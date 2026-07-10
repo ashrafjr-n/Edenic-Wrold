@@ -4,3 +4,4 @@
 2026-07-08 simplify header alignment
 2026-07-09 document progress store
 2026-07-10 simplify progress store
+2026-07-10 document lesson player layout
