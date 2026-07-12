@@ -6,3 +6,4 @@
 2026-07-10 simplify progress store
 2026-07-10 document lesson player layout
 2026-07-12 rename progress store
+2026-07-12 tweak header alignment
