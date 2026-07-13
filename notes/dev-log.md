@@ -7,3 +7,4 @@
 2026-07-10 document lesson player layout
 2026-07-12 rename progress store
 2026-07-12 tweak header alignment
+2026-07-13 clean up bottom nav
