@@ -8,3 +8,4 @@
 2026-07-12 rename progress store
 2026-07-12 tweak header alignment
 2026-07-13 clean up bottom nav
+2026-07-16 document word card
