@@ -9,3 +9,4 @@
 2026-07-12 tweak header alignment
 2026-07-13 clean up bottom nav
 2026-07-16 document word card
+2026-07-20 tidy image sizes
