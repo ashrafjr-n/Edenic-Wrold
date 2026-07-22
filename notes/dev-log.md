@@ -10,3 +10,4 @@
 2026-07-13 clean up bottom nav
 2026-07-16 document word card
 2026-07-20 tidy image sizes
+2026-07-22 update dark mode colors
