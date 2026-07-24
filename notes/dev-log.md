@@ -11,3 +11,4 @@
 2026-07-16 document word card
 2026-07-20 tidy image sizes
 2026-07-22 update dark mode colors
+2026-07-24 update hub copy
