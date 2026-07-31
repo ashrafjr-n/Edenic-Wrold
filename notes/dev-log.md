@@ -14,3 +14,4 @@
 2026-07-24 update hub copy
 2026-07-27 polish tracing board
 2026-07-31 polish header alignment
+2026-07-31 clean up button states
