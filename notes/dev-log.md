@@ -13,3 +13,4 @@
 2026-07-22 update dark mode colors
 2026-07-24 update hub copy
 2026-07-27 polish tracing board
+2026-07-31 polish header alignment
