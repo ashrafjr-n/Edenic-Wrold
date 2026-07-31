@@ -16,3 +16,4 @@
 2026-07-31 polish header alignment
 2026-07-31 clean up button states
 2026-07-31 simplify trail clouds
+2026-07-31 simplify dark mode colors
