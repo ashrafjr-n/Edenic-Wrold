@@ -19,3 +19,4 @@
 2026-07-31 simplify dark mode colors
 2026-08-03 simplify hub copy
 2026-08-05 refactor image sizes
+2026-08-06 document header alignment
