@@ -20,3 +20,4 @@
 2026-08-03 simplify hub copy
 2026-08-05 refactor image sizes
 2026-08-06 document header alignment
+2026-08-07 tweak lesson player layout
