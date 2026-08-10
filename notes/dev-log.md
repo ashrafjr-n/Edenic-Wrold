@@ -21,3 +21,4 @@
 2026-08-05 refactor image sizes
 2026-08-06 document header alignment
 2026-08-07 tweak lesson player layout
+2026-08-10 improve back button position
