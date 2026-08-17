@@ -23,3 +23,4 @@
 2026-08-07 tweak lesson player layout
 2026-08-10 improve back button position
 2026-08-12 clean up button states
+2026-08-17 update puzzle tray
