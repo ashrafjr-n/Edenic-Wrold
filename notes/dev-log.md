@@ -26,3 +26,4 @@
 2026-08-17 update puzzle tray
 2026-08-18 refactor font loading
 2026-08-18 simplify dark mode colors
+2026-08-18 polish card spacing
