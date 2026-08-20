@@ -29,3 +29,4 @@
 2026-08-18 polish card spacing
 2026-08-19 adjust puzzle tray
 2026-08-20 rename header alignment
+2026-08-20 improve confetti timing
