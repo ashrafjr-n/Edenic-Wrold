@@ -31,3 +31,4 @@
 2026-08-20 rename header alignment
 2026-08-20 improve confetti timing
 2026-08-21 document button states
+2026-08-22 rename lesson player layout
