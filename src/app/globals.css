@@ -6,12 +6,19 @@
 
   --color-pinki: #ff5fa8;
   --color-pinki-soft: #ffe3f0;
+  --color-pinki-dark: #d63f86;
   --color-nova: #35c1f1;
   --color-nova-soft: #dff5fd;
+  --color-nova-dark: #1a93c4;
   --color-bloo: #9b8ae0;
   --color-bloo-soft: #ece7fb;
+  --color-bloo-dark: #7360c4;
   --color-gold: #ffc94d;
+  --color-gold-dark: #e0a428;
   --color-ink: #3d2472;
+  --color-locked: #e7e4f1;
+  --color-locked-dark: #c7c2db;
+  --color-header-btn-dark: #a13a78;
 }
 
 @theme inline {
@@ -29,6 +36,40 @@
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1100px 550px at 12% -10%, rgb(255 95 168 / 7%), transparent 60%),
+    radial-gradient(1000px 500px at 92% 5%, rgb(53 193 241 / 8%), transparent 55%),
+    radial-gradient(900px 550px at 50% 110%, rgb(155 138 224 / 7%), transparent 60%),
+    var(--background);
   color: var(--foreground);
+  font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
+}
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  40% {
+    transform: rotate(9deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  80% {
+    transform: rotate(6deg);
+  }
 }
