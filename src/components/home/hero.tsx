@@ -2,6 +2,14 @@ import { characters } from "@/data/characters";
 import { CharacterCard } from "./character-card";
 import { IntroIcons } from "./intro-icons";
 
+/** Which character gates each locked one. `characters` is static, so this is
+    resolved once at module load rather than on every render. */
+const cast = characters.map((character, index) => ({
+  character,
+  index,
+  previousName: character.locked ? characters[index - 1]?.name : undefined,
+}));
+
 export function Hero() {
   return (
     <section className="relative flex flex-1 flex-col overflow-hidden px-4 pb-20 pt-2 sm:px-8 sm:pb-28 sm:pt-4">
@@ -27,12 +35,12 @@ export function Hero() {
           no dead space under it regardless of screen height. */}
       <div className="relative z-10 mx-auto mt-auto w-full max-w-6xl pt-8">
         <div className="flex flex-col items-center gap-12 sm:flex-row sm:items-end sm:justify-center sm:gap-6 lg:gap-10">
-          {characters.map((character, index) => (
+          {cast.map(({ character, index, previousName }) => (
             <CharacterCard
               key={character.id}
               character={character}
               index={index}
-              previousName={character.locked ? characters[index - 1]?.name : undefined}
+              previousName={previousName}
             />
           ))}
         </div>
