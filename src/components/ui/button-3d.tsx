@@ -1,8 +1,10 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
 
 export interface ButtonTone {
+  /** Solid fill, and the base the playful gradient is mixed from. */
   face: string;
-  edge: string;
+  /** Tints the playful drop shadow. Ignored by `calm`; defaults to `face`. */
+  edge?: string;
   text?: string;
 }
 
@@ -32,15 +34,19 @@ export function Button3D({
 }: Button3DProps) {
   const toneVars: ToneVars = {
     "--btn-face": tone.face,
-    "--btn-edge": tone.edge,
+    "--btn-edge": tone.edge ?? tone.face,
     "--btn-text": tone.text ?? "#fff",
     ...style,
   };
 
+  const classes = ["btn3d", variant === "calm" && "btn3d--calm", className]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       type="button"
-      className={`btn3d ${variant === "calm" ? "btn3d--calm" : ""} ${className}`}
+      className={classes}
       style={toneVars}
       {...props}
     >
