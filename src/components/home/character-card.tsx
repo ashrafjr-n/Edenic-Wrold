@@ -6,25 +6,39 @@ import type { Character } from "@/types/character";
 
 type ArchVars = CSSProperties & { "--arch-opacity"?: string };
 
-/** Arches land while the icons are still climbing; the friends arrive after. */
-const ARCH_DELAY = 0.5;
-const ARCH_STAGGER = 0.12;
-const FRIEND_DELAY = 2.3;
-const FRIEND_STAGGER = 0.15;
+/** The whole cast lands while the icons are still climbing — the icons are
+    decoration and must never gate the content. Everything is on screen by ~1.4s. */
+const ARCH_DELAY = 0.4;
+const ARCH_STAGGER = 0.1;
+const FRIEND_DELAY = 0.65;
+const FRIEND_STAGGER = 0.13;
+/** Idle float starts once pop-in (0.75s) has settled, so the two never fight. */
+const POP_IN_DURATION = 0.75;
+const NAME_OFFSET = 0.15;
+const BUTTON_OFFSET = 0.25;
+
+interface CharacterCardProps {
+  character: Character;
+  /** Name of the character that must be finished first; locked cards only. */
+  previousName?: string;
+  index: number;
+}
 
 export function CharacterCard({
   character,
   previousName,
   index,
-}: {
-  character: Character;
-  previousName?: string;
-  index: number;
-}) {
+}: CharacterCardProps) {
   const { name, image, accent, accentSoft, accentDark, locked } = character;
 
-  const archDelay = `${ARCH_DELAY + index * ARCH_STAGGER}s`;
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
+  const delay = {
+    arch: `${ARCH_DELAY + index * ARCH_STAGGER}s`,
+    friend: `${friendDelay}s`,
+    breathe: `${friendDelay + POP_IN_DURATION}s`,
+    name: `${friendDelay + NAME_OFFSET}s`,
+    button: `${friendDelay + BUTTON_OFFSET}s`,
+  };
 
   return (
     <div className="group/card relative flex w-full max-w-[300px] flex-col items-center">
@@ -36,7 +50,7 @@ export function CharacterCard({
           style={
             {
               backgroundColor: accentSoft,
-              animationDelay: archDelay,
+              animationDelay: delay.arch,
               "--arch-opacity": locked ? "0.5" : "1",
             } as ArchVars
           }
@@ -45,7 +59,7 @@ export function CharacterCard({
 
         <div
           className="anim-pop-in relative"
-          style={{ animationDelay: `${friendDelay}s` }}
+          style={{ animationDelay: delay.friend }}
         >
           {/* Contact shadow: a wide ambient pool plus a tight dark core right
               under the feet. Sits outside the floating wrapper so it stays
@@ -61,9 +75,7 @@ export function CharacterCard({
 
           <div
             className={`relative z-10 ${locked ? "" : "anim-breathe"}`}
-            style={
-              locked ? undefined : { animationDelay: `${friendDelay + 0.75}s` }
-            }
+            style={locked ? undefined : { animationDelay: delay.breathe }}
           >
             <Image
               src={image}
@@ -99,7 +111,7 @@ export function CharacterCard({
         className="anim-fade-up relative mt-4 text-3xl font-bold sm:text-4xl"
         style={{
           color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
-          animationDelay: `${friendDelay + 0.15}s`,
+          animationDelay: delay.name,
         }}
       >
         {name}
@@ -118,7 +130,7 @@ export function CharacterCard({
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
         className="anim-fade-up mt-4 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
-        style={{ animationDelay: `${friendDelay + 0.25}s` }}
+        style={{ animationDelay: delay.button }}
       >
         {locked ? (
           <>
