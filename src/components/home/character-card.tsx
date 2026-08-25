@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { LockKeyhole, Play } from "lucide-react";
+import { Lock, Play } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Character } from "@/types/character";
 
@@ -27,27 +27,17 @@ export function CharacterCard({
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
 
   return (
-    <div className="group/card relative flex w-full max-w-[290px] flex-col items-center">
-      <div className="relative flex w-full flex-col items-center pb-2 pt-10 sm:pt-14">
+    <div className="group/card relative flex w-full max-w-[300px] flex-col items-center">
+      {/* The arch stops at the character's feet — the name and button sit
+          below it, clear of the shape. */}
+      <div className="relative flex w-full justify-center pt-10 sm:pt-14">
         <div
-          className="anim-arch-in absolute bottom-4 left-1/2 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl sm:h-64 sm:w-64"
+          className="anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
           style={
             {
               backgroundColor: accentSoft,
               animationDelay: archDelay,
-              "--arch-opacity": locked ? "0.25" : "0.6",
-            } as ArchVars
-          }
-          aria-hidden
-        />
-
-        <div
-          className="anim-arch-in absolute bottom-0 left-1/2 h-64 w-72 -translate-x-1/2 rounded-t-full sm:h-80 sm:w-80"
-          style={
-            {
-              backgroundColor: accentSoft,
-              animationDelay: archDelay,
-              "--arch-opacity": locked ? "0.55" : "1",
+              "--arch-opacity": locked ? "0.5" : "1",
             } as ArchVars
           }
           aria-hidden
@@ -62,23 +52,23 @@ export function CharacterCard({
             alt={name}
             width={475}
             height={539}
-            className={`h-60 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.2)] transition-transform duration-300 sm:h-80 ${
-              locked ? "grayscale opacity-50" : "group-hover/card:scale-105"
+            className={`h-60 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.18)] transition-transform duration-300 sm:h-72 lg:h-80 ${
+              locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
             }`}
             priority={!locked}
           />
 
           <div
-            className="absolute -bottom-2 left-1/2 h-4 w-28 -translate-x-1/2 rounded-full bg-[var(--color-ink)]/15 blur-md"
+            className="absolute -bottom-1 left-1/2 h-3 w-28 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/15 blur-md"
             aria-hidden
           />
 
           {locked && (
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-md">
-                <LockKeyhole
-                  className="h-7 w-7 text-[var(--color-ink)]/60 transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
-                  strokeWidth={2.25}
+              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(61,36,114,0.35)]">
+                <Lock
+                  className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
+                  strokeWidth={2.5}
                 />
                 {previousName && (
                   <span className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
@@ -89,17 +79,17 @@ export function CharacterCard({
             </span>
           )}
         </div>
-
-        <h3
-          className="anim-fade-up relative mt-3 text-3xl font-semibold sm:text-4xl"
-          style={{
-            color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
-            animationDelay: `${friendDelay + 0.15}s`,
-          }}
-        >
-          {name}
-        </h3>
       </div>
+
+      <h3
+        className="anim-fade-up relative mt-4 text-3xl font-semibold sm:text-4xl"
+        style={{
+          color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
+          animationDelay: `${friendDelay + 0.15}s`,
+        }}
+      >
+        {name}
+      </h3>
 
       <Button3D
         tone={
@@ -113,12 +103,12 @@ export function CharacterCard({
         }
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
-        className="anim-fade-up mt-5 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
+        className="anim-fade-up mt-4 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
         style={{ animationDelay: `${friendDelay + 0.25}s` }}
       >
         {locked ? (
           <>
-            <LockKeyhole className="h-4 w-4" strokeWidth={2.75} />
+            <Lock className="h-4 w-4" strokeWidth={2.75} />
             Locked
           </>
         ) : (
