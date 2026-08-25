@@ -72,12 +72,15 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   Pill button — per-tone gradient fill, colored drop shadow, scales
-   on hover/tap. Locked state drops to flat color with no shadow/motion
-   so "inactive" reads instantly. `--btn-face`/`--btn-edge` are supplied
-   per tone; the gradient and shadow tint are derived from them with
-   color-mix() so every tone (character accent, header neutral, brand)
-   gets the same treatment with no per-tone CSS.
+   Pill button, two variants:
+   - default (`playful`) — per-tone gradient face, colored drop shadow,
+     scales on hover/tap. For the kid-facing character CTAs.
+   - `--calm` — solid face, no motion, one soft neutral shadow. For header
+     chrome, where a bouncing button reads as cheap rather than friendly.
+   Locked state drops to flat color with no shadow/motion so "inactive"
+   reads instantly. `--btn-face`/`--btn-edge` are supplied per tone; the
+   playful gradient and shadow tint derive from them with color-mix(), so
+   every tone gets the same treatment with no per-tone CSS.
    --------------------------------------------------------------- */
 
 .btn3d {
@@ -103,17 +106,6 @@ button:disabled,
     filter 0.2s ease;
 }
 
-.btn3d--brand {
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 30%), rgb(255 255 255 / 0%) 58%),
-    linear-gradient(
-      100deg,
-      var(--color-pinki),
-      var(--color-bloo) 55%,
-      var(--color-nova)
-    );
-}
-
 .btn3d:hover:not(:disabled) {
   transform: scale(1.05);
   filter: saturate(1.06);
@@ -123,6 +115,30 @@ button:disabled,
 .btn3d:active:not(:disabled) {
   transform: scale(0.95);
   box-shadow: 0 6px 14px -8px color-mix(in srgb, var(--btn-edge) 55%, transparent);
+}
+
+/* Declared after the base hover/active rules so it wins on source order. */
+.btn3d--calm {
+  background-image: none;
+  background-color: var(--btn-face);
+  text-shadow: none;
+  box-shadow:
+    0 1px 2px 0 rgb(61 36 114 / 10%),
+    0 4px 12px -4px rgb(61 36 114 / 20%);
+}
+
+.btn3d--calm:hover:not(:disabled) {
+  transform: none;
+  filter: brightness(1.05);
+  box-shadow:
+    0 2px 4px 0 rgb(61 36 114 / 12%),
+    0 8px 18px -6px rgb(61 36 114 / 26%);
+}
+
+.btn3d--calm:active:not(:disabled) {
+  transform: none;
+  filter: brightness(0.96);
+  box-shadow: 0 1px 2px 0 rgb(61 36 114 / 12%);
 }
 
 .btn3d:focus-visible {

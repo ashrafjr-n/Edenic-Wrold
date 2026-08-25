@@ -12,15 +12,19 @@ type ToneVars = CSSProperties & {
   "--btn-text"?: string;
 };
 
+/** `playful` — gradient face that scales on hover/tap, for the kid-facing CTAs.
+    `calm` — solid face, no motion, soft shadow only, for the header chrome. */
+export type ButtonVariant = "playful" | "calm";
+
 interface Button3DProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone: ButtonTone;
-  brand?: boolean;
+  variant?: ButtonVariant;
   children: ReactNode;
 }
 
 export function Button3D({
   tone,
-  brand = false,
+  variant = "playful",
   className = "",
   children,
   style,
@@ -36,7 +40,7 @@ export function Button3D({
   return (
     <button
       type="button"
-      className={`btn3d ${brand ? "btn3d--brand" : ""} ${className}`}
+      className={`btn3d ${variant === "calm" ? "btn3d--calm" : ""} ${className}`}
       style={toneVars}
       {...props}
     >
