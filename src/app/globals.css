@@ -20,7 +20,7 @@
   --color-locked-dark: #c7c2db;
   --color-locked-text: #9a93b3;
 
-  /* Heading gradient is deliberately independent of the character accent
+  /* Headline colors are deliberately independent of the character accent
      tokens — recoloring a mascot must never recolor the headline. */
   --color-head-play: #ef5f95;
   --color-head-grow: #5b5fd9;
