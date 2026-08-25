@@ -55,6 +55,153 @@ button:disabled,
   cursor: not-allowed;
 }
 
+/* Header "Join" button: frosted glass label over animated color blobs.
+   Widened from the original 8em spec (x1.625) so "Join Edenic World" fits;
+   blob offsets/size scaled by the same factor to preserve the look. */
+.join-btn {
+  position: relative;
+  font-family: inherit;
+  font-size: 18px;
+  border-radius: 40em;
+  width: 13em;
+  height: 3em;
+  z-index: 1;
+  color: white;
+  cursor: pointer;
+  overflow: hidden;
+  border: none;
+}
+
+.join-btn__glass {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  border-radius: 40em;
+  border: none;
+  background: linear-gradient(rgb(255 255 255 / 47%), rgb(150 150 150 / 25%));
+  z-index: 1;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.join-btn__blob {
+  position: absolute;
+  z-index: -1;
+  border-radius: 5em;
+  width: 8em;
+  height: 3em;
+  transition:
+    transform 0.3s ease-in-out,
+    background 0.3s ease-in-out;
+}
+
+.join-btn__blob:nth-child(2) {
+  left: 0em;
+  top: 0;
+  background: #ff930f;
+}
+
+.join-btn__blob:nth-child(3) {
+  left: 3em;
+  top: 0;
+  z-index: -1;
+  background: #bf0fff;
+}
+
+.join-btn__blob:nth-child(4) {
+  left: 6.5em;
+  top: -1em;
+  background: #ff1b6b;
+}
+
+.join-btn__blob:nth-child(5) {
+  left: 7em;
+  top: 1.6em;
+  background: #0061ff;
+}
+
+.join-btn:hover .join-btn__blob:nth-child(2) {
+  background: #0061ff;
+}
+
+.join-btn:hover .join-btn__blob:nth-child(3) {
+  background: #ff1b6b;
+}
+
+.join-btn:hover .join-btn__blob:nth-child(4) {
+  background: #bf0fff;
+}
+
+.join-btn:hover .join-btn__blob:nth-child(5) {
+  background: #ff930f;
+}
+
+.join-btn:hover .join-btn__blob {
+  transform: scale(1.3);
+}
+
+.join-btn:active {
+  border: 2px solid white;
+}
+
+@media (max-width: 420px) {
+  .join-btn {
+    font-size: 14px;
+  }
+}
+
+/* Character card CTA: shifting rainbow gradient */
+.hero-cta {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 1.1em 1.4em;
+  cursor: pointer;
+  gap: 0.4rem;
+  font-weight: bold;
+  border-radius: 30px;
+  text-shadow: 2px 2px 3px rgb(136 0 136 / 50%);
+  background: linear-gradient(
+      15deg,
+      #880088,
+      #aa2068,
+      #cc3f47,
+      #de6f3d,
+      #f09f33,
+      #de6f3d,
+      #cc3f47,
+      #aa2068,
+      #880088
+    )
+    no-repeat;
+  background-size: 300%;
+  color: #fff;
+  border: none;
+  background-position: left center;
+  box-shadow: 0 30px 10px -20px rgb(0 0 0 / 20%);
+  transition: background 0.3s ease;
+}
+
+.hero-cta:hover {
+  background-size: 320%;
+  background-position: right center;
+}
+
+.hero-cta svg {
+  width: 23px;
+  fill: #f09f33;
+  stroke: #f09f33;
+  transition: 0.3s ease;
+}
+
+.hero-cta:hover svg {
+  fill: #fff;
+  stroke: #fff;
+}
+
 @keyframes wiggle {
   0%,
   100% {
