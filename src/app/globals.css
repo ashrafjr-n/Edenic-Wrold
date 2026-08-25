@@ -8,10 +8,10 @@
   --color-pinki-soft: #ffe3f0;
   --color-pinki-dark: #d63f86;
   --color-nova: var(--color-gold);
-  --color-nova-soft: #fff2d2;
+  --color-nova-soft: #f7ead0;
   --color-nova-dark: var(--color-gold-dark);
   --color-bloo: #35c1f1;
-  --color-bloo-soft: #dff5fd;
+  --color-bloo-soft: #dceefb;
   --color-bloo-dark: #1a93c4;
   --color-gold: #ffc94d;
   --color-gold-dark: #e0a428;
@@ -19,6 +19,11 @@
   --color-locked: #e7e4f1;
   --color-locked-dark: #c7c2db;
   --color-locked-text: #9a93b3;
+
+  /* Heading gradient is deliberately independent of the character accent
+     tokens — recoloring a mascot must never recolor the headline. */
+  --color-head-play: #ef5f95;
+  --color-head-grow: #5b5fd9;
 }
 
 @theme inline {
@@ -35,20 +40,25 @@
   --font-sans: var(--font-fredoka);
 }
 
+/* The gradient lives on the page itself, not on the hero section — the header
+   is transparent and sits in normal flow, so a section-scoped background would
+   leave a visible flat band behind the header. */
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 12% 8%, var(--color-pinki-soft), transparent 42%),
+    radial-gradient(circle at 88% 6%, var(--color-bloo-soft), transparent 42%),
+    radial-gradient(circle at 50% 100%, var(--color-nova-soft), transparent 55%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Soft color-wash gradient behind the hero content — reuses the same
-   pastel tokens as the character arches so the glow reads as one scene. */
-.bg-hero-gradient {
-  background:
-    radial-gradient(circle at 15% 20%, var(--color-pinki-soft), transparent 45%),
-    radial-gradient(circle at 85% 15%, var(--color-bloo-soft), transparent 45%),
-    radial-gradient(circle at 50% 95%, var(--color-nova-soft), transparent 50%),
-    var(--background);
+/* Sparse dot field used at the far edges of the hero, well clear of the
+   characters so it reads as texture rather than content. */
+.dot-grid {
+  background-image: radial-gradient(currentColor 1.6px, transparent 1.6px);
+  background-size: 15px 15px;
 }
 
 button,
