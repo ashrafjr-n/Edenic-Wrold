@@ -18,6 +18,7 @@ export function Header() {
         <div className="flex items-center gap-2 sm:gap-3">
           <Button3D
             tone={{ face: "#ffffff", edge: "#e0dced", text: "var(--color-ink)" }}
+            variant="calm"
             aria-label="Change language"
             className="h-11 w-11 shrink-0"
           >
@@ -25,9 +26,9 @@ export function Header() {
           </Button3D>
 
           <Button3D
-            tone={{ face: "var(--color-pinki)", edge: "#7d4aa8" }}
-            brand
-            className="h-11 px-4 text-sm sm:px-5 sm:text-base"
+            tone={{ face: "var(--color-ink)", edge: "var(--color-ink)" }}
+            variant="calm"
+            className="h-11 px-5 text-sm sm:px-6 sm:text-base"
           >
             <LogIn className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
             Join Edenic World
