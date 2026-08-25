@@ -18,7 +18,7 @@
   --color-ink: #3d2472;
   --color-locked: #e7e4f1;
   --color-locked-dark: #c7c2db;
-  --color-header-btn-dark: #a13a78;
+  --color-locked-text: #9a93b3;
 }
 
 @theme inline {
@@ -55,151 +55,176 @@ button:disabled,
   cursor: not-allowed;
 }
 
-/* Header "Join" button: frosted glass label over animated color blobs.
-   Widened from the original 8em spec (x1.625) so "Join Edenic World" fits;
-   blob offsets/size scaled by the same factor to preserve the look. */
-.join-btn {
-  position: relative;
-  font-family: inherit;
-  font-size: 18px;
-  border-radius: 40em;
-  width: 13em;
-  height: 3em;
-  z-index: 1;
-  color: white;
-  cursor: pointer;
-  overflow: hidden;
-  border: none;
-}
+/* ---------------------------------------------------------------
+   3D button — solid face, hard color edge, presses into the page
+   --------------------------------------------------------------- */
 
-.join-btn__glass {
-  position: absolute;
-  inset: 0;
-  display: flex;
+.btn3d {
+  position: relative;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35em;
-  border-radius: 40em;
+  gap: 0.5rem;
   border: none;
-  background: linear-gradient(rgb(255 255 255 / 47%), rgb(150 150 150 / 25%));
-  z-index: 1;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.join-btn__blob {
-  position: absolute;
-  z-index: -1;
-  border-radius: 5em;
-  width: 8em;
-  height: 3em;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--btn-text, #fff);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 16%);
+  background-color: var(--btn-face);
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 30%),
+    rgb(255 255 255 / 0%) 58%
+  );
+  box-shadow:
+    inset 0 2px 0 0 rgb(255 255 255 / 45%),
+    inset 0 -2px 0 0 rgb(0 0 0 / 8%),
+    0 6px 0 0 var(--btn-edge),
+    0 12px 18px -8px rgb(61 36 114 / 40%);
   transition:
-    transform 0.3s ease-in-out,
-    background 0.3s ease-in-out;
+    transform 0.12s cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 0.12s cubic-bezier(0.2, 0.8, 0.3, 1),
+    filter 0.2s ease;
 }
 
-.join-btn__blob:nth-child(2) {
-  left: 0em;
-  top: 0;
-  background: #ff930f;
+.btn3d--brand {
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 30%), rgb(255 255 255 / 0%) 58%),
+    linear-gradient(
+      100deg,
+      var(--color-pinki),
+      var(--color-bloo) 55%,
+      var(--color-nova)
+    );
 }
 
-.join-btn__blob:nth-child(3) {
-  left: 3em;
-  top: 0;
-  z-index: -1;
-  background: #bf0fff;
+.btn3d:hover:not(:disabled) {
+  transform: translateY(-3px);
+  filter: saturate(1.06);
+  box-shadow:
+    inset 0 2px 0 0 rgb(255 255 255 / 45%),
+    inset 0 -2px 0 0 rgb(0 0 0 / 8%),
+    0 9px 0 0 var(--btn-edge),
+    0 18px 22px -10px rgb(61 36 114 / 45%);
 }
 
-.join-btn__blob:nth-child(4) {
-  left: 6.5em;
-  top: -1em;
-  background: #ff1b6b;
+.btn3d:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow:
+    inset 0 2px 0 0 rgb(255 255 255 / 30%),
+    inset 0 -1px 0 0 rgb(0 0 0 / 10%),
+    0 1px 0 0 var(--btn-edge),
+    0 4px 8px -6px rgb(61 36 114 / 40%);
 }
 
-.join-btn__blob:nth-child(5) {
-  left: 7em;
-  top: 1.6em;
-  background: #0061ff;
+.btn3d:focus-visible {
+  outline: 3px solid rgb(61 36 114 / 45%);
+  outline-offset: 3px;
 }
 
-.join-btn:hover .join-btn__blob:nth-child(2) {
-  background: #0061ff;
+.btn3d:disabled {
+  text-shadow: none;
+  box-shadow:
+    inset 0 2px 0 0 rgb(255 255 255 / 55%),
+    0 5px 0 0 var(--btn-edge),
+    0 8px 12px -8px rgb(61 36 114 / 25%);
 }
 
-.join-btn:hover .join-btn__blob:nth-child(3) {
-  background: #ff1b6b;
-}
+/* ---------------------------------------------------------------
+   Entrance choreography (pure CSS timeline, no JS)
+   --------------------------------------------------------------- */
 
-.join-btn:hover .join-btn__blob:nth-child(4) {
-  background: #bf0fff;
-}
-
-.join-btn:hover .join-btn__blob:nth-child(5) {
-  background: #ff930f;
-}
-
-.join-btn:hover .join-btn__blob {
-  transform: scale(1.3);
-}
-
-.join-btn:active {
-  border: 2px solid white;
-}
-
-@media (max-width: 420px) {
-  .join-btn {
-    font-size: 14px;
+@keyframes icon-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 0), calc(-100vh - 160px), 0) scale(1.05)
+      rotate(var(--spin, 30deg));
   }
 }
 
-/* Character card CTA: shifting rainbow gradient */
-.hero-cta {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  padding: 1.1em 1.4em;
-  cursor: pointer;
-  gap: 0.4rem;
-  font-weight: bold;
-  border-radius: 30px;
-  text-shadow: 2px 2px 3px rgb(136 0 136 / 50%);
-  background: linear-gradient(
-      15deg,
-      #880088,
-      #aa2068,
-      #cc3f47,
-      #de6f3d,
-      #f09f33,
-      #de6f3d,
-      #cc3f47,
-      #aa2068,
-      #880088
-    )
-    no-repeat;
-  background-size: 300%;
-  color: #fff;
-  border: none;
-  background-position: left center;
-  box-shadow: 0 30px 10px -20px rgb(0 0 0 / 20%);
-  transition: background 0.3s ease;
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -38px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-.hero-cta:hover {
-  background-size: 320%;
-  background-position: right center;
+/* Horizontal centering comes from Tailwind's `translate` property, which
+   composes with `transform` — keep translateX out of here or it doubles. */
+@keyframes arch-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scaleY(0.7);
+  }
+  to {
+    opacity: var(--arch-opacity, 1);
+    transform: translateY(0) scaleY(1);
+  }
 }
 
-.hero-cta svg {
-  width: 23px;
-  fill: #f09f33;
-  stroke: #f09f33;
-  transition: 0.3s ease;
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale(0.85);
+  }
+  62% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) scale(1.035);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
-.hero-cta:hover svg {
-  fill: #fff;
-  stroke: #fff;
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.anim-icon-rise {
+  animation: icon-rise 1.6s cubic-bezier(0.33, 0, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.anim-drop-in {
+  animation: drop-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-arch-in {
+  transform-origin: bottom center;
+  animation: arch-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-pop-in {
+  animation: pop-in 0.75s cubic-bezier(0.34, 1.4, 0.5, 1) both;
+  will-change: transform, opacity;
+}
+
+.anim-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes wiggle {
@@ -218,5 +243,18 @@ button:disabled,
   }
   80% {
     transform: rotate(6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-drop-in,
+  .anim-arch-in,
+  .anim-pop-in,
+  .anim-fade-up {
+    animation: none;
+  }
+
+  .intro-icons {
+    display: none;
   }
 }
