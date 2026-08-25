@@ -1,13 +1,11 @@
 import { characters } from "@/data/characters";
 import { CharacterCard } from "./character-card";
-import { HeroDecor } from "./hero-decor";
 import { IntroIcons } from "./intro-icons";
 
 export function Hero() {
   return (
-    <section className="relative flex flex-1 flex-col overflow-hidden px-4 pb-8 pt-2 sm:px-8 sm:pt-4">
+    <section className="relative flex flex-1 flex-col overflow-hidden px-4 pb-20 pt-2 sm:px-8 sm:pb-28 sm:pt-4">
       <IntroIcons />
-      <HeroDecor />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         <h1
