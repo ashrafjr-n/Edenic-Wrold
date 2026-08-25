@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Lock, Play } from "lucide-react";
+import { LockKeyhole, Play } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Character } from "@/types/character";
 
@@ -27,10 +27,10 @@ export function CharacterCard({
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
 
   return (
-    <div className="group/card relative flex w-full max-w-[260px] flex-col items-center">
+    <div className="group/card relative flex w-full max-w-[290px] flex-col items-center">
       <div className="relative flex w-full flex-col items-center pb-2 pt-10 sm:pt-14">
         <div
-          className="anim-arch-in absolute bottom-4 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full blur-3xl sm:h-56 sm:w-56"
+          className="anim-arch-in absolute bottom-4 left-1/2 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl sm:h-64 sm:w-64"
           style={
             {
               backgroundColor: accentSoft,
@@ -42,7 +42,7 @@ export function CharacterCard({
         />
 
         <div
-          className="anim-arch-in absolute bottom-0 left-1/2 h-56 w-64 -translate-x-1/2 rounded-t-full sm:h-72 sm:w-72"
+          className="anim-arch-in absolute bottom-0 left-1/2 h-64 w-72 -translate-x-1/2 rounded-t-full sm:h-80 sm:w-80"
           style={
             {
               backgroundColor: accentSoft,
@@ -62,7 +62,7 @@ export function CharacterCard({
             alt={name}
             width={475}
             height={539}
-            className={`h-52 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.2)] transition-transform duration-300 sm:h-72 ${
+            className={`h-60 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.2)] transition-transform duration-300 sm:h-80 ${
               locked ? "grayscale opacity-50" : "group-hover/card:scale-105"
             }`}
             priority={!locked}
@@ -76,7 +76,7 @@ export function CharacterCard({
           {locked && (
             <span className="absolute inset-0 flex items-center justify-center">
               <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-md">
-                <Lock
+                <LockKeyhole
                   className="h-7 w-7 text-[var(--color-ink)]/60 transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
                   strokeWidth={2.25}
                 />
@@ -118,7 +118,7 @@ export function CharacterCard({
       >
         {locked ? (
           <>
-            <Lock className="h-4 w-4" strokeWidth={2.75} />
+            <LockKeyhole className="h-4 w-4" strokeWidth={2.75} />
             Locked
           </>
         ) : (
