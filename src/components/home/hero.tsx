@@ -4,7 +4,7 @@ import { IntroIcons } from "./intro-icons";
 
 export function Hero() {
   return (
-    <section className="bg-hero-gradient relative overflow-hidden px-4 pb-20 pt-14 sm:px-8 sm:pt-20">
+    <section className="bg-hero-gradient relative overflow-hidden px-4 pb-20 pt-8 sm:px-8 sm:pt-12">
       <IntroIcons />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
