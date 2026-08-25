@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fffaf2;
+  --background: #fff9f5;
   --foreground: #3d2472;
 
   --color-pinki: #ff5fa8;
@@ -36,13 +36,19 @@
 }
 
 body {
-  background:
-    radial-gradient(1100px 550px at 12% -10%, rgb(255 95 168 / 7%), transparent 60%),
-    radial-gradient(1000px 500px at 92% 5%, rgb(53 193 241 / 8%), transparent 55%),
-    radial-gradient(900px 550px at 50% 110%, rgb(155 138 224 / 7%), transparent 60%),
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Soft color-wash gradient behind the hero content — reuses the same
+   pastel tokens as the character arches so the glow reads as one scene. */
+.bg-hero-gradient {
+  background:
+    radial-gradient(circle at 15% 20%, var(--color-pinki-soft), transparent 45%),
+    radial-gradient(circle at 85% 15%, var(--color-bloo-soft), transparent 45%),
+    radial-gradient(circle at 50% 95%, var(--color-nova-soft), transparent 50%),
+    var(--background);
 }
 
 button,
