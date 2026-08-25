@@ -26,17 +26,10 @@
   --color-head-grow: #5b5fd9;
 }
 
+/* Colors are consumed as `var(--color-*)` arbitrary values throughout, never as
+   generated utilities (`bg-pinki` etc.), so only the font is mapped into the
+   Tailwind theme. Keep it that way — one system, not two. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-pinki: var(--color-pinki);
-  --color-pinki-soft: var(--color-pinki-soft);
-  --color-nova: var(--color-nova);
-  --color-nova-soft: var(--color-nova-soft);
-  --color-bloo: var(--color-bloo);
-  --color-bloo-soft: var(--color-bloo-soft);
-  --color-gold: var(--color-gold);
-  --color-ink: var(--color-ink);
   --font-sans: var(--font-fredoka);
 }
 
@@ -52,13 +45,6 @@ body {
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
-}
-
-/* Sparse dot field used at the far edges of the hero, well clear of the
-   characters so it reads as texture rather than content. */
-.dot-grid {
-  background-image: radial-gradient(currentColor 1.6px, transparent 1.6px);
-  background-size: 15px 15px;
 }
 
 button,
