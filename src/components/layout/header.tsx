@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Languages, LogIn } from "lucide-react";
+import { Button3D } from "@/components/ui/button-3d";
 
 export function Header() {
   return (
@@ -15,24 +16,22 @@ export function Header() {
         />
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
+          <Button3D
+            tone={{ face: "#ffffff", edge: "#e0dced", text: "var(--color-ink)" }}
             aria-label="Change language"
-            className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--color-ink)]/10 bg-white text-[var(--color-ink)] shadow-[0_3px_0_0_#e4e0f2] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_0_0_#e4e0f2] active:translate-y-0.5 active:shadow-[0_0px_0_0_#e4e0f2]"
+            className="h-11 w-11 shrink-0"
           >
             <Languages className="h-5 w-5" strokeWidth={2.25} />
-          </button>
+          </Button3D>
 
-          <button type="button" className="join-btn">
-            <span className="join-btn__glass backdrop-blur-md">
-              <LogIn className="h-4 w-4" strokeWidth={2.5} />
-              Join Edenic World
-            </span>
-            <span className="join-btn__blob" aria-hidden />
-            <span className="join-btn__blob" aria-hidden />
-            <span className="join-btn__blob" aria-hidden />
-            <span className="join-btn__blob" aria-hidden />
-          </button>
+          <Button3D
+            tone={{ face: "var(--color-pinki)", edge: "#7d4aa8" }}
+            brand
+            className="h-11 px-4 text-sm sm:px-5 sm:text-base"
+          >
+            <LogIn className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
+            Join Edenic World
+          </Button3D>
         </div>
       </div>
     </header>
