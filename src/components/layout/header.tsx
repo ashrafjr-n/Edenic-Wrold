@@ -3,7 +3,7 @@ import { Languages, LogIn } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--color-ink)]/5 bg-[var(--background)]/90 backdrop-blur-sm">
+    <header className="sticky top-0 z-20 border-b border-[var(--color-ink)]/5 bg-gradient-to-b from-[var(--background)] to-white backdrop-blur-sm">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-8">
         <Image
           src="/logo/edenic-logo.png"
@@ -23,12 +23,15 @@ export function Header() {
             <Languages className="h-5 w-5" strokeWidth={2.25} />
           </button>
 
-          <button
-            type="button"
-            className="flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pinki)] to-[var(--color-nova)] px-5 text-sm font-semibold text-white shadow-[0_4px_0_0_var(--color-header-btn-dark)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_6px_0_0_var(--color-header-btn-dark)] active:translate-y-1 active:shadow-[0_0px_0_0_var(--color-header-btn-dark)] sm:text-base"
-          >
-            <LogIn className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
-            Join Edenic World
+          <button type="button" className="join-btn">
+            <span className="join-btn__glass backdrop-blur-md">
+              <LogIn className="h-4 w-4" strokeWidth={2.5} />
+              Join Edenic World
+            </span>
+            <span className="join-btn__blob" aria-hidden />
+            <span className="join-btn__blob" aria-hidden />
+            <span className="join-btn__blob" aria-hidden />
+            <span className="join-btn__blob" aria-hidden />
           </button>
         </div>
       </div>
