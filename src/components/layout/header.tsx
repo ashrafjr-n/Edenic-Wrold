@@ -4,8 +4,8 @@ import { Button3D } from "@/components/ui/button-3d";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--color-ink)]/5 bg-gradient-to-b from-[var(--background)] to-white backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-8">
+    <header className="sticky top-0 z-20">
+      <div className="flex items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Image
           src="/logo/edenic-logo.png"
           alt="Edenic World"
