@@ -33,9 +33,9 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         <h1 className="text-4xl font-semibold leading-tight text-[var(--color-ink)] sm:text-5xl">
-          Learn With Your{" "}
+          Learn.{" "}
           <span className="bg-gradient-to-r from-[var(--color-pinki)] via-[var(--color-bloo)] to-[var(--color-nova)] bg-clip-text text-transparent">
-            Edenic Friends
+            Play. Grow.
           </span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-[var(--color-ink)]/60 sm:text-xl">
@@ -43,7 +43,7 @@ export function Hero() {
         </p>
       </div>
 
-      <div className="relative mx-auto mt-10 max-w-6xl">
+      <div className="relative mx-auto mt-2 max-w-6xl sm:-mt-2">
         <div
           className="pointer-events-none absolute -left-2 top-10 hidden h-24 w-24 opacity-50 sm:block"
           style={dotGrid("var(--color-pinki)")}
