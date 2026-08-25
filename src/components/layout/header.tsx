@@ -18,14 +18,14 @@ export function Header() {
           <button
             type="button"
             aria-label="Change language"
-            className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--color-ink)]/10 bg-white text-[var(--color-ink)] shadow-sm transition-transform hover:scale-105 hover:border-[var(--color-nova)]/40"
+            className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--color-ink)]/10 bg-white text-[var(--color-ink)] shadow-[0_3px_0_0_#e4e0f2] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_0_0_#e4e0f2] active:translate-y-0.5 active:shadow-[0_0px_0_0_#e4e0f2]"
           >
             <Languages className="h-5 w-5" strokeWidth={2.25} />
           </button>
 
           <button
             type="button"
-            className="flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pinki)] to-[var(--color-nova)] px-5 text-sm font-semibold text-white shadow-md shadow-[var(--color-pinki)]/25 transition-transform hover:scale-105 sm:text-base"
+            className="flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pinki)] to-[var(--color-nova)] px-5 text-sm font-semibold text-white shadow-[0_4px_0_0_var(--color-header-btn-dark)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_6px_0_0_var(--color-header-btn-dark)] active:translate-y-1 active:shadow-[0_0px_0_0_var(--color-header-btn-dark)] sm:text-base"
           >
             <LogIn className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
             Join Edenic World
