@@ -9,7 +9,7 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         <h1
-          className="anim-drop-in text-4xl font-semibold leading-tight text-[var(--color-ink)] sm:text-6xl"
+          className="anim-drop-in text-4xl font-bold leading-tight tracking-tight text-[var(--color-ink)] sm:text-6xl"
           style={{ animationDelay: "0.15s" }}
         >
           Learn. <span className="text-[var(--color-head-play)]">Play.</span>{" "}
