@@ -1,36 +1,50 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Lock, Play } from "lucide-react";
+import { Button3D } from "@/components/ui/button-3d";
 import type { Character } from "@/types/character";
 
-type ShadowVars = CSSProperties & { "--btn-shadow"?: string };
-export type ArchPosition = "left" | "middle" | "right";
+type ArchVars = CSSProperties & { "--arch-opacity"?: string };
+
+/** Arches land while the icons are still climbing; the friends arrive after. */
+const ARCH_DELAY = 0.5;
+const ARCH_STAGGER = 0.12;
+const FRIEND_DELAY = 2.3;
+const FRIEND_STAGGER = 0.15;
 
 export function CharacterCard({
   character,
   previousName,
-  position,
+  index,
 }: {
   character: Character;
   previousName?: string;
-  position: ArchPosition;
+  index: number;
 }) {
-  const { name, image, accentSoft, locked } = character;
+  const { name, image, accent, accentSoft, accentDark, locked } = character;
+
+  const archDelay = `${ARCH_DELAY + index * ARCH_STAGGER}s`;
+  const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
 
   return (
-    <div
-      className={`group/card relative flex w-full max-w-[260px] flex-col items-center sm:-mx-6 ${
-        position === "middle" ? "z-[2]" : "z-[1]"
-      }`}
-    >
+    <div className="group/card relative flex w-full max-w-[260px] flex-col items-center">
       <div className="relative flex w-full flex-col items-center pb-2 pt-10 sm:pt-14">
         <div
-          className="absolute bottom-0 left-1/2 h-56 w-64 -translate-x-1/2 rounded-t-full transition-opacity duration-300 sm:h-72 sm:w-80"
-          style={{ backgroundColor: accentSoft, opacity: locked ? 0.55 : 1 }}
+          className="anim-arch-in absolute bottom-0 left-1/2 h-56 w-64 -translate-x-1/2 rounded-t-full sm:h-72 sm:w-72"
+          style={
+            {
+              backgroundColor: accentSoft,
+              animationDelay: archDelay,
+              "--arch-opacity": locked ? "0.55" : "1",
+            } as ArchVars
+          }
           aria-hidden
         />
 
-        <div className="relative">
+        <div
+          className="anim-pop-in relative"
+          style={{ animationDelay: `${friendDelay}s` }}
+        >
           <Image
             src={image}
             alt={name}
@@ -65,28 +79,43 @@ export function CharacterCard({
         </div>
 
         <h3
-          className="relative mt-3 text-3xl font-semibold sm:text-4xl"
-          style={{ color: locked ? "#9a93b3" : "var(--color-ink)" }}
+          className="anim-fade-up relative mt-3 text-3xl font-semibold sm:text-4xl"
+          style={{
+            color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
+            animationDelay: `${friendDelay + 0.15}s`,
+          }}
         >
           {name}
         </h3>
       </div>
 
-      {locked ? (
-        <button
-          type="button"
-          disabled
-          className="relative mt-4 w-full max-w-[200px] rounded-full bg-[var(--color-locked)] px-6 py-3 text-base font-semibold text-[#9a93b3] shadow-[0_4px_0_0_var(--btn-shadow)] sm:text-lg"
-          style={{ "--btn-shadow": "var(--color-locked-dark)" } as ShadowVars}
-        >
-          Locked
-        </button>
-      ) : (
-        <button type="button" className="hero-cta relative mt-4 text-base sm:text-lg">
-          Learn With {name}
-          <Play />
-        </button>
-      )}
+      <Button3D
+        tone={
+          locked
+            ? {
+                face: "var(--color-locked)",
+                edge: "var(--color-locked-dark)",
+                text: "var(--color-locked-text)",
+              }
+            : { face: accent, edge: accentDark }
+        }
+        disabled={locked}
+        aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
+        className="anim-fade-up mt-5 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
+        style={{ animationDelay: `${friendDelay + 0.25}s` }}
+      >
+        {locked ? (
+          <>
+            <Lock className="h-4 w-4" strokeWidth={2.75} />
+            Locked
+          </>
+        ) : (
+          <>
+            Learn With {name}
+            <Play className="h-4 w-4 fill-current" strokeWidth={2.75} />
+          </>
+        )}
+      </Button3D>
     </div>
   );
 }
