@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Edenic World
 
-## Getting Started
+An educational web app for children under 10. Three brand mascots — **Pinki**,
+**Nova**, and **Bloo** — each guide a set of lessons, and children work through
+them one item at a time.
 
-First, run the development server:
+All UI and content is English only.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 16** (App Router) with **React 19** and **TypeScript**
+- **Tailwind CSS v4** — configured in `src/app/globals.css`, no `tailwind.config.js`
+- **Fredoka** via `next/font/google`
+- **lucide-react** for icons
+- Entrance and idle animation are plain CSS keyframes — no animation library
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+src/
+  app/
+    layout.tsx        Root layout: font, header
+    page.tsx          Home page
+    globals.css       Design tokens, button styles, animation keyframes
+  components/
+    home/             Hero, character cards, intro icon animation
+    layout/           Header
+    ui/               Shared primitives (Button3D)
+  data/               Character definitions
+  types/              Shared TypeScript types
+public/assets/
+  friends/            Mascot artwork
+  icons/              Decorative 3D icons
+```
 
-## Deploy on Vercel
+## Current status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The home page is the only route that exists, and it is still being iterated on
+visually. Lesson routes, progress state, and lesson content are not built yet.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Planned, in order:
+
+1. Character lesson hubs and per-item pages (video → shape → tracing → questions)
+2. Client-side progress tracking, so a returning child resumes where they left off
+3. Progressive unlocking, across characters and within each character's lessons
+
+Audio narration is deliberately out of scope for the MVP.
