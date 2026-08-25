@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Lock } from "lucide-react";
+import { Lock, Play } from "lucide-react";
 import type { Character } from "@/types/character";
 
 type ShadowVars = CSSProperties & { "--btn-shadow"?: string };
@@ -15,7 +15,7 @@ export function CharacterCard({
   previousName?: string;
   position: ArchPosition;
 }) {
-  const { name, image, accent, accentSoft, accentDark, locked } = character;
+  const { name, image, accentSoft, locked } = character;
 
   return (
     <div
@@ -23,9 +23,9 @@ export function CharacterCard({
         position === "middle" ? "z-[2]" : "z-[1]"
       }`}
     >
-      <div className="relative flex w-full flex-col items-center pb-2 pt-16 sm:pt-24">
+      <div className="relative flex w-full flex-col items-center pb-2 pt-10 sm:pt-14">
         <div
-          className="absolute bottom-0 left-1/2 h-40 w-56 -translate-x-1/2 rounded-t-full transition-opacity duration-300 sm:h-52 sm:w-64"
+          className="absolute bottom-0 left-1/2 h-56 w-64 -translate-x-1/2 rounded-t-full transition-opacity duration-300 sm:h-72 sm:w-80"
           style={{ backgroundColor: accentSoft, opacity: locked ? 0.55 : 1 }}
           aria-hidden
         />
@@ -36,22 +36,22 @@ export function CharacterCard({
             alt={name}
             width={475}
             height={539}
-            className={`h-40 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.2)] transition-transform duration-300 sm:h-52 ${
+            className={`h-52 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.2)] transition-transform duration-300 sm:h-72 ${
               locked ? "grayscale opacity-50" : "group-hover/card:scale-105"
             }`}
             priority={!locked}
           />
 
           <div
-            className="absolute -bottom-2 left-1/2 h-4 w-24 -translate-x-1/2 rounded-full bg-[var(--color-ink)]/15 blur-md"
+            className="absolute -bottom-2 left-1/2 h-4 w-28 -translate-x-1/2 rounded-full bg-[var(--color-ink)]/15 blur-md"
             aria-hidden
           />
 
           {locked && (
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="group/lock relative flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-md">
+              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-md">
                 <Lock
-                  className="h-6 w-6 text-[var(--color-ink)]/60 transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
+                  className="h-7 w-7 text-[var(--color-ink)]/60 transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
                   strokeWidth={2.25}
                 />
                 {previousName && (
@@ -65,30 +65,28 @@ export function CharacterCard({
         </div>
 
         <h3
-          className="relative mt-3 text-2xl font-semibold sm:text-3xl"
+          className="relative mt-3 text-3xl font-semibold sm:text-4xl"
           style={{ color: locked ? "#9a93b3" : "var(--color-ink)" }}
         >
           {name}
         </h3>
       </div>
 
-      <button
-        type="button"
-        disabled={locked}
-        className={`relative mt-4 w-full max-w-[200px] rounded-full px-6 py-3 text-base font-semibold transition-all duration-150 sm:text-lg ${
-          locked
-            ? "bg-[var(--color-locked)] text-[#9a93b3] shadow-[0_4px_0_0_var(--btn-shadow)]"
-            : "text-white shadow-[0_4px_0_0_var(--btn-shadow)] hover:-translate-y-0.5 hover:shadow-[0_6px_0_0_var(--btn-shadow)] active:translate-y-1 active:shadow-[0_0px_0_0_var(--btn-shadow)]"
-        }`}
-        style={
-          {
-            backgroundColor: locked ? undefined : accent,
-            "--btn-shadow": locked ? "var(--color-locked-dark)" : accentDark,
-          } as ShadowVars
-        }
-      >
-        {locked ? "Locked" : `Learn With ${name}`}
-      </button>
+      {locked ? (
+        <button
+          type="button"
+          disabled
+          className="relative mt-4 w-full max-w-[200px] rounded-full bg-[var(--color-locked)] px-6 py-3 text-base font-semibold text-[#9a93b3] shadow-[0_4px_0_0_var(--btn-shadow)] sm:text-lg"
+          style={{ "--btn-shadow": "var(--color-locked-dark)" } as ShadowVars}
+        >
+          Locked
+        </button>
+      ) : (
+        <button type="button" className="hero-cta relative mt-4 text-base sm:text-lg">
+          Learn With {name}
+          <Play />
+        </button>
+      )}
     </div>
   );
 }
