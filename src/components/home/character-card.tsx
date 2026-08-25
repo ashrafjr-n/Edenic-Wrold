@@ -47,24 +47,38 @@ export function CharacterCard({
           className="anim-pop-in relative"
           style={{ animationDelay: `${friendDelay}s` }}
         >
-          <Image
-            src={image}
-            alt={name}
-            width={475}
-            height={539}
-            className={`h-60 w-auto object-contain drop-shadow-[0_12px_20px_rgba(61,36,114,0.18)] transition-transform duration-300 sm:h-72 lg:h-80 ${
-              locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
-            }`}
-            priority={!locked}
-          />
-
+          {/* Contact shadow: a wide ambient pool plus a tight dark core right
+              under the feet. Sits outside the floating wrapper so it stays
+              planted on the ground while the character breathes. */}
           <div
-            className="absolute -bottom-1 left-1/2 h-3 w-28 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/15 blur-md"
+            className="absolute bottom-0 left-1/2 z-0 h-5 w-36 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/10 blur-lg sm:w-44 lg:w-52"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-1 left-1/2 z-0 h-3 w-24 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/30 blur-md sm:w-28 lg:w-32"
             aria-hidden
           />
 
+          <div
+            className={`relative z-10 ${locked ? "" : "anim-breathe"}`}
+            style={
+              locked ? undefined : { animationDelay: `${friendDelay + 0.75}s` }
+            }
+          >
+            <Image
+              src={image}
+              alt={name}
+              width={475}
+              height={539}
+              className={`h-60 w-auto object-contain drop-shadow-[0_10px_14px_rgba(61,36,114,0.14)] transition-transform duration-300 sm:h-72 lg:h-80 ${
+                locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
+              }`}
+              priority={!locked}
+            />
+          </div>
+
           {locked && (
-            <span className="absolute inset-0 flex items-center justify-center">
+            <span className="absolute inset-0 z-20 flex items-center justify-center">
               <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(61,36,114,0.35)]">
                 <Lock
                   className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
@@ -82,7 +96,7 @@ export function CharacterCard({
       </div>
 
       <h3
-        className="anim-fade-up relative mt-4 text-3xl font-semibold sm:text-4xl"
+        className="anim-fade-up relative mt-4 text-3xl font-bold sm:text-4xl"
         style={{
           color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
           animationDelay: `${friendDelay + 0.15}s`,
