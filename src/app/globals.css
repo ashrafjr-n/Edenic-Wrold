@@ -7,12 +7,12 @@
   --color-pinki: #ff5fa8;
   --color-pinki-soft: #ffe3f0;
   --color-pinki-dark: #d63f86;
-  --color-nova: #35c1f1;
-  --color-nova-soft: #dff5fd;
-  --color-nova-dark: #1a93c4;
-  --color-bloo: #9b8ae0;
-  --color-bloo-soft: #ece7fb;
-  --color-bloo-dark: #7360c4;
+  --color-nova: var(--color-gold);
+  --color-nova-soft: #fff2d2;
+  --color-nova-dark: var(--color-gold-dark);
+  --color-bloo: #35c1f1;
+  --color-bloo-soft: #dff5fd;
+  --color-bloo-dark: #1a93c4;
   --color-gold: #ffc94d;
   --color-gold-dark: #e0a428;
   --color-ink: #3d2472;
