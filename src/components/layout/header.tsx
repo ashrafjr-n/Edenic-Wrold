@@ -17,7 +17,7 @@ export function Header() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <Button3D
-            tone={{ face: "#ffffff", edge: "#e0dced", text: "var(--color-ink)" }}
+            tone={{ face: "#ffffff", text: "var(--color-ink)" }}
             variant="calm"
             aria-label="Change language"
             className="h-11 w-11 shrink-0"
@@ -26,7 +26,7 @@ export function Header() {
           </Button3D>
 
           <Button3D
-            tone={{ face: "var(--color-ink)", edge: "var(--color-ink)" }}
+            tone={{ face: "var(--color-ink)" }}
             variant="calm"
             className="h-11 px-5 text-sm sm:px-6 sm:text-base"
           >
