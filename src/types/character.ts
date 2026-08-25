@@ -6,5 +6,6 @@ export interface Character {
   image: string;
   accent: string;
   accentSoft: string;
+  accentDark: string;
   locked: boolean;
 }

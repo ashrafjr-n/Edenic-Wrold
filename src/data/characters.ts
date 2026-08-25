@@ -7,6 +7,7 @@ export const characters: Character[] = [
     image: "/assets/friends/pinki.png",
     accent: "var(--color-pinki)",
     accentSoft: "var(--color-pinki-soft)",
+    accentDark: "var(--color-pinki-dark)",
     locked: false,
   },
   {
@@ -15,6 +16,7 @@ export const characters: Character[] = [
     image: "/assets/friends/nova.png",
     accent: "var(--color-nova)",
     accentSoft: "var(--color-nova-soft)",
+    accentDark: "var(--color-nova-dark)",
     locked: true,
   },
   {
@@ -23,6 +25,7 @@ export const characters: Character[] = [
     image: "/assets/friends/bloo.png",
     accent: "var(--color-bloo)",
     accentSoft: "var(--color-bloo-soft)",
+    accentDark: "var(--color-bloo-dark)",
     locked: true,
   },
 ];
