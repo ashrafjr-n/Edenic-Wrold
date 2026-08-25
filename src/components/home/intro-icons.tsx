@@ -36,7 +36,7 @@ const introIcons: IntroIcon[] = [
 export function IntroIcons() {
   return (
     <div
-      className="intro-icons pointer-events-none fixed inset-0 z-[15] overflow-hidden"
+      className="intro-icons pointer-events-none fixed inset-0 z-0 overflow-hidden"
       aria-hidden
     >
       {introIcons.map((icon) => {
