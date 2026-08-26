@@ -22,7 +22,9 @@ export default async function CharacterLearnPage({
   const character = characters.find((entry) => entry.id === characterId);
 
   if (!character) notFound();
-  if (character.locked) redirect("/");
+  /* Back to the friend picker, not the marketing home — a child who lands on a
+     locked friend should end up somewhere they can actually choose again. */
+  if (character.locked) redirect("/learn");
 
   const lessons = lessonsByCharacter[character.id];
   const cast = lessons.map((lesson, index) => ({
@@ -36,7 +38,7 @@ export default async function CharacterLearnPage({
       <div className="mx-auto w-full max-w-4xl">
         {/* Back is chrome: a plain white chip, the same material as a card. */}
         <Link
-          href="/"
+          href="/learn"
           className="card anim-drop-in inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)] transition hover:text-[var(--color-ink)]"
           style={{ animationDelay: "0.1s" }}
         >

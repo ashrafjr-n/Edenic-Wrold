@@ -10,7 +10,9 @@ const cast = characters.map((character, index) => ({
   previousName: character.locked ? characters[index - 1]?.name : undefined,
 }));
 
-export function Hero() {
+/** The `/learn` landing step: choose a friend, then their lesson hub. This was
+    the site's home page until the marketing home took that route over. */
+export function CharacterPicker() {
   return (
     <section className="relative flex flex-1 flex-col justify-center overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6">
       <IntroIcons />
