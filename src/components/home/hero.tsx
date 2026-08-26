@@ -65,7 +65,7 @@ export function Hero() {
           deliberately sketchy element on the site — everywhere else is clean
           claymorphism, but a scroll nudge reads as an annotation, not chrome,
           so it earns the exception. */}
-      <div className="absolute inset-x-0 bottom-4 sm:bottom-6 lg:bottom-10">
+      <div className="absolute inset-x-0 bottom-0 sm:bottom-2 lg:bottom-4">
         <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8 lg:justify-start">
           <div
             className="anim-fade-up flex flex-col items-start pl-6 sm:pl-24 lg:pl-40"
