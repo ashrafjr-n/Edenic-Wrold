@@ -34,7 +34,10 @@ export function LessonCard({
 
   const cardStyle: CSSProperties | undefined = locked
     ? undefined
-    : { backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)` };
+    : ({
+        backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)`,
+        "--card-edge": accentDark,
+      } as CSSProperties);
 
   const pillVars = {
     "--btn-face": locked ? "var(--color-locked)" : accent,
@@ -52,10 +55,10 @@ export function LessonCard({
           alt={name}
           width={140}
           height={140}
-          className={`h-24 w-24 object-contain drop-shadow-[0_8px_12px_rgba(59,36,101,0.18)] sm:h-28 sm:w-28 ${
+          className={`h-24 w-24 object-contain drop-shadow-[0_10px_14px_rgba(59,36,101,0.22)] sm:h-28 sm:w-28 ${
             locked
               ? "opacity-60 grayscale"
-              : "transition-transform duration-300 group-hover/lesson:scale-105"
+              : "-rotate-6 transition-transform duration-300 group-hover/lesson:rotate-0 group-hover/lesson:scale-110"
           }`}
         />
 
