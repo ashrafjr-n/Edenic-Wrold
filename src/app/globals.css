@@ -29,6 +29,13 @@
   --background: #f6f4fd;
   --surface: #ffffff;
 
+  /* Clay grain. Claymorphism reads as *material*, and a perfectly flat fill
+     reads as plastic — this is the tooth that sells it. Applied only to
+     colored surfaces (`.clay`, colored `.btn3d`), never to white chips, and
+     always through `background-blend-mode: overlay` so it lightens and darkens
+     the fill instead of greying it down. */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.62'/%3E%3C/svg%3E");
+
   /* Two hero colors, not one: a deep violet and a bubblegum pink. Purple leads
      (primary actions, the lesson-hub banner); pink is the counterweight that
      keeps the site from reading as a single-hue gradient — it takes the second
@@ -164,7 +171,13 @@ body {
   border-radius: 9999px;
 }
 
+/* The fill arrives as `background-color` from the element, so the grain can ride
+   on `background-image` and blend with it — no pseudo-element, and the panel's
+   own content stays crisp above it. */
 .clay {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
   box-shadow:
     inset 0 6px 10px -4px rgb(255 255 255 / 40%),
     inset 0 -7px 11px -4px color-mix(in srgb, var(--clay-edge) 45%, transparent),
@@ -249,6 +262,9 @@ button:disabled,
   letter-spacing: 0.01em;
   color: var(--btn-text, #fff);
   background-color: var(--btn-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
   /* Clay: inner highlight along the top, inner shade along the bottom, one
      wide tinted drop shadow. The pill reads as soft and slightly inflated —
      the same material the characters are modelled in. */
@@ -280,12 +296,13 @@ button:disabled,
 }
 
 /* Declared after the base hover/active rules so it wins on source order.
-   Header chrome is a plain white chip on the lavender ground — the same
-   material as a card, just small. No color, so it never competes with the
-   purple CTA sitting next to it. */
+   Chrome is a plain white chip — the same material as a card, just small. No
+   color, so it never competes with the purple CTA sitting next to it, and no
+   grain either: the tooth is for colored surfaces only. */
 .btn3d--calm {
   font-weight: 600;
   background-color: var(--surface);
+  background-image: none;
   box-shadow:
     0 10px 22px -12px rgb(var(--shadow-hue) / 34%),
     0 2px 6px -3px rgb(var(--shadow-hue) / 18%);
@@ -312,6 +329,7 @@ button:disabled,
    "inactive" reads instantly, before the label does. */
 .btn3d:disabled {
   background-color: var(--color-locked);
+  background-image: none;
   box-shadow: none;
 }
 
