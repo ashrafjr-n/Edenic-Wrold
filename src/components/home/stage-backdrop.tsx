@@ -68,10 +68,11 @@ const dots: StageDot[] = [
   { x: "48%", y: "34%", size: "clamp(5px, 0.6vw, 8px)", tint: "var(--color-gold)", strength: "0.35" },
 ];
 
-/** Flat, CSS-only backdrop for the home hero: soft organic washes, a few
-    bubbles, and a warm rise that grounds the cast. Deliberately holds no
-    detail — the 3D characters in front of it are the only thing on this
-    page meant to hold the eye. No images, so it stays a Server Component. */
+/** Flat, CSS-only backdrop for the home hero: soft organic washes and a few
+    bubbles in the open area around the headline. The world panels are the
+    ground now, so there's nothing to draw underneath them — this only has to
+    keep the space above them from reading as empty white. No images, so it
+    stays a Server Component. */
 export function StageBackdrop() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
@@ -107,8 +108,6 @@ export function StageBackdrop() {
           }
         />
       ))}
-
-      <div className="stage-ground" />
     </div>
   );
 }

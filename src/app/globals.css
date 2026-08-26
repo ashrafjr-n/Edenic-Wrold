@@ -212,36 +212,19 @@ body {
   opacity: var(--strength, 0.45);
 }
 
-/* A soft warm rise that plants the cast on something without drawing an
-   actual landscape. Warm sand mixed from the signature gold — not green,
-   which would be the one hue in the scene not present on any character. */
-.stage-ground {
-  position: absolute;
-  left: -10%;
-  right: -10%;
-  bottom: 0;
-  height: clamp(90px, 15vw, 200px);
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-gold) 9%, transparent),
-    color-mix(in srgb, var(--color-gold) 20%, transparent)
-  );
-}
 
-/* The header's hairline is the one place all three worlds and the gold
-   signature appear together — the thread that ties the characters into a
-   single brand rather than three unrelated mascots. */
-.header-thread {
-  height: 2px;
+/* The header is a floating island, not a bar welded to the top of the page.
+   Its 2px ring is the one place all three worlds and the gold signature
+   appear together — the thread that ties the characters into a single brand
+   rather than three unrelated mascots. A gradient can't be an inset shadow,
+   so the ring is a gradient-filled parent with the glass capsule inside it. */
+.header-ring {
   background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--color-pinki) 62%, transparent) 22%,
-    color-mix(in srgb, var(--color-nova) 62%, transparent) 45%,
-    color-mix(in srgb, var(--color-bloo) 62%, transparent) 68%,
-    color-mix(in srgb, var(--color-gold) 72%, transparent) 86%,
-    transparent 100%
+    100deg,
+    var(--color-pinki) 0%,
+    var(--color-nova) 34%,
+    var(--color-bloo) 63%,
+    var(--color-gold) 100%
   );
 }
 
