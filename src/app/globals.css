@@ -72,17 +72,13 @@
   --font-sans: var(--font-fredoka);
 }
 
-/* The gradient lives on the page itself, not on the hero section — the header
-   is transparent and sits in normal flow, so a section-scoped background would
-   leave a visible flat band behind the header. One soft wash per character's
-   world, and nothing else: no blobs, no dots, no scenery. */
+/* Flat, single-color ground. The pastel radial gradients that used to live
+   here are gone on purpose: a neumorphic surface has to be an even color, or
+   the raised/inset shadows stop reading as one consistent light source and
+   the whole effect collapses. The color comes from the surface, not from a
+   gradient painted on top of it. */
 body {
-  background:
-    radial-gradient(circle at 12% 8%, var(--color-pinki-soft), transparent 42%),
-    radial-gradient(circle at 88% 6%, var(--color-bloo-soft), transparent 42%),
-    radial-gradient(circle at 50% 100%, var(--color-nova-soft), transparent 55%),
-    var(--background);
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
 }
