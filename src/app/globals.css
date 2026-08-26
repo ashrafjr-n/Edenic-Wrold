@@ -36,6 +36,15 @@
      the fill instead of greying it down. */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.62'/%3E%3C/svg%3E");
 
+  /* The hero silhouette, as a stretchable SVG path. See `.hero-clip`. */
+  --hero-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M1200,0 L1200,600 C1000,600 900,548 740,566 S470,620 330,594 S160,516 150,452 S190,300 176,196 S214,44 268,0 Z'/%3E%3C/svg%3E");
+  --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
+
+  /* Fades the art on a colored panel into its fill instead of letting it end
+     on a rectangle edge. See `.panel-art`. */
+  --panel-art-fade: linear-gradient(to right, transparent 0%, #000 46%),
+    linear-gradient(to top, transparent 0%, #000 20%);
+
   /* Two hero colors, not one: a deep violet and a bubblegum pink. Purple leads
      (primary actions, the lesson-hub banner); pink is the counterweight that
      keeps the site from reading as a single-hue gradient — it takes the second
@@ -185,41 +194,43 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Feathered hero edge.
+   Art on a colored panel.
 
-   NOT `clip-path`. A clip-path cuts at 100% alpha however organic the shape
-   is, so the boundary is always a hard line — which is exactly what made the
-   earlier "wavy bottom" look cheap. A mask made of gradients fades the alpha
-   instead, so the photo dissolves into the lavender ground rather than ending
-   on it.
-
-   Four mask layers, intersected: a fade in from the left, the top and the
-   bottom, plus an off-centre radial that rounds those three into one organic
-   silhouette instead of three straight ramps meeting at square corners.
-
-   There is deliberately no fade on the right — the radial is centred near that
-   edge so it stays fully opaque. The image reads as exposed on one side only.
-   Lightning CSS adds the `-webkit-` prefixes, so don't write them here.
+   A photo dropped on a `.clay` panel ends on a rectangle and instantly reads
+   as a sticker. Fading it into the fill from the left and the bottom lets the
+   panel's own color close over it, so it reads as part of the material.
    --------------------------------------------------------------- */
-.hero-feather {
-  --feather-left: 24%;
-  --feather-top: 16%;
-  --feather-bottom: 18%;
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 var(--feather-left)),
-    linear-gradient(to bottom, transparent 0%, #000 var(--feather-top)),
-    linear-gradient(to top, transparent 0%, #000 var(--feather-bottom)),
-    radial-gradient(125% 105% at 88% 50%, #000 46%, transparent 96%);
+.panel-art {
+  mask-image: var(--panel-art-fade);
   mask-composite: intersect;
 }
 
-/* Stacked on a phone the image is full-bleed, so the left fade has far less
-   room to work in — at the desktop value it eats the characters. */
-@media (width < 64rem) {
-  .hero-feather {
-    --feather-left: 10%;
-    --feather-top: 10%;
-    --feather-bottom: 26%;
+/* ---------------------------------------------------------------
+   Wavy hero cut.
+
+   The image is cut to an organic silhouette with a crisp edge. An earlier
+   version feathered it out with gradients instead; that read as the image
+   fading rather than as a deliberate shape, so it's gone — don't bring the
+   gradient mask back.
+
+   The silhouette is an SVG path used as a mask rather than as a `clip-path`,
+   for two reasons: `preserveAspectRatio='none'` lets one path stretch to fill
+   any box, so the curve stays right at every viewport width; and a mask edge
+   is antialiased, where `clip-path` stair-steps along a diagonal.
+
+   Only the left and bottom are cut. The right edge stays straight because the
+   image runs off the side of the page there.
+   --------------------------------------------------------------- */
+.hero-clip {
+  mask-image: var(--hero-shape-narrow);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+@media (width >= 64rem) {
+  .hero-clip {
+    mask-image: var(--hero-shape);
   }
 }
 
