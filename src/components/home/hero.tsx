@@ -1,7 +1,7 @@
 import { characters } from "@/data/characters";
 import { CharacterCard } from "./character-card";
 import { IntroIcons } from "./intro-icons";
-import { SkyLandscape } from "./sky-landscape";
+import { StageBackdrop } from "./stage-backdrop";
 
 /** Which character gates each locked one. `characters` is static, so this is
     resolved once at module load rather than on every render. */
@@ -13,8 +13,8 @@ const cast = characters.map((character, index) => ({
 
 export function Hero() {
   return (
-    <section className="home-sky relative flex flex-1 flex-col overflow-hidden px-4 pb-20 pt-2 sm:px-8 sm:pb-28 sm:pt-4">
-      <SkyLandscape />
+    <section className="hero-stage relative flex flex-1 flex-col overflow-hidden px-4 pb-20 pt-2 sm:px-8 sm:pb-28 sm:pt-4">
+      <StageBackdrop />
       <IntroIcons />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
