@@ -4,7 +4,10 @@ import { Lock, Play } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Character } from "@/types/character";
 
-type ArchVars = CSSProperties & { "--arch-opacity"?: string };
+type ArchVars = CSSProperties & {
+  "--arch-opacity"?: string;
+  "--clay-edge"?: string;
+};
 
 /** The whole cast lands while the icons are still climbing — the icons are
     decoration and must never gate the content. Everything is on screen by ~1.4s. */
@@ -45,13 +48,20 @@ export function CharacterCard({
       {/* The arch stops at the character's feet — the name and button sit
           below it, clear of the shape. */}
       <div className="relative flex w-full justify-center pt-10 sm:pt-14">
+        {/* The arch is clay: a colored, softly inflated shape the character
+            stands in. Its tint is mixed at 40% rather than using `accentSoft`
+            — against the periwinkle ground the soft tokens are nearly
+            invisible, Nova's especially. */}
         <div
-          className="anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
+          className="clay anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
           style={
             {
-              backgroundColor: accentSoft,
+              backgroundColor: `color-mix(in srgb, ${
+                locked ? "var(--color-locked-dark)" : accent
+              } 40%, #ffffff)`,
               animationDelay: delay.arch,
-              "--arch-opacity": locked ? "0.5" : "1",
+              "--arch-opacity": locked ? "0.6" : "1",
+              "--clay-edge": locked ? "var(--color-locked-dark)" : accentDark,
             } as ArchVars
           }
           aria-hidden
@@ -93,7 +103,7 @@ export function CharacterCard({
 
           {locked && (
             <span className="absolute inset-0 z-20 flex items-center justify-center">
-              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(61,36,114,0.35)]">
+              <span className="neu group/lock relative flex h-16 w-16 items-center justify-center rounded-full">
                 <Lock
                   className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
                   strokeWidth={2.5}
