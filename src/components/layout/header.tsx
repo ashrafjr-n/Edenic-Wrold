@@ -4,11 +4,11 @@ import { Languages, LogIn, Moon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { MainNav } from "./main-nav";
 
+/** Fully transparent, in normal flow — the glass/blur island was tried and
+    rejected. Every piece of chrome in here is its own white or purple pill, so
+    it stays legible on the lavender ground and on the hero image alike. */
 export function Header() {
   return (
-    {/* Still fully transparent — the glass/blur island was tried and rejected.
-        Every piece of chrome in here is its own white or purple pill, so it
-        stays legible on the lavender ground and on the hero image alike. */}
     <header className="sticky top-0 z-20">
       {/* Three tracks with equal outer columns, so the nav is centred on the
           page rather than on whatever is left over between logo and chrome. */}
