@@ -2,11 +2,11 @@ import Image from "next/image";
 import { Languages, LogIn } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 
+/* Translucent cream rather than an opaque white slab: the stage behind it is
+   colored, and letting it show through faintly keeps the header part of the
+   page instead of a bar bolted on top of it. */
 export function Header() {
   return (
-    {/* Translucent cream rather than an opaque white slab: the stage behind
-        it is colored, and letting it show through faintly keeps the header
-        part of the page instead of a bar bolted on top of it. */}
     <header className="sticky top-0 z-20 bg-[var(--background)]/80 backdrop-blur-xl">
       <div className="flex items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Image

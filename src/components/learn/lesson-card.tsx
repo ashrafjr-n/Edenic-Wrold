@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
-import type { CharacterId } from "@/types/character";
+import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
 const CARD_DELAY = 0.65;
@@ -10,9 +10,8 @@ const CARD_STAGGER = 0.12;
 
 interface LessonCardProps {
   lesson: Lesson;
-  characterId: CharacterId;
-  characterImage: string;
-  characterName: string;
+  /** The character hosting this lesson — supplies the card's world colors. */
+  character: Character;
   /** Name of the lesson that must be finished first; locked cards only. */
   previousLessonName?: string;
   index: number;
@@ -20,28 +19,31 @@ interface LessonCardProps {
 
 export function LessonCard({
   lesson,
-  characterId,
-  characterImage,
-  characterName,
+  character,
   previousLessonName,
   index,
 }: LessonCardProps) {
   const { id, name, image, locked } = lesson;
+  const { accent, accentSoft, accentDark } = character;
+
+  /* Locked cards drop the gold hairline and the hover lift entirely, so
+     they read as inert before the label is even read. */
+  const cardClasses = `group/lesson relative flex w-full flex-col items-center rounded-[2rem] pb-6 pt-14 text-center ${
+    locked ? "bg-[var(--color-locked)]/50" : "lesson-card"
+  }`;
+
+  const cardStyle: CSSProperties | undefined = locked
+    ? undefined
+    : { backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)` };
 
   const pillVars = {
-    "--btn-face": locked ? "var(--color-locked)" : "var(--color-pinki)",
-    "--btn-edge": locked ? "var(--color-locked-dark)" : "var(--color-pinki-dark)",
+    "--btn-face": locked ? "var(--color-locked)" : accent,
+    "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
     "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
   } as CSSProperties;
 
   const card = (
-    <div
-      className={`group/lesson relative flex w-full flex-col items-center rounded-[2rem] pb-6 pt-14 text-center transition-transform duration-300 ${
-        locked
-          ? "bg-[var(--color-locked)]/50"
-          : "bg-gradient-to-b from-white to-[var(--color-pinki-soft)] shadow-[0_14px_28px_-12px_rgba(61,36,114,0.2)] group-hover/lesson:-translate-y-1.5 group-hover/lesson:shadow-[0_20px_34px_-12px_rgba(61,36,114,0.28)]"
-      }`}
-    >
+    <div className={cardClasses} style={cardStyle}>
       {/* Icon sits half above the card's top edge, half inside — centered on
           the border, not merely overlapping it. */}
       <div className="absolute -top-11 left-1/2 z-10 -translate-x-1/2 sm:-top-12">
@@ -50,7 +52,7 @@ export function LessonCard({
           alt={name}
           width={140}
           height={140}
-          className={`h-24 w-24 object-contain drop-shadow-[0_8px_12px_rgba(61,36,114,0.18)] sm:h-28 sm:w-28 ${
+          className={`h-24 w-24 object-contain drop-shadow-[0_8px_12px_rgba(59,36,101,0.18)] sm:h-28 sm:w-28 ${
             locked
               ? "opacity-60 grayscale"
               : "transition-transform duration-300 group-hover/lesson:scale-105"
@@ -59,7 +61,7 @@ export function LessonCard({
 
         {locked && (
           <span className="absolute inset-0 flex items-center justify-center">
-            <span className="group/lock relative flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(61,36,114,0.35)]">
+            <span className="group/lock relative flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(59,36,101,0.3)]">
               <Lock
                 className="h-5 w-5 text-[var(--color-locked-text)]"
                 strokeWidth={2.5}
@@ -83,11 +85,11 @@ export function LessonCard({
 
       {!locked && (
         <Image
-          src={characterImage}
-          alt={characterName}
+          src={character.image}
+          alt={character.name}
           width={475}
           height={539}
-          className="pointer-events-none absolute -bottom-3 -right-2 h-16 w-auto -rotate-6 object-contain drop-shadow-[0_6px_10px_rgba(61,36,114,0.18)] transition-transform duration-300 group-hover/lesson:rotate-0 sm:h-20"
+          className="pointer-events-none absolute -bottom-3 -right-2 h-16 w-auto -rotate-6 object-contain drop-shadow-[0_6px_10px_rgba(59,36,101,0.18)] transition-transform duration-300 group-hover/lesson:rotate-0 sm:h-20"
         />
       )}
 
@@ -122,7 +124,7 @@ export function LessonCard({
 
   return (
     <Link
-      href={`/learn/${characterId}/${id}`}
+      href={`/learn/${character.id}/${id}`}
       className="anim-fade-up block"
       style={delayStyle}
       aria-label={`Start ${name}`}

@@ -75,9 +75,7 @@ export default async function CharacterLearnPage({
           <LessonCard
             key={lesson.id}
             lesson={lesson}
-            characterId={character.id}
-            characterImage={character.image}
-            characterName={character.name}
+            character={character}
             previousLessonName={previousName}
             index={index}
           />
