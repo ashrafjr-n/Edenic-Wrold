@@ -193,19 +193,6 @@ body {
     0 12px 22px -8px color-mix(in srgb, var(--clay-edge) 55%, transparent);
 }
 
-/* Same clay-grain technique as `.clay`/`.btn3d`, clipped to text instead of a
-   shape. `--grain-color` is supplied per element rather than read from `color`,
-   since `color` itself has to be transparent for the clip to reveal the
-   texture — using `currentColor` here would resolve to that transparent value. */
-.grain-text {
-  background-image: var(--noise);
-  background-size: 150px 150px;
-  background-blend-mode: overlay;
-  background-color: var(--grain-color, currentColor);
-  background-clip: text;
-  color: transparent;
-}
-
 /* ---------------------------------------------------------------
    Art on a colored panel.
 

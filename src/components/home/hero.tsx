@@ -1,9 +1,6 @@
-import type { CSSProperties } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
-
-type GrainVars = CSSProperties & { "--grain-color"?: string };
 
 export function Hero() {
   return (
@@ -29,25 +26,10 @@ export function Hero() {
 
       <div className="relative mx-auto flex max-w-7xl flex-col px-4 sm:px-8 lg:min-h-[32rem] lg:justify-center">
         <div className="max-w-xl text-center lg:-ml-16 lg:text-left">
-          <h1 className="anim-drop-in text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            <span
-              className="grain-text"
-              style={{ "--grain-color": "var(--color-ink)" } as GrainVars}
-            >
-              Learn.
-            </span>{" "}
-            <span
-              className="grain-text"
-              style={{ "--grain-color": "var(--color-head-play)" } as GrainVars}
-            >
-              Play.
-            </span>{" "}
-            <span
-              className="grain-text"
-              style={{ "--grain-color": "var(--color-head-grow)" } as GrainVars}
-            >
-              Grow.
-            </span>
+          <h1 className="anim-drop-in text-5xl font-bold leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-6xl lg:text-7xl">
+            Learn.{" "}
+            <span className="text-[var(--color-head-play)]">Play.</span>{" "}
+            <span className="text-[var(--color-head-grow)]">Grow.</span>
           </h1>
 
           <p
