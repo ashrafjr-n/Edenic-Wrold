@@ -168,6 +168,22 @@ body {
   );
 }
 
+/* The header's hairline is the one place all three worlds and the gold
+   signature appear together — the thread that ties the characters into a
+   single brand rather than three unrelated mascots. */
+.header-thread {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-pinki) 62%, transparent) 22%,
+    color-mix(in srgb, var(--color-nova) 62%, transparent) 45%,
+    color-mix(in srgb, var(--color-bloo) 62%, transparent) 68%,
+    color-mix(in srgb, var(--color-gold) 72%, transparent) 86%,
+    transparent 100%
+  );
+}
+
 button,
 [role="button"] {
   cursor: pointer;
