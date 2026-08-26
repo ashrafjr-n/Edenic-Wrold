@@ -530,6 +530,33 @@ button:disabled,
   }
 }
 
+/* ---------------------------------------------------------------
+   Hero parallax.
+
+   A subtle drift as the page scrolls — the image itself moves a few px
+   within `.hero-clip`'s fixed wavy frame, the frame stays put. Driven by
+   `animation-timeline: scroll()` rather than JS/IntersectionObserver, same
+   reasoning as `.anim-reveal` below: gated behind @supports so an
+   unsupporting browser gets the static crop, never a parked invisible
+   frame. The slight `scale` keeps the translated image covering the box
+   at both ends of the range. --------------------------------------------------------------- */
+@keyframes hero-parallax {
+  from {
+    transform: translate3d(0, -14px, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(0, 14px, 0) scale(1.04);
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .anim-hero-parallax {
+    animation: hero-parallax 1s linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 70vh;
+  }
+}
+
 @keyframes wiggle {
   0%,
   100% {
@@ -555,7 +582,8 @@ button:disabled,
   .anim-pop-in,
   .anim-fade-up,
   .anim-breathe,
-  .anim-reveal {
+  .anim-reveal,
+  .anim-hero-parallax {
     animation: none;
   }
 
