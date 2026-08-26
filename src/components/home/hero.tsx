@@ -20,7 +20,7 @@ export function Hero() {
           sizes="(max-width: 1024px) 100vw, 64vw"
           /* Framed off-centre so the three friends land in the visible part of
              the crop rather than behind the feathered left edge. */
-          className="object-cover object-[58%_46%]"
+          className="object-cover object-[58%_40%]"
         />
       </div>
 

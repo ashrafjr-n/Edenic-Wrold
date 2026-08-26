@@ -174,23 +174,23 @@ body {
    instead, so the photo dissolves into the lavender ground rather than ending
    on it.
 
-   Three mask layers, intersected: a left fade, a bottom fade, and an off-centre
-   radial that softens the top and rounds the corner organically. The radial is
-   centred near the right edge so that edge stays fully opaque — the image is
-   meant to read as exposed on one side only, the way the reference does.
+   Four mask layers, intersected: a fade in from the left, the top and the
+   bottom, plus an off-centre radial that rounds those three into one organic
+   silhouette instead of three straight ramps meeting at square corners.
+
+   There is deliberately no fade on the right — the radial is centred near that
+   edge so it stays fully opaque. The image reads as exposed on one side only.
+   Lightning CSS adds the `-webkit-` prefixes, so don't write them here.
    --------------------------------------------------------------- */
 .hero-feather {
-  --feather-left: 26%;
+  --feather-left: 24%;
+  --feather-top: 16%;
   --feather-bottom: 18%;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 var(--feather-left)),
-    linear-gradient(to top, transparent 0%, #000 var(--feather-bottom)),
-    radial-gradient(135% 118% at 86% 46%, #000 44%, transparent 92%);
   mask-image:
     linear-gradient(to right, transparent 0%, #000 var(--feather-left)),
+    linear-gradient(to bottom, transparent 0%, #000 var(--feather-top)),
     linear-gradient(to top, transparent 0%, #000 var(--feather-bottom)),
-    radial-gradient(135% 118% at 86% 46%, #000 44%, transparent 92%);
-  -webkit-mask-composite: source-in;
+    radial-gradient(125% 105% at 88% 50%, #000 46%, transparent 96%);
   mask-composite: intersect;
 }
 
@@ -199,6 +199,7 @@ body {
 @media (width < 64rem) {
   .hero-feather {
     --feather-left: 10%;
+    --feather-top: 10%;
     --feather-bottom: 26%;
   }
 }
