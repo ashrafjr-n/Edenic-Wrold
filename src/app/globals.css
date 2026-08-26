@@ -111,9 +111,14 @@
 
   /* Headline colors are deliberately independent of the character accent
      tokens — recoloring a mascot must never recolor the headline. They're
-     tuned to sit in the same family, but they are not the same tokens. */
+     tuned to sit in the same family, but they are not the same tokens.
+
+     `--color-head-grow` is a literal snapshot of `--brand`'s current value, by
+     request — "World." in the hero should read as the same blue as the
+     buttons right now. It's still its own token, not `var(--brand)`: a future
+     brand recolor won't drag the headline along unless asked again. */
   --color-head-play: #f2569b;
-  --color-head-grow: #6d55e0;
+  --color-head-grow: #1c86e0;
 }
 
 /* Colors are consumed as `var(--color-*)` arbitrary values throughout, never as
