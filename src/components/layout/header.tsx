@@ -1,33 +1,22 @@
-import Image from "next/image";
-import Link from "next/link";
 import { Languages, LogIn, Moon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import { Logo } from "@/components/ui/logo";
 import { MainNav } from "./main-nav";
 
-/** Fully transparent, in normal flow — the glass/blur island was tried and
-    rejected. Every piece of chrome in here is its own white or purple pill, so
-    it stays legible on the lavender ground and on the hero image alike. */
+/** A solid white bar spanning the full width. The logo is pinned to the far
+    left and the chrome to the far right — no `max-w` container, because that
+    pulled both toward the middle of the page and left the bar looking empty at
+    the edges. Only the nav is centred. */
 export function Header() {
   return (
-    <header className="sticky top-0 z-20">
-      {/* Three tracks with equal outer columns, so the nav is centred on the
-          page rather than on whatever is left over between logo and chrome. */}
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-3 sm:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-4">
-        <div className="flex w-full items-center justify-between lg:w-auto lg:justify-start">
-          <Link href="/" aria-label="Edenic World home">
-            <Image
-              src="/edenic-logo.png"
-              alt="Edenic World"
-              width={622}
-              height={401}
-              preload
-              className="h-12 w-auto shrink-0 sm:h-14"
-            />
-          </Link>
+    <header className="sticky top-0 z-20 bg-[var(--surface)] shadow-[0_6px_20px_-16px_rgb(var(--shadow-hue)/45%)]">
+      <div className="flex flex-col items-center gap-4 px-5 py-4 sm:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-10">
+        <div className="flex w-full items-center justify-between gap-4 lg:w-auto lg:justify-start">
+          <Logo className="h-12 sm:h-14" />
 
           {/* On a phone the chrome shares the logo's row and the nav drops
               below it; from `lg` all three tracks sit on one line. */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
             <HeaderChrome />
           </div>
         </div>
@@ -36,7 +25,7 @@ export function Header() {
           <MainNav />
         </div>
 
-        <div className="hidden items-center justify-end gap-2 lg:flex lg:gap-3">
+        <div className="hidden items-center justify-end gap-3 lg:flex">
           <HeaderChrome />
         </div>
       </div>
