@@ -28,7 +28,7 @@ export function Hero() {
       </div>
 
       <div className="relative mx-auto flex max-w-7xl flex-col px-4 sm:px-8 lg:min-h-[32rem] lg:justify-center">
-        <div className="max-w-xl text-center lg:-ml-8 lg:text-left">
+        <div className="max-w-xl text-center lg:-ml-16 lg:text-left">
           <h1 className="anim-drop-in text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             <span
               className="grain-text"
