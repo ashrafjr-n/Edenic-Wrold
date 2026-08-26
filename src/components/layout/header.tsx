@@ -43,7 +43,7 @@ function HeaderChrome() {
         tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
         variant="calm"
         aria-label="Change language"
-        className="h-11 w-11 shrink-0"
+        className="btn3d--icon-accent h-11 w-11 shrink-0"
       >
         <Languages className="h-5 w-5" strokeWidth={2.25} />
       </Button3D>
@@ -52,7 +52,7 @@ function HeaderChrome() {
         tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
         variant="calm"
         aria-label="Switch to dark mode"
-        className="h-11 w-11 shrink-0"
+        className="btn3d--icon-accent h-11 w-11 shrink-0"
       >
         <Moon className="h-5 w-5" strokeWidth={2.25} />
       </Button3D>
