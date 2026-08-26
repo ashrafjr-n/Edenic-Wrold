@@ -4,7 +4,7 @@ import { Button3D } from "@/components/ui/button-3d";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-20">
+    <header className="sticky top-0 z-20 bg-white shadow-sm">
       <div className="flex items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Image
           src="/logo/edenic-logo.png"
