@@ -28,7 +28,7 @@ export function PathsSection() {
                 /* `isolate` keeps the art's negative z-index inside the panel:
                    it drops behind the text but stays above the panel's own
                    fill, which is the only place it can read as bedded in. */
-                className="clay relative isolate flex min-h-[19rem] flex-col items-start overflow-hidden rounded-[2rem] p-8 lg:p-10"
+                className="clay group relative isolate flex min-h-[19rem] flex-col items-start overflow-hidden rounded-[2rem] p-8 lg:p-10"
                 style={
                   { backgroundColor: face, "--clay-edge": edge } as ClayVars
                 }
@@ -40,11 +40,11 @@ export function PathsSection() {
                     alt=""
                     fill
                     sizes="(max-width: 768px) 62vw, 31vw"
-                    className={
+                    className={`transition-transform duration-500 ease-out group-hover:scale-110 ${
                       art.fit === "cover"
                         ? "object-cover object-center opacity-85"
                         : "object-contain object-bottom opacity-95"
-                    }
+                    }`}
                   />
                 </div>
 
