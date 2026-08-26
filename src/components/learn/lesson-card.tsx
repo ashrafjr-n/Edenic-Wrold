@@ -34,10 +34,7 @@ export function LessonCard({
 
   const cardStyle: CSSProperties | undefined = locked
     ? undefined
-    : ({
-        backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)`,
-        "--card-edge": accentDark,
-      } as CSSProperties);
+    : { backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)` };
 
   const pillVars = {
     "--btn-face": locked ? "var(--color-locked)" : accent,
