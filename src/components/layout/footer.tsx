@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { mainNav } from "@/data/nav";
+import { Logo } from "@/components/ui/logo";
 import { SocialLinks } from "@/components/ui/social-links";
 
 const YEAR = new Date().getFullYear();
@@ -13,13 +13,7 @@ export function Footer() {
     <footer className="rounded-t-[2.5rem] bg-[var(--surface)] px-4 pb-8 pt-12 sm:px-8 lg:pt-16">
       <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:gap-16">
         <div>
-          <Image
-            src="/edenic-logo.png"
-            alt="Edenic World"
-            width={622}
-            height={401}
-            className="h-14 w-auto"
-          />
+          <Logo className="h-14" />
           <p className="mt-4 max-w-xs text-base leading-relaxed text-[var(--color-ink)]/60">
             A gentle place to learn letters, numbers and shapes — built for
             children under ten.
