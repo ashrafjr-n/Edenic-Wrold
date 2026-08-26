@@ -1,29 +1,54 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fff9f5;
-  --foreground: #3d2472;
+/* ---------------------------------------------------------------
+   Palette sampled from the character renders themselves, not picked by
+   eye. Each friend owns a "world": Pinki → pink, Nova → lavender,
+   Bloo → blue.
 
-  --color-pinki: #ff5fa8;
-  --color-pinki-soft: #ffe3f0;
-  --color-pinki-dark: #d63f86;
-  --color-nova: var(--color-gold);
-  --color-nova-soft: #f7ead0;
-  --color-nova-dark: var(--color-gold-dark);
-  --color-bloo: #35c1f1;
-  --color-bloo-soft: #dceefb;
-  --color-bloo-dark: #1a93c4;
-  --color-gold: #ffc94d;
-  --color-gold-dark: #e0a428;
-  --color-ink: #3d2472;
-  --color-locked: #e7e4f1;
-  --color-locked-dark: #c7c2db;
-  --color-locked-text: #9a93b3;
+   Nova's world is lavender rather than a neutral for a specific reason:
+   her body is cream (#f5f1f0), not white, so on a white surface she
+   disappears. A tinted stage is what makes her readable — never put her
+   on plain white.
+   --------------------------------------------------------------- */
+:root {
+  --background: #fffaf6;
+  --foreground: #3b2465;
+
+  /* Pinki — warm bubblegum, not a cold pink. */
+  --color-pinki: #f76fa8;
+  --color-pinki-soft: #ffe7f2;
+  --color-pinki-dark: #c94a7e;
+
+  /* Nova — cream body, lavender world. */
+  --color-nova: #9b86e0;
+  --color-nova-soft: #eee8fc;
+  --color-nova-dark: #6b54b8;
+
+  /* Bloo — light sky, not navy. */
+  --color-bloo: #6bb8f0;
+  --color-bloo-soft: #e0f0fd;
+  --color-bloo-dark: #2f86c4;
+
+  /* The gold horns are the one feature all three characters share, so
+     gold is the signature accent: it marks what's active/unlocked
+     (borders, badges, dividers) and never fills a large surface. */
+  --color-gold: #f7c948;
+  --color-gold-dark: #c9891a;
+
+  /* Deep violet, sampled from the eyes — every piece of text on the site. */
+  --color-ink: #3b2465;
+
+  /* Locked state: warm-neutral, so it reads as "resting" rather than
+     as a cold grey foreign to the palette. */
+  --color-locked: #ebe6f2;
+  --color-locked-dark: #cdc5db;
+  --color-locked-text: #9990ad;
 
   /* Headline colors are deliberately independent of the character accent
-     tokens — recoloring a mascot must never recolor the headline. */
-  --color-head-play: #ef5f95;
-  --color-head-grow: #5b5fd9;
+     tokens — recoloring a mascot must never recolor the headline. They're
+     tuned to sit in the same family, but they are not the same tokens. */
+  --color-head-play: #f76fa8;
+  --color-head-grow: #7c5fd6;
 }
 
 /* Colors are consumed as `var(--color-*)` arbitrary values throughout, never as
