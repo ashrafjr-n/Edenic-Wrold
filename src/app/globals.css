@@ -23,7 +23,10 @@
      the active chip, the circular go buttons. Character colors stay for
      identity, but purple is the one that repeats.
      --------------------------------------------------------------- */
-  --background: #eceafb;
+  /* Very close to white, but still unmistakably violet — a true white ground
+     would leave the white cards with nothing to lift off. Card shadows are
+     tuned a little heavier to compensate for the reduced contrast. */
+  --background: #f6f4fd;
   --surface: #ffffff;
 
   /* Two hero colors, not one: a deep violet and a bubblegum pink. Purple leads
@@ -120,12 +123,15 @@ body {
    on this site has a hard edge or a tight drop shadow.
    --------------------------------------------------------------- */
 
+/* Shadows run a little heavier than the tinting alone would suggest: the ground
+   sits very close to white, so there is less white-on-lavender contrast to do
+   the lifting than there used to be. */
 .card {
   background: var(--surface);
   border-radius: 1.75rem;
   box-shadow:
-    0 18px 40px -18px rgb(var(--shadow-hue) / 30%),
-    0 4px 12px -6px rgb(var(--shadow-hue) / 16%);
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
 }
 
 .card-lift {
