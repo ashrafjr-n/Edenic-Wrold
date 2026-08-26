@@ -5,6 +5,8 @@ import { Lock, Play } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
+type TileVars = CSSProperties & { "--tile-tint"?: string };
+
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
 
@@ -24,49 +26,43 @@ export function LessonCard({
   index,
 }: LessonCardProps) {
   const { id, name, image, locked } = lesson;
-  const { accent, accentDark } = character;
+  const { accent } = character;
 
-  /* Same rule as the home page: an open lesson is clay raised out of the
-     ground, a locked one is a well pressed into it. */
-  const cardClasses = `group/lesson relative flex w-full flex-col items-center rounded-[2rem] pb-6 pt-14 text-center ${
-    locked ? "neu-inset" : "lesson-card clay"
-  }`;
-
-  const cardStyle: CSSProperties = locked
-    ? { backgroundColor: `color-mix(in srgb, ${accent} 12%, var(--background))` }
-    : ({
-        backgroundColor: `color-mix(in srgb, ${accent} 22%, #ffffff)`,
-        "--clay-edge": accentDark,
-      } as CSSProperties);
-
-  const pillVars = {
-    "--btn-face": locked ? "var(--color-locked)" : accent,
-    "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
-    "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
-  } as CSSProperties;
+  /* Same rule as the home page: the pale tile is where the character's color
+     lives, and locked drops most of the way to neutral without losing the hue. */
+  const tileTint = locked
+    ? `color-mix(in srgb, ${accent} 10%, var(--color-locked))`
+    : `color-mix(in srgb, ${accent} 20%, #ffffff)`;
 
   const card = (
-    <div className={cardClasses} style={cardStyle}>
-      {/* Icon sits half above the card's top edge, half inside — centered on
-          the border, not merely overlapping it. */}
-      <div className="absolute -top-11 left-1/2 z-10 -translate-x-1/2 sm:-top-12">
+    <div
+      className={`card group/lesson flex items-center gap-4 p-4 ${
+        locked ? "" : "card-lift"
+      }`}
+    >
+      <div
+        className="tile relative flex h-20 w-20 shrink-0 items-center justify-center sm:h-24 sm:w-24"
+        style={{ "--tile-tint": tileTint } as TileVars}
+      >
         <Image
           src={image}
           alt={name}
           width={140}
           height={140}
-          className={`h-24 w-24 object-contain drop-shadow-[0_10px_14px_rgba(59,36,101,0.22)] sm:h-28 sm:w-28 ${
+          className={`h-14 w-14 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] sm:h-16 sm:w-16 ${
             locked
-              ? "opacity-60 grayscale"
-              : "-rotate-6 transition-transform duration-300 group-hover/lesson:rotate-0 group-hover/lesson:scale-110"
+              ? "opacity-60 grayscale-[0.55]"
+              : "transition-transform duration-300 group-hover/lesson:scale-110"
           }`}
         />
 
+        {/* Corner-mounted, not centered: at this tile size a centered badge
+            covers the lesson icon completely and the card loses its subject. */}
         {locked && (
-          <span className="absolute inset-0 flex items-center justify-center">
-            <span className="neu-soft group/lock relative flex h-11 w-11 items-center justify-center rounded-full">
+          <span className="absolute -right-1.5 -top-1.5">
+            <span className="group/lock relative flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)]">
               <Lock
-                className="h-5 w-5 text-[var(--color-locked-text)]"
+                className="h-3.5 w-3.5 text-[var(--color-locked-text)]"
                 strokeWidth={2.5}
               />
               {previousLessonName && (
@@ -80,25 +76,24 @@ export function LessonCard({
       </div>
 
       <h3
-        className="mt-2 px-3 text-lg font-bold sm:text-xl"
+        className="min-w-0 flex-1 text-left text-base font-bold leading-snug sm:text-lg"
         style={{ color: locked ? "var(--color-locked-text)" : "var(--color-ink)" }}
       >
         {name}
       </h3>
 
-      {!locked && (
-        <Image
-          src={character.image}
-          alt={character.name}
-          width={475}
-          height={539}
-          className="pointer-events-none absolute -bottom-3 -right-2 h-16 w-auto -rotate-6 object-contain drop-shadow-[0_6px_10px_rgba(59,36,101,0.18)] transition-transform duration-300 group-hover/lesson:rotate-0 sm:h-20"
-        />
-      )}
-
       <span
-        className={`btn3d ${locked ? "btn3d--calm" : ""} mt-7 px-5 py-2 text-xs sm:text-sm`}
-        style={pillVars}
+        className="btn3d shrink-0 px-4 py-2 text-xs sm:text-sm"
+        style={
+          {
+            "--btn-face": locked ? "var(--color-locked)" : "var(--brand)",
+            "--btn-edge": locked
+              ? "var(--color-locked-dark)"
+              : "var(--brand-dark)",
+            "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
+            boxShadow: locked ? "none" : undefined,
+          } as CSSProperties
+        }
       >
         {locked ? (
           <>

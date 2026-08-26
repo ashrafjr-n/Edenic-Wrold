@@ -33,58 +33,52 @@ export default async function CharacterLearnPage({
 
   return (
     <main className="relative flex flex-1 flex-col px-4 pb-20 pt-5 sm:px-8 sm:pb-28">
-      {/* Back is chrome, so it's neumorphic — pressed out of the same ground
-          as the page, like the header's language chip. */}
-      <Link
-        href="/"
-        className="neu-soft anim-drop-in relative z-10 inline-flex w-fit items-center gap-1.5 self-start rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink)]/75 transition hover:text-[var(--color-ink)]"
-        style={{ animationDelay: "0.1s" }}
-      >
-        <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
-        Back
-      </Link>
+      <div className="mx-auto w-full max-w-4xl">
+        {/* Back is chrome: a plain white chip, the same material as a card. */}
+        <Link
+          href="/"
+          className="card anim-drop-in inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)] transition hover:text-[var(--color-ink)]"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
+          Back
+        </Link>
 
-      <div className="relative z-10 mx-auto mt-2 flex max-w-3xl flex-col items-center text-center">
-        {/* The character stands on a clay disc in their own color — the same
-            "open world" cue the home page arch carries, scaled down. */}
-        <div className="relative flex items-end justify-center">
-          <div
-            className="clay absolute bottom-0 left-1/2 h-24 w-40 -translate-x-1/2 rounded-[999px] sm:h-28 sm:w-52"
-            style={
-              {
-                backgroundColor: `color-mix(in srgb, ${character.accent} 40%, #ffffff)`,
-                "--clay-edge": character.accentDark,
-              } as CSSProperties
-            }
-            aria-hidden
-          />
+        {/* The banner is the hero purple rather than the character's own color:
+            purple is the one accent that repeats on every page, and the
+            portrait already carries whose world this is. */}
+        <div
+          className="clay anim-fade-up relative mt-5 flex items-center justify-between gap-4 overflow-hidden rounded-[2rem] px-6 py-6 sm:px-10 sm:py-8"
+          style={
+            {
+              backgroundColor: "var(--brand)",
+              "--clay-edge": "var(--brand-dark)",
+              animationDelay: "0.2s",
+            } as CSSProperties
+          }
+        >
+          <div className="min-w-0">
+            <h1 className="text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl">
+              Learn With {character.name}
+            </h1>
+            <p className="mt-2 max-w-sm text-sm text-white/85 sm:text-base">
+              Pick a lesson below to start your adventure!
+            </p>
+          </div>
+
           <Image
             src={character.image}
             alt={character.name}
             width={475}
             height={539}
             priority
-            className="anim-pop-in relative h-36 w-auto object-contain drop-shadow-[0_16px_20px_rgba(59,36,101,0.2)] sm:h-48"
-            style={{ animationDelay: "0.2s" }}
+            className="anim-pop-in h-28 w-auto shrink-0 object-contain drop-shadow-[0_16px_20px_rgba(52,38,120,0.35)] sm:h-40"
+            style={{ animationDelay: "0.3s" }}
           />
         </div>
-
-        <h1
-          className="anim-drop-in mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-5xl"
-          style={{ animationDelay: "0.35s" }}
-        >
-          Learn With{" "}
-          <span style={{ color: character.accentDark }}>{character.name}</span>
-        </h1>
-        <p
-          className="anim-drop-in mt-3 max-w-md text-lg text-[var(--color-ink)]/60"
-          style={{ animationDelay: "0.5s" }}
-        >
-          Pick a lesson below to start your adventure!
-        </p>
       </div>
 
-      <div className="relative z-10 mx-auto mt-16 grid w-full max-w-5xl grid-cols-2 gap-x-5 gap-y-16 sm:gap-x-8 lg:grid-cols-4">
+      <div className="mx-auto mt-6 grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
         {cast.map(({ lesson, index, previousName }) => (
           <LessonCard
             key={lesson.id}
