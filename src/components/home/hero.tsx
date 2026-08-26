@@ -14,16 +14,16 @@ export function Hero() {
           side of the section and the copy sits in the space it leaves.
 
           `.hero-clip` cuts it to a wavy silhouette — a real edge, not a fade. */}
-      <div className="hero-clip relative h-[240px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-[64%]">
+      <div className="hero-clip relative h-[240px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-[70%]">
         <Image
           src="/hero.png"
           alt="The friends of Edenic World walking through a candy-coloured land"
           fill
           preload
-          sizes="(max-width: 1024px) 100vw, 64vw"
-          /* Framed off-centre so the three friends land in the visible part of
-             the crop rather than behind the cut on the left. */
-          className="object-cover object-[68%_42%]"
+          sizes="(max-width: 1024px) 100vw, 70vw"
+          /* `hero.png` centers the trio, unlike the old crop — framed so they
+             clear the wavy cut on the left and bottom. */
+          className="anim-hero-parallax object-cover object-[54%_46%]"
         />
       </div>
 
