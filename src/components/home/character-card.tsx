@@ -127,6 +127,7 @@ export function CharacterCard({
               }
             : { face: accent, edge: accentDark }
         }
+        href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
         className="anim-fade-up mt-4 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
