@@ -127,49 +127,51 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Two shadow languages, used for two different jobs.
+   Three building blocks. Everything on the site is one of these.
 
-   NEUMORPHIC (`.neu*`) — for anything the same color as the page: chrome,
-   containers, wells. The element looks pressed out of the ground rather
-   than placed on top of it. One fixed light source (top-left), always
-   `--surface-high` / `--surface-low`, never a hand-picked grey.
+   `.card`  — a white panel on the lavender ground, generous radius, one
+              wide soft purple-tinted shadow. The default container.
+   `.tile`  — a pale pastel rounded square that an icon or character sits
+              on, inside a card. Tinted per subject, never white.
+   `.clay`  — a colored, softly inflated shape: CTAs and anything that
+              should look squeezable. `--clay-edge` is the darker companion
+              of the fill.
 
-   CLAY (`.clay`) — for anything colored: CTAs, the character arch, lesson
-   cards. A soft inner shade along the bottom and an inner highlight along
-   the top make the shape read as puffy and soft, over a wide tinted drop
-   shadow. `--clay-edge` is the darker companion of the fill.
-
-   The division is the whole design: colored things are clay, surfaces are
-   neumorphic. Don't mix the two on one element.
+   All radii are large and all shadows are wide and low-contrast; nothing
+   on this site has a hard edge or a tight drop shadow.
    --------------------------------------------------------------- */
 
-.neu {
-  background: var(--background);
+.card {
+  background: var(--surface);
+  border-radius: 1.75rem;
   box-shadow:
-    -6px -6px 14px var(--surface-high),
-    6px 6px 14px var(--surface-low);
+    0 18px 40px -18px rgb(var(--shadow-hue) / 30%),
+    0 4px 12px -6px rgb(var(--shadow-hue) / 16%);
 }
 
-.neu-soft {
-  background: var(--background);
-  box-shadow:
-    -4px -4px 10px var(--surface-high),
-    4px 4px 10px var(--surface-low);
+.card-lift {
+  transition:
+    translate 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-/* A well — content sits down inside the surface instead of on top of it. */
-.neu-inset {
-  background: var(--background);
+.card-lift:hover {
+  translate: 0 -6px;
   box-shadow:
-    inset -4px -4px 9px var(--surface-high),
-    inset 4px 4px 9px var(--surface-low);
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+.tile {
+  border-radius: 1.25rem;
+  background: var(--tile-tint);
 }
 
 .clay {
   box-shadow:
-    inset 0 7px 12px -4px rgb(255 255 255 / 45%),
-    inset 0 -8px 12px -4px color-mix(in srgb, var(--clay-edge) 60%, transparent),
-    0 14px 26px -10px color-mix(in srgb, var(--clay-edge) 65%, transparent);
+    inset 0 6px 10px -4px rgb(255 255 255 / 40%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--clay-edge) 45%, transparent),
+    0 12px 22px -8px color-mix(in srgb, var(--clay-edge) 55%, transparent);
 }
 
 button,
@@ -242,29 +244,27 @@ button:disabled,
 }
 
 /* Declared after the base hover/active rules so it wins on source order.
-   Header chrome is neumorphic instead of clay: it's the same color as the
-   page, pressed out of it. On tap it sinks into the surface — the neumorphic
-   equivalent of a press, and the reason chrome doesn't need to move. */
+   Header chrome is a plain white chip on the lavender ground — the same
+   material as a card, just small. No color, so it never competes with the
+   purple CTA sitting next to it. */
 .btn3d--calm {
   font-weight: 600;
-  background-color: var(--btn-face);
+  background-color: var(--surface);
   box-shadow:
-    -5px -5px 11px var(--surface-high),
-    5px 5px 11px var(--surface-low);
+    0 10px 22px -12px rgb(var(--shadow-hue) / 34%),
+    0 2px 6px -3px rgb(var(--shadow-hue) / 18%);
 }
 
 .btn3d--calm:hover:not(:disabled) {
-  translate: 0 0;
+  translate: 0 -1px;
   box-shadow:
-    -6px -6px 14px var(--surface-high),
-    6px 6px 14px var(--surface-low);
+    0 14px 28px -12px rgb(var(--shadow-hue) / 42%),
+    0 3px 8px -3px rgb(var(--shadow-hue) / 22%);
 }
 
 .btn3d--calm:active:not(:disabled) {
-  translate: 0 0;
-  box-shadow:
-    inset -4px -4px 9px color-mix(in srgb, var(--surface-high) 70%, transparent),
-    inset 4px 4px 9px color-mix(in srgb, var(--surface-low) 85%, transparent);
+  translate: 0 1px;
+  box-shadow: 0 4px 10px -6px rgb(var(--shadow-hue) / 30%);
 }
 
 .btn3d:focus-visible {
@@ -272,14 +272,11 @@ button:disabled,
   outline-offset: 3px;
 }
 
-/* Locked drops the clay entirely and becomes a well pressed into the surface,
-   matching the locked character's arch. "Inactive" then reads from the form
-   itself, before the label is read. */
+/* Locked drops every clay cue — flat pale fill, no shadow, no motion — so
+   "inactive" reads instantly, before the label does. */
 .btn3d:disabled {
-  background-color: var(--background);
-  box-shadow:
-    inset -3px -3px 7px var(--surface-high),
-    inset 3px 3px 7px var(--surface-low);
+  background-color: var(--color-locked);
+  box-shadow: none;
 }
 
 /* ---------------------------------------------------------------
