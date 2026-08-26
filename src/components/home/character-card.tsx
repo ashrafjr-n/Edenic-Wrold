@@ -32,7 +32,7 @@ export function CharacterCard({
   previousName,
   index,
 }: CharacterCardProps) {
-  const { name, image, accent, accentSoft, accentDark, locked } = character;
+  const { name, image, accent, accentDark, locked } = character;
 
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {

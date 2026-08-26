@@ -24,17 +24,20 @@ export function LessonCard({
   index,
 }: LessonCardProps) {
   const { id, name, image, locked } = lesson;
-  const { accent, accentSoft, accentDark } = character;
+  const { accent, accentDark } = character;
 
-  /* Locked cards drop the gold hairline and the hover lift entirely, so
-     they read as inert before the label is even read. */
+  /* Same rule as the home page: an open lesson is clay raised out of the
+     ground, a locked one is a well pressed into it. */
   const cardClasses = `group/lesson relative flex w-full flex-col items-center rounded-[2rem] pb-6 pt-14 text-center ${
-    locked ? "bg-[var(--color-locked)]/50" : "lesson-card"
+    locked ? "neu-inset" : "lesson-card clay"
   }`;
 
-  const cardStyle: CSSProperties | undefined = locked
-    ? undefined
-    : { backgroundImage: `linear-gradient(180deg, #ffffff 45%, ${accentSoft} 100%)` };
+  const cardStyle: CSSProperties = locked
+    ? { backgroundColor: `color-mix(in srgb, ${accent} 12%, var(--background))` }
+    : ({
+        backgroundColor: `color-mix(in srgb, ${accent} 22%, #ffffff)`,
+        "--clay-edge": accentDark,
+      } as CSSProperties);
 
   const pillVars = {
     "--btn-face": locked ? "var(--color-locked)" : accent,
@@ -61,7 +64,7 @@ export function LessonCard({
 
         {locked && (
           <span className="absolute inset-0 flex items-center justify-center">
-            <span className="group/lock relative flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(59,36,101,0.3)]">
+            <span className="neu-soft group/lock relative flex h-11 w-11 items-center justify-center rounded-full">
               <Lock
                 className="h-5 w-5 text-[var(--color-locked-text)]"
                 strokeWidth={2.5}

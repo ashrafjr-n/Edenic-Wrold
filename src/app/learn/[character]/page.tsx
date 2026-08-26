@@ -32,53 +32,59 @@ export default async function CharacterLearnPage({
   }));
 
   return (
-    <main
-      className="hub-stage relative flex flex-1 flex-col pb-20 sm:pb-28"
-      style={{ "--world": character.accent } as CSSProperties}
-    >
-      {/* You walk into this character's world: the band is their color at full
-          strength, and the lesson cards below climb back up into it. */}
-      <div
-        className="relative overflow-hidden rounded-b-[2.5rem] px-4 pb-24 pt-5 sm:rounded-b-[4rem] sm:px-8 sm:pb-28"
-        style={{
-          backgroundImage: `linear-gradient(180deg, ${character.accentSoft} 0%, ${character.accent} 100%)`,
-        }}
+    <main className="relative flex flex-1 flex-col px-4 pb-20 pt-5 sm:px-8 sm:pb-28">
+      {/* Back is chrome, so it's neumorphic — pressed out of the same ground
+          as the page, like the header's language chip. */}
+      <Link
+        href="/"
+        className="neu-soft anim-drop-in relative z-10 inline-flex w-fit items-center gap-1.5 self-start rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink)]/75 transition hover:text-[var(--color-ink)]"
+        style={{ animationDelay: "0.1s" }}
       >
-        <Link
-          href="/"
-          className="anim-drop-in relative z-10 inline-flex w-fit items-center gap-1.5 self-start rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-[var(--color-ink)]/75 shadow-[0_3px_0_0_rgba(59,36,101,0.15)] backdrop-blur transition hover:bg-white hover:text-[var(--color-ink)]"
-          style={{ animationDelay: "0.1s" }}
-        >
-          <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
-          Back
-        </Link>
+        <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
+        Back
+      </Link>
 
-        <div className="relative z-10 mx-auto mt-2 flex max-w-3xl flex-col items-center text-center">
+      <div className="relative z-10 mx-auto mt-2 flex max-w-3xl flex-col items-center text-center">
+        {/* The character stands on a clay disc in their own color — the same
+            "open world" cue the home page arch carries, scaled down. */}
+        <div className="relative flex items-end justify-center">
+          <div
+            className="clay absolute bottom-0 left-1/2 h-24 w-40 -translate-x-1/2 rounded-[999px] sm:h-28 sm:w-52"
+            style={
+              {
+                backgroundColor: `color-mix(in srgb, ${character.accent} 40%, #ffffff)`,
+                "--clay-edge": character.accentDark,
+              } as CSSProperties
+            }
+            aria-hidden
+          />
           <Image
             src={character.image}
             alt={character.name}
             width={475}
             height={539}
             priority
-            className="anim-pop-in anim-breathe h-36 w-auto object-contain drop-shadow-[0_16px_20px_rgba(59,36,101,0.25)] sm:h-48"
+            className="anim-pop-in relative h-36 w-auto object-contain drop-shadow-[0_16px_20px_rgba(59,36,101,0.2)] sm:h-48"
             style={{ animationDelay: "0.2s" }}
           />
-          <h1
-            className="anim-drop-in mt-3 text-4xl font-bold leading-[1.05] tracking-tight text-white [text-shadow:0_3px_12px_rgba(59,36,101,0.3)] sm:text-6xl"
-            style={{ animationDelay: "0.35s" }}
-          >
-            Learn With {character.name}
-          </h1>
-          <p
-            className="anim-drop-in mt-3 max-w-md text-lg font-medium text-white/85"
-            style={{ animationDelay: "0.5s" }}
-          >
-            Pick a lesson below to start your adventure!
-          </p>
         </div>
+
+        <h1
+          className="anim-drop-in mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-5xl"
+          style={{ animationDelay: "0.35s" }}
+        >
+          Learn With{" "}
+          <span style={{ color: character.accentDark }}>{character.name}</span>
+        </h1>
+        <p
+          className="anim-drop-in mt-3 max-w-md text-lg text-[var(--color-ink)]/60"
+          style={{ animationDelay: "0.5s" }}
+        >
+          Pick a lesson below to start your adventure!
+        </p>
       </div>
 
-      <div className="relative z-10 mx-auto -mt-12 grid w-full max-w-5xl grid-cols-2 gap-x-5 gap-y-16 px-4 sm:gap-x-8 sm:px-8 lg:grid-cols-4">
+      <div className="relative z-10 mx-auto mt-16 grid w-full max-w-5xl grid-cols-2 gap-x-5 gap-y-16 sm:gap-x-8 lg:grid-cols-4">
         {cast.map(({ lesson, index, previousName }) => (
           <LessonCard
             key={lesson.id}
