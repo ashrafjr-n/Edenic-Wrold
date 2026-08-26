@@ -6,6 +6,17 @@ them one item at a time.
 
 All UI and content is English only.
 
+## Pages
+
+| Route | Description |
+| --- | --- |
+| `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
+| `/learn` | Friend picker: choose Pinki, Nova or Bloo |
+| `/learn/[character]` | That friend's lesson hub |
+
+`Activities` appears in the navigation and footer but has no page yet, so it is
+rendered as disabled "soon" text rather than a link.
+
 ## Getting started
 
 ```bash
@@ -29,24 +40,33 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Next.js 16** (App Router) with **React 19** and **TypeScript**
 - **Tailwind CSS v4** — configured in `src/app/globals.css`, no `tailwind.config.js`
 - **Fredoka** via `next/font/google`
-- **lucide-react** for icons
-- Entrance and idle animation are plain CSS keyframes — no animation library
+- **lucide-react** for icons, and **@icons-pack/react-simple-icons** for platform
+  brand marks (lucide v1 dropped its brand icons)
+- Entrance and idle animation are plain CSS keyframes — no animation library.
+  Below-the-fold sections reveal with a CSS scroll-driven timeline
+  (`animation-timeline: view()`), gated behind `@supports`, so no JavaScript and no
+  Client Components are involved
 
 ## Design system
 
-Claymorphism with light purple as the hero: soft rounded shapes, generous radii,
-wide low-contrast shadows and pale pastel fills.
+Claymorphism with a deep purple and a bubblegum pink as the two hero colors: soft
+rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 
 - The page ground is light lavender, never white. White cards sit on top of it —
   that contrast is what gives them their lift.
-- Purple carries every primary action; character colors are reserved for identity.
+- Purple carries every primary action; pink is its counterweight. Character colors
+  are reserved for identity and only ever appear as a pale tile tint.
 - Everything is built from three blocks: `.card` (white panel), `.tile` (pale pastel
   square behind an icon or character) and `.clay` (a colored, softly inflated shape).
+  `.card` and `.tile` are unlayered, so a Tailwind `rounded-*` utility cannot
+  override them — use the `.card-pill` / `.tile-round` modifiers instead.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Nova's body is cream rather than white, so she is never placed on a plain white
   surface — her tile is always tinted.
-- No decorative shapes, textures or photographic art in the background.
+- The home hero is the only rendered scene on the site, and it has no edge of its
+  own: `.hero-feather` masks it with intersecting gradients so it dissolves into the
+  ground. Everywhere else there are no decorative shapes, textures or background art.
 
 Tokens live in `src/app/globals.css`.
 
@@ -57,30 +77,39 @@ src/
   app/
     layout.tsx                    Root layout: font, header
     page.tsx                      Home page
+    learn/page.tsx                Friend picker
     learn/[character]/page.tsx    Character lesson hub
-    globals.css                   Design tokens, button and stage styles, keyframes
+    globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
-    home/             Hero, character cards, intro icon animation
-    learn/            Lesson cards
-    layout/           Header
-    ui/               Shared primitives (Button3D)
-  data/               Character and lesson definitions
+    home/             Hero, friends introduction, Learn/Activities panels
+    learn/            Friend picker, character cards, lesson cards, intro icons
+    layout/           Header, nav, footer
+    ui/               Shared primitives (Button3D, SocialLinks)
+  data/               Characters, lessons, navigation, socials, home panels
   types/              Shared TypeScript types
-public/assets/
-  friends/            Mascot artwork
-  icons/              Decorative 3D icons
+public/
+  hero.jpg            Home hero scene
+  edenic-logo.png     Logo
+  assets/friends/     Mascot artwork
+  assets/icons/       Decorative 3D icons
 ```
 
 ## Current status
 
-The home page and the character lesson hub (`/learn/pinki`) are built, and both are
-still being iterated on visually. Only Pinki has lesson content; Nova and Bloo are
-locked. Per-item lesson pages, progress state, and lesson content are not built yet.
+The home page, the friend picker and Pinki's lesson hub are built, and all are still
+being iterated on visually. Only Pinki has lesson content; Nova and Bloo are locked.
+
+The header's language, dark-mode and "Join Edenic World" controls are presentation
+only — none of them have behavior yet. "Join Edenic World" is also the profile entry
+point, so no progress, streaks or points appear anywhere before sign-in.
 
 Planned, in order:
 
-1. Character lesson hubs and per-item pages (video → shape → tracing → questions)
+1. Per-item lesson pages (video → shape → tracing → questions)
 2. Client-side progress tracking, so a returning child resumes where they left off
 3. Progressive unlocking, across characters and within each character's lessons
+4. The Activities section
+5. Accounts, and the profile the "Join Edenic World" button leads to
+6. A real dark mode (needs a second token set across `globals.css`)
 
 Audio narration is deliberately out of scope for the MVP.
