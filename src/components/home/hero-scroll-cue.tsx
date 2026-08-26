@@ -25,7 +25,7 @@ export function HeroScrollCue() {
           <svg
             aria-hidden
             viewBox="0 0 90 150"
-            className="anim-nudge-down -mt-1 h-24 w-16 text-[var(--accent)] sm:h-28 sm:w-20"
+            className="anim-nudge-down -mt-1 ml-4 h-24 w-16 -rotate-12 text-[var(--accent)] sm:h-28 sm:w-20"
             fill="none"
           >
             <path
