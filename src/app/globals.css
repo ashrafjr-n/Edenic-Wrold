@@ -12,16 +12,21 @@
    --------------------------------------------------------------- */
 :root {
   /* ---------------------------------------------------------------
-     Claymorphism, with light purple as the hero.
+     Claymorphism. The ground stays lavender even though the brand accent
+     below is blue now — `--background` is its own token, untouched by the
+     `--brand` swap.
 
      The ground is a light lavender — never white — and the things that sit
-     on it are WHITE cards with a wide, soft, purple-tinted shadow. That
-     contrast (white on lavender) is what gives the surfaces their lift;
-     shadows alone on a white page would be invisible.
+     on it are WHITE cards with a wide, soft, purple-tinted shadow (tied to
+     `--shadow-hue`, the ground's own tint, not to `--brand`). That contrast
+     (white on lavender) is what gives the surfaces their lift; shadows alone
+     on a white page would be invisible.
 
-     Purple is the accent that carries every primary action: the main CTA,
-     the active chip, the circular go buttons. Character colors stay for
-     identity, but purple is the one that repeats.
+     The brand accent (sky blue, `--brand`) carries every primary action: the
+     main CTA, the active chip, the circular go buttons. Character colors stay
+     for identity, but the brand accent is the one that repeats. It used to be
+     purple — swapped to blue, but the token is still the one thing to touch;
+     don't hardcode the color a second place.
      --------------------------------------------------------------- */
   /* Very close to white, but still unmistakably violet — a true white ground
      would leave the white cards with nothing to lift off. Card shadows are
@@ -45,7 +50,7 @@
   --panel-art-fade: linear-gradient(to right, transparent 0%, #000 46%),
     linear-gradient(to top, transparent 0%, #000 20%);
 
-  /* Two hero colors, not one: a deep violet and a bubblegum pink. Purple leads
+  /* Two hero colors, not one: a sky blue and a bubblegum pink. Blue leads
      (primary actions, the lesson-hub banner); pink is the counterweight that
      keeps the site from reading as a single-hue gradient — it takes the second
      CTA in a pair, the emphasis word in a headline, the social chips.
@@ -53,10 +58,15 @@
      These are deliberately NOT the character tokens below. `--color-pinki` is
      Pinki's identity; `--accent` is the brand's. Recoloring the mascot must
      never recolor the site, which is the same reason the headline owns its own
-     `--color-head-*` pair. */
-  --brand: #6d55e0;
-  --brand-dark: #4a34b0;
-  --brand-soft: #e6e1fb;
+     `--color-head-*` pair.
+
+     `--brand` was purple (`#6d55e0`) until it was swapped to sky blue. The
+     home page's Learn panel (`data/home-paths.ts`) is the one deliberate
+     exception — it keeps the old purple hardcoded rather than following this
+     token, so it doesn't move when `--brand` does. */
+  --brand: #2e9bf0;
+  --brand-dark: #1a6fbd;
+  --brand-soft: #e0f2fe;
 
   --accent: #f2569b;
   --accent-dark: #c8306f;
