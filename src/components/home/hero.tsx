@@ -54,8 +54,8 @@ export function Hero() {
             className="anim-drop-in mx-auto mt-5 max-w-md text-lg text-[var(--color-ink)]/65 sm:text-xl lg:mx-0"
             style={{ animationDelay: "0.2s" }}
           >
-            Three friends, one big adventure. Letters, numbers and shapes — told
-            like a story, for children under ten.
+            Step into a whole world with Nova, Pinki and Bloo — games, stories
+            and adventures around every corner, made for children under ten.
           </p>
 
           <div
