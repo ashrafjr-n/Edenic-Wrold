@@ -4,12 +4,10 @@ import { Lock, Play } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Character } from "@/types/character";
 
-type ArchVars = CSSProperties & { "--arch-opacity"?: string };
-
 /** The whole cast lands while the icons are still climbing — the icons are
     decoration and must never gate the content. Everything is on screen by ~1.4s. */
-const ARCH_DELAY = 0.4;
-const ARCH_STAGGER = 0.1;
+const PANEL_DELAY = 0.4;
+const PANEL_STAGGER = 0.1;
 const FRIEND_DELAY = 0.65;
 const FRIEND_STAGGER = 0.13;
 /** Idle float starts once pop-in (0.75s) has settled, so the two never fight. */
@@ -33,91 +31,96 @@ export function CharacterCard({
 
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {
-    arch: `${ARCH_DELAY + index * ARCH_STAGGER}s`,
+    panel: `${PANEL_DELAY + index * PANEL_STAGGER}s`,
     friend: `${friendDelay}s`,
     breathe: `${friendDelay + POP_IN_DURATION}s`,
     name: `${friendDelay + NAME_OFFSET}s`,
     button: `${friendDelay + BUTTON_OFFSET}s`,
   };
 
+  /* The open world is the only one that lifts, glows and grows — hierarchy
+     comes from the panel's form, not just from its color. */
+  const panelClasses = [
+    "world-panel anim-arch-in group/card relative flex flex-1 flex-col items-center justify-end px-3 pb-6 pt-24 sm:pt-32",
+    locked ? "world-panel--locked" : "world-panel--open sm:-translate-y-3",
+  ].join(" ");
+
+  const faceStyle: CSSProperties = {
+    backgroundImage: locked
+      ? `linear-gradient(180deg, #f4f1f8 0%, ${accentSoft} 55%, ${accent} 100%)`
+      : `linear-gradient(180deg, ${accentSoft} 0%, ${accent} 100%)`,
+    boxShadow: locked
+      ? "0 18px 40px -24px rgb(59 36 101 / 35%)"
+      : `inset 0 0 0 3px color-mix(in srgb, var(--color-gold) 55%, transparent), 0 26px 50px -22px ${accentDark}`,
+  };
+
   return (
-    <div className="group/card relative flex w-full max-w-[300px] flex-col items-center">
-      {/* The arch stops at the character's feet — the name and button sit
-          below it, clear of the shape. */}
-      <div className="relative flex w-full justify-center pt-10 sm:pt-14">
-        {/* The arch is this character's world, flattened to a single soft
-            tint. The gold hairline around it is the site's signature mark
-            for "this one is open" — locked worlds never get it, so the
-            gold alone tells a child where they're allowed to go. */}
+    <div className={panelClasses} style={{ animationDelay: delay.panel }}>
+      {/* The panel's colored face is its own layer so the character can
+          overflow past the top edge without being clipped by it. */}
+      <div className="panel-face absolute inset-0 -z-10" style={faceStyle} aria-hidden />
+
+      {locked && (
         <div
-          className="anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
-          style={
-            {
-              backgroundColor: accentSoft,
-              boxShadow: locked
-                ? undefined
-                : "inset 0 0 0 2px color-mix(in srgb, var(--color-gold) 42%, transparent), inset 0 10px 24px -10px rgb(255 255 255 / 80%)",
-              animationDelay: delay.arch,
-              "--arch-opacity": locked ? "0.5" : "1",
-            } as ArchVars
-          }
+          className="panel-face absolute inset-0 -z-10 bg-white/45 backdrop-blur-[2px]"
+          aria-hidden
+        />
+      )}
+
+      <div
+        className="anim-pop-in relative -mt-20 sm:-mt-28"
+        style={{ animationDelay: delay.friend }}
+      >
+        {/* Contact shadow: a wide ambient pool plus a tight dark core right
+            under the feet. Sits outside the floating wrapper so it stays
+            planted on the ground while the character breathes. */}
+        <div
+          className="absolute bottom-0 left-1/2 z-0 h-5 w-36 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/15 blur-lg sm:w-44 lg:w-52"
+          aria-hidden
+        />
+        <div
+          className="absolute bottom-1 left-1/2 z-0 h-3 w-24 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/25 blur-md sm:w-28 lg:w-32"
           aria-hidden
         />
 
         <div
-          className="anim-pop-in relative"
-          style={{ animationDelay: delay.friend }}
+          className={`relative z-10 ${locked ? "" : "anim-breathe"}`}
+          style={locked ? undefined : { animationDelay: delay.breathe }}
         >
-          {/* Contact shadow: a wide ambient pool plus a tight dark core right
-              under the feet. Sits outside the floating wrapper so it stays
-              planted on the ground while the character breathes. */}
-          <div
-            className="absolute bottom-0 left-1/2 z-0 h-5 w-36 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/10 blur-lg sm:w-44 lg:w-52"
-            aria-hidden
+          <Image
+            src={image}
+            alt={name}
+            width={475}
+            height={539}
+            className={`h-56 w-auto object-contain drop-shadow-[0_18px_22px_rgba(59,36,101,0.22)] transition-transform duration-500 sm:h-72 lg:h-[22rem] ${
+              locked ? "opacity-70 grayscale" : "group-hover/card:scale-[1.07]"
+            }`}
+            priority={!locked}
           />
-          <div
-            className="absolute bottom-1 left-1/2 z-0 h-3 w-24 -translate-x-1/2 rounded-[50%] bg-[var(--color-ink)]/30 blur-md sm:w-28 lg:w-32"
-            aria-hidden
-          />
-
-          <div
-            className={`relative z-10 ${locked ? "" : "anim-breathe"}`}
-            style={locked ? undefined : { animationDelay: delay.breathe }}
-          >
-            <Image
-              src={image}
-              alt={name}
-              width={475}
-              height={539}
-              className={`h-60 w-auto object-contain drop-shadow-[0_10px_14px_rgba(59,36,101,0.14)] transition-transform duration-300 sm:h-72 lg:h-80 ${
-                locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
-              }`}
-              priority={!locked}
-            />
-          </div>
-
-          {locked && (
-            <span className="absolute inset-0 z-20 flex items-center justify-center">
-              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(59,36,101,0.3)]">
-                <Lock
-                  className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
-                  strokeWidth={2.5}
-                />
-                {previousName && (
-                  <span className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
-                    Finish {previousName}&apos;s lessons first!
-                  </span>
-                )}
-              </span>
-            </span>
-          )}
         </div>
+
+        {locked && (
+          <span className="absolute inset-0 z-20 flex items-center justify-center">
+            <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_10px_24px_-6px_rgba(59,36,101,0.4)]">
+              <Lock
+                className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
+                strokeWidth={2.5}
+              />
+              {previousName && (
+                <span className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
+                  Finish {previousName}&apos;s lessons first!
+                </span>
+              )}
+            </span>
+          </span>
+        )}
       </div>
 
       <h3
-        className="anim-fade-up relative mt-4 text-3xl font-bold sm:text-4xl"
+        className="anim-fade-up relative mt-5 text-4xl font-bold tracking-tight text-white [text-shadow:0_3px_10px_rgba(59,36,101,0.28)] sm:text-5xl"
         style={{
-          color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
+          color: locked ? "var(--color-locked-text)" : undefined,
+          textShadow: locked ? "none" : undefined,
           animationDelay: delay.name,
         }}
       >
@@ -132,12 +135,12 @@ export function CharacterCard({
                 edge: "var(--color-locked-dark)",
                 text: "var(--color-locked-text)",
               }
-            : { face: accent, edge: accentDark }
+            : { face: "#ffffff", edge: accentDark, text: accentDark }
         }
         href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
-        className="anim-fade-up mt-4 w-full max-w-[220px] px-6 py-3.5 text-base sm:text-lg"
+        className="anim-fade-up mt-5 w-full max-w-[230px] px-6 py-3.5 text-base sm:text-lg"
         style={{ animationDelay: delay.button }}
       >
         {locked ? (

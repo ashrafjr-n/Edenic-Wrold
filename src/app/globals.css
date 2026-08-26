@@ -124,6 +124,46 @@ body {
     linear-gradient(180deg, #ffffff 22%, var(--background) 100%);
 }
 
+/* ---------------------------------------------------------------
+   World panels.
+
+   The three friends aren't cards floating on a page — each one owns a
+   full-height column of the screen, its own world, standing side by side.
+   The open world physically takes more room when you point at it, and the
+   character breaks out over the top edge of its own panel, so the cast is
+   never fully contained by the layout.
+
+   The grow-on-hover is desktop-only: on a touch screen there's no hover to
+   reward, and the panels stack vertically instead.
+   --------------------------------------------------------------- */
+
+.world-panel {
+  transition:
+    flex-grow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+@media (min-width: 640px) {
+  .world-panel--open:hover {
+    flex-grow: 1.45;
+  }
+}
+
+/* Locked worlds sit behind frosted glass — visible, clearly not yours yet. */
+.world-panel--locked .panel-face {
+  filter: saturate(0.35);
+}
+
+.panel-face {
+  border-radius: 2.25rem 2.25rem 1.25rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .panel-face {
+    border-radius: 3rem 3rem 1.5rem 1.5rem;
+  }
+}
+
 /* Lesson card. Flat surface, gold hairline while it's open — the same
    signal the unlocked character's arch carries on the home page, so
    "you may go here" looks identical everywhere in the app. The gold
@@ -248,49 +288,59 @@ button:disabled,
   letter-spacing: 0.01em;
   color: var(--btn-text, #fff);
   background-color: var(--btn-face);
+  /* Sticker ring + chunky edge: the ring detaches the pill from whatever
+     color it sits on, the solid edge underneath is what the press animates
+     away. */
   box-shadow:
-    inset 0 2px 2px rgb(255 255 255 / 42%),
-    inset 0 -4px 8px -2px color-mix(in srgb, var(--btn-edge) 42%, transparent),
-    0 8px 18px -8px color-mix(in srgb, var(--btn-edge) 70%, transparent);
+    inset 0 0 0 3px rgb(255 255 255 / 50%),
+    0 5px 0 0 var(--btn-edge),
+    0 14px 22px -10px color-mix(in srgb, var(--btn-edge) 80%, transparent);
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+    translate 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
 .btn3d:hover:not(:disabled) {
-  transform: scale(1.04);
+  translate: 0 -2px;
   box-shadow:
-    inset 0 2px 2px rgb(255 255 255 / 50%),
-    inset 0 -4px 8px -2px color-mix(in srgb, var(--btn-edge) 42%, transparent),
-    0 12px 24px -8px color-mix(in srgb, var(--btn-edge) 75%, transparent);
+    inset 0 0 0 3px rgb(255 255 255 / 62%),
+    0 7px 0 0 var(--btn-edge),
+    0 18px 26px -10px color-mix(in srgb, var(--btn-edge) 85%, transparent);
 }
 
+/* Presses flat onto its own edge — the whole point of the chunky shadow. */
 .btn3d:active:not(:disabled) {
-  transform: scale(0.97);
+  translate: 0 5px;
   box-shadow:
-    inset 0 3px 6px -1px color-mix(in srgb, var(--btn-edge) 40%, transparent),
-    0 4px 10px -6px color-mix(in srgb, var(--btn-edge) 60%, transparent);
+    inset 0 0 0 3px rgb(255 255 255 / 45%),
+    0 0 0 0 var(--btn-edge),
+    0 4px 10px -8px color-mix(in srgb, var(--btn-edge) 70%, transparent);
 }
 
-/* Declared after the base hover/active rules so it wins on source order. */
+/* Declared after the base hover/active rules so it wins on source order.
+   Header chrome keeps a shallower edge — the toy press belongs to the
+   kid-facing CTAs, not to the navigation. */
 .btn3d--calm {
   box-shadow:
-    inset 0 0 0 1px rgb(59 36 101 / 7%),
-    0 2px 8px -3px rgb(59 36 101 / 16%);
+    inset 0 0 0 1px rgb(59 36 101 / 8%),
+    0 3px 0 0 color-mix(in srgb, var(--btn-edge) 45%, transparent),
+    0 8px 14px -8px rgb(59 36 101 / 30%);
 }
 
 .btn3d--calm:hover:not(:disabled) {
-  transform: none;
+  translate: 0 -1px;
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 55%, transparent),
-    0 4px 12px -4px rgb(59 36 101 / 20%);
+    inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 60%, transparent),
+    0 4px 0 0 color-mix(in srgb, var(--btn-edge) 55%, transparent),
+    0 10px 18px -8px rgb(59 36 101 / 34%);
 }
 
 .btn3d--calm:active:not(:disabled) {
-  transform: none;
+  translate: 0 3px;
   box-shadow:
     inset 0 0 0 1px rgb(59 36 101 / 10%),
-    0 1px 4px -2px rgb(59 36 101 / 18%);
+    0 0 0 0 var(--btn-edge),
+    0 3px 8px -6px rgb(59 36 101 / 28%);
 }
 
 .btn3d:focus-visible {
