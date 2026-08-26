@@ -12,21 +12,29 @@
    --------------------------------------------------------------- */
 :root {
   /* ---------------------------------------------------------------
-     The neumorphic ground.
+     Claymorphism, with light purple as the hero.
 
-     Deliberately NOT white. Neumorphism works by lighting a surface from
-     one corner and shading the other, and both of those shadows have to be
-     visible — on white the highlight disappears and only half the effect
-     survives. A soft periwinkle also sits at the midpoint of the three
-     character worlds (pink / cream / blue) and matches the violet ink.
+     The ground is a light lavender — never white — and the things that sit
+     on it are WHITE cards with a wide, soft, purple-tinted shadow. That
+     contrast (white on lavender) is what gives the surfaces their lift;
+     shadows alone on a white page would be invisible.
 
-     `--surface-high` and `--surface-low` are that single light source. Use
-     them for every raised or inset surface; never hand-pick a grey.
+     Purple is the accent that carries every primary action: the main CTA,
+     the active chip, the circular go buttons. Character colors stay for
+     identity, but purple is the one that repeats.
      --------------------------------------------------------------- */
-  --background: #e8e3f5;
-  --surface-high: #fbf9ff;
-  --surface-low: #bdb2d9;
-  --foreground: #3b2465;
+  --background: #eceafb;
+  --surface: #ffffff;
+
+  --brand: #7c6bee;
+  --brand-dark: #5b49cf;
+  --brand-soft: #e7e3fd;
+
+  /* Every shadow on the site is a tint of this, never a neutral grey — a
+     grey shadow on a lavender ground reads as dirt. */
+  --shadow-hue: 92 78 190;
+
+  --foreground: #2f2a52;
 
   /* Pinki — warm bubblegum, not a cold pink. */
   --color-pinki: #f76fa8;
@@ -50,7 +58,8 @@
   --color-gold-dark: #c9891a;
 
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
-  --color-ink: #3b2465;
+  --color-ink: #2f2a52;
+  --color-ink-soft: #7b76a3;
 
   /* Locked state: warm-neutral, so it reads as "resting" rather than
      as a cold grey foreign to the palette. */
