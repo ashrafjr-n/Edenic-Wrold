@@ -153,6 +153,44 @@ body {
     0 12px 22px -8px color-mix(in srgb, var(--clay-edge) 55%, transparent);
 }
 
+/* ---------------------------------------------------------------
+   Feathered hero edge.
+
+   NOT `clip-path`. A clip-path cuts at 100% alpha however organic the shape
+   is, so the boundary is always a hard line — which is exactly what made the
+   earlier "wavy bottom" look cheap. A mask made of gradients fades the alpha
+   instead, so the photo dissolves into the lavender ground rather than ending
+   on it.
+
+   Three mask layers, intersected: a left fade, a bottom fade, and an off-centre
+   radial that softens the top and rounds the corner organically. The radial is
+   centred near the right edge so that edge stays fully opaque — the image is
+   meant to read as exposed on one side only, the way the reference does.
+   --------------------------------------------------------------- */
+.hero-feather {
+  --feather-left: 26%;
+  --feather-bottom: 18%;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 var(--feather-left)),
+    linear-gradient(to top, transparent 0%, #000 var(--feather-bottom)),
+    radial-gradient(135% 118% at 86% 46%, #000 44%, transparent 92%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 var(--feather-left)),
+    linear-gradient(to top, transparent 0%, #000 var(--feather-bottom)),
+    radial-gradient(135% 118% at 86% 46%, #000 44%, transparent 92%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* Stacked on a phone the image is full-bleed, so the left fade has far less
+   room to work in — at the desktop value it eats the characters. */
+@media (width < 64rem) {
+  .hero-feather {
+    --feather-left: 10%;
+    --feather-bottom: 26%;
+  }
+}
+
 button,
 [role="button"] {
   cursor: pointer;
