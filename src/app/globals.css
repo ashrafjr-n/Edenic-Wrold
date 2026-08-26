@@ -260,11 +260,14 @@ button:disabled,
   outline-offset: 3px;
 }
 
-/* Locked drops every clay cue — flat fill, no shadow, no motion — so
-   "inactive" reads instantly without needing to read the label. */
+/* Locked drops the clay entirely and becomes a well pressed into the surface,
+   matching the locked character's arch. "Inactive" then reads from the form
+   itself, before the label is read. */
 .btn3d:disabled {
-  background-color: var(--btn-face);
-  box-shadow: none;
+  background-color: var(--background);
+  box-shadow:
+    inset -3px -3px 7px var(--surface-high),
+    inset 3px 3px 7px var(--surface-low);
 }
 
 /* ---------------------------------------------------------------

@@ -48,20 +48,23 @@ export function CharacterCard({
       {/* The arch stops at the character's feet — the name and button sit
           below it, clear of the shape. */}
       <div className="relative flex w-full justify-center pt-10 sm:pt-14">
-        {/* The arch is clay: a colored, softly inflated shape the character
-            stands in. Its tint is mixed at 40% rather than using `accentSoft`
-            — against the periwinkle ground the soft tokens are nearly
-            invisible, Nova's especially. */}
+        {/* The two shadow languages carry the lock state, not just color:
+            an open world is CLAY — a colored shape raised out of the ground —
+            while a locked one is a NEUMORPHIC WELL, pressed into the surface.
+            Locked keeps a faint wash of its own accent so the character still
+            reads as theirs. The unlocked tint is mixed at 40% rather than
+            using `accentSoft`, which is nearly invisible on the periwinkle. */}
         <div
-          className="clay anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
+          className={`anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-b-[2.5rem] rounded-t-full sm:w-72 lg:w-80 ${
+            locked ? "neu-inset" : "clay"
+          }`}
           style={
             {
-              backgroundColor: `color-mix(in srgb, ${
-                locked ? "var(--color-locked-dark)" : accent
-              } 40%, #ffffff)`,
+              backgroundColor: locked
+                ? `color-mix(in srgb, ${accent} 14%, var(--background))`
+                : `color-mix(in srgb, ${accent} 40%, #ffffff)`,
               animationDelay: delay.arch,
-              "--arch-opacity": locked ? "0.6" : "1",
-              "--clay-edge": locked ? "var(--color-locked-dark)" : accentDark,
+              "--clay-edge": accentDark,
             } as ArchVars
           }
           aria-hidden
