@@ -83,7 +83,9 @@ export function CharacterCard({
               width={475}
               height={539}
               className={`h-60 w-auto object-contain drop-shadow-[0_10px_14px_rgba(61,36,114,0.14)] transition-transform duration-300 sm:h-72 lg:h-80 ${
-                locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
+                locked
+                  ? "opacity-75 grayscale-[0.55]"
+                  : "group-hover/card:scale-105"
               }`}
               priority={!locked}
             />

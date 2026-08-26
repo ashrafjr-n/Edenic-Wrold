@@ -12,7 +12,7 @@ const cast = characters.map((character, index) => ({
 
 export function Hero() {
   return (
-    <section className="relative flex flex-1 flex-col overflow-hidden px-4 pb-20 pt-2 sm:px-8 sm:pb-28 sm:pt-4">
+    <section className="relative flex flex-1 flex-col justify-center overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6">
       <IntroIcons />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
@@ -31,9 +31,10 @@ export function Hero() {
         </p>
       </div>
 
-      {/* mt-auto pins the cast to the bottom of the viewport, so the hero has
-          no dead space under it regardless of screen height. */}
-      <div className="relative z-10 mx-auto mt-auto w-full max-w-6xl pt-8">
+      {/* The hero centers as one group. Pinning the cast to the bottom with
+          `mt-auto` instead left a large dead gap under the subtitle on a tall
+          viewport — the space reads better distributed above and below. */}
+      <div className="relative z-10 mx-auto mt-8 w-full max-w-6xl sm:mt-11">
         <div className="flex flex-col items-center gap-12 sm:flex-row sm:items-end sm:justify-center sm:gap-6 lg:gap-10">
           {cast.map(({ character, index, previousName }) => (
             <CharacterCard
