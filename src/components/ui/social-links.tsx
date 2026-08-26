@@ -17,7 +17,7 @@ export function SocialLinks({ className = "" }: { className?: string }) {
             rel="noreferrer noopener"
             aria-label={label}
             title={label}
-            className="card group relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full text-[var(--color-ink)] transition-[color,translate] duration-200 hover:-translate-y-0.5 hover:text-white"
+            className="card card-pill group relative flex h-12 w-12 items-center justify-center overflow-hidden text-[var(--color-ink)] transition-[color,translate] duration-200 hover:-translate-y-0.5 hover:text-white"
             style={{ "--social-brand": brand } as BrandVars}
           >
             <span

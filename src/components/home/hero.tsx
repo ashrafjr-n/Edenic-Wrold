@@ -27,7 +27,7 @@ export function Hero() {
       <div className="relative mx-auto flex max-w-7xl flex-col px-4 sm:px-8 lg:min-h-[34rem] lg:justify-center">
         <div className="max-w-xl text-center lg:text-left">
           <span
-            className="card anim-fade-up inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)]"
+            className="card card-pill anim-fade-up inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)]"
             style={{ animationDelay: "0.1s" }}
           >
             <Sparkles

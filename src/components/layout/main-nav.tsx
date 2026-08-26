@@ -13,7 +13,7 @@ export function MainNav() {
   return (
     <nav
       aria-label="Main"
-      className="card flex items-center gap-1 rounded-full p-1.5"
+      className="card card-pill flex items-center gap-1 p-1.5"
     >
       {mainNav.map(({ label, href }) => {
         if (!href) {

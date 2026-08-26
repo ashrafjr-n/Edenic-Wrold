@@ -141,9 +141,21 @@ body {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
+/* `.card` and `.tile` are unlayered, and Tailwind's utilities live in
+   `@layer utilities` — unlayered CSS wins over layered CSS whatever the source
+   order, so a `rounded-full` utility on a `.card` silently does nothing. Radius
+   changes have to be modifiers on the block itself. */
+.card-pill {
+  border-radius: 9999px;
+}
+
 .tile {
   border-radius: 1.25rem;
   background: var(--tile-tint);
+}
+
+.tile-round {
+  border-radius: 9999px;
 }
 
 .clay {
