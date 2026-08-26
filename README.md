@@ -32,19 +32,38 @@ Open [http://localhost:3000](http://localhost:3000).
 - **lucide-react** for icons
 - Entrance and idle animation are plain CSS keyframes — no animation library
 
+## Design system
+
+The characters are the only 3D on the site. Every piece of UI around them —
+buttons, cards, backdrops — is deliberately flat and soft, so nothing competes
+with the renders for attention.
+
+- The palette is sampled from the character artwork itself. Each mascot owns a
+  world: Pinki → pink, Nova → lavender, Bloo → blue.
+- Nova's body is cream rather than white, so she is never placed on a plain white
+  surface — her stage is always tinted.
+- Gold, taken from the horns all three characters share, is the signature accent.
+  It marks whatever is unlocked and available, and nothing else.
+- Backdrops are soft gradients with large blurred organic shapes. No photographic
+  backgrounds or textures.
+
+Tokens live in `src/app/globals.css`.
+
 ## Project structure
 
 ```text
 src/
   app/
-    layout.tsx        Root layout: font, header
-    page.tsx          Home page
-    globals.css       Design tokens, button styles, animation keyframes
+    layout.tsx                    Root layout: font, header
+    page.tsx                      Home page
+    learn/[character]/page.tsx    Character lesson hub
+    globals.css                   Design tokens, button and stage styles, keyframes
   components/
-    home/             Hero, character cards, intro icon animation
+    home/             Hero, character cards, stage backdrop, intro icon animation
+    learn/            Lesson cards
     layout/           Header
     ui/               Shared primitives (Button3D)
-  data/               Character definitions
+  data/               Character and lesson definitions
   types/              Shared TypeScript types
 public/assets/
   friends/            Mascot artwork
@@ -53,8 +72,9 @@ public/assets/
 
 ## Current status
 
-The home page is the only route that exists, and it is still being iterated on
-visually. Lesson routes, progress state, and lesson content are not built yet.
+The home page and the character lesson hub (`/learn/pinki`) are built, and both are
+still being iterated on visually. Only Pinki has lesson content; Nova and Bloo are
+locked. Per-item lesson pages, progress state, and lesson content are not built yet.
 
 Planned, in order:
 
