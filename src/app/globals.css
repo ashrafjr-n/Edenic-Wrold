@@ -83,8 +83,8 @@
   /* Headline colors are deliberately independent of the character accent
      tokens — recoloring a mascot must never recolor the headline. They're
      tuned to sit in the same family, but they are not the same tokens. */
-  --color-head-play: #f76fa8;
-  --color-head-grow: #7c5fd6;
+  --color-head-play: #f2569b;
+  --color-head-grow: #6d55e0;
 }
 
 /* Colors are consumed as `var(--color-*)` arbitrary values throughout, never as
