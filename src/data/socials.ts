@@ -1,6 +1,7 @@
 import {
   SiFacebook,
   SiInstagram,
+  SiSnapchat,
   SiTiktok,
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
@@ -31,5 +32,11 @@ export const socialLinks: SocialLink[] = [
     href: "https://facebook.com",
     Icon: SiFacebook,
     brand: "#0866ff",
+  },
+  {
+    label: "Snapchat",
+    href: "https://snapchat.com",
+    Icon: SiSnapchat,
+    brand: "#fffc00",
   },
 ];
