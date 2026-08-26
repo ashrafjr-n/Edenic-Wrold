@@ -26,9 +26,22 @@
   --background: #eceafb;
   --surface: #ffffff;
 
-  --brand: #7c6bee;
-  --brand-dark: #5b49cf;
-  --brand-soft: #e7e3fd;
+  /* Two hero colors, not one: a deep violet and a bubblegum pink. Purple leads
+     (primary actions, the lesson-hub banner); pink is the counterweight that
+     keeps the site from reading as a single-hue gradient — it takes the second
+     CTA in a pair, the emphasis word in a headline, the social chips.
+
+     These are deliberately NOT the character tokens below. `--color-pinki` is
+     Pinki's identity; `--accent` is the brand's. Recoloring the mascot must
+     never recolor the site, which is the same reason the headline owns its own
+     `--color-head-*` pair. */
+  --brand: #6d55e0;
+  --brand-dark: #4a34b0;
+  --brand-soft: #e6e1fb;
+
+  --accent: #f2569b;
+  --accent-dark: #c8306f;
+  --accent-soft: #ffe3ef;
 
   /* Every shadow on the site is a tint of this, never a neutral grey — a
      grey shadow on a lavender ground reads as dirt. */
