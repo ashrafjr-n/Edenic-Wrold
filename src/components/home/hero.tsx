@@ -27,9 +27,10 @@ export function Hero() {
       <div className="relative mx-auto flex max-w-7xl flex-col px-4 sm:px-8 lg:min-h-[32rem] lg:justify-center">
         <div className="max-w-xl text-center lg:-ml-16 lg:text-left">
           <h1 className="anim-drop-in text-5xl font-bold leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-6xl lg:text-7xl">
-            Learn.{" "}
-            <span className="text-[var(--color-head-play)]">Play.</span>{" "}
-            <span className="text-[var(--color-head-grow)]">Grow.</span>
+            Welcome to
+            <br />
+            <span className="text-[var(--color-head-play)]">Edenic</span>{" "}
+            <span className="text-[var(--color-head-grow)]">World.</span>
           </h1>
 
           <p
