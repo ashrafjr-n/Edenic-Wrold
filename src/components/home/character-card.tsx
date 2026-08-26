@@ -45,11 +45,18 @@ export function CharacterCard({
       {/* The arch stops at the character's feet — the name and button sit
           below it, clear of the shape. */}
       <div className="relative flex w-full justify-center pt-10 sm:pt-14">
+        {/* The arch is this character's world, flattened to a single soft
+            tint. The gold hairline around it is the site's signature mark
+            for "this one is open" — locked worlds never get it, so the
+            gold alone tells a child where they're allowed to go. */}
         <div
           className="anim-arch-in absolute bottom-0 left-1/2 h-[85%] w-64 -translate-x-1/2 rounded-t-full sm:w-72 lg:w-80"
           style={
             {
               backgroundColor: accentSoft,
+              boxShadow: locked
+                ? undefined
+                : "inset 0 0 0 2px color-mix(in srgb, var(--color-gold) 42%, transparent), inset 0 10px 24px -10px rgb(255 255 255 / 80%)",
               animationDelay: delay.arch,
               "--arch-opacity": locked ? "0.5" : "1",
             } as ArchVars
@@ -82,7 +89,7 @@ export function CharacterCard({
               alt={name}
               width={475}
               height={539}
-              className={`h-60 w-auto object-contain drop-shadow-[0_10px_14px_rgba(61,36,114,0.14)] transition-transform duration-300 sm:h-72 lg:h-80 ${
+              className={`h-60 w-auto object-contain drop-shadow-[0_10px_14px_rgba(59,36,101,0.14)] transition-transform duration-300 sm:h-72 lg:h-80 ${
                 locked ? "opacity-60 grayscale" : "group-hover/card:scale-105"
               }`}
               priority={!locked}
@@ -91,7 +98,7 @@ export function CharacterCard({
 
           {locked && (
             <span className="absolute inset-0 z-20 flex items-center justify-center">
-              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(61,36,114,0.35)]">
+              <span className="group/lock relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(59,36,101,0.3)]">
                 <Lock
                   className="h-8 w-8 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
                   strokeWidth={2.5}
