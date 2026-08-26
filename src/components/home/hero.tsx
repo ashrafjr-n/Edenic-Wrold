@@ -18,9 +18,10 @@ export function Hero() {
           fill
           preload
           sizes="(max-width: 1024px) 100vw, 70vw"
-          /* `hero.png` centers the trio, unlike the old crop — shifted left so
-             more of the trio shows, trimming the empty castle side on the right. */
-          className="anim-hero-parallax object-cover object-[40%_46%]"
+          /* `hero.png` centers the trio, unlike the old crop — nudged left just
+             enough to trim the empty castle side on the right without cutting
+             off Bloo; all three friends stay inside the frame. */
+          className="anim-hero-parallax object-cover object-[47%_46%]"
         />
       </div>
 
