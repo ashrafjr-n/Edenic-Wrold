@@ -11,10 +11,10 @@ export function MainNav() {
   const pathname = usePathname();
 
   return (
-    <nav
-      aria-label="Main"
-      className="card card-pill flex items-center gap-1 p-1.5"
-    >
+    /* No container chip: the header bar is white now, so a white pill around
+       the nav would be invisible apart from its shadow. Bare items on the bar,
+       with only the active one carrying color. */
+    <nav aria-label="Main" className="flex items-center gap-2 sm:gap-4">
       {mainNav.map(({ label, href }) => {
         if (!href) {
           return (
