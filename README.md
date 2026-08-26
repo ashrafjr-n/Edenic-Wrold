@@ -52,8 +52,11 @@ Open [http://localhost:3000](http://localhost:3000).
 Claymorphism with a deep purple and a bubblegum pink as the two hero colors: soft
 rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 
-- The page ground is light lavender, never white. White cards sit on top of it —
-  that contrast is what gives them their lift.
+- The page ground is a very pale violet — close to white, but never actually white.
+  White cards sit on top of it, and that narrow contrast is what gives them their
+  lift, so card shadows are tuned to carry it.
+- Colored surfaces carry a fine grain, blended into the fill, so they read as clay
+  rather than as flat plastic. White chips deliberately have none.
 - Purple carries every primary action; pink is its counterweight. Character colors
   are reserved for identity and only ever appear as a pale tile tint.
 - Everything is built from three blocks: `.card` (white panel), `.tile` (pale pastel
@@ -64,9 +67,12 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Nova's body is cream rather than white, so she is never placed on a plain white
   surface — her tile is always tinted.
-- The home hero is the only rendered scene on the site, and it has no edge of its
-  own: `.hero-feather` masks it with intersecting gradients so it dissolves into the
-  ground. Everywhere else there are no decorative shapes, textures or background art.
+- Rendered art appears in two places and never as a plain rectangle: the home hero
+  is cut to a wavy silhouette (`.hero-clip`, an SVG path used as a mask), and the two
+  home panels bed their art into the fill (`.panel-art`). Everywhere else there are
+  no decorative shapes, textures or background art.
+- Nothing moves on hover except the character cards — buttons and chips respond with
+  shadow and color instead.
 
 Tokens live in `src/app/globals.css`.
 
@@ -84,12 +90,13 @@ src/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards, intro icons
     layout/           Header, nav, footer
-    ui/               Shared primitives (Button3D, SocialLinks)
+    ui/               Shared primitives (Button3D, SocialLinks, Logo)
   data/               Characters, lessons, navigation, socials, home panels
   types/              Shared TypeScript types
 public/
   hero.jpg            Home hero scene
-  edenic-logo.png     Logo
+  edenic-logo.png     Logo (imported statically, never referenced by path)
+  assets/learn.jpg    Learn panel artwork
   assets/friends/     Mascot artwork
   assets/icons/       Decorative 3D icons
 ```
