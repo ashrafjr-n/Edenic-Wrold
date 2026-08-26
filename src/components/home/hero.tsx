@@ -57,46 +57,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-
-      {/* Hand-drawn cue pointing at `FriendsSection` just below, pinned to the
-          very bottom of the hero rather than living in the centered copy block
-          above — the wavy `.hero-clip` mask already cuts the image away from
-          this bottom-left zone, so it never collides with the art. The one
-          deliberately sketchy element on the site — everywhere else is clean
-          claymorphism, but a scroll nudge reads as an annotation, not chrome,
-          so it earns the exception. */}
-      <div className="absolute inset-x-0 bottom-0 sm:bottom-2 lg:bottom-4">
-        <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8 lg:justify-start">
-          <div
-            className="anim-fade-up flex flex-col items-start pl-6 sm:pl-24 lg:pl-40"
-            style={{ animationDelay: "0.5s" }}
-          >
-            <span className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl">
-              Meet Edenic Friends
-            </span>
-            <svg
-              aria-hidden
-              viewBox="0 0 90 150"
-              className="anim-nudge-down -mt-1 h-24 w-16 text-[var(--accent)] sm:h-28 sm:w-20"
-              fill="none"
-            >
-              <path
-                d="M72 10 C40 8 12 40 14 78 C15 100 35 112 48 98 C56 90 50 78 38 82 C20 88 10 112 16 138"
-                stroke="currentColor"
-                strokeWidth="7"
-                strokeLinecap="round"
-              />
-              <path
-                d="M6 120 L17 140 L34 126"
-                stroke="currentColor"
-                strokeWidth="7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
