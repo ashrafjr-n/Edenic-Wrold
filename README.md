@@ -34,13 +34,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Design system
 
-The characters are the only 3D on the site. Every piece of UI around them is flat,
-so nothing competes with the renders for attention — the one exception is a solid
-chunky edge on buttons and cards that presses down when tapped, because a physical
-press is the clearest affordance for this audience.
-
-On the home page each mascot owns a full-height panel — their world — rather than
-sitting on a card, and the character overflows above its panel's top edge.
+The characters are the only 3D on the site. Every piece of UI around them is flat —
+solid fills, generous radii, one soft shadow — so nothing competes with the renders
+for attention.
 
 - The palette is sampled from the character artwork itself. Each mascot owns a
   world: Pinki → pink, Nova → lavender, Bloo → blue.
@@ -48,8 +44,8 @@ sitting on a card, and the character overflows above its panel's top edge.
   surface — her stage is always tinted.
 - Gold, taken from the horns all three characters share, is the signature accent.
   It marks whatever is unlocked and available, and nothing else.
-- Backdrops are soft gradients with large blurred organic shapes. No photographic
-  backgrounds or textures.
+- The background is a soft pastel gradient and nothing else — no decorative shapes,
+  textures or photographic art.
 
 Tokens live in `src/app/globals.css`.
 
@@ -63,7 +59,7 @@ src/
     learn/[character]/page.tsx    Character lesson hub
     globals.css                   Design tokens, button and stage styles, keyframes
   components/
-    home/             Hero, character cards, stage backdrop, intro icon animation
+    home/             Hero, character cards, intro icon animation
     learn/            Lesson cards
     layout/           Header
     ui/               Shared primitives (Button3D)
