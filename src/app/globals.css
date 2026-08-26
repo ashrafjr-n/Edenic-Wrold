@@ -124,6 +124,27 @@ body {
     linear-gradient(180deg, #ffffff 22%, var(--background) 100%);
 }
 
+/* Lesson card. Flat surface, gold hairline while it's open — the same
+   signal the unlocked character's arch carries on the home page, so
+   "you may go here" looks identical everywhere in the app. The gold
+   strengthens on hover; the lift is the only motion, kept small because
+   a child is trying to tap this on a tablet. */
+.lesson-card {
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--color-gold) 38%, transparent),
+    0 14px 28px -14px rgb(59 36 101 / 22%);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.lesson-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--color-gold) 65%, transparent),
+    0 20px 34px -14px rgb(59 36 101 / 28%);
+}
+
 /* One organic blob. Shape/size/tint/position all arrive as custom
    properties, so the layout lives in the component's data rather than in
    a pile of near-identical CSS variants. */
@@ -288,16 +309,20 @@ button:disabled,
    Entrance choreography (pure CSS timeline, no JS)
    --------------------------------------------------------------- */
 
+/* The floating icons are 3D renders too, so at full opacity they compete
+   with the characters for attention. Held well below full strength they
+   stay what they're meant to be — atmosphere drifting past behind the
+   cast, never a second thing to look at. */
 @keyframes icon-rise {
   0% {
     opacity: 0;
     transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg);
   }
   12% {
-    opacity: 1;
+    opacity: 0.5;
   }
   78% {
-    opacity: 1;
+    opacity: 0.5;
   }
   100% {
     opacity: 0;
