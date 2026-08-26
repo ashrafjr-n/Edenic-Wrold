@@ -7,7 +7,7 @@ export function Header() {
     <header className="sticky top-0 z-20 bg-white shadow-sm">
       <div className="flex items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Image
-          src="/logo/edenic-logo.png"
+          src="/edenic-logo.png"
           alt="Edenic World"
           width={622}
           height={401}
