@@ -199,9 +199,13 @@ button:disabled,
   letter-spacing: 0.01em;
   color: var(--btn-text, #fff);
   background-color: var(--btn-face);
-  /* One soft shadow tinted by the button's own color. No bevel, no inner
-     highlight, no stacked edge — the shape and the color carry it. */
-  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--btn-edge) 65%, transparent);
+  /* Clay: inner highlight along the top, inner shade along the bottom, one
+     wide tinted drop shadow. The pill reads as soft and slightly inflated —
+     the same material the characters are modelled in. */
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--btn-edge) 60%, transparent),
+    0 12px 22px -8px color-mix(in srgb, var(--btn-edge) 60%, transparent);
   transition:
     translate 0.2s ease,
     box-shadow 0.2s ease,
@@ -210,37 +214,45 @@ button:disabled,
 
 .btn3d:hover:not(:disabled) {
   translate: 0 -2px;
-  box-shadow: 0 12px 22px -8px color-mix(in srgb, var(--btn-edge) 70%, transparent);
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 55%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--btn-edge) 60%, transparent),
+    0 18px 30px -10px color-mix(in srgb, var(--btn-edge) 68%, transparent);
 }
 
+/* Pressed: the inner shade flips to the top so the clay looks squashed in. */
 .btn3d:active:not(:disabled) {
-  translate: 0 0;
-  filter: brightness(0.96);
-  box-shadow: 0 4px 10px -6px color-mix(in srgb, var(--btn-edge) 55%, transparent);
+  translate: 0 1px;
+  box-shadow:
+    inset 0 7px 12px -4px color-mix(in srgb, var(--btn-edge) 65%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 30%),
+    0 5px 12px -8px color-mix(in srgb, var(--btn-edge) 50%, transparent);
 }
 
 /* Declared after the base hover/active rules so it wins on source order.
-   Header chrome is quieter still: a hairline instead of a colored shadow,
-   and no lift. Navigation shouldn't move when you point at it. */
+   Header chrome is neumorphic instead of clay: it's the same color as the
+   page, pressed out of it. On tap it sinks into the surface — the neumorphic
+   equivalent of a press, and the reason chrome doesn't need to move. */
 .btn3d--calm {
   font-weight: 600;
+  background-color: var(--btn-face);
   box-shadow:
-    inset 0 0 0 1px rgb(59 36 101 / 9%),
-    0 1px 2px 0 rgb(59 36 101 / 6%);
+    -5px -5px 11px var(--surface-high),
+    5px 5px 11px var(--surface-low);
 }
 
 .btn3d--calm:hover:not(:disabled) {
   translate: 0 0;
-  filter: brightness(0.98);
   box-shadow:
-    inset 0 0 0 1px rgb(59 36 101 / 16%),
-    0 2px 6px -2px rgb(59 36 101 / 12%);
+    -6px -6px 14px var(--surface-high),
+    6px 6px 14px var(--surface-low);
 }
 
 .btn3d--calm:active:not(:disabled) {
   translate: 0 0;
-  filter: brightness(0.95);
-  box-shadow: inset 0 0 0 1px rgb(59 36 101 / 16%);
+  box-shadow:
+    inset -4px -4px 9px color-mix(in srgb, var(--surface-high) 70%, transparent),
+    inset 4px 4px 9px color-mix(in srgb, var(--surface-low) 85%, transparent);
 }
 
 .btn3d:focus-visible {
