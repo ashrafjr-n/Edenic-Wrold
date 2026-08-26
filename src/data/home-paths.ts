@@ -5,7 +5,11 @@ import type { HomePath } from "@/types/home-path";
 
     Each panel's art is chosen to already sit in its panel's hue — the book
     scene is violet, the cotton-candy cloud is pink — so once `.panel-art` fades
-    it into the fill there's no seam to hide. */
+    it into the fill there's no seam to hide.
+
+    The Learn panel's fill is hardcoded rather than `var(--brand)` on purpose:
+    `--brand` moved from purple to sky blue site-wide, but this one panel was
+    kept purple deliberately, so it can't follow the token. */
 export const homePaths: HomePath[] = [
   {
     title: "Learn",
@@ -14,8 +18,8 @@ export const homePaths: HomePath[] = [
     art: { src: "/assets/learn.jpg", fit: "cover" },
     action: "Start learning",
     href: "/learn",
-    face: "var(--brand)",
-    edge: "var(--brand-dark)",
+    face: "#6d55e0",
+    edge: "#4a34b0",
   },
   {
     title: "Activities",
