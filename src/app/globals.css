@@ -357,6 +357,15 @@ button:disabled,
     0 14px 26px -10px color-mix(in srgb, var(--accent-dark) 55%, transparent);
 }
 
+/* The icon is an SVG using `stroke="currentColor"` — it inherits `color` but
+   doesn't reliably animate along with it unless it has its own matching
+   transition, so without this the icon can snap to white a beat out of step
+   with the background fading to pink. Same duration/easing as the button's
+   own `color` transition above, so both land in sync. */
+.btn3d--icon-accent svg {
+  transition: color 0.3s ease;
+}
+
 .btn3d:focus-visible {
   outline: 3px solid rgb(61 36 114 / 45%);
   outline-offset: 3px;
