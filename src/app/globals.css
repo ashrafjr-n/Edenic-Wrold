@@ -64,8 +64,8 @@
      home page's Learn panel (`data/home-paths.ts`) is the one deliberate
      exception — it keeps the old purple hardcoded rather than following this
      token, so it doesn't move when `--brand` does. */
-  --brand: #2e9bf0;
-  --brand-dark: #1a6fbd;
+  --brand: #1c86e0;
+  --brand-dark: #124f7d;
   --brand-soft: #e0f2fe;
 
   --accent: #f2569b;
