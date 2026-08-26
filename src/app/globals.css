@@ -412,6 +412,37 @@ button:disabled,
   will-change: transform;
 }
 
+/* ---------------------------------------------------------------
+   Scroll reveal for the sections below the fold.
+
+   The load-time timeline above is useless down here — those sections have
+   already finished animating by the time you scroll to them. This uses a
+   scroll-driven timeline instead, which keeps the sections Server Components
+   with zero JS (no IntersectionObserver, no `"use client"`).
+
+   Gated behind @supports on purpose: `both` would otherwise leave the content
+   parked at the `from` keyframe — invisible — in a browser without
+   `animation-timeline`. Unsupported means no animation, never no content.
+   --------------------------------------------------------------- */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .anim-reveal {
+    animation: reveal-up 1s linear both;
+    animation-timeline: view();
+    animation-range: entry 4% cover 26%;
+  }
+}
+
 @keyframes wiggle {
   0%,
   100% {
@@ -436,7 +467,8 @@ button:disabled,
   .anim-arch-in,
   .anim-pop-in,
   .anim-fade-up,
-  .anim-breathe {
+  .anim-breathe,
+  .anim-reveal {
     animation: none;
   }
 
