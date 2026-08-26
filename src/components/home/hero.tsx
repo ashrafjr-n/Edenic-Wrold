@@ -4,7 +4,10 @@ import { Button3D } from "@/components/ui/button-3d";
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pb-16 lg:-mt-24 lg:pb-28 lg:pt-24">
+    /* From `lg` the section is pulled up by roughly the header's height and
+       given it back as padding, so the scene runs behind the transparent
+       header instead of starting underneath it. */
+    <section className="relative isolate overflow-hidden pb-16 lg:-mt-20 lg:pb-28 lg:pt-20">
       {/* Stacked above the copy on a phone; from `lg` it takes over the right
           side of the section and the copy sits in the space it leaves.
 
