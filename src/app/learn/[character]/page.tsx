@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,10 +32,13 @@ export default async function CharacterLearnPage({
   }));
 
   return (
-    <main className="relative flex flex-1 flex-col bg-gradient-to-b from-[var(--color-pinki-soft)] via-white to-[var(--background)] px-4 pb-20 pt-6 sm:px-8 sm:pb-28">
+    <main
+      className="hub-stage relative flex flex-1 flex-col px-4 pb-20 pt-6 sm:px-8 sm:pb-28"
+      style={{ "--world": character.accent } as CSSProperties}
+    >
       <Link
         href="/"
-        className="anim-drop-in relative z-10 inline-flex w-fit items-center gap-1.5 self-start rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-[var(--color-ink)]/70 shadow-sm backdrop-blur transition hover:bg-white hover:text-[var(--color-ink)]"
+        className="anim-drop-in relative z-10 inline-flex w-fit items-center gap-1.5 self-start rounded-full bg-white/75 px-4 py-2 text-sm font-semibold text-[var(--color-ink)]/70 shadow-[inset_0_0_0_1px_rgba(59,36,101,0.07),0_2px_8px_-3px_rgba(59,36,101,0.16)] backdrop-blur transition hover:bg-white hover:text-[var(--color-ink)] hover:shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--color-gold)_55%,transparent),0_4px_12px_-4px_rgba(59,36,101,0.2)]"
         style={{ animationDelay: "0.1s" }}
       >
         <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
@@ -48,7 +52,7 @@ export default async function CharacterLearnPage({
           width={475}
           height={539}
           priority
-          className="anim-pop-in h-32 w-auto object-contain drop-shadow-[0_10px_14px_rgba(61,36,114,0.14)] sm:h-40"
+          className="anim-pop-in h-32 w-auto object-contain drop-shadow-[0_10px_14px_rgba(59,36,101,0.14)] sm:h-40"
           style={{ animationDelay: "0.2s" }}
         />
         <h1
