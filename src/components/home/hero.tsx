@@ -13,7 +13,7 @@ export function Hero() {
           `.hero-clip` cuts it to a wavy silhouette — a real edge, not a fade. */}
       <div className="hero-clip relative h-[240px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-[64%]">
         <Image
-          src="/hero.jpg"
+          src="/hero.png"
           alt="The friends of Edenic World walking through a candy-coloured land"
           fill
           preload
