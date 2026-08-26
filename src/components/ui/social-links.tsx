@@ -5,7 +5,10 @@ type BrandVars = CSSProperties & { "--social-brand"?: string };
 
 /** Round white chips, one per platform. At rest they're the same white-card
     material as everything else on the ground; the platform's own color only
-    appears on hover, so a row of them never competes with the characters. */
+    appears on hover, so a row of them never competes with the characters.
+
+    The chips don't move on hover — the color fill is the whole cue, matching
+    every other button on the site. */
 export function SocialLinks({ className = "" }: { className?: string }) {
   return (
     <ul className={`flex flex-wrap items-center gap-3 ${className}`}>
@@ -17,7 +20,7 @@ export function SocialLinks({ className = "" }: { className?: string }) {
             rel="noreferrer noopener"
             aria-label={label}
             title={label}
-            className="card card-pill group relative flex h-12 w-12 items-center justify-center overflow-hidden text-[var(--color-ink)] transition-[color,translate] duration-200 hover:-translate-y-0.5 hover:text-white"
+            className="card card-pill group relative flex h-12 w-12 items-center justify-center overflow-hidden text-[var(--color-ink)] transition-colors duration-200 hover:text-white"
             style={{ "--social-brand": brand } as BrandVars}
           >
             <span
