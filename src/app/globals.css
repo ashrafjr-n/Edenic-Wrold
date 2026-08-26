@@ -11,7 +11,21 @@
    on plain white.
    --------------------------------------------------------------- */
 :root {
-  --background: #fffaf6;
+  /* ---------------------------------------------------------------
+     The neumorphic ground.
+
+     Deliberately NOT white. Neumorphism works by lighting a surface from
+     one corner and shading the other, and both of those shadows have to be
+     visible — on white the highlight disappears and only half the effect
+     survives. A soft periwinkle also sits at the midpoint of the three
+     character worlds (pink / cream / blue) and matches the violet ink.
+
+     `--surface-high` and `--surface-low` are that single light source. Use
+     them for every raised or inset surface; never hand-pick a grey.
+     --------------------------------------------------------------- */
+  --background: #e8e3f5;
+  --surface-high: #fbf9ff;
+  --surface-low: #bdb2d9;
   --foreground: #3b2465;
 
   /* Pinki — warm bubblegum, not a cold pink. */
