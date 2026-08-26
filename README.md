@@ -34,9 +34,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Design system
 
-The characters are the only 3D on the site. Every piece of UI around them —
-buttons, cards, backdrops — is deliberately flat and soft, so nothing competes
-with the renders for attention.
+The characters are the only 3D on the site. Every piece of UI around them is flat,
+so nothing competes with the renders for attention — the one exception is a solid
+chunky edge on buttons and cards that presses down when tapped, because a physical
+press is the clearest affordance for this audience.
+
+On the home page each mascot owns a full-height panel — their world — rather than
+sitting on a card, and the character overflows above its panel's top edge.
 
 - The palette is sampled from the character artwork itself. Each mascot owns a
   world: Pinki → pink, Nova → lavender, Bloo → blue.
