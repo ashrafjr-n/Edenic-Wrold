@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
+import Link from "next/link";
 
 export interface ButtonTone {
   /** Solid fill, and the base the playful gradient is mixed from. */
@@ -21,12 +22,15 @@ export type ButtonVariant = "playful" | "calm";
 interface Button3DProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone: ButtonTone;
   variant?: ButtonVariant;
+  /** Renders as a `Link` styled identically to the button, for navigation. */
+  href?: string;
   children: ReactNode;
 }
 
 export function Button3D({
   tone,
   variant = "playful",
+  href,
   className = "",
   children,
   style,
@@ -42,6 +46,19 @@ export function Button3D({
   const classes = ["btn3d", variant === "calm" && "btn3d--calm", className]
     .filter(Boolean)
     .join(" ");
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={classes}
+        style={toneVars}
+        aria-label={props["aria-label"]}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <button
