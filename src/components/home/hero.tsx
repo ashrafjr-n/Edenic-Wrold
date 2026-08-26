@@ -55,13 +55,20 @@ export function Hero() {
               <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
             </Button3D>
           </div>
+        </div>
+      </div>
 
-          {/* Hand-drawn cue pointing at `FriendsSection` just below. The one
-              deliberately sketchy element on the site — everywhere else is clean
-              claymorphism, but a scroll nudge reads as an annotation, not chrome,
-              so it earns the exception. */}
+      {/* Hand-drawn cue pointing at `FriendsSection` just below, pinned to the
+          very bottom of the hero rather than living in the centered copy block
+          above — the wavy `.hero-clip` mask already cuts the image away from
+          this bottom-left zone, so it never collides with the art. The one
+          deliberately sketchy element on the site — everywhere else is clean
+          claymorphism, but a scroll nudge reads as an annotation, not chrome,
+          so it earns the exception. */}
+      <div className="absolute inset-x-0 bottom-4 sm:bottom-6 lg:bottom-10">
+        <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8 lg:justify-start">
           <div
-            className="anim-fade-up mt-6 flex flex-col items-start pl-4 sm:mt-8 sm:pl-10 lg:pl-16"
+            className="anim-fade-up flex flex-col items-start pl-6 sm:pl-24 lg:pl-40"
             style={{ animationDelay: "0.5s" }}
           >
             <span className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl">
