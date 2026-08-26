@@ -34,18 +34,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Design system
 
-The characters are the only 3D on the site. Every piece of UI around them is flat —
-solid fills, generous radii, one soft shadow — so nothing competes with the renders
-for attention.
+Claymorphism with light purple as the hero: soft rounded shapes, generous radii,
+wide low-contrast shadows and pale pastel fills.
 
+- The page ground is light lavender, never white. White cards sit on top of it —
+  that contrast is what gives them their lift.
+- Purple carries every primary action; character colors are reserved for identity.
+- Everything is built from three blocks: `.card` (white panel), `.tile` (pale pastel
+  square behind an icon or character) and `.clay` (a colored, softly inflated shape).
 - The palette is sampled from the character artwork itself. Each mascot owns a
-  world: Pinki → pink, Nova → lavender, Bloo → blue.
+  color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Nova's body is cream rather than white, so she is never placed on a plain white
-  surface — her stage is always tinted.
-- Gold, taken from the horns all three characters share, is the signature accent.
-  It marks whatever is unlocked and available, and nothing else.
-- The background is a soft pastel gradient and nothing else — no decorative shapes,
-  textures or photographic art.
+  surface — her tile is always tinted.
+- No decorative shapes, textures or photographic art in the background.
 
 Tokens live in `src/app/globals.css`.
 
