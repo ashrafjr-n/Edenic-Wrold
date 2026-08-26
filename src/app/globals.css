@@ -542,10 +542,10 @@ button:disabled,
    at both ends of the range. --------------------------------------------------------------- */
 @keyframes hero-parallax {
   from {
-    transform: translate3d(0, -14px, 0) scale(1.04);
+    transform: translate3d(0, -22px, 0) scale(1.1);
   }
   to {
-    transform: translate3d(0, 14px, 0) scale(1.04);
+    transform: translate3d(0, 22px, 0) scale(1.1);
   }
 }
 
