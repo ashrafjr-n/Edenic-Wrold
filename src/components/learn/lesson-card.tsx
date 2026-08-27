@@ -5,7 +5,11 @@ import { ChevronRight, Lock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
-type TileVars = CSSProperties & { "--tile-tint"?: string };
+type ThemeVars = CSSProperties & {
+  "--lesson-hue"?: string;
+  "--lesson-hue-dark"?: string;
+  "--lesson-hue-soft"?: string;
+};
 
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
@@ -45,17 +49,24 @@ export function LessonCard({
   rail,
   index,
 }: LessonCardProps) {
-  const { id, name, description, image, totalItems, locked } = lesson;
-  const { accent, accentDark } = character;
+  const { id, name, description, image, theme, totalItems, locked } = lesson;
+  const { accent } = character;
 
   const progressPercent = Math.round((CURRENT_ITEMS / totalItems) * 100);
   const isFirst = index === 0;
 
-  /* The rail's lit color and the step badge's fill follow the same rule:
-     reachable is the character's accent, everything ahead is the neutral
-     locked tone. */
+  /* The rail's lit color stays the CHARACTER's accent, not the lesson's:
+     below `sm` the lesson hues are switched off (see `.lesson-theme`), and
+     the rail is phone-only anyway. */
   const litTrack = accent;
   const dimTrack = "var(--color-locked)";
+
+  /* Which piece of the adventure trail leaves this card. One column
+     (tablet) always runs straight down; two columns (desktop) run across
+     the gap from the left-hand card and hook down-and-back from the
+     right-hand one. Nothing leaves the last card. */
+  const hasNext = !rail.isLast;
+  const isLeftColumn = index % 2 === 0;
 
   const card = (
     <div
@@ -64,22 +75,26 @@ export function LessonCard({
       }`}
     >
       {/* The icon owns the card's entire left edge, full height, flush — not a
-          tile floating with margin around it. Its background is plain white
-          with a soft shadow (`.tile-clay`), the same white as the card: pure
-          claymorphism, separation from light alone, not from color. */}
-      <div className="relative flex w-20 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-32 sm:p-4">
+          tile floating with margin around it. White on a phone (separation
+          from light alone); from `sm` up it takes the lesson's own pale tint,
+          which is what makes the four subjects read apart at a glance. */}
+      <div className="relative flex w-20 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-36 sm:p-4">
         <div
-          className="tile tile-clay relative flex h-full w-full items-center justify-center"
-          style={{ "--tile-tint": "#ffffff" } as TileVars}
+          className="tile tile-grain tile-clay relative flex h-full w-full items-center justify-center"
+          style={{ "--tile-tint": "var(--lesson-tile)" } as CSSProperties}
         >
           <Image
             src={image}
             alt={name}
             width={140}
             height={140}
-            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-16 sm:w-16 ${
+            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-20 sm:w-20 ${
               locked
-                ? "opacity-60 grayscale-[0.55]"
+                ? /* Desaturated on the phone, where locked reads as grey all
+                     through. From `sm` up the card fades instead and the icon
+                     keeps its color — the point there is to show the world
+                     ahead, not to hide it. */
+                  "opacity-60 grayscale-[0.55] sm:opacity-100 sm:grayscale-0"
                 : "group-hover/lesson:scale-110"
             }`}
           />
@@ -88,11 +103,8 @@ export function LessonCard({
               stack and the rail outside the card carries the sequence instead,
               so a number here would say the same thing twice. */}
           <span
-            className="absolute -left-1.5 -top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
-            style={{
-              backgroundColor: locked ? "var(--color-locked)" : accent,
-              color: locked ? "var(--color-locked-text)" : "#fff",
-            }}
+            className="absolute -left-1.5 -top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
+            style={{ backgroundColor: "var(--lesson-accent)" }}
           >
             {index + 1}
           </span>
@@ -107,7 +119,7 @@ export function LessonCard({
             {featured && (
               <span
                 className="mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs"
-                style={{ backgroundColor: accent }}
+                style={{ backgroundColor: "var(--lesson-accent)" }}
               >
                 Next up
               </span>
@@ -115,9 +127,7 @@ export function LessonCard({
 
             <h3
               className="text-base font-bold leading-snug sm:text-xl"
-              style={{
-                color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
-              }}
+              style={{ color: "var(--lesson-title)" }}
             >
               {name}
             </h3>
@@ -129,13 +139,12 @@ export function LessonCard({
           {/* Decorative, not a second control — the whole card is already the
               tappable target. It is also the card's only lock. */}
           <span
-            className="btn3d h-10 w-10 shrink-0 sm:h-12 sm:w-12"
+            className="btn3d lesson-chip h-10 w-10 shrink-0 sm:h-12 sm:w-12"
             style={
               {
-                "--btn-face": locked ? "var(--color-locked)" : accent,
-                "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
-                "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
-                boxShadow: locked ? "none" : undefined,
+                "--btn-face": "var(--lesson-accent)",
+                "--btn-edge": "var(--lesson-accent-dark)",
+                "--btn-text": "var(--lesson-chip-text)",
               } as CSSProperties
             }
             aria-hidden
@@ -151,7 +160,10 @@ export function LessonCard({
         {/* A progress bar on a lesson you cannot open yet is noise — a locked
             card names what opens it instead. */}
         {locked ? (
-          <p className="text-xs font-semibold text-[var(--color-locked-text)] sm:text-sm">
+          <p
+            className="text-xs font-semibold sm:text-sm"
+            style={{ color: "var(--lesson-muted)" }}
+          >
             {previousLessonName
               ? `Unlocks after ${previousLessonName}`
               : "Unlocks later"}
@@ -161,7 +173,10 @@ export function LessonCard({
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-2.5">
               <div
                 className="h-full rounded-full"
-                style={{ width: `${progressPercent}%`, backgroundColor: accent }}
+                style={{
+                  width: `${progressPercent}%`,
+                  backgroundColor: "var(--lesson-accent)",
+                }}
                 aria-hidden
               />
             </div>
@@ -209,15 +224,49 @@ export function LessonCard({
     </div>
   );
 
-  const delayStyle = { animationDelay: `${CARD_DELAY + index * CARD_STAGGER}s` };
+  /* The white clay road on to the next lesson. Sits behind the cards
+     (`.trail` is `z-index: -1`, inside the wrapper's own stacking context),
+     so the tuck under each card edge closes the join without a seam.
+     Geometry lives entirely in `globals.css`. */
+  const trail = hasNext && (
+    <>
+      {/* One column: tablet only — below `sm` the rail above does this job. */}
+      <div className="trail trail-down hidden sm:block lg:hidden" aria-hidden>
+        <span />
+      </div>
+
+      {isLeftColumn ? (
+        <div className="trail trail-across hidden lg:block" aria-hidden>
+          <span />
+        </div>
+      ) : (
+        <div className="trail trail-hook hidden lg:block" aria-hidden>
+          <span />
+          <span />
+          <span />
+        </div>
+      )}
+    </>
+  );
+
+  /* `isolate` keeps the trail's negative z-index inside this wrapper: without
+     a stacking context here it would slide behind the page background and
+     disappear. */
+  const wrapperClass = `lesson-theme anim-fade-up relative isolate ${
+    locked ? "is-locked sm:opacity-[0.72]" : ""
+  }`;
+
+  const wrapperStyle = {
+    animationDelay: `${CARD_DELAY + index * CARD_STAGGER}s`,
+    "--lesson-hue": theme.accent,
+    "--lesson-hue-dark": theme.accentDark,
+    "--lesson-hue-soft": theme.soft,
+  } as ThemeVars;
 
   if (locked) {
     return (
-      <div
-        className="anim-fade-up relative"
-        style={delayStyle}
-        aria-disabled="true"
-      >
+      <div className={wrapperClass} style={wrapperStyle} aria-disabled="true">
+        {trail}
         {railColumn}
         {card}
       </div>
@@ -227,10 +276,11 @@ export function LessonCard({
   return (
     <Link
       href={`/learn/${character.id}/${id}`}
-      className="anim-fade-up relative block"
-      style={delayStyle}
+      className={`${wrapperClass} block`}
+      style={wrapperStyle}
       aria-label={`Start ${name}`}
     >
+      {trail}
       {railColumn}
       {card}
     </Link>

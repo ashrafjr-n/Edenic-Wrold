@@ -48,19 +48,13 @@ export default async function CharacterLearnPage({
   }));
 
   return (
-    /* The character's own color, grained the same way `.clay` is, now
-       covers the whole page — not just a boxed banner sitting on the site's
-       pale ground. Every friend's hub reads as its own place. */
+    /* The character's own color, grained the same way `.clay` is, covers the
+       whole page — not a boxed banner sitting on the site's pale ground.
+       From `sm` up `.hub-ground` bends it through lavender into a near-white
+       tint of itself, because a flat slab that size reads as dead space. */
     <main
-      className="relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28"
-      style={
-        {
-          backgroundColor: character.accent,
-          backgroundImage: "var(--noise)",
-          backgroundSize: "180px 180px",
-          backgroundBlendMode: "overlay",
-        } as CSSProperties
-      }
+      className="hub-ground relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28"
+      style={{ "--hub-accent": character.accent } as CSSProperties}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back and the (presentation-only, no achievements feature yet)
@@ -179,8 +173,21 @@ export default async function CharacterLearnPage({
       <div className="w-full pt-8 sm:my-auto sm:pt-10">
         {/* The extra left padding below `sm` is the lane the phone progress
             rail lives in; from `sm` up the rail is gone and the padding goes
-            back to matching the rest of the page. */}
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 lg:grid-cols-2">
+            back to matching the rest of the page.
+
+            `.lesson-grid` owns the gap (no `gap-*` utility here): the trail
+            pieces measure themselves against it, so the two have to come
+            from one place. `--character-accent*` is the phone fallback the
+            lesson hues switch back to below `sm`. */}
+        <div
+          className="lesson-grid mx-auto grid w-full max-w-7xl grid-cols-1 px-6 pl-12 sm:px-8 lg:grid-cols-2"
+          style={
+            {
+              "--character-accent": character.accent,
+              "--character-accent-dark": character.accentDark,
+            } as CSSProperties
+          }
+        >
           {cast.map(({ lesson, index, featured, previousName, rail }) => (
             <LessonCard
               key={lesson.id}
