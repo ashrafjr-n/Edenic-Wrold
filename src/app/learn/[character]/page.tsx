@@ -48,11 +48,11 @@ export default async function CharacterLearnPage({
         } as CSSProperties
       }
     >
-      <div className="mx-auto w-full max-w-4xl px-4 sm:px-8">
+      <div className="mx-auto w-full max-w-4xl px-6 sm:px-10">
         {/* Back is chrome: a plain white chip, the same material as a card. */}
         <Link
           href="/learn"
-          className="card anim-drop-in inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)] transition hover:text-[var(--color-ink)]"
+          className="card anim-drop-in inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)] transition-colors duration-300 hover:text-[var(--color-ink)]"
           style={{ animationDelay: "0.1s" }}
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
@@ -96,7 +96,7 @@ export default async function CharacterLearnPage({
         </div>
       </div>
 
-      <div className="mx-auto mt-8 grid w-full max-w-4xl grid-cols-1 gap-4 px-4 sm:mt-10 sm:grid-cols-2 sm:px-8">
+      <div className="mx-auto mt-8 grid w-full max-w-4xl grid-cols-1 gap-5 px-6 sm:mt-10 sm:gap-6 sm:px-10">
         {cast.map(({ lesson, index, previousName }) => (
           <LessonCard
             key={lesson.id}
