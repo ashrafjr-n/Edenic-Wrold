@@ -34,3 +34,4 @@
 2026-08-22 rename lesson player layout
 2026-08-24 refactor progress store
 2026-08-26 adjust spell step
+2026-08-27 fix header alignment
