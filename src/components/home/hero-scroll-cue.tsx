@@ -1,4 +1,5 @@
 /** Hand-drawn "Meet Edenic Friends" cue pointing down at `FriendsSection`.
+    Static, by request — it used to idle-bob (`.anim-nudge-down`); that's gone.
     A sibling between the two sections, not a child of either — `Hero` has
     `overflow-hidden` (it has to, to contain the parallax image), which capped
     how far down this could sit while it lived inside that box. As its own
@@ -25,7 +26,7 @@ export function HeroScrollCue() {
           <svg
             aria-hidden
             viewBox="0 0 90 150"
-            className="anim-nudge-down -mt-1 ml-4 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20"
+            className="mt-2 ml-8 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20"
             fill="none"
           >
             <path

@@ -504,24 +504,6 @@ button:disabled,
   will-change: transform;
 }
 
-/* Idle bob for the hand-drawn "scroll here" cue — same restrained idea as
-   `.anim-breathe`, just vertical and a little quicker, so it reads as a nudge
-   toward the section below rather than a float. */
-@keyframes nudge-down {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, 8px, 0);
-  }
-}
-
-.anim-nudge-down {
-  animation: nudge-down 1.8s ease-in-out infinite;
-  will-change: transform;
-}
-
 /* ---------------------------------------------------------------
    Scroll reveal for the sections below the fold.
 
@@ -606,8 +588,7 @@ button:disabled,
   .anim-fade-up,
   .anim-breathe,
   .anim-reveal,
-  .anim-hero-parallax,
-  .anim-nudge-down {
+  .anim-hero-parallax {
     animation: none;
   }
 
