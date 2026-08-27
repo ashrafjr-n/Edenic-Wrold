@@ -71,8 +71,7 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   separate from the mascot colors — a subject means the same thing on every hub.
 - The lesson hub is the one page that is not a flat single-color ground: it takes
   the character's own color edge to edge, bending through lavender into a pale
-  tint of itself from tablet width up. Its lessons are joined by a white clay
-  trail, so the hub reads as a route rather than a list.
+  tint of itself from tablet width up.
 - Nova's body is cream rather than white, so she is never placed on a plain white
   surface — her tile is always tinted.
 - Rendered art appears in two places and never as a plain rectangle: the home hero
