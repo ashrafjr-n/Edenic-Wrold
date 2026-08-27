@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trophy } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
+import { Button3D } from "@/components/ui/button-3d";
 import { LessonCard } from "@/components/learn/lesson-card";
 
 export function generateStaticParams() {
@@ -49,51 +49,70 @@ export default async function CharacterLearnPage({
       }
     >
       <div className="mx-auto w-full max-w-4xl px-6 sm:px-10">
-        {/* Back is chrome: a plain white chip, the same material as a card. */}
-        <Link
-          href="/learn"
-          className="card anim-drop-in inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-ink-soft)] transition-colors duration-300 hover:text-[var(--color-ink)]"
+        {/* Back and the (presentation-only, no achievements feature yet)
+            trophy sit at the same level as the header's own icon chrome —
+            same size and shape, just white instead of accent pink, since
+            they're chrome on top of an already-saturated page. */}
+        <div
+          className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
-          <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
-          Back
-        </Link>
+          <Button3D
+            variant="calm"
+            tone={{ face: "var(--surface)" }}
+            href="/learn"
+            aria-label="Back to Learn"
+            className="h-11 w-11 shrink-0"
+          >
+            <ArrowLeft className="h-5 w-5 text-[var(--color-ink-soft)]" strokeWidth={2.5} />
+          </Button3D>
+
+          <Button3D
+            variant="calm"
+            tone={{ face: "var(--surface)" }}
+            aria-label="Achievements"
+            className="h-11 w-11 shrink-0"
+          >
+            <Trophy
+              className="h-5 w-5"
+              style={{ color: "var(--color-gold)" }}
+              strokeWidth={2.25}
+            />
+          </Button3D>
+        </div>
 
         <div
-          className="anim-fade-up relative mt-6 flex items-center justify-between gap-4 sm:mt-8"
+          className="anim-fade-up mt-5 sm:mt-6"
           style={{ animationDelay: "0.2s" }}
         >
-          <div className="min-w-0">
-            <h1 className="text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl">
-              Learn With {character.name}
-            </h1>
-            <p className="mt-2 max-w-sm text-sm text-white/85 sm:text-base">
-              Pick a lesson below to start your adventure!
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl">
+            Learn With {character.name}
+          </h1>
+          <p className="mt-2 max-w-sm text-sm text-white/85 sm:text-base">
+            Pick a lesson below to start your adventure!
+          </p>
+        </div>
 
+        {/* The hero scene replaces the old portrait — it already puts
+            {character.name} front and center, so a separate floating
+            portrait next to the heading would just be redundant now. Only
+            Pinki has one produced; the other two skip this card entirely
+            until their own scene exists. */}
+        {character.heroImage && (
           <div
-            className="anim-pop-in relative shrink-0"
+            className="card anim-pop-in relative mt-6 aspect-[16/10] w-full overflow-hidden sm:mt-8"
             style={{ animationDelay: "0.3s" }}
           >
-            {/* A soft, faintly transparent white disc standing behind the
-                portrait — the one piece of "frame" left on this page, since
-                a saturated render still needs somewhere to stand without a
-                card underneath it. */}
-            <div
-              className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/25 sm:h-40 sm:w-40"
-              aria-hidden
-            />
             <Image
-              src={character.image}
-              alt={character.name}
-              width={475}
-              height={539}
+              src={character.heroImage}
+              alt={`${character.name}'s learning corner`}
+              fill
+              sizes="(min-width: 1024px) 816px, 100vw"
               priority
-              className="relative h-32 w-auto object-contain drop-shadow-[0_16px_20px_rgba(52,38,120,0.35)] sm:h-48"
+              className="object-cover"
             />
           </div>
-        </div>
+        )}
       </div>
 
       <div className="mx-auto mt-8 grid w-full max-w-4xl grid-cols-1 gap-5 px-6 sm:mt-10 sm:gap-6 sm:px-10">
