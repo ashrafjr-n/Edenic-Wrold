@@ -65,6 +65,14 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   override them — use the `.card-pill` / `.tile-round` modifiers instead.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
+- Lesson subjects own a second, parallel palette (`--color-subject-*`): numbers
+  pink, letters violet, colors blue, shapes amber. It is used on the lesson hub
+  from tablet width up, so the four lessons read apart at a glance, and it is kept
+  separate from the mascot colors — a subject means the same thing on every hub.
+- The lesson hub is the one page that is not a flat single-color ground: it takes
+  the character's own color edge to edge, bending through lavender into a pale
+  tint of itself from tablet width up. Its lessons are joined by a white clay
+  trail, so the hub reads as a route rather than a list.
 - Nova's body is cream rather than white, so she is never placed on a plain white
   surface — her tile is always tinted.
 - Rendered art appears in two places and never as a plain rectangle: the home hero
