@@ -52,7 +52,7 @@ export function NumberVideo({
     /* Portrait: the source is a YouTube Short, so a 16/9 frame would letterbox
        it down to a sliver. Capped by height as well, or it runs past the fold
        on a phone. */
-    <div className="card relative mx-auto aspect-[9/16] w-full max-w-[15rem] max-h-[60vh] overflow-hidden">
+    <div className="card relative aspect-[9/16] w-full max-w-[11rem] shrink-0 overflow-hidden sm:max-w-[13rem]">
       {playing ? (
         <iframe
           src={embedUrl(videoId)}

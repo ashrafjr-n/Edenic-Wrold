@@ -108,7 +108,7 @@ export function TraceBoard({
           strokeLinejoin="round"
           /* Round caps on a zero-length dash: the guide reads as a row of
              dots, not as a chopped-up line. */
-          strokeDasharray="0 13"
+          strokeDasharray="0 11.5"
         />
       ))}
 
