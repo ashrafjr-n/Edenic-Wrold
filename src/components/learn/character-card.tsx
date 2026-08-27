@@ -29,7 +29,7 @@ export function CharacterCard({
   previousName,
   index,
 }: CharacterCardProps) {
-  const { name, image, accent, locked } = character;
+  const { name, image, accent, accentDark, locked } = character;
 
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {
@@ -40,32 +40,36 @@ export function CharacterCard({
     button: `${friendDelay + BUTTON_OFFSET}s`,
   };
 
-  /* The tile is the only place a character's own color appears on this page —
-     kept pale so the render on top of it stays the saturated thing. Locked
-     tiles drop most of the way to neutral but keep a trace of the hue, so the
-     card still reads as belonging to that friend. */
+  /* The pale circle is the only place a character's own color appears here —
+     kept faint so the render standing on it stays the saturated thing.
+     Locked circles drop most of the way to neutral but keep a trace of the
+     hue, so it still reads as belonging to that friend. */
   const tileTint = locked
     ? `color-mix(in srgb, ${accent} 10%, var(--color-locked))`
     : `color-mix(in srgb, ${accent} 20%, #ffffff)`;
 
   return (
     <div
-      className={`card anim-fade-up group/card flex w-full max-w-[300px] flex-col p-4 ${
-        locked ? "" : "card-lift"
-      }`}
+      className="anim-fade-up group/card flex w-full max-w-[300px] flex-col items-center"
       style={{ animationDelay: delay.card }}
     >
-      <div
-        className="tile relative flex h-56 items-end justify-center sm:h-64"
-        style={{ "--tile-tint": tileTint } as TileVars}
-      >
+      {/* No card, no square frame around the character — just a soft round
+          tint standing in for ground, the same treatment as the home page's
+          friend pods, sized up since this page is the main cast portrait. */}
+      <div className="relative flex h-64 items-end justify-center sm:h-72">
+        <div
+          className="tile tile-round absolute bottom-0 h-44 w-44 sm:h-52 sm:w-52"
+          style={{ "--tile-tint": tileTint } as TileVars}
+          aria-hidden
+        />
+
         <div
           className="anim-pop-in relative"
           style={{ animationDelay: delay.friend }}
         >
           {/* Contact shadow: a wide ambient pool plus a tight dark core right
               under the feet. Sits outside the floating wrapper so it stays
-              planted on the tile while the character breathes. */}
+              planted while the character breathes. */}
           <div
             className="absolute bottom-1 left-1/2 z-0 h-4 w-32 -translate-x-1/2 rounded-[50%] bg-[rgb(var(--shadow-hue))]/15 blur-lg sm:w-40"
             aria-hidden
@@ -84,7 +88,7 @@ export function CharacterCard({
               alt={name}
               width={475}
               height={539}
-              className={`h-52 w-auto object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.2)] transition-transform duration-300 sm:h-60 ${
+              className={`h-60 w-auto object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.2)] transition-transform duration-300 sm:h-72 ${
                 locked
                   ? "opacity-75 grayscale-[0.55]"
                   : "group-hover/card:scale-105"
@@ -129,12 +133,12 @@ export function CharacterCard({
                 edge: "var(--color-locked-dark)",
                 text: "var(--color-locked-text)",
               }
-            : { face: "var(--brand)", edge: "var(--brand-dark)" }
+            : { face: accent, edge: accentDark }
         }
         href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
-        className="anim-fade-up mt-3 w-full px-5 py-3 text-sm sm:text-base"
+        className="anim-fade-up mt-3 w-full max-w-[220px] px-5 py-3 text-sm sm:text-base"
         style={{ animationDelay: delay.button }}
       >
         {locked ? (
