@@ -308,14 +308,11 @@ button:disabled,
     filter 0.2s ease;
 }
 
-/* Hover: a subtle lighten of the face color, and the outer drop shadow drops
-   away entirely — only the inset clay highlight/shade stay, so the button
-   still reads as material but no longer casts a shadow onto the page. */
+/* Hover: only the face color darkens, smoothly, via the `background-color`
+   transition on the base rule above. Nothing else — no `box-shadow` declared
+   here on purpose, so it stays exactly the rest-state shadow from `.btn3d`. */
 .btn3d:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--btn-face) 85%, white 15%);
-  box-shadow:
-    inset 0 6px 10px -4px rgb(255 255 255 / 55%),
-    inset 0 -7px 11px -4px color-mix(in srgb, var(--btn-edge) 60%, transparent);
+  background-color: color-mix(in srgb, var(--btn-face) 85%, black 15%);
 }
 
 /* Pressed: the inner shade flips to the top so the clay looks squashed in. */
@@ -364,15 +361,16 @@ button:disabled,
     inset 0 6px 10px -4px rgb(255 255 255 / 45%),
     inset 0 -7px 11px -4px color-mix(in srgb, var(--accent-dark) 60%, transparent),
     0 14px 26px -10px color-mix(in srgb, var(--accent-dark) 55%, transparent);
+  /* `.btn3d--calm` (which this overrides) declares no `background-color`
+     transition, so this needs its own for the hover darken below to fade
+     smoothly. */
+  transition: background-color 0.2s ease;
 }
 
-/* Same hover language as the base `.btn3d`: lighten the face, drop the outer
-   shadow, keep the inset clay highlight/shade. */
+/* Same hover language as the base `.btn3d`: only the face darkens, shadow
+   untouched. */
 .btn3d--icon-accent:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--accent) 85%, white 15%);
-  box-shadow:
-    inset 0 6px 10px -4px rgb(255 255 255 / 55%),
-    inset 0 -7px 11px -4px color-mix(in srgb, var(--accent-dark) 60%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 85%, black 15%);
 }
 
 .btn3d:focus-visible {
