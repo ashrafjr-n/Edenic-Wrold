@@ -33,25 +33,23 @@ export function LessonCard({
   const { id, name, description, image, totalItems, locked } = lesson;
   const { accent, accentDark } = character;
 
-  /* Same rule as the rest of the app: the pale tile is where a character's
-     color lives, and locked drops most of the way to neutral without losing
-     the hue entirely. */
-  const tileTint = locked
-    ? `color-mix(in srgb, ${accent} 10%, var(--color-locked))`
-    : `color-mix(in srgb, ${accent} 20%, #ffffff)`;
-
   const progressPercent = Math.round((CURRENT_ITEMS / totalItems) * 100);
 
   const card = (
     <div
-      className={`card card-grain group/lesson flex flex-col gap-4 p-4 sm:p-5 ${
+      className={`card card-grain group/lesson flex overflow-hidden ${
         locked ? "" : "card-lift"
       }`}
     >
-      <div className="flex items-center gap-4">
+      {/* The icon owns the card's entire left edge, full height, flush —
+          not a tile floating with margin around it. Its own background is
+          plain white with a soft shadow (`.tile-clay`), the same white as
+          the card itself: pure claymorphism, separation from light alone,
+          not a color difference. */}
+      <div className="relative flex w-24 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-28 sm:p-4">
         <div
-          className="tile relative flex h-16 w-16 shrink-0 items-center justify-center sm:h-20 sm:w-20"
-          style={{ "--tile-tint": tileTint } as TileVars}
+          className="tile tile-clay relative flex h-full w-full items-center justify-center"
+          style={{ "--tile-tint": "#ffffff" } as TileVars}
         >
           <Image
             src={image}
@@ -84,58 +82,64 @@ export function LessonCard({
             </span>
           )}
         </div>
-
-        <div className="min-w-0 flex-1">
-          <h3
-            className="text-base font-bold leading-snug sm:text-lg"
-            style={{ color: locked ? "var(--color-locked-text)" : "var(--color-ink)" }}
-          >
-            {name}
-          </h3>
-          <p className="mt-0.5 truncate text-xs text-[var(--color-ink-soft)] sm:text-sm">
-            {description}
-          </p>
-        </div>
-
-        {/* A decorative circular indicator, not a second control — the whole
-            card is already the tappable/clickable target. Locked shows the
-            lock instead of a chevron, muted and inert. */}
-        <span
-          className="btn3d h-11 w-11 shrink-0"
-          style={
-            {
-              "--btn-face": locked ? "var(--color-locked)" : accent,
-              "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
-              "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
-              boxShadow: locked ? "none" : undefined,
-            } as CSSProperties
-          }
-          aria-hidden
-        >
-          {locked ? (
-            <Lock className="h-4 w-4" strokeWidth={2.75} />
-          ) : (
-            <ChevronRight className="h-5 w-5" strokeWidth={2.75} />
-          )}
-        </span>
       </div>
 
-      {/* Progress: a placeholder until the real progress store exists (see
-          the note above) — always 0 of the lesson's own item count. */}
-      <div className="flex items-center gap-3">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)]">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${progressPercent}%`,
-              backgroundColor: locked ? "var(--color-locked-dark)" : accent,
-            }}
+      {/* Everything else — name, description, the circular indicator, and
+          the progress row — lives beside the icon, not underneath it. */}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h3
+              className="text-base font-bold leading-snug sm:text-lg"
+              style={{ color: locked ? "var(--color-locked-text)" : "var(--color-ink)" }}
+            >
+              {name}
+            </h3>
+            <p className="mt-0.5 truncate text-xs text-[var(--color-ink-soft)] sm:text-sm">
+              {description}
+            </p>
+          </div>
+
+          {/* A decorative circular indicator, not a second control — the
+              whole card is already the tappable/clickable target. Locked
+              shows the lock instead of a chevron, muted and inert. */}
+          <span
+            className="btn3d h-10 w-10 shrink-0 sm:h-11 sm:w-11"
+            style={
+              {
+                "--btn-face": locked ? "var(--color-locked)" : accent,
+                "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
+                "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
+                boxShadow: locked ? "none" : undefined,
+              } as CSSProperties
+            }
             aria-hidden
-          />
+          >
+            {locked ? (
+              <Lock className="h-4 w-4" strokeWidth={2.75} />
+            ) : (
+              <ChevronRight className="h-5 w-5" strokeWidth={2.75} />
+            )}
+          </span>
         </div>
-        <span className="shrink-0 text-xs font-semibold text-[var(--color-ink-soft)]">
-          {CURRENT_ITEMS} / {totalItems}
-        </span>
+
+        {/* Progress: a placeholder until the real progress store exists (see
+            the note above) — always 0 of the lesson's own item count. */}
+        <div className="flex items-center gap-3">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)]">
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: `${progressPercent}%`,
+                backgroundColor: locked ? "var(--color-locked-dark)" : accent,
+              }}
+              aria-hidden
+            />
+          </div>
+          <span className="shrink-0 text-xs font-semibold text-[var(--color-ink-soft)]">
+            {CURRENT_ITEMS} / {totalItems}
+          </span>
+        </div>
       </div>
     </div>
   );
