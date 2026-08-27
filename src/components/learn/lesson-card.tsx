@@ -8,7 +8,6 @@ import type { Lesson } from "@/types/lesson";
 type ThemeVars = CSSProperties & {
   "--lesson-hue"?: string;
   "--lesson-hue-dark"?: string;
-  "--lesson-hue-soft"?: string;
 };
 
 const CARD_DELAY = 0.65;
@@ -61,13 +60,6 @@ export function LessonCard({
   const litTrack = accent;
   const dimTrack = "var(--color-locked)";
 
-  /* Which piece of the adventure trail leaves this card. One column
-     (tablet) always runs straight down; two columns (desktop) run across
-     the gap from the left-hand card and hook down-and-back from the
-     right-hand one. Nothing leaves the last card. */
-  const hasNext = !rail.isLast;
-  const isLeftColumn = index % 2 === 0;
-
   const card = (
     <div
       className={`card card-grain group/lesson flex h-full overflow-hidden ${
@@ -75,13 +67,15 @@ export function LessonCard({
       }`}
     >
       {/* The icon owns the card's entire left edge, full height, flush — not a
-          tile floating with margin around it. White on a phone (separation
-          from light alone); from `sm` up it takes the lesson's own pale tint,
-          which is what makes the four subjects read apart at a glance. */}
+          tile floating with margin around it. Its background is plain white
+          with a soft shadow, the same white as the card: pure claymorphism,
+          separation from light alone, not from color. A pale per-lesson tint
+          was tried here and cut — the lesson's hue lives on the badge, chip
+          and bar instead, and the icon reads better against white. */}
       <div className="relative flex w-20 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-36 sm:p-4">
         <div
-          className="tile tile-grain tile-clay relative flex h-full w-full items-center justify-center"
-          style={{ "--tile-tint": "var(--lesson-tile)" } as CSSProperties}
+          className="tile tile-clay relative flex h-full w-full items-center justify-center"
+          style={{ "--tile-tint": "#ffffff" } as CSSProperties}
         >
           <Image
             src={image}
@@ -224,38 +218,9 @@ export function LessonCard({
     </div>
   );
 
-  /* The white clay road on to the next lesson. Sits behind the cards
-     (`.trail` is `z-index: -1`, inside the wrapper's own stacking context),
-     so the tuck under each card edge closes the join without a seam.
-     Geometry lives entirely in `globals.css`. */
-  const trail = hasNext && (
-    <>
-      {/* One column: tablet only — below `sm` the rail above does this job. */}
-      <div className="trail trail-down hidden sm:block lg:hidden" aria-hidden>
-        <span />
-      </div>
-
-      {isLeftColumn ? (
-        <div className="trail trail-across hidden lg:block" aria-hidden>
-          <span />
-        </div>
-      ) : (
-        <div className="trail trail-hook hidden lg:block" aria-hidden>
-          <span />
-          <span />
-          <span />
-        </div>
-      )}
-    </>
-  );
-
-  /* `isolate` keeps the trail's negative z-index inside this wrapper: without
-     a stacking context here it would slide behind the page background and
-     disappear. */
-  const wrapperClass = `lesson-theme anim-fade-up relative isolate ${
+  const wrapperClass = `lesson-theme anim-fade-up relative ${
     /* Faded, not greyed — from `sm` up a locked lesson keeps its own hue and
-       just steps back. The fade covers its trail piece too, so the road
-       ahead dims with it. */
+       just steps back. */
     locked ? "is-locked sm:opacity-[0.78]" : ""
   }`;
 
@@ -263,13 +228,11 @@ export function LessonCard({
     animationDelay: `${CARD_DELAY + index * CARD_STAGGER}s`,
     "--lesson-hue": theme.accent,
     "--lesson-hue-dark": theme.accentDark,
-    "--lesson-hue-soft": theme.soft,
   } as ThemeVars;
 
   if (locked) {
     return (
       <div className={wrapperClass} style={wrapperStyle} aria-disabled="true">
-        {trail}
         {railColumn}
         {card}
       </div>
@@ -283,7 +246,6 @@ export function LessonCard({
       style={wrapperStyle}
       aria-label={`Start ${name}`}
     >
-      {trail}
       {railColumn}
       {card}
     </Link>

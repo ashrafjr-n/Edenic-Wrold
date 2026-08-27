@@ -11,7 +11,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       theme: {
         accent: "var(--color-subject-numbers)",
         accentDark: "var(--color-subject-numbers-dark)",
-        soft: "var(--color-subject-numbers-soft)",
       },
       totalItems: 10,
       locked: false,
@@ -24,7 +23,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       theme: {
         accent: "var(--color-subject-letters)",
         accentDark: "var(--color-subject-letters-dark)",
-        soft: "var(--color-subject-letters-soft)",
       },
       totalItems: 26,
       locked: true,
@@ -37,7 +35,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       theme: {
         accent: "var(--color-subject-colors)",
         accentDark: "var(--color-subject-colors-dark)",
-        soft: "var(--color-subject-colors-soft)",
       },
       totalItems: 8,
       locked: true,
@@ -52,7 +49,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       theme: {
         accent: "var(--color-subject-shapes)",
         accentDark: "var(--color-subject-shapes-dark)",
-        soft: "var(--color-subject-shapes-soft)",
       },
       totalItems: 8,
       locked: true,

@@ -6,8 +6,6 @@ export type LessonId = "numbers" | "letters" | "colors" | "shapes";
 export interface LessonTheme {
   accent: string;
   accentDark: string;
-  /** The pale tint the lesson's icon tile sits on. */
-  soft: string;
 }
 
 export interface Lesson {
