@@ -46,7 +46,7 @@ export function LessonCard({
           plain white with a soft shadow (`.tile-clay`), the same white as
           the card itself: pure claymorphism, separation from light alone,
           not a color difference. */}
-      <div className="relative flex w-24 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-28 sm:p-4">
+      <div className="relative flex w-24 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-36 sm:p-5">
         <div
           className="tile tile-clay relative flex h-full w-full items-center justify-center"
           style={{ "--tile-tint": "#ffffff" } as TileVars}
@@ -56,7 +56,7 @@ export function LessonCard({
             alt={name}
             width={140}
             height={140}
-            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-14 sm:w-14 ${
+            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-20 sm:w-20 ${
               locked
                 ? "opacity-60 grayscale-[0.55]"
                 : "group-hover/lesson:scale-110"
@@ -86,16 +86,16 @@ export function LessonCard({
 
       {/* Everything else — name, description, the circular indicator, and
           the progress row — lives beside the icon, not underneath it. */}
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-5 sm:p-7">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h3
-              className="text-base font-bold leading-snug sm:text-lg"
+              className="text-base font-bold leading-snug sm:text-2xl"
               style={{ color: locked ? "var(--color-locked-text)" : "var(--color-ink)" }}
             >
               {name}
             </h3>
-            <p className="mt-0.5 truncate text-xs text-[var(--color-ink-soft)] sm:text-sm">
+            <p className="mt-0.5 truncate text-xs text-[var(--color-ink-soft)] sm:mt-1.5 sm:text-base">
               {description}
             </p>
           </div>
@@ -104,7 +104,7 @@ export function LessonCard({
               whole card is already the tappable/clickable target. Locked
               shows the lock instead of a chevron, muted and inert. */}
           <span
-            className="btn3d h-10 w-10 shrink-0 sm:h-11 sm:w-11"
+            className="btn3d h-10 w-10 shrink-0 sm:h-14 sm:w-14"
             style={
               {
                 "--btn-face": locked ? "var(--color-locked)" : accent,
@@ -116,17 +116,17 @@ export function LessonCard({
             aria-hidden
           >
             {locked ? (
-              <Lock className="h-4 w-4" strokeWidth={2.75} />
+              <Lock className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.75} />
             ) : (
-              <ChevronRight className="h-5 w-5" strokeWidth={2.75} />
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
             )}
           </span>
         </div>
 
         {/* Progress: a placeholder until the real progress store exists (see
             the note above) — always 0 of the lesson's own item count. */}
-        <div className="flex items-center gap-3">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)]">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-3">
             <div
               className="h-full rounded-full"
               style={{
@@ -136,7 +136,7 @@ export function LessonCard({
               aria-hidden
             />
           </div>
-          <span className="shrink-0 text-xs font-semibold text-[var(--color-ink-soft)]">
+          <span className="shrink-0 text-xs font-semibold text-[var(--color-ink-soft)] sm:text-sm">
             {CURRENT_ITEMS} / {totalItems}
           </span>
         </div>
