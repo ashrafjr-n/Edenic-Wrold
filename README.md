@@ -14,7 +14,7 @@ All UI and content is English only.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
-| `/learn/[character]/[lesson]/[item]` | One number's loop — watch, trace, two quizzes, stars |
+| `/learn/[character]/[lesson]/[item]` | One number's journey — seven stages, guided by Pinki |
 
 `Activities` appears in the navigation and footer but has no page yet, so it is
 rendered as disabled "soon" text rather than a link.
@@ -44,6 +44,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Fredoka** via `next/font/google`
 - **lucide-react** for icons, and **@icons-pack/react-simple-icons** for platform
   brand marks (lucide v1 dropped its brand icons)
+- **zustand** with the `persist` middleware for lesson progress, saved to
+  `localStorage` — there are no accounts yet, so progress lives on the device
 - Entrance and idle animation are plain CSS keyframes — no animation library.
   Below-the-fold sections reveal with a CSS scroll-driven timeline
   (`animation-timeline: view()`), gated behind `@supports`, so no JavaScript and no
@@ -104,6 +106,7 @@ src/
     ui/               Shared primitives (Button3D, SocialLinks, Logo)
   data/               Characters, lessons, numbers, navigation, socials, home panels
   lib/                Trace scoring, quiz decoys, the shared /learn route resolver
+  store/              Lesson progress (zustand + persist)
   types/              Shared TypeScript types
 public/
   hero.jpg            Home hero scene
@@ -111,7 +114,7 @@ public/
   assets/learn.jpg    Learn panel artwork
   assets/friends/     Mascot artwork
   assets/icons/       Decorative 3D icons
-  assets/learn-with-pinki/  Pinki's lesson artwork and the clay numerals 1-9
+  assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9, props
 ```
 
 ## Current status
@@ -120,14 +123,23 @@ The home page, the friend picker, Pinki's lesson hub and the Numbers lesson are
 built, and all are still being iterated on visually. Only Pinki has lesson
 content; Nova and Bloo are locked, and Numbers is the only lesson with items.
 
-Each number is one loop: watch a short, trace the numeral, pick it out of three,
-then out of five, and earn one to three stars. Tracing is a custom SVG and
-Pointer Events board scored on how much of the numeral the child covered and how
-much of their drawing stayed on it — no drawing library. The video is a
-`youtube-nocookie.com` embed with suggestions and branding turned down, so
-nothing on the page offers a way off the site. Only number 1 has a short so far;
-the rest open straight on the tracing step until theirs are produced, and only
-number 1 is unlocked.
+Each number is one journey of seven stages, guided by Pinki throughout: meet the
+number in a short video, watch her write it, trace it, find it among others,
+give her one apple and say how many she has, pop the right balloon, and earn one
+to three stars for the whole journey. Finishing a number unlocks the next.
+
+Tracing is a custom SVG and Pointer Events board, scored on how much of the
+numeral the child covered and how much of their drawing stayed on it — no
+drawing library. The bar drops with every attempt, so a child always gets
+through, and nothing on these pages ever tells a child they are wrong. The video
+is a `youtube-nocookie.com` embed with suggestions and branding turned down, so
+nothing on the page offers a way off the site.
+
+**Number 1 is the designed one.** Numbers 2–9 run on the same pipeline but have
+no video yet, and their handwriting paths have not been tested.
+
+Audio is planned and designed for — the "say the word" button, its states and
+its timing are already built — but no clips exist yet.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
@@ -135,12 +147,12 @@ point, so no progress, streaks or points appear anywhere before sign-in.
 
 Planned, in order:
 
-1. The questions step, and the remaining numbers' videos
-2. Client-side progress tracking, so a returning child resumes where they left
-   off — today a reload restarts the current number
-3. Progressive unlocking, across characters and within each character's lessons
+1. Voice for Pinki and for each number word
+2. The same journey for numbers 2 to 9
+3. Progressive unlocking across characters and lessons (it works within a lesson)
 4. The Activities section
 5. Accounts, and the profile the "Join Edenic World" button leads to
 6. A real dark mode (needs a second token set across `globals.css`)
 
-Audio narration is deliberately out of scope for the MVP.
+Audio narration is deliberately out of scope for the MVP, but the experience is
+built around where it will go.
