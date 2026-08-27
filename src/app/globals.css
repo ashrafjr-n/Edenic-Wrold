@@ -190,6 +190,15 @@ body {
   border-radius: 9999px;
 }
 
+/* A scoped exception: white cards are normally grain-free (the tooth is for
+   colored surfaces only), but a card sitting on a saturated, noisy page
+   background — the `/learn/[character]` hub — reads too flat without it. */
+.card-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
 .tile {
   border-radius: 1.25rem;
   background: var(--tile-tint);
