@@ -46,15 +46,15 @@ export default async function CharacterLearnPage({
           Back
         </Link>
 
-        {/* The banner is the hero purple rather than the character's own color:
-            purple is the one accent that repeats on every page, and the
-            portrait already carries whose world this is. */}
+        {/* The banner carries the character's own color, with the clay grain
+            on top — each friend's hub is now its own identity, not a shared
+            brand-blue shell. */}
         <div
           className="clay anim-fade-up relative mt-5 flex items-center justify-between gap-4 overflow-hidden rounded-[2rem] px-6 py-6 sm:px-10 sm:py-8"
           style={
             {
-              backgroundColor: "var(--brand)",
-              "--clay-edge": "var(--brand-dark)",
+              backgroundColor: character.accent,
+              "--clay-edge": character.accentDark,
               animationDelay: "0.2s",
             } as CSSProperties
           }
