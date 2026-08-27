@@ -208,6 +208,17 @@ body {
   border-radius: 9999px;
 }
 
+/* A white variant of `.tile`: pass `--tile-tint: #fff` alongside this class.
+   `.tile` alone has no shadow — fine when a pastel tint already separates it
+   from its card, but a pure-white tile on a white card needs a shadow to
+   read as a shape at all. Pure claymorphism: form comes from light, not a
+   color difference. */
+.tile-clay {
+  box-shadow:
+    0 10px 20px -12px rgb(var(--shadow-hue) / 30%),
+    0 2px 6px -3px rgb(var(--shadow-hue) / 18%);
+}
+
 /* The fill arrives as `background-color` from the element, so the grain can ride
    on `background-image` and blend with it — no pseudo-element, and the panel's
    own content stays crisp above it. */
