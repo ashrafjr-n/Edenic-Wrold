@@ -14,14 +14,26 @@ const CARD_STAGGER = 0.12;
     CLAUDE.md's "Planned" table) exists — every lesson reads as untouched. */
 const CURRENT_ITEMS = 0;
 
+/** How this card sits on the phone-only progress rail. Grouped into one prop
+    so the component doesn't grow four more positional booleans. */
+export interface LessonRail {
+  /** Last lesson in the list — the track stops at this node. */
+  isLast: boolean;
+  /** The segment arriving at this node is lit (this lesson is reachable). */
+  aboveActive: boolean;
+  /** The segment leaving this node is lit (the next lesson is reachable). */
+  belowActive: boolean;
+}
+
 interface LessonCardProps {
   lesson: Lesson;
   /** The character hosting this lesson — supplies the card's world colors. */
   character: Character;
   /** Name of the lesson that must be finished first; locked cards only. */
   previousLessonName?: string;
-  /** The lesson to lead with: rendered larger, full-width, badged "Next up". */
+  /** Marks the lesson to do next. Adds a badge only — never a size change. */
   featured?: boolean;
+  rail: LessonRail;
   index: number;
 }
 
@@ -30,40 +42,20 @@ export function LessonCard({
   character,
   previousLessonName,
   featured = false,
+  rail,
   index,
 }: LessonCardProps) {
   const { id, name, description, image, totalItems, locked } = lesson;
   const { accent, accentDark } = character;
 
-  /* An empty bar on every card is what made a first visit read as
-     "unfinished". The bar only appears once there is something to show;
-     before that the same slot carries the lesson's size instead. */
-  const started = CURRENT_ITEMS > 0;
   const progressPercent = Math.round((CURRENT_ITEMS / totalItems) * 100);
+  const isFirst = index === 0;
 
-  /* The featured lesson is the page's one call to action, so it carries real
-     size over the locked ones rather than sitting at equal weight. */
-  const layout = featured
-    ? {
-        panel: "w-24 p-3 sm:w-44 sm:p-6",
-        icon: "h-14 w-14 sm:h-24 sm:w-24",
-        body: "gap-3 p-4 sm:gap-5 sm:p-8",
-        title: "text-lg sm:text-3xl",
-        /* The hero card gets room to wrap rather than truncating — at phone
-           width a single clipped line ("Learn numbers 1…") says nothing. */
-        description: "text-sm sm:text-lg",
-        indicator: "h-11 w-11 sm:h-16 sm:w-16",
-        indicatorIcon: "h-5 w-5 sm:h-8 sm:w-8",
-      }
-    : {
-        panel: "w-24 p-3 sm:w-32 sm:p-4",
-        icon: "h-11 w-11 sm:h-16 sm:w-16",
-        body: "gap-2.5 p-4 sm:gap-3 sm:p-5",
-        title: "text-base sm:text-xl",
-        description: "truncate text-xs sm:text-sm",
-        indicator: "h-10 w-10 sm:h-12 sm:w-12",
-        indicatorIcon: "h-5 w-5 sm:h-6 sm:w-6",
-      };
+  /* The rail's lit color and the step badge's fill follow the same rule:
+     reachable is the character's accent, everything ahead is the neutral
+     locked tone. */
+  const litTrack = accent;
+  const dimTrack = "var(--color-locked)";
 
   const card = (
     <div
@@ -71,14 +63,11 @@ export function LessonCard({
         locked ? "" : "card-lift"
       }`}
     >
-      {/* The icon owns the card's entire left edge, full height, flush —
-          not a tile floating with margin around it. Its own background is
-          plain white with a soft shadow (`.tile-clay`), the same white as
-          the card itself: pure claymorphism, separation from light alone,
-          not a color difference. */}
-      <div
-        className={`relative flex shrink-0 items-center justify-center bg-[var(--surface)] ${layout.panel}`}
-      >
+      {/* The icon owns the card's entire left edge, full height, flush — not a
+          tile floating with margin around it. Its background is plain white
+          with a soft shadow (`.tile-clay`), the same white as the card: pure
+          claymorphism, separation from light alone, not from color. */}
+      <div className="relative flex w-20 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-32 sm:p-4">
         <div
           className="tile tile-clay relative flex h-full w-full items-center justify-center"
           style={{ "--tile-tint": "#ffffff" } as TileVars}
@@ -88,22 +77,18 @@ export function LessonCard({
             alt={name}
             width={140}
             height={140}
-            className={`object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 ${
-              layout.icon
-            } ${
+            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-16 sm:w-16 ${
               locked
                 ? "opacity-60 grayscale-[0.55]"
                 : "group-hover/lesson:scale-110"
             }`}
           />
 
-          {/* Step number. Two columns at `lg` make the reading order
-              left-to-right-then-down, which is not obviously the lesson
-              order — the number says it outright. It sits where the lock
-              badge used to: that lock was a duplicate of the one in the
-              indicator, and one lock per card is enough. */}
+          {/* Step number, tablet and up only. Below `sm` the cards are a single
+              stack and the rail outside the card carries the sequence instead,
+              so a number here would say the same thing twice. */}
           <span
-            className="absolute -left-1.5 -top-1.5 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)]"
+            className="absolute -left-1.5 -top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
             style={{
               backgroundColor: locked ? "var(--color-locked)" : accent,
               color: locked ? "var(--color-locked-text)" : "#fff",
@@ -114,16 +99,14 @@ export function LessonCard({
         </div>
       </div>
 
-      {/* Everything else — name, description, the circular indicator, and
-          the status row — lives beside the icon, not underneath it. */}
-      <div
-        className={`flex min-w-0 flex-1 flex-col justify-center ${layout.body}`}
-      >
+      {/* Name, description, indicator and status all sit beside the icon —
+          never stacked underneath it. */}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             {featured && (
               <span
-                className="mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:mb-2 sm:text-xs"
+                className="mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs"
                 style={{ backgroundColor: accent }}
               >
                 Next up
@@ -131,25 +114,22 @@ export function LessonCard({
             )}
 
             <h3
-              className={`font-bold leading-snug ${layout.title}`}
+              className="text-base font-bold leading-snug sm:text-xl"
               style={{
                 color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
               }}
             >
               {name}
             </h3>
-            <p
-              className={`mt-0.5 text-[var(--color-ink-soft)] sm:mt-1.5 ${layout.description}`}
-            >
+            <p className="mt-0.5 truncate text-xs text-[var(--color-ink-soft)] sm:mt-1 sm:text-sm">
               {description}
             </p>
           </div>
 
-          {/* A decorative indicator, not a second control — the whole card is
-              already the tappable/clickable target. It is also the card's
-              only lock now. */}
+          {/* Decorative, not a second control — the whole card is already the
+              tappable target. It is also the card's only lock. */}
           <span
-            className={`btn3d shrink-0 ${layout.indicator}`}
+            className="btn3d h-10 w-10 shrink-0 sm:h-12 sm:w-12"
             style={
               {
                 "--btn-face": locked ? "var(--color-locked)" : accent,
@@ -161,30 +141,27 @@ export function LessonCard({
             aria-hidden
           >
             {locked ? (
-              <Lock className={layout.indicatorIcon} strokeWidth={2.75} />
+              <Lock className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.75} />
             ) : (
-              <ChevronRight className={layout.indicatorIcon} strokeWidth={2.75} />
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
             )}
           </span>
         </div>
 
         {/* A progress bar on a lesson you cannot open yet is noise — a locked
-            card says what opens it instead. */}
+            card names what opens it instead. */}
         {locked ? (
           <p className="text-xs font-semibold text-[var(--color-locked-text)] sm:text-sm">
             {previousLessonName
               ? `Unlocks after ${previousLessonName}`
               : "Unlocks later"}
           </p>
-        ) : started ? (
+        ) : (
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-3">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-2.5">
               <div
                 className="h-full rounded-full"
-                style={{
-                  width: `${progressPercent}%`,
-                  backgroundColor: accent,
-                }}
+                style={{ width: `${progressPercent}%`, backgroundColor: accent }}
                 aria-hidden
               />
             </div>
@@ -192,25 +169,56 @@ export function LessonCard({
               {CURRENT_ITEMS} / {totalItems}
             </span>
           </div>
-        ) : (
-          <p className="text-xs font-semibold text-[var(--color-ink-soft)] sm:text-sm">
-            {totalItems} activities
-          </p>
         )}
       </div>
     </div>
   );
 
+  /* Phone-only progress rail. The cards are one stack below `sm`, so the path
+     between them can be drawn literally: a silver track with the accent
+     travelling along it, one node per lesson. The lit length is the answer to
+     "how far have I got", which is exactly what the numbers say on wider
+     screens. The lane it sits in comes from the grid's extra left padding. */
+  const railColumn = (
+    <div className="absolute -left-9 top-0 bottom-0 w-9 sm:hidden" aria-hidden>
+      {/* Deliberately square-ended. Every segment terminus is either covered
+          by a node chip or butts against the next card's segment, so rounded
+          caps only produced a visible pinch at each join. */}
+      {!isFirst && (
+        <span
+          className="absolute left-1/2 top-0 h-1/2 w-1 -translate-x-1/2"
+          style={{ backgroundColor: rail.aboveActive ? litTrack : dimTrack }}
+        />
+      )}
+
+      {!rail.isLast && (
+        <span
+          className="absolute left-1/2 top-1/2 -bottom-5 w-1 -translate-x-1/2"
+          style={{ backgroundColor: rail.belowActive ? litTrack : dimTrack }}
+        />
+      )}
+
+      {/* White chip around the dot so the node reads against both the track
+          and the saturated page behind it. */}
+      <span className="absolute left-1/2 top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_6px_14px_-4px_rgb(92_78_190_/_45%)]">
+        <span
+          className="h-3 w-3 rounded-full"
+          style={{ backgroundColor: locked ? dimTrack : litTrack }}
+        />
+      </span>
+    </div>
+  );
+
   const delayStyle = { animationDelay: `${CARD_DELAY + index * CARD_STAGGER}s` };
-  const span = featured ? "lg:col-span-2" : "";
 
   if (locked) {
     return (
       <div
-        className={`anim-fade-up ${span}`}
+        className="anim-fade-up relative"
         style={delayStyle}
         aria-disabled="true"
       >
+        {railColumn}
         {card}
       </div>
     );
@@ -219,10 +227,11 @@ export function LessonCard({
   return (
     <Link
       href={`/learn/${character.id}/${id}`}
-      className={`anim-fade-up block ${span}`}
+      className="anim-fade-up relative block"
       style={delayStyle}
       aria-label={`Start ${name}`}
     >
+      {railColumn}
       {card}
     </Link>
   );

@@ -31,11 +31,20 @@ export default async function CharacterLearnPage({
      first unlocked *and unfinished* one; for now the first unlocked lesson is
      the same thing. `-1` (nothing unlocked) simply features nothing. */
   const featuredIndex = lessons.findIndex((lesson) => !lesson.locked);
+  const lastIndex = lessons.length - 1;
   const cast = lessons.map((lesson, index) => ({
     lesson,
     index,
     featured: index === featuredIndex,
     previousName: lesson.locked ? lessons[index - 1]?.name : undefined,
+    /* The phone rail lights up as far as the child can actually reach: the
+       segment into a node is lit when that lesson is open, and the segment
+       out of it when the next one is. */
+    rail: {
+      isLast: index === lastIndex,
+      aboveActive: !lesson.locked,
+      belowActive: index < lastIndex && !lessons[index + 1].locked,
+    },
   }));
 
   return (
@@ -168,14 +177,18 @@ export default async function CharacterLearnPage({
           Tailwind's margin ordering and dump all the free space at the
           bottom, and a child margin could collapse straight back out. */}
       <div className="w-full pt-8 sm:my-auto sm:pt-10">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:gap-7 sm:px-8 lg:grid-cols-2">
-          {cast.map(({ lesson, index, featured, previousName }) => (
+        {/* The extra left padding below `sm` is the lane the phone progress
+            rail lives in; from `sm` up the rail is gone and the padding goes
+            back to matching the rest of the page. */}
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 lg:grid-cols-2">
+          {cast.map(({ lesson, index, featured, previousName, rail }) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
               character={character}
               previousLessonName={previousName}
               featured={featured}
+              rail={rail}
               index={index}
             />
           ))}
