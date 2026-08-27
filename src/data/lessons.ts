@@ -6,7 +6,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
     {
       id: "numbers",
       name: "Learn Numbers",
-      image: "/assets/icons/123.png",
+      image: "/assets/learn-with-pinki/123-pinki.png",
       locked: false,
     },
     {
