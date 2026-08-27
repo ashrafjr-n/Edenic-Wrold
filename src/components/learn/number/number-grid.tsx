@@ -23,7 +23,7 @@ const ITEM_STAGGER = 0.07;
  */
 export function NumberGrid({ items, basePath }: NumberGridProps) {
   return (
-    <ul className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-12 lg:grid-cols-5">
+    <ul className="grid grid-cols-3 gap-x-4 gap-y-8 sm:gap-x-12 sm:gap-y-14">
       {items.map((item, index) => {
         const style = {
           animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
@@ -40,7 +40,7 @@ export function NumberGrid({ items, basePath }: NumberGridProps) {
                 <Numeral
                   value={item.value}
                   image={item.image}
-                  sizeClass="h-24 w-24 sm:h-32 sm:w-32"
+                  sizeClass="h-24 w-24 sm:h-32 sm:w-32 lg:h-36 lg:w-36"
                   locked
                   decorative
                 />
@@ -57,7 +57,7 @@ export function NumberGrid({ items, basePath }: NumberGridProps) {
                 <Numeral
                   value={item.value}
                   image={item.image}
-                  sizeClass="h-24 w-24 sm:h-32 sm:w-32"
+                  sizeClass="h-24 w-24 sm:h-32 sm:w-32 lg:h-36 lg:w-36"
                   decorative
                 />
               </Link>

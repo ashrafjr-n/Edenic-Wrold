@@ -54,7 +54,7 @@ export function NumberQuiz({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+    <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 lg:gap-10">
       {choices.map((value) => {
         const wrongPick = wrong.find((entry) => entry.value === value);
         const isAnswer = value === answer;
@@ -77,7 +77,7 @@ export function NumberQuiz({
             <Numeral
               value={value}
               image={imageFor(value)}
-              sizeClass="h-20 w-20 sm:h-28 sm:w-28"
+              sizeClass="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
               decorative
             />
           </button>

@@ -66,7 +66,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-col px-6 py-10 sm:my-auto sm:px-8 sm:py-12">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12">
         <NumberGrid
           items={numberItems}
           basePath={`/learn/${character.id}/${lesson.id}`}

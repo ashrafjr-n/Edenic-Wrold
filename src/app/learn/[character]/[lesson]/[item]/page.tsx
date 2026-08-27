@@ -99,7 +99,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-6 pt-8 sm:px-8 sm:pt-10">
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
         <NumberJourney
           item={item}
           character={character}

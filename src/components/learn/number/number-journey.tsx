@@ -111,7 +111,7 @@ export function NumberJourney({
   const quizStage = stage === "pickThree" || stage === "pickFive";
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center gap-6 sm:gap-8">
+    <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:gap-8">
       <h1 className="anim-fade-up text-center text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
         {heading}
       </h1>

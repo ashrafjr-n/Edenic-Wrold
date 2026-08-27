@@ -32,16 +32,25 @@ export function Numeral({
   decorative = false,
 }: NumeralProps) {
   return (
-    <span
-      className={`numeral-bloom relative flex items-center justify-center ${sizeClass}`}
-    >
+    <span className={`relative flex items-center justify-center ${sizeClass}`}>
+      {/* The bloom is its own layer, larger than the numeral, so it reads as
+          a halo around it rather than a square of lighter background behind
+          it. Held back on a locked numeral — the glow is what says "this one
+          is open". */}
+      <span
+        className={`numeral-bloom pointer-events-none absolute -inset-4 sm:-inset-6 ${
+          locked ? "opacity-30" : ""
+        }`}
+        aria-hidden
+      />
+
       <Image
         src={image}
         alt={decorative ? "" : `The number ${value}`}
         width={414}
         height={600}
-        className={`numeral-shadow h-full w-full object-contain ${
-          locked ? "opacity-70 grayscale" : ""
+        className={`relative h-full w-full object-contain ${
+          locked ? "numeral-shadow--locked" : "numeral-shadow"
         }`}
       />
 

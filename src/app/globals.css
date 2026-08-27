@@ -301,14 +301,25 @@ body {
 .numeral-bloom {
   background: radial-gradient(
     closest-side,
-    rgb(255 255 255 / 80%),
-    rgb(255 255 255 / 34%) 56%,
-    transparent 78%
+    rgb(255 255 255 / 96%),
+    rgb(255 255 255 / 66%) 40%,
+    rgb(255 255 255 / 22%) 62%,
+    rgb(255 255 255 / 0%) 78%
   );
 }
 
 .numeral-shadow {
   filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 34%));
+}
+
+/* A locked numeral goes silver. The desaturation and the shadow have to be
+   ONE `filter` declared here, not a Tailwind `grayscale` utility beside it:
+   `.numeral-shadow` is unlayered and utilities are layered, so a `grayscale`
+   class on the same element is silently thrown away and the numeral stays
+   pink. Declared after `.numeral-shadow` so it wins on source order. */
+.numeral-shadow--locked {
+  filter: grayscale(1) brightness(1.14) contrast(0.92)
+    drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 28%));
 }
 
 /* ---------------------------------------------------------------
