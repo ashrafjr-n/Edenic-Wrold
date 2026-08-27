@@ -17,7 +17,7 @@ export function CharacterPicker() {
     <section className="relative flex flex-1 flex-col justify-center overflow-hidden px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6">
       <IntroIcons />
 
-      <div className="relative z-10 mx-auto max-w-3xl text-center">
+      <div className="relative z-10 mx-auto -mt-2 max-w-3xl text-center sm:-mt-4">
         <h1
           className="anim-drop-in text-4xl font-bold leading-tight tracking-tight text-[var(--color-ink)] sm:text-6xl"
           style={{ animationDelay: "0.15s" }}
