@@ -122,6 +122,13 @@
   --color-subject-shapes: #f7a83c;
   --color-subject-shapes-dark: #c2701a;
 
+  /* Green means GO, and only that: the button that carries the child forward
+     once a step is passed. Deliberately outside the brand pair — blue leads
+     ordinary primary actions, this one is reserved for "you got it, continue",
+     so it never appears on a step that isn't finished. */
+  --color-go: #35b567;
+  --color-go-dark: #197a43;
+
   /* The gold horns are the one feature all three characters share, so
      gold is the signature accent: it marks what's active/unlocked
      (borders, badges, dividers) and never fills a large surface. */
@@ -277,6 +284,31 @@ body {
 .panel-art {
   mask-image: var(--panel-art-fade);
   mask-composite: intersect;
+}
+
+/* ---------------------------------------------------------------
+   A numeral standing on the page with no container.
+
+   The clay numerals are objects, not illustrations inside a panel, so they
+   get a soft white bloom behind them and their own drop shadow instead of a
+   `.card`. A card around each one turned the number grid into a sheet of
+   boxes and buried the thing the child is actually looking at.
+
+   The bloom is what keeps a pink numeral legible on the pink ground; the
+   shadow is `filter`, not `box-shadow`, so it follows the numeral's own
+   silhouette rather than a rectangle around it.
+   --------------------------------------------------------------- */
+.numeral-bloom {
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 80%),
+    rgb(255 255 255 / 34%) 56%,
+    transparent 78%
+  );
+}
+
+.numeral-shadow {
+  filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 34%));
 }
 
 /* ---------------------------------------------------------------
@@ -824,12 +856,20 @@ button:disabled,
   }
 }
 
+/* The keyframes above finally have a user: a wrong pick in the number quiz
+   shakes its head rather than showing an error. Nothing on this site tells a
+   child they are wrong in words. */
+.anim-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-arch-in,
   .anim-pop-in,
   .anim-fade-up,
   .anim-rise-in,
+  .anim-wiggle,
   .anim-breathe,
   .anim-reveal,
   .anim-hero-parallax {

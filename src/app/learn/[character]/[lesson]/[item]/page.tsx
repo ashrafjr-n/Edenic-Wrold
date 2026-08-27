@@ -46,14 +46,19 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
   const item = findNumberItem(Number(itemId));
   if (!item) notFound();
 
+  const lessonPath = `/learn/${character.id}/${lesson.id}`;
+  /* A locked number goes back to the list rather than 404ing — the URL is
+     real, the child just cannot be here yet. Same rule as a locked lesson. */
+  if (item.locked) redirect(lessonPath);
+
   const index = numberItems.indexOf(item);
   const isLast = index === numberItems.length - 1;
-  /* After the last number the journey ends at the hub — there is no "well
-     done, you finished the lesson" screen yet, and sending the child back to
-     a locked list would be worse than sending them somewhere they can choose. */
+  /* Both ends of the journey lead back to the number list: it is where the
+     child chose from, and after the last number there is no "you finished
+     the lesson" screen yet. */
   const nextHref = isLast
-    ? `/learn/${character.id}`
-    : `/learn/${character.id}/${lesson.id}/${numberItems[index + 1].value}`;
+    ? lessonPath
+    : `${lessonPath}/${numberItems[index + 1].value}`;
 
   return (
     /* The same ground as the character's hub, for the same reason: this is
@@ -72,8 +77,8 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
           <Button3D
             variant="calm"
             tone={{ face: "var(--surface)" }}
-            href={`/learn/${character.id}`}
-            aria-label={`Back to ${character.name}'s lessons`}
+            href={lessonPath}
+            aria-label={`Back to ${lesson.name}`}
             className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
             <ArrowLeft
