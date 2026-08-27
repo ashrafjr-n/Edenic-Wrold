@@ -33,15 +33,15 @@ export function Header() {
   );
 }
 
-/* Language and theme are white chips — the same material as a card, just small.
-   Colorless on purpose, so neither competes with the purple CTA beside them.
-   Both are still presentation only; nothing is wired up yet. */
+/* Language and theme are always accent pink (`.btn3d--icon-accent` in
+   globals.css overrides the `tone`/`variant` below regardless) — not a hover
+   state, so the tone/variant props here are mostly documentation at this
+   point. Both are still presentation only; nothing is wired up yet. */
 function HeaderChrome() {
   return (
     <>
       <Button3D
-        tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
-        variant="calm"
+        tone={{ face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" }}
         aria-label="Change language"
         className="btn3d--icon-accent h-11 w-11 shrink-0"
       >
@@ -49,17 +49,15 @@ function HeaderChrome() {
       </Button3D>
 
       <Button3D
-        tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
-        variant="calm"
+        tone={{ face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" }}
         aria-label="Switch to dark mode"
         className="btn3d--icon-accent h-11 w-11 shrink-0"
       >
         <Moon className="h-5 w-5" strokeWidth={2.25} />
       </Button3D>
 
-      {/* The hero purple, and the only colored element in the header. It doubles
-          as the profile entry point: there's no profile to show until someone
-          has joined. */}
+      {/* The brand blue. It doubles as the profile entry point: there's no
+          profile to show until someone has joined. */}
       <Button3D
         tone={{ face: "var(--brand)", edge: "var(--brand-dark)" }}
         className="h-11 shrink-0 whitespace-nowrap px-4 text-sm sm:px-6 sm:text-base"
