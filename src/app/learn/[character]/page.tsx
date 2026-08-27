@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft, Trophy } from "lucide-react";
+import { ArrowLeft, Crown } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { Button3D } from "@/components/ui/button-3d";
@@ -64,43 +64,46 @@ export default async function CharacterLearnPage({
             tone={{ face: "var(--surface)" }}
             href="/learn"
             aria-label="Back to Learn"
-            className="h-11 w-11 shrink-0"
+            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--color-ink-soft)]" strokeWidth={2.5} />
+            <ArrowLeft
+              className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
+              strokeWidth={2.75}
+            />
           </Button3D>
 
           <Button3D
             variant="calm"
             tone={{ face: "var(--surface)" }}
             aria-label="Achievements"
-            className="h-11 w-11 shrink-0"
+            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
-            {/* Filled, not outlined — a thin stroke trophy read as flimsy
-                next to the site's chunky clay characters and buttons. */}
-            <Trophy
-              className="h-5 w-5 fill-current"
+            {/* A filled crown, not the outlined trophy that was here first —
+                a trophy's thin stem and handles break up at this size, while
+                a crown stays one chunky silhouette, which is what reads as
+                clay next to the character renders. */}
+            <Crown
+              className="h-5 w-5 fill-current sm:h-6 sm:w-6"
               style={{ color: "var(--color-gold)" }}
               strokeWidth={1.5}
             />
           </Button3D>
         </div>
 
-        {/* The hero scene replaces the old portrait — it already puts
-            {character.name} front and center, so a separate floating
-            portrait next to a heading would just be redundant now. Only
-            Pinki has one produced; the other two skip this card entirely
-            until their own scene exists. Wide and short on purpose — a
-            panoramic banner, not a tall photo. */}
+        {/* Phone only (`sm:hidden`). On a narrow screen the scene is what
+            gives the page its warmth before the lesson list starts; from
+            tablet up there is room for the lessons themselves to be the
+            page, and the banner just pushed them below the fold. */}
         {character.heroImage && (
           <div
-            className="card anim-pop-in relative mt-5 aspect-[2/1] w-full overflow-hidden sm:mt-6"
+            className="card anim-pop-in relative mt-5 aspect-[2/1] w-full overflow-hidden sm:hidden"
             style={{ animationDelay: "0.2s" }}
           >
             <Image
               src={character.heroImage}
               alt={`${character.name}'s learning corner`}
               fill
-              sizes="(min-width: 1280px) 1216px, 100vw"
+              sizes="100vw"
               priority
               className="object-cover"
             />
@@ -108,16 +111,29 @@ export default async function CharacterLearnPage({
         )}
       </div>
 
-      <div className="mx-auto mt-8 grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:mt-10 sm:gap-6 sm:px-8 lg:grid-cols-2">
-        {cast.map(({ lesson, index, previousName }) => (
-          <LessonCard
-            key={lesson.id}
-            lesson={lesson}
-            character={character}
-            previousLessonName={previousName}
-            index={index}
-          />
-        ))}
+      {/* `my-auto` on a wrapper rather than `justify-center` on the parent:
+          it keeps the back/crown row pinned to the top while the lessons take
+          the leftover height, and auto margins collapse to zero once there
+          are enough lessons to fill the page — so it never pushes content
+          off-screen the way `items-center` would. Same "space reads better
+          distributed" call as the `/learn` picker.
+
+          The gap above the grid is PADDING on this wrapper, not a margin on
+          the grid: a `sm:mt-*` on the grid would out-rank `my-auto` in
+          Tailwind's margin ordering and dump all the free space at the
+          bottom, and a child margin could collapse straight back out. */}
+      <div className="w-full pt-8 sm:my-auto sm:pt-10">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:gap-7 sm:px-8 lg:grid-cols-2">
+          {cast.map(({ lesson, index, previousName }) => (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              character={character}
+              previousLessonName={previousName}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
     </main>
   );
