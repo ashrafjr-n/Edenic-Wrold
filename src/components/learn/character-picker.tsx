@@ -37,7 +37,7 @@ export function CharacterPicker() {
           `mt-auto` instead left a large dead gap under the subtitle on a tall
           viewport — the space reads better distributed above and below. */}
       <div className="relative z-10 mx-auto mt-8 w-full max-w-6xl sm:mt-11">
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-stretch sm:justify-center sm:gap-6 lg:gap-8">
+        <div className="flex flex-col items-center gap-10 sm:flex-row sm:items-end sm:justify-center sm:gap-6 lg:gap-14">
           {cast.map(({ character, index, previousName }) => (
             <CharacterCard
               key={character.id}
