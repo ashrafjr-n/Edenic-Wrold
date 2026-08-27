@@ -208,6 +208,16 @@ body {
   border-radius: 9999px;
 }
 
+/* Grain on a pastel tile. Must come after `.tile`: `.tile` sets the
+   `background` shorthand, which would reset `background-image` back to none.
+   Only worth it on a tinted tile — on a near-white one the overlay blend has
+   almost nothing to push against and the texture disappears. */
+.tile-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
 /* A white variant of `.tile`: pass `--tile-tint: #fff` alongside this class.
    `.tile` alone has no shadow — fine when a pastel tint already separates it
    from its card, but a pure-white tile on a white card needs a shadow to
