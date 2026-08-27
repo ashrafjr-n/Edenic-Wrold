@@ -10,6 +10,18 @@ import { NumberVideo } from "./number-video";
 import { TraceBoard } from "./trace-board";
 import { StarReward } from "./star-reward";
 
+/* Both CTAs here are brand blue, not the character's accent. The accent-toned
+   CTA is a rule scoped to the `/learn` picker; on this page the ground IS the
+   character's colour, so a pink button on Pinki's pink ground disappears —
+   which is exactly why the site-wide rule puts brand blue on primary actions.
+   The child's traced stroke still uses the accent: on the white board it reads
+   as the character's own colour with nothing to compete against. */
+const BRAND_TONE = {
+  face: "var(--brand)",
+  edge: "var(--brand-dark)",
+  text: "#fff",
+} as const;
+
 /** Watch → draw → celebrate. One small loop per number, repeated identically
     nine times, so a child under ten learns the rhythm once. */
 type Stage = "watch" | "trace" | "reward";
@@ -107,7 +119,7 @@ export function NumberJourney({
           another origin on a children's page — to save one tap. */}
       {stage === "watch" && videoId && (
         <Button3D
-          tone={{ face: accent, edge: accentDark, text: "#fff" }}
+          tone={BRAND_TONE}
           onClick={() => setStage("trace")}
           className="anim-fade-up px-7 py-3 text-base sm:px-8 sm:text-lg"
         >
@@ -140,7 +152,7 @@ export function NumberJourney({
           </Button3D>
 
           <Button3D
-            tone={{ face: accent, edge: accentDark, text: "#fff" }}
+            tone={BRAND_TONE}
             href={stage === "reward" ? nextHref : undefined}
             disabled={stage !== "reward"}
             className="px-7 py-3 text-base sm:px-8 sm:text-lg"
