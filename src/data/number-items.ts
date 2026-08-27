@@ -16,9 +16,6 @@ export const numberItems: NumberItem[] = NUMBER_VALUES.map((value) => ({
   image: `/assets/learn-with-pinki/learn-numbers/numbers/${value}.png`,
   videoId: videoIdByValue[value],
   strokes: numberStrokes[value],
-  /* Hardcoded until the progress store lands: finishing a number is what
-     opens the next one, and nothing records that yet. */
-  locked: value !== NUMBER_VALUES[0],
 }));
 
 export function findNumberItem(value: number): NumberItem | undefined {

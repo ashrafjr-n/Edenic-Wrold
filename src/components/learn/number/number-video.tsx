@@ -37,7 +37,7 @@ function embedUrl(videoId: string): string {
  */
 export function NumberVideo({ videoId, value }: NumberVideoProps) {
   return (
-    <div className="card relative aspect-[9/16] h-[52vh] max-h-[30rem] min-h-[17rem] shrink-0 overflow-hidden">
+    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden">
       <iframe
         src={embedUrl(videoId)}
         title={`A short video about the number ${value}`}

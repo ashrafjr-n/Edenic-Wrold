@@ -100,6 +100,16 @@ export function scoreTrace(
   return { coverage, stars };
 }
 
+/** How long a stroke is, in the strokes' own 0–100 units. Used to set the
+    dash length that makes the numeral draw itself in `StrokeDemo`. */
+export function strokeLength(stroke: NumberStroke): number {
+  let total = 0;
+  for (let i = 0; i < stroke.length - 1; i += 1) {
+    total += Math.sqrt(distanceSquared(stroke[i], stroke[i + 1]));
+  }
+  return total;
+}
+
 /** The `d` of an SVG path following a stroke's corners. */
 export function strokeToPath(stroke: NumberStroke): string {
   return stroke

@@ -1,0 +1,48 @@
+/**
+ * The stages of one number's journey, in order.
+ *
+ * Named rather than numbered so the pipeline can be reordered or extended
+ * without every component having to know its index. `celebrate` is the score
+ * screen and is not a step the child works at, which is why the step rail
+ * counts the ones before it.
+ */
+export const JOURNEY_STAGES = [
+  "discover",
+  "demo",
+  "trace",
+  "find",
+  "count",
+  "game",
+  "celebrate",
+] as const;
+
+export type JourneyStage = (typeof JOURNEY_STAGES)[number];
+
+/** The stages the child actually works through — what the step rail counts. */
+export const WORKING_STAGES = JOURNEY_STAGES.filter(
+  (stage) => stage !== "celebrate",
+);
+
+/**
+ * What Pinki says at each point of one number's journey.
+ *
+ * Every line is written to be read aloud later: audio is not built yet, but
+ * the flow is designed as though it were, so adding a clip per line changes no
+ * layout. Keep them short — a child under ten reads a phrase, not a sentence.
+ */
+export interface NumberScript {
+  /** The number as a word: "One". Shown, and later spoken. */
+  word: string;
+  discover: string;
+  /** How the numeral is written, in the order the strokes are drawn. */
+  strokeHint: string;
+  traceInvite: string;
+  /** Shown when a trace attempt does not land. Never says "wrong". */
+  traceMiss: string;
+  find: string;
+  findMiss: string;
+  count: string;
+  countHow: string;
+  game: string;
+  celebrate: string;
+}

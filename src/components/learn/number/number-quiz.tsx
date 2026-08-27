@@ -11,6 +11,9 @@ interface NumberQuizProps {
   /** Frozen once the round is won, so the picked numeral stays on screen. */
   solved: boolean;
   onCorrect: () => void;
+  /** Every wrong tap. The journey counts these toward the final star score —
+      the quiz itself never scores, never blocks and never gives up an answer. */
+  onWrong: () => void;
 }
 
 interface WrongPick {
@@ -36,6 +39,7 @@ export function NumberQuiz({
   answer,
   solved,
   onCorrect,
+  onWrong,
 }: NumberQuizProps) {
   const [wrong, setWrong] = useState<WrongPick[]>([]);
 
@@ -47,6 +51,7 @@ export function NumberQuiz({
       return;
     }
 
+    onWrong();
     setWrong((picked) => [
       ...picked.filter((entry) => entry.value !== value),
       { value, attempt: picked.length + 1 },
@@ -72,7 +77,9 @@ export function NumberQuiz({
             aria-label={`The number ${value}`}
             className={`rounded-3xl transition-opacity duration-300 disabled:cursor-default ${
               dimmed ? "opacity-30" : "opacity-100"
-            } ${wrongPick ? "anim-wiggle" : ""}`}
+            } ${wrongPick ? "anim-wiggle" : ""} ${
+              solved && isAnswer ? "anim-jump" : ""
+            }`}
           >
             <Numeral
               value={value}

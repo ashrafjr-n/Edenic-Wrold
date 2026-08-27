@@ -18,8 +18,4 @@ export interface NumberItem {
       at the tracing step instead of showing an empty frame. */
   videoId?: string;
   strokes: readonly NumberStroke[];
-  /** Only number 1 is open today. The progressive-unlock rule (finish one to
-      open the next) is the progress store's job — until it exists this is a
-      fixed flag so the grid still reads correctly. */
-  locked: boolean;
 }

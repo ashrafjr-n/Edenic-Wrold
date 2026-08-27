@@ -625,6 +625,193 @@ button:disabled,
   box-shadow: none;
 }
 
+
+/* ---------------------------------------------------------------
+   The number journey.
+
+   Pinki teaches, so she needs a voice: a white clay bubble with a tail
+   pointing at her. She sits beside the bubble from `sm` up and above it on a
+   phone, so the tail moves too.
+   --------------------------------------------------------------- */
+.speech-bubble {
+  position: relative;
+  background: var(--surface);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
+    0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  background: var(--surface);
+  /* A triangle rather than a rotated square: a rotated square pokes its
+     corners out past the bubble's rounded edge at this radius. */
+  left: -0.6rem;
+  top: 50%;
+  translate: 0 -50%;
+  width: 0.75rem;
+  height: 1.35rem;
+  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+}
+
+@media (width < 40rem) {
+  .speech-bubble::after {
+    left: 50%;
+    top: -0.6rem;
+    translate: -50% 0;
+    width: 1.35rem;
+    height: 0.75rem;
+    clip-path: polygon(0 100%, 100% 100%, 50% 0);
+  }
+}
+
+/* ---------------------------------------------------------------
+   "Watch me draw it."
+
+   The numeral draws itself along the same centreline the child then traces,
+   so the demonstration and the guide can never disagree about how the number
+   is written. The dash offset starts at the full path length and runs to 0 —
+   both are set inline from the measured length, in the strokes' own 0–100
+   units.
+   --------------------------------------------------------------- */
+@keyframes stroke-draw {
+  0% {
+    stroke-dashoffset: var(--stroke-length);
+  }
+  /* Drawn by 62%, then held: the finished numeral has to sit still long
+     enough to be read before the loop starts over. A keyframe stop cannot be
+     a variable, so the hold is a fixed share of the cycle and the component
+     sizes the duration around it. */
+  62%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.stroke-draw {
+  stroke-dasharray: var(--stroke-length);
+  animation: stroke-draw var(--stroke-duration, 1.6s) ease-in-out
+    var(--stroke-delay, 0s) infinite;
+}
+
+/* The pencil tip riding the same path. Hidden unless `offset-path` is
+   supported — same reasoning as `.anim-reveal`: without the gate an
+   unsupporting browser parks it at the origin, in the corner, looking broken.
+   The line still draws itself either way. */
+.pen-tip {
+  display: none;
+}
+
+@supports (offset-path: path("M 0 0")) {
+  .pen-tip {
+    display: block;
+    offset-path: var(--pen-path);
+    offset-rotate: 0deg;
+    animation: pen-travel var(--stroke-duration, 1.6s) ease-in-out
+      var(--stroke-delay, 0s) infinite;
+  }
+}
+
+@keyframes pen-travel {
+  0% {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+  62% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  /* Gone during the hold — a pencil parked on the finished numeral reads as
+     part of the shape. */
+  72%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Balloons.
+
+   One pink balloon asset, recoloured per balloon with `hue-rotate` — nine
+   numbers' worth of balloon art for one file. The drift is per-balloon so a
+   row of them never moves as a block.
+   --------------------------------------------------------------- */
+@keyframes balloon-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(2deg);
+  }
+}
+
+.balloon-drift {
+  animation: balloon-drift var(--drift-duration, 3.4s) ease-in-out
+    var(--drift-delay, 0s) infinite;
+}
+
+@keyframes balloon-pop {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.balloon-pop {
+  animation: balloon-pop 0.4s ease-out both;
+}
+
+/* A right answer jumps rather than flashing a tick — the motion says "yes"
+   without a word, which is the whole approach on these pages. */
+@keyframes jump {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(0, -22px, 0) scale(1.06);
+  }
+  55% {
+    transform: translate3d(0, 0, 0) scale(0.98);
+  }
+  75% {
+    transform: translate3d(0, -8px, 0) scale(1.02);
+  }
+}
+
+.anim-jump {
+  animation: jump 0.7s cubic-bezier(0.3, 0.8, 0.4, 1);
+}
+
+/* The ring that pulses out of the "say it" button. There is no audio yet —
+   this is the slot it will play into, and it reads as sound on its own. */
+@keyframes say-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+.say-pulse {
+  animation: say-pulse 1.4s ease-out infinite;
+}
+
 /* ---------------------------------------------------------------
    Entrance choreography (pure CSS timeline, no JS)
    --------------------------------------------------------------- */
@@ -881,6 +1068,11 @@ button:disabled,
   .anim-fade-up,
   .anim-rise-in,
   .anim-wiggle,
+  .anim-jump,
+  .balloon-drift,
+  .stroke-draw,
+  .pen-tip,
+  .say-pulse,
   .anim-breathe,
   .anim-reveal,
   .anim-hero-parallax {

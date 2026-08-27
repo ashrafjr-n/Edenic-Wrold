@@ -3,13 +3,19 @@
 import { useCallback, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
-import { MIN_COVERAGE, scoreTrace, strokeToPath } from "@/lib/trace-score";
+import { scoreTrace, strokeToPath } from "@/lib/trace-score";
 
 interface TraceBoardProps {
   strokes: readonly NumberStroke[];
   accent: string;
+  /** How much of the numeral counts as finished this attempt. It drops with
+      every miss, which is what guarantees a child gets through eventually. */
+  minCoverage: number;
   /** Fired once the child has covered enough of the numeral to be finished. */
-  onFinish: (stars: number) => void;
+  onFinish: (coverage: number) => void;
+  /** Fired when a real, committed attempt did not land — a scribble, not a
+      child still part-way through drawing. */
+  onMiss: () => void;
   /** Frozen once the reward is showing, so the drawing stays on screen. */
   locked: boolean;
 }
@@ -18,10 +24,17 @@ interface TraceBoardProps {
     should not leave a dot on the board. */
 const MIN_STROKE_POINTS = 3;
 
+/** Below this the child is still drawing, so a low score says nothing. Past
+    it they have clearly finished something, and if it did not land it is worth
+    offering to start over. */
+const COMMITTED_POINTS = 55;
+
 export function TraceBoard({
   strokes,
   accent,
+  minCoverage,
   onFinish,
+  onMiss,
   locked,
 }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
@@ -72,10 +85,17 @@ export function TraceBoard({
 
     /* Scored on every pen-up rather than behind a "Done" button: a numeral
        like 4 takes two strokes and a small child will lift mid-way through
-       even a 1, so an unfinished attempt simply says nothing and waits for
-       the next stroke. */
+       even a 1, so a part-drawn attempt simply says nothing and waits for the
+       next stroke. Only once they have drawn a real amount and still missed
+       does Pinki offer to go again. */
     const result = scoreTrace(strokes, finished);
-    if (result.coverage >= MIN_COVERAGE) onFinish(result.stars);
+    if (result.coverage >= minCoverage) {
+      onFinish(result.coverage);
+      return;
+    }
+
+    const drawnPoints = finished.reduce((total, s) => total + s.length, 0);
+    if (drawnPoints >= COMMITTED_POINTS) onMiss();
   };
 
   const guidePaths = strokes.map(strokeToPath);

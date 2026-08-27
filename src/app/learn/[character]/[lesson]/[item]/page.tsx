@@ -46,19 +46,17 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
   const item = findNumberItem(Number(itemId));
   if (!item) notFound();
 
+  /* Which numbers are open lives in the progress store, which is
+     client-side, so this route cannot gate on it — the lock is drawn on the
+     number list instead. Nothing is lost: a child reaches these pages by
+     tapping a numeral, not by typing a URL. */
   const lessonPath = `/learn/${character.id}/${lesson.id}`;
-  /* A locked number goes back to the list rather than 404ing — the URL is
-     real, the child just cannot be here yet. Same rule as a locked lesson. */
-  if (item.locked) redirect(lessonPath);
 
   const index = numberItems.indexOf(item);
-  const isLast = index === numberItems.length - 1;
-  /* Both ends of the journey lead back to the number list: it is where the
-     child chose from, and after the last number there is no "you finished
-     the lesson" screen yet. */
-  const nextHref = isLast
-    ? lessonPath
-    : `${lessonPath}/${numberItems[index + 1].value}`;
+  const next = numberItems[index + 1];
+  /* After the last number the journey ends back at the list: it is where the
+     child chose from, and there is no "you finished the lesson" screen yet. */
+  const nextHref = next ? `${lessonPath}/${next.value}` : lessonPath;
 
   return (
     /* The same ground as the character's hub, for the same reason: this is
@@ -103,8 +101,10 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
         <NumberJourney
           item={item}
           character={character}
+          lessonId={lesson.id}
           nextHref={nextHref}
-          isLast={isLast}
+          lessonHref={lessonPath}
+          nextValue={next?.value}
         />
       </div>
     </main>
