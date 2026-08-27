@@ -48,11 +48,13 @@ export default async function CharacterLearnPage({
         } as CSSProperties
       }
     >
-      <div className="mx-auto w-full max-w-4xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back and the (presentation-only, no achievements feature yet)
             trophy sit at the same level as the header's own icon chrome —
             same size and shape, just white instead of accent pink, since
-            they're chrome on top of an already-saturated page. */}
+            they're chrome on top of an already-saturated page. No heading
+            text below them any more — the hero scene and the lesson list
+            carry the page on their own. */}
         <div
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
@@ -73,41 +75,32 @@ export default async function CharacterLearnPage({
             aria-label="Achievements"
             className="h-11 w-11 shrink-0"
           >
+            {/* Filled, not outlined — a thin stroke trophy read as flimsy
+                next to the site's chunky clay characters and buttons. */}
             <Trophy
-              className="h-5 w-5"
+              className="h-5 w-5 fill-current"
               style={{ color: "var(--color-gold)" }}
-              strokeWidth={2.25}
+              strokeWidth={1.5}
             />
           </Button3D>
         </div>
 
-        <div
-          className="anim-fade-up mt-5 sm:mt-6"
-          style={{ animationDelay: "0.2s" }}
-        >
-          <h1 className="text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl">
-            Learn With {character.name}
-          </h1>
-          <p className="mt-2 max-w-sm text-sm text-white/85 sm:text-base">
-            Pick a lesson below to start your adventure!
-          </p>
-        </div>
-
         {/* The hero scene replaces the old portrait — it already puts
             {character.name} front and center, so a separate floating
-            portrait next to the heading would just be redundant now. Only
+            portrait next to a heading would just be redundant now. Only
             Pinki has one produced; the other two skip this card entirely
-            until their own scene exists. */}
+            until their own scene exists. Wide and short on purpose — a
+            panoramic banner, not a tall photo. */}
         {character.heroImage && (
           <div
-            className="card anim-pop-in relative mt-6 aspect-[16/10] w-full overflow-hidden sm:mt-8"
-            style={{ animationDelay: "0.3s" }}
+            className="card anim-pop-in relative mt-5 aspect-[2/1] w-full overflow-hidden sm:mt-6"
+            style={{ animationDelay: "0.2s" }}
           >
             <Image
               src={character.heroImage}
               alt={`${character.name}'s learning corner`}
               fill
-              sizes="(min-width: 1024px) 816px, 100vw"
+              sizes="(min-width: 1280px) 1216px, 100vw"
               priority
               className="object-cover"
             />
@@ -115,7 +108,7 @@ export default async function CharacterLearnPage({
         )}
       </div>
 
-      <div className="mx-auto mt-8 grid w-full max-w-4xl grid-cols-1 gap-5 px-6 sm:mt-10 sm:gap-6 sm:px-10">
+      <div className="mx-auto mt-8 grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:mt-10 sm:gap-6 sm:px-8 lg:grid-cols-2">
         {cast.map(({ lesson, index, previousName }) => (
           <LessonCard
             key={lesson.id}
