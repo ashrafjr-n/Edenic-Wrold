@@ -58,7 +58,7 @@ export function CharacterCard({
           friend pods, sized up since this page is the main cast portrait. */}
       <div className="relative flex h-72 items-end justify-center sm:h-80">
         <div
-          className="tile tile-round absolute bottom-0 h-48 w-48 sm:h-56 sm:w-56"
+          className="tile tile-round tile-grain absolute bottom-0 h-48 w-48 sm:h-56 sm:w-56"
           style={{ "--tile-tint": tileTint } as TileVars}
           aria-hidden
         />
