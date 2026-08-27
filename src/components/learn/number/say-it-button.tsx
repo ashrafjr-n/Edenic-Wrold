@@ -6,9 +6,17 @@ import { Volume2 } from "lucide-react";
 interface SayItButtonProps {
   /** The number as a word: "One". */
   word: string;
-  accent: string;
-  accentDark: string;
 }
+
+/* Gold, not the character's accent and not brand blue. The accent disappears
+   into this page's own pink ground, and blue is already carrying "Let's draw"
+   right beside it — two blues would read as two equal ways onward. Gold is the
+   one colour left that is neither a mascot's identity nor a primary action,
+   and it ties saying the word to the stars the child is working toward. */
+const SAY_TONE = {
+  face: "var(--color-gold)",
+  edge: "var(--color-gold-dark)",
+} as const;
 
 /** How long the "it is speaking" state lasts. Once real audio lands this
     becomes the clip's own duration instead of a timer. */
@@ -26,7 +34,7 @@ const SPEAK_MS = 1400;
  * ripple, which is enough for a child to connect the shape to the word even
  * with the sound off.
  */
-export function SayItButton({ word, accent, accentDark }: SayItButtonProps) {
+export function SayItButton({ word }: SayItButtonProps) {
   const [speaking, setSpeaking] = useState(false);
 
   const say = () => {
@@ -43,7 +51,7 @@ export function SayItButton({ word, accent, accentDark }: SayItButtonProps) {
       {speaking && (
         <span
           className="say-pulse pointer-events-none absolute inset-0 rounded-full"
-          style={{ backgroundColor: accent }}
+          style={{ backgroundColor: SAY_TONE.face }}
           aria-hidden
         />
       )}
@@ -56,8 +64,8 @@ export function SayItButton({ word, accent, accentDark }: SayItButtonProps) {
           speaking ? "anim-jump" : ""
         }`}
         style={{
-          "--btn-face": accent,
-          "--btn-edge": accentDark,
+          "--btn-face": SAY_TONE.face,
+          "--btn-edge": SAY_TONE.edge,
           "--btn-text": "#fff",
         } as React.CSSProperties}
       >

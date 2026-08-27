@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Pencil, RotateCcw, SkipForward, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
@@ -68,8 +67,6 @@ interface NumberJourneyProps {
   lessonId: string;
   /** Where the journey goes next: the following number, or the number list. */
   nextHref: string;
-  /** The number list — the way out at any point. */
-  lessonHref: string;
   nextValue?: number;
 }
 
@@ -78,11 +75,10 @@ export function NumberJourney({
   character,
   lessonId,
   nextHref,
-  lessonHref,
   nextValue,
 }: NumberJourneyProps) {
   const { value, videoId, strokes } = item;
-  const { accent, accentDark } = character;
+  const { accent } = character;
   const script = scriptFor(value);
 
   const [stage, setStage] = useState<JourneyStage>("discover");
@@ -210,11 +206,7 @@ export function NumberJourney({
               Can you say it?
             </p>
 
-            <SayItButton
-              word={script.word}
-              accent={accent}
-              accentDark={accentDark}
-            />
+            <SayItButton word={script.word} />
 
             <div className="flex items-center gap-3">
               <Button3D
@@ -252,7 +244,7 @@ export function NumberJourney({
           </div>
 
           <Button3D
-            tone={GO_TONE}
+            tone={BRAND_TONE}
             onClick={advance}
             className="anim-fade-up px-8 py-3 text-base sm:px-10 sm:text-lg"
           >
@@ -454,17 +446,6 @@ export function NumberJourney({
             </Button3D>
           </div>
         </>
-      )}
-
-      {/* Nothing on this page is a dead end: a child who wanders can always
-          get back to the numbers without hunting for the chrome. */}
-      {stage !== "celebrate" && (
-        <Link
-          href={lessonHref}
-          className="text-xs font-semibold text-[var(--color-ink-soft)] underline-offset-4 hover:underline sm:text-sm"
-        >
-          Back to numbers
-        </Link>
       )}
     </div>
   );

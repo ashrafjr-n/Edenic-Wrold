@@ -103,7 +103,6 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
           character={character}
           lessonId={lesson.id}
           nextHref={nextHref}
-          lessonHref={lessonPath}
           nextValue={next?.value}
         />
       </div>
