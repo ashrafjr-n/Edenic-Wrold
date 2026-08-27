@@ -253,7 +253,10 @@ export function LessonCard({
      a stacking context here it would slide behind the page background and
      disappear. */
   const wrapperClass = `lesson-theme anim-fade-up relative isolate ${
-    locked ? "is-locked sm:opacity-[0.72]" : ""
+    /* Faded, not greyed — from `sm` up a locked lesson keeps its own hue and
+       just steps back. The fade covers its trail piece too, so the road
+       ahead dims with it. */
+    locked ? "is-locked sm:opacity-[0.78]" : ""
   }`;
 
   const wrapperStyle = {

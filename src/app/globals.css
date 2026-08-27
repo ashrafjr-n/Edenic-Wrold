@@ -314,9 +314,14 @@ body {
     background-image: var(--noise),
       linear-gradient(
         163deg,
+        /* The lavender is a bend, not a takeover — the accent still holds the
+           majority of the mix, or the page stops reading as the character's
+           color. The bottom keeps enough accent in it to stay a pink rather
+           than going white, which would leave the white cards nothing to
+           lift off. */
         var(--hub-accent) 0%,
-        color-mix(in srgb, var(--hub-accent) 45%, var(--color-lavender)) 46%,
-        color-mix(in srgb, var(--hub-accent) 26%, #ffffff) 100%
+        color-mix(in srgb, var(--hub-accent) 60%, var(--color-lavender)) 50%,
+        color-mix(in srgb, var(--hub-accent) 34%, #ffffff) 100%
       );
     background-size:
       180px 180px,
@@ -418,7 +423,7 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  filter: drop-shadow(0 10px 12px rgb(var(--shadow-hue) / 30%));
+  filter: drop-shadow(0 9px 11px rgb(var(--shadow-hue) / 38%));
 }
 
 .trail > span {
