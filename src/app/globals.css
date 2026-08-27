@@ -97,6 +97,35 @@
   --color-bloo-soft: #e0f0fd;
   --color-bloo-dark: #2f86c4;
 
+  /* A generic lavender — not `--color-nova`. Nova's token is her identity;
+     this one is just a color in the box, used to bend the lesson hub's
+     ground away from a single flat hue. Recoloring Nova must not repaint a
+     page she isn't on. */
+  --color-lavender: #a48fe3;
+
+  /* ---------------------------------------------------------------
+     Lesson subjects own a hue each, from `sm` up: Numbers pink, Letters
+     violet, Colors blue, Shapes amber. Deliberately their own tokens and
+     NOT the character tokens above — a lesson's color says what the lesson
+     is about, and every character's hub uses the same four. Same separation
+     as `--color-head-*`: the values sit in the family, the tokens don't.
+     --------------------------------------------------------------- */
+  --color-subject-numbers: #f76fa8;
+  --color-subject-numbers-dark: #c94a7e;
+  --color-subject-numbers-soft: #ffe1ee;
+
+  --color-subject-letters: #9b7ce8;
+  --color-subject-letters-dark: #6845b8;
+  --color-subject-letters-soft: #ebe3ff;
+
+  --color-subject-colors: #4fa9ef;
+  --color-subject-colors-dark: #1f6fb0;
+  --color-subject-colors-soft: #dcefff;
+
+  --color-subject-shapes: #f7a83c;
+  --color-subject-shapes-dark: #c2701a;
+  --color-subject-shapes-soft: #ffecd0;
+
   /* The gold horns are the one feature all three characters share, so
      gold is the signature accent: it marks what's active/unlocked
      (borders, badges, dividers) and never fills a large surface. */
@@ -252,6 +281,199 @@ body {
 .panel-art {
   mask-image: var(--panel-art-fade);
   mask-composite: intersect;
+}
+
+/* ---------------------------------------------------------------
+   The lesson hub's ground (`/learn/[character]`).
+
+   Site-wide the ground is one flat color, because the clay shading assumes
+   a single even surface. This route is the one exception: the character's
+   own accent, grained the way `.clay` is, covers the whole page.
+
+   From `sm` up the flat fill bends — the accent runs through lavender into
+   a near-white tint of itself — because across a tablet or desktop's width
+   a single flat slab reads as dead space. Phones keep the flat fill: there
+   is no large empty area there for a gradient to solve, and the flat
+   version is what the clay shadows were tuned against.
+
+   `--hub-accent` comes from the character, so Nova's hub bends through the
+   same lavender from her own lavender and Bloo's from his blue. Nothing
+   here is Pinki-specific.
+   --------------------------------------------------------------- */
+.hub-ground {
+  background-color: var(--hub-accent);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+@media (width >= 40rem) {
+  .hub-ground {
+    /* The grain rides on top and blends with the gradient below it; the
+       gradient itself paints normally over the flat fallback color. */
+    background-image: var(--noise),
+      linear-gradient(
+        163deg,
+        var(--hub-accent) 0%,
+        color-mix(in srgb, var(--hub-accent) 45%, var(--color-lavender)) 46%,
+        color-mix(in srgb, var(--hub-accent) 26%, #ffffff) 100%
+      );
+    background-size:
+      180px 180px,
+      100% 100%;
+    background-blend-mode: overlay, normal;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Lesson colors.
+
+   From `sm` up every lesson wears its subject's hue instead of the
+   character's accent, so the hub reads as four places to go rather than
+   four copies of the same pink. A locked lesson keeps its hue and simply
+   fades — greying it out would hide the exact thing the color is there to
+   show, which is what the world ahead looks like.
+
+   Below `sm` this is deliberately off. The phone stack already draws the
+   sequence in the character's accent (`LessonRail`), and four more colors
+   beside it is two color systems arguing; there the old rule stands —
+   character accent when open, the neutral locked tone when not.
+
+   `--lesson-hue*` arrives inline per card from `data/lessons.ts`;
+   `--character-accent*` is set once on the grid.
+   --------------------------------------------------------------- */
+.lesson-theme {
+  --lesson-accent: var(--lesson-hue);
+  --lesson-accent-dark: var(--lesson-hue-dark);
+  --lesson-tile: var(--lesson-hue-soft);
+  --lesson-title: var(--color-ink);
+  --lesson-muted: var(--color-ink-soft);
+  --lesson-chip-text: #ffffff;
+}
+
+@media (width < 40rem) {
+  .lesson-theme {
+    --lesson-accent: var(--character-accent);
+    --lesson-accent-dark: var(--character-accent-dark);
+    --lesson-tile: #ffffff;
+  }
+
+  .lesson-theme.is-locked {
+    --lesson-accent: var(--color-locked);
+    --lesson-accent-dark: var(--color-locked-dark);
+    --lesson-title: var(--color-locked-text);
+    --lesson-muted: var(--color-locked-text);
+    --lesson-chip-text: var(--color-locked-text);
+  }
+
+  /* Locked drops every clay cue on the phone, same as `.btn3d:disabled`.
+     From `sm` up the chip is colored and keeps its shadow — the fade on the
+     whole card is what says "locked" there. */
+  .lesson-theme.is-locked .lesson-chip {
+    box-shadow: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   The adventure trail (tablet and desktop only).
+
+   A white clay road running Numbers → Letters → Colors → Shapes, so the
+   lessons read as stops on a journey instead of a stack of white boxes.
+   Below `sm` nothing here is drawn: the phone rail already does this job in
+   its own lane beside the cards.
+
+   Every piece is positioned against ONE card's own box, so the geometry is
+   exact at any width — the only unknowns are the grid gaps, and the grid
+   sets those from the same variables the pieces read. Keep the gap here
+   rather than as a Tailwind `gap-*` utility, or the two drift apart and
+   the road stops meeting the cards.
+   --------------------------------------------------------------- */
+.lesson-grid {
+  --trail-gap-y: 1.25rem;
+  --trail-gap-x: 0rem;
+  --trail-weight: 0.75rem;
+  /* How far a piece tucks under the card it leaves. The road sits behind
+     the cards, so the overlap never shows — it just removes the seam. */
+  --trail-tuck: 0.5rem;
+  gap: var(--trail-gap-y) var(--trail-gap-x);
+}
+
+@media (width >= 40rem) {
+  .lesson-grid {
+    --trail-gap-y: 3.5rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .lesson-grid {
+    --trail-gap-x: 4rem;
+  }
+}
+
+/* The wrapper carries the shadow, not the bars. An elbow is three
+   overlapping bars, and shadowing each one separately draws a seam at every
+   join; one filter over the union draws one continuous road. */
+.trail {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 12px rgb(var(--shadow-hue) / 30%));
+}
+
+.trail > span {
+  position: absolute;
+  background: var(--surface);
+  border-radius: 9999px;
+}
+
+/* One column (tablet): straight down through the row gap. */
+.trail-down > span {
+  left: 50%;
+  translate: -50% 0;
+  width: var(--trail-weight);
+  top: calc(100% - var(--trail-tuck));
+  height: calc(var(--trail-gap-y) + var(--trail-tuck) * 2);
+}
+
+/* Two columns (desktop), left-hand card: across the column gap. */
+.trail-across > span {
+  top: 50%;
+  translate: 0 -50%;
+  height: var(--trail-weight);
+  left: calc(100% - var(--trail-tuck));
+  width: calc(var(--trail-gap-x) + var(--trail-tuck) * 2);
+}
+
+/* Two columns (desktop), right-hand card: down out of this card, back
+   across the row gap, then down into the first card of the next row — the
+   turn that keeps the road following the reading order. */
+.trail-hook > span:nth-child(1) {
+  left: 50%;
+  translate: -50% 0;
+  width: var(--trail-weight);
+  top: calc(100% - var(--trail-tuck));
+  height: calc(
+    var(--trail-tuck) + var(--trail-gap-y) / 2 + var(--trail-weight) / 2
+  );
+}
+
+.trail-hook > span:nth-child(2) {
+  height: var(--trail-weight);
+  top: calc(100% + var(--trail-gap-y) / 2 - var(--trail-weight) / 2);
+  /* Right end at this card's centre, left end at the next row's first card
+     centre — one column plus one gap away. */
+  right: calc(50% - var(--trail-weight) / 2);
+  width: calc(100% + var(--trail-gap-x) + var(--trail-weight));
+}
+
+.trail-hook > span:nth-child(3) {
+  width: var(--trail-weight);
+  left: calc(-50% - var(--trail-gap-x) - var(--trail-weight) / 2);
+  top: calc(100% + var(--trail-gap-y) / 2 - var(--trail-weight) / 2);
+  height: calc(
+    var(--trail-gap-y) / 2 + var(--trail-weight) / 2 + var(--trail-tuck)
+  );
 }
 
 /* ---------------------------------------------------------------
