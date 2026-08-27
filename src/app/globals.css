@@ -12,26 +12,26 @@
    --------------------------------------------------------------- */
 :root {
   /* ---------------------------------------------------------------
-     Claymorphism. The ground stays lavender even though the brand accent
-     below is blue now — `--background` is its own token, untouched by the
-     `--brand` swap.
+     Claymorphism. The ground is a pale blue tint now, not lavender — it
+     followed the brand accent's purple-to-blue swap even though it's a
+     separate token (`--background`), so the whole site reads as one family
+     instead of a blue accent on a violet ground.
 
-     The ground is a light lavender — never white — and the things that sit
-     on it are WHITE cards with a wide, soft, purple-tinted shadow (tied to
-     `--shadow-hue`, the ground's own tint, not to `--brand`). That contrast
-     (white on lavender) is what gives the surfaces their lift; shadows alone
-     on a white page would be invisible.
+     The ground is a light, barely-there tint — never plain white — and the
+     things that sit on it are WHITE cards with a wide, soft shadow (tied to
+     `--shadow-hue`, still its old purple-leaning tint — see the note there).
+     That contrast (white on the tinted ground) is what gives the surfaces
+     their lift; shadows alone on a white page would be invisible.
 
      The brand accent (sky blue, `--brand`) carries every primary action: the
      main CTA, the active chip, the circular go buttons. Character colors stay
-     for identity, but the brand accent is the one that repeats. It used to be
-     purple — swapped to blue, but the token is still the one thing to touch;
-     don't hardcode the color a second place.
+     for identity, but the brand accent is the one that repeats.
      --------------------------------------------------------------- */
-  /* Very close to white, but still unmistakably violet — a true white ground
-     would leave the white cards with nothing to lift off. Card shadows are
-     tuned a little heavier to compensate for the reduced contrast. */
-  --background: #f6f4fd;
+  /* Very close to white, but still unmistakably blue-tinted — a true white
+     ground would leave the white cards with nothing to lift off. Card shadows
+     are tuned a little heavier to compensate for the reduced contrast. Was
+     `#f6f4fd` (pale violet) before the ground followed `--brand` to blue. */
+  --background: #f3f8fd;
   --surface: #ffffff;
 
   /* Clay grain. Claymorphism reads as *material*, and a perfectly flat fill
@@ -73,7 +73,11 @@
   --accent-soft: #ffe3ef;
 
   /* Every shadow on the site is a tint of this, never a neutral grey — a
-     grey shadow on a lavender ground reads as dirt. */
+     grey shadow on a tinted ground reads as dirt. Still the old purple-leaning
+     triple from when the ground was lavender — the ground moved to a pale
+     blue tint and this wasn't asked to follow, so shadows are very slightly
+     off-hue from the ground now. Not touched without being asked; revisit if
+     it reads as mismatched in the browser. */
   --shadow-hue: 92 78 190;
 
   --foreground: #2f2a52;
