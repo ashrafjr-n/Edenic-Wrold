@@ -5,8 +5,6 @@ import { Lock, Play } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
-type TileVars = CSSProperties & { "--tile-tint"?: string };
-
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
 
@@ -26,38 +24,43 @@ export function LessonCard({
   index,
 }: LessonCardProps) {
   const { id, name, image, locked } = lesson;
-  const { accent } = character;
+  const { accent, accentDark } = character;
 
-  /* Same rule as the home page: the pale tile is where the character's color
-     lives, and locked drops most of the way to neutral without losing the hue. */
-  const tileTint = locked
-    ? `color-mix(in srgb, ${accent} 10%, var(--color-locked))`
-    : `color-mix(in srgb, ${accent} 20%, #ffffff)`;
+  /* No tile box behind the icon any more — a soft blurred color pool stands
+     in for it, the same atmospheric language the contact shadows elsewhere
+     already use. Locked drops most of the way to neutral without losing the
+     hue entirely. */
+  const iconGlow = locked
+    ? `color-mix(in srgb, ${accent} 8%, transparent)`
+    : `color-mix(in srgb, ${accent} 32%, transparent)`;
 
   const card = (
     <div
-      className={`card group/lesson flex items-center gap-4 p-4 ${
+      className={`card group/lesson flex items-center gap-4 p-4 sm:gap-5 sm:p-5 ${
         locked ? "" : "card-lift"
       }`}
     >
-      <div
-        className="tile relative flex h-20 w-20 shrink-0 items-center justify-center sm:h-24 sm:w-24"
-        style={{ "--tile-tint": tileTint } as TileVars}
-      >
+      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center sm:h-24 sm:w-24">
+        <div
+          className="absolute inset-1 rounded-full blur-2xl"
+          style={{ backgroundColor: iconGlow }}
+          aria-hidden
+        />
+
         <Image
           src={image}
           alt={name}
           width={140}
           height={140}
-          className={`h-14 w-14 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] sm:h-16 sm:w-16 ${
+          className={`relative h-16 w-16 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] sm:h-20 sm:w-20 ${
             locked
               ? "opacity-60 grayscale-[0.55]"
               : "transition-transform duration-300 group-hover/lesson:scale-110"
           }`}
         />
 
-        {/* Corner-mounted, not centered: at this tile size a centered badge
-            covers the lesson icon completely and the card loses its subject. */}
+        {/* Corner-mounted, not centered: a centered badge at this size would
+            cover the lesson icon completely and the card loses its subject. */}
         {locked && (
           <span className="absolute -right-1.5 -top-1.5">
             <span className="group/lock relative flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)]">
@@ -86,10 +89,8 @@ export function LessonCard({
         className="btn3d shrink-0 px-4 py-2 text-xs sm:text-sm"
         style={
           {
-            "--btn-face": locked ? "var(--color-locked)" : "var(--brand)",
-            "--btn-edge": locked
-              ? "var(--color-locked-dark)"
-              : "var(--brand-dark)",
+            "--btn-face": locked ? "var(--color-locked)" : accent,
+            "--btn-edge": locked ? "var(--color-locked-dark)" : accentDark,
             "--btn-text": locked ? "var(--color-locked-text)" : "#fff",
             boxShadow: locked ? "none" : undefined,
           } as CSSProperties
