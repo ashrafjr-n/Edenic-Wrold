@@ -681,6 +681,55 @@ button:disabled,
   animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* A plain fade-and-grow, deliberately NOT `pop-in`: this is what the numeral
+   arrives on in the number journey, and pop-in's travel-and-overshoot reads
+   as a thing being thrown in rather than a thing appearing. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-rise-in {
+  animation: rise-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------------------------------------------------------------
+   Celebration confetti.
+
+   CSS rather than canvas-confetti: the whole site's animation is keyframes,
+   and a two-second burst of a dozen squares does not earn a dependency. Each
+   piece is handed its own vector and spin inline, so one keyframe covers the
+   scatter.
+   --------------------------------------------------------------- */
+@keyframes confetti-fly {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.4) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-x), var(--confetti-y), 0) scale(1)
+      rotate(var(--confetti-spin));
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 0.15rem;
+  animation: confetti-fly 2s cubic-bezier(0.15, 0.6, 0.3, 1) both;
+}
+
 /* Idle "breathing" float for unlocked characters — deliberately small, so it
    reads as alive rather than as a bouncing animation. Starts after pop-in. */
 @keyframes breathe {
@@ -780,13 +829,15 @@ button:disabled,
   .anim-arch-in,
   .anim-pop-in,
   .anim-fade-up,
+  .anim-rise-in,
   .anim-breathe,
   .anim-reveal,
   .anim-hero-parallax {
     animation: none;
   }
 
-  .intro-icons {
+  .intro-icons,
+  .confetti-piece {
     display: none;
   }
 }
