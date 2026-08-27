@@ -56,9 +56,9 @@ export function CharacterCard({
       {/* No card, no square frame around the character — just a soft round
           tint standing in for ground, the same treatment as the home page's
           friend pods, sized up since this page is the main cast portrait. */}
-      <div className="relative flex h-64 items-end justify-center sm:h-72">
+      <div className="relative flex h-72 items-end justify-center sm:h-80">
         <div
-          className="tile tile-round absolute bottom-0 h-44 w-44 sm:h-52 sm:w-52"
+          className="tile tile-round absolute bottom-0 h-48 w-48 sm:h-56 sm:w-56"
           style={{ "--tile-tint": tileTint } as TileVars}
           aria-hidden
         />
@@ -88,7 +88,7 @@ export function CharacterCard({
               alt={name}
               width={475}
               height={539}
-              className={`h-60 w-auto object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.2)] transition-transform duration-300 sm:h-72 ${
+              className={`h-64 w-auto object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.2)] transition-transform duration-300 sm:h-80 ${
                 locked
                   ? "opacity-75 grayscale-[0.55]"
                   : "group-hover/card:scale-105"
