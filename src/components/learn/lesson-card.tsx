@@ -36,11 +36,11 @@ export function LessonCard({
 
   const card = (
     <div
-      className={`card card-grain group/lesson flex items-center justify-between gap-4 p-4 sm:gap-5 sm:p-5 ${
+      className={`card card-grain group/lesson relative p-5 pr-7 sm:p-6 sm:pr-9 ${
         locked ? "" : "card-lift"
       }`}
     >
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 pr-16 sm:pr-20">
         <h3
           className="text-base font-bold leading-snug sm:text-lg"
           style={{ color: locked ? "var(--color-locked-text)" : "var(--color-ink)" }}
@@ -51,7 +51,7 @@ export function LessonCard({
         {/* Level track: a placeholder until the real progress store (zustand
             + persist, see CLAUDE.md's "Planned" table) exists — every lesson
             reads as level 0 for now. */}
-        <div className="mt-2.5 h-2 w-full max-w-[9rem] overflow-hidden rounded-full bg-[var(--color-locked)]">
+        <div className="mt-4 h-3 w-full max-w-[13rem] overflow-hidden rounded-full bg-[var(--color-locked)] sm:mt-5">
           <div
             className="h-full w-0 rounded-full"
             style={{ backgroundColor: locked ? "var(--color-locked-dark)" : accent }}
@@ -60,7 +60,10 @@ export function LessonCard({
         </div>
       </div>
 
-      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center sm:h-24 sm:w-24">
+      {/* The icon straddles the card's own right edge — half in, half out —
+          the same "breaks the frame" language the character portraits use
+          on their tiles elsewhere in the app, just mirrored to this row. */}
+      <div className="absolute right-0 top-1/2 h-24 w-24 -translate-y-1/2 translate-x-1/2 sm:h-28 sm:w-28">
         <div
           className="absolute inset-1 rounded-full blur-2xl"
           style={{ backgroundColor: iconGlow }}
@@ -72,29 +75,12 @@ export function LessonCard({
           alt={name}
           width={140}
           height={140}
-          className={`relative h-16 w-16 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-opacity duration-200 sm:h-20 sm:w-20 ${
-            locked ? "opacity-60 grayscale-[0.55]" : "group-hover/lesson:opacity-10"
+          className={`relative h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(92,78,190,0.24)] transition-transform duration-300 sm:h-24 sm:w-24 ${
+            locked
+              ? "opacity-60 grayscale-[0.55]"
+              : "group-hover/lesson:scale-105"
           }`}
         />
-
-        {/* Hover reveal: the Start pill takes the icon's place instead of
-            sitting in the row permanently — mouse-only affordance, since the
-            whole card is already a tappable Link for touch. */}
-        {!locked && (
-          <span
-            className="btn3d pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 text-xs opacity-0 transition-opacity duration-200 group-hover/lesson:opacity-100 sm:text-sm"
-            style={
-              {
-                "--btn-face": accent,
-                "--btn-edge": accentDark,
-                "--btn-text": "#fff",
-              } as CSSProperties
-            }
-          >
-            Start
-            <Play className="h-3.5 w-3.5 fill-current" strokeWidth={2.75} />
-          </span>
-        )}
 
         {/* Corner-mounted, not centered: a centered badge at this size would
             cover the lesson icon completely and the card loses its subject. */}
@@ -114,6 +100,25 @@ export function LessonCard({
           </span>
         )}
       </div>
+
+      {/* Hover reveal: the Start pill lands in the middle of the whole card,
+          not tucked into a corner — mouse-only affordance, since the whole
+          row is already a tappable Link for touch. */}
+      {!locked && (
+        <span
+          className="btn3d pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-5 py-2.5 text-sm opacity-0 transition-opacity duration-200 group-hover/lesson:opacity-100"
+          style={
+            {
+              "--btn-face": accent,
+              "--btn-edge": accentDark,
+              "--btn-text": "#fff",
+            } as CSSProperties
+          }
+        >
+          Start
+          <Play className="h-4 w-4 fill-current" strokeWidth={2.75} />
+        </span>
+      )}
     </div>
   );
 
