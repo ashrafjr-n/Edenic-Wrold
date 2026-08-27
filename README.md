@@ -13,6 +13,8 @@ All UI and content is English only.
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
+| `/learn/[character]/[lesson]` | Redirects to the lesson's first item |
+| `/learn/[character]/[lesson]/[item]` | One number's journey — watch, trace, celebrate |
 
 `Activities` appears in the navigation and footer but has no page yet, so it is
 rendered as disabled "soon" text rather than a link.
@@ -92,13 +94,16 @@ src/
     page.tsx                      Home page
     learn/page.tsx                Friend picker
     learn/[character]/page.tsx    Character lesson hub
+    learn/[character]/[lesson]/   Lesson redirect, and the per-number pages
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards, intro icons
+    learn/number/     The number journey: video, tracing board, stars
     layout/           Header, nav, footer
     ui/               Shared primitives (Button3D, SocialLinks, Logo)
-  data/               Characters, lessons, navigation, socials, home panels
+  data/               Characters, lessons, numbers, navigation, socials, home panels
+  lib/                Trace scoring, and the shared /learn route resolver
   types/              Shared TypeScript types
 public/
   hero.jpg            Home hero scene
@@ -106,12 +111,22 @@ public/
   assets/learn.jpg    Learn panel artwork
   assets/friends/     Mascot artwork
   assets/icons/       Decorative 3D icons
+  assets/learn-with-pinki/  Pinki's lesson artwork and the clay numerals 1-9
 ```
 
 ## Current status
 
-The home page, the friend picker and Pinki's lesson hub are built, and all are still
-being iterated on visually. Only Pinki has lesson content; Nova and Bloo are locked.
+The home page, the friend picker, Pinki's lesson hub and the Numbers lesson are
+built, and all are still being iterated on visually. Only Pinki has lesson
+content; Nova and Bloo are locked, and Numbers is the only lesson with items.
+
+Each number is one loop: watch a short, trace the numeral, earn one to three
+stars, move on. Tracing is a custom SVG and Pointer Events board scored on how
+much of the numeral the child covered and how much of their drawing stayed on
+it — no drawing library. The video is a click-to-load facade in front of a
+`youtube-nocookie.com` embed, so nothing is requested from YouTube until a child
+actually taps play. Only number 1 has a short so far; the rest open straight on
+the tracing step until theirs are produced.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
@@ -119,8 +134,9 @@ point, so no progress, streaks or points appear anywhere before sign-in.
 
 Planned, in order:
 
-1. Per-item lesson pages (video → shape → tracing → questions)
-2. Client-side progress tracking, so a returning child resumes where they left off
+1. The questions step, and the remaining numbers' videos
+2. Client-side progress tracking, so a returning child resumes where they left
+   off — today a reload restarts the current number
 3. Progressive unlocking, across characters and within each character's lessons
 4. The Activities section
 5. Accounts, and the profile the "Join Edenic World" button leads to
