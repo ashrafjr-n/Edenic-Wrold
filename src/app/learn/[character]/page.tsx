@@ -175,12 +175,10 @@ export default async function CharacterLearnPage({
             rail lives in; from `sm` up the rail is gone and the padding goes
             back to matching the rest of the page.
 
-            `.lesson-grid` owns the gap (no `gap-*` utility here): the trail
-            pieces measure themselves against it, so the two have to come
-            from one place. `--character-accent*` is the phone fallback the
-            lesson hues switch back to below `sm`. */}
+            `--character-accent*` is the phone fallback the lesson hues
+            switch back to below `sm`. */}
         <div
-          className="lesson-grid mx-auto grid w-full max-w-7xl grid-cols-1 px-6 pl-12 sm:px-8 lg:grid-cols-2"
+          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 lg:grid-cols-2"
           style={
             {
               "--character-accent": character.accent,
