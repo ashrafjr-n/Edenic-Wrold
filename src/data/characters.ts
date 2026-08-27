@@ -6,6 +6,7 @@ export const characters: Character[] = [
     name: "Pinki",
     tagline: "Counts everything and finds shapes in the whole wide world.",
     image: "/assets/friends/pinki.png",
+    heroImage: "/assets/learn-with-pinki/learn-with-pinki.png",
     accent: "var(--color-pinki)",
     accentSoft: "var(--color-pinki-soft)",
     accentDark: "var(--color-pinki-dark)",
