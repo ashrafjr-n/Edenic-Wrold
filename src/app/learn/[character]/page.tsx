@@ -27,9 +27,14 @@ export default async function CharacterLearnPage({
   if (character.locked) redirect("/learn");
 
   const lessons = lessonsByCharacter[character.id];
+  /* The lesson to lead with. Once the progress store lands this becomes the
+     first unlocked *and unfinished* one; for now the first unlocked lesson is
+     the same thing. `-1` (nothing unlocked) simply features nothing. */
+  const featuredIndex = lessons.findIndex((lesson) => !lesson.locked);
   const cast = lessons.map((lesson, index) => ({
     lesson,
     index,
+    featured: index === featuredIndex,
     previousName: lesson.locked ? lessons[index - 1]?.name : undefined,
   }));
 
@@ -56,7 +61,7 @@ export default async function CharacterLearnPage({
             text below them any more — the hero scene and the lesson list
             carry the page on their own. */}
         <div
-          className="anim-drop-in flex items-center justify-between"
+          className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
         >
           <Button3D
@@ -72,22 +77,62 @@ export default async function CharacterLearnPage({
             />
           </Button3D>
 
-          <Button3D
-            variant="calm"
-            tone={{ face: "var(--surface)" }}
-            aria-label="Achievements"
-            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-          >
-            {/* A filled crown, not the outlined trophy that was here first —
-                a trophy's thin stem and handles break up at this size, while
-                a crown stays one chunky silhouette, which is what reads as
-                clay next to the character renders. */}
-            <Crown
-              className="h-5 w-5 fill-current sm:h-6 sm:w-6"
-              style={{ color: "var(--color-gold)" }}
-              strokeWidth={1.5}
-            />
-          </Button3D>
+          {/* Whose world this is. The hero banner is phone-only now, so
+              without this the desktop page carried no trace of the character
+              at all — and this fills the dead span between the two buttons
+              at the same time. */}
+          <div className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6">
+            <div
+              className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
+              style={
+                {
+                  "--tile-tint": `color-mix(in srgb, ${character.accent} 20%, #ffffff)`,
+                } as CSSProperties
+              }
+            >
+              <Image
+                src={character.image}
+                alt=""
+                width={475}
+                height={539}
+                priority
+                /* Scaled up and offset inside the circle so the crop lands on
+                   the face — the source render is a full body, and the head
+                   sits left of and above its center. Re-check this framing
+                   if the character renders are ever replaced. */
+                className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
+              />
+            </div>
+            <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
+              {character.name}
+            </span>
+          </div>
+
+          {/* Presentation only — there is no achievements screen yet. The
+              tooltip is the same `group/*` hover pattern the locked lesson
+              cards use, so an unexplained icon still says what it is. */}
+          <div className="group/tip relative shrink-0">
+            <Button3D
+              variant="calm"
+              tone={{ face: "var(--surface)" }}
+              aria-label="Achievements"
+              className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
+            >
+              {/* A filled crown, not the outlined trophy that was here first —
+                  a trophy's thin stem and handles break up at this size, while
+                  a crown stays one chunky silhouette, which is what reads as
+                  clay next to the character renders. */}
+              <Crown
+                className="h-5 w-5 fill-current sm:h-6 sm:w-6"
+                style={{ color: "var(--color-gold)" }}
+                strokeWidth={1.5}
+              />
+            </Button3D>
+
+            <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
+              Your achievements
+            </span>
+          </div>
         </div>
 
         {/* Phone only (`sm:hidden`). On a narrow screen the scene is what
@@ -124,12 +169,13 @@ export default async function CharacterLearnPage({
           bottom, and a child margin could collapse straight back out. */}
       <div className="w-full pt-8 sm:my-auto sm:pt-10">
         <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:gap-7 sm:px-8 lg:grid-cols-2">
-          {cast.map(({ lesson, index, previousName }) => (
+          {cast.map(({ lesson, index, featured, previousName }) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
               character={character}
               previousLessonName={previousName}
+              featured={featured}
               index={index}
             />
           ))}
