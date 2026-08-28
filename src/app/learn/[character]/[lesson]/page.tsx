@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
@@ -54,8 +55,36 @@ export default async function LessonPage({ params }: LessonPageProps) {
             />
           </Button3D>
 
-          <div className="card card-pill px-5 py-2.5 sm:px-6 sm:py-3">
-            <span className="whitespace-nowrap text-sm font-bold text-[var(--color-ink)] sm:text-base">
+          {/* The lesson's own icon and subject color, not a plain text pill —
+              the chip carries some identity instead of just repeating the
+              back button's row with a label. Same shape as the character
+              chip on the hub page, themed to the lesson instead. */}
+          <div
+            className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6"
+            style={
+              {
+                "--lesson-accent": lesson.theme.accent,
+              } as CSSProperties
+            }
+          >
+            <div
+              className="tile tile-round relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden sm:h-11 sm:w-11"
+              style={
+                {
+                  "--tile-tint":
+                    "color-mix(in srgb, var(--lesson-accent) 22%, white)",
+                } as CSSProperties
+              }
+            >
+              <Image
+                src={lesson.image}
+                alt=""
+                width={140}
+                height={140}
+                className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+              />
+            </div>
+            <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
               {lesson.name}
             </span>
           </div>
