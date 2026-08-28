@@ -48,14 +48,7 @@ export default async function CharacterLearnPage({
   }));
 
   return (
-    /* The character's own color, grained the same way `.clay` is, covers the
-       whole page — not a boxed banner sitting on the site's pale ground.
-       From `sm` up `.hub-ground` bends it through lavender into a near-white
-       tint of itself, because a flat slab that size reads as dead space. */
-    <main
-      className="hub-ground relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28"
-      style={{ "--hub-accent": character.accent } as CSSProperties}
-    >
+    <main className="relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back and the (presentation-only, no achievements feature yet)
             trophy sit at the same level as the header's own icon chrome —
