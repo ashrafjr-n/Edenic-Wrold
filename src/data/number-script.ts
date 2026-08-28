@@ -33,6 +33,7 @@ export function scriptFor(value: number): NumberScript {
   return {
     word,
     discover: `I found Number ${value}! Let's learn it together.`,
+    reveal: `This is Number ${value}!`,
     strokeHint: STROKE_HINTS[value] ?? "Watch how I draw it!",
     traceInvite: "Your turn! Follow the dots with your finger.",
     /* The whole point of this line: a miss is Pinki offering to go again, not

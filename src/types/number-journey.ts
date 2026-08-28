@@ -8,6 +8,7 @@
  */
 export const JOURNEY_STAGES = [
   "discover",
+  "reveal",
   "demo",
   "trace",
   "find",
@@ -34,6 +35,8 @@ export interface NumberScript {
   /** The number as a word: "One". Shown, and later spoken. */
   word: string;
   discover: string;
+  /** Said while the numeral itself is on screen, before any drawing starts. */
+  reveal: string;
   /** How the numeral is written, in the order the strokes are drawn. */
   strokeHint: string;
   traceInvite: string;
