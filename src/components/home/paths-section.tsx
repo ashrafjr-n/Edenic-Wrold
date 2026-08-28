@@ -55,13 +55,18 @@ export function PathsSection() {
                 </p>
 
                 {/* White button on a colored panel: the purple CTA that works
-                    everywhere else would disappear into this one. */}
+                    everywhere else would disappear into this one.
+                    `.btn3d--clay-white` gives it the real clay material
+                    (inner top highlight, inner bottom shade, wide tinted drop
+                    shadow) — `calm`'s flat chip reads as a sticker on a
+                    saturated panel like this, same reasoning as the lesson
+                    hub's back/achievements buttons. */}
                 <Button3D
                   tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
                   variant="calm"
                   href={href}
                   disabled={!href}
-                  className="mt-auto px-6 py-3 text-base"
+                  className="btn3d--clay-white mt-auto px-6 py-3 text-base"
                 >
                   {action}
                   {href && <ArrowRight className="h-5 w-5" strokeWidth={2.75} />}
