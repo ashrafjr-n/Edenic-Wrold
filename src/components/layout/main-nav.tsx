@@ -13,8 +13,9 @@ export function MainNav() {
   return (
     /* No container chip: the header bar is white now, so a white pill around
        the nav would be invisible apart from its shadow. Bare items on the bar,
-       with only the active one carrying color. */
-    <nav aria-label="Main" className="flex items-center gap-2 sm:gap-4">
+       with only the active one carrying color. Hidden below `sm` — on a phone
+       these items move to `BottomNav`, a fixed app-style tab bar, instead. */
+    <nav aria-label="Main" className="hidden items-center gap-2 sm:flex sm:gap-4">
       {mainNav.map(({ label, href }) => {
         if (!href) {
           return (
