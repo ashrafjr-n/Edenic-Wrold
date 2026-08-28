@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, RotateCcw, SkipForward, Unlock } from "lucide-react";
+import { ArrowRight, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -216,21 +216,6 @@ export function NumberJourney({
             >
               Next
               <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-
-            {/* Skip is a plain white chip, never greyed or shrunken — a
-                child who has watched enough is not doing anything wrong. */}
-            <Button3D
-              variant="calm"
-              tone={WHITE_TONE}
-              onClick={advance}
-              className="btn3d--clay-white px-5 py-3 text-sm sm:px-7 sm:py-3 sm:text-base"
-            >
-              Skip
-              <SkipForward
-                className="h-4 w-4 fill-current text-[var(--color-ink-soft)]"
-                strokeWidth={1.5}
-              />
             </Button3D>
           </div>
         </div>
