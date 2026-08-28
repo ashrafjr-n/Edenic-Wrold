@@ -15,12 +15,26 @@ const APPLE_COUNT = 3;
 /** Below this the pointer never really moved — treat it as a tap, not a drag,
     so a wobbly finger still counts as a press. */
 const DRAG_THRESHOLD = 8;
+/** How long a tapped apple takes to travel to the basket before it counts. */
+const FLY_MS = 320;
 
 interface DragState {
   id: number;
+  /** Where the pointer went down, in viewport coordinates — deltas are
+      tracked against this rather than accumulated from `movementX`/`movementY`,
+      which are unreliable across touch/pen input on some browsers and were
+      the likely reason dragging didn't consistently work. */
+  startX: number;
+  startY: number;
   dx: number;
   dy: number;
   moved: boolean;
+}
+
+interface FlyState {
+  id: number;
+  dx: number;
+  dy: number;
 }
 
 /**
@@ -34,12 +48,19 @@ interface DragState {
  * which is not what this stage is testing.
  *
  * A drag that lands anywhere else simply springs back — nothing is ever wrong
- * here, because giving the apple IS the answer.
+ * here, because giving the apple IS the answer. A tapped apple flies itself
+ * over to the basket before it's counted, so tapping and dragging both end
+ * the same way: watching the apple actually arrive.
  */
 export function AppleGive({ target, onGiven }: AppleGiveProps) {
   const basketRef = useRef<HTMLDivElement>(null);
   const [given, setGiven] = useState<number[]>([]);
   const [drag, setDrag] = useState<DragState | null>(null);
+  /* A tapped (not dragged) apple flies to the basket before it counts, so a
+     tap reads as "the apple went over" instead of just vanishing where it
+     stood. A dragged one is already there when it's released, so it skips
+     straight to `give`. */
+  const [flying, setFlying] = useState<FlyState | null>(null);
 
   const give = (id: number) => {
     if (given.includes(id)) return;
@@ -50,18 +71,18 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
   };
 
   const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>, id: number) => {
-    if (given.includes(id)) return;
+    if (given.includes(id) || flying) return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    setDrag({ id, dx: 0, dy: 0, moved: false });
+    setDrag({ id, startX: event.clientX, startY: event.clientY, dx: 0, dy: 0, moved: false });
   };
 
   const onPointerMove = (event: ReactPointerEvent<HTMLButtonElement>, id: number) => {
     if (drag?.id !== id) return;
 
-    const dx = event.movementX + drag.dx;
-    const dy = event.movementY + drag.dy;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
     setDrag({
-      id,
+      ...drag,
       dx,
       dy,
       moved: drag.moved || Math.hypot(dx, dy) > DRAG_THRESHOLD,
@@ -72,8 +93,6 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
     if (drag?.id !== id) return;
     event.currentTarget.releasePointerCapture(event.pointerId);
 
-    /* A tap counts. So does a drag that ended over the basket. Anything else
-       springs back, and the child can simply try again. */
     const basket = basketRef.current?.getBoundingClientRect();
     const overBasket =
       basket &&
@@ -82,7 +101,29 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
       event.clientY >= basket.top &&
       event.clientY <= basket.bottom;
 
-    if (!drag.moved || overBasket) give(id);
+    if (!drag.moved) {
+      /* A tap: fly this exact apple over to the basket first, THEN count it —
+         it should never just vanish in place. */
+      const appleRect = event.currentTarget.getBoundingClientRect();
+      if (basket) {
+        setFlying({
+          id,
+          dx: basket.left + basket.width / 2 - (appleRect.left + appleRect.width / 2),
+          dy: basket.top + basket.height / 2 - (appleRect.top + appleRect.height / 2),
+        });
+        window.setTimeout(() => {
+          setFlying(null);
+          give(id);
+        }, FLY_MS);
+      } else {
+        give(id);
+      }
+    } else if (overBasket) {
+      /* A drag that landed on the basket is already there — no flight needed. */
+      give(id);
+    }
+    /* A drag that landed anywhere else just springs back to its start point,
+       via the same transition the "not dragging" state already applies. */
     setDrag(null);
   };
 
@@ -116,12 +157,13 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
         {Array.from({ length: APPLE_COUNT }, (_, id) => {
           const isGone = given.includes(id);
           const dragging = drag?.id === id && drag.moved;
+          const isFlying = flying?.id === id;
 
           return (
             <button
               key={id}
               type="button"
-              disabled={isGone}
+              disabled={isGone || isFlying}
               aria-label="Give Pinki an apple"
               onPointerDown={(event) => onPointerDown(event, id)}
               onPointerMove={(event) => onPointerMove(event, id)}
@@ -134,7 +176,12 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
               style={
                 dragging
                   ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.15" }
-                  : undefined
+                  : isFlying
+                    ? {
+                        translate: `${flying.dx}px ${flying.dy}px`,
+                        scale: "0.35",
+                      }
+                    : undefined
               }
             >
               <Image
