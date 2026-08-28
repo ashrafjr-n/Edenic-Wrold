@@ -67,22 +67,22 @@ export function LessonCard({
       }`}
       style={
         {
-          backgroundColor:
-            "color-mix(in srgb, var(--character-accent) 16%, white)",
+          /* Full-strength accent, same as the numbers page's own `.hub-ground`
+             fill — a direct request to make the two match, not a diluted tile
+             tint. */
+          backgroundColor: "var(--character-accent)",
         } as CSSProperties
       }
     >
-      {/* The icon's own panel is a deeper pink than the card behind it, so
-          the two still separate — same pale-tint math the rest of the site
-          uses for character color, just applied here instead of staying
-          white. */}
+      {/* The icon's own panel is a lighter pink than the fully-saturated card
+          behind it, so the two still separate by shade. */}
       <div className="relative flex w-20 shrink-0 items-center justify-center p-3 sm:w-36 sm:p-4">
         <div
           className="tile tile-clay tile-grain relative flex h-full w-full items-center justify-center"
           style={
             {
               "--tile-tint":
-                "color-mix(in srgb, var(--character-accent) 32%, white)",
+                "color-mix(in srgb, var(--character-accent) 45%, white)",
             } as CSSProperties
           }
         >
