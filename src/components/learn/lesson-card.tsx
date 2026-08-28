@@ -65,17 +65,26 @@ export function LessonCard({
       className={`card card-grain group/lesson flex h-full overflow-hidden ${
         locked ? "" : "card-lift"
       }`}
+      style={
+        {
+          backgroundColor:
+            "color-mix(in srgb, var(--character-accent) 16%, white)",
+        } as CSSProperties
+      }
     >
-      {/* The icon owns the card's entire left edge, full height, flush — not a
-          tile floating with margin around it. Its background is plain white
-          with a soft shadow, the same white as the card: pure claymorphism,
-          separation from light alone, not from color. A pale per-lesson tint
-          was tried here and cut — the lesson's hue lives on the badge, chip
-          and bar instead, and the icon reads better against white. */}
-      <div className="relative flex w-20 shrink-0 items-center justify-center bg-[var(--surface)] p-3 sm:w-36 sm:p-4">
+      {/* The icon's own panel is a deeper pink than the card behind it, so
+          the two still separate — same pale-tint math the rest of the site
+          uses for character color, just applied here instead of staying
+          white. */}
+      <div className="relative flex w-20 shrink-0 items-center justify-center p-3 sm:w-36 sm:p-4">
         <div
-          className="tile tile-clay relative flex h-full w-full items-center justify-center"
-          style={{ "--tile-tint": "#ffffff" } as CSSProperties}
+          className="tile tile-clay tile-grain relative flex h-full w-full items-center justify-center"
+          style={
+            {
+              "--tile-tint":
+                "color-mix(in srgb, var(--character-accent) 32%, white)",
+            } as CSSProperties
+          }
         >
           <Image
             src={image}
@@ -131,22 +140,25 @@ export function LessonCard({
           </div>
 
           {/* Decorative, not a second control — the whole card is already the
-              tappable target. It is also the card's only lock. */}
+              tappable target. It is also the card's only lock. White clay,
+              same material as the hub's back/achievements buttons, rather
+              than a solid accent-filled disc. */}
           <span
-            className="btn3d lesson-chip h-10 w-10 shrink-0 sm:h-12 sm:w-12"
-            style={
-              {
-                "--btn-face": "var(--lesson-accent)",
-                "--btn-edge": "var(--lesson-accent-dark)",
-                "--btn-text": "var(--lesson-chip-text)",
-              } as CSSProperties
-            }
+            className="btn3d btn3d--clay-white h-10 w-10 shrink-0 sm:h-12 sm:w-12"
             aria-hidden
           >
             {locked ? (
-              <Lock className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.75} />
+              <Lock
+                className="h-4 w-4 sm:h-5 sm:w-5"
+                style={{ color: "var(--color-locked-text)" }}
+                strokeWidth={2.75}
+              />
             ) : (
-              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
+              <ChevronRight
+                className="h-5 w-5 sm:h-6 sm:w-6"
+                style={{ color: "var(--lesson-accent)" }}
+                strokeWidth={2.75}
+              />
             )}
           </span>
         </div>
