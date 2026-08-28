@@ -47,12 +47,22 @@ export function NumberGrid({
       ? (progress[itemKey(characterId, lessonId, value)]?.stars ?? 0)
       : 0;
 
+  /* The one number the child has actually reached: the first open number
+     with no stars yet. It pulses so a child glancing at the grid knows
+     exactly where to tap next, instead of scanning nine identical numerals. */
+  const nextValue = items.find((item, index) => {
+    const previous = items[index - 1];
+    const isLocked = previous ? starsFor(previous.value) === 0 : false;
+    return !isLocked && starsFor(item.value) === 0;
+  })?.value;
+
   return (
     <ul className="grid grid-cols-3 gap-x-4 gap-y-8 sm:gap-x-12 sm:gap-y-14">
       {items.map((item, index) => {
         const previous = items[index - 1];
         const locked = previous ? starsFor(previous.value) === 0 : false;
         const earned = starsFor(item.value);
+        const isNext = item.value === nextValue;
 
         const style = {
           animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
@@ -80,15 +90,25 @@ export function NumberGrid({
               </span>
             ) : (
               /* The only motion on hover anywhere on the site is a lift, so
-                 that is what an open numeral does too. */
-              <Link
-                href={`${basePath}/${item.value}`}
-                className="anim-rise-in block transition-transform duration-300 hover:scale-105"
-                style={style}
-                aria-label={`Start the number ${item.value}`}
+                 that is what an open numeral does too. The pulse (when this
+                 is the number to tap next) lives on a wrapping span so its
+                 continuous `scale` never fights the hover `scale` below —
+                 Tailwind v4's `scale` is its own standalone property, and an
+                 animation on the same element would just override it. */
+              <span
+                className={
+                  isNext ? "anim-pulse-invite inline-block" : "inline-block"
+                }
               >
-                {numeral}
-              </Link>
+                <Link
+                  href={`${basePath}/${item.value}`}
+                  className="anim-rise-in block transition-transform duration-300 hover:scale-105"
+                  style={style}
+                  aria-label={`Start the number ${item.value}`}
+                >
+                  {numeral}
+                </Link>
+              </span>
             )}
 
             {/* The stars a finished number earned, small, under it — the list
