@@ -14,7 +14,7 @@ All UI and content is English only.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
-| `/learn/[character]/[lesson]/[item]` | One number's journey — seven stages, guided by Pinki |
+| `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
 
 `Activities` appears in the navigation and footer but has no page yet, so it is
 rendered as disabled "soon" text rather than a link.
@@ -123,10 +123,11 @@ The home page, the friend picker, Pinki's lesson hub and the Numbers lesson are
 built, and all are still being iterated on visually. Only Pinki has lesson
 content; Nova and Bloo are locked, and Numbers is the only lesson with items.
 
-Each number is one journey of seven stages, guided by Pinki throughout: meet the
-number in a short video, watch her write it, trace it, find it among others,
-give her one apple and say how many she has, pop the right balloon, and earn one
-to three stars for the whole journey. Finishing a number unlocks the next.
+Each number is one journey of eight stages, guided by Pinki throughout: meet the
+number in a short video, see it standing still and say it aloud, watch her
+write it, trace it, find it among others, give her one apple and say how many
+she has, pop the right balloon, and earn one to three stars for the whole
+journey. Finishing a number unlocks the next.
 
 Tracing is a custom SVG and Pointer Events board, scored on how much of the
 numeral the child covered and how much of their drawing stayed on it — no
