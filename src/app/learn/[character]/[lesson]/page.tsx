@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Crown } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { Button3D } from "@/components/ui/button-3d";
@@ -31,12 +31,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (lesson.id !== "numbers") notFound();
 
   return (
-    /* The same ground as the character's hub — the child walked here from
-       there and is still in that character's world. */
-    <main
-      className="hub-ground relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
-      style={{ "--hub-accent": character.accent } as CSSProperties}
-    >
+    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
       <div className="mx-auto w-full max-w-5xl px-6 sm:px-8">
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
@@ -89,9 +84,27 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </span>
           </div>
 
-          {/* Balances the chip against the back button so it sits on the
-              page's centre line, not on the leftover space. */}
-          <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" aria-hidden />
+          {/* Same presentation-only achievements button as the character hub,
+              in the same spot — this page's header row now matches that one
+              exactly rather than faking the balance with empty space. */}
+          <div className="group/tip relative shrink-0">
+            <Button3D
+              variant="calm"
+              tone={{ face: "var(--surface)" }}
+              aria-label="Achievements"
+              className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
+            >
+              <Crown
+                className="h-5 w-5 fill-current sm:h-6 sm:w-6"
+                style={{ color: "var(--color-gold)" }}
+                strokeWidth={1.5}
+              />
+            </Button3D>
+
+            <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
+              Your achievements
+            </span>
+          </div>
         </div>
       </div>
 
