@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Pencil, RotateCcw, SkipForward, Unlock } from "lucide-react";
+import { ArrowRight, RotateCcw, SkipForward, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -11,6 +11,7 @@ import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { NumberVideo } from "./number-video";
+import { Numeral } from "./numeral";
 import { PinkiGuide } from "./pinki-guide";
 import { StageDots } from "./stage-dots";
 import { SayItButton } from "./say-it-button";
@@ -77,7 +78,7 @@ export function NumberJourney({
   nextHref,
   nextValue,
 }: NumberJourneyProps) {
-  const { value, videoId, strokes } = item;
+  const { value, image, videoId, strokes } = item;
   const { accent } = character;
   const script = scriptFor(value);
 
@@ -149,33 +150,35 @@ export function NumberJourney({
   const guide: { pose: "speak" | "pen" | "celebrate"; line: string } =
     stage === "discover"
       ? { pose: "speak", line: script.discover }
-      : stage === "demo"
-        ? { pose: "pen", line: script.strokeHint }
-        : stage === "trace"
-          ? {
-              pose: "pen",
-              line: traceMissed ? script.traceMiss : script.traceInvite,
-            }
-          : stage === "find"
+      : stage === "reveal"
+        ? { pose: "speak", line: script.reveal }
+        : stage === "demo"
+          ? { pose: "pen", line: script.strokeHint }
+          : stage === "trace"
             ? {
-                pose: "speak",
-                line: pickMissed ? script.findMiss : script.find,
+                pose: "pen",
+                line: traceMissed ? script.traceMiss : script.traceInvite,
               }
-            : stage === "count"
+            : stage === "find"
               ? {
-                  pose: appleGiven ? "celebrate" : "speak",
-                  line: pickMissed
-                    ? script.findMiss
-                    : appleGiven
-                      ? script.countHow
-                      : script.count,
+                  pose: "speak",
+                  line: pickMissed ? script.findMiss : script.find,
                 }
-              : stage === "game"
+              : stage === "count"
                 ? {
-                    pose: "speak",
-                    line: pickMissed ? script.findMiss : script.game,
+                    pose: appleGiven ? "celebrate" : "speak",
+                    line: pickMissed
+                      ? script.findMiss
+                      : appleGiven
+                        ? script.countHow
+                        : script.count,
                   }
-                : { pose: "celebrate", line: script.celebrate };
+                : stage === "game"
+                  ? {
+                      pose: "speak",
+                      line: pickMissed ? script.findMiss : script.game,
+                    }
+                  : { pose: "celebrate", line: script.celebrate };
 
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:gap-8">
@@ -187,8 +190,8 @@ export function NumberJourney({
         />
       )}
 
-      {/* Pinki opens every stage. She is the through-line that makes seven
-          screens read as one journey rather than seven exercises. */}
+      {/* Pinki opens every stage. She is the through-line that makes every
+          screen read as one journey rather than a string of exercises. */}
       <PinkiGuide
         pose={guide.pose}
         line={guide.line}
@@ -196,8 +199,42 @@ export function NumberJourney({
       />
 
       {stage === "discover" && (
-        <div className="anim-rise-in flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+        <div className="anim-rise-in flex flex-col items-center gap-6 sm:gap-8">
+          {/* This stage is the reel and nothing else — saying the word and
+              seeing the numeral are their own stage right after. */}
           {videoId && <NumberVideo videoId={videoId} value={value} />}
+
+          <div className="flex items-center gap-3">
+            <Button3D
+              tone={BRAND_TONE}
+              onClick={advance}
+              className="px-7 py-3 text-base sm:px-8 sm:text-lg"
+            >
+              Next
+              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+            </Button3D>
+
+            {/* Skip is a plain white chip, never greyed or shrunken — a
+                child who has watched enough is not doing anything wrong. */}
+            <Button3D
+              variant="calm"
+              tone={WHITE_TONE}
+              onClick={advance}
+              className="btn3d--clay-white px-5 py-3 text-sm sm:text-base"
+            >
+              Skip
+              <SkipForward
+                className="h-4 w-4 fill-current text-[var(--color-ink-soft)]"
+                strokeWidth={1.5}
+              />
+            </Button3D>
+          </div>
+        </div>
+      )}
+
+      {stage === "reveal" && (
+        <div className="anim-rise-in flex flex-col items-center gap-6 sm:gap-8">
+          <Numeral value={value} image={image} sizeClass="h-32 w-32 sm:h-44 sm:w-44" />
 
           <div className="flex flex-col items-center gap-4 sm:gap-6">
             {/* The word, then the button that will speak it. Placed and
@@ -207,33 +244,16 @@ export function NumberJourney({
             </p>
 
             <SayItButton word={script.word} />
-
-            <div className="flex items-center gap-3">
-              <Button3D
-                tone={BRAND_TONE}
-                onClick={advance}
-                className="px-7 py-3 text-base sm:px-8 sm:text-lg"
-              >
-                <Pencil className="h-5 w-5" strokeWidth={2.75} />
-                Let&apos;s draw
-              </Button3D>
-
-              {/* Skip is a plain white chip, never greyed or shrunken — a
-                  child who has watched enough is not doing anything wrong. */}
-              <Button3D
-                variant="calm"
-                tone={WHITE_TONE}
-                onClick={advance}
-                className="btn3d--clay-white px-5 py-3 text-sm sm:text-base"
-              >
-                Skip
-                <SkipForward
-                  className="h-4 w-4 fill-current text-[var(--color-ink-soft)]"
-                  strokeWidth={1.5}
-                />
-              </Button3D>
-            </div>
           </div>
+
+          <Button3D
+            tone={BRAND_TONE}
+            onClick={advance}
+            className="px-8 py-3 text-base sm:px-10 sm:text-lg"
+          >
+            Next
+            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+          </Button3D>
         </div>
       )}
 
