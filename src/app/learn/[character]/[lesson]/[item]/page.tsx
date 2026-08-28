@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Crown } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { findNumberItem, numberItems } from "@/data/number-items";
@@ -91,9 +91,28 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
             accent={character.accent}
           />
 
-          {/* Balances the progress card against the back button so it sits on
-              the page's centre line rather than on the leftover space. */}
-          <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" aria-hidden />
+          {/* Same presentation-only achievements button as the hub and the
+              number list, in the same spot, instead of an empty balancing
+              spacer — the back/crown pair reads identically everywhere under
+              `/learn/[character]`. */}
+          <div className="group/tip relative shrink-0">
+            <Button3D
+              variant="calm"
+              tone={{ face: "var(--surface)" }}
+              aria-label="Achievements"
+              className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
+            >
+              <Crown
+                className="h-5 w-5 fill-current sm:h-6 sm:w-6"
+                style={{ color: "var(--color-gold)" }}
+                strokeWidth={1.5}
+              />
+            </Button3D>
+
+            <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
+              Your achievements
+            </span>
+          </div>
         </div>
       </div>
 

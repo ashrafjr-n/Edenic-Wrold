@@ -32,7 +32,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
-      <div className="mx-auto w-full max-w-5xl px-6 sm:px-8">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
