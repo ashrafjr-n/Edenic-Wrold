@@ -33,11 +33,14 @@ function embedUrl(videoId: string): string {
  * that job — it holds tracking cookies back until playback actually starts.
  *
  * Sized by HEIGHT, not width: the source is a vertical Short, so the frame is
- * as tall as the viewport comfortably allows and its width follows.
+ * as tall as the viewport comfortably allows and its width follows. Grown
+ * noticeably from `sm` up — this is the reel, and a tablet/desktop viewport
+ * has the vertical room to let it actually read as one instead of a
+ * thumbnail sitting beside the rest of the stage.
  */
 export function NumberVideo({ videoId, value }: NumberVideoProps) {
   return (
-    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden">
+    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[56vh] sm:max-h-[34rem]">
       <iframe
         src={embedUrl(videoId)}
         title={`A short video about the number ${value}`}
