@@ -1003,6 +1003,25 @@ button:disabled,
   will-change: transform;
 }
 
+/* Invites a tap on the one numeral the child has actually reached — the
+   first open number with no stars yet. Uses the standalone `scale` property
+   (not `transform`) so it never fights the numeral's own hover `scale-105`
+   utility; the two live on different elements anyway (see `NumberGrid`), but
+   staying off `transform` keeps this reusable wherever else it's needed. */
+@keyframes pulse-invite {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.08;
+  }
+}
+
+.anim-pulse-invite {
+  animation: pulse-invite 1.6s ease-in-out infinite;
+}
+
 /* ---------------------------------------------------------------
    Scroll reveal for the sections below the fold.
 
@@ -1101,6 +1120,7 @@ button:disabled,
   .say-pulse,
   .say-pulse--invite,
   .anim-breathe,
+  .anim-pulse-invite,
   .anim-reveal,
   .anim-hero-parallax {
     animation: none;
