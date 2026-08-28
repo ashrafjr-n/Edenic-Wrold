@@ -119,14 +119,20 @@ export function LessonCard({
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            {featured && (
-              <span
-                className="mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs"
-                style={{ backgroundColor: "var(--lesson-accent)" }}
-              >
-                Next up
-              </span>
-            )}
+            {/* Always rendered, just hidden when not featured — reserving the
+                same space on every card. Conditionally rendering this
+                (instead of hiding it) was what made the "Next up" card taller
+                than the rest despite the "adds a badge only, never a size
+                change" rule below. */}
+            <span
+              className={`mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs ${
+                featured ? "" : "invisible"
+              }`}
+              style={{ backgroundColor: "var(--lesson-accent)" }}
+              aria-hidden={!featured}
+            >
+              Next up
+            </span>
 
             <h3
               className="text-base font-bold leading-snug sm:text-xl"
