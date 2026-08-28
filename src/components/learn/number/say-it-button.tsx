@@ -36,9 +36,13 @@ const SPEAK_MS = 1400;
  */
 export function SayItButton({ word }: SayItButtonProps) {
   const [speaking, setSpeaking] = useState(false);
+  /* Whether the child has ever pressed this button. Drives the idle invite
+     ring below — once they've found it once, it has done its job. */
+  const [everPressed, setEverPressed] = useState(false);
 
   const say = () => {
     if (speaking) return;
+    setEverPressed(true);
     setSpeaking(true);
     /* TODO(audio): play the clip for `word` here and clear on `ended`. */
     window.setTimeout(() => setSpeaking(false), SPEAK_MS);
@@ -46,11 +50,21 @@ export function SayItButton({ word }: SayItButtonProps) {
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* The ring is what reads as sound. It only exists while speaking, so a
-          resting button is silent in the visual language too. */}
+      {/* The ring is what reads as sound. While speaking it's the same pulse
+          as before; before the first press, a slower, fainter version of the
+          same ring runs on a loop — an invitation to try it rather than a
+          "sound is playing" cue, so it's dimmer and never overlaps with the
+          speaking state. */}
       {speaking && (
         <span
           className="say-pulse pointer-events-none absolute inset-0 rounded-full"
+          style={{ backgroundColor: SAY_TONE.face }}
+          aria-hidden
+        />
+      )}
+      {!speaking && !everPressed && (
+        <span
+          className="say-pulse say-pulse--invite pointer-events-none absolute inset-0 rounded-full"
           style={{ backgroundColor: SAY_TONE.face }}
           aria-hidden
         />

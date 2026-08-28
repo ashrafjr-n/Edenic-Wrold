@@ -647,6 +647,22 @@ button:disabled,
   clip-path: polygon(100% 0, 100% 100%, 0 50%);
 }
 
+/* Pink and grained, matching the number journey's own `.hub-ground` fill —
+   a direct request so Pinki's bubble reads the same as the rest of that
+   page instead of sitting there as a plain white card. Declared after
+   `.speech-bubble` (and its `::after`) so it wins on source order; both the
+   body and the tail need the color, since the tail is its own filled shape. */
+.speech-bubble--tinted {
+  background-color: var(--bubble-tint);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+.speech-bubble--tinted::after {
+  background-color: var(--bubble-tint);
+}
+
 @media (width < 40rem) {
   .speech-bubble::after {
     left: 50%;
@@ -801,6 +817,25 @@ button:disabled,
 
 .say-pulse {
   animation: say-pulse 1.4s ease-out infinite;
+}
+
+/* A slower, fainter loop of the same ring — the invite before the first
+   press, not the "it's speaking now" cue. Its own keyframes rather than a
+   scaled-down `.say-pulse` so the peak opacity can be held down too, not
+   just the timing. */
+@keyframes say-pulse-invite {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.say-pulse--invite {
+  animation: say-pulse-invite 2.2s ease-out infinite;
 }
 
 /* ---------------------------------------------------------------
@@ -1064,6 +1099,7 @@ button:disabled,
   .stroke-draw,
   .pen-tip,
   .say-pulse,
+  .say-pulse--invite,
   .anim-breathe,
   .anim-reveal,
   .anim-hero-parallax {
