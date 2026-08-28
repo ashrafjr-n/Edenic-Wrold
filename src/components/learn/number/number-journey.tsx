@@ -196,19 +196,23 @@ export function NumberJourney({
         pose={guide.pose}
         line={guide.line}
         size={stage === "celebrate" ? "lg" : "sm"}
+        accent={accent}
       />
 
       {stage === "discover" && (
-        <div className="anim-rise-in flex flex-col items-center gap-6 sm:gap-8">
+        <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
           {/* This stage is the reel and nothing else — saying the word and
-              seeing the numeral are their own stage right after. */}
+              seeing the numeral are their own stage right after. It's the
+              hero of this screen from `sm` up: much bigger, with the buttons
+              moved beside it instead of underneath, so nothing competes with
+              it and nothing caps its height. */}
           {videoId && <NumberVideo videoId={videoId} value={value} />}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
             <Button3D
               tone={BRAND_TONE}
               onClick={advance}
-              className="px-7 py-3 text-base sm:px-8 sm:text-lg"
+              className="px-7 py-3 text-base sm:px-9 sm:py-4 sm:text-lg"
             >
               Next
               <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
@@ -220,7 +224,7 @@ export function NumberJourney({
               variant="calm"
               tone={WHITE_TONE}
               onClick={advance}
-              className="btn3d--clay-white px-5 py-3 text-sm sm:text-base"
+              className="btn3d--clay-white px-5 py-3 text-sm sm:px-7 sm:py-3 sm:text-base"
             >
               Skip
               <SkipForward

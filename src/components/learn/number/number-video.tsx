@@ -34,13 +34,14 @@ function embedUrl(videoId: string): string {
  *
  * Sized by HEIGHT, not width: the source is a vertical Short, so the frame is
  * as tall as the viewport comfortably allows and its width follows. Grown
- * noticeably from `sm` up — this is the reel, and a tablet/desktop viewport
- * has the vertical room to let it actually read as one instead of a
- * thumbnail sitting beside the rest of the stage.
+ * noticeably from `sm` up — this is the reel and the hero of its stage, and
+ * with the CTAs moved to sit beside it instead of underneath (see
+ * `NumberJourney`'s `discover` stage), nothing below it caps how tall it can
+ * get.
  */
 export function NumberVideo({ videoId, value }: NumberVideoProps) {
   return (
-    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[56vh] sm:max-h-[34rem]">
+    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68vh] sm:max-h-[42rem]">
       <iframe
         src={embedUrl(videoId)}
         title={`A short video about the number ${value}`}
