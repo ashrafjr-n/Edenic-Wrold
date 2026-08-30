@@ -36,3 +36,4 @@
 2026-08-26 adjust spell step
 2026-08-27 fix header alignment
 2026-08-29 simplify confetti timing
+2026-08-30 tweak button states
