@@ -46,14 +46,19 @@ const TILE_TONES = [
 export function NumberReveal({ value, image, onFinish }: NumberRevealProps) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [dragging, setDragging] = useState(false);
-  const [finished, setFinished] = useState(false);
+  /* Derived, not stored: whether enough tiles are gone. A ref (not state)
+     guards `onFinish` firing only once — the effect below only ever calls
+     the callback, never `setState`, so revealing further tiles afterward
+     can't cascade into another render. */
+  const finished = revealed.size / TOTAL >= REVEAL_THRESHOLD;
+  const firedRef = useRef(false);
 
   useEffect(() => {
-    if (finished || revealed.size / TOTAL < REVEAL_THRESHOLD) return;
-    setFinished(true);
+    if (!finished || firedRef.current) return;
+    firedRef.current = true;
     const timer = window.setTimeout(onFinish, 350);
     return () => window.clearTimeout(timer);
-  }, [revealed, finished, onFinish]);
+  }, [finished, onFinish]);
 
   const revealAt = (clientX: number, clientY: number) => {
     const target = document

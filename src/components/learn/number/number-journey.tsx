@@ -20,6 +20,9 @@ import { StrokeDemo } from "./stroke-demo";
 import { TraceBoard } from "./trace-board";
 import { NumberQuiz } from "./number-quiz";
 import { AppleGive } from "./apple-give";
+import { NumberComplete } from "./number-complete";
+import { NumberPath } from "./number-path";
+import { NumberReveal } from "./number-reveal";
 import { BalloonPop } from "./balloon-pop";
 import { Celebration } from "./celebration";
 import { StarReward } from "./star-reward";
@@ -167,14 +170,18 @@ export function NumberJourney({
                   line: pickMissed ? script.findMiss : script.find,
                 }
               : stage === "count"
-                ? {
-                    pose: appleGiven ? "celebrate" : "speak",
-                    line: pickMissed
-                      ? script.findMiss
-                      : appleGiven
-                        ? script.countHow
-                        : script.count,
-                  }
+                ? countActivity.kind === "give"
+                  ? {
+                      pose: appleGiven ? "celebrate" : "speak",
+                      line: pickMissed
+                        ? script.findMiss
+                        : appleGiven
+                          ? script.countHow
+                          : script.count,
+                    }
+                  : countActivity.kind === "complete"
+                    ? { pose: "pen", line: pickMissed ? script.traceMiss : script.count }
+                    : { pose: "speak", line: script.count }
                 : stage === "game"
                   ? {
                       pose: "speak",
@@ -345,29 +352,62 @@ export function NumberJourney({
 
       {stage === "count" && (
         <>
-          {/* Two beats, because the point of this stage is the LINK: hand over
-              the item, then say what that many of it is called. Giving alone
-              teaches nothing about the numeral; asking alone teaches nothing
-              about quantity. */}
-          {!appleGiven ? (
-            <div className="anim-rise-in">
-              <AppleGive
-                key={`give-${attempt}`}
-                target={value}
-                icon={countActivity.icon}
-                itemLabel={countActivity.itemLabel}
-                onGiven={() => setAppleGiven(true)}
+          {countActivity.kind === "give" ? (
+            /* Two beats, because the point of this activity is the LINK: hand
+               over the item, then say what that many of it is called. Giving
+               alone teaches nothing about the numeral; asking alone teaches
+               nothing about quantity. */
+            !appleGiven ? (
+              <div className="anim-rise-in">
+                <AppleGive
+                  key={`give-${attempt}`}
+                  target={value}
+                  icon={countActivity.icon}
+                  itemLabel={countActivity.itemLabel}
+                  onGiven={() => setAppleGiven(true)}
+                />
+              </div>
+            ) : (
+              <div className="anim-rise-in relative">
+                <NumberQuiz
+                  key={`count-${attempt}`}
+                  choices={countChoices}
+                  answer={value}
+                  solved={solved}
+                  onCorrect={() => setSolved(true)}
+                  onWrong={pickMiss}
+                />
+                {solved && <Celebration />}
+              </div>
+            )
+          ) : countActivity.kind === "complete" ? (
+            <div className="anim-rise-in relative">
+              <NumberComplete
+                key={`complete-${attempt}`}
+                value={value}
+                image={image}
+                onFinish={() => setSolved(true)}
+                onMiss={pickMiss}
               />
+              {solved && <Celebration />}
+            </div>
+          ) : countActivity.kind === "path" ? (
+            <div className="anim-rise-in relative">
+              <NumberPath
+                key={`path-${attempt}`}
+                numbers={countActivity.numbers}
+                target={value}
+                onFinish={() => setSolved(true)}
+              />
+              {solved && <Celebration />}
             </div>
           ) : (
             <div className="anim-rise-in relative">
-              <NumberQuiz
-                key={`count-${attempt}`}
-                choices={countChoices}
-                answer={value}
-                solved={solved}
-                onCorrect={() => setSolved(true)}
-                onWrong={pickMiss}
+              <NumberReveal
+                key={`reveal-${attempt}`}
+                value={value}
+                image={image}
+                onFinish={() => setSolved(true)}
               />
               {solved && <Celebration />}
             </div>
