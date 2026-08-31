@@ -7,6 +7,7 @@ import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
 import type { JourneyStage } from "@/types/number-journey";
 import { scriptFor } from "@/data/number-script";
+import { countActivityFor } from "@/data/count-activities";
 import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
@@ -81,6 +82,7 @@ export function NumberJourney({
   const { value, image, videoId, strokes } = item;
   const { accent } = character;
   const script = scriptFor(value);
+  const countActivity = countActivityFor(value);
 
   const [stage, setStage] = useState<JourneyStage>("discover");
   /* One flag across every stage: false is "still working", true is "passed —
@@ -344,14 +346,16 @@ export function NumberJourney({
       {stage === "count" && (
         <>
           {/* Two beats, because the point of this stage is the LINK: hand over
-              one apple, then say what "one apple" is called. Giving alone
+              the item, then say what that many of it is called. Giving alone
               teaches nothing about the numeral; asking alone teaches nothing
               about quantity. */}
           {!appleGiven ? (
             <div className="anim-rise-in">
               <AppleGive
-                key={`apples-${attempt}`}
+                key={`give-${attempt}`}
                 target={value}
+                icon={countActivity.icon}
+                itemLabel={countActivity.itemLabel}
                 onGiven={() => setAppleGiven(true)}
               />
             </div>
