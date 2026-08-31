@@ -62,28 +62,16 @@ export function LessonCard({
 
   const card = (
     <div
-      className={`card card-grain group/lesson flex h-full overflow-hidden ${
+      className={`card card-clay-white group/lesson flex h-full overflow-hidden ${
         locked ? "" : "card-lift"
       }`}
-      style={
-        {
-          /* Full-strength accent — a direct request, not a diluted tile
-             tint. */
-          backgroundColor: "var(--character-accent)",
-        } as CSSProperties
-      }
     >
-      {/* The icon's own panel is a lighter pink than the fully-saturated card
-          behind it, so the two still separate by shade. */}
+      {/* Plain white, like the card behind it — separated by the tile's own
+          shadow rather than a color difference, pure claymorphism. */}
       <div className="relative flex w-20 shrink-0 items-center justify-center p-3 sm:w-36 sm:p-4">
         <div
-          className="tile tile-clay tile-grain relative flex h-full w-full items-center justify-center"
-          style={
-            {
-              "--tile-tint":
-                "color-mix(in srgb, var(--character-accent) 45%, white)",
-            } as CSSProperties
-          }
+          className="tile tile-clay relative flex h-full w-full items-center justify-center"
+          style={{ "--tile-tint": "var(--surface)" } as CSSProperties}
         >
           <Image
             src={image}
@@ -145,23 +133,18 @@ export function LessonCard({
           </div>
 
           {/* Decorative, not a second control — the whole card is already the
-              tappable target. It is also the card's only lock. White clay,
-              same material as the hub's back/achievements buttons, rather
-              than a solid accent-filled disc. */}
+              tappable target. It is also the card's only lock. Pink clay,
+              grained — the one place the character's own color still lives
+              on the card now that the body itself is white. */}
           <span
-            className="btn3d btn3d--clay-white h-10 w-10 shrink-0 sm:h-12 sm:w-12"
+            className="btn3d btn3d--clay-accent h-10 w-10 shrink-0 sm:h-12 sm:w-12"
             aria-hidden
           >
             {locked ? (
-              <Lock
-                className="h-4 w-4 sm:h-5 sm:w-5"
-                style={{ color: "var(--color-locked-text)" }}
-                strokeWidth={2.75}
-              />
+              <Lock className="h-4 w-4 text-white sm:h-5 sm:w-5" strokeWidth={2.75} />
             ) : (
               <ChevronRight
-                className="h-5 w-5 sm:h-6 sm:w-6"
-                style={{ color: "var(--lesson-accent)" }}
+                className="h-5 w-5 text-white sm:h-6 sm:w-6"
                 strokeWidth={2.75}
               />
             )}
@@ -169,16 +152,20 @@ export function LessonCard({
         </div>
 
         {/* A progress bar on a lesson you cannot open yet is noise — a locked
-            card names what opens it instead. */}
+            card names what opens it instead, but still carries the same pink
+            item-count chip every card gets now. */}
         {locked ? (
-          <p
-            className="text-xs font-semibold sm:text-sm"
-            style={{ color: "var(--lesson-muted)" }}
-          >
-            {previousLessonName
-              ? `Unlocks after ${previousLessonName}`
-              : "Unlocks later"}
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p
+              className="min-w-0 truncate text-xs font-semibold sm:text-sm"
+              style={{ color: "var(--lesson-muted)" }}
+            >
+              {previousLessonName
+                ? `Unlocks after ${previousLessonName}`
+                : "Unlocks later"}
+            </p>
+            <span className="card-grain counter-chip">{totalItems}</span>
+          </div>
         ) : (
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-2.5">
@@ -191,7 +178,7 @@ export function LessonCard({
                 aria-hidden
               />
             </div>
-            <span className="shrink-0 text-xs font-semibold text-[var(--color-ink-soft)] sm:text-sm">
+            <span className="card-grain counter-chip">
               {CURRENT_ITEMS} / {totalItems}
             </span>
           </div>

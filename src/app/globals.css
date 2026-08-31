@@ -240,6 +240,31 @@ body {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
+/* The pink item-count chip every lesson card carries now (paired with
+   `.card-grain` for the noise) — the card body reads white, so this is
+   where the character's own color still shows on the row. Fully
+   self-contained (padding, radius, size all live here, not as Tailwind
+   utilities) because it sits beside `.card`/`.tile`, and those are unlayered
+   — a layered Tailwind utility for the same property would silently lose. */
+.counter-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: var(--character-accent);
+}
+
+@media (width >= 40rem) {
+  .counter-chip {
+    padding: 0.3125rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
 /* `.card` and `.tile` are unlayered, and Tailwind's utilities live in
    `@layer utilities` — unlayered CSS wins over layered CSS whatever the source
    order, so a `rounded-full` utility on a `.card` silently does nothing. Radius
