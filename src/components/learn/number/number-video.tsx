@@ -66,10 +66,19 @@ export function NumberVideo({ videoId, value }: NumberVideoProps) {
       <link rel="preconnect" href="https://www.youtube.com" />
       <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="" />
 
+      {/* `allow="autoplay"` stays even though the URL no longer requests
+          autoplay — the video not requesting it and the video being ALLOWED
+          to are two different things, and YouTube's player issues its own
+          internal `play()` call when the child taps its on-screen button.
+          Dropping this permission was tried and broke that tap: some
+          browsers gate the player's own click-triggered `play()` behind the
+          same Permissions Policy that gates real autoplay, so the click did
+          nothing at all. The rest is YouTube's own recommended embed
+          permission set. */}
       <iframe
         src={embedUrl(videoId)}
         title={`A short video about the number ${value}`}
-        allow="encrypted-media; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
         className="absolute inset-0 h-full w-full border-0"
       />
