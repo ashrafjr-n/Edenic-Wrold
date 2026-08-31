@@ -67,8 +67,7 @@ export function LessonCard({
       }`}
       style={
         {
-          /* Full-strength accent, same as the numbers page's own `.hub-ground`
-             fill — a direct request to make the two match, not a diluted tile
+          /* Full-strength accent — a direct request, not a diluted tile
              tint. */
           backgroundColor: "var(--character-accent)",
         } as CSSProperties
