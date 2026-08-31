@@ -294,9 +294,9 @@ body {
    `.card`. A card around each one turned the number grid into a sheet of
    boxes and buried the thing the child is actually looking at.
 
-   The bloom is what keeps a pink numeral legible on the pink ground; the
-   shadow is `filter`, not `box-shadow`, so it follows the numeral's own
-   silhouette rather than a rectangle around it.
+   The bloom is what keeps a pink numeral legible on the site's own pale
+   ground; the shadow is `filter`, not `box-shadow`, so it follows the
+   numeral's own silhouette rather than a rectangle around it.
    --------------------------------------------------------------- */
 .numeral-bloom {
   background: radial-gradient(
@@ -320,53 +320,6 @@ body {
 .numeral-shadow--locked {
   filter: grayscale(1) brightness(1.14) contrast(0.92)
     drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 28%));
-}
-
-/* ---------------------------------------------------------------
-   The lesson hub's ground (`/learn/[character]`).
-
-   Site-wide the ground is one flat color, because the clay shading assumes
-   a single even surface. This route is the one exception: the character's
-   own accent, grained the way `.clay` is, covers the whole page.
-
-   From `sm` up the flat fill bends — the accent runs through lavender into
-   a near-white tint of itself — because across a tablet or desktop's width
-   a single flat slab reads as dead space. Phones keep the flat fill: there
-   is no large empty area there for a gradient to solve, and the flat
-   version is what the clay shadows were tuned against.
-
-   `--hub-accent` comes from the character, so Nova's hub bends through the
-   same lavender from her own lavender and Bloo's from his blue. Nothing
-   here is Pinki-specific.
-   --------------------------------------------------------------- */
-.hub-ground {
-  background-color: var(--hub-accent);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-}
-
-@media (width >= 40rem) {
-  .hub-ground {
-    /* The grain rides on top and blends with the gradient below it; the
-       gradient itself paints normally over the flat fallback color. */
-    background-image: var(--noise),
-      linear-gradient(
-        163deg,
-        /* The lavender is a bend, not a takeover — the accent still holds the
-           majority of the mix, or the page stops reading as the character's
-           color. The bottom keeps enough accent in it to stay a pink rather
-           than going white, which would leave the white cards nothing to
-           lift off. */
-        var(--hub-accent) 0%,
-        color-mix(in srgb, var(--hub-accent) 60%, var(--color-lavender)) 50%,
-        color-mix(in srgb, var(--hub-accent) 34%, #ffffff) 100%
-      );
-    background-size:
-      180px 180px,
-      100% 100%;
-    background-blend-mode: overlay, normal;
-  }
 }
 
 /* ---------------------------------------------------------------
@@ -645,22 +598,6 @@ button:disabled,
   width: 0.75rem;
   height: 1.35rem;
   clip-path: polygon(100% 0, 100% 100%, 0 50%);
-}
-
-/* Pink and grained, matching the number journey's own `.hub-ground` fill —
-   a direct request so Pinki's bubble reads the same as the rest of that
-   page instead of sitting there as a plain white card. Declared after
-   `.speech-bubble` (and its `::after`) so it wins on source order; both the
-   body and the tail need the color, since the tail is its own filled shape. */
-.speech-bubble--tinted {
-  background-color: var(--bubble-tint);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-}
-
-.speech-bubble--tinted::after {
-  background-color: var(--bubble-tint);
 }
 
 @media (width < 40rem) {
