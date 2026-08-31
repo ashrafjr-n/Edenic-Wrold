@@ -41,6 +41,11 @@
      the fill instead of greying it down. */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.62'/%3E%3C/svg%3E");
 
+  /* Same turbulence, a lighter baked-in opacity (0.28 vs 0.62) — for a spot
+     that needs to read as grained but subtler, not a second material. Used
+     by `BottomNav`'s press/focus icon state. */
+  --noise-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+
   /* The hero silhouette, as a stretchable SVG path. See `.hero-clip`. */
   --hero-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M1200,0 L1200,600 C1000,600 900,548 740,566 S470,620 330,594 S160,516 150,452 S190,300 176,196 S214,44 268,0 Z'/%3E%3C/svg%3E");
   --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
@@ -350,18 +355,60 @@ body {
 
    `BottomNav`'s three tab icons are plain black-on-transparent PNGs
    (`public/assets/png`), not lucide — masked to `currentColor` instead of
-   drawn as an `<img>`, so they pick up the same `text-*` classes (locked,
-   inactive, active, hover) the rest of the site's icons already use, with no
-   separate color logic. Lightning CSS adds the `-webkit-mask-*` prefixes
-   automatically (same as `.hero-clip`/`.panel-art` above) — only the
-   unprefixed properties are declared here. The image itself arrives per-icon
-   via `--icon-src`, set inline. */
+   drawn as an `<img>`, so a parent's `color` drives the icon exactly like it
+   would drive an inline SVG's `fill`. Lightning CSS adds the
+   `-webkit-mask-*` prefixes automatically (same as `.hero-clip`/`.panel-art`
+   above) — only the unprefixed properties are declared here. The image
+   itself arrives per-icon via `--icon-src`, set inline. Structural only —
+   no color, no grain — so it stays reusable for whatever needs a colorable
+   PNG icon next; `.icon-mask-grain` and `.nav-tab` below are what give
+   `BottomNav` its own specific look. */
 .icon-mask {
   mask-image: var(--icon-src);
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
   background-color: currentColor;
+}
+
+/* Grain riding on top of whatever `currentColor` resolved the icon to —
+   same `.card-grain`/`.tile-grain` pattern (background-image only, so it
+   layers over `.icon-mask`'s own `background-color` instead of replacing
+   it). A separate modifier, not baked into `.icon-mask` itself, because not
+   every future user of `.icon-mask` will want grain. */
+.icon-mask-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+/* ---------------------------------------------------------------
+   `BottomNav`'s own color language — blue at rest, pink while pressed or
+   focused, with heavier grain at rest and lighter grain during the press.
+   This is a direct request and a deliberate departure from every other
+   nav/link on the site, which colors itself by CURRENT PAGE (`aria-current`)
+   — here color is pure interaction feedback instead; which tab is current is
+   still announced to assistive tech via `aria-current`, just not shown in
+   color. `.nav-tab` is unlayered, like `.card`/`.tile`, so it (and the
+   descendant `.icon-mask-grain` override) wins over the Tailwind `text-*`
+   utility on the same `<a>` regardless of source order — the same reason
+   those two classes can't take a Tailwind radius utility either.
+   --------------------------------------------------------------- */
+.nav-tab {
+  color: var(--brand);
+  transition: color 0.2s ease;
+}
+
+.nav-tab:active,
+.nav-tab:focus-visible {
+  color: var(--accent);
+}
+
+/* `background-image` itself cannot be transitioned by any browser — this
+   swap is an instant cut, not a fade; only `color` above eases. */
+.nav-tab:active .icon-mask-grain,
+.nav-tab:focus-visible .icon-mask-grain {
+  background-image: var(--noise-soft);
 }
 
 /* ---------------------------------------------------------------
