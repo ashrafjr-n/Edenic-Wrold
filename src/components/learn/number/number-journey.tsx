@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { ArrowRight, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
@@ -471,15 +472,25 @@ export function NumberJourney({
           </div>
 
           {/* The unlock is the payoff for the whole journey, so it is stated
-              in words rather than left for the child to notice on the list. */}
+              in words rather than left for the child to notice on the list —
+              a green clay pill, not plain colored text, so it reads as its
+              own small reward next to the stars instead of a caption. */}
           {nextValue && (
-            <p
-              className="anim-pop-in flex items-center gap-2 text-base font-bold sm:text-lg"
-              style={{ color: "var(--color-go-dark)", animationDelay: "0.6s" }}
+            <div
+              className="clay anim-pop-in flex items-center gap-2 rounded-full px-5 py-2.5 sm:gap-2.5 sm:px-6 sm:py-3"
+              style={
+                {
+                  backgroundColor: "var(--color-go)",
+                  "--clay-edge": "var(--color-go-dark)",
+                  animationDelay: "0.6s",
+                } as CSSProperties
+              }
             >
-              <Unlock className="h-5 w-5" strokeWidth={2.75} />
-              Number {nextValue} unlocked!
-            </p>
+              <Unlock className="h-5 w-5 text-white sm:h-6 sm:w-6" strokeWidth={2.75} />
+              <span className="text-base font-bold text-white sm:text-lg">
+                Number {nextValue} unlocked!
+              </span>
+            </div>
           )}
 
           <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
