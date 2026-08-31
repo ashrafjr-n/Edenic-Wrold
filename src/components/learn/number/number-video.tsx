@@ -9,7 +9,13 @@ interface NumberVideoProps {
    nothing on it should offer a way off the site.
 
    `mute=1` is not a preference, it is what makes `autoplay=1` work at all:
-   browsers block an unmuted autoplay outright. */
+   browsers block an unmuted autoplay outright.
+
+   `cc_load_policy=0` keeps captions off by default — a short with a burned-in
+   caption track on top was reading as cluttered for this audience.
+   `loop=1` needs `playlist` set to the SAME id or YouTube ignores it; this is
+   a Short with no end screen or "next" action, so it should keep replaying
+   rather than freezing on its last frame. */
 function embedUrl(videoId: string): string {
   const params = new URLSearchParams({
     autoplay: "1",
@@ -18,6 +24,9 @@ function embedUrl(videoId: string): string {
     modestbranding: "1",
     showinfo: "0",
     iv_load_policy: "3",
+    cc_load_policy: "0",
+    loop: "1",
+    playlist: videoId,
     playsinline: "1",
   });
 
@@ -42,6 +51,16 @@ function embedUrl(videoId: string): string {
 export function NumberVideo({ videoId, value }: NumberVideoProps) {
   return (
     <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68vh] sm:max-h-[42rem]">
+      {/* Opens the connection to YouTube before the iframe even requests
+          anything, instead of waiting for the browser to discover it from the
+          iframe's `src` — the DNS lookup, TLS handshake and redirect that
+          `youtube-nocookie.com` does to `youtube.com` are what make the embed
+          feel slow to start. A `<link>` rendered anywhere in a Server
+          Component's output gets hoisted into `<head>` automatically. */}
+      <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+      <link rel="preconnect" href="https://www.youtube.com" />
+      <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="" />
+
       <iframe
         src={embedUrl(videoId)}
         title={`A short video about the number ${value}`}
