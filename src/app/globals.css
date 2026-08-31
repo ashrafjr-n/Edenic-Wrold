@@ -346,6 +346,25 @@ body {
 }
 
 /* ---------------------------------------------------------------
+   A flat PNG icon that still recolors like an SVG one.
+
+   `BottomNav`'s three tab icons are plain black-on-transparent PNGs
+   (`public/assets/png`), not lucide — masked to `currentColor` instead of
+   drawn as an `<img>`, so they pick up the same `text-*` classes (locked,
+   inactive, active, hover) the rest of the site's icons already use, with no
+   separate color logic. Lightning CSS adds the `-webkit-mask-*` prefixes
+   automatically (same as `.hero-clip`/`.panel-art` above) — only the
+   unprefixed properties are declared here. The image itself arrives per-icon
+   via `--icon-src`, set inline. */
+.icon-mask {
+  mask-image: var(--icon-src);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
+}
+
+/* ---------------------------------------------------------------
    A numeral standing on the page with no container.
 
    The clay numerals are objects, not illustrations inside a panel, so they

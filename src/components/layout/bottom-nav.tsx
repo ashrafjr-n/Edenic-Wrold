@@ -1,14 +1,17 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Home, Sparkles } from "lucide-react";
 import { mainNav } from "@/data/nav";
 
-const ICONS = {
-  Home,
-  Learn: GraduationCap,
-  Activities: Sparkles,
+/* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
+   `currentColor`, so they still recolor with the surrounding text the way
+   every other icon on the site does, instead of shipping fixed-color art. */
+const ICON_SRC = {
+  Home: "/assets/png/home.png",
+  Learn: "/assets/png/learn.png",
+  Activities: "/assets/png/activity.png",
 } as const;
 
 /** App-style bottom tab bar — phone only (`sm:hidden`). Mirrors `MainNav`'s
@@ -26,7 +29,9 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-3 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
     >
       {mainNav.map(({ label, href }) => {
-        const Icon = ICONS[label as keyof typeof ICONS];
+        const iconStyle = {
+          "--icon-src": `url(${ICON_SRC[label as keyof typeof ICON_SRC]})`,
+        } as CSSProperties;
 
         if (!href) {
           return (
@@ -35,7 +40,7 @@ export function BottomNav() {
               aria-disabled="true"
               className="flex h-16 cursor-default flex-col items-center justify-center gap-0.5 text-[var(--color-locked-text)]"
             >
-              <Icon className="h-5 w-5" strokeWidth={2.25} />
+              <span aria-hidden className="icon-mask h-5 w-5" style={iconStyle} />
               <span className="text-[0.6875rem] font-semibold">{label}</span>
               <span className="rounded-full bg-[var(--color-locked)] px-1.5 py-px text-[0.5rem] font-bold uppercase tracking-wide">
                 Soon
@@ -53,10 +58,16 @@ export function BottomNav() {
             href={href}
             aria-current={active ? "page" : undefined}
             className={`flex h-16 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold transition-colors ${
-              active ? "text-[var(--brand)]" : "text-[var(--color-ink-soft)]"
+              active
+                ? "text-[var(--brand)]"
+                : "text-[var(--color-ink-soft)] hover:text-[var(--brand)]"
             }`}
           >
-            <Icon className="h-5 w-5" strokeWidth={2.25} />
+            <span
+              aria-hidden
+              className="icon-mask h-5 w-5 transition-colors"
+              style={iconStyle}
+            />
             {label}
           </Link>
         );
