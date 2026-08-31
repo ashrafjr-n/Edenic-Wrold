@@ -295,6 +295,36 @@ body {
   background-blend-mode: overlay;
 }
 
+/* ---------------------------------------------------------------
+   The social chips (home + footer).
+
+   Each one wears its own platform colour with the site's grain over it. They
+   used to be white at rest and only took the brand colour on hover, so the
+   row wouldn't read as a rainbow beside the characters — that was reversed
+   on direct request; the colour is now the point.
+
+   Declared AFTER `.card`, which sets the `background` SHORTHAND — the same
+   trap `.card-grain` and `.tile-grain` already carry a note about, since a
+   shorthand resets `background-image` back to `none`. `--social-brand` and
+   `--social-ink` arrive per platform from `data/socials.ts`; the icon reads
+   `currentColor`, so `--social-ink` is what keeps a black ghost on
+   Snapchat's yellow while everything else stays white.
+   --------------------------------------------------------------- */
+.social-chip {
+  background-color: var(--social-brand);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: var(--social-ink);
+  transition: background-color 0.2s ease;
+}
+
+/* Hover darkens the face and nothing else — the same language every coloured
+   `.btn3d` on the site already uses. No lift, no shadow change. */
+.social-chip:hover {
+  background-color: color-mix(in srgb, var(--social-brand) 85%, black 15%);
+}
+
 .tile {
   border-radius: 1.25rem;
   background: var(--tile-tint);

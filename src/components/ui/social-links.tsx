@@ -1,18 +1,22 @@
 import type { CSSProperties } from "react";
 import { socialLinks } from "@/data/socials";
 
-type BrandVars = CSSProperties & { "--social-brand"?: string };
+type BrandVars = CSSProperties & {
+  "--social-brand"?: string;
+  "--social-ink"?: string;
+};
 
-/** Round white chips, one per platform. At rest they're the same white-card
-    material as everything else on the ground; the platform's own color only
-    appears on hover, so a row of them never competes with the characters.
+/** Round chips, one per platform, each in its own brand color with the site's
+    grain over it (`.social-chip`). They used to be white at rest and only took
+    the color on hover — reversed on request, so the row is colored now and
+    hover just darkens the fill.
 
-    The chips don't move on hover — the color fill is the whole cue, matching
+    The chips don't move on hover — the darkening is the whole cue, matching
     every other button on the site. */
 export function SocialLinks({ className = "" }: { className?: string }) {
   return (
     <ul className={`flex flex-wrap items-center gap-3 ${className}`}>
-      {socialLinks.map(({ label, href, Icon, brand }) => (
+      {socialLinks.map(({ label, href, Icon, brand, ink }) => (
         <li key={label}>
           <a
             href={href}
@@ -20,14 +24,14 @@ export function SocialLinks({ className = "" }: { className?: string }) {
             rel="noreferrer noopener"
             aria-label={label}
             title={label}
-            className="card card-pill group relative flex h-12 w-12 items-center justify-center overflow-hidden text-[var(--color-ink)] transition-colors duration-200 hover:text-white"
-            style={{ "--social-brand": brand } as BrandVars}
+            className="card card-pill social-chip flex h-12 w-12 items-center justify-center"
+            style={
+              { "--social-brand": brand, "--social-ink": ink ?? "#fff" } as BrandVars
+            }
           >
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-[var(--social-brand)] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-            />
-            <Icon className="relative h-5 w-5" size={20} />
+            {/* The icon reads `currentColor`, which `.social-chip` sets from
+                `--social-ink`. */}
+            <Icon className="h-5 w-5" size={20} />
           </a>
         </li>
       ))}

@@ -22,9 +22,12 @@ export const socialLinks: SocialLink[] = [
   },
   {
     label: "TikTok",
+    /* A deep purple rather than TikTok's own near-black: asked for directly,
+       and a black chip in this row reads as a hole next to four saturated
+       ones. */
+    brand: "#6b3fa0",
     href: "https://www.tiktok.com/@edenic.world?_r=1&_t=ZS-99M08l3uF0x",
     Icon: SiTiktok,
-    brand: "#111111",
   },
   {
     label: "Facebook",
@@ -37,5 +40,8 @@ export const socialLinks: SocialLink[] = [
     href: "https://snapchat.com/t/1H9eHXOO",
     Icon: SiSnapchat,
     brand: "#fffc00",
+    /* The one chip whose fill is too pale for a white icon — Snapchat's own
+       branding is a dark ghost on yellow for the same reason. */
+    ink: "var(--color-ink)",
   },
 ];

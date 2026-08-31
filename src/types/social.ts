@@ -5,8 +5,12 @@ export interface SocialLink {
   label: string;
   href: string;
   Icon: IconType;
-  /** The platform's own brand color. Only ever shown on hover — at rest the
-      chips stay white, so the row doesn't turn into a rainbow next to the
-      characters. */
+  /** The platform's own brand color — the chip's fill at rest, grained, and
+      darkened on hover. (It used to appear only on hover, over a white chip;
+      that was reversed on request.) */
   brand: string;
+  /** The icon's own color on top of `brand`. Defaults to white; only a pale
+      fill like Snapchat's yellow needs to override it, since a white icon on
+      yellow cannot be read at this size. */
+  ink?: string;
 }
