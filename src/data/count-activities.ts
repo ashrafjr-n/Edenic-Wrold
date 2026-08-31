@@ -13,7 +13,7 @@ const DEFAULT_COUNT_ACTIVITY: CountActivityConfig = {
  * give/drag tray was built for. 2 gives flowers instead, purely for variety.
  * From 4 up, giving breaks down (only 3 items in the tray), so each of those
  * numbers gets a different mini-activity, rotating through the three kinds
- * so no two neighbours repeat: complete → path → reveal → path → reveal →
+ * so no two neighbours repeat: complete → path → colour → path → colour →
  * complete.
  */
 const countActivityByValue: Record<number, CountActivityConfig> = {
@@ -24,9 +24,9 @@ const countActivityByValue: Record<number, CountActivityConfig> = {
   },
   4: { kind: "complete" },
   5: { kind: "path", numbers: [3, 4, 5, 6, 7] },
-  6: { kind: "reveal" },
+  6: { kind: "color" },
   7: { kind: "path", numbers: [5, 6, 7, 8, 9] },
-  8: { kind: "reveal" },
+  8: { kind: "color" },
   9: { kind: "complete" },
 };
 

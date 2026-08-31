@@ -26,8 +26,8 @@ function pluralize(word: string, count: number): string {
 }
 
 /** The `count` stage's invite line — different per activity kind, since
-    "Give me ONE apple!" makes no sense for a puzzle piece or a hidden
-    numeral. `countHow` (the second, "how many do I have now" beat) only
+    "Give me ONE apple!" makes no sense for a puzzle piece or an outline
+    to colour in. `countHow` (the second, "how many do I have now" beat) only
     ever applies to `give`, so it's computed separately below. */
 function countLine(value: number, word: string): string {
   const activity = countActivityFor(value);
@@ -39,8 +39,8 @@ function countLine(value: number, word: string): string {
       return `Complete Number ${value}!`;
     case "path":
       return `Help Pinki reach Number ${value}!`;
-    case "reveal":
-      return `Reveal Number ${value}!`;
+    case "color":
+      return `Color Number ${value}!`;
   }
 }
 

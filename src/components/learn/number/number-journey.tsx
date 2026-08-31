@@ -22,7 +22,7 @@ import { NumberQuiz } from "./number-quiz";
 import { AppleGive } from "./apple-give";
 import { NumberComplete } from "./number-complete";
 import { NumberPath } from "./number-path";
-import { NumberReveal } from "./number-reveal";
+import { NumberColor } from "./number-color";
 import { BalloonPop } from "./balloon-pop";
 import { Celebration } from "./celebration";
 import { StarReward } from "./star-reward";
@@ -181,7 +181,9 @@ export function NumberJourney({
                     }
                   : countActivity.kind === "complete"
                     ? { pose: "pen", line: pickMissed ? script.traceMiss : script.count }
-                    : { pose: "speak", line: script.count }
+                    : countActivity.kind === "color"
+                      ? { pose: "pen", line: script.count }
+                      : { pose: "speak", line: script.count }
                 : stage === "game"
                   ? {
                       pose: "speak",
@@ -403,10 +405,12 @@ export function NumberJourney({
             </div>
           ) : (
             <div className="anim-rise-in relative">
-              <NumberReveal
-                key={`reveal-${attempt}`}
+              <NumberColor
+                key={`color-${attempt}`}
                 value={value}
                 image={image}
+                strokes={strokes}
+                accent={accent}
                 onFinish={() => setSolved(true)}
               />
               {solved && <Celebration />}

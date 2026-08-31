@@ -2,7 +2,7 @@
     one of four: it stops making sense past a target of 3 (there are only 3
     items in the tray), so numbers past that get an entirely different
     mini-activity instead of a different icon. */
-export type CountActivityKind = "give" | "complete" | "path" | "reveal";
+export type CountActivityKind = "give" | "complete" | "path" | "color";
 
 /** Hand Pinki `itemLabel`s until she has as many as the number. */
 export interface GiveActivity {
@@ -26,13 +26,13 @@ export interface PathActivity {
   numbers: readonly number[];
 }
 
-/** The numeral is hidden under a grid; swipe or tap it clear. */
-export interface RevealActivity {
-  kind: "reveal";
+/** The numeral is an empty outline; colour it in. */
+export interface ColorActivity {
+  kind: "color";
 }
 
 export type CountActivityConfig =
   | GiveActivity
   | CompleteActivity
   | PathActivity
-  | RevealActivity;
+  | ColorActivity;
