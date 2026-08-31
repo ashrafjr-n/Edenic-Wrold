@@ -399,6 +399,7 @@ export function NumberJourney({
                 key={`path-${attempt}`}
                 numbers={countActivity.numbers}
                 target={value}
+                accent={accent}
                 onFinish={() => setSolved(true)}
               />
               {solved && <Celebration />}

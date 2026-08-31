@@ -12,6 +12,8 @@ interface NumberPathProps {
   numbers: readonly number[];
   /** Which one Pinki has to reach — always one of `numbers`. */
   target: number;
+  /** The character's colour, used to ring the stop she has to reach. */
+  accent: string;
   onFinish: () => void;
 }
 
@@ -20,16 +22,25 @@ interface BoardPoint {
   y: number;
 }
 
-/** Five fixed waypoints in a 0–100 board square, hand-picked for a gentle
+interface Waypoint extends BoardPoint {
+  /** Where that stop's numeral sits — BESIDE its circle, never on it. Pinki
+      stands on the circles, so a numeral underneath one would be hidden the
+      whole time (the first stop's number especially, where she starts). */
+  lx: number;
+  ly: number;
+}
+
+/** Five fixed stops in a 0–100 board square, hand-picked for a gentle
     top-to-bottom zigzag — the same "coarse, hand-tuned" spirit as
     `number-strokes.ts`. The geometry never changes; only which numbers and
-    which one is the target does. */
-const SLOTS: readonly BoardPoint[] = [
-  { x: 24, y: 8 },
-  { x: 74, y: 24 },
-  { x: 38, y: 50 },
-  { x: 76, y: 74 },
-  { x: 26, y: 92 },
+    which one is the target does. Labels sit outward, away from the middle
+    of the board, so they never land on the path itself. */
+const SLOTS: readonly Waypoint[] = [
+  { x: 30, y: 9, lx: 11, ly: 9 },
+  { x: 74, y: 27, lx: 91, ly: 27 },
+  { x: 36, y: 51, lx: 14, ly: 51 },
+  { x: 76, y: 75, lx: 91, ly: 75 },
+  { x: 30, y: 92, lx: 11, ly: 92 },
 ];
 
 const DRAG_THRESHOLD = 8;
@@ -73,7 +84,7 @@ const imageFor = (value: number) =>
  * the route on a loop, showing what to do. It stops for good the moment they
  * take over, the same way `SayItButton`'s invite pulse does.
  */
-export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
+export function NumberPath({ numbers, target, accent, onFinish }: NumberPathProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const targetIndex = Math.max(0, numbers.indexOf(target));
   const targetSlot = SLOTS[targetIndex];
@@ -176,19 +187,36 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
           const isTarget = index === targetIndex;
 
           return (
-            <span
-              key={value}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 ${
-                isTarget ? "anim-pulse-invite" : ""
-              }`}
-              style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-            >
-              <Numeral
-                value={value}
-                image={imageFor(value)}
-                sizeClass={isTarget ? "h-16 w-16 sm:h-20 sm:w-20" : "h-9 w-9 sm:h-11 sm:w-11"}
-                decorative
+            <span key={value}>
+              {/* The stop itself: a circle ON the path. This is what Pinki has
+                  to be brought to — the target's is bigger, ringed in the
+                  character's colour and pulsing, so where to go is never a
+                  guess. */}
+              <span
+                className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--surface)] shadow-[0_6px_14px_-6px_rgb(var(--shadow-hue)/45%)] ${
+                  isTarget ? "anim-pulse-invite h-11 w-11 sm:h-14 sm:w-14" : "h-6 w-6 sm:h-7 sm:w-7"
+                }`}
+                style={{
+                  left: `${slot.x}%`,
+                  top: `${slot.y}%`,
+                  border: isTarget ? `4px solid ${accent}` : "3px solid var(--color-locked-dark)",
+                }}
+                aria-hidden
               />
+
+              <span
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${slot.lx}%`, top: `${slot.ly}%` }}
+              >
+                <Numeral
+                  value={value}
+                  image={imageFor(value)}
+                  sizeClass={
+                    isTarget ? "h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" : "h-9 w-9 sm:h-11 sm:w-11"
+                  }
+                  decorative
+                />
+              </span>
             </span>
           );
         })}
@@ -243,10 +271,14 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
           style={{
             left: `${startSlot.x}%`,
             top: `${startSlot.y}%`,
+            /* The centring stays IN the inline value: `translate` is a
+               standalone property in Tailwind v4, so an inline `translate`
+               replaces `-translate-x-1/2 -translate-y-1/2` outright and the
+               token would jump half its own size the moment a drag starts. */
             translate: drag?.moved
-              ? `${drag.dx}px ${drag.dy}px`
+              ? `calc(-50% + ${drag.dx}px) calc(-50% + ${drag.dy}px)`
               : snap
-                ? `${snap.dx}px ${snap.dy}px`
+                ? `calc(-50% + ${snap.dx}px) calc(-50% + ${snap.dy}px)`
                 : undefined,
             scale: drag?.moved ? "1.1" : "1",
           }}
