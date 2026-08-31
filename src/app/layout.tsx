@@ -16,7 +16,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${fredoka.variable} h-full antialiased`}>
+    /* `suppressHydrationWarning` here only suppresses a mismatch on THIS
+       element's own attributes (React docs) — it does not hide a real
+       mismatch anywhere else in the tree. It's needed because a browser
+       extension can inject its own attributes onto `<html>` before React
+       hydrates (seen locally: a `webcrx`/`webcrx-bridged` pair from some
+       extension), which React then reports as a mismatch even though
+       nothing in this app ever sets them. */
+    <html
+      lang="en"
+      className={`${fredoka.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
         <Header />
         {children}
