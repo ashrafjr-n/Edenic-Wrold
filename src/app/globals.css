@@ -129,6 +129,14 @@
   --color-go: #35b567;
   --color-go-dark: #197a43;
 
+  /* A deliberate, scoped exception to "nothing on this site marks an answer
+     wrong in color" — the trace board's own miss flash, added on direct
+     request so a child sees the failed stroke clearly before it clears
+     itself. Soft coral, not an alarming stop-sign red, to stay in the
+     palette's family. Nowhere else on the site should reach for this. */
+  --color-miss: #f2685f;
+  --color-miss-dark: #c94b43;
+
   /* The gold horns are the one feature all three characters share, so
      gold is the signature accent: it marks what's active/unlocked
      (borders, badges, dividers) and never fills a large surface. */
