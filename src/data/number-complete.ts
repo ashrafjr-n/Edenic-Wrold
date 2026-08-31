@@ -15,10 +15,13 @@ export interface CompleteNotch {
 /** Only numbers using the `complete` activity need an entry — picked by eye
     against the actual render, one clearly separable chunk per numeral. */
 const notchByValue: Record<number, CompleteNotch> = {
-  /* The rounded foot at the bottom of 4's vertical stroke. */
-  4: { x: 56, y: 78, w: 28, h: 20 },
-  /* The curled tail at the bottom-left of 9. */
-  9: { x: 10, y: 74, w: 30, h: 24 },
+  /* The rounded foot at the bottom of 4's vertical stroke, with a little
+     clearance all round — a rect that clips the stem leaves a sliver of it
+     still showing beside the gap, and the piece then never looks like it
+     belongs there. */
+  4: { x: 49, y: 76, w: 36, h: 23 },
+  /* The curled tip of 9's tail, up to where it runs back into the bowl. */
+  9: { x: 4, y: 65, w: 36, h: 28 },
 };
 
 /** A safety-net rect for a number that reaches `complete` without a tuned
