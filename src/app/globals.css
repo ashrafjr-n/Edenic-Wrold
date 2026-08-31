@@ -214,6 +214,32 @@ body {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
+/* A white `.card` with the full clay treatment — inner top highlight, inner
+   bottom shade, wide tinted drop shadow — instead of `.card`'s single flat
+   shadow. Same recipe as `.btn3d--clay-white`, scaled to a card's shadow
+   weight. Used where a card's body is plain white but still needs to read
+   as an inflated shape (the lesson hub's cards, now that their fill is no
+   longer the character's own color). Declared after `.card` so it wins. */
+.card-clay-white {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* `.card-lift:hover` alone would win on hover (same specificity, later
+   source) and wipe the inset shading back to a flat shadow. This combined
+   selector is more specific, so the clay insets survive the lift instead of
+   flickering off for the hover duration. */
+.card-clay-white.card-lift:hover {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 24%),
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
 /* `.card` and `.tile` are unlayered, and Tailwind's utilities live in
    `@layer utilities` — unlayered CSS wins over layered CSS whatever the source
    order, so a `rounded-full` utility on a `.card` silently does nothing. Radius
@@ -554,6 +580,30 @@ button:disabled,
     inset 0 8px 12px -5px rgb(var(--shadow-hue) / 26%),
     inset 0 -6px 10px -5px rgb(255 255 255 / 70%),
     0 6px 14px -8px rgb(var(--shadow-hue) / 38%);
+}
+
+/* Pink and grained, like `.btn3d--icon-accent`, but keyed to THIS character's
+   own `--character-accent`/`--character-accent-dark` instead of the site's
+   fixed `--accent` — so Nova's and Bloo's hubs get their own color instead
+   of Pinki's pink. Used on the lesson hub's chevron/lock indicator, now that
+   the card body around it is plain white and the color has to live here
+   instead. */
+.btn3d--clay-accent {
+  background-color: var(--character-accent);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
+    inset 0 -7px 11px -4px
+      color-mix(in srgb, var(--character-accent-dark) 60%, transparent),
+    0 14px 26px -10px
+      color-mix(in srgb, var(--character-accent-dark) 55%, transparent);
+  transition: background-color 0.2s ease;
+}
+
+.btn3d--clay-accent:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--character-accent) 85%, black 15%);
 }
 
 .btn3d:focus-visible {
