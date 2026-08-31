@@ -222,7 +222,9 @@ export function NumberJourney({
               hero of this screen from `sm` up: much bigger, with the buttons
               moved beside it instead of underneath, so nothing competes with
               it and nothing caps its height. */}
-          {videoId && <NumberVideo videoId={videoId} value={value} />}
+          {videoId && (
+            <NumberVideo videoId={videoId} value={value} image={image} />
+          )}
 
           <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
             <Button3D
