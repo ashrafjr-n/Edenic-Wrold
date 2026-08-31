@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
-import { Flame } from "lucide-react";
+import { Flame, Hand } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { Numeral } from "./numeral";
 
@@ -221,9 +221,9 @@ export function NumberPath({ numbers, target, accent, onFinish }: NumberPathProp
           );
         })}
 
-        {/* The demo: a ghost of Pinki's token walking the route, looping
-            until the child takes over. Shown first so nobody has to guess
-            that this one is dragged rather than tapped. */}
+        {/* The demo: a hand walking the route, looping until the child takes
+            over. A hand rather than a second Pinki on purpose — two Pinkis on
+            one board reads as two characters, not as a hint. */}
         {!everDragged && !solved && (
           <span
             className="path-hint pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
@@ -241,14 +241,11 @@ export function NumberPath({ numbers, target, accent, onFinish }: NumberPathProp
             }
             aria-hidden
           >
-            <span className="card card-pill flex h-14 w-14 items-center justify-center p-1 opacity-70 sm:h-16 sm:w-16">
-              <Image
-                src={PINKI_TOKEN}
-                alt=""
-                width={475}
-                height={539}
-                draggable={false}
-                className="h-full w-full select-none object-contain"
+            <span className="card card-pill flex h-11 w-11 items-center justify-center sm:h-12 sm:w-12">
+              <Hand
+                className="h-6 w-6 sm:h-7 sm:w-7"
+                style={{ color: accent }}
+                strokeWidth={2.25}
               />
             </span>
           </span>
