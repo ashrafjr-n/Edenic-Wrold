@@ -6,13 +6,13 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
     {
       id: "numbers",
       name: "Learn Numbers",
-      description: "Learn numbers 1 to 10",
+      description: "Learn numbers 1 to 9",
       image: "/assets/learn-with-pinki/123-pinki.png",
       theme: {
         accent: "var(--color-subject-numbers)",
         accentDark: "var(--color-subject-numbers-dark)",
       },
-      totalItems: 10,
+      totalItems: 9,
       locked: false,
     },
     {
@@ -24,7 +24,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-letters)",
         accentDark: "var(--color-subject-letters-dark)",
       },
-      totalItems: 26,
+      totalItems: 30,
       locked: true,
     },
     {
@@ -36,7 +36,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-colors)",
         accentDark: "var(--color-subject-colors-dark)",
       },
-      totalItems: 8,
+      totalItems: 10,
       locked: true,
     },
     {
@@ -50,7 +50,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-shapes)",
         accentDark: "var(--color-subject-shapes-dark)",
       },
-      totalItems: 8,
+      totalItems: 9,
       locked: true,
     },
   ],
