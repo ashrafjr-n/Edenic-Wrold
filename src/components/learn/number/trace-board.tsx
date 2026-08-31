@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
 import { scoreTrace, strokeToPath } from "@/lib/trace-score";
@@ -29,6 +29,11 @@ const MIN_STROKE_POINTS = 3;
     offering to start over. */
 const COMMITTED_POINTS = 55;
 
+/** How long the wrong stroke stays on screen, shaking and red, before it
+    clears itself for another try — long enough to register as feedback,
+    short enough that a child isn't left waiting to draw again. */
+const MISS_FLASH_MS = 550;
+
 export function TraceBoard({
   strokes,
   accent,
@@ -40,6 +45,18 @@ export function TraceBoard({
   const surfaceRef = useRef<SVGSVGElement>(null);
   const [drawn, setDrawn] = useState<StrokePoint[][]>([]);
   const [active, setActive] = useState<StrokePoint[]>([]);
+  /* True for the brief shake-and-red window right after a committed miss,
+     before the board clears itself and the child can draw again. */
+  const [missed, setMissed] = useState(false);
+  const missTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (missTimeoutRef.current !== null) {
+        window.clearTimeout(missTimeoutRef.current);
+      }
+    };
+  }, []);
 
   /* Client pixels → the strokes' own 0–100 square, so the score means the
      same thing whatever the board is sized to. */
@@ -95,7 +112,17 @@ export function TraceBoard({
     }
 
     const drawnPoints = finished.reduce((total, s) => total + s.length, 0);
-    if (drawnPoints >= COMMITTED_POINTS) onMiss();
+    if (drawnPoints >= COMMITTED_POINTS) {
+      /* The wrong stroke shakes and turns red right where it is, then clears
+         itself — the child never has to press anything to go again. */
+      setMissed(true);
+      onMiss();
+      missTimeoutRef.current = window.setTimeout(() => {
+        setDrawn([]);
+        setMissed(false);
+        missTimeoutRef.current = null;
+      }, MISS_FLASH_MS);
+    }
   };
 
   const guidePaths = strokes.map(strokeToPath);
@@ -111,7 +138,7 @@ export function TraceBoard({
       aria-label="Trace the number with your finger"
       /* `touch-action: none` is what stops a drag from scrolling the page
          instead of drawing — the whole activity depends on it. */
-      className="h-full w-full touch-none select-none"
+      className={`h-full w-full touch-none select-none ${missed ? "anim-wiggle" : ""}`}
       onPointerDown={handleDown}
       onPointerMove={handleMove}
       onPointerUp={handleUp}
@@ -137,7 +164,7 @@ export function TraceBoard({
           key={`drawn-${index}`}
           points={stroke.map(([x, y]) => `${x},${y}`).join(" ")}
           fill="none"
-          stroke={accent}
+          stroke={missed ? "var(--color-miss)" : accent}
           strokeWidth={9}
           strokeLinecap="round"
           strokeLinejoin="round"
