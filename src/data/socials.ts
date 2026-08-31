@@ -7,35 +7,34 @@ import {
 } from "@icons-pack/react-simple-icons";
 import type { SocialLink } from "@/types/social";
 
-/** Placeholder destinations — swap in the real accounts once they exist. */
 export const socialLinks: SocialLink[] = [
   {
     label: "YouTube",
-    href: "https://youtube.com",
+    href: "https://www.youtube.com/@EdenicWorld-kids",
     Icon: SiYoutube,
     brand: "#ff0033",
   },
   {
     label: "Instagram",
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/edenic.world/",
     Icon: SiInstagram,
     brand: "#e4405f",
   },
   {
     label: "TikTok",
-    href: "https://tiktok.com",
+    href: "https://www.tiktok.com/@edenic.world?_r=1&_t=ZS-99M08l3uF0x",
     Icon: SiTiktok,
     brand: "#111111",
   },
   {
     label: "Facebook",
-    href: "https://facebook.com",
+    href: "https://www.facebook.com/profile.php?id=61591428555515",
     Icon: SiFacebook,
     brand: "#0866ff",
   },
   {
     label: "Snapchat",
-    href: "https://snapchat.com",
+    href: "https://snapchat.com/t/1H9eHXOO",
     Icon: SiSnapchat,
     brand: "#fffc00",
   },
