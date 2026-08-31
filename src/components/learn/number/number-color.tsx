@@ -23,6 +23,21 @@ interface NumberColorProps {
 const BRUSH = 14;
 /** A dab has to be a dab — one stray point is not a stroke. */
 const MIN_STROKE_POINTS = 2;
+
+/** Same fix as `TraceBoard`'s own `MIN_POINT_DISTANCE`: a new point is only
+    kept if it's at least this far (board units, out of 100) from the last
+    one, so scrubbing the crayon slowly back and forth — which is how
+    colouring in actually happens, more so than tracing — can't pile up
+    thousands of near-duplicate points into `active` and make `scoreTrace`
+    (and every re-render in between) increasingly expensive mid-stroke. */
+const MIN_POINT_DISTANCE = 0.8;
+const MIN_POINT_DISTANCE_SQUARED = MIN_POINT_DISTANCE * MIN_POINT_DISTANCE;
+
+function distanceSquared(a: StrokePoint, b: StrokePoint): number {
+  const dx = a[0] - b[0];
+  const dy = a[1] - b[1];
+  return dx * dx + dy * dy;
+}
 /** How much of the numeral has to be covered to count as coloured in.
     Measured the same way `TraceBoard` measures a trace, against the same
     centrelines, so "coloured most of the number" is what actually passes. */
@@ -87,7 +102,13 @@ export function NumberColor({
     if (done || active.length === 0) return;
     const point = toBoardPoint(event);
     if (!point) return;
-    setActive((points) => [...points, point]);
+    setActive((points) => {
+      const last = points[points.length - 1];
+      if (last && distanceSquared(last, point) < MIN_POINT_DISTANCE_SQUARED) {
+        return points;
+      }
+      return [...points, point];
+    });
   };
 
   const handleUp = (event: ReactPointerEvent<HTMLDivElement>) => {

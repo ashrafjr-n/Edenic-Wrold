@@ -24,6 +24,24 @@ interface TraceBoardProps {
     should not leave a dot on the board. */
 const MIN_STROKE_POINTS = 3;
 
+/** A new point is only kept if it's at least this far (board units, out of
+    100) from the last one. `pointermove` can fire dozens of times a second
+    even while a finger barely moves, and every one of those was landing in
+    `active` unfiltered — a slow or hesitant trace (exactly the numerals with
+    longer strokes, like 3 or 8) could pile up thousands of near-duplicate
+    points. Since scoring and re-rendering both cost roughly O(point count),
+    and every `setActive` call was already re-copying the whole array, that
+    is real O(n²) work piling up mid-stroke — the actual cause of the
+    reported freezing/lag while drawing, not a one-off glitch. */
+const MIN_POINT_DISTANCE = 0.8;
+const MIN_POINT_DISTANCE_SQUARED = MIN_POINT_DISTANCE * MIN_POINT_DISTANCE;
+
+function distanceSquared(a: StrokePoint, b: StrokePoint): number {
+  const dx = a[0] - b[0];
+  const dy = a[1] - b[1];
+  return dx * dx + dy * dy;
+}
+
 /** Below this the child is still drawing, so a low score says nothing. Past
     it they have clearly finished something, and if it did not land it is worth
     offering to start over. */
@@ -89,7 +107,15 @@ export function TraceBoard({
     const point = toBoardPoint(event);
     if (!point) return;
 
-    setActive((points) => [...points, point]);
+    setActive((points) => {
+      const last = points[points.length - 1];
+      /* Returning the SAME array (not a copy) when the point is too close
+         also lets React skip the re-render entirely for that event. */
+      if (last && distanceSquared(last, point) < MIN_POINT_DISTANCE_SQUARED) {
+        return points;
+      }
+      return [...points, point];
+    });
   };
 
   const handleUp = (event: ReactPointerEvent<SVGSVGElement>) => {
