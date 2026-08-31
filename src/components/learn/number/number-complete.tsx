@@ -205,7 +205,12 @@ export function NumberComplete({
           style={{
             width: `calc(var(--board-w) * ${notch.w} / 100)`,
             height: `calc(var(--board-h) * ${notch.h} / 100)`,
-            filter: "drop-shadow(0 8px 12px rgb(var(--shadow-hue) / 35%))",
+            /* The shadow is what makes the loose piece read as liftable —
+               and exactly what would draw a seam around it once it's home. */
+            filter: solved
+              ? "none"
+              : "drop-shadow(0 8px 12px rgb(var(--shadow-hue) / 35%))",
+            transition: "filter 0.3s ease",
           }}
         >
           <Image
