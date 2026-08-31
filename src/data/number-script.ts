@@ -1,4 +1,5 @@
 import type { NumberScript } from "@/types/number-journey";
+import { countActivityFor } from "./count-activities";
 
 const WORDS: Record<number, string> = {
   1: "One",
@@ -27,8 +28,14 @@ const STROKE_HINTS: Record<number, string> = {
  * that gets recorded when audio arrives, so they need to be readable in one
  * place rather than hunted through seven components.
  */
+/** "apple" + 1 stays "apple"; anything else gets an "s". */
+function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
+}
+
 export function scriptFor(value: number): NumberScript {
   const word = WORDS[value] ?? String(value);
+  const items = pluralize(countActivityFor(value).itemLabel, value);
 
   return {
     word,
@@ -41,8 +48,8 @@ export function scriptFor(value: number): NumberScript {
     traceMiss: "Almost! Let's try again together.",
     find: `Help me find ${word.toUpperCase()}!`,
     findMiss: "Hmm... let's look again!",
-    count: `Give me ${word.toUpperCase()} apple!`,
-    countHow: "How many apples do I have now?",
+    count: `Give me ${word.toUpperCase()} ${items}!`,
+    countHow: `How many ${items} do I have now?`,
     game: `Pop Number ${value}!`,
     celebrate: "We did it! You're amazing!",
   };
