@@ -432,6 +432,10 @@ export function NumberJourney({
 
       {stage === "game" && (
         <>
+          {/* No sibling `<Celebration>` here, unlike the other stages — the
+              balloons keep drifting even after a win, so a burst centred on
+              this wrapper would land away from the popped balloon.
+              `BalloonPop` bursts its own confetti from the balloon itself. */}
           <div className="anim-rise-in relative">
             <BalloonPop
               key={`pop-${attempt}`}
@@ -440,7 +444,6 @@ export function NumberJourney({
               onCorrect={() => setSolved(true)}
               onMiss={pickMiss}
             />
-            {solved && <Celebration />}
           </div>
 
           {solved && (

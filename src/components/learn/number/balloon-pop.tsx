@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { Celebration } from "./celebration";
 
 interface BalloonPopProps {
   /** The numbers on the balloons, answer included, in display order. */
@@ -80,6 +81,15 @@ export function BalloonPop({
             }
           >
             <span className={`relative block ${isPopped ? "balloon-pop" : ""}`}>
+              {/* Nested inside the popped balloon itself, not centred on the
+                  whole row: every balloon keeps drifting via `balloon-drift`
+                  on the button above, so a burst positioned against the row's
+                  own centre would land wherever the balloon happened to be
+                  when it popped — usually not there. As a descendant it
+                  inherits the same drift transform and bursts from exactly
+                  where the balloon is. */}
+              {isPopped && <Celebration />}
+
               <Image
                 src={BALLOON}
                 alt=""
