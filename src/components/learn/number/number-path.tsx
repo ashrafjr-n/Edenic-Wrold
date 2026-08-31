@@ -66,7 +66,9 @@ const imageFor = (value: number) =>
  * activity is about reaching a number, not about handwriting precision. A
  * side gauge reads "hot" the closer the drag gets and "cold" the further it
  * strays, so the feedback is continuous rather than only a pass/fail at the
- * very end.
+ * very end. A tap with no real movement always succeeds too, same as
+ * `AppleGive` and `NumberComplete` — there is only one place worth tapping
+ * Pinki toward.
  */
 export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -116,7 +118,11 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
     if (!drag) return;
     event.currentTarget.releasePointerCapture(event.pointerId);
 
-    const point = toBoardPoint(event.clientX, event.clientY);
+    /* A tap (no real movement) always succeeds, same convention as
+       AppleGive's tap-to-give and NumberComplete's tap-to-place — dragging
+       precisely onto a target shouldn't be the only way through for a child
+       who cannot yet aim a drag that well. */
+    const point = drag.moved ? toBoardPoint(event.clientX, event.clientY) : targetSlot;
     const reached = point && distance(point, targetSlot) <= CATCH_RADIUS;
     const bounds = boardRef.current?.getBoundingClientRect();
 
