@@ -137,6 +137,11 @@ export function NumberJourney({
   const retryTrace = () => {
     setTraceAttempt((count) => count + 1);
     setTraceMissed(false);
+    /* Resetting `solved` is what makes the board live again: it is passed
+       down as `locked`, so pressing "Try Again" AFTER passing the trace used
+       to remount a board that was frozen on arrival — the child could not
+       draw a single line and the only way out was "Next". */
+    setSolved(false);
     setAttempt((count) => count + 1);
   };
 
