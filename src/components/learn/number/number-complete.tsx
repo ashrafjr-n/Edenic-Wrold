@@ -152,6 +152,7 @@ export function NumberComplete({
           src={image}
           alt={`The number ${value}`}
           fill
+          sizes="(min-width: 640px) 13rem, 10rem"
           className="object-contain"
         />
 

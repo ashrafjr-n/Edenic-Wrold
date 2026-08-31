@@ -99,7 +99,13 @@ export function NumberReveal({ value, image, onFinish }: NumberRevealProps) {
         onPointerCancel={stopDragging}
         onPointerLeave={stopDragging}
       >
-        <Image src={image} alt={`The number ${value}`} fill className="object-contain" />
+        <Image
+          src={image}
+          alt={`The number ${value}`}
+          fill
+          sizes="(min-width: 640px) 13rem, 10rem"
+          className="object-contain"
+        />
 
         {Array.from({ length: TOTAL }, (_, index) => {
           const row = Math.floor(index / COLS);
