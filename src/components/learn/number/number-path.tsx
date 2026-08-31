@@ -66,9 +66,12 @@ const imageFor = (value: number) =>
  * activity is about reaching a number, not about handwriting precision. A
  * side gauge reads "hot" the closer the drag gets and "cold" the further it
  * strays, so the feedback is continuous rather than only a pass/fail at the
- * very end. A tap with no real movement always succeeds too, same as
- * `AppleGive` and `NumberComplete` — there is only one place worth tapping
- * Pinki toward.
+ * very end.
+ *
+ * Dragging is required — a tap does nothing. Walking Pinki there IS the
+ * activity, so before the child's first drag a ghost of her token travels
+ * the route on a loop, showing what to do. It stops for good the moment they
+ * take over, the same way `SayItButton`'s invite pulse does.
  */
 export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -78,6 +81,8 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
 
   const [drag, setDrag] = useState<DragState | null>(null);
   const [heat, setHeat] = useState(0);
+  /* The route demo runs until the child's first real drag, then never again. */
+  const [everDragged, setEverDragged] = useState(false);
   const [snap, setSnap] = useState<{ dx: number; dy: number } | null>(null);
   const [solved, setSolved] = useState(false);
 
@@ -106,6 +111,7 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
       dy,
       moved: drag.moved || Math.hypot(dx, dy) > DRAG_THRESHOLD,
     });
+    if (!drag.moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) setEverDragged(true);
 
     const point = toBoardPoint(event.clientX, event.clientY);
     if (point) {
@@ -118,11 +124,9 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
     if (!drag) return;
     event.currentTarget.releasePointerCapture(event.pointerId);
 
-    /* A tap (no real movement) always succeeds, same convention as
-       AppleGive's tap-to-give and NumberComplete's tap-to-place — dragging
-       precisely onto a target shouldn't be the only way through for a child
-       who cannot yet aim a drag that well. */
-    const point = drag.moved ? toBoardPoint(event.clientX, event.clientY) : targetSlot;
+    /* A tap puts her back down and nothing else: carrying Pinki to the
+       number is the exercise, so it cannot be passed by tapping her. */
+    const point = drag.moved ? toBoardPoint(event.clientX, event.clientY) : null;
     const reached = point && distance(point, targetSlot) <= CATCH_RADIUS;
     const bounds = boardRef.current?.getBoundingClientRect();
 
@@ -188,6 +192,39 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
             </span>
           );
         })}
+
+        {/* The demo: a ghost of Pinki's token walking the route, looping
+            until the child takes over. Shown first so nobody has to guess
+            that this one is dragged rather than tapped. */}
+        {!everDragged && !solved && (
+          <span
+            className="path-hint pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
+            style={
+              {
+                left: `${startSlot.x}%`,
+                top: `${startSlot.y}%`,
+                "--hint-x0": `${startSlot.x}%`,
+                "--hint-y0": `${startSlot.y}%`,
+                "--hint-x1": `${SLOTS[1].x}%`,
+                "--hint-y1": `${SLOTS[1].y}%`,
+                "--hint-x2": `${targetSlot.x}%`,
+                "--hint-y2": `${targetSlot.y}%`,
+              } as CSSProperties
+            }
+            aria-hidden
+          >
+            <span className="card card-pill flex h-14 w-14 items-center justify-center p-1 opacity-70 sm:h-16 sm:w-16">
+              <Image
+                src={PINKI_TOKEN}
+                alt=""
+                width={475}
+                height={539}
+                draggable={false}
+                className="h-full w-full select-none object-contain"
+              />
+            </span>
+          </span>
+        )}
 
         <button
           type="button"
