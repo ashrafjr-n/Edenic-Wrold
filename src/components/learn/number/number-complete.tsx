@@ -204,6 +204,7 @@ export function NumberComplete({
           alt=""
           width={IMAGE_W}
           height={IMAGE_H}
+          draggable={false}
           className="pointer-events-none select-none"
           style={cropStyle(notch)}
         />

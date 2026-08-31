@@ -195,7 +195,8 @@ export function AppleGive({ target, icon, itemLabel, onGiven }: AppleGiveProps) 
                 alt=""
                 width={140}
                 height={140}
-                className="h-20 w-20 object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] sm:h-24 sm:w-24"
+                draggable={false}
+                className="h-20 w-20 select-none object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] sm:h-24 sm:w-24"
               />
             </button>
           );

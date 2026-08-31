@@ -220,7 +220,8 @@ export function NumberPath({ numbers, target, onFinish }: NumberPathProps) {
               alt="Pinki"
               width={475}
               height={539}
-              className="h-full w-full object-contain"
+              draggable={false}
+              className="h-full w-full select-none object-contain"
             />
           </span>
         </button>
