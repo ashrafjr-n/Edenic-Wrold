@@ -207,7 +207,6 @@ export function NumberJourney({
         pose={guide.pose}
         line={guide.line}
         size={stage === "celebrate" ? "lg" : "sm"}
-        accent={accent}
       />
 
       {stage === "discover" && (

@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import Image from "next/image";
 
 /** Pinki has three renders. Anything else falls back to `speak` rather than
@@ -17,9 +16,6 @@ interface PinkiGuideProps {
   line: string;
   /** Bigger on the stages where she is the subject, not the sidebar. */
   size?: "sm" | "lg";
-  /** Tints the bubble this color, grained, instead of plain white — matches
-      the page's own `.hub-ground` fill. Omit for a plain white bubble. */
-  accent?: string;
 }
 
 /**
@@ -34,12 +30,7 @@ interface PinkiGuideProps {
  * She stands to the LEFT of her bubble from `sm` up and above it on a phone;
  * `.speech-bubble` moves its tail to match.
  */
-export function PinkiGuide({
-  pose = "speak",
-  line,
-  size = "sm",
-  accent,
-}: PinkiGuideProps) {
+export function PinkiGuide({ pose = "speak", line, size = "sm" }: PinkiGuideProps) {
   const box =
     size === "lg"
       ? "h-28 w-28 sm:h-40 sm:w-40"
@@ -58,12 +49,7 @@ export function PinkiGuide({
         className={`anim-breathe shrink-0 object-contain drop-shadow-[0_14px_18px_rgba(92,78,190,0.28)] ${box}`}
       />
 
-      <p
-        className={`speech-bubble max-w-xs px-5 py-3 text-center text-base font-bold sm:max-w-sm sm:text-left sm:text-lg ${
-          accent ? "speech-bubble--tinted text-white" : "text-[var(--color-ink)]"
-        }`}
-        style={accent ? ({ "--bubble-tint": accent } as CSSProperties) : undefined}
-      >
+      <p className="speech-bubble max-w-xs px-5 py-3 text-center text-base font-bold text-[var(--color-ink)] sm:max-w-sm sm:text-left sm:text-lg">
         {line}
       </p>
     </div>
