@@ -5,13 +5,17 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 
 interface AppleGiveProps {
-  /** How many apples Pinki is asking for. */
+  /** How many items Pinki is asking for. */
   target: number;
+  /** The item's icon — same clay-render style as the rest of `assets/icons`. */
+  icon: string;
+  /** Singular word for the item (e.g. "apple", "star"). */
+  itemLabel: string;
   onGiven: () => void;
 }
 
-/** More apples than she asks for, or "give me one" is just "tap the apple". */
-const APPLE_COUNT = 3;
+/** More items than she asks for, or "give me one" is just "tap the item". */
+const ITEM_COUNT = 3;
 /** Below this the pointer never really moved — treat it as a tap, not a drag,
     so a wobbly finger still counts as a press. */
 const DRAG_THRESHOLD = 8;
@@ -38,9 +42,10 @@ interface FlyState {
 }
 
 /**
- * "Give me ONE apple" — the step that connects the numeral to a quantity.
+ * "Give me ONE apple" (or star, or whatever `icon`/`itemLabel` says) — the
+ * step that connects the numeral to a quantity.
  *
- * Both interactions work at once, on purpose: a child can **tap** an apple to
+ * Both interactions work at once, on purpose: a child can **tap** an item to
  * send it over, or **drag** it into Pinki's basket. Tapping is what a four-
  * year-old reaches for and never fails at; dragging is what the instruction
  * implies and what feels like really handing something over. Requiring the
@@ -48,11 +53,12 @@ interface FlyState {
  * which is not what this stage is testing.
  *
  * A drag that lands anywhere else simply springs back — nothing is ever wrong
- * here, because giving the apple IS the answer. A tapped apple flies itself
+ * here, because giving the item IS the answer. A tapped item flies itself
  * over to the basket before it's counted, so tapping and dragging both end
- * the same way: watching the apple actually arrive.
+ * the same way: watching it actually arrive.
  */
-export function AppleGive({ target, onGiven }: AppleGiveProps) {
+export function AppleGive({ target, icon, itemLabel, onGiven }: AppleGiveProps) {
+  const article = /^[aeiou]/i.test(itemLabel) ? "an" : "a";
   const basketRef = useRef<HTMLDivElement>(null);
   const [given, setGiven] = useState<number[]>([]);
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -137,13 +143,13 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
       >
         {given.length === 0 ? (
           <span className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-            Drop an apple here
+            Drop {article} {itemLabel} here
           </span>
         ) : (
           given.map((id) => (
             <Image
               key={id}
-              src="/assets/icons/apple.png"
+              src={icon}
               alt=""
               width={140}
               height={140}
@@ -154,7 +160,7 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
       </div>
 
       <div className="flex items-center gap-4 sm:gap-8">
-        {Array.from({ length: APPLE_COUNT }, (_, id) => {
+        {Array.from({ length: ITEM_COUNT }, (_, id) => {
           const isGone = given.includes(id);
           const dragging = drag?.id === id && drag.moved;
           const isFlying = flying?.id === id;
@@ -164,7 +170,7 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
               key={id}
               type="button"
               disabled={isGone || isFlying}
-              aria-label="Give Pinki an apple"
+              aria-label={`Give Pinki ${article} ${itemLabel}`}
               onPointerDown={(event) => onPointerDown(event, id)}
               onPointerMove={(event) => onPointerMove(event, id)}
               onPointerUp={(event) => onPointerUp(event, id)}
@@ -185,7 +191,7 @@ export function AppleGive({ target, onGiven }: AppleGiveProps) {
               }
             >
               <Image
-                src="/assets/icons/apple.png"
+                src={icon}
                 alt=""
                 width={140}
                 height={140}
