@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { mainNav } from "@/data/nav";
 
 /* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
-   `currentColor`, so `.nav-tab`'s own color rules (blue at rest, pink on
-   press/focus) drive the icon exactly like they'd drive an inline SVG. */
+   `currentColor`, so `.nav-tab`'s own color rules (blue at rest, pink for
+   the current page) drive the icon exactly like they'd drive an inline SVG. */
 const ICON_SRC = {
   Home: "/assets/png/home.png",
   Learn: "/assets/png/learn.png",
@@ -21,12 +21,13 @@ const ICON_SRC = {
     top header on every breakpoint; only Home/Learn/Activities move down here
     on a phone — see `MainNav`, hidden below `sm`.
 
-    Icon color is interaction feedback, not a "current page" indicator —
-    every icon reads blue+grain at rest and turns pink+lighter-grain while
-    actually being pressed or focused (`.nav-tab`, `globals.css`), a direct
-    request and a deliberate departure from `MainNav`'s own active-pill
-    treatment. `aria-current` still marks the current page for assistive
-    tech even though nothing shows it in color any more. */
+    Every tab reads blue+grain by default; the CURRENT page's tab is pink
+    with lighter grain (`.nav-tab--current`, `globals.css`) — driven by the
+    same `pathname`-derived `active` boolean that sets `aria-current`, not by
+    `:hover`/`:active` (this bar is phone-only, where hover doesn't exist and
+    a touch's `:active` state doesn't persist once the finger lifts, so a
+    CSS-interaction-driven version snapped back to blue right after landing
+    on the new page — see `globals.css` for the fuller story). */
 export function BottomNav() {
   const pathname = usePathname();
 
@@ -72,7 +73,9 @@ export function BottomNav() {
             key={label}
             href={href}
             aria-current={active ? "page" : undefined}
-            className="nav-tab flex h-16 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold"
+            className={`nav-tab flex h-16 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold ${
+              active ? "nav-tab--current" : ""
+            }`}
           >
             <span
               aria-hidden

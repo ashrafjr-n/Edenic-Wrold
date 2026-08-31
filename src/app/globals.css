@@ -383,31 +383,28 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   `BottomNav`'s own color language — blue at rest, pink while pressed or
-   focused, with heavier grain at rest and lighter grain during the press.
-   This is a direct request and a deliberate departure from every other
-   nav/link on the site, which colors itself by CURRENT PAGE (`aria-current`)
-   — here color is pure interaction feedback instead; which tab is current is
-   still announced to assistive tech via `aria-current`, just not shown in
-   color. `.nav-tab` is unlayered, like `.card`/`.tile`, so it (and the
-   descendant `.icon-mask-grain` override) wins over the Tailwind `text-*`
-   utility on the same `<a>` regardless of source order — the same reason
-   those two classes can't take a Tailwind radius utility either.
+   `BottomNav`'s own color language — every tab blue by default, the CURRENT
+   page's tab pink, with heavier grain at rest and lighter grain on the
+   current tab. Driven by the `active` boolean (from `pathname`), not
+   `:hover`/`:active`/`:focus-visible` — an earlier round tried CSS
+   interaction states here and it was wrong for this bar specifically:
+   `BottomNav` only renders below `sm`, a touch-only context with no real
+   `:hover`, and `:active` only lasts for the touch itself, so the color
+   snapped back to blue the instant a finger lifted instead of staying pink
+   on the page the child actually landed on. `.nav-tab`/`.nav-tab--current`
+   are unlayered, like `.card`/`.tile`, so they win over the Tailwind
+   `text-*` utility on the same `<a>` regardless of source order — the same
+   reason those two classes can't take a Tailwind radius utility either.
    --------------------------------------------------------------- */
 .nav-tab {
   color: var(--brand);
-  transition: color 0.2s ease;
 }
 
-.nav-tab:active,
-.nav-tab:focus-visible {
+.nav-tab--current {
   color: var(--accent);
 }
 
-/* `background-image` itself cannot be transitioned by any browser — this
-   swap is an instant cut, not a fade; only `color` above eases. */
-.nav-tab:active .icon-mask-grain,
-.nav-tab:focus-visible .icon-mask-grain {
+.nav-tab--current .icon-mask-grain {
   background-image: var(--noise-soft);
 }
 
