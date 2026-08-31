@@ -20,6 +20,30 @@ const STROKE_HINTS: Record<number, string> = {
   1: "A little flag... then straight down!",
 };
 
+/** "apple" + 1 stays "apple"; anything else gets an "s". */
+function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
+}
+
+/** The `count` stage's invite line — different per activity kind, since
+    "Give me ONE apple!" makes no sense for a puzzle piece or a hidden
+    numeral. `countHow` (the second, "how many do I have now" beat) only
+    ever applies to `give`, so it's computed separately below. */
+function countLine(value: number, word: string): string {
+  const activity = countActivityFor(value);
+
+  switch (activity.kind) {
+    case "give":
+      return `Give me ${word.toUpperCase()} ${pluralize(activity.itemLabel, value)}!`;
+    case "complete":
+      return `Complete Number ${value}!`;
+    case "path":
+      return `Help Pinki reach Number ${value}!`;
+    case "reveal":
+      return `Reveal Number ${value}!`;
+  }
+}
+
 /**
  * Pinki's lines for one number.
  *
@@ -28,14 +52,11 @@ const STROKE_HINTS: Record<number, string> = {
  * that gets recorded when audio arrives, so they need to be readable in one
  * place rather than hunted through seven components.
  */
-/** "apple" + 1 stays "apple"; anything else gets an "s". */
-function pluralize(word: string, count: number): string {
-  return count === 1 ? word : `${word}s`;
-}
-
 export function scriptFor(value: number): NumberScript {
   const word = WORDS[value] ?? String(value);
-  const items = pluralize(countActivityFor(value).itemLabel, value);
+  const activity = countActivityFor(value);
+  const items =
+    activity.kind === "give" ? pluralize(activity.itemLabel, value) : "";
 
   return {
     word,
@@ -48,7 +69,7 @@ export function scriptFor(value: number): NumberScript {
     traceMiss: "Almost! Let's try again together.",
     find: `Help me find ${word.toUpperCase()}!`,
     findMiss: "Hmm... let's look again!",
-    count: `Give me ${word.toUpperCase()} ${items}!`,
+    count: countLine(value, word),
     countHow: `How many ${items} do I have now?`,
     game: `Pop Number ${value}!`,
     celebrate: "We did it! You're amazing!",
