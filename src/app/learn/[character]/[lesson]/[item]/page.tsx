@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, Crown } from "lucide-react";
 import { characters } from "@/data/characters";
@@ -59,12 +58,9 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
   const nextHref = next ? `${lessonPath}/${next.value}` : lessonPath;
 
   return (
-    /* The same ground as the character's hub, for the same reason: this is
-       still that character's world, and the child walked here from it. */
-    <main
-      className="hub-ground relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
-      style={{ "--hub-accent": character.accent } as CSSProperties}
-    >
+    /* Plain site ground, matching the hub and the number list above it — the
+       saturated pink page was reverted the same way theirs already had been. */
+    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
