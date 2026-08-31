@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import { completeNotchFor } from "@/data/number-complete";
+import type { CompleteNotch } from "@/data/number-complete";
 
 interface NumberCompleteProps {
   value: number;
@@ -12,21 +13,22 @@ interface NumberCompleteProps {
   onMiss: () => void;
 }
 
-/** The numeral PNGs' own pixel size. The piece's crop math and the hole's
-    position both read the notch rect against this exact box, edge to edge —
-    no `object-contain` letterboxing to throw the percentages off, because
-    the board below is sized to this same ratio. */
+/** The numeral PNGs' own pixel size. The hole's position and the piece's crop
+    both read the notch rect against this exact box, edge to edge — the board
+    is sized to the same ratio (`--board-w`/`--board-h` in `globals.css`), so
+    there is no `object-contain` letterboxing to throw the percentages off. */
 const IMAGE_W = 426;
 const IMAGE_H = 585;
 
-/** Below this the pointer never really moved — a tap, not a drag. A tap
-    always places the piece, same convention as `AppleGive`'s tap-to-give:
-    dragging shouldn't be required to pass a stage a four-year-old cannot
-    yet aim precisely. */
+/** Below this the pointer never really moved. A tap does NOT solve this —
+    putting the piece back IS the exercise, so it has to be carried there. */
 const DRAG_THRESHOLD = 8;
-/** How long the piece takes to fly from wherever it was released into the
-    hole, once a drop (or a tap) succeeds. */
-const SNAP_MS = 320;
+/** How long the piece takes to settle into the hole once it lands close. */
+const SNAP_MS = 300;
+/** How far off the hole's centre still counts, as a share of the hole's own
+    size. Forgiving enough for a fingertip, tight enough that the piece has to
+    actually be brought to the gap. */
+const CATCH_FACTOR = 0.85;
 
 interface DragState {
   startX: number;
@@ -36,10 +38,10 @@ interface DragState {
   moved: boolean;
 }
 
-/** The inner, oversized `<Image>` that makes a small tray box show only the
-    notch's own slice of the full numeral — the classic sprite-crop trick,
-    done with percentages so it stays correct at any size. */
-function cropStyle(notch: { x: number; y: number; w: number; h: number }): CSSProperties {
+/** The oversized inner `<Image>` that makes the small piece box show only the
+    notch's own slice of the numeral — the classic sprite-crop trick, done in
+    percentages so it stays exact at any size. */
+function cropStyle(notch: CompleteNotch): CSSProperties {
   return {
     position: "absolute",
     width: `${(100 / notch.w) * 100}%`,
@@ -52,14 +54,20 @@ function cropStyle(notch: { x: number; y: number; w: number; h: number }): CSSPr
 
 /**
  * "Complete Number 4!" — a rectangular piece is missing from the numeral and
- * sits in a tray beside it; the child drags (or taps) it back into place.
+ * waits below it; the child drags it back into the gap.
+ *
+ * The piece is rendered at EXACTLY the hole's size, both derived from the same
+ * `--board-w`/`--board-h` pair, because a piece that is even slightly bigger
+ * than its gap never looks like it fits when it lands.
  *
  * The notch is a plain rectangle rather than a shape cut around the glyph's
- * own silhouette — a jigsaw-style square reads clearly to a small child and
- * needs no per-pixel masking. The "hole" is simply a `--surface`-colored
- * rectangle painted over that part of the numeral (the pixels are still
- * there underneath), so completing it is just making that rectangle
- * disappear — no clip-path or mask involved.
+ * silhouette — a jigsaw-style square reads clearly to a small child and needs
+ * no per-pixel masking. The "hole" is just a `--surface`-colored rectangle
+ * painted over that part of the numeral (the pixels are still underneath), so
+ * completing it is only a matter of fading that rectangle away.
+ *
+ * Dragging is required: a tap does nothing. Carrying the piece to the gap is
+ * the whole exercise, so solving it by tapping would skip the activity.
  */
 export function NumberComplete({
   value,
@@ -76,20 +84,7 @@ export function NumberComplete({
   const [wrong, setWrong] = useState(false);
 
   const locked = solved || snap !== null;
-
-  const snapToHole = (pieceRect: DOMRect) => {
-    const hole = holeRef.current?.getBoundingClientRect();
-    if (!hole) return;
-
-    setSnap({
-      dx: (drag?.dx ?? 0) + (hole.left + hole.width / 2) - (pieceRect.left + pieceRect.width / 2),
-      dy: (drag?.dy ?? 0) + (hole.top + hole.height / 2) - (pieceRect.top + pieceRect.height / 2),
-    });
-    window.setTimeout(() => {
-      setSolved(true);
-      onFinish();
-    }, SNAP_MS);
-  };
+  const dragging = drag?.moved ?? false;
 
   const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (locked) return;
@@ -113,27 +108,34 @@ export function NumberComplete({
     if (!drag) return;
     event.currentTarget.releasePointerCapture(event.pointerId);
 
-    const pieceRect = event.currentTarget.getBoundingClientRect();
-    const hole = holeRef.current?.getBoundingClientRect();
-
+    /* A tap just puts it back down — nothing is wrong, there is simply
+       nothing to score until the piece has actually been carried. */
     if (!drag.moved) {
-      /* A tap: always succeeds, same reasoning as AppleGive's tap-to-give —
-         there is only one place this piece can go. */
-      snapToHole(pieceRect);
       setDrag(null);
       return;
     }
 
-    const closeEnough =
-      hole &&
-      Math.hypot(
-        pieceRect.left + pieceRect.width / 2 - (hole.left + hole.width / 2),
-        pieceRect.top + pieceRect.height / 2 - (hole.top + hole.height / 2),
-      ) <=
-        Math.max(hole.width, hole.height) * 0.9;
+    const piece = event.currentTarget.getBoundingClientRect();
+    const hole = holeRef.current?.getBoundingClientRect();
+    const offBy = hole
+      ? Math.hypot(
+          piece.left + piece.width / 2 - (hole.left + hole.width / 2),
+          piece.top + piece.height / 2 - (hole.top + hole.height / 2),
+        )
+      : Infinity;
 
-    if (closeEnough) {
-      snapToHole(pieceRect);
+    if (hole && offBy <= Math.max(hole.width, hole.height) * CATCH_FACTOR) {
+      /* Land it dead centre in the gap rather than wherever it was let go:
+         the piece and the hole are the same size, so anything less than exact
+         reads as a piece sitting crookedly on top of the number. */
+      setSnap({
+        dx: drag.dx + (hole.left + hole.width / 2) - (piece.left + piece.width / 2),
+        dy: drag.dy + (hole.top + hole.height / 2) - (piece.top + piece.height / 2),
+      });
+      window.setTimeout(() => {
+        setSolved(true);
+        onFinish();
+      }, SNAP_MS);
     } else {
       setWrong(true);
       window.setTimeout(() => setWrong(false), 500);
@@ -143,26 +145,23 @@ export function NumberComplete({
   };
 
   return (
-    <div className="card anim-rise-in flex flex-col items-center gap-5 p-5 sm:gap-7 sm:p-7">
+    <div className="card numeral-stage anim-rise-in flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7">
       <div
-        className="relative mx-auto h-52 sm:h-64"
-        style={{ aspectRatio: `${IMAGE_W} / ${IMAGE_H}` }}
+        className="relative"
+        style={{ width: "var(--board-w)", height: "var(--board-h)" }}
       >
         <Image
           src={image}
           alt={`The number ${value}`}
           fill
-          sizes="(min-width: 640px) 13rem, 10rem"
-          className="object-contain"
+          sizes="(min-width: 640px) 11rem, 9rem"
+          draggable={false}
+          className="select-none object-contain"
         />
 
-        {/* The hole: a plain rectangle painted the same white as the card
-            behind it, so it reads as "this part is missing" rather than as
-            a shape cut out of the image. Fades away once the piece lands,
-            revealing the pixels that were underneath all along. */}
         <div
           ref={holeRef}
-          className={`absolute rounded-2xl border-[3px] border-dashed border-[var(--color-locked-dark)] bg-[var(--surface)] transition-opacity duration-300 ${
+          className={`absolute rounded-xl border-2 border-dashed border-[var(--color-locked-dark)] bg-[var(--surface)] transition-opacity duration-300 ${
             solved ? "opacity-0" : "opacity-100"
           }`}
           style={{
@@ -175,39 +174,50 @@ export function NumberComplete({
         />
       </div>
 
+      {/* The loose piece. The button carries padding so the touch target stays
+          comfortably bigger than the piece itself, which is pinned to the
+          hole's exact size. */}
       <button
         type="button"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={() => setDrag(null)}
-        disabled={locked}
+        disabled={solved}
         aria-label="Drag the missing piece back into the number"
-        /* `touch-action: none` or the drag scrolls the page instead — same
-           reason AppleGive needs it. */
-        className={`relative touch-none overflow-hidden rounded-2xl shadow-[0_10px_20px_-10px_rgb(var(--shadow-hue)/40%)] ${
-          drag?.moved || snap ? "" : "transition-all duration-300"
-        } ${wrong ? "anim-wiggle" : ""} ${solved ? "pointer-events-none" : ""}`}
+        /* `touch-action: none` or the drag scrolls the page instead. */
+        className={`touch-none rounded-2xl p-3 ${
+          dragging || snap ? "" : "transition-all duration-300"
+        } ${wrong ? "anim-wiggle" : ""} ${
+          !dragging && !snap && !solved ? "anim-breathe" : ""
+        } ${solved ? "pointer-events-none" : ""}`}
         style={{
-          width: "6rem",
-          aspectRatio: `${notch.w * IMAGE_W} / ${notch.h * IMAGE_H}`,
           translate: drag?.moved
             ? `${drag.dx}px ${drag.dy}px`
             : snap
               ? `${snap.dx}px ${snap.dy}px`
               : undefined,
-          scale: drag?.moved ? "1.08" : "1",
+          scale: dragging ? "1.06" : "1",
         }}
       >
-        <Image
-          src={image}
-          alt=""
-          width={IMAGE_W}
-          height={IMAGE_H}
-          draggable={false}
-          className="pointer-events-none select-none"
-          style={cropStyle(notch)}
-        />
+        <span
+          className="relative block overflow-hidden rounded-[0.6rem]"
+          style={{
+            width: `calc(var(--board-w) * ${notch.w} / 100)`,
+            height: `calc(var(--board-h) * ${notch.h} / 100)`,
+            filter: "drop-shadow(0 8px 12px rgb(var(--shadow-hue) / 35%))",
+          }}
+        >
+          <Image
+            src={image}
+            alt=""
+            width={IMAGE_W}
+            height={IMAGE_H}
+            draggable={false}
+            className="pointer-events-none select-none"
+            style={cropStyle(notch)}
+          />
+        </span>
       </button>
     </div>
   );

@@ -1106,6 +1106,75 @@ button:disabled,
   animation: wiggle 0.5s ease-in-out;
 }
 
+/* ---------------------------------------------------------------
+   The count-stage activities that need a shared, breakpoint-aware size.
+
+   `NumberComplete` draws the numeral, the hole cut out of it and the loose
+   piece from ONE pair of variables, so the piece is exactly the size of the
+   hole it came from — a piece even slightly bigger reads as the wrong piece
+   and never looks assembled when it lands. `NumberColor` uses the same box
+   so its paint layer lines up with the numeral it is masked to.
+   --------------------------------------------------------------- */
+.numeral-stage {
+  --board-h: 12rem;
+  --board-w: calc(var(--board-h) * 426 / 585);
+}
+
+@media (width >= 40rem) {
+  .numeral-stage {
+    --board-h: 15rem;
+  }
+}
+
+/* Paint only ever shows up ON the numeral: the layer carrying the child's
+   strokes is masked by the numeral's own alpha, so colouring outside the
+   lines simply has nowhere to land. Lightning CSS adds the `-webkit-`
+   prefixes — don't write them by hand. */
+.numeral-mask {
+  mask-image: var(--numeral-mask);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* The "how to solve it" ghost on the path activity: Pinki's token travelling
+   start -> middle -> target, on a loop, until the child takes over. Waypoints
+   arrive as variables so one keyframe serves any path. */
+@keyframes path-hint-travel {
+  0% {
+    left: var(--hint-x0);
+    top: var(--hint-y0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  45% {
+    left: var(--hint-x1);
+    top: var(--hint-y1);
+    opacity: 0.85;
+  }
+  75% {
+    left: var(--hint-x2);
+    top: var(--hint-y2);
+    opacity: 0.85;
+  }
+  88% {
+    left: var(--hint-x2);
+    top: var(--hint-y2);
+    opacity: 0;
+  }
+  100% {
+    left: var(--hint-x0);
+    top: var(--hint-y0);
+    opacity: 0;
+  }
+}
+
+.path-hint {
+  animation: path-hint-travel 3.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-arch-in,
@@ -1122,6 +1191,7 @@ button:disabled,
   .anim-breathe,
   .anim-pulse-invite,
   .anim-reveal,
+  .path-hint,
   .anim-hero-parallax {
     animation: none;
   }
