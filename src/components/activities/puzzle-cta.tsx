@@ -7,11 +7,7 @@ const IMAGE_SRC = "/assets/activity-page/puzzle/puzzle-card.jpg";
 /** Second card on the Activities page: the puzzle-pieces scene as a full-bleed
     background, a light green-to-blue wash over it (mixed from the site's own
     `--color-go`/`--brand` tokens, not a new hue) for legibility, and a green
-    clay "Puzzle Time" button centred on top.
-
-    Presentation only, like the header's "Join"/achievements chrome — the
-    puzzle activity itself isn't built yet, so `Button3D` renders with no
-    `href` and does nothing on tap.
+    clay "Puzzle Time" button centred on top, leading into `/activities/puzzle`.
 
     Shorter than `YoutubeCta` on purpose: the image's own `16:9` shape is
     wider (so shorter, at the same card width) than the YouTube card's `3:2`
@@ -40,6 +36,7 @@ export function PuzzleCta({ className = "" }: { className?: string }) {
       <div className="absolute inset-0 flex items-center justify-center">
         <Button3D
           tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
+          href="/activities/puzzle"
           className="px-8 py-4 text-lg sm:px-10 sm:text-xl"
         >
           <Puzzle className="h-6 w-6" strokeWidth={2} />
