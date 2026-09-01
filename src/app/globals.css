@@ -1274,21 +1274,27 @@ button:disabled,
    layout to switch between, so it does set its own inline.
    --------------------------------------------------------------- */
 .puzzle-upright {
-  --puzzle-space: calc(100svh - 27.5rem);
+  --puzzle-space: calc(100svh - 20.25rem);
   --board-max-h: calc(var(--puzzle-space) * var(--board-share));
-  --tray-w: min(100vw - 4rem, 32rem);
+  /* Stacked, the heap is exactly as wide as the board, so the two cards are
+     twins sitting one above the other — any difference reads as a mistake
+     when they are that close together. */
+  --tray-w: var(--puzzle-w);
 }
 
 /* A tablet has no bottom nav and a little more room to give back. */
 @media (width >= 40rem) {
   .puzzle-upright {
-    --puzzle-space: calc(100svh - 30.5rem);
+    --puzzle-space: calc(100svh - 25.5rem);
   }
 }
 
 @media (width >= 64rem) {
   .puzzle-upright {
     --board-max-h: calc(100svh - 24rem);
+    /* Side by side, the heap takes the width the board leaves rather than
+       matching it: the two cards are no longer stacked, so they no longer
+       have to be twins, and the pieces would rather have the room. */
     --tray-w: min(100vw - 6rem - var(--puzzle-w), 32rem);
   }
 }
