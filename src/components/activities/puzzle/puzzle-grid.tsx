@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import type { PuzzleStage } from "@/types/puzzle";
 import { puzzleKey, useProgress } from "@/store/progress";
+import { PuzzleProgress } from "./puzzle-progress";
 
 interface PuzzleGridProps {
   stages: PuzzleStage[];
@@ -16,16 +17,28 @@ const ITEM_STAGGER = 0.06;
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 type LockVars = CSSProperties & { "--lock-face"?: string };
+type VeilVars = CSSProperties & { "--veil-tone"?: string };
+type ChipVars = CSSProperties & { "--chip-face"?: string };
+type RingVars = CSSProperties & { "--ring-tone"?: string };
 
 /**
- * The twelve puzzle stages, three to a row.
+ * The fifteen puzzle stages, three to a row, with the child's position in
+ * the set above them.
  *
- * Every card is real clay — a coloured face with the site's grain over it and
- * the inflated shading every other `.clay` surface has. An unopened stage is
- * its own colour with its number on it, so a wall of them reads as that many
- * different things to look forward to; the open one drops the colour and
- * shows the picture instead, because by then there is something better to
- * look at than a number.
+ * **Every card shows its picture, open or not.** A locked stage is the same
+ * artwork behind a soft blur and a pale wash of its own colour, with a small
+ * padlock on it — so the fifteen read as fifteen real places that exist and
+ * have not been opened yet, rather than as a wall of coloured number
+ * buttons. This replaced a version where a locked card was its tone with a
+ * huge numeral on it: at that size the number WAS the card, and stages 10–15
+ * looked like a keypad.
+ *
+ * The number is a small clay chip in the bottom-left of every card instead,
+ * open or locked or finished, so a glance says which level a card is without
+ * the number ever competing with the picture. Status lives in the opposite
+ * corner: the padlock when locked, a small green tick when finished. The
+ * tick used to be a large disc dead centre, which covered the artwork the
+ * child had just earned the right to see.
  *
  * A stage opens when the one before it is finished AND its own picture
  * exists — a stage with no art stays shut however far the child has got, so
@@ -55,116 +68,150 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
     };
   });
 
+  const finished = cast.filter(({ done }) => done).length;
+
   /* The one stage the child has actually reached: the first open one they
-     have not finished. It pulses so a glance at the grid says where to tap. */
+     have not finished. It rocks, so a glance at the grid says where to tap. */
   const nextValue = cast.find(({ open, done }) => open && !done)?.stage.value;
 
   return (
-    <ul className="grid grid-cols-3 gap-3 sm:gap-5">
-      {cast.map(({ stage, index, open, done }) => {
-        /* `.clay` is declared after `.card` in globals.css, so its grain and
-           inflated shading win over `.card`'s flat white — the fill itself
-           still has to come from an inline style, since `.card` sets the
-           `background` SHORTHAND and is unlayered (a Tailwind `bg-*` utility
-           would silently lose). */
-        const style = {
-          animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
-          backgroundColor: stage.tone.face,
-          "--clay-edge": stage.tone.edge,
-        } as ClayVars;
+    <div>
+      <PuzzleProgress done={finished} total={stages.length} />
 
-        const face = (
-          <>
-            {open && stage.picture && (
-              <Image
-                src={stage.picture.image}
-                alt=""
-                fill
-                sizes="(min-width: 640px) 12rem, 30vw"
-                className="object-cover"
-              />
-            )}
+      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
+        {cast.map(({ stage, index, open, done }) => {
+          /* `.clay` is declared after `.card` in globals.css, so its grain and
+             inflated shading win over `.card`'s flat white — the fill itself
+             still has to come from an inline style, since `.card` sets the
+             `background` SHORTHAND and is unlayered (a Tailwind `bg-*` utility
+             would silently lose). It only shows through on a stage with no
+             picture yet; everywhere else the artwork covers it. */
+          const style = {
+            animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
+            backgroundColor: stage.tone.face,
+            "--clay-edge": stage.tone.edge,
+          } as ClayVars;
 
-            {/* The number carries the card when there is no picture yet. */}
-            {!open && (
-              <span className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white/90 sm:text-5xl">
+          const face = (
+            <>
+              {stage.picture && (
+                <Image
+                  src={stage.picture.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 640px) 12rem, 30vw"
+                  /* Scaled up while blurred, so the blur's own soft edges are
+                     pushed outside the card instead of fading its border into
+                     the page — `filter: blur()` samples transparency beyond the
+                     image, and `overflow-hidden` cannot put that back. */
+                  className={
+                    open
+                      ? "object-cover"
+                      : "scale-110 object-cover blur-[3px] sm:blur-[4px]"
+                  }
+                />
+              )}
+
+              {/* The frosted wash over a locked picture. Skipped when there is
+                  no picture — there is nothing to soften, and washing out the
+                  bare clay would only make the card paler. */}
+              {!open && stage.picture && (
+                <span
+                  aria-hidden
+                  className="puzzle-veil absolute inset-0"
+                  style={{ "--veil-tone": stage.tone.face } as VeilVars}
+                />
+              )}
+
+              {/* `.lock-chip`, the site's shared clay padlock, but wearing this
+                  stage's OWN darker edge rather than the dormant lavender: it
+                  sits on that stage's own washed-out colour, and a lavender
+                  chip on it would read as a sticker from another set. Every
+                  other lock on the site takes the default face. */}
+              {!open && (
+                <span
+                  className="lock-chip absolute right-1.5 top-1.5 h-6 w-6 sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
+                  style={{ "--lock-face": stage.tone.edge } as LockVars}
+                >
+                  <Lock className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={2.75} />
+                </span>
+              )}
+
+              {/* Finished: a small green clay tick in the status corner, the
+                  same material as the cards themselves rather than a flat icon
+                  dropped on top. It marks the card; the picture is still the
+                  thing being looked at. */}
+              {done && (
+                <span
+                  className="clay absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
+                  style={
+                    {
+                      backgroundColor: "var(--color-go)",
+                      "--clay-edge": "var(--color-go-dark)",
+                    } as ClayVars
+                  }
+                  aria-label="Finished"
+                >
+                  <Check
+                    className="h-3.5 w-3.5 text-white sm:h-5 sm:w-5"
+                    strokeWidth={3.5}
+                  />
+                </span>
+              )}
+
+              {/* Which level this is — on every card, in the stage's own
+                  colour, small enough that the picture stays the subject. */}
+              <span
+                aria-hidden
+                className="stage-chip absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5"
+                style={{ "--chip-face": stage.tone.face } as ChipVars}
+              >
                 {stage.value}
               </span>
-            )}
+            </>
+          );
 
-            {/* `.lock-chip`, the site's shared clay padlock, but wearing this
-                stage's OWN darker edge rather than the dormant lavender: the
-                card underneath is already a saturated colour, and a lavender
-                chip on it would read as a sticker from another set. Every
-                other lock on the site takes the default face. */}
-            {!open && (
-              <span
-                className="lock-chip absolute bottom-1.5 right-1.5 h-7 w-7 sm:bottom-2.5 sm:right-2.5 sm:h-9 sm:w-9"
-                style={{ "--lock-face": stage.tone.edge } as LockVars}
-              >
-                <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
-              </span>
-            )}
+          const card = open ? (
+            <Link
+              href={`/activities/puzzle/${stage.value}`}
+              aria-label={`Start puzzle ${stage.value}`}
+              className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
+              style={style}
+            >
+              {face}
+            </Link>
+          ) : (
+            <span
+              aria-label={`Puzzle ${stage.value}, locked`}
+              className="card clay anim-rise-in relative block aspect-square overflow-hidden"
+              style={style}
+            >
+              {face}
+            </span>
+          );
 
-            {/* Finished: a green clay tick, the same material as the cards
-                themselves rather than a flat icon dropped on top. Dead centre
-                of the card, not tucked in a corner — it is the card's whole
-                message once the puzzle is done. */}
-            {done && (
-              <span
-                className="clay absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-16 sm:w-16"
-                style={
-                  {
-                    backgroundColor: "var(--color-go)",
-                    "--clay-edge": "var(--color-go-dark)",
-                  } as ClayVars
-                }
-                aria-label="Finished"
-              >
-                <Check
-                  className="h-7 w-7 text-white sm:h-9 sm:w-9"
-                  strokeWidth={3.5}
-                />
-              </span>
-            )}
-          </>
-        );
-
-        return (
-          <li key={stage.value}>
-            {open ? (
-              /* The pulse lives on a wrapping span so its continuous `scale`
-                 never fights the card's own hover lift — Tailwind v4's
-                 `scale` is a standalone property, and an infinite animation
-                 on the same element would keep overriding it. */
-              <span
-                className={
-                  stage.value === nextValue
-                    ? "anim-pulse-invite block"
-                    : "block"
-                }
-              >
-                <Link
-                  href={`/activities/puzzle/${stage.value}`}
-                  aria-label={`Start puzzle ${stage.value}`}
-                  className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
-                  style={style}
-                >
-                  {face}
-                </Link>
-              </span>
-            ) : (
-              <span
-                aria-label={`Puzzle ${stage.value}, locked`}
-                className="card clay anim-rise-in relative block aspect-square overflow-hidden"
-                style={style}
-              >
-                {face}
-              </span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+          /* The rock and its ring live on a wrapping span so the continuous
+             `translate` never fights the card's own `.card-lift:hover`, which
+             animates the same property. The ring is drawn BEFORE the card, so
+             the opaque card covers all but its rim. */
+          return (
+            <li key={stage.value}>
+              {stage.value === nextValue ? (
+                <span className="anim-next-card relative block">
+                  <span
+                    aria-hidden
+                    className="puzzle-next-ring"
+                    style={{ "--ring-tone": stage.tone.face } as RingVars}
+                  />
+                  {card}
+                </span>
+              ) : (
+                card
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
