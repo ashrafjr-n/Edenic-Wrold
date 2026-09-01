@@ -4,12 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import { ArrowRight, RotateCcw } from "lucide-react";
-import { PUZZLE_COLS, PUZZLE_PIECES, PUZZLE_ROWS } from "@/data/puzzles";
-import type { PuzzlePicture } from "@/types/puzzle";
+import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import {
   pieceBoxStyle,
   pieceCropStyle,
-  puzzlePieces,
+  piecesFor,
   slotStyle,
   trayLayout,
 } from "@/lib/puzzle-pieces";
@@ -22,6 +21,9 @@ import { Celebration } from "@/components/learn/number/celebration";
 interface PuzzleBoardProps {
   stage: number;
   picture: PuzzlePicture;
+  /** How this stage's picture is cut up. Later stages get harder by adding
+      pieces, so nothing here may assume 3 × 3. */
+  grid: PuzzleGrid;
   /** The next puzzle, or back to the list when there isn't a playable one. */
   nextHref: string;
 }
@@ -66,11 +68,20 @@ interface DragState {
 function PieceArt({
   picture,
   piece,
+  grid,
   shadow = true,
+  hitArea = false,
 }: {
   picture: PuzzlePicture;
   piece: PuzzlePiece;
+  grid: PuzzleGrid;
   shadow?: boolean;
+  /** Makes the clipped shape itself the only part that answers a pointer.
+      Loose pieces overlap in a heap, and a piece box is a RECTANGLE — without
+      this, a piece's empty corners sit on top of its neighbours and a tap
+      picks up something the child cannot even see. `clip-path` clips
+      hit-testing as well as pixels, so the silhouette becomes the target. */
+  hitArea?: boolean;
 }) {
   return (
     <span
@@ -90,21 +101,21 @@ function PieceArt({
           page out and drags every `position: fixed` overlay off-screen with
           it. */}
       <span
-        className="relative block h-full w-full overflow-hidden"
+        className={`relative block h-full w-full overflow-hidden ${
+          hitArea ? "pointer-events-auto" : ""
+        }`}
         style={{ clipPath: `url(#${clipId(piece.id)})` }}
       >
         <Image
-          src={picture.src}
+          src={picture.image}
           alt=""
-          width={picture.width}
-          height={picture.height}
           sizes="(min-width: 640px) 32rem, 100vw"
           /* Images are natively draggable: without this the browser's own
              image drag starts instead, firing `pointercancel` and killing the
              custom drag on its first move. */
           draggable={false}
           className="pointer-events-none select-none"
-          style={pieceCropStyle(piece)}
+          style={pieceCropStyle(piece, grid)}
         />
       </span>
     </span>
@@ -125,7 +136,15 @@ function PieceArt({
  * forgiving still can't put a piece in the wrong place. A miss springs back
  * with a wiggle and no telling-off, matching the rest of the site.
  */
-export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
+export function PuzzleBoard({
+  stage,
+  picture,
+  grid,
+  nextHref,
+}: PuzzleBoardProps) {
+  const pieces = piecesFor(grid);
+  const total = pieces.length;
+  const { width, height } = picture.image;
   const boardRef = useRef<HTMLDivElement>(null);
   const wiggleTimer = useRef<number | null>(null);
   const complete = useProgress((state) => state.complete);
@@ -135,15 +154,14 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
   const [wrongId, setWrongId] = useState<number | null>(null);
 
   /* Derived, never stored: a second copy could drift out of sync. */
-  const solved = placed.length === PUZZLE_PIECES;
-  const loose = trayLayout(stage).filter(
+  const solved = placed.length === total;
+  const loose = trayLayout(stage, grid).filter(
     (spot) => !placed.includes(spot.piece.id),
   );
 
   /* A cell's width over its height — what keeps the knobs round on screen
-     even though the cells are much wider than they are tall. */
-  const cellRatio =
-    (picture.width / PUZZLE_COLS) / (picture.height / PUZZLE_ROWS);
+     even when the cells are wider than they are tall. */
+  const cellRatio = (width / grid.cols) / (height / grid.rows);
 
   useEffect(() => {
     return () => {
@@ -214,8 +232,8 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
     const box = event.currentTarget.getBoundingClientRect();
 
     if (board) {
-      const cellW = board.width / PUZZLE_COLS;
-      const cellH = board.height / PUZZLE_ROWS;
+      const cellW = board.width / grid.cols;
+      const cellH = board.height / grid.rows;
       const offX = Math.abs(
         box.left + box.width / 2 - (board.left + (piece.col + 0.5) * cellW),
       );
@@ -235,7 +253,7 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
         setDrag(null);
         /* Recorded the moment the picture is whole, in the handler that made
            it whole — not in an effect watching for it. */
-        if (next.length === PUZZLE_PIECES) {
+        if (next.length === total) {
           complete(puzzleKey(stage), DONE);
         }
         return;
@@ -254,8 +272,8 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
 
   const sizing = {
     "--puzzle-w": BOARD_WIDTH,
-    "--cell-w": `calc(var(--puzzle-w) / ${PUZZLE_COLS})`,
-    "--cell-h": `calc(var(--puzzle-w) * ${picture.height} / ${picture.width} / ${PUZZLE_ROWS})`,
+    "--cell-w": `calc(var(--puzzle-w) / ${grid.cols})`,
+    "--cell-h": `calc(var(--puzzle-w) * ${height} / ${width} / ${grid.rows})`,
     /* How far a knob sticks out past its cell — every piece box is grown by
        this on all four sides. Measured off the cell's short side so knobs are
        the same size on every edge. */
@@ -268,13 +286,13 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
           definition scales to whatever size the board is drawn at. */}
       <svg width="0" height="0" aria-hidden className="absolute">
         <defs>
-          {puzzlePieces.map((piece) => (
+          {pieces.map((piece) => (
             <clipPath
               key={piece.id}
               id={clipId(piece.id)}
               clipPathUnits="objectBoundingBox"
             >
-              <path d={piecePath(piece, cellRatio)} />
+              <path d={piecePath(piece, cellRatio, grid)} />
             </clipPath>
           ))}
         </defs>
@@ -288,10 +306,10 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
           className="relative overflow-hidden rounded-2xl bg-[var(--color-locked)]/40"
           style={{
             width: "var(--puzzle-w)",
-            aspectRatio: `${picture.width} / ${picture.height}`,
+            aspectRatio: `${width} / ${height}`,
           }}
         >
-          {puzzlePieces.map((piece) => {
+          {pieces.map((piece) => {
             const isPlaced = placed.includes(piece.id);
 
             return (
@@ -302,7 +320,12 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
               >
                 {isPlaced ? (
                   <span className="anim-pop-in block">
-                    <PieceArt picture={picture} piece={piece} shadow={false} />
+                    <PieceArt
+                      picture={picture}
+                      piece={piece}
+                      grid={grid}
+                      shadow={false}
+                    />
                   </span>
                 ) : (
                   /* The hole, drawn as the piece's own outline rather than a
@@ -316,7 +339,7 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
                     className="h-full w-full"
                   >
                     <path
-                      d={piecePath(piece, cellRatio)}
+                      d={piecePath(piece, cellRatio, grid)}
                       vectorEffect="non-scaling-stroke"
                       strokeWidth={2}
                       strokeDasharray="5 4"
@@ -336,7 +359,7 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
               nine crops, so the finished puzzle can never show a hairline
               seam between them. */}
           <Image
-            src={picture.src}
+            src={picture.image}
             alt={solved ? picture.alt : ""}
             fill
             sizes="(min-width: 640px) 32rem, 100vw"
@@ -382,7 +405,7 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
             className="relative"
             style={{
               width: "var(--puzzle-w)",
-              height: "calc(var(--cell-h) * 3.9)",
+              height: `calc(var(--cell-h) * ${grid.rows + 0.9})`,
             }}
           >
             {loose.map((spot, index) => {
@@ -400,10 +423,16 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
                     releaseCapture(event);
                     setDrag(null);
                   }}
-                  aria-label={`Puzzle piece ${piece.id + 1} of ${PUZZLE_PIECES}`}
+                  aria-label={`Puzzle piece ${piece.id + 1} of ${total}`}
                   /* `touch-none` or the drag scrolls the page instead of
                      moving the piece. */
-                  className={`absolute touch-none ${
+                  /* `pointer-events-none` on the button, `auto` on the
+                     clipped art inside it (see `PieceArt`'s `hitArea`): the
+                     button's own box is a rectangle, and in a heap of
+                     overlapping pieces that rectangle would steal taps meant
+                     for whatever is visible underneath it. Events still
+                     bubble from the art to these handlers. */
+                  className={`pointer-events-none absolute touch-none ${
                     wrongId === piece.id ? "anim-wiggle" : ""
                   }`}
                   style={{
@@ -428,7 +457,12 @@ export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
                       : "translate 0.3s ease, rotate 0.3s ease, scale 0.3s ease",
                   }}
                 >
-                  <PieceArt picture={picture} piece={piece} />
+                  <PieceArt
+                    picture={picture}
+                    piece={piece}
+                    grid={grid}
+                    hitArea
+                  />
                 </button>
               );
             })}
