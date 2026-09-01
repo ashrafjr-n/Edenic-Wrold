@@ -63,14 +63,13 @@ export default async function PuzzleStagePage({
               loses and it stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
             <Button3D
-              variant="calm"
-              tone={{ face: "var(--surface)" }}
+              tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
               href="/activities/puzzle"
               aria-label="Back to the puzzles"
-              className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+              className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
             >
               <ArrowLeft
-                className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
+                className="h-5 w-5 text-white sm:h-6 sm:w-6"
                 strokeWidth={2.75}
               />
             </Button3D>
