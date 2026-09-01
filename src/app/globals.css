@@ -1240,7 +1240,7 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   One puzzle's board, when the picture is PORTRAIT.
+   One puzzle's board and heap, when the picture is PORTRAIT.
 
    A landscape picture can take the board's plain width cap: 32rem of a 16:9
    scene comes out about 18rem tall. A portrait one cannot — at that same
@@ -1253,14 +1253,29 @@ button:disabled,
    browser's chrome hidden, which is exactly the amount a board sized to "the
    whole screen" would then overflow by.
 
-   The cap grows twice. Below `lg` the board and the heap are stacked, so the
-   board may only have about half the screen; from `lg` they sit side by side
-   and it can have nearly all of it.
+   Two layouts, and both variables change together at the same breakpoint:
+
+   - Below `lg` the board and the heap are STACKED, so the two together — not
+     the board alone — have to fit the screen once it is scrolled past the
+     page's own header, which is what holds the board to under half of it.
+     The heap gets the full width, the same as the board's own cap.
+   - From `lg` they sit SIDE BY SIDE. The board no longer shares its height
+     with the heap so it can have most of the screen, and the heap takes
+     whatever width the board leaves (`6rem` covers the page's own padding
+     plus the gap between the two cards).
+
+   `--tray-w` is declared here rather than inline in `PuzzleBoard` precisely
+   because it changes at that breakpoint: an inline custom property would beat
+   this stylesheet and the heap would keep the phone's full-width value on a
+   desktop, running off the side of the page. A landscape stage has neither
+   layout to switch between, so it does set its own inline.
    --------------------------------------------------------------- */
 .puzzle-portrait {
   --board-max-h: 42svh;
+  --tray-w: min(100vw - 4rem, 32rem);
 }
 
+/* A tablet is still stacked, but it has the height to spare. */
 @media (width >= 40rem) {
   .puzzle-portrait {
     --board-max-h: 46svh;
@@ -1269,7 +1284,8 @@ button:disabled,
 
 @media (width >= 64rem) {
   .puzzle-portrait {
-    --board-max-h: 72svh;
+    --board-max-h: 55svh;
+    --tray-w: min(100vw - 6rem - var(--puzzle-w), 32rem);
   }
 }
 

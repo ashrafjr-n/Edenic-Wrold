@@ -286,9 +286,12 @@ export function PuzzleBoard({
     "--puzzle-w": portrait
       ? `min(${AVAILABLE_WIDTH}, var(--board-max-h) * ${width} / ${height})`
       : AVAILABLE_WIDTH,
-    /* The heap gets the full width whatever the board took — a narrow
-       portrait board must not squeeze the pieces into a column. */
-    "--tray-w": AVAILABLE_WIDTH,
+    /* A landscape stage's heap is always the same width as its board. A
+       portrait one's changes at the breakpoint where the heap moves beside
+       the board, so it comes from `.puzzle-portrait` in `globals.css`
+       instead — an inline custom property would beat the stylesheet and it
+       could never switch. */
+    ...(portrait ? {} : { "--tray-w": AVAILABLE_WIDTH }),
     "--cell-w": `calc(var(--puzzle-w) / ${grid.cols})`,
     "--cell-h": `calc(var(--puzzle-w) * ${height} / ${width} / ${grid.rows})`,
     /* How far a knob sticks out past its cell — every piece box is grown by
@@ -322,12 +325,15 @@ export function PuzzleBoard({
       </svg>
 
       {/* Board and heap. Stacked, except for a portrait picture from `lg` up:
-          a tall board and a wide heap under it need more height than a desktop
-          has, and side by side they both fit without the page scrolling — the
-          child can never be looking at the pieces with the board off-screen. */}
+          a tall board with a wide heap under it needs more height than the
+          screen has, and side by side they both fit without the page
+          scrolling — a child must never be looking at the pieces with the
+          board off-screen. Below `md` there is no room to put them in a row,
+          so the page scrolls instead; the two cards together still fit one
+          phone screen once it is scrolled past the header. */}
       <div
         className={`flex flex-col items-center gap-4 sm:gap-6 ${
-          portrait ? "lg:flex-row lg:items-center lg:gap-8" : ""
+          portrait ? "lg:flex-row lg:items-center" : ""
         }`}
       >
         <div className="card relative p-3 sm:p-4">
