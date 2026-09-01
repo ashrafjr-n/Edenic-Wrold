@@ -48,10 +48,19 @@ export interface TraySpot {
 /** The share of the tray kept clear at each edge, so a jittered piece still
     has room to lie inside it however many columns there are. */
 const SLOT_INSET = 0.12;
-/** How far a piece may wander from its loose slot, and how far it may tip. */
+/** How far a piece may wander from its loose slot, and how far it may tip.
+
+    An upright stage's heap is tighter — its tray is about half the height of
+    the board rather than most of it — and in a tight heap the wander is what
+    turns a scatter into a clump: two pieces that stray toward each other end
+    up stacked while the space they came from sits empty. So it wanders and
+    tips less, which reads as tidier without ever reading as a grid. */
 const SCATTER_X = 6;
 const SCATTER_Y = 8;
 const MAX_TILT = 22;
+const SCATTER_X_UPRIGHT = 3.5;
+const SCATTER_Y_UPRIGHT = 4.5;
+const MAX_TILT_UPRIGHT = 15;
 
 /** Spreads `count` slots across the tray, squeezed in from both edges. */
 function slotAt(index: number, count: number): number {
@@ -60,8 +69,34 @@ function slotAt(index: number, count: number): number {
   );
 }
 
-/** How many rows deep the heap lies, as a share of the picture's own. */
-const HEAP_ROW_SHARE = 0.6;
+/** How many rows deep the heap lies, as a share of the picture's own. Fewer
+    rows is a shallower tray and a bigger board, but also more columns for the
+    same pieces — past about this the heap stops being a heap and becomes a
+    pile with the pieces underneath unreachable. */
+const HEAP_ROW_SHARE = 0.7;
+
+/** A heap row's height, in cells. A piece lies at `TRAY_SCALE` (0.72 of a
+    cell), so rows at 0.7 of a cell overlap slightly — which is what a heap
+    tipped out of a box looks like, and what keeps the tray short enough for
+    the board and the pieces to share a phone screen. */
+const HEAP_ROW_PITCH = 0.7;
+
+/** Whether a picture is upright — square or taller. Everything that has to
+    bend for one (the board's height cap, the shape of the heap, the layout,
+    the page's own padding) keys off this one test, and it has to give the
+    same answer in the route as it does in the board. */
+export function isUpright(image: { width: number; height: number }): boolean {
+  return image.height >= image.width;
+}
+
+/** How tall the tray is, in cells.
+
+    An upright stage pays for its height twice — the board and the heap share
+    one phone screen — so its tray is exactly as tall as its heap rows need.
+    A landscape one keeps the roomier `rows + 0.9` it was built with. */
+export function trayHeightInCells(slots: PuzzleGrid, upright: boolean): number {
+  return upright ? slots.rows * HEAP_ROW_PITCH : slots.rows + 0.9;
+}
 
 /**
  * The shape of the loose heap — how many slots across and down the tray gets.
@@ -71,10 +106,11 @@ const HEAP_ROW_SHARE = 0.6;
  *
  * An UPRIGHT one's is not. The tray under a square board has to be SHALLOW or
  * the two together do not fit a phone screen, so the heap is dealt into about
- * 60% as many rows as the picture has and as many columns as that takes —
+ * 70% as many rows as the picture has and as many columns as that takes —
  * wide and shallow, whatever the cut. It is the tray's height that this is
- * really choosing: the tray is `rows + 0.9` cells tall, so every row the heap
- * loses is a cell of screen the board gets to keep.
+ * really choosing (see `trayHeightInCells`): every row the heap loses is most
+ * of a cell of screen the board gets to keep, and every column it gains is
+ * one more piece lying across its neighbour.
  *
  * The slot count can come out slightly above the piece count (25 pieces lie on
  * 9 × 3); the walk in `trayLayout` only ever deals the first `total` of them,
@@ -119,10 +155,14 @@ export function trayLayout(
   stage: number,
   grid: PuzzleGrid,
   slots: PuzzleGrid,
+  upright: boolean,
 ): TraySpot[] {
   const pieces = piecesFor(grid);
   const total = pieces.length;
   const step = stepFor(total);
+  const scatterX = upright ? SCATTER_X_UPRIGHT : SCATTER_X;
+  const scatterY = upright ? SCATTER_Y_UPRIGHT : SCATTER_Y;
+  const tilt = upright ? MAX_TILT_UPRIGHT : MAX_TILT;
 
   return pieces.map((piece) => {
     const seed = stage * 1000 + piece.id;
@@ -130,16 +170,23 @@ export function trayLayout(
        every piece lands somewhere different from where it belongs in the
        picture. */
     const slot = (stage + piece.id * step) % total;
+    const row = Math.floor(slot / slots.cols);
+    /* The last row can be short (25 pieces over 9 columns leaves 7), and a
+       short row spread on the full row's pitch would sit bunched against the
+       left edge with the tray empty beside it. Spreading it on its OWN count
+       keeps every row reaching both edges. Full rows are unaffected, which is
+       why the landscape stages come out exactly as they were. */
+    const inRow = Math.min(slots.cols, total - row * slots.cols);
 
     return {
       piece,
       x:
-        slotAt(slot % slots.cols, slots.cols) +
-        (hash(seed) - 0.5) * 2 * SCATTER_X,
+        slotAt(slot % slots.cols, inRow) +
+        (hash(seed) - 0.5) * 2 * scatterX,
       y:
-        slotAt(Math.floor(slot / slots.cols), slots.rows) +
-        (hash(seed + 77) - 0.5) * 2 * SCATTER_Y,
-      rotate: (hash(seed + 131) - 0.5) * 2 * MAX_TILT,
+        slotAt(row, slots.rows) +
+        (hash(seed + 77) - 0.5) * 2 * scatterY,
+      rotate: (hash(seed + 131) - 0.5) * 2 * tilt,
     };
   });
 }
