@@ -27,7 +27,7 @@ export function PuzzleProgress({ done, total }: PuzzleProgressProps) {
         <span className="text-sm font-bold text-[var(--color-ink)] sm:text-base">
           Puzzles
         </span>
-        <span className="text-sm font-bold text-[var(--brand-dark)] sm:text-base">
+        <span className="text-sm font-bold text-[var(--color-go-dark)] sm:text-base">
           {done} / {total}
         </span>
       </div>

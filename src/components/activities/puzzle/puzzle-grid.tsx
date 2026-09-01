@@ -18,8 +18,6 @@ const ITEM_STAGGER = 0.06;
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 type LockVars = CSSProperties & { "--lock-face"?: string };
 type VeilVars = CSSProperties & { "--veil-tone"?: string };
-type ChipVars = CSSProperties & { "--chip-face"?: string };
-type RingVars = CSSProperties & { "--ring-tone"?: string };
 
 /**
  * The fifteen puzzle stages, three to a row, with the child's position in
@@ -159,13 +157,14 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
                 </span>
               )}
 
-              {/* Which level this is — on every card, in the stage's own
-                  colour, small enough that the picture stays the subject. */}
+              {/* Which level this is — on every card, the same brand blue on
+                  all fifteen, small enough that the picture stays the
+                  subject. */}
               <span
                 aria-hidden
                 className="stage-chip absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5"
-                style={{ "--chip-face": stage.tone.face } as ChipVars}
               >
+                <span className="stage-chip-word">Level</span>
                 {stage.value}
               </span>
             </>
@@ -190,19 +189,19 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
             </span>
           );
 
-          /* The rock and its ring live on a wrapping span so the continuous
-             `translate` never fights the card's own `.card-lift:hover`, which
-             animates the same property. The ring is drawn BEFORE the card, so
-             the opaque card covers all but its rim. */
+          /* The breathe lives on a WRAPPING span, never on the card:
+             `.card-lift:hover` animates `translate` on the card itself, and an
+             infinite animation on the same property would keep overriding the
+             hover. Held back 1s so it starts after the last card has risen in
+             (`ITEM_DELAY + 14 * ITEM_STAGGER`) — `.anim-breathe` fills `both`,
+             so it sits still through the delay rather than jumping. */
           return (
             <li key={stage.value}>
               {stage.value === nextValue ? (
-                <span className="anim-next-card relative block">
-                  <span
-                    aria-hidden
-                    className="puzzle-next-ring"
-                    style={{ "--ring-tone": stage.tone.face } as RingVars}
-                  />
+                <span
+                  className="anim-breathe block"
+                  style={{ animationDelay: "1s" }}
+                >
                   {card}
                 </span>
               ) : (
