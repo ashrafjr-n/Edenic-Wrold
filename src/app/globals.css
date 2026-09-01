@@ -1601,7 +1601,7 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   "8 / 15 completed" above the grid.
+   "8 / 15 Puzzles Complete" above the grid.
 
    Clay, like every other object here: the track is pressed INTO the page (an
    inner shade along the top, no outer shadow at all — the same language a
@@ -1615,7 +1615,7 @@ button:disabled,
    so nothing needs containing.
    --------------------------------------------------------------- */
 .puzzle-progress-track {
-  height: 0.625rem;
+  height: 0.8125rem;
   border-radius: 9999px;
   background-color: var(--color-locked);
   box-shadow:
@@ -1625,7 +1625,7 @@ button:disabled,
 
 @media (width >= 40rem) {
   .puzzle-progress-track {
-    height: 0.75rem;
+    height: 0.9375rem;
   }
 }
 

@@ -1,3 +1,5 @@
+import { Puzzle } from "lucide-react";
+
 interface PuzzleProgressProps {
   /** How many stages the child has finished. */
   done: number;
@@ -6,18 +8,17 @@ interface PuzzleProgressProps {
 }
 
 /**
- * "Your Puzzle Journey — 8 / 15 completed" and a clay bar, above the stage
- * grid.
+ * "8 / 15 Puzzles Complete" and a clay bar, directly under the page's title.
  *
- * The grid alone said nothing about how far a child had got — fifteen cards
+ * The grid alone said nothing about how far a child had got — fifteen tiles
  * under one another read as a gallery, not as a journey with a position in
- * it. This is the one line that changes that: a name for the thing being
- * worked through, the count, and a bar saying the same fact for a child who
- * cannot read the numbers yet.
+ * it. This is the one line that changes that: the count, and a bar saying the
+ * same fact for a child who cannot read the numbers yet.
  *
- * The label used to be the word "Puzzles", which the page's own title
- * already says. One row rather than the two stacked lines it was drafted as,
- * because this page's vertical space belongs to the cards.
+ * It used to be a "Your Puzzle Journey" label on the left with the count on
+ * the right — a two-column stat row, which is a DASHBOARD pattern and read as
+ * one. One centred sentence with a puzzle piece in front of it is the same
+ * information said the way a game says it, and it costs the cards less height.
  *
  * Presentational only — it is handed the two numbers rather than reading the
  * progress store itself, so the store stays read in exactly one place on this
@@ -31,14 +32,14 @@ export function PuzzleProgress({ done, total }: PuzzleProgressProps) {
       className="anim-fade-up mb-4 sm:mb-6"
       style={{ animationDelay: "0.2s" }}
     >
-      <div className="mb-1.5 flex items-baseline justify-between gap-3 px-0.5 sm:mb-2">
-        <span className="text-[0.8125rem] font-bold text-[var(--color-ink)] sm:text-[0.9375rem]">
-          Your Puzzle Journey
-        </span>
-        <span className="text-[0.75rem] font-bold text-[var(--color-go-dark)] sm:text-[0.875rem]">
-          {done} / {total} completed
-        </span>
-      </div>
+      <p className="mb-1.5 flex items-center justify-center gap-1.5 text-[0.8125rem] font-bold text-[var(--color-ink)] sm:mb-2 sm:gap-2 sm:text-[0.9375rem]">
+        <Puzzle
+          aria-hidden
+          className="h-4 w-4 shrink-0 fill-current text-[var(--color-go)] sm:h-[1.125rem] sm:w-[1.125rem]"
+          strokeWidth={2}
+        />
+        {done} / {total} Puzzles Complete
+      </p>
 
       <div
         className="puzzle-progress-track"
