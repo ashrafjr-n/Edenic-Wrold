@@ -6,10 +6,12 @@ import Image from "next/image";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import {
+  isUpright,
   pieceBoxStyle,
   pieceCropStyle,
   piecesFor,
   slotStyle,
+  trayHeightInCells,
   trayLayout,
   traySlots,
 } from "@/lib/puzzle-pieces";
@@ -33,8 +35,17 @@ interface PuzzleBoardProps {
     the piece across IS the exercise, same call `NumberComplete` makes. */
 const DRAG_THRESHOLD = 6;
 /** Loose pieces lie smaller than their slot; picking one up brings it back to
-    full size and straightens it. */
+    full size and straightens it.
+
+    An upright stage lies SMALLER still. Its heap shares one phone screen with
+    the board, so the tray is only about half the board's height — and the
+    pieces to go in it are the same pieces, whose total area does not change
+    with the cut. At the landscape scale they fill that tray edge to edge and
+    the heap stops reading as loose pieces at all; a little smaller and there
+    is air between them again. Nothing is lost by it: a piece is carried at
+    full size either way. */
 const TRAY_SCALE = 0.72;
+const TRAY_SCALE_UPRIGHT = 0.62;
 const WIGGLE_MS = 500;
 
 /** Puzzles are not scored — the finished picture is the reward, and stars
@@ -44,11 +55,18 @@ const WIGGLE_MS = 500;
 const DONE = 3;
 
 /** The widest anything here is ever drawn, and never wider than the phone it
-    is on. It is the tray's width always, and a LANDSCAPE board's too; a
-    an upright board is capped by height instead (see `--puzzle-w` below).
-    Viewport units rather than `%` on purpose: the board and the tray are
-    different containers, and both have to derive the same piece size. */
+    is on. It is a LANDSCAPE stage's board and tray; an upright board is capped
+    by height instead (see `--puzzle-w` below). Viewport units rather than `%`
+    on purpose: the board and the tray are different containers, and both have
+    to derive the same piece size. */
 const AVAILABLE_WIDTH = "min(100vw - 4rem, 32rem)";
+
+/** The same, for an upright stage, which is asked to reach as close to the
+    edges of a phone as the page's own `px-4` allows: `3.5rem` is that padding
+    plus the card's own, so the CARD lands exactly on the page's text column.
+    Never wider than the 32rem cap, which is what keeps it inside the wider
+    `sm:px-8` padding at every size above a phone. */
+const UPRIGHT_WIDTH = "min(100vw - 3.5rem, 32rem)";
 
 interface DragState {
   id: number;
@@ -152,7 +170,7 @@ export function PuzzleBoard({
      flag: the board's own cap, the shape of the heap, and whether the two sit
      side by side rather than stacked. Square counts — a square board leaves a
      phone just as little room for the heap underneath it as a tall one did. */
-  const upright = height >= width;
+  const upright = isUpright(picture.image);
   const slots = traySlots(grid, upright);
   const boardRef = useRef<HTMLDivElement>(null);
   const wiggleTimer = useRef<number | null>(null);
@@ -164,7 +182,7 @@ export function PuzzleBoard({
 
   /* Derived, never stored: a second copy could drift out of sync. */
   const solved = placed.length === total;
-  const loose = trayLayout(stage, grid, slots).filter(
+  const loose = trayLayout(stage, grid, slots, upright).filter(
     (spot) => !placed.includes(spot.piece.id),
   );
 
@@ -286,7 +304,9 @@ export function PuzzleBoard({
      alone — which is why it can be handed to CSS as a plain number and
      multiplied there. Passed as the BOARD's share rather than the heap's so
      the stylesheet never has to divide by a variable. */
-  const heapShare = (slots.rows + 0.9) / grid.rows;
+  const heapCells = trayHeightInCells(slots, upright);
+  const trayScale = upright ? TRAY_SCALE_UPRIGHT : TRAY_SCALE;
+  const heapShare = heapCells / grid.rows;
   const boardShare = (1 / (1 + heapShare)).toFixed(4);
 
   const sizing = {
@@ -295,7 +315,7 @@ export function PuzzleBoard({
        `.puzzle-upright` sets. A landscape one never comes near that cap, so
        it keeps the plain width. */
     "--puzzle-w": upright
-      ? `min(${AVAILABLE_WIDTH}, var(--board-max-h) * ${width} / ${height})`
+      ? `min(${UPRIGHT_WIDTH}, var(--board-max-h) * ${width} / ${height})`
       : AVAILABLE_WIDTH,
     ...(upright ? { "--board-share": boardShare } : {}),
     /* A landscape stage's heap is always the same width as its board. An
@@ -431,7 +451,7 @@ export function PuzzleBoard({
               className="relative"
               style={{
                 width: "var(--tray-w)",
-                height: `calc(var(--cell-h) * ${slots.rows + 0.9})`,
+                height: `calc(var(--cell-h) * ${heapCells})`,
               }}
             >
               {loose.map((spot, index) => {
@@ -476,7 +496,7 @@ export function PuzzleBoard({
                          no rotating to fit, which is a mechanic a small child
                          does not need. */
                       rotate: carrying ? "0deg" : `${spot.rotate}deg`,
-                      scale: carrying ? "1" : String(TRAY_SCALE),
+                      scale: carrying ? "1" : String(trayScale),
                       zIndex: carrying ? 50 : index,
                       transition: carrying
                         ? "rotate 0.2s ease, scale 0.2s ease"
