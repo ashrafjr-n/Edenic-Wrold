@@ -151,7 +151,9 @@ its timing are already built — but no clips exist yet.
 All nine puzzles are playable. Each is one picture cut into real interlocking
 jigsaw pieces — SVG clip paths over crops of a single image, no piece files —
 and a stage gets harder only by being cut into more of them, from nine up to
-twenty-eight. A piece counts as placed as soon as it overlaps its own hole, so
+thirty. Stages 4–9 use square pictures so that the board and the heap of loose
+pieces both fit one phone screen: a child who had to scroll between the two
+could not drag a piece from one to the other. A piece counts as placed as soon as it overlaps its own hole, so
 nothing has to be lined up, and puzzles are not scored: the finished picture is
 the reward.
 
