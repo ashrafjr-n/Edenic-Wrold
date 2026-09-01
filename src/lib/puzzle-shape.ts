@@ -1,5 +1,5 @@
-import { PUZZLE_COLS, PUZZLE_ROWS } from "@/data/puzzles";
 import type { PuzzlePiece } from "@/lib/puzzle-pieces";
+import type { PuzzleGrid } from "@/types/puzzle";
 
 /**
  * Real jigsaw outlines, as SVG clip paths.
@@ -46,16 +46,16 @@ interface Edges {
   left: EdgeDir;
 }
 
-function edgesFor(piece: PuzzlePiece): Edges {
+function edgesFor(piece: PuzzlePiece, grid: PuzzleGrid): Edges {
   const { row, col } = piece;
 
   return {
     top: row === 0 ? 0 : tabsDown(row, col) ? 1 : -1,
     /* The edge below this piece is described from the lower piece's side, so
        this piece takes the opposite of it. */
-    bottom: row === PUZZLE_ROWS - 1 ? 0 : tabsDown(row + 1, col) ? -1 : 1,
+    bottom: row === grid.rows - 1 ? 0 : tabsDown(row + 1, col) ? -1 : 1,
     left: col === 0 ? 0 : tabsRight(row, col) ? 1 : -1,
-    right: col === PUZZLE_COLS - 1 ? 0 : tabsRight(row, col + 1) ? -1 : 1,
+    right: col === grid.cols - 1 ? 0 : tabsRight(row, col + 1) ? -1 : 1,
   };
 }
 
@@ -139,9 +139,13 @@ function verticalEdge(
 }
 
 /** One piece's outline, walked clockwise from its top-left corner. */
-export function piecePath(piece: PuzzlePiece, ratio: number): string {
+export function piecePath(
+  piece: PuzzlePiece,
+  ratio: number,
+  grid: PuzzleGrid,
+): string {
   const m = metrics(ratio);
-  const edges = edgesFor(piece);
+  const edges = edgesFor(piece, grid);
 
   return [
     `M ${m.x0} ${m.y0}`,
