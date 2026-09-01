@@ -20,9 +20,11 @@ interface NumeralProps {
  * in `.card`s turned the number grid into a sheet of containers and buried
  * the thing the child is looking at.
  *
- * Locked numerals go silver rather than the site's usual light desaturation:
- * these are the subject itself, not decoration on a card, so they have to
- * read as "not yet" at a glance across a grid of nine.
+ * A locked numeral is the same clay in a dormant lavender rather than the
+ * site's usual light desaturation (see `.numeral-shadow--locked`): these are
+ * the subject itself, not decoration on a card, so they have to read as "not
+ * yet" at a glance across a grid of nine — without going grey, which is a
+ * colour this site does not otherwise own.
  */
 export function Numeral({
   value,
@@ -56,12 +58,14 @@ export function Numeral({
 
       {locked && (
         /* Corner-mounted, like the lesson cards' badge — centred, it covers
-           the numeral and the child can no longer see which number it is. */
-        <span className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:h-9 sm:w-9">
-          <Lock
-            className="h-4 w-4 text-[var(--color-locked-text)] sm:h-4.5 sm:w-4.5"
-            strokeWidth={2.75}
-          />
+           the numeral and the child can no longer see which number it is.
+
+           `.lock-chip`: the shared clay padlock, grained and inflated like
+           every other object here. It replaced a flat white disc with a grey
+           padlock in it, which was the one thing on the page made of neither
+           clay nor card. */
+        <span className="lock-chip absolute -right-1 -top-1 h-8 w-8 sm:h-9 sm:w-9">
+          <Lock className="h-4 w-4 sm:h-4.5 sm:w-4.5" strokeWidth={2.75} />
         </span>
       )}
     </span>

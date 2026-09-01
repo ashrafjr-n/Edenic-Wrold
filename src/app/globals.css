@@ -505,13 +505,21 @@ body {
   filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 34%));
 }
 
-/* A locked numeral goes silver. The desaturation and the shadow have to be
-   ONE `filter` declared here, not a Tailwind `grayscale` utility beside it:
-   `.numeral-shadow` is unlayered and utilities are layered, so a `grayscale`
-   class on the same element is silently thrown away and the numeral stays
-   pink. Declared after `.numeral-shadow` so it wins on source order. */
+/* A locked numeral is still clay — just clay in a dormant colour. It used to
+   be flat silver (`grayscale(1) brightness(1.14)`), the one grey object on a
+   site with no grey in it; the `sepia` + `hue-rotate` + `saturate` run after
+   the desaturation puts the lavender of `--color-locked` back into it, so it
+   reads as the same material as the numeral beside it and not as a
+   photograph someone drained.
+
+   The tint and the shadow have to be ONE `filter` declared here, not a
+   Tailwind `grayscale` utility beside it: `.numeral-shadow` is unlayered and
+   utilities are layered, so a `grayscale` class on the same element is
+   silently thrown away and the numeral stays pink. Declared after
+   `.numeral-shadow` so it wins on source order. */
 .numeral-shadow--locked {
-  filter: grayscale(1) brightness(1.14) contrast(0.92)
+  filter: grayscale(1) brightness(1.06) contrast(0.94) sepia(0.35)
+    hue-rotate(206deg) saturate(1.45)
     drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 28%));
 }
 
