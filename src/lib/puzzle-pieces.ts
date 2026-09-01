@@ -61,30 +61,70 @@ function slotAt(index: number, count: number): number {
 }
 
 /**
+ * The shape of the loose heap — how many slots across and down the tray gets.
+ *
+ * The tray is a wide, short box: it sits under the board on a phone and beside
+ * it on a desktop, and either way it is as wide as the page allows. A
+ * LANDSCAPE picture's own grid is already that shape, so the heap keeps it.
+ * A PORTRAIT one's is the opposite — tall and narrow — and laid out that way
+ * the pieces would pile into a thin column down the middle of a wide tray, so
+ * the slots are transposed instead. Either way the slot count is exactly the
+ * piece count, which is what lets `trayLayout` give every piece its own.
+ */
+export function traySlots(grid: PuzzleGrid, portrait: boolean): PuzzleGrid {
+  return portrait ? { cols: grid.rows, rows: grid.cols } : grid;
+}
+
+function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+/**
+ * The stride the slot walk takes.
+ *
+ * It has to be coprime with the piece count or the walk repeats and several
+ * pieces are dealt the same slot — 5 and 15 share a factor of 3, which would
+ * have piled a 3 × 5 stage's fifteen pieces onto five slots. 5 is coprime
+ * with 9, 12, 18, 24 and 28, so every stage built before the portrait ones
+ * keeps exactly the scatter it already had.
+ */
+function stepFor(total: number): number {
+  let step = 5;
+  while (gcd(step, total) !== 1) step += 1;
+  return step;
+}
+
+/**
  * Where each loose piece lies in the tray.
  *
- * The pieces are dropped onto a loose grid the same shape as the picture's own
- * and then jittered and tipped, so they overlap and lie at angles like a box
- * tipped out — but never so far that one ends up completely buried under
- * another and unreachable. Deterministic, seeded from the stage and the piece
- * (see `hash`).
+ * The pieces are dropped onto a loose grid of `slots` and then jittered and
+ * tipped, so they overlap and lie at angles like a box tipped out — but never
+ * so far that one ends up completely buried under another and unreachable.
+ * Deterministic, seeded from the stage and the piece (see `hash`).
  */
-export function trayLayout(stage: number, grid: PuzzleGrid): TraySpot[] {
+export function trayLayout(
+  stage: number,
+  grid: PuzzleGrid,
+  slots: PuzzleGrid,
+): TraySpot[] {
   const pieces = piecesFor(grid);
   const total = pieces.length;
+  const step = stepFor(total);
 
   return pieces.map((piece) => {
     const seed = stage * 1000 + piece.id;
-    /* A loose slot each, walked with a step coprime to the piece count so
+    /* A loose slot each, walked with a stride coprime to the piece count so
        every piece lands somewhere different from where it belongs in the
-       picture. 5 is coprime with both 9 and 12. */
-    const slot = (stage + piece.id * 5) % total;
+       picture. */
+    const slot = (stage + piece.id * step) % total;
 
     return {
       piece,
-      x: slotAt(slot % grid.cols, grid.cols) + (hash(seed) - 0.5) * 2 * SCATTER_X,
+      x:
+        slotAt(slot % slots.cols, slots.cols) +
+        (hash(seed) - 0.5) * 2 * SCATTER_X,
       y:
-        slotAt(Math.floor(slot / grid.cols), grid.rows) +
+        slotAt(Math.floor(slot / slots.cols), slots.rows) +
         (hash(seed + 77) - 0.5) * 2 * SCATTER_Y,
       rotate: (hash(seed + 131) - 0.5) * 2 * MAX_TILT,
     };

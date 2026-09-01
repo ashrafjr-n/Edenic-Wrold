@@ -1239,6 +1239,40 @@ button:disabled,
   }
 }
 
+/* ---------------------------------------------------------------
+   One puzzle's board, when the picture is PORTRAIT.
+
+   A landscape picture can take the board's plain width cap: 32rem of a 16:9
+   scene comes out about 18rem tall. A portrait one cannot — at that same
+   width a 9:16 picture is over 57rem tall, taller than any screen, and the
+   heap of loose pieces still has to fit as well. So a portrait board is
+   capped by HEIGHT instead and its width falls out of the picture's own
+   aspect ratio (`--puzzle-w` in `PuzzleBoard`).
+
+   `svh`, not `vh`: on a phone `vh` is measured against the viewport with the
+   browser's chrome hidden, which is exactly the amount a board sized to "the
+   whole screen" would then overflow by.
+
+   The cap grows twice. Below `lg` the board and the heap are stacked, so the
+   board may only have about half the screen; from `lg` they sit side by side
+   and it can have nearly all of it.
+   --------------------------------------------------------------- */
+.puzzle-portrait {
+  --board-max-h: 42svh;
+}
+
+@media (width >= 40rem) {
+  .puzzle-portrait {
+    --board-max-h: 46svh;
+  }
+}
+
+@media (width >= 64rem) {
+  .puzzle-portrait {
+    --board-max-h: 72svh;
+  }
+}
+
 /* Paint only ever shows up ON the numeral: the layer carrying the child's
    strokes is masked by the numeral's own alpha, so colouring outside the
    lines simply has nowhere to land. Lightning CSS adds the `-webkit-`
