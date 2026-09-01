@@ -61,7 +61,16 @@ export function PuzzleView({ picture }: PuzzleViewProps) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-ink)]/70 p-7 sm:p-10"
     >
       <div
-        className="card anim-pop-in relative w-full max-w-3xl p-3 sm:p-4"
+        className="card anim-pop-in relative w-full p-3 sm:p-4"
+        style={{
+          /* A portrait picture cannot take the full 48rem: at that width a
+             9:16 scene is taller than any screen, and the card would run off
+             the top and bottom of the overlay with the middle of the picture
+             the only part left to see. Capping the card by the height the
+             viewport actually has keeps the whole picture on screen — which
+             is the entire point of "View". */
+          maxWidth: `min(48rem, (100svh - 7rem) * ${picture.image.width} / ${picture.image.height})`,
+        }}
         /* The picture itself is not a way out — only the scrim and the cross
            are. */
         onClick={(event) => event.stopPropagation()}
