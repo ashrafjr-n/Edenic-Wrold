@@ -15,6 +15,7 @@ const ITEM_DELAY = 0.15;
 const ITEM_STAGGER = 0.06;
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
+type LockVars = CSSProperties & { "--lock-face"?: string };
 
 /**
  * The twelve puzzle stages, three to a row.
@@ -91,12 +92,17 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
               </span>
             )}
 
+            {/* `.lock-chip`, the site's shared clay padlock, but wearing this
+                stage's OWN darker edge rather than the dormant lavender: the
+                card underneath is already a saturated colour, and a lavender
+                chip on it would read as a sticker from another set. Every
+                other lock on the site takes the default face. */}
             {!open && (
-              <span className="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 sm:bottom-2.5 sm:right-2.5 sm:h-9 sm:w-9">
-                <Lock
-                  className="h-3.5 w-3.5 text-[var(--color-locked-text)] sm:h-4 sm:w-4"
-                  strokeWidth={2.75}
-                />
+              <span
+                className="lock-chip absolute bottom-1.5 right-1.5 h-7 w-7 sm:bottom-2.5 sm:right-2.5 sm:h-9 sm:w-9"
+                style={{ "--lock-face": stage.tone.edge } as LockVars}
+              >
+                <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
               </span>
             )}
 
