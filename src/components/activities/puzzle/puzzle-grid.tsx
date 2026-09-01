@@ -101,10 +101,12 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
             )}
 
             {/* Finished: a green clay tick, the same material as the cards
-                themselves rather than a flat icon dropped on top. */}
+                themselves rather than a flat icon dropped on top. Dead centre
+                of the card, not tucked in a corner — it is the card's whole
+                message once the puzzle is done. */}
             {done && (
               <span
-                className="clay absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full sm:right-2.5 sm:top-2.5 sm:h-10 sm:w-10"
+                className="clay absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-16 sm:w-16"
                 style={
                   {
                     backgroundColor: "var(--color-go)",
@@ -114,7 +116,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
                 aria-label="Finished"
               >
                 <Check
-                  className="h-4 w-4 text-white sm:h-5 sm:w-5"
+                  className="h-7 w-7 text-white sm:h-9 sm:w-9"
                   strokeWidth={3.5}
                 />
               </span>
