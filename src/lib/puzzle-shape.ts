@@ -12,9 +12,10 @@ import type { PuzzleGrid } from "@/types/puzzle";
  *
  * The paths are in `objectBoundingBox` units (0–1), so one definition scales
  * to whatever size the board is rendered at. The knob is sized from the SHORT
- * side of a cell and its two radii are normalised separately (`rx` against the
- * box width, `ry` against its height), so it comes out round on screen even
- * though the cells are much wider than they are tall.
+ * side of a cell — whichever that is, since a portrait picture's cells can be
+ * taller than they are wide — and its two radii are normalised separately
+ * (`rx` against the box width, `ry` against its height), so it comes out
+ * round on screen whatever shape the cell is.
  */
 
 /** Knob chord half-length and radius, as shares of a cell's short side. The
@@ -22,9 +23,11 @@ import type { PuzzleGrid } from "@/types/puzzle";
 const KNOB_CHORD = 0.15;
 const KNOB_RADIUS = 0.19;
 
-/** How far a knob bulges past the cell edge, as a share of the short side:
-    the far point of a circle drawn the long way round its chord. Every piece
-    box is grown by this much on all four sides to make room. */
+/** How far a knob bulges past the cell edge, as a share of a cell's SHORT
+    side: the far point of a circle drawn the long way round its chord. Every
+    piece box is grown by this much on all four sides to make room — see
+    `--tab` in `PuzzleBoard`, which multiplies it by the shorter of the two
+    cell dimensions. */
 export const TAB_DEPTH =
   KNOB_RADIUS + Math.sqrt(KNOB_RADIUS ** 2 - KNOB_CHORD ** 2);
 
@@ -75,22 +78,30 @@ interface Metrics {
 /** Everything the paths need, normalised against the grown piece box. `ratio`
     is a cell's width divided by its height. */
 function metrics(ratio: number): Metrics {
-  /* Work in units of a cell's SHORT side (its height, since the cells are
-     wider than they are tall), then normalise. */
+  /* Work in units of a cell's height, and size the knob off whichever side is
+     SHORTER — a portrait picture cut into near-square cells can put either
+     one there, and a knob measured off the long side would swallow the short
+     one. `short` is 1 whenever the cells are wider than they are tall, which
+     is why the landscape stages come out byte-identical to before. */
   const cellH = 1;
   const cellW = ratio;
-  const boxW = cellW + 2 * TAB_DEPTH;
-  const boxH = cellH + 2 * TAB_DEPTH;
+  const short = Math.min(cellW, cellH);
+
+  const tab = TAB_DEPTH * short;
+  const radius = KNOB_RADIUS * short;
+  const chord = KNOB_CHORD * short;
+  const boxW = cellW + 2 * tab;
+  const boxH = cellH + 2 * tab;
 
   return {
-    x0: TAB_DEPTH / boxW,
-    y0: TAB_DEPTH / boxH,
-    x1: 1 - TAB_DEPTH / boxW,
-    y1: 1 - TAB_DEPTH / boxH,
-    rx: KNOB_RADIUS / boxW,
-    ry: KNOB_RADIUS / boxH,
-    cx: KNOB_CHORD / boxW,
-    cy: KNOB_CHORD / boxH,
+    x0: tab / boxW,
+    y0: tab / boxH,
+    x1: 1 - tab / boxW,
+    y1: 1 - tab / boxH,
+    rx: radius / boxW,
+    ry: radius / boxH,
+    cx: chord / boxW,
+    cy: chord / boxH,
   };
 }
 
