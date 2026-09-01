@@ -1369,80 +1369,171 @@ button:disabled,
 /* ---------------------------------------------------------------
    The stage grid on `/activities/puzzle`.
 
-   Every card shows its PICTURE now, open or not — a locked stage is the
-   same picture behind a soft blur and a pale wash, so the fifteen read as
-   fifteen real places that exist and have not been opened yet, rather than
-   as a wall of coloured number buttons. The picture is the card's subject;
-   the number and the lock/tick are small status marks on top of it.
+   Three states, one card. Every stage is the SAME white card with the same
+   picture in it, and only three small marks separate them — that sameness is
+   what makes the fifteen read as one set rather than as a shelf of different
+   products:
 
-   `.puzzle-veil` is that wash. It is white with a SIXTH of the stage's own
-   colour mixed into it, not plain white: fifteen identical white cards lose
-   the thing the colours were there for, and a mix this light still reads as
-   frosted rather than tinted. `--veil-tone` comes from the stage.
+     completed  picture, sharp, with a small green tick
+     current    picture, sharp, ringed and lifted
+     locked     picture behind frosted glass, with a padlock
+
+   **There are no per-stage colours any more.** Each card used to be one of
+   fifteen clay tones, and fifteen hues on one screen read as a game template
+   rather than as a premium children's product — the colour on this page now
+   comes from the artwork itself and the UI stays pink, blue and white.
+   `PuzzleTone`/`TONES` are gone from `data/puzzles.ts` with it.
    --------------------------------------------------------------- */
-.puzzle-veil {
-  background-color: color-mix(in srgb, var(--veil-tone) 16%, #fff);
-  opacity: 0.85;
+
+/* Adds the press to `.card`'s hover lift. `scale` is a standalone property in
+   Tailwind v4, so it composes with `.card-lift`'s `translate` instead of
+   fighting it — but `.card-lift` only transitions `translate` and
+   `box-shadow`, so the easing for it has to be declared here. */
+.puzzle-card {
+  transition: scale 0.18s ease;
 }
 
-/* "Level 1", and the site's smallest clay object. Self-contained (size,
-   radius, type all here) for the usual reason — it sits inside
-   `.card`/`.clay`, which are unlayered, so a Tailwind utility for any
-   property those blocks already set would silently lose.
+.puzzle-card:active {
+  scale: 0.97;
+}
 
-   **One colour for all fifteen, not the stage's own tone.** It briefly took
-   `stage.tone.face`, and fifteen differently-coloured labels read as fifteen
-   different KINDS of thing rather than as the same label repeated — the
-   colours still do their job on the padlock and the locked wash. Brand blue,
-   the site's own primary, so the chip says "this is a level" the same way on
-   every picture behind it. */
-.stage-chip {
-  --chip-face: var(--brand);
-  --chip-edge: var(--brand-dark);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-  height: 1.5rem;
-  padding: 0 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-  color: #fff;
-  background-color: var(--chip-face);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
+/* The one stage the child is on. Everything here is deliberately quiet — a
+   ring, a little more lift, and a wide accent-tinted glow — because the
+   hierarchy has to come from the card being *slightly* more present than its
+   neighbours, not from it wearing a different costume.
+
+   `outline` rather than a border: a border would eat into the picture inside
+   `overflow-hidden` and change the card's box, while an outline is drawn
+   outside it and costs no layout. The glow rides in the same `box-shadow` as
+   `.card`'s own shadow, which has to be restated whole — a second rule
+   cannot add to a shadow, only replace it. */
+.puzzle-card--current {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
   box-shadow:
-    inset 0 4px 7px -2px rgb(255 255 255 / 50%),
-    inset 0 -5px 8px -2px color-mix(in srgb, var(--chip-edge) 70%, transparent),
-    0 8px 16px -7px color-mix(in srgb, var(--chip-edge) 60%, transparent);
-}
-
-/* The word is the smaller half of the label — "Level" says what the number
-   means, the number is the thing being read. */
-.stage-chip-word {
-  font-size: 0.85em;
-  opacity: 0.85;
+    0 0 0 8px color-mix(in srgb, var(--accent) 14%, transparent),
+    0 26px 50px -18px rgb(var(--shadow-hue) / 42%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 24%);
 }
 
 @media (width >= 40rem) {
-  .stage-chip {
-    height: 1.875rem;
-    padding: 0 0.75rem;
-    font-size: 0.8125rem;
+  .puzzle-card--current {
+    outline-width: 4px;
+    outline-offset: 4px;
   }
 }
 
-/* ---------------------------------------------------------------
-   "9 / 15" above the grid.
+/* Frosted glass, not a bad photograph.
 
-   Clay, like every other object here: the track is pressed INTO the page
-   (an inner shade along the top, no outer shadow at all — the same language
-   a disabled `Button3D` speaks) and the fill is inflated out of it, so the
-   bar reads as a groove with a bar of clay lying in it. Never a flat two-tone
+   The blur is STRONG on purpose. At 3–4px the picture read as a low-quality
+   image rather than as something behind glass, which is the single worst
+   thing a locked card can look like on a site meant to feel expensive — so
+   it goes far enough that nobody could mistake it for the artwork's own
+   resolution. `saturate` compensates for the wash on top: blur alone drains
+   a picture, and a locked puzzle should still look like a colourful place.
+
+   `scale` is load-bearing, not decoration: `filter: blur()` samples
+   transparency beyond the image's edges, so an unscaled blur fades the card's
+   own border into the page and `overflow-hidden` cannot put it back. It has
+   to grow with the blur radius — change one and re-check the other. */
+.puzzle-locked-art {
+  filter: blur(10px) saturate(1.2);
+  scale: 1.22;
+}
+
+@media (width >= 40rem) {
+  .puzzle-locked-art {
+    filter: blur(16px) saturate(1.2);
+    scale: 1.25;
+  }
+}
+
+/* The glass itself: plain white, no tint. It used to carry a sixth of the
+   stage's own colour, which was the last place the fifteen hues lived. It is
+   also much LIGHTER than it was (0.85 → 0.46) — the blur is doing the hiding
+   now, so the wash only has to knock the picture back, and a heavy wash on
+   top of a heavy blur is what made these cards look washed out. */
+.puzzle-veil {
+  background-color: rgb(255 255 255 / 46%);
+}
+
+/* ---------------------------------------------------------------
+   The level mark.
+
+   Two lines: "LEVEL" set tiny and letter-spaced above a two-digit number.
+   Zero-padded, so 01–09 are the same width as 10–15 and the fifteen marks
+   line up as a set. It sits on a frosted chip rather than straight on the
+   picture — artwork this varied will otherwise swallow small type over some
+   of it — and the chip is white, never a colour, so it stays a label instead
+   of becoming the second brightest thing on the card.
+
+   The chip is a scoped exception to the clay language: it has no inflated
+   shading and no grain, because a clay pill at this size is a BUTTON, and a
+   button is exactly what this must not look like. It reads as glass on the
+   picture instead — the same material as a locked card's own frost.
+   --------------------------------------------------------------- */
+.level-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.0625rem;
+  padding: 0.25rem 0.375rem 0.3125rem;
+  border-radius: 0.625rem;
+  color: var(--color-ink);
+  background-color: rgb(255 255 255 / 82%);
+  box-shadow: 0 2px 8px -3px rgb(var(--shadow-hue) / 35%);
+}
+
+.level-badge-word {
+  font-size: 0.4375rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  opacity: 0.55;
+}
+
+.level-badge-value {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (width >= 40rem) {
+  .level-badge {
+    padding: 0.3125rem 0.5rem 0.375rem;
+    border-radius: 0.75rem;
+  }
+
+  .level-badge-word {
+    font-size: 0.5rem;
+  }
+
+  .level-badge-value {
+    font-size: 0.9375rem;
+  }
+}
+
+/* The current stage's mark is the one that takes colour — accent pink, the
+   site's counterweight to brand blue. One card in fifteen, so the eye lands
+   on it without another element being added to the page. */
+.level-badge--current {
+  color: #fff;
+  background-color: var(--accent);
+  box-shadow: 0 3px 10px -3px color-mix(in srgb, var(--accent-dark) 65%, transparent);
+}
+
+.level-badge--current .level-badge-word {
+  opacity: 0.8;
+}
+
+/* ---------------------------------------------------------------
+   "8 / 15 completed" above the grid.
+
+   Clay, like every other object here: the track is pressed INTO the page (an
+   inner shade along the top, no outer shadow at all — the same language a
+   disabled `Button3D` speaks) and the fill is inflated out of it, so the bar
+   reads as a groove with a bar of clay lying in it. Never a flat two-tone
    rectangle, and never `<progress>`, which cannot be styled into either.
 
    The track deliberately does NOT get `overflow: hidden` — the fill's own
@@ -1451,7 +1542,7 @@ button:disabled,
    so nothing needs containing.
    --------------------------------------------------------------- */
 .puzzle-progress-track {
-  height: 0.875rem;
+  height: 0.625rem;
   border-radius: 9999px;
   background-color: var(--color-locked);
   box-shadow:
@@ -1461,7 +1552,7 @@ button:disabled,
 
 @media (width >= 40rem) {
   .puzzle-progress-track {
-    height: 1rem;
+    height: 0.75rem;
   }
 }
 
@@ -1487,6 +1578,7 @@ button:disabled,
      also the bar filling itself in on arrival — no separate entrance. */
   transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 
 /* Paint only ever shows up ON the numeral: the layer carrying the child's
    strokes is masked by the numeral's own alpha, so colouring outside the

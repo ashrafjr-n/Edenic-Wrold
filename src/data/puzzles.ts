@@ -13,37 +13,7 @@ import puzzle12 from "../../public/assets/activity-page/puzzle/12/puzzle-12.jpg"
 import puzzle13 from "../../public/assets/activity-page/puzzle/13/puzzle-13.jpg";
 import puzzle14 from "../../public/assets/activity-page/puzzle/14/puzzle-14.jpg";
 import puzzle15 from "../../public/assets/activity-page/puzzle/15/puzzle-15.jpg";
-import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
-
-/** A colour each, so a wall of unopened puzzles reads as that many different
-    things to look forward to rather than one grid of grey. Every pair is an
-    existing site token — no new hues — laid out so no two neighbours in the
-    three-wide grid share a family. Fifteen stages is five rows of three, and
-    the palette runs out well before fifteen distinct hues do, so the last two
-    rows repeat colours from the first three — never one directly above. */
-const TONES: PuzzleTone[] = [
-  { face: "var(--color-pinki)", edge: "var(--color-pinki-dark)" },
-  { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
-  { face: "var(--color-gold)", edge: "var(--color-gold-dark)" },
-  { face: "var(--color-nova)", edge: "var(--color-nova-dark)" },
-  { face: "var(--color-go)", edge: "var(--color-go-dark)" },
-  { face: "var(--color-subject-shapes)", edge: "var(--color-subject-shapes-dark)" },
-  { face: "var(--brand)", edge: "var(--brand-dark)" },
-  { face: "var(--color-subject-letters)", edge: "var(--color-subject-letters-dark)" },
-  { face: "var(--accent)", edge: "var(--accent-dark)" },
-  { face: "var(--color-go)", edge: "var(--color-go-dark)" },
-  { face: "var(--color-gold)", edge: "var(--color-gold-dark)" },
-  {
-    face: "var(--color-subject-colors)",
-    edge: "var(--color-subject-colors-dark)",
-  },
-  { face: "var(--accent)", edge: "var(--accent-dark)" },
-  { face: "var(--color-nova)", edge: "var(--color-nova-dark)" },
-  {
-    face: "var(--color-subject-shapes)",
-    edge: "var(--color-subject-shapes-dark)",
-  },
-];
+import type { PuzzleStage } from "@/types/puzzle";
 
 /**
  * Fifteen stages, every one of them with its picture. Fifteen is the whole
@@ -67,7 +37,6 @@ const TONES: PuzzleTone[] = [
 export const puzzleStages: PuzzleStage[] = [
   {
     value: 1,
-    tone: TONES[0],
     grid: { cols: 3, rows: 3 },
     picture: {
       image: puzzle1,
@@ -76,7 +45,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 2,
-    tone: TONES[1],
     grid: { cols: 4, rows: 3 },
     picture: {
       image: puzzle2,
@@ -85,7 +53,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 3,
-    tone: TONES[2],
     grid: { cols: 4, rows: 3 },
     picture: {
       image: puzzle3,
@@ -98,7 +65,6 @@ export const puzzleStages: PuzzleStage[] = [
      heap of loose pieces underneath it; a square one does. */
   {
     value: 4,
-    tone: TONES[3],
     grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle4,
@@ -107,7 +73,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 5,
-    tone: TONES[4],
     grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle5,
@@ -116,7 +81,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 6,
-    tone: TONES[5],
     grid: { cols: 5, rows: 4 },
     picture: {
       image: puzzle6,
@@ -125,7 +89,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 7,
-    tone: TONES[6],
     grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle7,
@@ -134,7 +97,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 8,
-    tone: TONES[7],
     grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle8,
@@ -143,7 +105,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 9,
-    tone: TONES[8],
     grid: { cols: 6, rows: 5 },
     picture: {
       image: puzzle9,
@@ -152,7 +113,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 10,
-    tone: TONES[9],
     grid: { cols: 6, rows: 6 },
     picture: {
       image: puzzle10,
@@ -161,7 +121,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 11,
-    tone: TONES[10],
     grid: { cols: 7, rows: 6 },
     picture: {
       image: puzzle11,
@@ -170,7 +129,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 12,
-    tone: TONES[11],
     grid: { cols: 7, rows: 7 },
     picture: {
       image: puzzle12,
@@ -179,7 +137,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 13,
-    tone: TONES[12],
     grid: { cols: 8, rows: 7 },
     picture: {
       image: puzzle13,
@@ -188,7 +145,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 14,
-    tone: TONES[13],
     grid: { cols: 8, rows: 8 },
     picture: {
       image: puzzle14,
@@ -197,7 +153,6 @@ export const puzzleStages: PuzzleStage[] = [
   },
   {
     value: 15,
-    tone: TONES[14],
     grid: { cols: 9, rows: 8 },
     picture: {
       image: puzzle15,

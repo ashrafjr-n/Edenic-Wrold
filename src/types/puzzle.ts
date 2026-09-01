@@ -15,13 +15,6 @@ export interface PuzzlePicture {
   alt: string;
 }
 
-/** A stage card's clay fill and the darker companion its shading is mixed
-    from — the same `face`/`edge` pair every `.clay` surface on the site takes. */
-export interface PuzzleTone {
-  face: string;
-  edge: string;
-}
-
 /** How a stage's picture is cut up. Per stage, not global: later stages get
     harder by adding pieces. */
 export interface PuzzleGrid {
@@ -30,9 +23,8 @@ export interface PuzzleGrid {
 }
 
 export interface PuzzleStage {
-  /** 1–9. Also the URL segment under `/activities/puzzle`. */
+  /** 1–15. Also the URL segment under `/activities/puzzle`. */
   value: number;
-  tone: PuzzleTone;
   /** Undefined until that stage's art exists. A stage with no picture stays
       locked in the grid however much the child has finished — nothing in the
       chrome should lead to a page that cannot be played. */
