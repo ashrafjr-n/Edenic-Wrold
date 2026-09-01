@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { findPuzzleStage, puzzleStages } from "@/data/puzzles";
+import { isUpright } from "@/lib/puzzle-pieces";
 import { Button3D } from "@/components/ui/button-3d";
 import { PuzzleBoard } from "@/components/activities/puzzle/puzzle-board";
 import { PuzzleView } from "@/components/activities/puzzle/puzzle-view";
@@ -35,8 +36,19 @@ export default async function PuzzleStagePage({
     ? `/activities/puzzle/${next.value}`
     : "/activities/puzzle";
 
+  /* A stage with an upright picture has to fit its board AND its heap of loose
+     pieces on one phone screen — a child who has to scroll between the two
+     cannot drag a piece from one to the other — so it takes back the padding a
+     landscape stage, which scrolls anyway, can afford. Read from the same
+     `isUpright` the board itself keys off, so the two can never disagree. */
+  const upright = isUpright(stage.picture.image);
+
   return (
-    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+    <main
+      className={`relative flex flex-1 flex-col ${
+        upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
+      }`}
+    >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back sits on the left, `View` dead centre of the page — centred on
             the page rather than on the space left over, which is why the back
@@ -68,7 +80,11 @@ export default async function PuzzleStagePage({
         </div>
       </div>
 
-      <div className="mx-auto flex w-full flex-1 flex-col justify-center px-4 py-8 sm:px-8 sm:py-10">
+      <div
+        className={`mx-auto flex w-full flex-1 flex-col justify-center px-4 sm:px-8 ${
+          upright ? "py-1 sm:py-6" : "py-8 sm:py-10"
+        }`}
+      >
         <PuzzleBoard
           stage={stage.value}
           picture={stage.picture}
