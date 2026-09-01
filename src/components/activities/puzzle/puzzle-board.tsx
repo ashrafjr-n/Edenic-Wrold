@@ -7,12 +7,14 @@ import { RotateCcw } from "lucide-react";
 import { PUZZLE_COLS, PUZZLE_PIECES, PUZZLE_ROWS } from "@/data/puzzles";
 import type { PuzzlePicture } from "@/types/puzzle";
 import {
+  pieceBoxStyle,
   pieceCropStyle,
   puzzlePieces,
   slotStyle,
-  trayOrder,
+  trayLayout,
 } from "@/lib/puzzle-pieces";
 import type { PuzzlePiece } from "@/lib/puzzle-pieces";
+import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { Celebration } from "@/components/learn/number/celebration";
@@ -23,16 +25,12 @@ interface PuzzleBoardProps {
   picture: PuzzlePicture;
 }
 
-/** How far outside its own cell a drop still counts, as a share of the cell.
-    Generous on purpose: only the piece's OWN cell is ever tested, so being
-    forgiving can never drop a piece into the wrong hole. */
-const CATCH_PAD = 0.45;
 /** Below this the pointer never really moved. A tap does nothing — carrying
     the piece across IS the exercise, same call `NumberComplete` makes. */
 const DRAG_THRESHOLD = 6;
-/** Tray pieces sit smaller than their slot so nine of them stay a compact
-    strip; a carried piece grows back to exactly slot size. */
-const TRAY_SCALE = 0.8;
+/** Loose pieces lie smaller than their slot; picking one up brings it back to
+    full size and straightens it. */
+const TRAY_SCALE = 0.72;
 const WIGGLE_MS = 500;
 
 /** The board never gets wider than this, and never wider than the phone it is
@@ -56,56 +54,69 @@ interface DragState {
   moved: boolean;
 }
 
-/** One piece of the picture. The box is piece-sized and the image inside it is
-    drawn at 300% and pushed off-centre, so only this piece's cell shows —
-    one file, nine crops, no SVG and no slicing. */
+/**
+ * One piece of the picture: the box holds the crop, the clip path cuts the
+ * jigsaw outline out of it.
+ *
+ * The drop shadow sits on the OUTER span rather than the clipped one — a
+ * filter is applied before the clip on the same element, so a shadow declared
+ * there would be cut away with everything else outside the outline. From a
+ * parent it follows the piece's real silhouette instead.
+ */
 function PieceArt({
   picture,
   piece,
-  className = "",
-  style,
+  shadow = true,
 }: {
   picture: PuzzlePicture;
   piece: PuzzlePiece;
-  className?: string;
-  style?: CSSProperties;
+  shadow?: boolean;
 }) {
   return (
     <span
-      className={`relative block overflow-hidden ${className}`}
-      style={style}
+      className="block"
+      style={{
+        ...pieceBoxStyle,
+        filter: shadow
+          ? "drop-shadow(0 6px 8px rgb(var(--shadow-hue) / 40%))"
+          : undefined,
+      }}
     >
-      <Image
-        src={picture.src}
-        alt=""
-        width={picture.width}
-        height={picture.height}
-        sizes="(min-width: 640px) 32rem, 100vw"
-        /* Images are natively draggable: without this the browser's own image
-           drag starts instead, firing `pointercancel` and killing the custom
-           drag on its first move. */
-        draggable={false}
-        className="pointer-events-none select-none"
-        style={pieceCropStyle(piece)}
-      />
+      <span
+        className="relative block h-full w-full"
+        style={{ clipPath: `url(#${clipId(piece.id)})` }}
+      >
+        <Image
+          src={picture.src}
+          alt=""
+          width={picture.width}
+          height={picture.height}
+          sizes="(min-width: 640px) 32rem, 100vw"
+          /* Images are natively draggable: without this the browser's own
+             image drag starts instead, firing `pointercancel` and killing the
+             custom drag on its first move. */
+          draggable={false}
+          className="pointer-events-none select-none"
+          style={pieceCropStyle(piece)}
+        />
+      </span>
     </span>
   );
 }
 
 /**
- * One puzzle: an empty board with the nine slots outlined, and a tray of
- * loose pieces underneath to carry into them.
+ * One puzzle: a board showing the empty jigsaw holes, and a heap of loose
+ * pieces below to carry into them.
  *
- * The pieces are CSS crops of a single image (`lib/puzzle-pieces.ts`) rather
- * than nine files or an SVG — the same sprite-crop trick `NumberComplete`
- * already uses for its missing-piece activity. They are plain rectangles for
- * the same reason that one is: a square piece reads clearly to a small child
- * and needs no per-pixel masking.
+ * The nine pieces are CSS crops of a SINGLE image — never nine files — cut to
+ * real interlocking jigsaw outlines by an SVG clip path each
+ * (`lib/puzzle-shape.ts`). Neighbouring pieces read the same edge table, so a
+ * tab and the socket it drops into are the same curve by construction.
  *
- * A drop counts when the piece's centre lands in (or near) its OWN cell.
- * Nothing else is ever tested, so being forgiving cannot put a piece in the
- * wrong hole — a miss simply springs back with a wiggle and no telling-off,
- * matching the rest of the site.
+ * A drop counts as soon as the piece OVERLAPS its own hole at all — it never
+ * has to be lined up. Only the piece's own hole is ever tested, so being that
+ * forgiving still can't put a piece in the wrong place. A miss springs back
+ * with a wiggle and no telling-off, matching the rest of the site.
  */
 export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -119,7 +130,14 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
 
   /* Derived, never stored: a second copy could drift out of sync. */
   const solved = placed.length === PUZZLE_PIECES;
-  const tray = trayOrder(stage).filter((piece) => !placed.includes(piece.id));
+  const loose = trayLayout(stage).filter(
+    (spot) => !placed.includes(spot.piece.id),
+  );
+
+  /* A cell's width over its height — what keeps the knobs round on screen
+     even though the cells are much wider than they are tall. */
+  const cellRatio =
+    (picture.width / PUZZLE_COLS) / (picture.height / PUZZLE_ROWS);
 
   useEffect(() => {
     return () => {
@@ -199,7 +217,13 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
         box.top + box.height / 2 - (board.top + (piece.row + 0.5) * cellH),
       );
 
-      if (offX <= cellW * (0.5 + CATCH_PAD) && offY <= cellH * (0.5 + CATCH_PAD)) {
+      /* Overlapping its own hole is enough — the two rects touching. A child
+         should never have to line a piece up, and since no other hole is ever
+         tested, this cannot land a piece somewhere wrong. */
+      if (
+        offX <= (cellW + box.width) / 2 &&
+        offY <= (cellH + box.height) / 2
+      ) {
         const next = [...placed, piece.id];
         setPlaced(next);
         setDrag(null);
@@ -226,43 +250,83 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
 
   const sizing = {
     "--puzzle-w": BOARD_WIDTH,
-    /* One cell, at slot size. The tray derives its own smaller piece from the
-       same value, so a carried piece is always exactly slot-sized. */
     "--cell-w": `calc(var(--puzzle-w) / ${PUZZLE_COLS})`,
     "--cell-h": `calc(var(--puzzle-w) * ${picture.height} / ${picture.width} / ${PUZZLE_ROWS})`,
+    /* How far a knob sticks out past its cell — every piece box is grown by
+       this on all four sides. Measured off the cell's short side so knobs are
+       the same size on every edge. */
+    "--tab": `calc(var(--cell-h) * ${TAB_DEPTH})`,
   } as CSSProperties;
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6" style={sizing}>
-      {/* The board: empty to start, with every slot outlined so a child can
-          see where the pieces go and what shape they are. */}
+      {/* The nine outlines, defined once. `objectBoundingBox` units mean one
+          definition scales to whatever size the board is drawn at. */}
+      <svg width="0" height="0" aria-hidden className="absolute">
+        <defs>
+          {puzzlePieces.map((piece) => (
+            <clipPath
+              key={piece.id}
+              id={clipId(piece.id)}
+              clipPathUnits="objectBoundingBox"
+            >
+              <path d={piecePath(piece, cellRatio)} />
+            </clipPath>
+          ))}
+        </defs>
+      </svg>
+
       <div className="card relative p-3 sm:p-4">
         <div
           ref={boardRef}
           role="group"
           aria-label={`Puzzle board — ${picture.alt}`}
-          className="relative overflow-hidden rounded-2xl"
+          className="relative overflow-hidden rounded-2xl bg-[var(--color-locked)]/40"
           style={{
             width: "var(--puzzle-w)",
             aspectRatio: `${picture.width} / ${picture.height}`,
           }}
         >
-          {puzzlePieces.map((piece) => (
-            <div key={piece.id} className="absolute" style={slotStyle(piece)}>
-              {placed.includes(piece.id) ? (
-                <PieceArt
-                  picture={picture}
-                  piece={piece}
-                  className="anim-pop-in h-full w-full"
-                />
-              ) : (
-                <span
-                  aria-hidden
-                  className="absolute inset-[2px] rounded-lg border-2 border-dashed border-[var(--color-locked-dark)]"
-                />
-              )}
-            </div>
-          ))}
+          {puzzlePieces.map((piece) => {
+            const isPlaced = placed.includes(piece.id);
+
+            return (
+              <div
+                key={piece.id}
+                className="absolute"
+                style={{ ...slotStyle(piece), ...pieceBoxStyle }}
+              >
+                {isPlaced ? (
+                  <span className="anim-pop-in block">
+                    <PieceArt picture={picture} piece={piece} shadow={false} />
+                  </span>
+                ) : (
+                  /* The hole, drawn as the piece's own outline rather than a
+                     dashed box — a child can see the shape that belongs
+                     here, not just the area. `non-scaling-stroke` keeps the
+                     line an even width despite the viewBox being stretched. */
+                  <svg
+                    viewBox="0 0 1 1"
+                    preserveAspectRatio="none"
+                    aria-hidden
+                    className="h-full w-full"
+                  >
+                    <path
+                      d={piecePath(piece, cellRatio)}
+                      vectorEffect="non-scaling-stroke"
+                      strokeWidth={2}
+                      strokeDasharray="5 4"
+                      style={{
+                        fill: "var(--color-locked)",
+                        fillOpacity: 0.5,
+                        stroke: "var(--color-locked-text)",
+                      }}
+                    />
+                  </svg>
+                )}
+              </div>
+            );
+          })}
 
           {/* Once every piece is home the whole picture fades in over the
               nine crops, so the finished puzzle can never show a hairline
@@ -295,16 +359,19 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
           </Button3D>
         </div>
       ) : (
-        /* The tray: shorter than the board, and it shrinks as it empties.
-            No `overflow-hidden` — a carried piece has to be able to leave it.
-            Its content box is pinned to the board's own width, and it carries
-            the same padding, so the two cards line up exactly. */
+        /* The loose pieces, tipped out in a heap rather than lined up: each
+           lies at its own angle and they overlap. No `overflow-hidden` — a
+           carried piece has to be able to leave the card. */
         <div className="card p-3 sm:p-4">
           <div
-            className="flex min-h-[5rem] flex-wrap items-center justify-center gap-2 sm:gap-3"
-            style={{ width: "var(--puzzle-w)" }}
+            className="relative"
+            style={{
+              width: "var(--puzzle-w)",
+              height: "calc(var(--cell-h) * 3.9)",
+            }}
           >
-            {tray.map((piece) => {
+            {loose.map((spot, index) => {
+              const piece = spot.piece;
               const carrying = drag?.id === piece.id && drag.moved;
 
               return (
@@ -320,32 +387,33 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
                   }}
                   aria-label={`Puzzle piece ${piece.id + 1} of ${PUZZLE_PIECES}`}
                   /* `touch-none` or the drag scrolls the page instead of
-                     moving the piece. `z-50` while carried so it rides above
-                     the board card, which sits earlier in the DOM. */
-                  className={`touch-none rounded-xl ${
-                    carrying ? "relative z-50" : "transition-all duration-300"
-                  } ${wrongId === piece.id ? "anim-wiggle" : ""}`}
+                     moving the piece. */
+                  className={`absolute touch-none ${
+                    wrongId === piece.id ? "anim-wiggle" : ""
+                  }`}
                   style={{
+                    left: `${spot.x}%`,
+                    top: `${spot.y}%`,
+                    /* The centring has to live inside the same `translate`
+                       the drag writes to — an inline `translate` replaces a
+                       `-translate-x-1/2` utility outright, and the piece
+                       would jump by half its own size on the first move. */
                     translate: carrying
-                      ? `${drag.dx}px ${drag.dy}px`
-                      : undefined,
-                    /* Carried pieces grow to exactly slot size. `scale` is
-                       centred, so the drop test's centre maths is
-                       unaffected. */
-                    scale: carrying ? String(1 / TRAY_SCALE) : "1",
+                      ? `calc(-50% + ${drag.dx}px) calc(-50% + ${drag.dy}px)`
+                      : "-50% -50%",
+                    /* Picking a piece up straightens it and brings it to full
+                       size, so it always matches the hole it is going into —
+                       no rotating to fit, which is a mechanic a small child
+                       does not need. */
+                    rotate: carrying ? "0deg" : `${spot.rotate}deg`,
+                    scale: carrying ? "1" : String(TRAY_SCALE),
+                    zIndex: carrying ? 50 : index,
+                    transition: carrying
+                      ? "rotate 0.2s ease, scale 0.2s ease"
+                      : "translate 0.3s ease, rotate 0.3s ease, scale 0.3s ease",
                   }}
                 >
-                  <PieceArt
-                    picture={picture}
-                    piece={piece}
-                    className="rounded-lg"
-                    style={{
-                      width: `calc(var(--cell-w) * ${TRAY_SCALE})`,
-                      height: `calc(var(--cell-h) * ${TRAY_SCALE})`,
-                      filter:
-                        "drop-shadow(0 8px 12px rgb(var(--shadow-hue) / 35%))",
-                    }}
-                  />
+                  <PieceArt picture={picture} piece={piece} />
                 </button>
               );
             })}
