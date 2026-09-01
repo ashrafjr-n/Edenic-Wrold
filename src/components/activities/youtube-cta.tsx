@@ -1,12 +1,17 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
-/* The three friends each holding a play button, on a near-white background
-   that blends straight into `.card` — no crop, no overlay needed.
+/* The three friends each holding a play button, cut out of its background —
+   the card that used to frame it is gone, so the art has to sit on the page's
+   own ground with nothing behind it. The soft contact shadows survived the
+   cut as translucent grey, which is what keeps the friends standing on the
+   page rather than floating over it.
 
    A STATIC import, not a `/public` path: a static import is content-hashed
    into its URL, so replacing the file on disk changes the URL and every cache
-   misses (see `ui/logo.tsx`). */
+   misses (see `ui/logo.tsx`). It also carries the file's real pixel size, so
+   the picture keeps its own proportions with no `aspect-*` box to drift out
+   of step with it. */
 import ctaArt from "../../../public/assets/activity-page/youtube-CTA/activity-youtube-CTA.png";
 
 type ButtonVars = CSSProperties & {
@@ -20,45 +25,49 @@ type ButtonVars = CSSProperties & {
     (the hero's own image/copy) is hardcoded directly in its component. */
 const YOUTUBE_HREF = "https://www.youtube.com/@EdenicWorld-kids";
 
-/** The activities page's opening CTA: a card pointing at our YouTube
-    channel. Deliberately compact — the picture is capped well below the
-    card's own width and the padding is tight, so it reads as an invitation
-    rather than the page's centrepiece. External link, so a plain `<a>` styled with the same `.btn3d`
-    clay recipe `Button3D` uses internally — `Button3D` only renders an
-    internal `next/link`, with no `target`/`rel`, so this is hand-rolled the
-    same way `SocialLinks` hand-rolls its own external chips. */
+/**
+ * The activities page's opening CTA: the three friends, and one button under
+ * them pointing at our YouTube channel.
+ *
+ * **No `.card`, and that is deliberate** — this is the one place on the site
+ * where rendered art stands on the page with no container at all, because a
+ * frame around a cut-out picture is a box around nothing. It is also why the
+ * art is trimmed to its own content: the empty margin the render came with
+ * was invisible inside a card and would be dead height without one.
+ *
+ * External link, so a plain `<a>` styled with the same `.btn3d` clay recipe
+ * `Button3D` uses internally — `Button3D` only renders an internal
+ * `next/link`, with no `target`/`rel`, so this is hand-rolled the same way
+ * `SocialLinks` hand-rolls its own external chips.
+ */
 export function YoutubeCta({ className = "" }: { className?: string }) {
   return (
-    <div className={`card relative overflow-hidden p-4 sm:p-6 ${className}`}>
-      <div className="relative mx-auto aspect-[3/2] w-full max-w-sm sm:max-w-md">
-        <Image
-          src={ctaArt}
-          alt="Pinki, Nova and Bloo each holding a red play button"
-          fill
-          sizes="(min-width: 640px) 28rem, 100vw"
-          priority
-          className="object-contain"
-        />
-      </div>
+    <div className={`flex flex-col items-center ${className}`}>
+      <Image
+        src={ctaArt}
+        alt="Pinki, Nova and Bloo each holding a red play button"
+        sizes="(min-width: 640px) 34rem, 92vw"
+        preload
+        className="h-auto w-full max-w-[22rem] sm:max-w-[34rem]"
+      />
 
-      <div className="mt-4 flex justify-center sm:mt-5">
-        <a
-          href={YOUTUBE_HREF}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="btn3d px-7 py-3.5 text-base sm:px-8 sm:text-lg"
-          style={
-            {
-              "--btn-face": "#ff0033",
-              "--btn-edge": "#c40027",
-              "--btn-text": "#fff",
-            } as ButtonVars
-          }
-        >
-          <Play className="h-5 w-5 fill-current" strokeWidth={2} />
-          Watch Now
-        </a>
-      </div>
+      {/* Last thing on the card, centred under the picture. */}
+      <a
+        href={YOUTUBE_HREF}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="btn3d mt-3 px-7 py-3.5 text-base sm:mt-4 sm:px-8 sm:text-lg"
+        style={
+          {
+            "--btn-face": "#ff0033",
+            "--btn-edge": "#c40027",
+            "--btn-text": "#fff",
+          } as ButtonVars
+        }
+      >
+        <Play className="h-5 w-5 fill-current" strokeWidth={2} />
+        Watch Now
+      </a>
     </div>
   );
 }
