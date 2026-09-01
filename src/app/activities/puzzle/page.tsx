@@ -7,7 +7,7 @@ import { PuzzleGrid } from "@/components/activities/puzzle/puzzle-grid";
 
 export const metadata: Metadata = {
   title: "Puzzles — Edenic World",
-  description: "Nine picture puzzles to build, one piece at a time.",
+  description: "Fifteen picture puzzles to build, one piece at a time.",
 };
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
@@ -90,6 +90,21 @@ export default function PuzzleStagesPage() {
               </span>
             ))}
           </span>
+        </div>
+
+        {/* The chips alone said "puzzles" without saying what the page is for.
+            The title and the line under it give the fifteen cards a heading to
+            sit beneath — the chips stay as the picture of it. */}
+        <div
+          className="anim-fade-up mt-4 text-center sm:mt-5"
+          style={{ animationDelay: "0.25s" }}
+        >
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
+            Puzzle Time
+          </h1>
+          <p className="mt-1 text-base text-[var(--color-ink)]/60 sm:text-lg">
+            Complete the puzzles!
+          </p>
         </div>
       </div>
 
