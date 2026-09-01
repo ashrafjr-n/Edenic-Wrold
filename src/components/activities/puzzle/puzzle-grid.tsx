@@ -141,9 +141,13 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
             </>
           );
 
-          const shell = `puzzle-tile anim-rise-in relative ${
-            open ? "puzzle-tile--open" : ""
-          } ${current ? "puzzle-tile--current" : ""}`;
+          const shell = [
+            "puzzle-tile anim-rise-in relative",
+            open && "puzzle-tile--open",
+            current && "puzzle-tile--current",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           const tile = open ? (
             <Link
