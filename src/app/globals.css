@@ -1240,27 +1240,30 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   One puzzle's board and heap, when the picture is PORTRAIT.
+   One puzzle's board and heap, when the picture is UPRIGHT — square or
+   taller. (Stages 1–3 are landscape and use none of this.)
 
-   A landscape picture can take the board's plain width cap: 32rem of a 16:9
-   scene comes out about 18rem tall. A portrait one cannot — at that same
-   width a 9:16 picture is over 57rem tall, taller than any screen, and the
-   heap of loose pieces still has to fit as well. So a portrait board is
-   capped by HEIGHT instead and its width falls out of the picture's own
-   aspect ratio (`--puzzle-w` in `PuzzleBoard`).
+   An upright picture cannot take the board's plain width cap: 32rem of a
+   square scene is 32rem tall, and the heap of loose pieces still has to fit
+   as well. So an upright board is capped by HEIGHT and its width falls out of
+   the picture's own aspect ratio (`--puzzle-w` in `PuzzleBoard`).
 
    `svh`, not `vh`: on a phone `vh` is measured against the viewport with the
    browser's chrome hidden, which is exactly the amount a board sized to "the
    whole screen" would then overflow by.
 
-   Two layouts, and both variables change together at the same breakpoint:
+   Two layouts:
 
-   - Below `lg` the board and the heap are STACKED, so the two together — not
-     the board alone — have to fit the screen once it is scrolled past the
-     page's own header, which is what holds the board to under half of it.
-     The heap gets the full width, the same as the board's own cap.
-   - From `lg` they sit SIDE BY SIDE. The board no longer shares its height
-     with the heap so it can have most of the screen, and the heap takes
+   - Below `lg` the board and the heap are STACKED, and they must fit the
+     screen TOGETHER — a child who has to scroll between the pieces and the
+     board cannot drag one to the other at all. `--puzzle-space` is what the
+     two have left once the page's own chrome is out of the way (header, the
+     `View` row, the page and card padding, the gap, and the phone's bottom
+     nav); `--board-share` — inline from `PuzzleBoard`, because it depends on
+     the stage's own cut — is the board's share of it, the rest being exactly
+     the height the heap needs.
+   - From `lg` they sit SIDE BY SIDE, so the board stops sharing its height
+     with the heap and takes everything but the chrome, and the heap takes
      whatever width the board leaves (`6rem` covers the page's own padding
      plus the gap between the two cards).
 
@@ -1270,21 +1273,22 @@ button:disabled,
    desktop, running off the side of the page. A landscape stage has neither
    layout to switch between, so it does set its own inline.
    --------------------------------------------------------------- */
-.puzzle-portrait {
-  --board-max-h: 42svh;
+.puzzle-upright {
+  --puzzle-space: calc(100svh - 27.5rem);
+  --board-max-h: calc(var(--puzzle-space) * var(--board-share));
   --tray-w: min(100vw - 4rem, 32rem);
 }
 
-/* A tablet is still stacked, but it has the height to spare. */
+/* A tablet has no bottom nav and a little more room to give back. */
 @media (width >= 40rem) {
-  .puzzle-portrait {
-    --board-max-h: 46svh;
+  .puzzle-upright {
+    --puzzle-space: calc(100svh - 30.5rem);
   }
 }
 
 @media (width >= 64rem) {
-  .puzzle-portrait {
-    --board-max-h: 55svh;
+  .puzzle-upright {
+    --board-max-h: calc(100svh - 24rem);
     --tray-w: min(100vw - 6rem - var(--puzzle-w), 32rem);
   }
 }

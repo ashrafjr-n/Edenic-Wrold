@@ -45,7 +45,7 @@ const DONE = 3;
 
 /** The widest anything here is ever drawn, and never wider than the phone it
     is on. It is the tray's width always, and a LANDSCAPE board's too; a
-    portrait board is capped by height instead (see `--puzzle-w` below).
+    an upright board is capped by height instead (see `--puzzle-w` below).
     Viewport units rather than `%` on purpose: the board and the tray are
     different containers, and both have to derive the same piece size. */
 const AVAILABLE_WIDTH = "min(100vw - 4rem, 32rem)";
@@ -148,11 +148,12 @@ export function PuzzleBoard({
   const pieces = piecesFor(grid);
   const total = pieces.length;
   const { width, height } = picture.image;
-  /* Everything that has to bend for a tall picture reads this one flag: the
-     board's own cap, the shape of the heap, and whether the two sit side by
-     side rather than stacked. */
-  const portrait = height > width;
-  const slots = traySlots(grid, portrait);
+  /* Everything that has to bend for a picture that is not WIDE reads this one
+     flag: the board's own cap, the shape of the heap, and whether the two sit
+     side by side rather than stacked. Square counts — a square board leaves a
+     phone just as little room for the heap underneath it as a tall one did. */
+  const upright = height >= width;
+  const slots = traySlots(grid, upright);
   const boardRef = useRef<HTMLDivElement>(null);
   const wiggleTimer = useRef<number | null>(null);
   const complete = useProgress((state) => state.complete);
@@ -278,20 +279,31 @@ export function PuzzleBoard({
     setDrag(null);
   };
 
+  /* Stacked, the board and the heap share one budget (`--puzzle-space` in
+     `globals.css`), and this is the board's share of it. The heap is
+     `slots.rows + 0.9` cells tall and a cell is a fifth (or a quarter…) of
+     the board, so the ratio between the two is fixed by the stage's cut
+     alone — which is why it can be handed to CSS as a plain number and
+     multiplied there. Passed as the BOARD's share rather than the heap's so
+     the stylesheet never has to divide by a variable. */
+  const heapShare = (slots.rows + 0.9) / grid.rows;
+  const boardShare = (1 / (1 + heapShare)).toFixed(4);
+
   const sizing = {
-    /* A portrait board takes whichever is smaller: the width every board is
+    /* An upright board takes whichever is smaller: the width every board is
        allowed, or the width its own aspect ratio needs to fit the height cap
-       `.puzzle-portrait` sets. A landscape one never comes near that cap, so
+       `.puzzle-upright` sets. A landscape one never comes near that cap, so
        it keeps the plain width. */
-    "--puzzle-w": portrait
+    "--puzzle-w": upright
       ? `min(${AVAILABLE_WIDTH}, var(--board-max-h) * ${width} / ${height})`
       : AVAILABLE_WIDTH,
-    /* A landscape stage's heap is always the same width as its board. A
-       portrait one's changes at the breakpoint where the heap moves beside
-       the board, so it comes from `.puzzle-portrait` in `globals.css`
+    ...(upright ? { "--board-share": boardShare } : {}),
+    /* A landscape stage's heap is always the same width as its board. An
+       upright one's changes at the breakpoint where the heap moves beside
+       the board, so it comes from `.puzzle-upright` in `globals.css`
        instead — an inline custom property would beat the stylesheet and it
        could never switch. */
-    ...(portrait ? {} : { "--tray-w": AVAILABLE_WIDTH }),
+    ...(upright ? {} : { "--tray-w": AVAILABLE_WIDTH }),
     "--cell-w": `calc(var(--puzzle-w) / ${grid.cols})`,
     "--cell-h": `calc(var(--puzzle-w) * ${height} / ${width} / ${grid.rows})`,
     /* How far a knob sticks out past its cell — every piece box is grown by
@@ -304,7 +316,7 @@ export function PuzzleBoard({
   return (
     <div
       className={`flex flex-col items-center gap-4 sm:gap-6 ${
-        portrait ? "puzzle-portrait" : ""
+        upright ? "puzzle-upright" : ""
       }`}
       style={sizing}
     >
@@ -324,16 +336,15 @@ export function PuzzleBoard({
         </defs>
       </svg>
 
-      {/* Board and heap. Stacked, except for a portrait picture from `lg` up:
-          a tall board with a wide heap under it needs more height than the
-          screen has, and side by side they both fit without the page
-          scrolling — a child must never be looking at the pieces with the
-          board off-screen. Below `md` there is no room to put them in a row,
-          so the page scrolls instead; the two cards together still fit one
-          phone screen once it is scrolled past the header. */}
+      {/* Board and heap. Stacked, except for an upright picture from `lg` up,
+          where they sit side by side — a child must never be looking at the
+          pieces with the board off-screen, and on a wide screen a row is what
+          keeps both on it at a decent size. Below `lg` there is no width for
+          a row, so they stay stacked and are sized to fit the screen together
+          instead (`.puzzle-upright` in `globals.css`). */}
       <div
         className={`flex flex-col items-center gap-4 sm:gap-6 ${
-          portrait ? "lg:flex-row lg:items-center" : ""
+          upright ? "lg:flex-row lg:items-center" : ""
         }`}
       >
         <div className="card relative p-3 sm:p-4">
