@@ -1416,6 +1416,17 @@ button:disabled,
     0 6px 16px -6px rgb(var(--shadow-hue) / 24%);
 }
 
+/* `.card-lift:hover` is `.class:hover` and therefore MORE specific than
+   `.puzzle-card--current` — on hover it would replace this shadow wholesale
+   and the glow would blink off, exactly as `.card-clay-white` documents for
+   its own insets. Same fix: a combined selector that outranks it. */
+.puzzle-card--current.card-lift:hover {
+  box-shadow:
+    0 0 0 8px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 30px 56px -18px rgb(var(--shadow-hue) / 44%),
+    0 7px 18px -6px rgb(var(--shadow-hue) / 24%);
+}
+
 @media (width >= 40rem) {
   .puzzle-card--current {
     outline-width: 4px;
@@ -1425,36 +1436,39 @@ button:disabled,
 
 /* Frosted glass, not a bad photograph.
 
-   The blur is STRONG on purpose. At 3–4px the picture read as a low-quality
-   image rather than as something behind glass, which is the single worst
-   thing a locked card can look like on a site meant to feel expensive — so
-   it goes far enough that nobody could mistake it for the artwork's own
-   resolution. `saturate` compensates for the wash on top: blur alone drains
-   a picture, and a locked puzzle should still look like a colourful place.
+   The blur has a NARROW window and both walls have been hit. At 3–4px (with
+   a heavy wash over it) the picture read as a low-quality image rather than
+   as something behind glass — the worst thing a locked card can look like on
+   a site meant to feel expensive. At 10–16px it went the other way: the
+   artwork dissolved into coloured mush and the card stopped saying there was
+   a puzzle back there at all. The rule is that a child should still see three
+   friends in a scene and simply not be able to make it out. `saturate`
+   compensates for the wash on top: blur alone drains a picture, and a locked
+   puzzle should still look like a colourful place.
 
    `scale` is load-bearing, not decoration: `filter: blur()` samples
    transparency beyond the image's edges, so an unscaled blur fades the card's
    own border into the page and `overflow-hidden` cannot put it back. It has
    to grow with the blur radius — change one and re-check the other. */
 .puzzle-locked-art {
-  filter: blur(10px) saturate(1.2);
-  scale: 1.22;
+  filter: blur(5px) saturate(1.3);
+  scale: 1.14;
 }
 
 @media (width >= 40rem) {
   .puzzle-locked-art {
-    filter: blur(16px) saturate(1.2);
-    scale: 1.25;
+    filter: blur(8px) saturate(1.3);
+    scale: 1.16;
   }
 }
 
 /* The glass itself: plain white, no tint. It used to carry a sixth of the
    stage's own colour, which was the last place the fifteen hues lived. It is
-   also much LIGHTER than it was (0.85 → 0.46) — the blur is doing the hiding
+   also much LIGHTER than it was (0.85 → 0.38) — the blur is doing the hiding
    now, so the wash only has to knock the picture back, and a heavy wash on
    top of a heavy blur is what made these cards look washed out. */
 .puzzle-veil {
-  background-color: rgb(255 255 255 / 46%);
+  background-color: rgb(255 255 255 / 38%);
 }
 
 /* ---------------------------------------------------------------
