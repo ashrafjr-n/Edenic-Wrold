@@ -32,15 +32,15 @@ const TONES: PuzzleTone[] = [
  * stage harder.** The board, the heap, the crop maths and the jigsaw
  * outlines all read `grid` from here, so a stage can be any shape.
  *
- * The counts climb in three steps: 9 and then 12 to learn the game, 15–18
- * once the child has the idea, 24–28 at the end.
+ * The counts climb in three steps: 9 and then 12 to learn the game, 16–20
+ * once the child has the idea, 25–30 at the end.
  *
  * The grids are not chosen for their piece count alone — each one is picked
  * so its CELLS COME OUT NEARLY SQUARE against its own picture. Stages 1–3 are
- * landscape (1376 × 768) and 4–9 are portrait, so a cut that suits one is
- * wrong for the other: 4 × 3 on a 9:16 picture would give pieces two and a
- * half times taller than they are wide, which is a strip, not a jigsaw piece.
- * Change a picture's shape and its grid has to be re-picked with it.
+ * landscape (1376 × 768) and 4–9 are square (see the note on those pictures
+ * below), so a cut that suits one is wrong for the other: 4 × 3 on a square
+ * picture would give pieces a third wider than they are tall. Change a
+ * picture's shape and its grid has to be re-picked with it.
  */
 export const puzzleStages: PuzzleStage[] = [
   {
@@ -70,10 +70,14 @@ export const puzzleStages: PuzzleStage[] = [
       alt: "Pinki, Nova and Bloo picking flowers on a green hill",
     },
   },
+  /* 4–9 are SQUARE (768 × 768, or 848 × 848 for 5 and 8) — cropped from the
+     tall originals rather than scaled, so nothing is squashed and every
+     character is still in frame. A tall board leaves a phone no room for the
+     heap of loose pieces underneath it; a square one does. */
   {
     value: 4,
     tone: TONES[3],
-    grid: { cols: 3, rows: 5 },
+    grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle4,
       alt: "Pinki, Nova and Bloo splashing in a paddling pool with rubber rings",
@@ -82,7 +86,7 @@ export const puzzleStages: PuzzleStage[] = [
   {
     value: 5,
     tone: TONES[4],
-    grid: { cols: 3, rows: 5 },
+    grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle5,
       alt: "Pinki, Nova and Bloo climbing a climbing wall",
@@ -91,7 +95,7 @@ export const puzzleStages: PuzzleStage[] = [
   {
     value: 6,
     tone: TONES[5],
-    grid: { cols: 3, rows: 6 },
+    grid: { cols: 5, rows: 4 },
     picture: {
       image: puzzle6,
       alt: "Pinki, Nova and Bloo flying a spaceship past the planets",
@@ -100,7 +104,7 @@ export const puzzleStages: PuzzleStage[] = [
   {
     value: 7,
     tone: TONES[6],
-    grid: { cols: 4, rows: 6 },
+    grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle7,
       alt: "Pinki, Nova and Bloo riding a little train through the hills",
@@ -109,7 +113,7 @@ export const puzzleStages: PuzzleStage[] = [
   {
     value: 8,
     tone: TONES[7],
-    grid: { cols: 4, rows: 6 },
+    grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle8,
       alt: "Pinki, Nova and Bloo playing basketball together",
@@ -118,7 +122,7 @@ export const puzzleStages: PuzzleStage[] = [
   {
     value: 9,
     tone: TONES[8],
-    grid: { cols: 4, rows: 7 },
+    grid: { cols: 6, rows: 5 },
     picture: {
       image: puzzle9,
       alt: "Pinki, Nova and Bloo painting a big picture on an easel",
