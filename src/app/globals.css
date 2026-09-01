@@ -1366,6 +1366,164 @@ button:disabled,
   }
 }
 
+/* ---------------------------------------------------------------
+   The stage grid on `/activities/puzzle`.
+
+   Every card shows its PICTURE now, open or not — a locked stage is the
+   same picture behind a soft blur and a pale wash, so the fifteen read as
+   fifteen real places that exist and have not been opened yet, rather than
+   as a wall of coloured number buttons. The picture is the card's subject;
+   the number and the lock/tick are small status marks on top of it.
+
+   `.puzzle-veil` is that wash. It is white with a SIXTH of the stage's own
+   colour mixed into it, not plain white: fifteen identical white cards lose
+   the thing the colours were there for, and a mix this light still reads as
+   frosted rather than tinted. `--veil-tone` comes from the stage.
+   --------------------------------------------------------------- */
+.puzzle-veil {
+  background-color: color-mix(in srgb, var(--veil-tone) 16%, #fff);
+  opacity: 0.74;
+}
+
+/* The stage's number, and the site's smallest clay object. Self-contained
+   (size, radius, type all here) for the usual reason — it sits inside
+   `.card`/`.clay`, which are unlayered, so a Tailwind utility for any
+   property those blocks already set would silently lose. `--chip-face` is
+   the stage's own colour, so the fifteen keep their identity now that the
+   card body itself is a picture. */
+.stage-chip {
+  --chip-edge: color-mix(in srgb, var(--chip-face) 62%, #2c2340);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.4rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background-color: var(--chip-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 4px 7px -2px rgb(255 255 255 / 50%),
+    inset 0 -5px 8px -2px color-mix(in srgb, var(--chip-edge) 70%, transparent),
+    0 8px 16px -7px color-mix(in srgb, var(--chip-edge) 60%, transparent);
+}
+
+@media (width >= 40rem) {
+  .stage-chip {
+    min-width: 2.125rem;
+    height: 2.125rem;
+    padding: 0 0.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* ---------------------------------------------------------------
+   "9 / 15" above the grid.
+
+   Clay, like every other object here: the track is pressed INTO the page
+   (an inner shade along the top, no outer shadow at all — the same language
+   a disabled `Button3D` speaks) and the fill is inflated out of it, so the
+   bar reads as a groove with a bar of clay lying in it. Never a flat two-tone
+   rectangle, and never `<progress>`, which cannot be styled into either.
+
+   The track deliberately does NOT get `overflow: hidden` — the fill's own
+   drop shadow is what lifts it out of the groove, and clipping the fill to
+   the track would cut that away. The fill can never exceed the track's width,
+   so nothing needs containing.
+   --------------------------------------------------------------- */
+.puzzle-progress-track {
+  height: 0.875rem;
+  border-radius: 9999px;
+  background-color: var(--color-locked);
+  box-shadow:
+    inset 0 3px 6px -1px color-mix(in srgb, var(--color-locked-dark) 95%, transparent),
+    inset 0 -2px 3px -1px rgb(255 255 255 / 70%);
+}
+
+@media (width >= 40rem) {
+  .puzzle-progress-track {
+    height: 1rem;
+  }
+}
+
+.puzzle-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--brand);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 4px 6px -2px rgb(255 255 255 / 55%),
+    inset 0 -5px 8px -2px color-mix(in srgb, var(--brand-dark) 70%, transparent),
+    0 7px 14px -7px color-mix(in srgb, var(--brand-dark) 60%, transparent);
+  /* The bar starts empty on the server and on the first client render (the
+     progress store has not read localStorage yet), so this transition is
+     also the bar filling itself in on arrival — no separate entrance. */
+  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------
+   The one stage the child has actually reached.
+
+   A plain `.anim-pulse-invite` scale was what marked it first, and it read
+   as the card throbbing. This is a slow rock instead — the card leaning and
+   lifting like a piece being picked up — with one soft ring travelling out
+   from behind it on the same beat, so the eye is caught by movement in the
+   grid rather than by one card changing size.
+
+   Both live on a WRAPPER, never on the card: `.card-lift:hover` animates
+   `translate` on the card itself, and an infinite animation on the same
+   property would keep overriding the hover. The ring is a sibling drawn
+   BEFORE the card, so the opaque card covers all but the rim of it.
+   --------------------------------------------------------------- */
+@keyframes next-card-rock {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: -1.4deg;
+  }
+  50% {
+    translate: 0 -7px;
+    rotate: 1.4deg;
+  }
+}
+
+.anim-next-card {
+  animation: next-card-rock 2.8s ease-in-out infinite;
+  will-change: translate, rotate;
+}
+
+@keyframes next-card-ring {
+  0% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 1.13;
+  }
+}
+
+/* `-0.4rem` outside the card, whose radius is `.card`'s own 1.75rem — hence
+   2.15rem here, so the rim runs parallel to the card's edge instead of
+   cutting across its corners. */
+.puzzle-next-ring {
+  position: absolute;
+  inset: -0.4rem;
+  border: 0.3rem solid var(--ring-tone);
+  border-radius: 2.15rem;
+  animation: next-card-ring 2.8s ease-out infinite;
+}
+
 /* Paint only ever shows up ON the numeral: the layer carrying the child's
    strokes is masked by the numeral's own alpha, so colouring outside the
    lines simply has nowhere to land. Lightning CSS adds the `-webkit-`
@@ -1430,14 +1588,19 @@ button:disabled,
   .say-pulse--invite,
   .anim-breathe,
   .anim-pulse-invite,
+  .anim-next-card,
   .anim-reveal,
   .path-hint,
   .anim-hero-parallax {
     animation: none;
   }
 
+  /* The ring only exists as a travelling pulse — parked at `animation:
+     none` it would be a solid, permanent rim around the card, so it goes
+     away entirely instead. Same call as the confetti. */
   .intro-icons,
-  .confetti-piece {
+  .confetti-piece,
+  .puzzle-next-ring {
     display: none;
   }
 }
