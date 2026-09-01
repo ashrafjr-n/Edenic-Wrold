@@ -99,9 +99,14 @@ export function CharacterCard({
 
           {locked && (
             <span className="absolute inset-0 z-20 flex items-center justify-center">
-              <span className="group/lock relative flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_10px_22px_-8px_rgb(92_78_190_/_45%)]">
+              {/* `.lock-chip`: the shared clay padlock — a dormant lavender
+                  face with the site's grain and the same inflated shading
+                  every other object here has. It was a flat white disc with a
+                  grey padlock in it, which next to three clay characters read
+                  as a sticker rather than as part of the world. */}
+              <span className="lock-chip group/lock relative h-14 w-14">
                 <Lock
-                  className="h-6 w-6 text-[var(--color-locked-text)] transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
+                  className="h-6 w-6 transition-transform duration-300 group-hover/lock:[animation:wiggle_0.5s_ease-in-out]"
                   strokeWidth={2.5}
                 />
                 {previousName && (
