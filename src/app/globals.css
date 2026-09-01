@@ -793,12 +793,20 @@ button:disabled,
   outline-offset: 3px;
 }
 
-/* Locked drops every clay cue — flat pale fill, no shadow, no motion — so
-   "inactive" reads instantly, before the label does. */
+/* Locked keeps the clay but turns it the other way up: the grain stays, and
+   the shading is INSET on the top edge with the highlight underneath — the
+   pill reads as pressed into the page instead of standing out of it. There is
+   still no outer drop shadow, which is what makes "inactive" land before the
+   label does; it just no longer reads as a flat silver slab, the one dead
+   material on a site that has no dead materials anywhere else. */
 .btn3d:disabled {
   background-color: var(--color-locked);
-  background-image: none;
-  box-shadow: none;
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 6px 11px -4px color-mix(in srgb, var(--color-locked-dark) 85%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 65%);
 }
 
 
