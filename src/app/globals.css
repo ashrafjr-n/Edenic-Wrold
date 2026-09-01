@@ -729,9 +729,12 @@ button:disabled,
 /* A WHITE clay chip — the same inflated material as a colored `.btn3d`
    (inner top highlight, inner bottom shade, wide tinted drop shadow), just
    with no hue. `.btn3d--calm` is deliberately flatter: a card-like chip that
-   reads fine on the site's pale ground. On the saturated `/learn/[character]`
-   page a flat white chip reads as a sticker instead of as clay, so the back
-   and achievements buttons there use this instead.
+   reads fine on the site's pale ground; a flat white chip beside a saturated
+   surface reads as a sticker instead of as clay, so the chrome that sits
+   there uses this instead — the achievements crown on every `/learn` route,
+   and the padlock chip on a locked lesson card. (The BACK buttons wore this
+   too until they went accent pink, which is now the one thing telling the
+   two header chips apart at a glance.)
 
    The inner bottom shade is what sells it — a white surface can't darken its
    own face, so the shading is the only cue that the shape is inflated.
