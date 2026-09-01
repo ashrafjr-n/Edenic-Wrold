@@ -53,7 +53,7 @@ export default function PuzzleStagesPage() {
             </Button3D>
           </span>
 
-          <span className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             <span
               aria-hidden
               className="clay anim-pop-in flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:h-14 sm:w-14"
@@ -65,15 +65,19 @@ export default function PuzzleStagesPage() {
               />
             </span>
 
-            <span className="text-left">
+            {/* A `div`, not a `span`: `<h1>`/`<p>` are flow content and cannot
+                legally sit inside phrasing content — the browser would close
+                the span itself and React would hydrate against a DOM it did
+                not render. */}
+            <div className="text-left">
               <h1 className="text-xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
                 Puzzle Time
               </h1>
               <p className="text-xs text-[var(--color-ink)]/55 sm:text-base">
                 Complete the puzzles!
               </p>
-            </span>
-          </span>
+            </div>
+          </div>
         </div>
       </div>
 
