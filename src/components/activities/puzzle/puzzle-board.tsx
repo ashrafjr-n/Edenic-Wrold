@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
-import { RotateCcw } from "lucide-react";
+import { ArrowRight, RotateCcw } from "lucide-react";
 import { PUZZLE_COLS, PUZZLE_PIECES, PUZZLE_ROWS } from "@/data/puzzles";
 import type { PuzzlePicture } from "@/types/puzzle";
 import {
@@ -18,11 +18,12 @@ import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { Celebration } from "@/components/learn/number/celebration";
-import { StarReward } from "@/components/learn/number/star-reward";
 
 interface PuzzleBoardProps {
   stage: number;
   picture: PuzzlePicture;
+  /** The next puzzle, or back to the list when there isn't a playable one. */
+  nextHref: string;
 }
 
 /** Below this the pointer never really moved. A tap does nothing — carrying
@@ -33,17 +34,16 @@ const DRAG_THRESHOLD = 6;
 const TRAY_SCALE = 0.72;
 const WIGGLE_MS = 500;
 
+/** Puzzles are not scored — the finished picture is the reward, and stars
+    here would be a second currency next to the lessons' own. The store still
+    needs a non-zero value to read the stage as finished, so every completion
+    records the same one. */
+const DONE = 3;
+
 /** The board never gets wider than this, and never wider than the phone it is
     on. Viewport units rather than `%` on purpose: the tray is a different
     container, and both have to derive the exact same piece size from it. */
 const BOARD_WIDTH = "min(100vw - 4rem, 32rem)";
-
-function starsFor(mistakes: number): number {
-  if (mistakes <= 2) return 3;
-  if (mistakes <= 6) return 2;
-  /* Never 0: finishing the picture at all is the achievement. */
-  return 1;
-}
 
 interface DragState {
   id: number;
@@ -82,8 +82,15 @@ function PieceArt({
           : undefined,
       }}
     >
+      {/* `overflow-hidden` as well as the clip path, and it is load-bearing:
+          the image inside is drawn at THREE TIMES the board's size and pushed
+          off-centre, and `clip-path` only hides it — it does not contain the
+          layout. Without this the page's scroll width grew past the viewport,
+          which on a phone widens the layout viewport itself, zooms the whole
+          page out and drags every `position: fixed` overlay off-screen with
+          it. */}
       <span
-        className="relative block h-full w-full"
+        className="relative block h-full w-full overflow-hidden"
         style={{ clipPath: `url(#${clipId(piece.id)})` }}
       >
         <Image
@@ -118,7 +125,7 @@ function PieceArt({
  * forgiving still can't put a piece in the wrong place. A miss springs back
  * with a wiggle and no telling-off, matching the rest of the site.
  */
-export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
+export function PuzzleBoard({ stage, picture, nextHref }: PuzzleBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const wiggleTimer = useRef<number | null>(null);
   const complete = useProgress((state) => state.complete);
@@ -126,7 +133,6 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
   const [placed, setPlaced] = useState<number[]>([]);
   const [drag, setDrag] = useState<DragState | null>(null);
   const [wrongId, setWrongId] = useState<number | null>(null);
-  const [mistakes, setMistakes] = useState(0);
 
   /* Derived, never stored: a second copy could drift out of sync. */
   const solved = placed.length === PUZZLE_PIECES;
@@ -230,20 +236,18 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
         /* Recorded the moment the picture is whole, in the handler that made
            it whole — not in an effect watching for it. */
         if (next.length === PUZZLE_PIECES) {
-          complete(puzzleKey(stage), starsFor(mistakes));
+          complete(puzzleKey(stage), DONE);
         }
         return;
       }
     }
 
     flashWrong(piece.id);
-    setMistakes((count) => count + 1);
     setDrag(null);
   };
 
   const reset = () => {
     setPlaced([]);
-    setMistakes(0);
     setWrongId(null);
     setDrag(null);
   };
@@ -347,15 +351,26 @@ export function PuzzleBoard({ stage, picture }: PuzzleBoardProps) {
       </div>
 
       {solved ? (
-        <div className="anim-pop-in flex flex-col items-center gap-4">
-          <StarReward stars={starsFor(mistakes)} />
+        /* No stars: the finished picture IS the reward here, and a second
+           star currency next to the lessons' own would only muddy both. */
+        <div className="anim-pop-in flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <Button3D
-            tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
+            variant="calm"
+            tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
             onClick={reset}
-            className="px-6 py-3 text-base"
+            className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
           >
             <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-            Play again
+            Again
+          </Button3D>
+
+          <Button3D
+            tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
+            href={nextHref}
+            className="px-6 py-3 text-base sm:px-7 sm:text-lg"
+          >
+            Next
+            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
           </Button3D>
         </div>
       ) : (
