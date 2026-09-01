@@ -10,14 +10,17 @@ import puzzle9 from "../../public/assets/activity-page/puzzle/9/puzzle-9.jpg";
 import puzzle10 from "../../public/assets/activity-page/puzzle/10/puzzle-10.jpg";
 import puzzle11 from "../../public/assets/activity-page/puzzle/11/puzzle-11.jpg";
 import puzzle12 from "../../public/assets/activity-page/puzzle/12/puzzle-12.jpg";
+import puzzle13 from "../../public/assets/activity-page/puzzle/13/puzzle-13.jpg";
+import puzzle14 from "../../public/assets/activity-page/puzzle/14/puzzle-14.jpg";
+import puzzle15 from "../../public/assets/activity-page/puzzle/15/puzzle-15.jpg";
 import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
 
 /** A colour each, so a wall of unopened puzzles reads as that many different
     things to look forward to rather than one grid of grey. Every pair is an
     existing site token — no new hues — laid out so no two neighbours in the
-    three-wide grid share a family. Twelve stages is four rows of three, and
-    the palette runs out before twelve distinct hues do, so the last row
-    repeats colours from the first two — never one directly above it. */
+    three-wide grid share a family. Fifteen stages is five rows of three, and
+    the palette runs out well before fifteen distinct hues do, so the last two
+    rows repeat colours from the first three — never one directly above. */
 const TONES: PuzzleTone[] = [
   { face: "var(--color-pinki)", edge: "var(--color-pinki-dark)" },
   { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
@@ -34,22 +37,29 @@ const TONES: PuzzleTone[] = [
     face: "var(--color-subject-colors)",
     edge: "var(--color-subject-colors-dark)",
   },
+  { face: "var(--accent)", edge: "var(--accent-dark)" },
+  { face: "var(--color-nova)", edge: "var(--color-nova-dark)" },
+  {
+    face: "var(--color-subject-shapes)",
+    edge: "var(--color-subject-shapes-dark)",
+  },
 ];
 
 /**
- * Twelve stages, every one of them with its picture.
+ * Fifteen stages, every one of them with its picture. Fifteen is the whole
+ * set — no more are planned.
  *
  * **Each stage owns its own cut, and that is the only thing that makes a
  * stage harder.** The board, the heap, the crop maths and the jigsaw
  * outlines all read `grid` from here, so a stage can be any shape.
  *
- * The counts climb in four steps: 9 and then 12 to learn the game, 16–20 once
- * the child has the idea, 25–30 after that, and 36–49 for a child who has
- * finished the other nine.
+ * The counts climb in five steps: 9 and then 12 to learn the game, 16–20 once
+ * the child has the idea, 25–30 after that, 36–49 for a child who has finished
+ * the first nine, and 56–72 for the three at the very end.
  *
  * The grids are not chosen for their piece count alone — each one is picked
  * so its CELLS COME OUT NEARLY SQUARE against its own picture. Stages 1–3 are
- * landscape (1376 × 768) and 4–12 are square (4–9 were cropped to it, 10–12
+ * landscape (1376 × 768) and 4–15 are square (4–9 were cropped to it, 10–15
  * arrived that way at 1024 × 1024), so a cut that suits one is wrong for the
  * other: 4 × 3 on a square picture would give pieces a third wider than they
  * are tall. Change a picture's shape and its grid has to be re-picked with it.
@@ -165,6 +175,33 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle12,
       alt: "Pinki, Nova and Bloo having a picnic beside a tent",
+    },
+  },
+  {
+    value: 13,
+    tone: TONES[12],
+    grid: { cols: 8, rows: 7 },
+    picture: {
+      image: puzzle13,
+      alt: "Pinki, Nova and Bloo potting flowers in a fenced garden",
+    },
+  },
+  {
+    value: 14,
+    tone: TONES[13],
+    grid: { cols: 8, rows: 8 },
+    picture: {
+      image: puzzle14,
+      alt: "Pinki, Nova and Bloo looking at the planets through a telescope",
+    },
+  },
+  {
+    value: 15,
+    tone: TONES[14],
+    grid: { cols: 9, rows: 8 },
+    picture: {
+      image: puzzle15,
+      alt: "Pinki, Nova and Bloo building a little town out of blocks",
     },
   },
 ];
