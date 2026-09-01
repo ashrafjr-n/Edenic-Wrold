@@ -16,6 +16,13 @@ export function itemKey(
   return `${characterId}.${lessonId}.${item}`;
 }
 
+/** Puzzles sit outside the character → lesson → item tree (they live under
+    `/activities`), but they are the same thing to this store: one key, best
+    score wins, one place completion lives. */
+export function puzzleKey(stage: number): ItemKey {
+  return `puzzle.${stage}`;
+}
+
 interface ItemProgress {
   /** 1–3, scored across the whole journey, not per stage. */
   stars: number;
