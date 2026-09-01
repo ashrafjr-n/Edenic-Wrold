@@ -1,3 +1,5 @@
+import puzzle1 from "../../public/assets/activity-page/puzzle/1/puzzle-1.jpg";
+import puzzle2 from "../../public/assets/activity-page/puzzle/2/puzzle-2.jpg";
 import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
 
 /** A colour each, so a wall of nine unopened puzzles reads as nine different
@@ -16,30 +18,38 @@ const TONES: PuzzleTone[] = [
   { face: "var(--accent)", edge: "var(--accent-dark)" },
 ];
 
-/** Every puzzle is a 3 × 3 grid. The nine pieces are cut out of ONE image by
-    CSS (see `lib/puzzle-pieces.ts`) — not nine separate files, and not an
-    SVG — the same sprite-crop trick `NumberComplete` already uses. */
-export const PUZZLE_COLS = 3;
-export const PUZZLE_ROWS = 3;
-export const PUZZLE_PIECES = PUZZLE_COLS * PUZZLE_ROWS;
-
-/** Nine stages. Only the first has its picture so far; the rest are declared
-    so the grid can show the shape of the whole set, the same way the numbers
-    lesson lists 1–9 with only the first fully built. */
+/**
+ * Nine stages. Only the first two have their pictures so far; the rest are
+ * declared so the grid can show the shape of the whole set, the same way the
+ * numbers lesson lists 1–9 with only the first fully built.
+ *
+ * **Each stage owns its own cut.** Stage 1 is 3 × 3, stage 2 is 4 × 3 — three
+ * more pieces, which is how a stage gets harder. Nothing else about a stage
+ * changes to make it harder; the board, the tray and the jigsaw outlines all
+ * read the grid from here.
+ */
 export const puzzleStages: PuzzleStage[] = [
   {
     value: 1,
     tone: TONES[0],
+    grid: { cols: 3, rows: 3 },
     picture: {
-      src: "/assets/activity-page/puzzle/1/puzzle-1.jpg",
-      width: 1376,
-      height: 768,
+      image: puzzle1,
       alt: "Pinki, Nova and Bloo drawing together at a little table",
     },
   },
-  ...Array.from({ length: 8 }, (_, index) => ({
-    value: index + 2,
-    tone: TONES[index + 1],
+  {
+    value: 2,
+    tone: TONES[1],
+    grid: { cols: 4, rows: 3 },
+    picture: {
+      image: puzzle2,
+      alt: "Pinki, Bloo and Nova playing with a ball in the park",
+    },
+  },
+  ...Array.from({ length: 7 }, (_, index) => ({
+    value: index + 3,
+    tone: TONES[index + 2],
   })),
 ];
 
