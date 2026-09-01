@@ -55,10 +55,13 @@ export function PuzzleView({ picture }: PuzzleViewProps) {
       /* The scrim closes it too — a child who taps anywhere should get back
          to the puzzle rather than be trapped. */
       onClick={() => setOpen(false)}
-      className="anim-pop-in fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-ink)]/65 p-6"
+      /* The scrim itself never animates: `pop-in` travels and overshoots, and
+         on a full-screen dim that reads as the whole page lurching. It fades,
+         the card pops. */
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-ink)]/70 p-7 sm:p-10"
     >
       <div
-        className="card relative w-full max-w-3xl p-3 sm:p-4"
+        className="card anim-pop-in relative w-full max-w-3xl p-3 sm:p-4"
         /* The picture itself is not a way out — only the scrim and the cross
            are. */
         onClick={(event) => event.stopPropagation()}
@@ -78,19 +81,20 @@ export function PuzzleView({ picture }: PuzzleViewProps) {
 
         {/* The wrapper carries the positioning, not the button: `.btn3d` sets
             `position: relative` and is UNLAYERED, so a Tailwind `absolute`
-            utility on the button itself silently loses. */}
-        <span className="absolute -right-3 -top-3">
+            utility on the button itself silently loses.
+
+            Solid accent pink with a white cross, not the white clay chip that
+            was here first — a white chip on the corner of a pale picture was
+            reported as hard to see, and pink is already the site's language
+            for chrome (the header's own icon chips). */}
+        <span className="absolute -right-4 -top-4 sm:-right-5 sm:-top-5">
           <Button3D
-            variant="calm"
-            tone={{ face: "var(--surface)" }}
+            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
             onClick={() => setOpen(false)}
             aria-label="Close and go back to the puzzle"
-            className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
+            className="h-14 w-14 sm:h-16 sm:w-16"
           >
-            <X
-              className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
-              strokeWidth={2.75}
-            />
+            <X className="h-7 w-7 sm:h-8 sm:w-8" strokeWidth={3.25} />
           </Button3D>
         </span>
       </div>
