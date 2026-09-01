@@ -60,19 +60,31 @@ function slotAt(index: number, count: number): number {
   );
 }
 
+/** How many rows deep the heap lies, as a share of the picture's own. */
+const HEAP_ROW_SHARE = 0.6;
+
 /**
  * The shape of the loose heap — how many slots across and down the tray gets.
  *
- * The tray is a wide, short box: it sits under the board on a phone and beside
- * it on a desktop, and either way it is as wide as the page allows. A
- * LANDSCAPE picture's own grid is already that shape, so the heap keeps it.
- * A PORTRAIT one's is the opposite — tall and narrow — and laid out that way
- * the pieces would pile into a thin column down the middle of a wide tray, so
- * the slots are transposed instead. Either way the slot count is exactly the
- * piece count, which is what lets `trayLayout` give every piece its own.
+ * A LANDSCAPE picture's own grid is already the shape the tray is, so the heap
+ * keeps it and those stages are untouched.
+ *
+ * An UPRIGHT one's is not. The tray under a square board has to be SHALLOW or
+ * the two together do not fit a phone screen, so the heap is dealt into about
+ * 60% as many rows as the picture has and as many columns as that takes —
+ * wide and shallow, whatever the cut. It is the tray's height that this is
+ * really choosing: the tray is `rows + 0.9` cells tall, so every row the heap
+ * loses is a cell of screen the board gets to keep.
+ *
+ * The slot count can come out slightly above the piece count (25 pieces lie on
+ * 9 × 3); the walk in `trayLayout` only ever deals the first `total` of them,
+ * which just leaves the last row of the heap a little short.
  */
-export function traySlots(grid: PuzzleGrid, portrait: boolean): PuzzleGrid {
-  return portrait ? { cols: grid.rows, rows: grid.cols } : grid;
+export function traySlots(grid: PuzzleGrid, upright: boolean): PuzzleGrid {
+  if (!upright) return grid;
+
+  const rows = Math.max(2, Math.round(grid.rows * HEAP_ROW_SHARE));
+  return { cols: Math.ceil((grid.cols * grid.rows) / rows), rows };
 }
 
 function gcd(a: number, b: number): number {
@@ -85,8 +97,9 @@ function gcd(a: number, b: number): number {
  * It has to be coprime with the piece count or the walk repeats and several
  * pieces are dealt the same slot — 5 and 15 share a factor of 3, which would
  * have piled a 3 × 5 stage's fifteen pieces onto five slots. 5 is coprime
- * with 9, 12, 18, 24 and 28, so every stage built before the portrait ones
- * keeps exactly the scatter it already had.
+ * with 9, 12, 16, 20, 25 and 30, so nothing built so far has needed another
+ * one — but a cut that does would silently deal several pieces the same slot
+ * without this.
  */
 function stepFor(total: number): number {
   let step = 5;
