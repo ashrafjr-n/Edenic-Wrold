@@ -76,7 +76,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
           <>
             {open && stage.picture && (
               <Image
-                src={stage.picture.src}
+                src={stage.picture.image}
                 alt=""
                 fill
                 sizes="(min-width: 640px) 12rem, 30vw"

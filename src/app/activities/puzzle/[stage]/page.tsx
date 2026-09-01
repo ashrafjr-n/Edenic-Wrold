@@ -24,7 +24,7 @@ export default async function PuzzleStagePage({
   /* Which stages are open lives in the progress store, which is client-side,
      so this route cannot gate on it — the lock is drawn on the grid instead.
      A stage with no picture has nothing to play, and that IS a 404. */
-  if (!stage?.picture) notFound();
+  if (!stage?.picture || !stage.grid) notFound();
 
   /* Where "Next" goes when the picture is finished: the following stage if it
      is actually playable, otherwise back to the list — the same call the
@@ -72,6 +72,7 @@ export default async function PuzzleStagePage({
         <PuzzleBoard
           stage={stage.value}
           picture={stage.picture}
+          grid={stage.grid}
           nextHref={nextHref}
         />
       </div>

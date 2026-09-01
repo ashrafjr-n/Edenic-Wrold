@@ -68,10 +68,12 @@ export function PuzzleView({ picture }: PuzzleViewProps) {
       >
         <div
           className="relative w-full overflow-hidden rounded-2xl"
-          style={{ aspectRatio: `${picture.width} / ${picture.height}` }}
+          style={{
+            aspectRatio: `${picture.image.width} / ${picture.image.height}`,
+          }}
         >
           <Image
-            src={picture.src}
+            src={picture.image}
             alt={picture.alt}
             fill
             sizes="(min-width: 768px) 48rem, 100vw"
