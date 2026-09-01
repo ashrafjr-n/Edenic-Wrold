@@ -15,9 +15,9 @@ All UI and content is English only.
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
-
-`Activities` appears in the navigation and footer but has no page yet, so it is
-rendered as disabled "soon" text rather than a link.
+| `/activities` | Activities — the YouTube channel card and the puzzles card |
+| `/activities/puzzle` | The nine puzzle stages, unlocked one at a time |
+| `/activities/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
 
 ## Getting started
 
@@ -97,15 +97,19 @@ src/
     learn/page.tsx                Friend picker
     learn/[character]/page.tsx    Character lesson hub
     learn/[character]/[lesson]/   Number picker, and the per-number pages
+    activities/page.tsx           Activities
+    activities/puzzle/            The stage grid, and one puzzle per stage
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards, intro icons
     learn/number/     Numerals, the tracing board, the quizzes, stars
+    activities/       The Activities cards, and the puzzle grid, board and view
     layout/           Header, nav, footer
     ui/               Shared primitives (Button3D, SocialLinks, Logo)
-  data/               Characters, lessons, numbers, navigation, socials, home panels
-  lib/                Trace scoring, quiz decoys, the shared /learn route resolver
+  data/               Characters, lessons, numbers, puzzles, navigation, socials, home panels
+  lib/                Trace scoring, quiz decoys, jigsaw piece and outline maths,
+                      the shared /learn route resolver
   store/              Lesson progress (zustand + persist)
   types/              Shared TypeScript types
 public/
@@ -115,13 +119,15 @@ public/
   assets/friends/     Mascot artwork
   assets/icons/       Decorative 3D icons
   assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9, props
+  assets/activity-page/     The Activities card art and the nine puzzle pictures
 ```
 
 ## Current status
 
-The home page, the friend picker, Pinki's lesson hub and the Numbers lesson are
-built, and all are still being iterated on visually. Only Pinki has lesson
-content; Nova and Bloo are locked, and Numbers is the only lesson with items.
+The home page, the friend picker, Pinki's lesson hub, the Numbers lesson and the
+puzzles are built, and all are still being iterated on visually. Only Pinki has
+lesson content; Nova and Bloo are locked, and Numbers is the only lesson with
+items.
 
 Each number is one journey of eight stages, guided by Pinki throughout: meet the
 number in a short video, see it standing still and say it aloud, watch her
@@ -142,6 +148,13 @@ no video yet, and their handwriting paths have not been tested.
 Audio is planned and designed for — the "say the word" button, its states and
 its timing are already built — but no clips exist yet.
 
+All nine puzzles are playable. Each is one picture cut into real interlocking
+jigsaw pieces — SVG clip paths over crops of a single image, no piece files —
+and a stage gets harder only by being cut into more of them, from nine up to
+twenty-eight. A piece counts as placed as soon as it overlaps its own hole, so
+nothing has to be lined up, and puzzles are not scored: the finished picture is
+the reward.
+
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
 point, so no progress, streaks or points appear anywhere before sign-in.
@@ -151,7 +164,7 @@ Planned, in order:
 1. Voice for Pinki and for each number word
 2. The same journey for numbers 2 to 9
 3. Progressive unlocking across characters and lessons (it works within a lesson)
-4. The Activities section
+4. The rest of the Activities section — tracing and matching practice
 5. Accounts, and the profile the "Join Edenic World" button leads to
 6. A real dark mode (needs a second token set across `globals.css`)
 
