@@ -1497,7 +1497,11 @@ button:disabled,
 }
 
 .anim-next-card {
-  animation: next-card-rock 2.8s ease-in-out infinite;
+  /* Held back until the cards have finished rising in — the last one lands at
+     roughly 0.99s (`ITEM_DELAY + 14 * ITEM_STAGGER` in `PuzzleGrid`), and a
+     card already rocking while its neighbours are still arriving reads as a
+     glitch rather than as a cue. */
+  animation: next-card-rock 2.8s ease-in-out 1s infinite;
   will-change: translate, rotate;
 }
 
@@ -1521,7 +1525,12 @@ button:disabled,
   inset: -0.4rem;
   border: 0.3rem solid var(--ring-tone);
   border-radius: 2.15rem;
-  animation: next-card-ring 2.8s ease-out infinite;
+  /* Invisible in its own right, with NO fill mode: the ring only exists
+     mid-keyframe. That is what keeps it hidden through the delay and between
+     iterations — a fill mode of `both` or `backwards` would park it at the 0%
+     keyframe instead, a solid rim sitting around the card. */
+  opacity: 0;
+  animation: next-card-ring 2.8s ease-out 1s infinite;
 }
 
 /* Paint only ever shows up ON the numeral: the layer carrying the child's
