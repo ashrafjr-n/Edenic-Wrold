@@ -37,3 +37,4 @@
 2026-08-27 fix header alignment
 2026-08-29 simplify confetti timing
 2026-08-30 tweak button states
+2026-09-01 adjust puzzle tray
