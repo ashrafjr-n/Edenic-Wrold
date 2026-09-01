@@ -26,8 +26,8 @@ type ButtonVars = CSSProperties & {
 const YOUTUBE_HREF = "https://www.youtube.com/@EdenicWorld-kids";
 
 /**
- * The activities page's opening CTA: the three friends, and one button under
- * them pointing at our YouTube channel.
+ * The activities page's opening CTA: one button pointing at our YouTube
+ * channel, and the three friends under it.
  *
  * **No `.card`, and that is deliberate** — this is the one place on the site
  * where rendered art stands on the page with no container at all, because a
@@ -43,20 +43,14 @@ const YOUTUBE_HREF = "https://www.youtube.com/@EdenicWorld-kids";
 export function YoutubeCta({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <Image
-        src={ctaArt}
-        alt="Pinki, Nova and Bloo each holding a red play button"
-        sizes="(min-width: 640px) 34rem, 92vw"
-        preload
-        className="h-auto w-full max-w-[22rem] sm:max-w-[34rem]"
-      />
-
-      {/* Last thing on the card, centred under the picture. */}
+      {/* Above the picture, not under it — the page opens on the thing to
+          tap, and the friends holding their play buttons then read as the
+          picture explaining it rather than as art with a caption. */}
       <a
         href={YOUTUBE_HREF}
         target="_blank"
         rel="noreferrer noopener"
-        className="btn3d mt-3 px-7 py-3.5 text-base sm:mt-4 sm:px-8 sm:text-lg"
+        className="btn3d mb-3 px-7 py-3.5 text-base sm:mb-4 sm:px-8 sm:text-lg"
         style={
           {
             "--btn-face": "#ff0033",
@@ -68,6 +62,14 @@ export function YoutubeCta({ className = "" }: { className?: string }) {
         <Play className="h-5 w-5 fill-current" strokeWidth={2} />
         Watch Now
       </a>
+
+      <Image
+        src={ctaArt}
+        alt="Pinki, Nova and Bloo each holding a red play button"
+        sizes="(min-width: 640px) 34rem, 92vw"
+        preload
+        className="h-auto w-full max-w-[22rem] sm:max-w-[34rem]"
+      />
     </div>
   );
 }
