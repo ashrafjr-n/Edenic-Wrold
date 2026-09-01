@@ -1,5 +1,12 @@
 import puzzle1 from "../../public/assets/activity-page/puzzle/1/puzzle-1.jpg";
 import puzzle2 from "../../public/assets/activity-page/puzzle/2/puzzle-2.jpg";
+import puzzle3 from "../../public/assets/activity-page/puzzle/3/puzzle-3.jpg";
+import puzzle4 from "../../public/assets/activity-page/puzzle/4/puzzle-4.jpg";
+import puzzle5 from "../../public/assets/activity-page/puzzle/5/puzzle-5.jpg";
+import puzzle6 from "../../public/assets/activity-page/puzzle/6/puzzle-6.jpg";
+import puzzle7 from "../../public/assets/activity-page/puzzle/7/puzzle-7.jpg";
+import puzzle8 from "../../public/assets/activity-page/puzzle/8/puzzle-8.jpg";
+import puzzle9 from "../../public/assets/activity-page/puzzle/9/puzzle-9.jpg";
 import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
 
 /** A colour each, so a wall of nine unopened puzzles reads as nine different
@@ -19,14 +26,21 @@ const TONES: PuzzleTone[] = [
 ];
 
 /**
- * Nine stages. Only the first two have their pictures so far; the rest are
- * declared so the grid can show the shape of the whole set, the same way the
- * numbers lesson lists 1–9 with only the first fully built.
+ * Nine stages, every one of them with its picture.
  *
- * **Each stage owns its own cut.** Stage 1 is 3 × 3, stage 2 is 4 × 3 — three
- * more pieces, which is how a stage gets harder. Nothing else about a stage
- * changes to make it harder; the board, the tray and the jigsaw outlines all
- * read the grid from here.
+ * **Each stage owns its own cut, and that is the only thing that makes a
+ * stage harder.** The board, the heap, the crop maths and the jigsaw
+ * outlines all read `grid` from here, so a stage can be any shape.
+ *
+ * The counts climb in three steps: 9 and then 12 to learn the game, 15–18
+ * once the child has the idea, 24–28 at the end.
+ *
+ * The grids are not chosen for their piece count alone — each one is picked
+ * so its CELLS COME OUT NEARLY SQUARE against its own picture. Stages 1–3 are
+ * landscape (1376 × 768) and 4–9 are portrait, so a cut that suits one is
+ * wrong for the other: 4 × 3 on a 9:16 picture would give pieces two and a
+ * half times taller than they are wide, which is a strip, not a jigsaw piece.
+ * Change a picture's shape and its grid has to be re-picked with it.
  */
 export const puzzleStages: PuzzleStage[] = [
   {
@@ -47,10 +61,69 @@ export const puzzleStages: PuzzleStage[] = [
       alt: "Pinki, Bloo and Nova playing with a ball in the park",
     },
   },
-  ...Array.from({ length: 7 }, (_, index) => ({
-    value: index + 3,
-    tone: TONES[index + 2],
-  })),
+  {
+    value: 3,
+    tone: TONES[2],
+    grid: { cols: 4, rows: 3 },
+    picture: {
+      image: puzzle3,
+      alt: "Pinki, Nova and Bloo picking flowers on a green hill",
+    },
+  },
+  {
+    value: 4,
+    tone: TONES[3],
+    grid: { cols: 3, rows: 5 },
+    picture: {
+      image: puzzle4,
+      alt: "Pinki, Nova and Bloo splashing in a paddling pool with rubber rings",
+    },
+  },
+  {
+    value: 5,
+    tone: TONES[4],
+    grid: { cols: 3, rows: 5 },
+    picture: {
+      image: puzzle5,
+      alt: "Pinki, Nova and Bloo climbing a climbing wall",
+    },
+  },
+  {
+    value: 6,
+    tone: TONES[5],
+    grid: { cols: 3, rows: 6 },
+    picture: {
+      image: puzzle6,
+      alt: "Pinki, Nova and Bloo flying a spaceship past the planets",
+    },
+  },
+  {
+    value: 7,
+    tone: TONES[6],
+    grid: { cols: 4, rows: 6 },
+    picture: {
+      image: puzzle7,
+      alt: "Pinki, Nova and Bloo riding a little train through the hills",
+    },
+  },
+  {
+    value: 8,
+    tone: TONES[7],
+    grid: { cols: 4, rows: 6 },
+    picture: {
+      image: puzzle8,
+      alt: "Pinki, Nova and Bloo playing basketball together",
+    },
+  },
+  {
+    value: 9,
+    tone: TONES[8],
+    grid: { cols: 4, rows: 7 },
+    picture: {
+      image: puzzle9,
+      alt: "Pinki, Nova and Bloo painting a big picture on an easel",
+    },
+  },
 ];
 
 export function findPuzzleStage(value: number): PuzzleStage | undefined {
