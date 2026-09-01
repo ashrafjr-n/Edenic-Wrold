@@ -26,6 +26,15 @@ export default async function PuzzleStagePage({
      A stage with no picture has nothing to play, and that IS a 404. */
   if (!stage?.picture) notFound();
 
+  /* Where "Next" goes when the picture is finished: the following stage if it
+     is actually playable, otherwise back to the list — the same call the
+     numbers journey makes at the end of its own run. */
+  const index = puzzleStages.indexOf(stage);
+  const next = puzzleStages[index + 1];
+  const nextHref = next?.picture
+    ? `/activities/puzzle/${next.value}`
+    : "/activities/puzzle";
+
   return (
     <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
@@ -60,7 +69,11 @@ export default async function PuzzleStagePage({
       </div>
 
       <div className="mx-auto flex w-full flex-1 flex-col justify-center px-4 py-8 sm:px-8 sm:py-10">
-        <PuzzleBoard stage={stage.value} picture={stage.picture} />
+        <PuzzleBoard
+          stage={stage.value}
+          picture={stage.picture}
+          nextHref={nextHref}
+        />
       </div>
     </main>
   );
