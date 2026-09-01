@@ -553,9 +553,16 @@ body {
   .lesson-theme.is-locked {
     --lesson-accent: var(--color-locked);
     --lesson-accent-dark: var(--color-locked-dark);
-    --lesson-title: var(--color-locked-text);
-    --lesson-muted: var(--color-locked-text);
   }
+}
+
+/* A locked card's BODY is the character's own accent now, grained — so its
+   type is white at every width, not the locked grey it wore when the card
+   behind it was white. Declared after the phone block on purpose: that block
+   still swaps the accent tokens, this overrides only the type. */
+.lesson-theme.is-locked {
+  --lesson-title: #fff;
+  --lesson-muted: rgb(255 255 255 / 88%);
 }
 
 /* ---------------------------------------------------------------
