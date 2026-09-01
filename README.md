@@ -119,7 +119,7 @@ public/
   assets/friends/     Mascot artwork
   assets/icons/       Decorative 3D icons
   assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9, props
-  assets/activity-page/     The Activities card art and the nine puzzle pictures
+  assets/activity-page/     The Activities card art and the fifteen puzzle pictures
 ```
 
 ## Current status
@@ -148,8 +148,11 @@ no video yet, and their handwriting paths have not been tested.
 Audio is planned and designed for — the "say the word" button, its states and
 its timing are already built — but no clips exist yet.
 
-All fifteen puzzles are playable. Each is one picture cut into real
-interlocking jigsaw pieces — SVG clip paths over crops of a single image, no
+All fifteen puzzles are playable, and the stage grid shows the child where
+they are: every stage is the same card with the same artwork on it, marked
+with a green tick when finished, a pink ring when it is the one to play next,
+or frosted glass and a padlock while it is still locked. Each puzzle is one
+picture cut into real interlocking jigsaw pieces — SVG clip paths over crops of a single image, no
 piece files — and a stage gets harder only by being cut into more of them,
 from nine up to seventy-two. Stages 4–15 use square pictures so that the board
 and the heap of loose pieces both fit one phone screen: a child who had to
