@@ -69,14 +69,13 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
           {/* Out of the journey and back to the lesson list, not to the
               previous number — leaving is leaving. */}
           <Button3D
-            variant="calm"
-            tone={{ face: "var(--surface)" }}
+            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
             href={lessonPath}
             aria-label={`Back to ${lesson.name}`}
-            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
             <ArrowLeft
-              className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
+              className="h-5 w-5 text-white sm:h-6 sm:w-6"
               strokeWidth={2.75}
             />
           </Button3D>

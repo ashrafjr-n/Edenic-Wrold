@@ -38,14 +38,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
           style={{ animationDelay: "0.1s" }}
         >
           <Button3D
-            variant="calm"
-            tone={{ face: "var(--surface)" }}
+            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
             href={`/learn/${character.id}`}
             aria-label={`Back to ${character.name}'s lessons`}
-            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
             <ArrowLeft
-              className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
+              className="h-5 w-5 text-white sm:h-6 sm:w-6"
               strokeWidth={2.75}
             />
           </Button3D>

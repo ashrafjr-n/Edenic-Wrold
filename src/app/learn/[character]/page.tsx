@@ -60,15 +60,20 @@ export default async function CharacterLearnPage({
           className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
         >
+          {/* Accent pink and grained, like every other back button on the
+              site — the default `playful` variant IS the clay recipe, so the
+              tone alone drives it and no modifier class is needed. It used to
+              be a white `.btn3d--clay-white` chip; the crown beside it still
+              is, which is what keeps "go back" and "chrome with no
+              destination yet" from reading as the same control. */}
           <Button3D
-            variant="calm"
-            tone={{ face: "var(--surface)" }}
+            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
             href="/learn"
             aria-label="Back to Learn"
-            className="btn3d--clay-white h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
           >
             <ArrowLeft
-              className="h-5 w-5 text-[var(--color-ink-soft)] sm:h-6 sm:w-6"
+              className="h-5 w-5 text-white sm:h-6 sm:w-6"
               strokeWidth={2.75}
             />
           </Button3D>
