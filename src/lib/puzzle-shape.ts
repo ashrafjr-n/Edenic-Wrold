@@ -12,7 +12,7 @@ import type { PuzzleGrid } from "@/types/puzzle";
  *
  * The paths are in `objectBoundingBox` units (0–1), so one definition scales
  * to whatever size the board is rendered at. The knob is sized from the SHORT
- * side of a cell — whichever that is, since a portrait picture's cells can be
+ * side of a cell — whichever that is, since an upright picture's cells can be
  * taller than they are wide — and its two radii are normalised separately
  * (`rx` against the box width, `ry` against its height), so it comes out
  * round on screen whatever shape the cell is.
@@ -79,7 +79,7 @@ interface Metrics {
     is a cell's width divided by its height. */
 function metrics(ratio: number): Metrics {
   /* Work in units of a cell's height, and size the knob off whichever side is
-     SHORTER — a portrait picture cut into near-square cells can put either
+     SHORTER — an upright picture cut into near-square cells can put either
      one there, and a knob measured off the long side would swallow the short
      one. `short` is 1 whenever the cells are wider than they are tall, which
      is why the landscape stages come out byte-identical to before. */
