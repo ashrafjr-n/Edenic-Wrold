@@ -1,6 +1,9 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { YoutubeCta } from "@/components/activities/youtube-cta";
 import { PuzzleCta } from "@/components/activities/puzzle-cta";
+
+type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 export const metadata: Metadata = {
   title: "Activities — Edenic World",
@@ -19,18 +22,23 @@ export default function ActivitiesPage() {
             are coming under this, which is what the rule is really marking:
             the end of one section, not a gap between two cards.
 
-            It fades out at both ends rather than stopping: nothing on this
-            site has a hard edge, and a full-strength line ruled across the
-            page would be the only one. Brand blue at a quarter strength, so
-            it reads as part of the page rather than as a border — and no new
-            hue, the same rule every other surface here follows. */}
+            It is a `.clay` bar, not a border: brand blue with the site's
+            grain over it, an inner highlight and shade, and its own soft
+            shadow — the same material as every button and panel here. A
+            hairline rule would have been the one hard edge on the site, and a
+            faded gradient one (tried first) carried no grain at all, since
+            the overlay blend has nothing to push against below full strength.
+            `.clay` sets no radius of its own, so `rounded-full` composes with
+            it safely — unlike `.card`/`.tile`, which would swallow it. */}
         <div
           aria-hidden
-          className="mx-auto h-0.5 w-full max-w-3xl rounded-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 30%, transparent), transparent)",
-          }}
+          className="clay mx-auto h-1.5 w-full max-w-3xl rounded-full"
+          style={
+            {
+              backgroundColor: "var(--brand)",
+              "--clay-edge": "var(--brand-dark)",
+            } as ClayVars
+          }
         />
 
         <PuzzleCta />
