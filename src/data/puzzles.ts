@@ -7,12 +7,17 @@ import puzzle6 from "../../public/assets/activity-page/puzzle/6/puzzle-6.jpg";
 import puzzle7 from "../../public/assets/activity-page/puzzle/7/puzzle-7.jpg";
 import puzzle8 from "../../public/assets/activity-page/puzzle/8/puzzle-8.jpg";
 import puzzle9 from "../../public/assets/activity-page/puzzle/9/puzzle-9.jpg";
+import puzzle10 from "../../public/assets/activity-page/puzzle/10/puzzle-10.jpg";
+import puzzle11 from "../../public/assets/activity-page/puzzle/11/puzzle-11.jpg";
+import puzzle12 from "../../public/assets/activity-page/puzzle/12/puzzle-12.jpg";
 import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
 
-/** A colour each, so a wall of nine unopened puzzles reads as nine different
+/** A colour each, so a wall of unopened puzzles reads as that many different
     things to look forward to rather than one grid of grey. Every pair is an
     existing site token — no new hues — laid out so no two neighbours in the
-    3 × 3 grid share a family. */
+    three-wide grid share a family. Twelve stages is four rows of three, and
+    the palette runs out before twelve distinct hues do, so the last row
+    repeats colours from the first two — never one directly above it. */
 const TONES: PuzzleTone[] = [
   { face: "var(--color-pinki)", edge: "var(--color-pinki-dark)" },
   { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
@@ -23,24 +28,31 @@ const TONES: PuzzleTone[] = [
   { face: "var(--brand)", edge: "var(--brand-dark)" },
   { face: "var(--color-subject-letters)", edge: "var(--color-subject-letters-dark)" },
   { face: "var(--accent)", edge: "var(--accent-dark)" },
+  { face: "var(--color-go)", edge: "var(--color-go-dark)" },
+  { face: "var(--color-gold)", edge: "var(--color-gold-dark)" },
+  {
+    face: "var(--color-subject-colors)",
+    edge: "var(--color-subject-colors-dark)",
+  },
 ];
 
 /**
- * Nine stages, every one of them with its picture.
+ * Twelve stages, every one of them with its picture.
  *
  * **Each stage owns its own cut, and that is the only thing that makes a
  * stage harder.** The board, the heap, the crop maths and the jigsaw
  * outlines all read `grid` from here, so a stage can be any shape.
  *
- * The counts climb in three steps: 9 and then 12 to learn the game, 16–20
- * once the child has the idea, 25–30 at the end.
+ * The counts climb in four steps: 9 and then 12 to learn the game, 16–20 once
+ * the child has the idea, 25–30 after that, and 36–49 for a child who has
+ * finished the other nine.
  *
  * The grids are not chosen for their piece count alone — each one is picked
  * so its CELLS COME OUT NEARLY SQUARE against its own picture. Stages 1–3 are
- * landscape (1376 × 768) and 4–9 are square (see the note on those pictures
- * below), so a cut that suits one is wrong for the other: 4 × 3 on a square
- * picture would give pieces a third wider than they are tall. Change a
- * picture's shape and its grid has to be re-picked with it.
+ * landscape (1376 × 768) and 4–12 are square (4–9 were cropped to it, 10–12
+ * arrived that way at 1024 × 1024), so a cut that suits one is wrong for the
+ * other: 4 × 3 on a square picture would give pieces a third wider than they
+ * are tall. Change a picture's shape and its grid has to be re-picked with it.
  */
 export const puzzleStages: PuzzleStage[] = [
   {
@@ -126,6 +138,33 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle9,
       alt: "Pinki, Nova and Bloo painting a big picture on an easel",
+    },
+  },
+  {
+    value: 10,
+    tone: TONES[9],
+    grid: { cols: 6, rows: 6 },
+    picture: {
+      image: puzzle10,
+      alt: "Pinki, Nova and Bloo planting and watering flowers in a garden",
+    },
+  },
+  {
+    value: 11,
+    tone: TONES[10],
+    grid: { cols: 7, rows: 6 },
+    picture: {
+      image: puzzle11,
+      alt: "Pinki, Nova and Bloo mixing colours in a little science lab",
+    },
+  },
+  {
+    value: 12,
+    tone: TONES[11],
+    grid: { cols: 7, rows: 7 },
+    picture: {
+      image: puzzle12,
+      alt: "Pinki, Nova and Bloo having a picnic beside a tent",
     },
   },
 ];

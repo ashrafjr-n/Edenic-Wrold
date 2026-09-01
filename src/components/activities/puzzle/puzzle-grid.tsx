@@ -17,11 +17,11 @@ const ITEM_STAGGER = 0.06;
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 /**
- * The nine puzzle stages, three to a row.
+ * The twelve puzzle stages, three to a row.
  *
  * Every card is real clay — a coloured face with the site's grain over it and
  * the inflated shading every other `.clay` surface has. An unopened stage is
- * its own colour with its number on it, so a wall of nine reads as nine
+ * its own colour with its number on it, so a wall of them reads as that many
  * different things to look forward to; the open one drops the colour and
  * shows the picture instead, because by then there is something better to
  * look at than a number.

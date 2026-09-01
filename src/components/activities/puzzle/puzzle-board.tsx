@@ -147,7 +147,7 @@ function PieceArt({
  * One puzzle: a board showing the empty jigsaw holes, and a heap of loose
  * pieces below to carry into them.
  *
- * The nine pieces are CSS crops of a SINGLE image — never nine files — cut to
+ * The pieces are CSS crops of a SINGLE image — never one file each — cut to
  * real interlocking jigsaw outlines by an SVG clip path each
  * (`lib/puzzle-shape.ts`). Neighbouring pieces read the same edge table, so a
  * tab and the socket it drops into are the same curve by construction.
@@ -340,7 +340,7 @@ export function PuzzleBoard({
       }`}
       style={sizing}
     >
-      {/* The nine outlines, defined once. `objectBoundingBox` units mean one
+      {/* Every outline, defined once. `objectBoundingBox` units mean one
           definition scales to whatever size the board is drawn at. */}
       <svg width="0" height="0" aria-hidden className="absolute">
         <defs>
@@ -425,7 +425,7 @@ export function PuzzleBoard({
             })}
 
             {/* Once every piece is home the whole picture fades in over the
-                nine crops, so the finished puzzle can never show a hairline
+                crops, so the finished puzzle can never show a hairline
                 seam between them. */}
             <Image
               src={picture.image}
