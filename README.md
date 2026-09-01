@@ -149,9 +149,11 @@ Audio is planned and designed for — the "say the word" button, its states and
 its timing are already built — but no clips exist yet.
 
 All fifteen puzzles are playable, and the stage grid shows the child where
-they are: every stage is the same card with the same artwork on it, marked
-with a green tick when finished, a pink ring when it is the one to play next,
-or frosted glass and a padlock while it is still locked. Each puzzle is one
+they are: every stage is the same clay tile with its artwork set into a well
+in the face and its number engraved in the lip below, marked with a small
+embossed tick when finished, cast in pink clay and lifted when it is the one
+to play next, or sealed under a clay lid and a padlock while it is still
+locked. Each puzzle is one
 picture cut into real interlocking jigsaw pieces — SVG clip paths over crops of a single image, no
 piece files — and a stage gets harder only by being cut into more of them,
 from nine up to seventy-two. Stages 4–15 use square pictures so that the board
