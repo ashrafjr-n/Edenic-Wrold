@@ -16,7 +16,7 @@ All UI and content is English only.
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
 | `/activities` | Activities — the YouTube channel card and the puzzles card |
-| `/activities/puzzle` | The nine puzzle stages, unlocked one at a time |
+| `/activities/puzzle` | The twelve puzzle stages, unlocked one at a time |
 | `/activities/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
 
 ## Getting started
@@ -148,12 +148,12 @@ no video yet, and their handwriting paths have not been tested.
 Audio is planned and designed for — the "say the word" button, its states and
 its timing are already built — but no clips exist yet.
 
-All nine puzzles are playable. Each is one picture cut into real interlocking
-jigsaw pieces — SVG clip paths over crops of a single image, no piece files —
-and a stage gets harder only by being cut into more of them, from nine up to
-thirty. Stages 4–9 use square pictures so that the board and the heap of loose
-pieces both fit one phone screen: a child who had to scroll between the two
-could not drag a piece from one to the other. A piece counts as placed as soon as it overlaps its own hole, so
+All twelve puzzles are playable. Each is one picture cut into real
+interlocking jigsaw pieces — SVG clip paths over crops of a single image, no
+piece files — and a stage gets harder only by being cut into more of them,
+from nine up to forty-nine. Stages 4–12 use square pictures so that the board
+and the heap of loose pieces both fit one phone screen: a child who had to
+scroll between the two could not drag a piece from one to the other. A piece counts as placed as soon as it overlaps its own hole, so
 nothing has to be lined up, and puzzles are not scored: the finished picture is
 the reward.
 
