@@ -15,9 +15,11 @@ All UI and content is English only.
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
-| `/activities` | Activities — the YouTube channel card and the puzzles card |
+| `/activities` | Activities — the puzzles card and the Memory Match card, plus a floating YouTube prompt |
 | `/activities/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/activities/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
+| `/activities/memory-match` | The twelve Memory Match levels, unlocked one at a time |
+| `/activities/memory-match/[level]` | One level: the level number, the clock, and the grid of cards |
 
 ## Getting started
 
@@ -99,18 +101,21 @@ src/
     learn/[character]/[lesson]/   Number picker, and the per-number pages
     activities/page.tsx           Activities
     activities/puzzle/            The stage grid, and one puzzle per stage
+    activities/memory-match/      The level grid, and one memory level per level
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards, intro icons
     learn/number/     Numerals, the tracing board, the quizzes, stars
-    activities/       The Activities cards, and the puzzle grid, board and view
+    activities/       The Activities cards, the shared progress bar, and the
+                      puzzle and memory-match grids and boards
     layout/           Header, nav, footer
-    ui/               Shared primitives (Button3D, SocialLinks, Logo)
-  data/               Characters, lessons, numbers, puzzles, navigation, socials, home panels
+    ui/               Shared primitives (Button3D, SocialLinks, Logo, confetti, stars)
+  data/               Characters, lessons, numbers, puzzles, memory levels,
+                      navigation, socials, home panels
   lib/                Trace scoring, quiz decoys, jigsaw piece and outline maths,
-                      the shared /learn route resolver
-  store/              Lesson progress (zustand + persist)
+                      the memory deal and scoring, the shared /learn route resolver
+  store/              Progress for lessons, puzzles and memory levels (zustand + persist)
   types/              Shared TypeScript types
 public/
   hero.jpg            Home hero scene
