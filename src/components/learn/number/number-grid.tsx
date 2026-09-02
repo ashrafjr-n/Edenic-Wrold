@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import { Lock } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
@@ -114,7 +115,24 @@ export function NumberGrid({
                   sizeClass="h-16 w-16 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
                   locked={locked}
                   decorative
+                  /* The cell is the numeral's ground now, so the halo has a
+                     surface to fight with — left on, it washes a light blob
+                     into the middle of every tint. */
+                  bloom={false}
+                  /* The padlock goes on the CELL's corner below, not the
+                     glyph's: sized against a numeral this small it covered
+                     half the digit. */
+                  badge={false}
                 />
+
+                {/* `.lock-chip` — the site's one padlock badge, corner-mounted
+                    the same way the friend picker and the lesson cards mount
+                    theirs, so "not yet" reads identically everywhere. */}
+                {locked && (
+                  <span className="lock-chip absolute right-1 top-1 h-6 w-6 sm:right-1.5 sm:top-1.5 sm:h-7 sm:w-7">
+                    <Lock className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2.75} />
+                  </span>
+                )}
 
                 {/* The same "Next up" mark the lesson hub uses, shortened to
                     fit a cell this size and hung over the tile's top edge so
