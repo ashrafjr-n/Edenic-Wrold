@@ -1,15 +1,8 @@
-import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Play } from "lucide-react";
 import novaYoutube from "../../../public/assets/activity-page/youtube-CTA/nova-youtube.png";
 import blooYoutube from "../../../public/assets/activity-page/youtube-CTA/bloo-youtube.png";
 import pinkiYoutube from "../../../public/assets/activity-page/youtube-CTA/pinki-youtube.png";
-
-type ButtonVars = CSSProperties & {
-  "--btn-face"?: string;
-  "--btn-edge"?: string;
-  "--btn-text"?: string;
-};
 
 /** Same channel URL `YoutubeCta` used before it — see `data/socials.ts`. */
 const YOUTUBE_HREF = "https://www.youtube.com/@EdenicWorld-kids";
@@ -31,8 +24,12 @@ const MASCOTS: { id: string; name: string; image: StaticImageData }[] = [
 /**
  * The Activities page's YouTube CTA, now a small floating widget instead of
  * a full-width banner: Nova, Bloo and Pinki each take a turn sliding in from
- * the right in the bottom corner, holding a "Watch Now" chip that pops up
- * above them once they've settled, before both fade out for the next friend.
+ * the right in the bottom corner, with a speech bubble popping up well clear
+ * of their head once they've settled, before both fade out for the next
+ * friend. The bubble is `.speech-bubble` (the same one `PinkiGuide` uses on
+ * the number journey) with a downward-pointing tail
+ * (`.speech-bubble--point-down`) instead of a `.btn3d` pill — "Watch Now"
+ * reads as the character saying it, not as a button floating beside them.
  *
  * Fixed to the viewport (not the page flow) so it stays reachable while
  * scrolling. The bottom offset clears `BottomNav` on a phone (`sm:hidden`,
@@ -62,17 +59,10 @@ export function MascotYoutubeCta() {
               target="_blank"
               rel="noreferrer noopener"
               aria-label={`Watch ${mascot.name} on YouTube`}
-              className="mascot-watch-btn btn3d pointer-events-auto absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs sm:-top-3 sm:px-4 sm:py-2 sm:text-sm"
-              style={
-                {
-                  animationDelay: `${index * SEGMENT_SECONDS}s`,
-                  "--btn-face": "#ff0033",
-                  "--btn-edge": "#c40027",
-                  "--btn-text": "#fff",
-                } as ButtonVars
-              }
+              className="mascot-watch-btn speech-bubble speech-bubble--point-down pointer-events-auto absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-2 text-xs font-bold whitespace-nowrap text-[var(--color-ink)] sm:-top-12 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm"
+              style={{ animationDelay: `${index * SEGMENT_SECONDS}s` }}
             >
-              <Play className="h-3 w-3 fill-current sm:h-4 sm:w-4" strokeWidth={2} />
+              <Play className="h-3 w-3 shrink-0 fill-[#ff0033] text-[#ff0033] sm:h-4 sm:w-4" strokeWidth={2} />
               Watch Now
             </a>
           </div>
