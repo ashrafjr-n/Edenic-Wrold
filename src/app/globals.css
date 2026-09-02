@@ -1497,15 +1497,20 @@ button:disabled,
   display: block;
   height: 100%;
   border-radius: 9999px;
-  background-color: var(--color-go);
+  /* Green by default — the site's "you passed this" colour, and what the
+     puzzles have always used. Memory match overrides the pair with gold, its
+     own hero token; nothing else about the bar changes. */
+  --bar-face: var(--color-go);
+  --bar-edge: var(--color-go-dark);
+  background-color: var(--bar-face);
   background-image: var(--noise);
   background-size: 180px 180px;
   background-blend-mode: overlay;
   box-shadow:
     inset 0 4px 6px -2px rgb(255 255 255 / 55%),
     inset 0 -5px 8px -2px
-      color-mix(in srgb, var(--color-go-dark) 70%, transparent),
-    0 7px 14px -7px color-mix(in srgb, var(--color-go-dark) 60%, transparent);
+      color-mix(in srgb, var(--bar-edge) 70%, transparent),
+    0 7px 14px -7px color-mix(in srgb, var(--bar-edge) 60%, transparent);
   /* The bar starts empty on the server and on the first client render (the
      progress store has not read localStorage yet), so this transition is
      also the bar filling itself in on arrival — no separate entrance. */
@@ -1661,5 +1666,135 @@ button:disabled,
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Memory Match — the cards, and the mini board on a level card.
+
+   Gold leads this game the way green leads the puzzles: the closed card IS
+   gold clay, and every other gold thing on these two pages follows from
+   that. Same claymorphism as everything else — inner top highlight, inner
+   bottom shade, wide tinted drop shadow — just at card size.
+
+   These blocks are fully self-contained (radius, size, shading all here)
+   rather than built on `.card`/`.tile`: those are unlayered and set a
+   `border-radius` this needs to override at this scale, which a Tailwind
+   `rounded-*` utility silently cannot do.
+   --------------------------------------------------------------- */
+.memory-card {
+  perspective: 900px;
+  /* The flip is a transform on the INNER element, so the button itself is
+     free for the miss wiggle without the two fighting. */
+  background: none;
+  border: 0;
+  padding: 0;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.memory-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.memory-card.is-open .memory-card-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.1rem;
+  /* Lightning CSS adds the -webkit- prefixes; writing them by hand only
+     duplicates every declaration in the output. */
+  backface-visibility: hidden;
+}
+
+/* Face down: the same gold clay back on every card, so nothing about a
+   closed card can hint at what is under it. */
+.memory-face--back {
+  --clay-edge: var(--color-gold-dark);
+  color: color-mix(in srgb, var(--color-gold-dark) 55%, #fff);
+  background-color: var(--color-gold);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 7px 12px -4px rgb(255 255 255 / 55%),
+    inset 0 -8px 13px -4px color-mix(in srgb, var(--clay-edge) 55%, transparent),
+    0 12px 22px -10px color-mix(in srgb, var(--clay-edge) 60%, transparent);
+}
+
+/* Face up: white clay, the picture standing on it. */
+.memory-face--front {
+  transform: rotateY(180deg);
+  padding: 0.5rem;
+  background-color: var(--surface);
+  box-shadow:
+    inset 0 8px 13px -6px rgb(255 255 255 / 90%),
+    inset 0 -9px 14px -6px rgb(var(--shadow-hue) / 20%),
+    0 14px 28px -12px rgb(var(--shadow-hue) / 32%);
+}
+
+/* Matched: a gold rim around the front, so a found pair reads as claimed
+   rather than merely open. No motion — they sit still while the rest of the
+   board carries on. */
+.memory-card.is-matched .memory-face--front {
+  box-shadow:
+    inset 0 0 0 3px var(--color-gold),
+    inset 0 8px 13px -6px rgb(255 255 255 / 90%),
+    inset 0 -9px 14px -6px color-mix(in srgb, var(--color-gold-dark) 30%, transparent),
+    0 14px 28px -12px color-mix(in srgb, var(--color-gold-dark) 45%, transparent);
+}
+
+/* A closed card lifts a little under the pointer — the only hover on the
+   board, and the same "nothing moves but a card lift" rule the rest of the
+   site keeps. */
+.memory-card:not(.is-open):not(:disabled):hover .memory-card-inner {
+  translate: 0 -4px;
+}
+
+/* The miniature board on a level-select card: one pip per card, in that
+   level's own column count, so the size of the level is visible before it is
+   opened. */
+.memory-mini {
+  display: grid;
+  gap: 0.25rem;
+  width: fit-content;
+}
+
+.memory-mini-pip {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.3rem;
+  background-color: rgb(255 255 255 / 78%);
+  box-shadow: inset 0 -2px 3px -1px color-mix(in srgb, var(--color-gold-dark) 45%, transparent);
+}
+
+@media (width >= 40rem) {
+  .memory-mini {
+    gap: 0.3rem;
+  }
+
+  .memory-mini-pip {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-card-inner {
+    transition: none;
+  }
+
+  .memory-card:not(.is-open):not(:disabled):hover .memory-card-inner {
+    translate: none;
   }
 }

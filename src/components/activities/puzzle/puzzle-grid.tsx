@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import type { PuzzleStage } from "@/types/puzzle";
 import { puzzleKey, useProgress } from "@/store/progress";
-import { PuzzleProgress } from "./puzzle-progress";
+import { ActivityProgress } from "@/components/activities/activity-progress";
 
 interface PuzzleGridProps {
   stages: PuzzleStage[];
@@ -73,7 +73,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
 
   return (
     <div>
-      <PuzzleProgress done={finished} total={stages.length} />
+      <ActivityProgress label="Puzzles" done={finished} total={stages.length} />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
         {cast.map(({ stage, index, open, done }) => {
