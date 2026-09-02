@@ -160,6 +160,16 @@ scroll between the two could not drag a piece from one to the other. A piece cou
 nothing has to be lined up, and puzzles are not scored: the finished picture is
 the reward.
 
+**Memory Match** adds twelve levels of matching pairs, from six cards up to
+sixteen. The card count is only half of what makes a level harder: the early
+levels use plainly different pictures, while the later ones deal look-alikes —
+the same ball in two colours, three letters in the same lettering, the three
+friends in the same silhouette — so the game turns from recognising into
+remembering. Each level carries a target time that is worth a star, and
+nothing else: the clock stops at zero and goes quiet, the board stays playable,
+and a child can always finish. Levels are scored out of three stars from time
+and wrong turns, and unlock one at a time.
+
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
 point, so no progress, streaks or points appear anywhere before sign-in.
@@ -169,7 +179,7 @@ Planned, in order:
 1. Voice for Pinki and for each number word
 2. The same journey for numbers 2 to 9
 3. Progressive unlocking across characters and lessons (it works within a lesson)
-4. The rest of the Activities section — tracing and matching practice
+4. The rest of the Activities section — tracing practice
 5. Accounts, and the profile the "Join Edenic World" button leads to
 6. A real dark mode (needs a second token set across `globals.css`)
 
