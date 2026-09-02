@@ -2,9 +2,8 @@
 
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { Lock, Star } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
-import { MAX_STARS } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/activities/activity-progress";
 
@@ -35,8 +34,9 @@ type ChipVars = CSSProperties & {
  * the same problem with their artwork; a memory level has no picture of its
  * own, so its shape is the picture.
  *
- * Stars sit on the card once it is finished (the ask was for progress and
- * stars at level level), the padlock when it is not open yet.
+ * A green tick marks a finished level, a padlock one that is not open yet.
+ * Stars were here for one round and were removed on request — a better idea
+ * for scoring is coming, and until it does a level is simply done or not.
  *
  * A level opens when the one before it has been finished. A Client Component
  * only because that depends on saved progress — until the store has read
@@ -52,14 +52,12 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
 
   const cast = levels.map((level, index) => {
     const previous = levels[index - 1];
-    const stars = starsFor(level.value);
 
     return {
       level,
       index,
-      stars,
       open: previous ? starsFor(previous.value) > 0 : true,
-      done: stars > 0,
+      done: starsFor(level.value) > 0,
     };
   });
 
@@ -79,7 +77,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
       />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
-        {cast.map(({ level, index, open, done, stars }) => {
+        {cast.map(({ level, index, open, done }) => {
           /* `.clay` is declared after `.card` in globals.css, so its grain and
              inflated shading win over `.card`'s flat white — the fill itself
              still has to come from an inline style, since `.card` sets the
@@ -116,27 +114,26 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                 </span>
               )}
 
-              {/* What the child scored, kept small and in the status corner so
-                  it marks the card rather than covering it. Unearned stars
-                  stay in place rather than being dropped, so three stars and
-                  one star are the same shape at a glance — the same call
-                  `StarReward` makes on the numbers journey. */}
+              {/* Finished: the same green clay tick the puzzle stages use,
+                  in the status corner opposite the level chip. Stars were
+                  here for one round and were taken out again — a better idea
+                  for scoring is coming, and a level is simply done or not
+                  until it arrives. */}
               {done && (
                 <span
-                  className="absolute right-1.5 top-1.5 flex gap-0.5 sm:right-2.5 sm:top-2.5"
-                  aria-hidden
+                  className="clay absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
+                  style={
+                    {
+                      backgroundColor: "var(--color-go)",
+                      "--clay-edge": "var(--color-go-dark)",
+                    } as ClayVars
+                  }
+                  aria-label="Finished"
                 >
-                  {Array.from({ length: MAX_STARS }, (_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
-                        i < stars
-                          ? "fill-white text-white"
-                          : "fill-transparent text-white/45"
-                      }`}
-                      strokeWidth={2.5}
-                    />
-                  ))}
+                  <Check
+                    className="h-3.5 w-3.5 text-white sm:h-5 sm:w-5"
+                    strokeWidth={3.5}
+                  />
                 </span>
               )}
 

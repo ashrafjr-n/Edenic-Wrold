@@ -6,11 +6,10 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, RotateCcw, Star, Timer } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
 import { memoryFaces } from "@/data/memory-levels";
-import { deckFor, scoreLevel, secondsLeft } from "@/lib/memory-deck";
+import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { Celebration } from "@/components/ui/celebration";
-import { StarReward } from "@/components/ui/star-reward";
 
 interface MemoryBoardProps {
   level: MemoryLevel;
@@ -27,7 +26,13 @@ const WRONG_MS = 900;
     end up with playing cards the size of a hand on a desktop. */
 const MAX_CARD = "8.5rem";
 
-type BoardVars = CSSProperties & { "--memory-cols"?: string };
+/** Levels are not scored — for now. Stars were built here and taken out
+    again on request, with a better idea for scoring still to come; the store
+    only needs a non-zero value to read a level as finished, so every
+    completion records the same one, exactly as a puzzle does. */
+const DONE = 3;
+
+type ClockVars = CSSProperties & { "--clock-left"?: string };
 
 /**
  * One level of Memory Match: the header the spec asks for (level, clock) and
@@ -58,21 +63,16 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
 
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
-  const [misses, setMisses] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [running, setRunning] = useState(false);
   /* The two cards currently being turned back over. They wiggle, and nothing
      can be tapped while they are up. */
   const [wrong, setWrong] = useState<number[] | null>(null);
-  /* Set once, when the last pair lands — so the stars can't drift as the
-     clock keeps ticking behind the celebration. */
-  const [result, setResult] = useState<{ stars: number; elapsed: number } | null>(
-    null,
-  );
+  const [finished, setFinished] = useState(false);
 
   const wrongTimer = useRef<number | null>(null);
 
-  const done = result !== null;
+  const done = finished;
   const remaining = secondsLeft(level, elapsed);
 
   /* The clock. A real subscription to something outside React (an interval),
@@ -113,22 +113,14 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
       setFlipped([]);
 
       if (nextMatched.length === level.pairs) {
-        /* Scored and recorded in the handler that finished it, never in an
-           effect watching for it — the same call the puzzle and the numbers
-           journey make. */
-        const stars = scoreLevel({
-          pairs: level.pairs,
-          seconds: level.seconds,
-          misses,
-          elapsed,
-        });
-        setResult({ stars, elapsed });
-        complete(memoryKey(level.value), stars);
+        /* Recorded in the handler that finished it, never in an effect
+           watching for it — the same call the puzzle makes. */
+        setFinished(true);
+        complete(memoryKey(level.value), DONE);
       }
       return;
     }
 
-    setMisses((count) => count + 1);
     setWrong(next);
     wrongTimer.current = window.setTimeout(() => {
       setFlipped([]);
@@ -141,11 +133,10 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
     setRound((r) => r + 1);
     setFlipped([]);
     setMatched([]);
-    setMisses(0);
     setElapsed(0);
     setRunning(false);
     setWrong(null);
-    setResult(null);
+    setFinished(false);
   };
 
   return (
@@ -173,27 +164,41 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
           </span>
 
           {/* Only two things up here, as asked: which level this is, and the
-              clock. */}
-          <div className="text-center">
+              clock — the clock as a big gold dial, since it is the one thing
+              on this screen that changes on its own and the child has to be
+              able to read it without looking away from the board for long. */}
+          <div className="flex flex-col items-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-ink)]/55 sm:text-sm">
               Level {String(level.value).padStart(2, "0")}
             </p>
-            <p
-              className={`mt-0.5 flex items-center justify-center gap-1.5 text-xl font-bold tabular-nums sm:text-2xl ${
-                remaining === 0 ? "text-[var(--color-ink)]/35" : ""
-              }`}
+
+            {/* The ring is the time left, drawn as a share of the level's own
+                target — a child who cannot yet read the number still sees it
+                going round. At zero it empties and the whole dial goes quiet
+                rather than red: the clock stops mattering there, it does not
+                start threatening. */}
+            <div
+              className={`memory-clock mt-1.5 ${remaining === 0 ? "is-spent" : ""}`}
               style={
-                remaining === 0
-                  ? undefined
-                  : { color: "var(--color-gold-dark)" }
+                {
+                  "--clock-left": `${(remaining / level.seconds) * 100}%`,
+                } as ClockVars
               }
               /* Announced only when it runs out — a per-second live region
                  would talk over the whole game. */
               aria-live="off"
+              role="timer"
+              aria-label={`${remaining} seconds left`}
             >
-              <Timer className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
-              {remaining}s
-            </p>
+              <span className="memory-clock-face">
+                <Timer
+                  className="h-3.5 w-3.5 opacity-70 sm:h-4 sm:w-4"
+                  strokeWidth={2.75}
+                  aria-hidden
+                />
+                <span className="memory-clock-value">{remaining}</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -205,7 +210,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
             {
               gridTemplateColumns: `repeat(${level.cols}, minmax(0, 1fr))`,
               maxWidth: `calc(${level.cols} * ${MAX_CARD})`,
-            } as BoardVars
+            } as CSSProperties
           }
         >
           {deck.map((card, index) => {
@@ -256,8 +261,6 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
         {done && (
           <div className="anim-pop-in relative mt-7 flex flex-col items-center gap-5 sm:mt-9 sm:gap-6">
             <Celebration />
-
-            <StarReward stars={result.stars} />
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Button3D

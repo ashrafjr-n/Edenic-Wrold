@@ -8,8 +8,6 @@ export interface MemoryCard {
   faceId: string;
 }
 
-export const MAX_STARS = 3;
-
 /**
  * A deterministic 0–1 generator.
  *
@@ -57,46 +55,6 @@ export function deckFor(level: MemoryLevel, round: number): MemoryCard[] {
   }
 
   return cards;
-}
-
-interface ScoreInput {
-  pairs: number;
-  /** The level's comfortable time. */
-  seconds: number;
-  /** Pairs turned over that didn't match. */
-  misses: number;
-  /** How long the child actually took, in seconds. */
-  elapsed: number;
-}
-
-/**
- * Stars for a finished level: time and mistakes, one star each, floored at 1.
- *
- * **The clock cannot lose the game.** Running past `seconds` costs a star and
- * nothing else — there is no "time's up", no game over, and the board stays
- * playable for as long as a child needs it. That was the explicit ask, and it
- * is also the site's standing rule: a wrong answer here never ends anything,
- * it just doesn't earn.
- *
- * The miss allowance is one wrong pair per pair on the board, which is
- * generous on purpose — a level of six pairs can be finished with six wrong
- * turns and still be worth three stars. A child who is genuinely playing
- * rather than tapping at random clears that easily.
- *
- * Never 0: finishing at all is the achievement, the same call the numbers
- * journey makes.
- */
-export function scoreLevel({
-  pairs,
-  seconds,
-  misses,
-  elapsed,
-}: ScoreInput): number {
-  let stars = MAX_STARS;
-  if (elapsed > seconds) stars -= 1;
-  if (misses > pairs) stars -= 1;
-
-  return Math.max(1, stars);
 }
 
 /** `32s` — what the header counts down. Clamped at zero, where it simply
