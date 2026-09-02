@@ -43,22 +43,26 @@ export const memoryFaces: Record<string, MemoryFace> = {
 /**
  * The twelve levels.
  *
- * The card count climbs in five steps — 6, 8, 10, 12, 16 — but that is only
- * half of it. Three other things move with it:
+ * **Every board is a compact block, never a long strip.** The shapes run
+ * 2 × 2, 3 × 2, 4 × 2, 4 × 3, 4 × 4 and 5 × 4 — so the count climbs 4, 6, 8,
+ * 12, 16, 20 and `cols` is always the divisor that leaves the block roughly
+ * as tall as it is wide. Ten cards laid out 5 × 2 read as a ribbon rather
+ * than as a board, and the shape is as much of what a child holds in their
+ * head as the size is. It caps at five columns: a sixth makes each card too
+ * small to be tapped comfortably on a phone.
+ *
+ * The count is only half the difficulty. Two other things move with it:
  *
  * 1. **The pictures get harder to tell apart.** Levels 1–6 are all plainly
  *    different objects; the look-alikes start at 7 (two balls), reach the
- *    letters at 9, and by 12 the board is three friends, two balls and three
- *    letters with barely a distinct shape on it.
- * 2. **The layout changes.** 6 and 8 and 10 are two long rows; 12 and 16 are
- *    four columns and several rows, which is a different thing to hold in
- *    your head than a line.
- * 3. **The clock tightens.** Time per pair falls across each band — 13s a
- *    pair at level 1, under 10s by level 12 — so the target stays reachable
- *    while asking for a bit more each time.
+ *    letters at 9, the friends at 10, and by 12 the board is three friends,
+ *    two balls and three letters with barely a distinct shape on it.
+ * 2. **The clock tightens.** Time per pair falls the whole way down the
+ *    ladder — 13s a pair at level 1, 9s by level 12 — so the target stays
+ *    reachable while asking for a bit more each time.
  *
- * `seconds` is a TARGET, never a limit: passing it costs one star and the
- * child plays on. See `scoreLevel`.
+ * `seconds` is a TARGET, never a limit: it runs out, goes quiet, and the
+ * board carries on being playable.
  */
 export const memoryLevels: MemoryLevel[] = [
   { value: 1, pairs: 2, cols: 2, seconds: 26, faces: ["apple", "cat"] },
