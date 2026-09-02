@@ -23,6 +23,14 @@ export function puzzleKey(stage: number): ItemKey {
   return `puzzle.${stage}`;
 }
 
+/** Same again for the memory game's twelve levels (`memory.1`). Unlike a
+    puzzle — which is finished or not, and records a flat constant — a level
+    records REAL stars here, scored from time and mistakes, so "best score
+    wins" above is doing actual work for these keys. */
+export function memoryKey(level: number): ItemKey {
+  return `memory.${level}`;
+}
+
 interface ItemProgress {
   /** 1–3, scored across the whole journey, not per stage. */
   stars: number;
