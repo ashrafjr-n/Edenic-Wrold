@@ -16,7 +16,6 @@ const ITEM_DELAY = 0.15;
 const ITEM_STAGGER = 0.06;
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
-type LockVars = CSSProperties & { "--lock-face"?: string };
 type VeilVars = CSSProperties & { "--veil-tone"?: string };
 
 /**
@@ -121,16 +120,15 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
                 />
               )}
 
-              {/* `.lock-chip`, the site's shared clay padlock, but wearing this
-                  stage's OWN darker edge rather than the dormant lavender: it
-                  sits on that stage's own washed-out colour, and a lavender
-                  chip on it would read as a sticker from another set. Every
-                  other lock on the site takes the default face. */}
+              {/* `.lock-chip` at its DEFAULT lavender face — every locked
+                  stage now shows the same padlock, on direct request: fifteen
+                  differently-tinted padlocks (each wearing that stage's own
+                  edge colour) read as fifteen different KINDS of lock rather
+                  than as one padlock repeated on fifteen scenes. The picture
+                  and the veil still carry the stage's own colour; only the
+                  lock itself is uniform now. */}
               {!open && (
-                <span
-                  className="lock-chip absolute right-1.5 top-1.5 h-6 w-6 sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
-                  style={{ "--lock-face": stage.tone.edge } as LockVars}
-                >
+                <span className="lock-chip absolute right-1.5 top-1.5 h-6 w-6 sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8">
                   <Lock className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={2.75} />
                 </span>
               )}
