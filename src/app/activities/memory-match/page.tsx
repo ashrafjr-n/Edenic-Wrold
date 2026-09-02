@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
-import Image from "next/image";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Heart, Star } from "lucide-react";
 import { memoryLevels } from "@/data/memory-levels";
 import { Button3D } from "@/components/ui/button-3d";
 import { MemoryGrid } from "@/components/activities/memory/memory-grid";
@@ -11,7 +9,24 @@ export const metadata: Metadata = {
   description: "Twelve levels of matching pairs with Pinki, Nova and Bloo.",
 };
 
-type ClayVars = CSSProperties & { "--clay-edge"?: string };
+/**
+ * The heading's mark: **a pair, found, with one card still to turn.**
+ *
+ * The two outer cards are face up showing the same heart and wearing the very
+ * same gold rim a matched pair gets on the board; the middle one is still
+ * face down, in the game's real card back. So the picture at the top of the
+ * page is a hand of Memory Match mid-game rather than a decoration — which is
+ * the same job the puzzle page's three interlocking chips do for the puzzles.
+ *
+ * No character on it, by request. It also can't carry one: the friends appear
+ * as CARD FACES from level 10 on, so putting one here would quietly give away
+ * one of the pictures the last levels are built on.
+ */
+const CARDS = [
+  { kind: "face", tilt: "-14deg", size: "h-12 w-12 sm:h-14 sm:w-14", delay: 0.15 },
+  { kind: "back", tilt: "5deg", size: "h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]", delay: 0.23 },
+  { kind: "face", tilt: "13deg", size: "h-12 w-12 sm:h-14 sm:w-14", delay: 0.31 },
+] as const;
 
 export default function MemoryMatchPage() {
   return (
@@ -42,64 +57,23 @@ export default function MemoryMatchPage() {
             </Button3D>
           </span>
 
-          {/* Three cards leaning together — two face down in gold, one turned
-              over with a friend on it. The heading of this page is the game
-              itself in miniature, the same call the puzzle page's three chips
-              make, and it uses the real card backs so the picture and the
-              board agree. */}
           <span className="flex items-center -space-x-2 sm:-space-x-2.5">
-            <span
-              aria-hidden
-              className="clay anim-pop-in flex h-11 w-11 items-center justify-center rounded-2xl sm:h-12 sm:w-12"
-              style={{
-                backgroundColor: "var(--color-gold)",
-                "--clay-edge": "var(--color-gold-dark)",
-                rotate: "-12deg",
-                animationDelay: "0.15s",
-              } as ClayVars}
-            >
-              <Star
-                className="h-1/2 w-1/2 fill-current"
-                style={{ color: "color-mix(in srgb, var(--color-gold-dark) 55%, #fff)" }}
-                strokeWidth={2}
-              />
-            </span>
-
-            <span
-              aria-hidden
-              className="clay anim-pop-in relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl p-1.5 sm:h-16 sm:w-16"
-              style={{
-                backgroundColor: "var(--surface)",
-                "--clay-edge": "var(--color-gold-dark)",
-                rotate: "6deg",
-                animationDelay: "0.23s",
-              } as ClayVars}
-            >
-              <Image
-                src="/assets/friends/pinki.png"
-                alt=""
-                width={140}
-                height={140}
-                className="h-full w-full object-contain"
-              />
-            </span>
-
-            <span
-              aria-hidden
-              className="clay anim-pop-in flex h-11 w-11 items-center justify-center rounded-2xl sm:h-12 sm:w-12"
-              style={{
-                backgroundColor: "var(--color-gold)",
-                "--clay-edge": "var(--color-gold-dark)",
-                rotate: "14deg",
-                animationDelay: "0.31s",
-              } as ClayVars}
-            >
-              <Star
-                className="h-1/2 w-1/2 fill-current"
-                style={{ color: "color-mix(in srgb, var(--color-gold-dark) 55%, #fff)" }}
-                strokeWidth={2}
-              />
-            </span>
+            {CARDS.map(({ kind, tilt, size, delay }, index) => (
+              <span
+                key={index}
+                aria-hidden
+                className={`memory-mark anim-pop-in ${
+                  kind === "back" ? "memory-mark--back" : "memory-mark--face"
+                } ${size}`}
+                style={{ rotate: tilt, animationDelay: `${delay}s` }}
+              >
+                {kind === "back" ? (
+                  <Star className="h-1/2 w-1/2 fill-current" strokeWidth={2} />
+                ) : (
+                  <Heart className="h-1/2 w-1/2 fill-current" strokeWidth={2} />
+                )}
+              </span>
+            ))}
           </span>
         </div>
 
