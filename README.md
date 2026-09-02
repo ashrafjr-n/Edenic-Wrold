@@ -165,8 +165,9 @@ scroll between the two could not drag a piece from one to the other. A piece cou
 nothing has to be lined up, and puzzles are not scored: the finished picture is
 the reward.
 
-**Memory Match** adds twelve levels of matching pairs, from six cards up to
-sixteen. The card count is only half of what makes a level harder: the early
+**Memory Match** adds twelve levels of matching pairs, from four cards up to
+twenty, every board laid out as a compact block rather than a long row. The
+card count is only half of what makes a level harder: the early
 levels use plainly different pictures, while the later ones deal look-alikes —
 the same ball in two colours, three letters in the same lettering, the three
 friends in the same silhouette — so the game turns from recognising into
