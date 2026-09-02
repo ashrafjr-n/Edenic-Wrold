@@ -1564,33 +1564,40 @@ button:disabled,
    their hidden-state stops with `visibility: hidden`, not just `opacity: 0`,
    so the other two mascots' buttons are out of the tab order and can't eat
    clicks meant for whatever sits behind this floating widget. */
+/* One mascot's 9.2s turn, as a share of the 27.6s relay: 0.5s sliding in,
+   **6s standing there** (the hold, asked for directly), 0.5s sliding out,
+   then 2.2s of empty corner before the next friend's turn begins. Every stop
+   below is those seconds over 27.6 — the hold is the only one that has moved
+   since, so recompute from the seconds, never by nudging a percentage. */
 @keyframes mascot-slide {
   0%,
-  21.11%,
+  25.36%,
   100% {
     opacity: 0;
     visibility: hidden;
     transform: translate3d(2.5rem, 0, 0);
   }
-  2.78%,
-  18.33% {
+  1.81%,
+  23.55% {
     opacity: 1;
     visibility: visible;
     transform: translate3d(0, 0, 0);
   }
 }
 
+/* The bubble keeps its own offsets against the avatar: up 0.4s after they
+   land, gone 0.3s before they leave. */
 @keyframes mascot-cta-pop {
   0%,
-  5%,
-  18.33%,
+  3.26%,
+  23.55%,
   100% {
     opacity: 0;
     visibility: hidden;
     transform: translateY(6px);
   }
-  6.67%,
-  16.67% {
+  4.35%,
+  22.46% {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -1598,12 +1605,12 @@ button:disabled,
 }
 
 .mascot-avatar {
-  animation: mascot-slide 18s ease-in-out infinite both;
+  animation: mascot-slide 27.6s ease-in-out infinite both;
   will-change: transform, opacity;
 }
 
 .mascot-watch-btn {
-  animation: mascot-cta-pop 18s ease-in-out infinite both;
+  animation: mascot-cta-pop 27.6s ease-in-out infinite both;
   will-change: transform, opacity;
 }
 

@@ -7,13 +7,15 @@ import pinkiYoutube from "../../../public/assets/activity-page/youtube-CTA/pinki
 /** Same channel URL `YoutubeCta` used before it — see `data/socials.ts`. */
 const YOUTUBE_HREF = "https://www.youtube.com/@EdenicWorld-kids";
 
-/** Seconds each mascot owns before the next one takes its turn. Also the
-    `.mascot-slide`/`.mascot-cta-pop` keyframes' unit: both run on one
-    `SEGMENT * MASCOTS.length` loop, and staggering only `animation-delay`
-    (0, 6, 12s) is what keeps the three in lockstep with no JS driving state —
-    same technique `IntroIcons`' staggered delays use, for a looping cycle
-    instead of a one-shot entrance. */
-const SEGMENT_SECONDS = 6;
+/** Seconds each mascot owns before the next one takes its turn: 0.5s sliding
+    in, **6s standing there**, 0.5s sliding out, then a 2.2s empty corner.
+    Also the `.mascot-slide`/`.mascot-cta-pop` keyframes' unit — both run on
+    one `SEGMENT * MASCOTS.length` (27.6s) loop, and staggering only
+    `animation-delay` is what keeps the three in lockstep with no JS driving
+    state, the same technique `IntroIcons`' staggered delays use. Change this
+    and the keyframe percentages in `globals.css` have to be recomputed with
+    it — they are these seconds over the total. */
+const SEGMENT_SECONDS = 9.2;
 
 const MASCOTS: { id: string; name: string; image: StaticImageData }[] = [
   { id: "nova", name: "Nova", image: novaYoutube },
