@@ -1380,9 +1380,14 @@ button:disabled,
    the thing the colours were there for, and a mix this light still reads as
    frosted rather than tinted. `--veil-tone` comes from the stage.
    --------------------------------------------------------------- */
+/* The wash was 0.85, which left a locked card as a near-blank pastel square —
+   the picture behind it had effectively gone. At 0.6 a child can see there is
+   a scene back there, with shapes and characters in it, and still cannot make
+   it out: the blur is what hides the detail, so the wash only has to knock the
+   colour back. Reduced on direct request; don't push it back up. */
 .puzzle-veil {
   background-color: color-mix(in srgb, var(--veil-tone) 16%, #fff);
-  opacity: 0.85;
+  opacity: 0.6;
 }
 
 /* "Level 1", and the site's smallest clay object. Self-contained (size,
