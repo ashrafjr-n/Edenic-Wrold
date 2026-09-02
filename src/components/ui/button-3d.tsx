@@ -24,6 +24,11 @@ interface Button3DProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   /** Renders as a `Link` styled identically to the button, for navigation. */
   href?: string;
+  /** Link branch only. `"_blank"` for a CTA that leaves the site — the
+      Activities page's YouTube card is the one that does. Always pair it with
+      `rel="noreferrer noopener"`. */
+  target?: string;
+  rel?: string;
   children: ReactNode;
 }
 
@@ -31,6 +36,8 @@ export function Button3D({
   tone,
   variant = "playful",
   href,
+  target,
+  rel,
   className = "",
   children,
   style,
@@ -51,6 +58,8 @@ export function Button3D({
     return (
       <Link
         href={href}
+        target={target}
+        rel={rel}
         className={classes}
         style={toneVars}
         aria-label={props["aria-label"]}
