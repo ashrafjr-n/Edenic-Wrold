@@ -1355,7 +1355,11 @@ button:disabled,
    layout to switch between, so it does set its own inline.
    --------------------------------------------------------------- */
 .puzzle-upright {
-  --puzzle-space: calc(100svh - 20.25rem);
+  /* Measured, never derived — header, the chrome row, page and card padding,
+     the gap, and the phone's bottom nav. It came down by the 1rem (1.5rem
+     from `sm`) the chrome row lost when "View" became a back-button-sized
+     hint chip; re-measure again if that row ever changes height. */
+  --puzzle-space: calc(100svh - 19.25rem);
   --board-max-h: calc(var(--puzzle-space) * var(--board-share));
   /* Stacked, the heap is exactly as wide as the board, so the two cards are
      twins sitting one above the other — any difference reads as a mistake
@@ -1366,13 +1370,13 @@ button:disabled,
 /* A tablet has no bottom nav and a little more room to give back. */
 @media (width >= 40rem) {
   .puzzle-upright {
-    --puzzle-space: calc(100svh - 25.5rem);
+    --puzzle-space: calc(100svh - 24rem);
   }
 }
 
 @media (width >= 64rem) {
   .puzzle-upright {
-    --board-max-h: calc(100svh - 24rem);
+    --board-max-h: calc(100svh - 22.5rem);
     /* Side by side, the heap takes the width the board leaves rather than
        matching it: the two cards are no longer stacked, so they no longer
        have to be twins, and the pieces would rather have the room. */
