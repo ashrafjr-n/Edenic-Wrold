@@ -367,7 +367,7 @@ export function PuzzleBoard({
           upright ? "lg:flex-row lg:items-center" : ""
         }`}
       >
-        <div className="card relative p-3 sm:p-4">
+        <div className="card card-clay-white relative p-3 sm:p-4">
           <div
             ref={boardRef}
             role="group"
