@@ -39,3 +39,4 @@
 2026-08-30 tweak button states
 2026-09-01 adjust puzzle tray
 2026-09-02 update course backdrop
+2026-09-02 refactor hub copy
