@@ -26,7 +26,8 @@ export const homePaths: HomePath[] = [
     description:
       "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
     art: { src: "/assets/icons/cloud.png", fit: "contain" },
-    action: "Coming soon",
+    action: "Start playing",
+    href: "/activities",
     face: "var(--accent)",
     edge: "var(--accent-dark)",
   },
