@@ -10,6 +10,9 @@ type ThemeVars = CSSProperties & {
   "--lesson-hue-dark"?: string;
 };
 
+/** A locked card's fill plus the darker companion `.clay` shades it with. */
+type ClayVars = CSSProperties & { "--clay-edge"?: string };
+
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
 
@@ -63,21 +66,32 @@ export function LessonCard({
      that has not been walked yet instead of a silver one. */
   const dimTrack = `color-mix(in srgb, ${accent} 28%, #ffffff)`;
 
-  /* Open cards are white clay. A LOCKED one wears the character's own accent
-     with the site's grain over it — the same `.card` + inline fill +
-     `.card-grain` recipe the puzzle stage cards use, and the reason nothing
-     here has to be greyed out any more: the colour says "not yet" on its own,
-     louder and friendlier than a silver card ever did. `.card` sets the
-     `background` SHORTHAND and is unlayered, so the fill has to come from an
-     inline style — a Tailwind `bg-*` utility would silently lose. */
+  /* Both states are clay now — an open card in white (`.card-clay-white`), a
+     locked one in the character's own accent (`.clay`), so the two read as
+     the same material in two colours rather than one inflated card beside a
+     flat coloured slab. `.clay` is the site's recipe for a COLOURED clay
+     surface, and it is the right one here: its inset highlight is gentler
+     than `.card-clay-white`'s near-white one (which would blow out on a
+     saturated fill) and its shade and drop shadow are mixed from
+     `--clay-edge`, the fill's own darker companion, rather than the neutral
+     shadow hue. It carries the grain itself, which is why `.card-grain` is
+     gone from here.
+
+     `.card` sets the `background` SHORTHAND and is unlayered, so the fill has
+     to come from an inline style — a Tailwind `bg-*` utility would silently
+     lose. `.clay` is declared after `.card`, so its own `background-image`
+     (the grain) survives that shorthand. */
   const card = (
     <div
       className={`card group/lesson flex h-full overflow-hidden ${
-        locked ? "card-grain" : "card-clay-white card-lift"
+        locked ? "clay" : "card-clay-white card-lift"
       }`}
       style={
         locked
-          ? ({ backgroundColor: "var(--character-accent)" } as CSSProperties)
+          ? ({
+              backgroundColor: "var(--character-accent)",
+              "--clay-edge": "var(--character-accent-dark)",
+            } as ClayVars)
           : undefined
       }
     >
