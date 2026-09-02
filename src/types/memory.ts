@@ -11,13 +11,15 @@ export interface MemoryFace {
 
 export interface MemoryLevel {
   value: number;
-  /** Pairs, so the deck is twice this. 3 → 6 cards, 8 → 16. */
+  /** Pairs, so the deck is twice this. 2 → 4 cards, 10 → 20. */
   pairs: number;
   /** Columns the board lays out in. Picked per level so the rows come out
-      even — a ragged last row reads as a mistake rather than a layout. */
+      even — a ragged last row reads as a mistake rather than a layout — AND
+      so the block stays roughly as tall as it is wide. Ten cards in one
+      5 × 2 line read as a ribbon, not as a board. */
   cols: number;
-  /** The comfortable time, in seconds. Running past it costs a star and
-      NOTHING else: the clock never ends the game (see `scoreLevel`). */
+  /** The comfortable time, in seconds. Running past it costs NOTHING: the
+      clock empties, goes quiet, and the board stays playable. */
   seconds: number;
   /** Face ids this level is cut from — exactly `pairs` of them. Which faces,
       not just how many, is half the difficulty: the early levels take
