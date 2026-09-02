@@ -40,10 +40,15 @@ export function CharacterPicker() {
           </p>
         </div>
 
-        {/* One friend per row on a phone, the three side by side from `sm` —
-            the same arrangement the home page's friend pods take. */}
+        {/* One friend per row until `lg`, the three side by side above it.
+            Deliberately `lg` and not `sm` — the same call the lesson hub's
+            grid makes, and for the same reason: this page's portraits are the
+            main cast shot, roughly twice the size of the home page's friend
+            pods, and three 14rem tiles simply do not fit inside this card at
+            a tablet's width. They overlapped each other from 640px to about
+            900px before this. "Desktop" here means real desktop width. */}
         <div className="mx-auto mt-14 w-full max-w-6xl lg:mt-16">
-          <div className="flex flex-col items-center gap-12 sm:flex-row sm:items-end sm:justify-center sm:gap-6 lg:gap-14">
+          <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-end lg:justify-center lg:gap-14">
             {cast.map(({ character, index, previousName }) => (
               <CharacterCard
                 key={character.id}
