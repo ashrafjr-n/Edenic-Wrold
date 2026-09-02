@@ -854,20 +854,6 @@ button:disabled,
   }
 }
 
-/* A speech-bubble variant whose tail always points straight down — for a
-   bubble perched ABOVE its speaker at every width, unlike `PinkiGuide`'s
-   (beside her on `sm`+, above her only on a phone). One extra class beats
-   the base tail (and the phone-only top-pointing one) on plain selector
-   specificity, so this needs no media query of its own. */
-.speech-bubble--point-down::after {
-  left: 50%;
-  top: 100%;
-  translate: -50% 0;
-  width: 1.1rem;
-  height: 0.65rem;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-
 /* ---------------------------------------------------------------
    "Watch me draw it."
 
@@ -1539,63 +1525,6 @@ button:disabled,
   animation: path-hint-travel 3.4s ease-in-out infinite;
 }
 
-/* Activities mascot CTA (`MascotYoutubeCta`): one 18s keyframe shared by all
-   three mascots, each only "on stage" for the first third of it — staggering
-   `animation-delay` (0/6/12s, applied inline per mascot) is what turns one
-   shared timeline into a three-way relay with no JS. Both keyframes match
-   their hidden-state stops with `visibility: hidden`, not just `opacity: 0`,
-   so the other two mascots' buttons are out of the tab order and can't eat
-   clicks meant for whatever sits behind this floating widget. */
-/* One mascot's 9.2s turn, as a share of the 27.6s relay: 0.5s sliding in,
-   **6s standing there** (the hold, asked for directly), 0.5s sliding out,
-   then 2.2s of empty corner before the next friend's turn begins. Every stop
-   below is those seconds over 27.6 — the hold is the only one that has moved
-   since, so recompute from the seconds, never by nudging a percentage. */
-@keyframes mascot-slide {
-  0%,
-  25.36%,
-  100% {
-    opacity: 0;
-    visibility: hidden;
-    transform: translate3d(2.5rem, 0, 0);
-  }
-  1.81%,
-  23.55% {
-    opacity: 1;
-    visibility: visible;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-/* The bubble keeps its own offsets against the avatar: up 0.4s after they
-   land, gone 0.3s before they leave. */
-@keyframes mascot-cta-pop {
-  0%,
-  3.26%,
-  23.55%,
-  100% {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(6px);
-  }
-  4.35%,
-  22.46% {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-}
-
-.mascot-avatar {
-  animation: mascot-slide 27.6s ease-in-out infinite both;
-  will-change: transform, opacity;
-}
-
-.mascot-watch-btn {
-  animation: mascot-cta-pop 27.6s ease-in-out infinite both;
-  will-change: transform, opacity;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-arch-in,
@@ -1613,31 +1542,12 @@ button:disabled,
   .anim-pulse-invite,
   .anim-reveal,
   .path-hint,
-  .anim-hero-parallax,
-  .mascot-avatar,
-  .mascot-watch-btn {
+  .anim-hero-parallax {
     animation: none;
   }
 
   .confetti-piece {
     display: none;
-  }
-
-  /* No relay without motion: freeze on the first mascot instead of cycling. */
-  .mascot-slot:not(:first-child) {
-    display: none;
-  }
-
-  .mascot-slot:first-child .mascot-avatar {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-  }
-
-  .mascot-slot:first-child .mascot-watch-btn {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
   }
 }
 
