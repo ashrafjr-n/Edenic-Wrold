@@ -81,45 +81,45 @@ export function LessonCard({
           : undefined
       }
     >
-      {/* Plain white — on an open card that is the same white as the card
-          behind it, separated by the tile's own shadow rather than by colour;
-          on a locked one it is the window through the accent that keeps the
-          lesson's icon readable. */}
+      {/* The art stands directly on the card — no `.tile` behind it any
+          more, on request. These are full character renders rather than the
+          flat subject icons that were here before, and a render boxed on its
+          own panel reads as a sticker stuck to the card instead of Pinki
+          standing on it; her own drop shadow is what grounds her now. */}
       <div className="relative flex w-20 shrink-0 items-center justify-center p-3 sm:w-36 sm:p-4">
-        <div
-          className="tile tile-clay relative flex h-full w-full items-center justify-center"
-          style={{ "--tile-tint": "var(--surface)" } as CSSProperties}
-        >
-          <Image
-            src={image}
-            alt={name}
-            width={140}
-            height={140}
-            /* The icon keeps its colour even when locked, at every width.
-               It used to be desaturated on a phone, back when a locked card
-               was grey all through — now the accent card around it says
-               "not yet" and hiding the subject as well would only take away
-               the one thing worth looking forward to. */
-            className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-20 sm:w-20 ${
-              locked ? "" : "group-hover/lesson:scale-110"
-            }`}
-          />
+        <Image
+          src={image}
+          alt={name}
+          width={140}
+          height={140}
+          /* The art keeps its colour even when locked, at every width.
+             It used to be desaturated on a phone, back when a locked card
+             was grey all through — now the accent card around it says
+             "not yet" and hiding the subject as well would only take away
+             the one thing worth looking forward to. */
+          className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-20 sm:w-20 ${
+            locked ? "" : "group-hover/lesson:scale-110"
+          }`}
+        />
 
-          {/* Step number, tablet and up only. Below `sm` the cards are a single
-              stack and the rail outside the card carries the sequence instead,
-              so a number here would say the same thing twice. White on a
-              locked card, where the lesson hue would otherwise sit on the
-              character's accent and muddy both. */}
-          <span
-            className="absolute -left-1.5 -top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
-            style={{
-              backgroundColor: locked ? "var(--surface)" : "var(--lesson-accent)",
-              color: locked ? "var(--character-accent)" : "#fff",
-            }}
-          >
-            {index + 1}
-          </span>
-        </div>
+        {/* Step number, tablet and up only. Below `sm` the cards are a single
+            stack and the rail outside the card carries the sequence instead,
+            so a number here would say the same thing twice. White on a
+            locked card, where the lesson hue would otherwise sit on the
+            character's accent and muddy both.
+
+            Positive inset, not the negative one it carried against the tile:
+            it hangs off the panel's own corner now, and the card clips
+            (`overflow-hidden`) anything pushed outside it. */}
+        <span
+          className="absolute left-1.5 top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
+          style={{
+            backgroundColor: locked ? "var(--surface)" : "var(--lesson-accent)",
+            color: locked ? "var(--character-accent)" : "#fff",
+          }}
+        >
+          {index + 1}
+        </span>
       </div>
 
       {/* Name, description, indicator and status all sit beside the icon —
