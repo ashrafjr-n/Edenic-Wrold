@@ -7,7 +7,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       id: "numbers",
       name: "Learn Numbers",
       description: "Learn numbers 1 to 9",
-      image: "/assets/learn-with-pinki/123-pinki.png",
+      image: "/assets/learn-with-pinki/pinki-numbers.png",
       theme: {
         accent: "var(--color-subject-numbers)",
         accentDark: "var(--color-subject-numbers-dark)",
@@ -19,7 +19,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       id: "letters",
       name: "Learn Letters",
       description: "Learn the alphabet from A to Z",
-      image: "/assets/icons/A.png",
+      image: "/assets/learn-with-pinki/pinki-letters.png",
       theme: {
         accent: "var(--color-subject-letters)",
         accentDark: "var(--color-subject-letters-dark)",
@@ -31,7 +31,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       id: "colors",
       name: "Learn Colors",
       description: "Discover colors all around us",
-      image: "/assets/icons/blue-ball.png",
+      image: "/assets/learn-with-pinki/pinki-colors.png",
       theme: {
         accent: "var(--color-subject-colors)",
         accentDark: "var(--color-subject-colors-dark)",
