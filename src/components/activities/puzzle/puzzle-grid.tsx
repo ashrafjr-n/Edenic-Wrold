@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Lock } from "lucide-react";
@@ -11,37 +12,35 @@ interface PuzzleGridProps {
   stages: PuzzleStage[];
 }
 
-const ITEM_DELAY = 0.12;
-const ITEM_STAGGER = 0.05;
+const ITEM_DELAY = 0.15;
+const ITEM_STAGGER = 0.06;
 
-/** How long the whole grid takes to arrive, so the current tile's breathe can
-    start after it rather than during it. */
-const GRID_SETTLED = ITEM_DELAY + 14 * ITEM_STAGGER;
+type ClayVars = CSSProperties & { "--clay-edge"?: string };
+type LockVars = CSSProperties & { "--lock-face"?: string };
+type VeilVars = CSSProperties & { "--veil-tone"?: string };
 
 /**
- * The fifteen puzzle stages, three to a row, with the child's position in the
- * set above them.
+ * The fifteen puzzle stages, three to a row, with the child's position in
+ * the set above them.
  *
- * **One tile, three states.** Every stage is the same piece of clay with the
- * same artwork pressed into it, and only a small embossed mark separates
- * them — a green tick when finished, a translucent clay lid and a padlock
- * when locked, and a pink clay face with a deeper lift on the ONE the child
- * is on. That sameness is what turns a grid of fifteen pictures into one
- * journey with a position in it.
+ * **Every card shows its picture, open or not.** A locked stage is the same
+ * artwork behind a soft blur and a pale wash of its own colour, with a small
+ * padlock on it — so the fifteen read as fifteen real places that exist and
+ * have not been opened yet, rather than as a wall of coloured number
+ * buttons. This replaced a version where a locked card was its tone with a
+ * huge numeral on it: at that size the number WAS the card, and stages 10–15
+ * looked like a keypad.
  *
- * The MATERIAL is the point here. This replaced a version where the card was
- * a white `.card` cropped to the picture and everything else on it was
- * ordinary web chrome laid on top — a white "LEVEL 01" glass pill, a flat
- * green tick disc, a hard pink outline ring on the current one. Nothing on
- * this page is a badge any more: the number is engraved into the tile's lip,
- * the marks are clay, the lock is a lid rather than a heavy frost, and the
- * current stage is picked out by elevation instead of a border. See the
- * `.puzzle-tile` block in `globals.css` for the rest of the reasoning; before
- * that came fifteen different clay tones, which read as a game template.
+ * The number is a small clay chip in the bottom-left of every card instead,
+ * open or locked or finished, so a glance says which level a card is without
+ * the number ever competing with the picture. Status lives in the opposite
+ * corner: the padlock when locked, a small green tick when finished. The
+ * tick used to be a large disc dead centre, which covered the artwork the
+ * child had just earned the right to see.
  *
  * A stage opens when the one before it is finished AND its own picture
  * exists — a stage with no art stays shut however far the child has got, so
- * tapping a tile can never land on a page with nothing to play.
+ * tapping a card can never land on a page with nothing to play.
  *
  * A Client Component only because unlocking depends on saved progress. Until
  * the store has read localStorage it renders the nothing-finished-yet view,
@@ -70,125 +69,143 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
   const finished = cast.filter(({ done }) => done).length;
 
   /* The one stage the child has actually reached: the first open one they
-     have not finished. It is the only tile given any emphasis. */
-  const currentValue = cast.find(({ open, done }) => open && !done)?.stage.value;
+     have not finished. It rocks, so a glance at the grid says where to tap. */
+  const nextValue = cast.find(({ open, done }) => open && !done)?.stage.value;
 
   return (
     <div>
       <PuzzleProgress done={finished} total={stages.length} />
 
-      <ul className="grid grid-cols-3 gap-2.5 sm:gap-5">
+      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
         {cast.map(({ stage, index, open, done }) => {
-          const current = stage.value === currentValue;
+          /* `.clay` is declared after `.card` in globals.css, so its grain and
+             inflated shading win over `.card`'s flat white — the fill itself
+             still has to come from an inline style, since `.card` sets the
+             `background` SHORTHAND and is unlayered (a Tailwind `bg-*` utility
+             would silently lose). It only shows through on a stage with no
+             picture yet; everywhere else the artwork covers it. */
+          const style = {
+            animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
+            backgroundColor: stage.tone.face,
+            "--clay-edge": stage.tone.edge,
+          } as ClayVars;
 
           const face = (
             <>
-              {/* The picture sits in a well pressed into the clay, never flush
-                  with the tile's edge — the frame around it is what makes the
-                  stage read as an object rather than as a thumbnail. */}
-              <span className="puzzle-well">
-                {stage.picture && (
-                  <Image
-                    src={stage.picture.image}
-                    alt=""
-                    fill
-                    sizes="(min-width: 640px) 15rem, 31vw"
-                    className={
-                      open ? "object-cover" : "puzzle-locked-art object-cover"
-                    }
+              {stage.picture && (
+                <Image
+                  src={stage.picture.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 640px) 12rem, 30vw"
+                  /* Scaled up while blurred, so the blur's own soft edges are
+                     pushed outside the card instead of fading its border into
+                     the page — `filter: blur()` samples transparency beyond the
+                     image, and `overflow-hidden` cannot put that back. */
+                  className={
+                    open
+                      ? "object-cover"
+                      : "scale-110 object-cover blur-[3px] sm:blur-[4px]"
+                  }
+                />
+              )}
+
+              {/* The frosted wash over a locked picture. Skipped when there is
+                  no picture — there is nothing to soften, and washing out the
+                  bare clay would only make the card paler. */}
+              {!open && stage.picture && (
+                <span
+                  aria-hidden
+                  className="puzzle-veil absolute inset-0"
+                  style={{ "--veil-tone": stage.tone.face } as VeilVars}
+                />
+              )}
+
+              {/* `.lock-chip`, the site's shared clay padlock, but wearing this
+                  stage's OWN darker edge rather than the dormant lavender: it
+                  sits on that stage's own washed-out colour, and a lavender
+                  chip on it would read as a sticker from another set. Every
+                  other lock on the site takes the default face. */}
+              {!open && (
+                <span
+                  className="lock-chip absolute right-1.5 top-1.5 h-6 w-6 sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
+                  style={{ "--lock-face": stage.tone.edge } as LockVars}
+                >
+                  <Lock className="h-3 w-3 sm:h-4 sm:w-4" strokeWidth={2.75} />
+                </span>
+              )}
+
+              {/* Finished: a small green clay tick in the status corner, the
+                  same material as the cards themselves rather than a flat icon
+                  dropped on top. It marks the card; the picture is still the
+                  thing being looked at. */}
+              {done && (
+                <span
+                  className="clay absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
+                  style={
+                    {
+                      backgroundColor: "var(--color-go)",
+                      "--clay-edge": "var(--color-go-dark)",
+                    } as ClayVars
+                  }
+                  aria-label="Finished"
+                >
+                  <Check
+                    className="h-3.5 w-3.5 text-white sm:h-5 sm:w-5"
+                    strokeWidth={3.5}
                   />
-                )}
+                </span>
+              )}
 
-                {/* The clay lid over a locked picture — the tile's own face
-                    poured over the well at partial opacity, not a white frost.
-                    Skipped when there is no picture at all; there would be
-                    nothing behind it. */}
-                {!open && stage.picture && (
-                  <span aria-hidden className="puzzle-lid" />
-                )}
-
-                {/* Status, top-right, deliberately small and embossed: these
-                    are marks that say what a tile IS, not controls, and the
-                    artwork keeps essentially all of its own space. */}
-                {!open && (
-                  <span className="lock-chip absolute right-1.5 top-1.5 h-5 w-5 sm:right-2 sm:top-2 sm:h-7 sm:w-7">
-                    <Lock
-                      className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5"
-                      strokeWidth={3}
-                    />
-                  </span>
-                )}
-
-                {done && (
-                  <span
-                    className="puzzle-tick absolute right-1.5 top-1.5 h-5 w-5 sm:right-2 sm:top-2 sm:h-7 sm:w-7"
-                    aria-label="Finished"
-                  >
-                    <Check
-                      className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5"
-                      strokeWidth={4}
-                    />
-                  </span>
-                )}
-              </span>
-
-              {/* Which stage this is, engraved into the clay below the
-                  picture — the site's own type pressed into the lip, not a
-                  chip laid over the artwork. */}
-              <span aria-hidden className="puzzle-level">
-                {String(stage.value).padStart(2, "0")}
+              {/* Which level this is — on every card, the same brand blue on
+                  all fifteen, small enough that the picture stays the
+                  subject. */}
+              <span
+                aria-hidden
+                className="stage-chip absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5"
+              >
+                <span className="stage-chip-word">Level</span>
+                {stage.value}
               </span>
             </>
           );
 
-          const shell = [
-            "puzzle-tile anim-rise-in relative",
-            open && "puzzle-tile--open",
-            current && "puzzle-tile--current",
-          ]
-            .filter(Boolean)
-            .join(" ");
-
-          const tile = open ? (
+          const card = open ? (
             <Link
               href={`/activities/puzzle/${stage.value}`}
-              aria-label={
-                done
-                  ? `Puzzle ${stage.value}, finished`
-                  : `Start puzzle ${stage.value}`
-              }
-              className={shell}
-              style={{ animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s` }}
+              aria-label={`Start puzzle ${stage.value}`}
+              className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
+              style={style}
             >
               {face}
             </Link>
           ) : (
             <span
               aria-label={`Puzzle ${stage.value}, locked`}
-              className={shell}
-              style={{ animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s` }}
+              className="card clay anim-rise-in relative block aspect-square overflow-hidden"
+              style={style}
             >
               {face}
             </span>
           );
 
-          /* The bounce lives on a WRAPPING span, never on the tile itself:
-             `.puzzle-tile--open:hover` animates `translate`, and an infinite
-             animation on the same property would keep overriding the hover.
-             Held back until the last tile has risen in — `.anim-breathe`
-             fills `both`, so it sits still through the delay rather than
-             jumping. */
+          /* The breathe lives on a WRAPPING span, never on the card:
+             `.card-lift:hover` animates `translate` on the card itself, and an
+             infinite animation on the same property would keep overriding the
+             hover. Held back 1s so it starts after the last card has risen in
+             (`ITEM_DELAY + 14 * ITEM_STAGGER`) — `.anim-breathe` fills `both`,
+             so it sits still through the delay rather than jumping. */
           return (
             <li key={stage.value}>
-              {current ? (
+              {stage.value === nextValue ? (
                 <span
                   className="anim-breathe block"
-                  style={{ animationDelay: `${GRID_SETTLED + 0.4}s` }}
+                  style={{ animationDelay: "1s" }}
                 >
-                  {tile}
+                  {card}
                 </span>
               ) : (
-                tile
+                card
               )}
             </li>
           );

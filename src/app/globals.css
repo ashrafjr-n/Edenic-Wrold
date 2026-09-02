@@ -1369,244 +1369,80 @@ button:disabled,
 /* ---------------------------------------------------------------
    The stage grid on `/activities/puzzle`.
 
-   Every stage is ONE PIECE OF CLAY with a picture set into it — not a
-   photograph with UI badges laid on top. That distinction is the whole
-   design of this page: the previous version was a white `.card` cropped to
-   the artwork, a white "LEVEL 01" glass pill, a flat green tick disc and a
-   pink outline ring, and the four of them together read as ordinary web
-   chrome sitting on images rather than as anything belonging to this site.
+   Every card shows its PICTURE now, open or not — a locked stage is the
+   same picture behind a soft blur and a pale wash, so the fifteen read as
+   fifteen real places that exist and have not been opened yet, rather than
+   as a wall of coloured number buttons. The picture is the card's subject;
+   the number and the lock/tick are small status marks on top of it.
 
-   The tile is built the same way every other clay object here is: a tinted
-   face carrying `--noise`, an inner highlight along the top, an inner shade
-   along the bottom, one wide tinted drop shadow. The picture sits in a WELL
-   pressed into that face (`.puzzle-well`), and the level number is engraved
-   into the lip below it (`.puzzle-level`). Reading down a column the eye
-   gets clay → picture → clay → picture, which is what makes the grid look
-   like fifteen toys rather than fifteen thumbnails.
-
-   Three states, one tile — the sameness is still the point:
-
-     open       picture sharp in the well
-     completed  the same, with a small embossed green tick in the corner
-     current    a pink clay face, a deeper lift and a soft glow, breathing
-     locked     the picture softly blurred and darkened under a translucent
-                CLAY LID, with a small raised padlock on it
-
-   **There are no per-stage colours.** The colour on this page comes from the
-   artwork and from these three: pale blue clay, pink clay for the one stage
-   the child is on, white. Don't reintroduce fifteen tones, an outline ring,
-   or a white badge of any kind.
+   `.puzzle-veil` is that wash. It is white with a SIXTH of the stage's own
+   colour mixed into it, not plain white: fifteen identical white cards lose
+   the thing the colours were there for, and a mix this light still reads as
+   frosted rather than tinted. `--veil-tone` comes from the stage.
    --------------------------------------------------------------- */
-
-/* `--tile-face` / `--tile-edge` / `--tile-ink` are the tile's whole palette:
-   the state modifiers below repaint the tile, its lid and its engraved number
-   by swapping these three, so nothing has to restate a shadow.
-
-   Note this is a PALE TINT, not white. The site's rule is that grain belongs
-   on coloured surfaces only, because `background-blend-mode: overlay` has
-   nothing to push against on a near-white fill — a genuinely white tile would
-   have come out flat and plastic, which is exactly what was being complained
-   about. A pale blue tint is the least colour that still holds the texture. */
-.puzzle-tile {
-  --tile-face: color-mix(in srgb, var(--brand-soft) 62%, #fff);
-  --tile-edge: color-mix(in srgb, var(--brand) 24%, #fff);
-  --tile-ink: var(--brand-dark);
-
-  display: block;
-  padding: 0.375rem 0.375rem 0.0625rem;
-  border-radius: 1.375rem;
-  background-color: var(--tile-face);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  box-shadow:
-    inset 0 7px 11px -5px rgb(255 255 255 / 95%),
-    inset 0 -9px 13px -5px color-mix(in srgb, var(--tile-edge) 85%, transparent),
-    0 16px 28px -12px rgb(var(--shadow-hue) / 40%),
-    0 4px 10px -5px rgb(var(--shadow-hue) / 22%);
-  /* `translate` and `scale` are standalone properties in Tailwind v4, so both
-     compose with `.anim-rise-in`'s `transform: scale()` instead of fighting
-     it. Nothing here transitions `box-shadow`: the hover only lifts, so the
-     `.card-clay-white` specificity trap (a `:hover` rule outranking a state
-     modifier and wiping its shadow) cannot happen on this page. */
-  transition:
-    translate 0.3s ease,
-    scale 0.18s ease;
+.puzzle-veil {
+  background-color: color-mix(in srgb, var(--veil-tone) 16%, #fff);
+  opacity: 0.85;
 }
 
-@media (width >= 40rem) {
-  .puzzle-tile {
-    padding: 0.5rem 0.5rem 0.125rem;
-    border-radius: 1.75rem;
-  }
-}
+/* "Level 1", and the site's smallest clay object. Self-contained (size,
+   radius, type all here) for the usual reason — it sits inside
+   `.card`/`.clay`, which are unlayered, so a Tailwind utility for any
+   property those blocks already set would silently lose.
 
-/* Only a playable tile reacts — a locked one is a `<span>`, not a link, and
-   moving under the finger would promise something it cannot do. */
-.puzzle-tile--open:hover {
-  translate: 0 -5px;
-}
-
-.puzzle-tile--open:active {
-  scale: 0.97;
-}
-
-/* The one stage the child is on. It is the SAME object as its neighbours in a
-   different clay — a pink face, a deeper and pinker drop shadow, and one soft
-   ring of colour bled into the shadow stack rather than drawn as an outline.
-   The old treatment was a hard 3–4px pink `outline`, which read as a selection
-   box round a thumbnail; elevation is what says "this one" in a material
-   language. The little bounce comes from `.anim-breathe` on a wrapper — see
-   `PuzzleGrid` for why it cannot live on the tile itself. */
-.puzzle-tile--current {
-  --tile-face: color-mix(in srgb, var(--accent-soft) 78%, #fff);
-  --tile-edge: color-mix(in srgb, var(--accent) 28%, #fff);
-  --tile-ink: var(--accent-dark);
-
-  box-shadow:
-    inset 0 8px 12px -5px rgb(255 255 255 / 95%),
-    inset 0 -10px 15px -5px color-mix(in srgb, var(--tile-edge) 90%, transparent),
-    0 0 0 7px color-mix(in srgb, var(--accent) 11%, transparent),
-    0 22px 34px -12px color-mix(in srgb, var(--accent-dark) 40%, transparent),
-    0 6px 14px -6px rgb(var(--shadow-hue) / 24%);
-}
-
-/* The picture's well. Square, so the fifteen line up whatever their artwork
-   is; the tile itself is taller than square because of the lip below. */
-.puzzle-well {
-  position: relative;
-  display: block;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 0.9375rem;
-}
-
-@media (width >= 40rem) {
-  .puzzle-well {
-    border-radius: 1.25rem;
-  }
-}
-
-/* The rim that sinks the picture into the clay instead of pasting it on top.
-   It has to be a pseudo-element: an inset `box-shadow` on `.puzzle-well`
-   itself paints below its children, so the `<Image>` would cover it. */
-.puzzle-well::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 28%),
-    inset 0 6px 11px -5px rgb(var(--shadow-hue) / 55%),
-    inset 0 -4px 9px -5px rgb(var(--shadow-hue) / 30%);
-}
-
-/* Locked: a soft blur and a slight darkening, and that is all the picture
-   itself takes. The heavy 5–8px frost this replaced made the artwork look
-   like a BAD IMAGE; at this radius a child still reads three friends in a
-   scene and simply cannot make it out. What says "shut" is the clay lid over
-   it, not the state of the photograph.
-
-   `scale` is load-bearing, not decoration: `filter: blur()` samples
-   transparency past the image's edges, so an unscaled blur fades the well's
-   own edge into the clay and `overflow-hidden` cannot put it back. It has to
-   grow with the radius — change one and re-check the other. */
-.puzzle-locked-art {
-  filter: blur(2.5px) brightness(0.94) saturate(1.05);
-  scale: 1.08;
-}
-
-@media (width >= 40rem) {
-  .puzzle-locked-art {
-    filter: blur(3.5px) brightness(0.94) saturate(1.05);
-    scale: 1.1;
-  }
-}
-
-/* The lid: the tile's own clay, poured over the well at partial opacity and
-   shaded like every other clay surface here. It is deliberately the same
-   `--tile-face` as the frame around it, so a locked stage reads as one solid
-   piece with the picture buried in it — a plain white wash (what this used to
-   be) reads as fog over a photo instead. */
-.puzzle-lid {
-  position: absolute;
-  inset: 0;
-  background-color: color-mix(in srgb, var(--tile-face) 62%, transparent);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  box-shadow:
-    inset 0 9px 15px -7px rgb(255 255 255 / 60%),
-    inset 0 -11px 17px -7px color-mix(in srgb, var(--tile-edge) 70%, transparent);
-}
-
-/* Finished. The same clay recipe as `.lock-chip` in green — small, cornered
-   and embossed, so the picture keeps essentially all of its own space. It was
-   a flat filled disc with one soft shadow, the one object on the card made of
-   neither clay nor picture. Not folded into `.lock-chip` with a `--lock-face`
-   override, because a tick is not a lock and the class name would lie. */
-.puzzle-tick {
-  --tick-edge: color-mix(in srgb, var(--color-go-dark) 80%, #1d1533);
+   **One colour for all fifteen, not the stage's own tone.** It briefly took
+   `stage.tone.face`, and fifteen differently-coloured labels read as fifteen
+   different KINDS of thing rather than as the same label repeated — the
+   colours still do their job on the padlock and the locked wash. Brand blue,
+   the site's own primary, so the chip says "this is a level" the same way on
+   every picture behind it. */
+.stage-chip {
+  --chip-face: var(--brand);
+  --chip-edge: var(--brand-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.2rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
   border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
   color: #fff;
-  background-color: var(--color-go);
+  background-color: var(--chip-face);
   background-image: var(--noise);
   background-size: 180px 180px;
   background-blend-mode: overlay;
   box-shadow:
-    inset 0 4px 7px -2px rgb(255 255 255 / 55%),
-    inset 0 -5px 8px -2px color-mix(in srgb, var(--tick-edge) 70%, transparent),
-    0 6px 12px -5px color-mix(in srgb, var(--tick-edge) 60%, transparent);
+    inset 0 4px 7px -2px rgb(255 255 255 / 50%),
+    inset 0 -5px 8px -2px color-mix(in srgb, var(--chip-edge) 70%, transparent),
+    0 8px 16px -7px color-mix(in srgb, var(--chip-edge) 60%, transparent);
 }
 
-/* The level number, ENGRAVED into the tile's bottom lip: the site's own type,
-   pressed in with a shallow groove behind it and a white highlight along its
-   underside — the letterpress pair that makes type read as cut into a surface
-   rather than printed on one. It takes `--tile-ink`, so it turns pink on the
-   current tile with the rest of the clay.
-
-   This replaced a two-line white "LEVEL 01" glass chip sitting on the
-   artwork, which was the single element most responsible for the page reading
-   as a web UI. There is no word any more — a number under a picture in a grid
-   of fifteen needs no label to say what it counts. */
-.puzzle-level {
-  display: block;
-  width: fit-content;
-  margin: 0.25rem auto 0.1875rem;
-  padding: 0.0625rem 0.4375rem 0.125rem;
-  border-radius: 9999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: 0.03em;
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--tile-ink) 68%, transparent);
-  background-color: color-mix(in srgb, var(--tile-edge) 42%, transparent);
-  box-shadow:
-    inset 0 2px 3px -1px color-mix(in srgb, var(--tile-edge) 90%, transparent),
-    0 1px 0 rgb(255 255 255 / 80%);
-  text-shadow: 0 1px 0 rgb(255 255 255 / 70%);
+/* The word is the smaller half of the label — "Level" says what the number
+   means, the number is the thing being read. */
+.stage-chip-word {
+  font-size: 0.85em;
+  opacity: 0.85;
 }
 
 @media (width >= 40rem) {
-  .puzzle-level {
-    margin: 0.375rem auto 0.25rem;
-    padding: 0.125rem 0.5625rem 0.1875rem;
+  .stage-chip {
+    height: 1.875rem;
+    padding: 0 0.75rem;
     font-size: 0.8125rem;
   }
 }
 
 /* ---------------------------------------------------------------
-   "8 / 15 Puzzles Complete" above the grid.
+   "9 / 15" above the grid.
 
-   Clay, like every other object here: the track is pressed INTO the page (an
-   inner shade along the top, no outer shadow at all — the same language a
-   disabled `Button3D` speaks) and the fill is inflated out of it, so the bar
-   reads as a groove with a bar of clay lying in it. Never a flat two-tone
+   Clay, like every other object here: the track is pressed INTO the page
+   (an inner shade along the top, no outer shadow at all — the same language
+   a disabled `Button3D` speaks) and the fill is inflated out of it, so the
+   bar reads as a groove with a bar of clay lying in it. Never a flat two-tone
    rectangle, and never `<progress>`, which cannot be styled into either.
 
    The track deliberately does NOT get `overflow: hidden` — the fill's own
@@ -1615,7 +1451,7 @@ button:disabled,
    so nothing needs containing.
    --------------------------------------------------------------- */
 .puzzle-progress-track {
-  height: 0.8125rem;
+  height: 0.875rem;
   border-radius: 9999px;
   background-color: var(--color-locked);
   box-shadow:
@@ -1625,7 +1461,7 @@ button:disabled,
 
 @media (width >= 40rem) {
   .puzzle-progress-track {
-    height: 0.9375rem;
+    height: 1rem;
   }
 }
 
@@ -1651,7 +1487,6 @@ button:disabled,
      also the bar filling itself in on arrival — no separate entrance. */
   transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 
 /* Paint only ever shows up ON the numeral: the layer carrying the child's
    strokes is masked by the numeral's own alpha, so colouring outside the

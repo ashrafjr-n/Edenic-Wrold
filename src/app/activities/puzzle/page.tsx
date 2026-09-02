@@ -12,25 +12,43 @@ export const metadata: Metadata = {
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
-/** The title's own mark: ONE clay puzzle piece, sitting beside the words
-    rather than above them. It was three chips leaning into each other on a
-    line of their own — a nice object, but it stacked icon → title → subtitle
-    → journey label → bar before a single stage was on screen, and this page's
-    vertical space belongs to the tiles. Same material either way. */
-const ICON_TONE: ClayVars = {
-  backgroundColor: "var(--color-gold)",
-  "--clay-edge": "var(--color-gold-dark)",
-};
+/** Three clay puzzle chips instead of a word. They lean into each other like
+    pieces waiting to be joined, and they're the same material as the cards
+    below — the heading of this page is a picture, not a label. */
+const CHIPS: { tone: ClayVars; tilt: string; size: string }[] = [
+  {
+    tone: {
+      backgroundColor: "var(--color-pinki)",
+      "--clay-edge": "var(--color-pinki-dark)",
+    },
+    tilt: "-12deg",
+    size: "h-11 w-11 sm:h-12 sm:w-12",
+  },
+  {
+    tone: {
+      backgroundColor: "var(--color-gold)",
+      "--clay-edge": "var(--color-gold-dark)",
+    },
+    tilt: "6deg",
+    size: "h-14 w-14 sm:h-16 sm:w-16",
+  },
+  {
+    tone: {
+      backgroundColor: "var(--color-bloo)",
+      "--clay-edge": "var(--color-bloo-dark)",
+    },
+    tilt: "14deg",
+    size: "h-11 w-11 sm:h-12 sm:w-12",
+  },
+];
 
 export default function PuzzleStagesPage() {
   return (
-    <main className="relative flex flex-1 flex-col pb-14 pt-4 sm:pb-20 sm:pt-5">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
-        {/* Back on the left, the title lockup centred on the page — centred
+    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
+        {/* Back on the left, the puzzle chips centred on the page — centred
             on the page itself rather than on the space left over, which is
-            why the back button is taken out of the flow. The lockup's phone
-            sizes are held down deliberately: at 320px wide the centred group
-            has to clear the absolutely positioned back button. */}
+            why the back button is taken out of the flow. */}
         <div
           className="anim-drop-in relative flex items-center justify-center"
           style={{ animationDelay: "0.1s" }}
@@ -53,35 +71,44 @@ export default function PuzzleStagesPage() {
             </Button3D>
           </span>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
-            <span
-              aria-hidden
-              className="clay anim-pop-in flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:h-14 sm:w-14"
-              style={{ ...ICON_TONE, animationDelay: "0.18s" }}
-            >
-              <Puzzle
-                className="h-1/2 w-1/2 fill-current text-white"
-                strokeWidth={2}
-              />
-            </span>
+          <span className="flex items-center -space-x-2 sm:-space-x-2.5">
+            {CHIPS.map(({ tone, tilt, size }, index) => (
+              <span
+                key={index}
+                aria-hidden
+                className={`clay anim-pop-in flex items-center justify-center rounded-2xl ${size}`}
+                style={{
+                  ...tone,
+                  rotate: tilt,
+                  animationDelay: `${0.15 + index * 0.08}s`,
+                }}
+              >
+                <Puzzle
+                  className="h-1/2 w-1/2 fill-current text-white"
+                  strokeWidth={2}
+                />
+              </span>
+            ))}
+          </span>
+        </div>
 
-            {/* A `div`, not a `span`: `<h1>`/`<p>` are flow content and cannot
-                legally sit inside phrasing content — the browser would close
-                the span itself and React would hydrate against a DOM it did
-                not render. */}
-            <div className="text-left">
-              <h1 className="text-xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
-                Puzzle Time
-              </h1>
-              <p className="text-xs text-[var(--color-ink)]/55 sm:text-base">
-                Complete the puzzles!
-              </p>
-            </div>
-          </div>
+        {/* The chips alone said "puzzles" without saying what the page is for.
+            The title and the line under it give the fifteen cards a heading to
+            sit beneath — the chips stay as the picture of it. */}
+        <div
+          className="anim-fade-up mt-4 text-center sm:mt-5"
+          style={{ animationDelay: "0.25s" }}
+        >
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
+            Puzzle Time
+          </h1>
+          <p className="mt-1 text-base text-[var(--color-ink)]/60 sm:text-lg">
+            Complete the puzzles!
+          </p>
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-6 pt-4 sm:px-8 sm:pb-8 sm:pt-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
         <PuzzleGrid stages={puzzleStages} />
       </div>
     </main>
