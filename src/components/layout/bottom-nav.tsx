@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { mainNav } from "@/data/nav";
+import { mainNav, profileNav } from "@/data/nav";
 
 /* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
    `currentColor`, so `.nav-tab`'s own color rules (blue at rest, pink for
@@ -12,7 +12,11 @@ const ICON_SRC = {
   Home: "/assets/png/home.png",
   Learn: "/assets/png/learn.png",
   Activities: "/assets/png/activity.png",
+  Profile: "/assets/png/profile.png",
 } as const;
+
+const iconVar = (label: keyof typeof ICON_SRC) =>
+  ({ "--icon-src": `url(${ICON_SRC[label]})` }) as CSSProperties;
 
 /** App-style bottom tab bar — phone only (`sm:hidden`). Mirrors `MainNav`'s
     items (same `mainNav` data, same locked rules) but fixed to the viewport
@@ -34,12 +38,10 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-3 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
     >
       {mainNav.map(({ label, href }) => {
-        const iconStyle = {
-          "--icon-src": `url(${ICON_SRC[label as keyof typeof ICON_SRC]})`,
-        } as CSSProperties;
+        const iconStyle = iconVar(label as keyof typeof ICON_SRC);
 
         if (!href) {
           return (
@@ -86,6 +88,29 @@ export function BottomNav() {
           </Link>
         );
       })}
+
+      {/* Profile: chrome with no destination, the same pattern the header's
+          "Join Edenic World" follows — there is no profile until someone
+          signs in, and the sign-in flow is a later phase. So it is a `<span>`,
+          not a `<Link>`, and it does nothing at all when pressed.
+
+          It deliberately does NOT take the "Soon" treatment the locked
+          `mainNav` branch above uses: that badge is for a SECTION of the site
+          that has no page yet, while this is a control that will act on the
+          child's own account. It wears `.nav-tab` so the icon and label read
+          exactly like a resting tab, and it can never take
+          `.nav-tab--current` — there is no page it could be "on". */}
+      <span
+        aria-disabled="true"
+        className="nav-tab flex h-16 cursor-default flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold"
+      >
+        <span
+          aria-hidden
+          className="icon-mask icon-mask-grain h-5 w-5"
+          style={iconVar("Profile")}
+        />
+        {profileNav.label}
+      </span>
     </nav>
   );
 }
