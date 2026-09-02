@@ -170,10 +170,10 @@ sixteen. The card count is only half of what makes a level harder: the early
 levels use plainly different pictures, while the later ones deal look-alikes —
 the same ball in two colours, three letters in the same lettering, the three
 friends in the same silhouette — so the game turns from recognising into
-remembering. Each level carries a target time that is worth a star, and
+remembering. Each level carries a target time shown as a countdown dial, and
 nothing else: the clock stops at zero and goes quiet, the board stays playable,
-and a child can always finish. Levels are scored out of three stars from time
-and wrong turns, and unlock one at a time.
+and a child can always finish. Levels are not scored yet — finishing one marks
+it done and opens the next.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
