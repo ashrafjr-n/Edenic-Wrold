@@ -105,7 +105,7 @@ src/
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Activities panels
-    learn/            Friend picker, character cards, lesson cards, intro icons
+    learn/            Friend picker, character cards, lesson cards
     learn/number/     Numerals, the tracing board, the quizzes, stars
     activities/       The Activities cards, the shared progress bar, and the
                       puzzle and memory-match grids and boards
