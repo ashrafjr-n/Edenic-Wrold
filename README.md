@@ -15,7 +15,7 @@ All UI and content is English only.
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9 with a progress bar and star record, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
-| `/activities` | Activities — the puzzles card and the Memory Match card, plus a floating YouTube prompt |
+| `/activities` | Activities — three cards: Puzzle Time, Memory Match and Watch & Learn, each showing how far the child has got |
 | `/activities/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/activities/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
 | `/activities/memory-match` | The twelve Memory Match levels, unlocked one at a time |
@@ -107,10 +107,11 @@ src/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards
     learn/number/     Numerals, the tracing board, the quizzes, stars
-    activities/       The Activities cards, the shared progress bar, and the
+    activities/       The Activities cards and their progress badges, plus the
                       puzzle and memory-match grids and boards
     layout/           Header, nav, footer
-    ui/               Shared primitives (Button3D, SocialLinks, Logo, confetti, stars)
+    ui/               Shared primitives (Button3D, SocialLinks, Logo, confetti,
+                      stars, the progress bar)
   data/               Characters, lessons, numbers, puzzles, memory levels,
                       navigation, socials, home panels
   lib/                Trace scoring, quiz decoys, jigsaw piece and outline maths,
