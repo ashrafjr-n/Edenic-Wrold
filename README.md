@@ -13,7 +13,7 @@ All UI and content is English only.
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
-| `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time |
+| `/learn/[character]/[lesson]` | Number picker — 1 to 9 with a progress bar and star record, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
 | `/activities` | Activities — the puzzles card and the Memory Match card, plus a floating YouTube prompt |
 | `/activities/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -139,6 +139,12 @@ number in a short video, see it standing still and say it aloud, watch her
 write it, trace it, find it among others, give her one apple and say how many
 she has, pop the right balloon, and earn one to three stars for the whole
 journey. Finishing a number unlocks the next.
+
+The picker that leads into them shows the whole set at once: a "Numbers - 0 / 9"
+bar, then each numeral on its own cell with three star slots under it. The stars
+are empty until a number is actually finished and turn gold one at a time after
+that, so a child can see both what has been earned and what is still on offer;
+numbers that are not open yet keep the same padlock the friend picker uses.
 
 Tracing is a custom SVG and Pointer Events board, scored on how much of the
 numeral the child covered and how much of their drawing stayed on it — no
