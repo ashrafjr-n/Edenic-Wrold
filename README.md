@@ -178,7 +178,8 @@ it done and opens the next.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
-point, so no progress, streaks or points appear anywhere before sign-in.
+point, as is the Profile tab on the phone's bottom bar, so no progress, streaks or
+points appear anywhere before sign-in.
 
 Planned, in order:
 
@@ -186,7 +187,7 @@ Planned, in order:
 2. The same journey for numbers 2 to 9
 3. Progressive unlocking across characters and lessons (it works within a lesson)
 4. The rest of the Activities section — tracing practice
-5. Accounts, and the profile the "Join Edenic World" button leads to
+5. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
 6. A real dark mode (needs a second token set across `globals.css`)
 
 Audio narration is deliberately out of scope for the MVP, but the experience is
