@@ -1,0 +1,291 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import Image from "next/image";
+import { ArrowLeft, ArrowRight, RotateCcw, Star, Timer } from "lucide-react";
+import type { MemoryLevel } from "@/types/memory";
+import { memoryFaces } from "@/data/memory-levels";
+import { deckFor, scoreLevel, secondsLeft } from "@/lib/memory-deck";
+import { memoryKey, useProgress } from "@/store/progress";
+import { Button3D } from "@/components/ui/button-3d";
+import { Celebration } from "@/components/ui/celebration";
+import { StarReward } from "@/components/ui/star-reward";
+
+interface MemoryBoardProps {
+  level: MemoryLevel;
+  /** The next level, or back to the list when this was the last one. */
+  nextHref: string;
+}
+
+/** How long a wrong pair stays up before turning back over. Long enough to
+    actually be READ and remembered — that pause is the whole game — short
+    enough that a child isn't left waiting on it. */
+const WRONG_MS = 900;
+
+/** The board never grows past this per column, so a three-pair level doesn't
+    end up with playing cards the size of a hand on a desktop. */
+const MAX_CARD = "8.5rem";
+
+type BoardVars = CSSProperties & { "--memory-cols"?: string };
+
+/**
+ * One level of Memory Match: the header the spec asks for (level, clock) and
+ * the grid of cards under it.
+ *
+ * **The clock never ends the game.** It counts down from the level's
+ * comfortable time and stops at zero, where it goes quiet and simply stops
+ * being worth a star — there is no "time's up", and the board stays playable
+ * for as long as a child needs. It also doesn't start until the first card is
+ * turned, so looking at the board costs nothing.
+ *
+ * A wrong pair is never told off: the two cards wiggle and turn back, the
+ * same call every other activity on the site makes. A found pair stays face
+ * up with a gold rim.
+ *
+ * It owns the back button as well as the board, for the same reason
+ * `PuzzlePlay` does — the header shows live state (the clock), so the whole
+ * row has to be inside the client component that has it.
+ */
+export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
+  const complete = useProgress((state) => state.complete);
+
+  /* Bumped by "Again", and the only thing that re-deals the board. It starts
+     at 0, which is what the server rendered and what the first client render
+     agrees on — so the deal is SSR-safe and still different on a replay. */
+  const [round, setRound] = useState(0);
+  const deck = useMemo(() => deckFor(level, round), [level, round]);
+
+  const [flipped, setFlipped] = useState<number[]>([]);
+  const [matched, setMatched] = useState<string[]>([]);
+  const [misses, setMisses] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const [running, setRunning] = useState(false);
+  /* The two cards currently being turned back over. They wiggle, and nothing
+     can be tapped while they are up. */
+  const [wrong, setWrong] = useState<number[] | null>(null);
+  /* Set once, when the last pair lands — so the stars can't drift as the
+     clock keeps ticking behind the celebration. */
+  const [result, setResult] = useState<{ stars: number; elapsed: number } | null>(
+    null,
+  );
+
+  const wrongTimer = useRef<number | null>(null);
+
+  const done = result !== null;
+  const remaining = secondsLeft(level, elapsed);
+
+  /* The clock. A real subscription to something outside React (an interval),
+     which is what `useEffect` is actually for — it starts on the first flip,
+     stops the moment the level is done, and cleans up either way. */
+  useEffect(() => {
+    if (!running || done) return;
+
+    const id = window.setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => window.clearInterval(id);
+  }, [running, done]);
+
+  useEffect(() => {
+    return () => {
+      if (wrongTimer.current !== null) window.clearTimeout(wrongTimer.current);
+    };
+  }, []);
+
+  const isOpen = (index: number) =>
+    flipped.includes(index) || matched.includes(deck[index].faceId);
+
+  const flip = (index: number) => {
+    /* Nothing is tappable while a wrong pair is on its way back, and a card
+       that is already up cannot be tapped again — turning the same card twice
+       must never count as a pair. */
+    if (wrong || done || flipped.length === 2 || isOpen(index)) return;
+
+    if (!running) setRunning(true);
+
+    const next = [...flipped, index];
+    setFlipped(next);
+    if (next.length < 2) return;
+
+    const [a, b] = next;
+    if (deck[a].faceId === deck[b].faceId) {
+      const nextMatched = [...matched, deck[a].faceId];
+      setMatched(nextMatched);
+      setFlipped([]);
+
+      if (nextMatched.length === level.pairs) {
+        /* Scored and recorded in the handler that finished it, never in an
+           effect watching for it — the same call the puzzle and the numbers
+           journey make. */
+        const stars = scoreLevel({
+          pairs: level.pairs,
+          seconds: level.seconds,
+          misses,
+          elapsed,
+        });
+        setResult({ stars, elapsed });
+        complete(memoryKey(level.value), stars);
+      }
+      return;
+    }
+
+    setMisses((count) => count + 1);
+    setWrong(next);
+    wrongTimer.current = window.setTimeout(() => {
+      setFlipped([]);
+      setWrong(null);
+    }, WRONG_MS);
+  };
+
+  const again = () => {
+    if (wrongTimer.current !== null) window.clearTimeout(wrongTimer.current);
+    setRound((r) => r + 1);
+    setFlipped([]);
+    setMatched([]);
+    setMisses(0);
+    setElapsed(0);
+    setRunning(false);
+    setWrong(null);
+    setResult(null);
+  };
+
+  return (
+    <>
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
+        <div
+          className="anim-drop-in relative flex items-center justify-center"
+          style={{ animationDelay: "0.1s" }}
+        >
+          {/* The wrapper carries the positioning, not the button: `.btn3d`
+              sets `position: relative` and is UNLAYERED, so a Tailwind
+              `absolute` utility on the button itself silently loses. */}
+          <span className="absolute left-0 top-0">
+            <Button3D
+              tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
+              href="/activities/memory-match"
+              aria-label="Back to the levels"
+              className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+            >
+              <ArrowLeft
+                className="h-5 w-5 text-white sm:h-6 sm:w-6"
+                strokeWidth={2.75}
+              />
+            </Button3D>
+          </span>
+
+          {/* Only two things up here, as asked: which level this is, and the
+              clock. */}
+          <div className="text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-ink)]/55 sm:text-sm">
+              Level {String(level.value).padStart(2, "0")}
+            </p>
+            <p
+              className={`mt-0.5 flex items-center justify-center gap-1.5 text-xl font-bold tabular-nums sm:text-2xl ${
+                remaining === 0 ? "text-[var(--color-ink)]/35" : ""
+              }`}
+              style={
+                remaining === 0
+                  ? undefined
+                  : { color: "var(--color-gold-dark)" }
+              }
+              /* Announced only when it runs out — a per-second live region
+                 would talk over the whole game. */
+              aria-live="off"
+            >
+              <Timer className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
+              {remaining}s
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto flex w-full flex-1 flex-col items-center justify-center px-4 py-6 sm:px-8 sm:py-8">
+        <div
+          className="grid w-full gap-2.5 sm:gap-4"
+          style={
+            {
+              gridTemplateColumns: `repeat(${level.cols}, minmax(0, 1fr))`,
+              maxWidth: `calc(${level.cols} * ${MAX_CARD})`,
+            } as BoardVars
+          }
+        >
+          {deck.map((card, index) => {
+            const face = memoryFaces[card.faceId];
+            const open = isOpen(index);
+            const isMatched = matched.includes(card.faceId);
+            const isWrong = wrong?.includes(index) ?? false;
+
+            return (
+              <button
+                key={card.key}
+                type="button"
+                onClick={() => flip(index)}
+                disabled={done || isMatched}
+                aria-label={open ? face.label : `Card ${index + 1}, face down`}
+                className={`memory-card anim-rise-in ${open ? "is-open" : ""} ${
+                  isMatched ? "is-matched" : ""
+                } ${isWrong ? "anim-wiggle" : ""}`}
+                style={{ animationDelay: `${0.05 + index * 0.04}s` }}
+              >
+                {/* The flip is a transform on this inner element, which is why
+                    the wiggle can live on the button without the two fighting
+                    over the same property. */}
+                <span className="memory-card-inner">
+                  <span className="memory-face memory-face--back">
+                    <Star
+                      className="h-1/3 w-1/3 fill-current"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  </span>
+
+                  <span className="memory-face memory-face--front">
+                    <Image
+                      src={face.src}
+                      alt=""
+                      width={140}
+                      height={140}
+                      className="h-full w-full object-contain"
+                    />
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {done && (
+          <div className="anim-pop-in relative mt-7 flex flex-col items-center gap-5 sm:mt-9 sm:gap-6">
+            <Celebration />
+
+            <StarReward stars={result.stars} />
+
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <Button3D
+                variant="calm"
+                tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
+                onClick={again}
+                className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
+              >
+                <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
+                Again
+              </Button3D>
+
+              <Button3D
+                tone={{
+                  face: "var(--color-gold)",
+                  edge: "var(--color-gold-dark)",
+                  text: "var(--color-ink)",
+                }}
+                href={nextHref}
+                className="px-6 py-3 text-base sm:px-7 sm:text-lg"
+              >
+                Next
+                <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+              </Button3D>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

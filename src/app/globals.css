@@ -1694,6 +1694,11 @@ button:disabled,
 }
 
 .memory-card-inner {
+  /* A `<span>`, so it is inline by default and would ignore both dimensions
+     below — which collapses the whole card to 0 × 0 while the button around
+     it still measures and still answers clicks, i.e. an invisible but
+     perfectly playable board. */
+  display: block;
   position: relative;
   width: 100%;
   height: 100%;

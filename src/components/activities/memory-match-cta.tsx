@@ -18,7 +18,10 @@ import memoryCard from "../../../public/assets/activity-page/memory-match/memory
 
     The button's text and icon are `--color-ink`, not the usual white: gold is
     the one face on the site pale enough that white type disappears on it —
-    the same call the puzzle stage's hint chip makes for its lightbulb. */
+    the same call the puzzle stage's hint chip makes for its lightbulb.
+
+    Live now that the twelve levels exist; it was presentation-only with no
+    `href` for one round before that, exactly as `PuzzleCta` was. */
 export function MemoryMatchCta({ className = "" }: { className?: string }) {
   return (
     <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
@@ -46,6 +49,7 @@ export function MemoryMatchCta({ className = "" }: { className?: string }) {
             edge: "var(--color-gold-dark)",
             text: "var(--color-ink)",
           }}
+          href="/activities/memory-match"
           className="px-8 py-4 text-lg sm:px-10 sm:text-xl"
         >
           <Brain className="h-6 w-6" strokeWidth={2} />

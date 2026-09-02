@@ -25,8 +25,8 @@ import { NumberComplete } from "./number-complete";
 import { NumberPath } from "./number-path";
 import { NumberColor } from "./number-color";
 import { BalloonPop } from "./balloon-pop";
-import { Celebration } from "./celebration";
-import { StarReward } from "./star-reward";
+import { Celebration } from "@/components/ui/celebration";
+import { StarReward } from "@/components/ui/star-reward";
 
 /* Green is the "you got it, carry on" button and nothing else, so it never
    appears on a step the child has not passed. Blue is the ordinary primary

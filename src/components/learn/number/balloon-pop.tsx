@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Celebration } from "./celebration";
+import { Celebration } from "@/components/ui/celebration";
 
 interface BalloonPopProps {
   /** The numbers on the balloons, answer included, in display order. */

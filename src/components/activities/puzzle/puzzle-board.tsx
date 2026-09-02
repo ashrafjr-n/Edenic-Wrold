@@ -23,7 +23,7 @@ import type { PuzzlePiece } from "@/lib/puzzle-pieces";
 import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
-import { Celebration } from "@/components/learn/number/celebration";
+import { Celebration } from "@/components/ui/celebration";
 
 export interface PuzzleBoardHandle {
   /** Flies one loose piece home, as the hint overlay's "Help" does. `false`
