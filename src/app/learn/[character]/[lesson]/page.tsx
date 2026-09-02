@@ -113,6 +113,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           characterId={character.id}
           lessonId={lesson.id}
           basePath={`/learn/${character.id}/${lesson.id}`}
+          tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
         />
       </div>
     </main>

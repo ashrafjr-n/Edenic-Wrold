@@ -1,9 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
+import { ActivityProgress } from "@/components/ui/activity-progress";
+import { StarReward } from "@/components/ui/star-reward";
 import { Numeral } from "./numeral";
 
 interface NumberGridProps {
@@ -12,7 +14,13 @@ interface NumberGridProps {
   lessonId: string;
   /** `/learn/pinki/numbers` — each numeral appends its own value. */
   basePath: string;
+  /** The lesson's own subject colour pair, used for the progress bar, the
+      cells' tint and the "Next" badge — never a character colour, so every
+      character's numbers page reads the same. */
+  tone: { face: string; edge: string };
 }
+
+type CellVars = CSSProperties & { "--tile-tint"?: string };
 
 const ITEM_DELAY = 0.2;
 const ITEM_STAGGER = 0.07;
@@ -20,24 +28,34 @@ const ITEM_STAGGER = 0.07;
 /**
  * The nine numerals, as the way into the lesson.
  *
- * No cards: each numeral stands on the page on its own bloom (see `Numeral`).
- * Boxed, the grid read as a sheet of containers and the numbers — the entire
- * subject of the lesson — became the smallest thing on screen.
+ * **The grid lives inside one white `.card`, and each numeral stands on its
+ * own tinted `.tile` cell inside it.** Both of those are reversals, made on
+ * direct request: the numerals used to float straight on the page background
+ * with nothing around them at all, which left the page with no structure and
+ * nothing tying it to the rest of the site. An earlier version had gone the
+ * other way — every numeral in its own white `.card` on the bare page — and
+ * was rejected because a sheet of white containers on a white ground made the
+ * numbers the smallest thing on screen. The cell being a pale TINT inside a
+ * white card is what avoids both: the parent card gives the page its
+ * structure, and the cell reads as a distinct, tappable object because it is
+ * a different colour from the card it sits on, not because it is a second
+ * white box on a white box.
  *
- * A number is open when the one before it has been finished, so the row of
- * silver numerals turns pink one at a time as the child works through them.
+ * A number is open when the one before it has been finished, so the grid of
+ * lavender numerals turns pink one at a time as the child works through them.
  * The first is always open.
  *
- * A Client Component only because unlocking depends on saved progress. Until
- * the store has read localStorage it renders the nothing-finished-yet view,
- * which is exactly what the server rendered — anything else is a hydration
- * mismatch.
+ * A Client Component only because unlocking and stars depend on saved
+ * progress. Until the store has read localStorage it renders the
+ * nothing-finished-yet view, which is exactly what the server rendered —
+ * anything else is a hydration mismatch.
  */
 export function NumberGrid({
   items,
   characterId,
   lessonId,
   basePath,
+  tone,
 }: NumberGridProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
@@ -47,93 +65,110 @@ export function NumberGrid({
       ? (progress[itemKey(characterId, lessonId, value)]?.stars ?? 0)
       : 0;
 
-  /* The one number the child has actually reached: the first open number
-     with no stars yet. It pulses so a child glancing at the grid knows
-     exactly where to tap next, instead of scanning nine identical numerals. */
-  const nextValue = items.find((item, index) => {
+  const cast = items.map((item, index) => {
     const previous = items[index - 1];
-    const isLocked = previous ? starsFor(previous.value) === 0 : false;
-    return !isLocked && starsFor(item.value) === 0;
-  })?.value;
+
+    return {
+      item,
+      index,
+      locked: previous ? starsFor(previous.value) === 0 : false,
+      stars: starsFor(item.value),
+    };
+  });
+
+  const finished = cast.filter(({ stars }) => stars > 0).length;
+
+  /* The one number the child has actually reached: the first open number
+     with no stars yet. It pulses and carries the badge, so a child glancing
+     at the grid knows exactly where to tap instead of scanning all nine. */
+  const nextValue = cast.find(({ locked, stars }) => !locked && stars === 0)
+    ?.item.value;
+
+  /* Pale enough that the pink numeral standing on it stays the saturated
+     thing — the site's one rule for where a subject colour may appear. */
+  const cellTint = `color-mix(in srgb, ${tone.face} 16%, #ffffff)`;
 
   return (
-    <ul className="grid grid-cols-3 gap-x-4 gap-y-8 sm:gap-x-12 sm:gap-y-14">
-      {items.map((item, index) => {
-        const previous = items[index - 1];
-        const locked = previous ? starsFor(previous.value) === 0 : false;
-        const earned = starsFor(item.value);
-        const isNext = item.value === nextValue;
+    <div className="card w-full px-5 py-7 sm:px-9 sm:py-10">
+      <ActivityProgress
+        label="Numbers"
+        done={finished}
+        total={items.length}
+        tone={tone}
+      />
 
-        const style = {
-          animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
-        };
+      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
+        {cast.map(({ item, index, locked, stars }) => {
+          const isNext = item.value === nextValue;
+          const style = { animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s` };
 
-        const numeral = (
-          <Numeral
-            value={item.value}
-            image={item.image}
-            sizeClass="h-24 w-24 sm:h-32 sm:w-32 lg:h-36 lg:w-36"
-            locked={locked}
-            decorative
-          />
-        );
-
-        return (
-          <li key={item.value} className="flex flex-col items-center gap-2">
-            {locked ? (
+          const cell = (
+            <>
               <span
-                className="anim-rise-in block"
-                style={style}
-                aria-label={`The number ${item.value}, locked`}
+                className="tile tile-clay relative flex aspect-square w-full items-center justify-center"
+                style={{ "--tile-tint": cellTint } as CellVars}
               >
-                {numeral}
-              </span>
-            ) : (
-              /* The only motion on hover anywhere on the site is a lift, so
-                 that is what an open numeral does too. The pulse (when this
-                 is the number to tap next) lives on a wrapping span so its
-                 continuous `scale` never fights the hover `scale` below —
-                 Tailwind v4's `scale` is its own standalone property, and an
-                 animation on the same element would just override it. */
-              <span
-                className={
-                  isNext ? "anim-pulse-invite inline-block" : "inline-block"
-                }
-              >
-                <Link
-                  href={`${basePath}/${item.value}`}
-                  className="anim-rise-in block transition-transform duration-300 hover:scale-105"
-                  style={style}
-                  aria-label={`Start the number ${item.value}`}
-                >
-                  {numeral}
-                </Link>
-              </span>
-            )}
+                <Numeral
+                  value={item.value}
+                  image={item.image}
+                  sizeClass="h-16 w-16 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+                  locked={locked}
+                  decorative
+                />
 
-            {/* The stars a finished number earned, small, under it — the list
-                is also the record of what the child has done. */}
-            {earned > 0 && (
-              <span
-                className="anim-pop-in flex gap-0.5"
-                style={style}
-                aria-label={`${earned} of 3 stars`}
-              >
-                {Array.from({ length: earned }, (_, star) => (
-                  <Image
-                    key={star}
-                    src="/assets/icons/yellow-star.png"
-                    alt=""
-                    width={140}
-                    height={140}
-                    className="h-5 w-5 object-contain sm:h-6 sm:w-6"
-                  />
-                ))}
+                {/* The same "Next up" mark the lesson hub uses, shortened to
+                    fit a cell this size and hung over the tile's top edge so
+                    it never crowds the numeral. */}
+                {isNext && (
+                  <span
+                    aria-hidden
+                    className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:text-xs"
+                    style={{ backgroundColor: tone.face }}
+                  >
+                    Next
+                  </span>
+                )}
               </span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+
+              {/* Always three slots, gold only for what was actually earned —
+                  an unfinished number shows three empty ones rather than
+                  nothing, so the reward is visible before it is won. */}
+              <StarReward stars={stars} size="compact" />
+            </>
+          );
+
+          return (
+            <li key={item.value}>
+              {/* The pulse lives on a WRAPPING span so its continuous `scale`
+                  never fights the link's hover `scale` — Tailwind v4's
+                  `scale` is its own standalone property, and an infinite
+                  animation on the same element would keep overriding it. */}
+              <span
+                className={`block ${isNext ? "anim-pulse-invite" : ""}`}
+              >
+                {locked ? (
+                  <span
+                    className="anim-rise-in flex flex-col items-center gap-2"
+                    style={style}
+                    aria-label={`The number ${item.value}, locked`}
+                  >
+                    {cell}
+                  </span>
+                ) : (
+                  <Link
+                    href={`${basePath}/${item.value}`}
+                    className="anim-rise-in flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-105"
+                    style={style}
+                    aria-label={`Start the number ${item.value}, ${stars} of 3 stars`}
+                  >
+                    {cell}
+                  </Link>
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
