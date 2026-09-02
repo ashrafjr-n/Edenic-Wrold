@@ -49,12 +49,18 @@ export function WatchLearnCta({ className = "" }: { className?: string }) {
         className="object-cover"
       />
 
+      {/* Mixed from the same two-token recipe as the other cards, but at 38 /
+          28 rather than their 55 / 45: this scene is ALREADY in the accent's
+          own family (a pink pastel world), so at full strength the wash and
+          the picture collapse into one flat pink and the friends disappear.
+          The other two sit on a green and a cream picture and need the
+          stronger veil to stay legible under white type. */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(160deg, color-mix(in srgb, var(--accent) 55%, transparent) 0%, color-mix(in srgb, var(--brand) 45%, transparent) 100%)",
+            "linear-gradient(160deg, color-mix(in srgb, var(--accent) 38%, transparent) 0%, color-mix(in srgb, var(--brand) 28%, transparent) 100%)",
         }}
       />
 

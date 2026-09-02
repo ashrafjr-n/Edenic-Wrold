@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  */
 export default function ActivitiesPage() {
   return (
-    <main className="flex flex-1 flex-col px-4 py-10 sm:px-8 sm:py-14">
+    <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 sm:py-14">
       <div className="mx-auto grid w-full max-w-7xl gap-6 sm:gap-8 lg:grid-cols-3">
         <PuzzleCta />
 
