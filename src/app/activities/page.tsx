@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MascotYoutubeCta } from "@/components/activities/mascot-youtube-cta";
 import { PuzzleCta } from "@/components/activities/puzzle-cta";
+import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
 
 export const metadata: Metadata = {
   title: "Activities — Edenic World",
@@ -20,6 +21,8 @@ export default function ActivitiesPage() {
 
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:gap-8">
         <PuzzleCta />
+
+        <MemoryMatchCta />
       </div>
     </main>
   );
