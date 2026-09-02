@@ -18,12 +18,15 @@ const ICON_SRC = {
 const iconVar = (label: keyof typeof ICON_SRC) =>
   ({ "--icon-src": `url(${ICON_SRC[label]})` }) as CSSProperties;
 
-/** App-style bottom tab bar — phone only (`sm:hidden`). Mirrors `MainNav`'s
+/** App-style bottom tab bar — phone only (`sm:hidden`). Carries `MainNav`'s
     items (same `mainNav` data, same locked rules) but fixed to the viewport
     bottom instead of sitting in the header, the way a native app places its
-    primary navigation. Chrome (logo, language, dark mode, join) stays in the
-    top header on every breakpoint; only Home/Learn/Activities move down here
-    on a phone — see `MainNav`, hidden below `sm`.
+    primary navigation. Home/Learn/Activities move down here on a phone — see
+    `MainNav`, hidden below `sm` — and a fourth **Profile** tab joins them,
+    which is the one thing on this bar `MainNav` has no counterpart for: it
+    comes from `profileNav`, not `mainNav`, precisely so it stays out of the
+    header and the footer. The rest of the chrome (logo, language, dark mode,
+    join) stays in the top header on every breakpoint.
 
     Every tab reads blue+grain by default; the CURRENT page's tab is pink
     with lighter grain (`.nav-tab--current`, `globals.css`) — driven by the
