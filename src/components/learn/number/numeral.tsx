@@ -9,6 +9,16 @@ interface NumeralProps {
   locked?: boolean;
   /** Skips the alt text where a parent already labels the control. */
   decorative?: boolean;
+  /** The white halo behind the numeral. On by default — it is what keeps a
+      pink numeral legible on a pink ground. Turn it OFF when the numeral
+      already stands on a pale tinted cell of its own: there the halo has a
+      surface to fight with and washes a light blob into the middle of it. */
+  bloom?: boolean;
+  /** The corner padlock drawn on a locked numeral. Turn it OFF when the
+      parent puts the lock on its own container instead — on a small cell the
+      chip is sized against the CELL, not against the glyph, or it covers half
+      the digit. */
+  badge?: boolean;
 }
 
 /**
@@ -32,6 +42,8 @@ export function Numeral({
   sizeClass,
   locked = false,
   decorative = false,
+  bloom = true,
+  badge = true,
 }: NumeralProps) {
   return (
     <span className={`relative flex items-center justify-center ${sizeClass}`}>
@@ -39,12 +51,14 @@ export function Numeral({
           a halo around it rather than a square of lighter background behind
           it. Held back on a locked numeral — the glow is what says "this one
           is open". */}
-      <span
-        className={`numeral-bloom pointer-events-none absolute -inset-4 sm:-inset-6 ${
-          locked ? "opacity-30" : ""
-        }`}
-        aria-hidden
-      />
+      {bloom && (
+        <span
+          className={`numeral-bloom pointer-events-none absolute -inset-4 sm:-inset-6 ${
+            locked ? "opacity-30" : ""
+          }`}
+          aria-hidden
+        />
+      )}
 
       <Image
         src={image}
@@ -56,7 +70,7 @@ export function Numeral({
         }`}
       />
 
-      {locked && (
+      {locked && badge && (
         /* Corner-mounted, like the lesson cards' badge — centred, it covers
            the numeral and the child can no longer see which number it is.
 
