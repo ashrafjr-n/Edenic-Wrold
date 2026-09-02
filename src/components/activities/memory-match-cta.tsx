@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Brain } from "lucide-react";
 import { memoryLevels } from "@/data/memory-levels";
-import { memoryKey } from "@/store/progress";
+import { memoryKey } from "@/lib/progress-keys";
 import { Button3D } from "@/components/ui/button-3d";
 import { ActivityCountBadge } from "./activity-count-badge";
 import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";

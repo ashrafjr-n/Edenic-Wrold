@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Puzzle } from "lucide-react";
 import { puzzleStages } from "@/data/puzzles";
-import { puzzleKey } from "@/store/progress";
+import { puzzleKey } from "@/lib/progress-keys";
 import { Button3D } from "@/components/ui/button-3d";
 import { ActivityCountBadge } from "./activity-count-badge";
 import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.jpg";

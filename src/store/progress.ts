@@ -2,34 +2,14 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { ItemKey } from "@/lib/progress-keys";
 
-/** `pinki.numbers.1` — the shape CLAUDE.md describes (character → lesson →
-    item), flattened to one key so the store stays a single flat map instead of
-    three nested records to merge on every write. */
-export type ItemKey = string;
-
-export function itemKey(
-  characterId: string,
-  lessonId: string,
-  item: number | string,
-): ItemKey {
-  return `${characterId}.${lessonId}.${item}`;
-}
-
-/** Puzzles sit outside the character → lesson → item tree (they live under
-    `/activities`), but they are the same thing to this store: one key, best
-    score wins, one place completion lives. */
-export function puzzleKey(stage: number): ItemKey {
-  return `puzzle.${stage}`;
-}
-
-/** Same again for the memory game's twelve levels (`memory.1`). Unlike a
-    puzzle — which is finished or not, and records a flat constant — a level
-    records REAL stars here, scored from time and mistakes, so "best score
-    wins" above is doing actual work for these keys. */
-export function memoryKey(level: number): ItemKey {
-  return `memory.${level}`;
-}
+/* The key builders are pure, and they live in `lib/progress-keys.ts` rather
+   than here so a SERVER component can call them — anything exported from a
+   `"use client"` module can only be invoked from client code. Re-exported
+   from this file so every existing `@/store/progress` import still works. */
+export type { ItemKey } from "@/lib/progress-keys";
+export { itemKey, puzzleKey, memoryKey } from "@/lib/progress-keys";
 
 interface ItemProgress {
   /** 1–3, scored across the whole journey, not per stage. */

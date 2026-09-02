@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import type { ItemKey } from "@/store/progress";
+import type { ItemKey } from "@/lib/progress-keys";
 import { useProgress } from "@/store/progress";
 
 interface ActivityCountBadgeProps {
