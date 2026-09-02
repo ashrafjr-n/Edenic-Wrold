@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
+import type {
+  CSSProperties,
+  PointerEvent as ReactPointerEvent,
+  Ref,
+} from "react";
 import Image from "next/image";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
@@ -21,6 +25,13 @@ import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { Celebration } from "@/components/learn/number/celebration";
 
+export interface PuzzleBoardHandle {
+  /** Flies one loose piece home, as the hint overlay's "Help" does. `false`
+      when there was nothing to place — already finished, or a piece is still
+      in the air — so the caller knows not to spend one of the three. */
+  solveOne: () => boolean;
+}
+
 interface PuzzleBoardProps {
   stage: number;
   picture: PuzzlePicture;
@@ -29,6 +40,11 @@ interface PuzzleBoardProps {
   grid: PuzzleGrid;
   /** The next puzzle, or back to the list when there isn't a playable one. */
   nextHref: string;
+  /** How `PuzzlePlay` reaches `solveOne` from the hint overlay's Help button.
+      An imperative handle rather than a signal prop watched by an effect: a
+      button press is an event, and an effect reacting to a nonce is the
+      `useEffect`-as-event-handler trap. */
+  ref?: Ref<PuzzleBoardHandle>;
 }
 
 /** Below this the pointer never really moved. A tap does nothing — carrying
@@ -47,6 +63,13 @@ const DRAG_THRESHOLD = 6;
 const TRAY_SCALE = 0.72;
 const TRAY_SCALE_UPRIGHT = 0.62;
 const WIGGLE_MS = 500;
+
+/** A helped piece waits this long before setting off, so the hint overlay is
+    out of the way and the child's eyes are back on the board before anything
+    moves — then travels for `HELP_FLY_MS`. Carried in the piece's own
+    `transition` rather than a second timer. */
+const HELP_LIFT_MS = 260;
+const HELP_FLY_MS = 820;
 
 /** Puzzles are not scored — the finished picture is the reward, and stars
     here would be a second currency next to the lessons' own. The store still
@@ -75,6 +98,14 @@ interface DragState {
   dx: number;
   dy: number;
   moved: boolean;
+}
+
+/** A piece currently flying itself home from a "Help" press, and the vector
+    from where it lay in the heap to the middle of its own hole. */
+interface FlightState {
+  id: number;
+  dx: number;
+  dy: number;
 }
 
 /**
@@ -162,6 +193,7 @@ export function PuzzleBoard({
   picture,
   grid,
   nextHref,
+  ref,
 }: PuzzleBoardProps) {
   const pieces = piecesFor(grid);
   const total = pieces.length;
@@ -174,16 +206,28 @@ export function PuzzleBoard({
   const slots = traySlots(grid, upright);
   const boardRef = useRef<HTMLDivElement>(null);
   const wiggleTimer = useRef<number | null>(null);
+  const flightTimer = useRef<number | null>(null);
+  /* The loose pieces' own elements, so a helped piece can be measured where
+     it actually lies in the heap rather than from its scatter percentages. */
+  const looseRefs = useRef(new Map<number, HTMLButtonElement>());
   const complete = useProgress((state) => state.complete);
 
   const [placed, setPlaced] = useState<number[]>([]);
   const [drag, setDrag] = useState<DragState | null>(null);
   const [wrongId, setWrongId] = useState<number | null>(null);
+  const [flight, setFlight] = useState<FlightState | null>(null);
 
-  /* Derived, never stored: a second copy could drift out of sync. */
-  const solved = placed.length === total;
+  /* Derived, never stored: a second copy could drift out of sync.
+
+     A helped piece counts as placed the moment it sets off, so nothing async
+     ever has to add it later — a timer firing a second after the fact would
+     be holding a stale `placed` and could drop whatever the child managed to
+     drop meanwhile. What the flight defers is only the LOOK of it: until it
+     lands the piece still lies in the heap, its hole is still empty, and the
+     picture is not finished yet even if that was the final piece. */
+  const solved = placed.length === total && !flight;
   const loose = trayLayout(stage, grid, slots, upright).filter(
-    (spot) => !placed.includes(spot.piece.id),
+    (spot) => !placed.includes(spot.piece.id) || flight?.id === spot.piece.id,
   );
 
   /* A cell's width over its height — what keeps the knobs round on screen
@@ -193,8 +237,49 @@ export function PuzzleBoard({
   useEffect(() => {
     return () => {
       if (wiggleTimer.current !== null) window.clearTimeout(wiggleTimer.current);
+      if (flightTimer.current !== null) window.clearTimeout(flightTimer.current);
     };
   }, []);
+
+  /* "Help", in the hint overlay, reaches the board through here. It picks the
+     piece lying on TOP of the heap — the last one dealt, so it is never
+     dragged out from under its neighbours — measures the gap between where it
+     lies and the middle of its own hole, and hands that vector to the piece's
+     own `translate`, which is already how a carried piece moves. */
+  useImperativeHandle(ref, () => ({
+    solveOne: () => {
+      if (flight || solved) return false;
+
+      const spot = loose[loose.length - 1];
+      const board = boardRef.current?.getBoundingClientRect();
+      const el = spot ? looseRefs.current.get(spot.piece.id) : undefined;
+      if (!spot || !board || !el) return false;
+
+      const box = el.getBoundingClientRect();
+      const cellW = board.width / grid.cols;
+      const cellH = board.height / grid.rows;
+      /* The same centre the drop test measures against, so a helped piece
+         lands exactly where a carried one would have. */
+      const dx =
+        board.left + (spot.piece.col + 0.5) * cellW - (box.left + box.width / 2);
+      const dy =
+        board.top + (spot.piece.row + 0.5) * cellH - (box.top + box.height / 2);
+
+      const next = [...placed, spot.piece.id];
+      setPlaced(next);
+      setFlight({ id: spot.piece.id, dx, dy });
+      /* Recorded here rather than when it lands, for the same reason a
+         dropped piece is: in the handler that made the picture whole. */
+      if (next.length === total) complete(puzzleKey(stage), DONE);
+
+      if (flightTimer.current !== null) window.clearTimeout(flightTimer.current);
+      flightTimer.current = window.setTimeout(
+        () => setFlight(null),
+        HELP_LIFT_MS + HELP_FLY_MS,
+      );
+      return true;
+    },
+  }));
 
   const flashWrong = (id: number) => {
     setWrongId(id);
@@ -292,9 +377,11 @@ export function PuzzleBoard({
   };
 
   const reset = () => {
+    if (flightTimer.current !== null) window.clearTimeout(flightTimer.current);
     setPlaced([]);
     setWrongId(null);
     setDrag(null);
+    setFlight(null);
   };
 
   /* Stacked, the board and the heap share one budget (`--puzzle-space` in
@@ -379,7 +466,10 @@ export function PuzzleBoard({
             }}
           >
             {pieces.map((piece) => {
-              const isPlaced = placed.includes(piece.id);
+              /* A piece still in the air is committed but not home yet — its
+                 hole stays drawn until it actually arrives. */
+              const isPlaced =
+                placed.includes(piece.id) && flight?.id !== piece.id;
 
               return (
                 <div
@@ -457,12 +547,22 @@ export function PuzzleBoard({
               {loose.map((spot, index) => {
                 const piece = spot.piece;
                 const carrying = drag?.id === piece.id && drag.moved;
+                const flying = flight?.id === piece.id;
 
                 return (
                   <button
                     key={piece.id}
                     type="button"
-                    onPointerDown={(event) => onPointerDown(event, piece)}
+                    ref={(el) => {
+                      if (el) looseRefs.current.set(piece.id, el);
+                      else looseRefs.current.delete(piece.id);
+                    }}
+                    onPointerDown={(event) => {
+                      /* A piece that is flying itself home is not carriable —
+                         it has already been counted. */
+                      if (flight) return;
+                      onPointerDown(event, piece);
+                    }}
                     onPointerMove={onPointerMove}
                     onPointerUp={(event) => onPointerUp(event, piece)}
                     onPointerCancel={(event) => {
@@ -487,20 +587,27 @@ export function PuzzleBoard({
                       /* The centring has to live inside the same `translate`
                          the drag writes to — an inline `translate` replaces a
                          `-translate-x-1/2` utility outright, and the piece
-                         would jump by half its own size on the first move. */
-                      translate: carrying
-                        ? `calc(-50% + ${drag.dx}px) calc(-50% + ${drag.dy}px)`
-                        : "-50% -50%",
+                         would jump by half its own size on the first move.
+                         A helped piece travels on the very same property, so
+                         it moves exactly the way a carried one does. */
+                      translate: flying
+                        ? `calc(-50% + ${flight.dx}px) calc(-50% + ${flight.dy}px)`
+                        : carrying
+                          ? `calc(-50% + ${drag.dx}px) calc(-50% + ${drag.dy}px)`
+                          : "-50% -50%",
                       /* Picking a piece up straightens it and brings it to full
                          size, so it always matches the hole it is going into —
                          no rotating to fit, which is a mechanic a small child
-                         does not need. */
-                      rotate: carrying ? "0deg" : `${spot.rotate}deg`,
-                      scale: carrying ? "1" : String(trayScale),
-                      zIndex: carrying ? 50 : index,
-                      transition: carrying
-                        ? "rotate 0.2s ease, scale 0.2s ease"
-                        : "translate 0.3s ease, rotate 0.3s ease, scale 0.3s ease",
+                         does not need. A helped piece straightens itself on the
+                         way for the same reason. */
+                      rotate: carrying || flying ? "0deg" : `${spot.rotate}deg`,
+                      scale: carrying || flying ? "1" : String(trayScale),
+                      zIndex: carrying || flying ? 50 : index,
+                      transition: flying
+                        ? `translate ${HELP_FLY_MS}ms cubic-bezier(0.33, 0, 0.2, 1) ${HELP_LIFT_MS}ms, rotate 260ms ease ${HELP_LIFT_MS}ms, scale 260ms ease ${HELP_LIFT_MS}ms`
+                        : carrying
+                          ? "rotate 0.2s ease, scale 0.2s ease"
+                          : "translate 0.3s ease, rotate 0.3s ease, scale 0.3s ease",
                     }}
                   >
                     <PieceArt
