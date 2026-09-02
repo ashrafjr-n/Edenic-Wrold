@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import type { PuzzleStage } from "@/types/puzzle";
 import { puzzleKey, useProgress } from "@/store/progress";
-import { ActivityProgress } from "@/components/activities/activity-progress";
+import { ActivityProgress } from "@/components/ui/activity-progress";
 
 interface PuzzleGridProps {
   stages: PuzzleStage[];

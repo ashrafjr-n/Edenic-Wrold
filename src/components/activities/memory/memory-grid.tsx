@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
 import { memoryKey, useProgress } from "@/store/progress";
-import { ActivityProgress } from "@/components/activities/activity-progress";
+import { ActivityProgress } from "@/components/ui/activity-progress";
 
 interface MemoryGridProps {
   levels: MemoryLevel[];
