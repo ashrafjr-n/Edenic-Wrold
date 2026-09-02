@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { Brain } from "lucide-react";
+import { memoryLevels } from "@/data/memory-levels";
+import { memoryKey } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import { ActivityCountBadge } from "./activity-count-badge";
 import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";
+
+const LEVEL_KEYS = memoryLevels.map((level) => memoryKey(level.value));
 
 /** The art is a **static import**, not a `/public` path: a static import is
     content-hashed into its URL, so replacing the file on disk changes the URL
@@ -25,11 +30,17 @@ import memoryCard from "../../../public/assets/activity-page/memory-match/memory
 export function MemoryMatchCta({ className = "" }: { className?: string }) {
   return (
     <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
+      <ActivityCountBadge
+        keys={LEVEL_KEYS}
+        noun="levels"
+        tint="var(--color-gold-dark)"
+      />
+
       <Image
         src={memoryCard}
         alt="Pinki, Nova and Bloo playing a memory card game"
         fill
-        sizes="(min-width: 1024px) 80rem, 100vw"
+        sizes="(min-width: 1024px) 27rem, 100vw"
         className="object-cover"
       />
 
@@ -42,7 +53,7 @@ export function MemoryMatchCta({ className = "" }: { className?: string }) {
         }}
       />
 
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center p-4">
         <Button3D
           tone={{
             face: "var(--color-gold)",
@@ -50,9 +61,9 @@ export function MemoryMatchCta({ className = "" }: { className?: string }) {
             text: "var(--color-ink)",
           }}
           href="/activities/memory-match"
-          className="px-8 py-4 text-lg sm:px-10 sm:text-xl"
+          className="px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
         >
-          <Brain className="h-6 w-6" strokeWidth={2} />
+          <Brain className="h-5 w-5" strokeWidth={2} />
           Memory Match
         </Button3D>
       </div>
