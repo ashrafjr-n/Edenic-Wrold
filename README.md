@@ -70,9 +70,9 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Lesson subjects own a second, parallel palette (`--color-subject-*`): numbers
-  pink, letters violet, colors blue, shapes amber. It is used on the lesson hub
-  from tablet width up, so the four lessons read apart at a glance, and it is kept
-  separate from the mascot colors — a subject means the same thing on every hub.
+  pink, letters violet, colors blue. It is used on the lesson hub from tablet
+  width up, so the three lessons read apart at a glance, and it is kept separate
+  from the mascot colors — a subject means the same thing on every hub.
 - The lesson hub is the one page that is not a flat single-color ground: it takes
   the character's own color edge to edge, bending through lavender into a pale
   tint of itself from tablet width up.
