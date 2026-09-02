@@ -86,7 +86,7 @@ export function LessonCard({
           flat subject icons that were here before, and a render boxed on its
           own panel reads as a sticker stuck to the card instead of Pinki
           standing on it; her own drop shadow is what grounds her now. */}
-      <div className="relative flex w-20 shrink-0 items-center justify-center p-3 sm:w-36 sm:p-4">
+      <div className="relative flex w-20 shrink-0 items-center justify-center p-2 sm:w-36 sm:p-3">
         <Image
           src={image}
           alt={name}
@@ -97,7 +97,7 @@ export function LessonCard({
              was grey all through — now the accent card around it says
              "not yet" and hiding the subject as well would only take away
              the one thing worth looking forward to. */
-          className={`h-11 w-11 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-20 sm:w-20 ${
+          className={`h-16 w-16 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-28 sm:w-28 ${
             locked ? "" : "group-hover/lesson:scale-110"
           }`}
         />
