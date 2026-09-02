@@ -1036,28 +1036,6 @@ button:disabled,
    Entrance choreography (pure CSS timeline, no JS)
    --------------------------------------------------------------- */
 
-/* The floating icons are 3D renders too, so at full opacity they compete
-   with the characters for attention. Held well below full strength they
-   stay what they're meant to be — atmosphere drifting past behind the
-   cast, never a second thing to look at. */
-@keyframes icon-rise {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg);
-  }
-  12% {
-    opacity: 0.5;
-  }
-  78% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--drift, 0), calc(-100vh - 160px), 0) scale(1.05)
-      rotate(var(--spin, 30deg));
-  }
-}
-
 @keyframes drop-in {
   from {
     opacity: 0;
@@ -1106,11 +1084,6 @@ button:disabled,
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
-}
-
-.anim-icon-rise {
-  animation: icon-rise 1.6s cubic-bezier(0.33, 0, 0.3, 1) both;
-  will-change: transform, opacity;
 }
 
 .anim-drop-in {
@@ -1646,7 +1619,6 @@ button:disabled,
     animation: none;
   }
 
-  .intro-icons,
   .confetti-piece {
     display: none;
   }
