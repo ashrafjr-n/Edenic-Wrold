@@ -39,20 +39,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       totalItems: 10,
       locked: true,
     },
-    {
-      id: "shapes",
-      name: "Learn Shapes",
-      description: "Explore circles, squares and more",
-      /* A star, not the plain ball this used to use: the ball said nothing
-         about shapes and clashed with Colors, which is a ball too. */
-      image: "/assets/icons/yellow-star.png",
-      theme: {
-        accent: "var(--color-subject-shapes)",
-        accentDark: "var(--color-subject-shapes-dark)",
-      },
-      totalItems: 9,
-      locked: true,
-    },
   ],
   nova: [],
   bloo: [],
