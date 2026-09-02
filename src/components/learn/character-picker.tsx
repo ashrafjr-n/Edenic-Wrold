@@ -23,7 +23,12 @@ const cast = characters.map((character, index) => ({
 export function CharacterPicker() {
   return (
     <section className="flex flex-1 flex-col justify-center px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6">
-      <div className="card mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-16 lg:py-16">
+      {/* `w-full` is load-bearing: the section is a flex COLUMN, and an auto
+          inline margin on a flex item defeats the default `stretch`, so
+          without it the card shrinks to fit its contents instead of filling
+          the page the way the home page's copy of it does (that one sits in a
+          plain block section, where `mx-auto` + `max-w-*` is enough). */}
+      <div className="card mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-16 lg:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <h1
             className="anim-drop-in text-4xl font-bold leading-tight tracking-tight text-[var(--color-ink)] sm:text-6xl"
