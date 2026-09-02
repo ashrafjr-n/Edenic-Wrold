@@ -86,18 +86,22 @@ export function LessonCard({
           flat subject icons that were here before, and a render boxed on its
           own panel reads as a sticker stuck to the card instead of Pinki
           standing on it; her own drop shadow is what grounds her now. */}
-      <div className="relative flex w-20 shrink-0 items-center justify-center p-2 sm:w-36 sm:p-3">
+      {/* No padding: the art box fills the panel's whole width, so the render
+          can be as large as possible without taking a single pixel from the
+          text column beside it — the art's own aspect ratio (roughly 0.9)
+          leaves the visual margin instead. */}
+      <div className="relative flex w-20 shrink-0 items-center justify-center sm:w-36">
         <Image
           src={image}
           alt={name}
-          width={140}
-          height={140}
+          width={220}
+          height={220}
           /* The art keeps its colour even when locked, at every width.
              It used to be desaturated on a phone, back when a locked card
              was grey all through — now the accent card around it says
              "not yet" and hiding the subject as well would only take away
              the one thing worth looking forward to. */
-          className={`h-16 w-16 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-28 sm:w-28 ${
+          className={`h-20 w-20 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-36 sm:w-36 ${
             locked ? "" : "group-hover/lesson:scale-110"
           }`}
         />
