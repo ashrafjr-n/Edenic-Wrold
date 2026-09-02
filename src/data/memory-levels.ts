@@ -61,10 +61,22 @@ export const memoryFaces: Record<string, MemoryFace> = {
  * child plays on. See `scoreLevel`.
  */
 export const memoryLevels: MemoryLevel[] = [
-  { value: 1, pairs: 3, cols: 3, seconds: 40, faces: ["apple", "cat", "car"] },
+  { value: 1, pairs: 2, cols: 2, seconds: 40, faces: ["apple", "cat"] },
   { value: 2, pairs: 3, cols: 3, seconds: 36, faces: ["dog", "giraffe", "cloud"] },
-  { value: 3, pairs: 3, cols: 3, seconds: 32, faces: ["rabbit", "apple", "numbers"] },
-  { value: 4, pairs: 3, cols: 3, seconds: 30, faces: ["cat", "car", "giraffe"] },
+  {
+    value: 3,
+    pairs: 4,
+    cols: 4,
+    seconds: 32,
+    faces: ["rabbit", "apple", "numbers", "car"],
+  },
+  {
+    value: 4,
+    pairs: 4,
+    cols: 4,
+    seconds: 30,
+    faces: ["cat", "car", "giraffe", "star"],
+  },
 
   { value: 5, pairs: 4, cols: 4, seconds: 45, faces: ["apple", "dog", "cloud", "rabbit"] },
   { value: 6, pairs: 4, cols: 4, seconds: 40, faces: ["numbers", "cat", "giraffe", "car"] },
