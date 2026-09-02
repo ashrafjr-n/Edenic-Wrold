@@ -15,7 +15,8 @@ const FRIEND_STAGGER = 0.13;
 /** Idle float starts once pop-in (0.75s) has settled, so the two never fight. */
 const POP_IN_DURATION = 0.75;
 const NAME_OFFSET = 0.15;
-const BUTTON_OFFSET = 0.25;
+const TAGLINE_OFFSET = 0.22;
+const BUTTON_OFFSET = 0.3;
 
 interface CharacterCardProps {
   character: Character;
@@ -29,7 +30,7 @@ export function CharacterCard({
   previousName,
   index,
 }: CharacterCardProps) {
-  const { name, image, accent, accentDark, locked } = character;
+  const { name, tagline, image, accent, accentDark, locked } = character;
 
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {
@@ -37,6 +38,7 @@ export function CharacterCard({
     friend: `${friendDelay}s`,
     breathe: `${friendDelay + POP_IN_DURATION}s`,
     name: `${friendDelay + NAME_OFFSET}s`,
+    tagline: `${friendDelay + TAGLINE_OFFSET}s`,
     button: `${friendDelay + BUTTON_OFFSET}s`,
   };
 
@@ -120,8 +122,12 @@ export function CharacterCard({
         </div>
       </div>
 
+      {/* Name in a small white pill, tagline bare underneath — the exact
+          treatment the home page's `FriendPod` uses, so a friend is presented
+          the same way on both pages. White on white: the pill is read by its
+          shadow, the same way it is on the home card. */}
       <h3
-        className="anim-fade-up mt-4 text-center text-2xl font-bold sm:text-3xl"
+        className="card card-pill anim-fade-up mt-5 px-5 py-1.5 text-lg font-bold sm:px-6 sm:text-xl"
         style={{
           color: locked ? "var(--color-locked-text)" : "var(--color-ink)",
           animationDelay: delay.name,
@@ -129,6 +135,13 @@ export function CharacterCard({
       >
         {name}
       </h3>
+
+      <p
+        className="anim-fade-up mt-3 max-w-[13rem] text-center text-sm leading-snug text-[var(--color-ink)]/60"
+        style={{ animationDelay: delay.tagline }}
+      >
+        {tagline}
+      </p>
 
       <Button3D
         tone={
@@ -143,7 +156,7 @@ export function CharacterCard({
         href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
         aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
-        className="anim-fade-up mt-3 w-full max-w-[220px] px-5 py-3 text-sm sm:text-base"
+        className="anim-fade-up mt-5 w-full max-w-[220px] px-5 py-3 text-sm sm:text-base"
         style={{ animationDelay: delay.button }}
       >
         {locked ? (
