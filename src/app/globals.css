@@ -1543,6 +1543,56 @@ button:disabled,
   animation: path-hint-travel 3.4s ease-in-out infinite;
 }
 
+/* Activities mascot CTA (`MascotYoutubeCta`): one 18s keyframe shared by all
+   three mascots, each only "on stage" for the first third of it — staggering
+   `animation-delay` (0/6/12s, applied inline per mascot) is what turns one
+   shared timeline into a three-way relay with no JS. Both keyframes match
+   their hidden-state stops with `visibility: hidden`, not just `opacity: 0`,
+   so the other two mascots' buttons are out of the tab order and can't eat
+   clicks meant for whatever sits behind this floating widget. */
+@keyframes mascot-slide {
+  0%,
+  21.11%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(2.5rem, 0, 0);
+  }
+  2.78%,
+  18.33% {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes mascot-cta-pop {
+  0%,
+  5%,
+  18.33%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+  }
+  6.67%,
+  16.67% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.mascot-avatar {
+  animation: mascot-slide 18s ease-in-out infinite both;
+  will-change: transform, opacity;
+}
+
+.mascot-watch-btn {
+  animation: mascot-cta-pop 18s ease-in-out infinite both;
+  will-change: transform, opacity;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-arch-in,
@@ -1560,12 +1610,31 @@ button:disabled,
   .anim-pulse-invite,
   .anim-reveal,
   .path-hint,
-  .anim-hero-parallax {
+  .anim-hero-parallax,
+  .mascot-avatar,
+  .mascot-watch-btn {
     animation: none;
   }
 
   .intro-icons,
   .confetti-piece {
     display: none;
+  }
+
+  /* No relay without motion: freeze on the first mascot instead of cycling. */
+  .mascot-slot:not(:first-child) {
+    display: none;
+  }
+
+  .mascot-slot:first-child .mascot-avatar {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .mascot-slot:first-child .mascot-watch-btn {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 }
