@@ -78,22 +78,34 @@ export const memoryLevels: MemoryLevel[] = [
     faces: ["cat", "car", "giraffe", "star"],
   },
 
-  { value: 5, pairs: 4, cols: 4, seconds: 45, faces: ["apple", "dog", "cloud", "rabbit"] },
-  { value: 6, pairs: 4, cols: 4, seconds: 40, faces: ["numbers", "cat", "giraffe", "car"] },
+  {
+    value: 5,
+    pairs: 6,
+    cols: 4,
+    seconds: 45,
+    faces: ["apple", "dog", "cloud", "rabbit", "numbers", "car"],
+  },
+  {
+    value: 6,
+    pairs: 6,
+    cols: 4,
+    seconds: 40,
+    faces: ["numbers", "cat", "giraffe", "car", "star", "cloud"],
+  },
 
   {
     value: 7,
-    pairs: 5,
-    cols: 5,
+    pairs: 6,
+    cols: 4,
     seconds: 55,
-    faces: ["apple", "dog", "rabbit", "ball", "blueBall"],
+    faces: ["apple", "dog", "rabbit", "cloud", "ball", "blueBall"],
   },
   {
     value: 8,
-    pairs: 5,
-    cols: 5,
+    pairs: 8,
+    cols: 4,
     seconds: 50,
-    faces: ["cat", "cloud", "giraffe", "ball", "blueBall"],
+    faces: ["cat", "cloud", "giraffe", "car", "numbers", "star", "ball", "blueBall"],
   },
 
   {
