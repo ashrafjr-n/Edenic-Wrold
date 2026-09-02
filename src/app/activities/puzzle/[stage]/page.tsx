@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { findPuzzleStage, puzzleStages } from "@/data/puzzles";
 import { isUpright } from "@/lib/puzzle-pieces";
-import { Button3D } from "@/components/ui/button-3d";
-import { PuzzleBoard } from "@/components/activities/puzzle/puzzle-board";
-import { PuzzleView } from "@/components/activities/puzzle/puzzle-view";
+import { PuzzlePlay } from "@/components/activities/puzzle/puzzle-play";
 
 export function generateStaticParams() {
   return puzzleStages
@@ -49,48 +46,16 @@ export default async function PuzzleStagePage({
         upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
       }`}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* Back sits on the left, `View` dead centre of the page — centred on
-            the page rather than on the space left over, which is why the back
-            button is taken out of the flow rather than balanced by a spacer. */}
-        <div
-          className="anim-drop-in relative flex items-center justify-center"
-          style={{ animationDelay: "0.1s" }}
-        >
-          {/* The wrapper carries the positioning, not the button:
-              `.btn3d` sets `position: relative` and is UNLAYERED, so a
-              Tailwind `absolute` utility on the button itself silently
-              loses and it stays in the centred flex row. */}
-          <span className="absolute left-0 top-0">
-            <Button3D
-              tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-              href="/activities/puzzle"
-              aria-label="Back to the puzzles"
-              className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-            >
-              <ArrowLeft
-                className="h-5 w-5 text-white sm:h-6 sm:w-6"
-                strokeWidth={2.75}
-              />
-            </Button3D>
-          </span>
-
-          <PuzzleView picture={stage.picture} />
-        </div>
-      </div>
-
-      <div
-        className={`mx-auto flex w-full flex-1 flex-col justify-center px-4 sm:px-8 ${
-          upright ? "py-1 sm:py-6" : "py-8 sm:py-10"
-        }`}
-      >
-        <PuzzleBoard
-          stage={stage.value}
-          picture={stage.picture}
-          grid={stage.grid}
-          nextHref={nextHref}
-        />
-      </div>
+      {/* The chrome row and the board are one client component: "Help", in
+          the hint overlay at the top, places a piece on the board at the
+          bottom, and the two have to be able to reach each other. */}
+      <PuzzlePlay
+        stage={stage.value}
+        picture={stage.picture}
+        grid={stage.grid}
+        nextHref={nextHref}
+        upright={upright}
+      />
     </main>
   );
 }
