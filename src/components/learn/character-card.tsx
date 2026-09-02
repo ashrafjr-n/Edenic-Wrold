@@ -6,8 +6,8 @@ import type { Character } from "@/types/character";
 
 type TileVars = CSSProperties & { "--tile-tint"?: string };
 
-/** The whole cast lands while the icons are still climbing — the icons are
-    decoration and must never gate the content. Everything is on screen by ~1.4s. */
+/** The entrance timeline: the heading lands first, then each friend, name,
+    tagline and button in turn. Everything is on screen by ~1.5s. */
 const CARD_DELAY = 0.4;
 const CARD_STAGGER = 0.1;
 const FRIEND_DELAY = 0.65;

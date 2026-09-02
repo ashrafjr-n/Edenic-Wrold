@@ -42,7 +42,7 @@ export function CharacterPicker() {
 
         {/* One friend per row on a phone, the three side by side from `sm` —
             the same arrangement the home page's friend pods take. */}
-        <div className="mx-auto mt-10 w-full max-w-6xl sm:mt-12">
+        <div className="mx-auto mt-14 w-full max-w-6xl lg:mt-16">
           <div className="flex flex-col items-center gap-12 sm:flex-row sm:items-end sm:justify-center sm:gap-6 lg:gap-14">
             {cast.map(({ character, index, previousName }) => (
               <CharacterCard
