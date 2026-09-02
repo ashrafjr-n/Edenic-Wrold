@@ -61,20 +61,20 @@ export const memoryFaces: Record<string, MemoryFace> = {
  * child plays on. See `scoreLevel`.
  */
 export const memoryLevels: MemoryLevel[] = [
-  { value: 1, pairs: 2, cols: 2, seconds: 40, faces: ["apple", "cat"] },
-  { value: 2, pairs: 3, cols: 3, seconds: 36, faces: ["dog", "giraffe", "cloud"] },
+  { value: 1, pairs: 2, cols: 2, seconds: 26, faces: ["apple", "cat"] },
+  { value: 2, pairs: 3, cols: 3, seconds: 38, faces: ["dog", "giraffe", "cloud"] },
   {
     value: 3,
     pairs: 4,
     cols: 4,
-    seconds: 32,
+    seconds: 50,
     faces: ["rabbit", "apple", "numbers", "car"],
   },
   {
     value: 4,
     pairs: 4,
     cols: 4,
-    seconds: 30,
+    seconds: 48,
     faces: ["cat", "car", "giraffe", "star"],
   },
 
@@ -82,14 +82,14 @@ export const memoryLevels: MemoryLevel[] = [
     value: 5,
     pairs: 6,
     cols: 4,
-    seconds: 45,
+    seconds: 70,
     faces: ["apple", "dog", "cloud", "rabbit", "numbers", "car"],
   },
   {
     value: 6,
     pairs: 6,
     cols: 4,
-    seconds: 40,
+    seconds: 68,
     faces: ["numbers", "cat", "giraffe", "car", "star", "cloud"],
   },
 
@@ -97,14 +97,14 @@ export const memoryLevels: MemoryLevel[] = [
     value: 7,
     pairs: 6,
     cols: 4,
-    seconds: 55,
+    seconds: 66,
     faces: ["apple", "dog", "rabbit", "cloud", "ball", "blueBall"],
   },
   {
     value: 8,
     pairs: 8,
     cols: 4,
-    seconds: 50,
+    seconds: 85,
     faces: ["cat", "cloud", "giraffe", "car", "numbers", "star", "ball", "blueBall"],
   },
 
@@ -112,14 +112,14 @@ export const memoryLevels: MemoryLevel[] = [
     value: 9,
     pairs: 8,
     cols: 4,
-    seconds: 65,
+    seconds: 82,
     faces: ["apple", "dog", "car", "star", "cloud", "a", "b", "c"],
   },
   {
     value: 10,
     pairs: 8,
     cols: 4,
-    seconds: 60,
+    seconds: 80,
     faces: ["rabbit", "cloud", "ball", "blueBall", "a", "b", "pinki", "nova"],
   },
 
@@ -127,7 +127,7 @@ export const memoryLevels: MemoryLevel[] = [
     value: 11,
     pairs: 10,
     cols: 5,
-    seconds: 85,
+    seconds: 95,
     faces: [
       "apple",
       "cat",
@@ -145,7 +145,7 @@ export const memoryLevels: MemoryLevel[] = [
     value: 12,
     pairs: 10,
     cols: 5,
-    seconds: 75,
+    seconds: 90,
     faces: [
       "pinki",
       "nova",
