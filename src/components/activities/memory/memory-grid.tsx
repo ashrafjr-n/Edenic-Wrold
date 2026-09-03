@@ -195,18 +195,18 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                 {level.value}
               </span>
 
-              {/* The same "Next up" mark the numbers picker uses, shortened
-                  to fit a cell this size. **Inset from the top edge, not hung
-                  over it** — unlike the numbers picker's `.tile`, this card
-                  is `overflow-hidden` (it has to be, to clip the board art to
-                  its rounded corners), so a negative offset here was being
-                  cut in half by the card's own edge. `tone.edge` — the darker
-                  of the two "next" gold values — is what keeps it legible
-                  against a card already filled with `tone.face`. */}
+              {/* The same top-right corner the finished tick and the padlock
+                  use — the three are mutually exclusive (done / next /
+                  locked), so they can share one slot without ever
+                  colliding. Was centred over the top edge, matching the
+                  numbers picker's pill; moved here so all three status marks
+                  read from the same spot on every card. `tone.edge` — the
+                  darker of the two "next" gold values — is what keeps it
+                  legible against a card already filled with `tone.face`. */}
               {state === "next" && (
                 <span
                   aria-hidden
-                  className="absolute top-1.5 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:top-2 sm:text-xs"
+                  className="absolute right-1.5 top-1.5 rounded-full px-2 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:right-2.5 sm:top-2.5 sm:px-2.5 sm:text-xs"
                   style={{ backgroundColor: tone.edge }}
                 >
                   Next
