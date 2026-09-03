@@ -37,6 +37,16 @@ interface NumbersIntroProps {
  * which is exactly where number 1 is from here), so this is a few degrees of
  * correction rather than the new artwork an earlier, upright-and-above
  * composition would have needed.
+ *
+ * **-3°, chosen against -5° and -7° in the browser.** The lean is small for
+ * two reasons that point the same way: past about 5° she stops reading as
+ * standing and starts reading as tipping over, and — counter-intuitively —
+ * a DEEPER anti-clockwise lean aims the stick WORSE. Flattening it swings
+ * the tip toward the bottom-left corner (7, 4) when the target is up and
+ * left; the stick gets closer to number 1 as the lean approaches zero.
+ * Aiming it dead-on would need roughly +10° the other way, which tips her
+ * backwards, away from the grid. So this gestures at the numerals rather
+ * than striking number 1 exactly — which is what the reference does too.
  */
 export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
   return (
@@ -55,7 +65,7 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
            property in Tailwind v4, so it composes with both instead of being
            overwritten on every tick. This is why the lean is a utility here
            and never a hand-written `transform: rotate()`. */
-        className="anim-fade-up pointer-events-none absolute bottom-0 right-0 z-10 block w-[58%] rotate-[-5deg] sm:w-[52%]"
+        className="anim-fade-up pointer-events-none absolute bottom-0 right-0 z-10 block w-[58%] rotate-[-3deg] sm:w-[52%]"
       >
         <Image
           src={POSE_IMAGE[pose]}
