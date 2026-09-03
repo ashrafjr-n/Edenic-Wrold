@@ -1,4 +1,4 @@
-import type { MemoryFace, MemoryLevel, MemoryTone } from "@/types/memory";
+import type { MemoryFace, MemoryLevel } from "@/types/memory";
 
 /**
  * Every picture a card can wear, and the reason the last levels are harder
@@ -164,34 +164,6 @@ export const memoryLevels: MemoryLevel[] = [
     ],
   },
 ];
-
-/**
- * The three rungs of gold the twelve levels climb, four levels to a rung:
- * 1–4 a light yellow, 5–8 the base gold, 9–12 a deeper amber-gold.
- *
- * **The same colour at three shades, never three colours.** Every pair is
- * mixed from `--color-gold` / `--color-gold-dark` in `globals.css`, so the
- * game keeps one identity while the board a child is looking at gets visibly
- * heavier the further down the ladder they are — difficulty made visible
- * before a level is even opened, which is the same job the miniature board on
- * each card already does for size.
- */
-const TONES: MemoryTone[] = [
-  { face: "var(--color-gold-soft)", edge: "var(--color-gold-soft-dark)" },
-  { face: "var(--color-gold)", edge: "var(--color-gold-dark)" },
-  { face: "var(--color-gold-deep)", edge: "var(--color-gold-deep-dark)" },
-];
-
-/** How many levels share one rung. */
-const LEVELS_PER_TONE = 4;
-
-/** The shade a level wears. Anything past the last rung stays on it, so
-    adding a thirteenth level can never fall off the end of the table. */
-export function memoryTone(value: number): MemoryTone {
-  const band = Math.floor((value - 1) / LEVELS_PER_TONE);
-
-  return TONES[Math.min(Math.max(band, 0), TONES.length - 1)];
-}
 
 export function findMemoryLevel(value: number): MemoryLevel | undefined {
   return memoryLevels.find((level) => level.value === value);

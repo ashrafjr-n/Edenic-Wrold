@@ -168,16 +168,29 @@
   --color-gold: #f7c948;
   --color-gold-dark: #c9891a;
 
-  /* Three RUNGS of the same gold, light to deep, so a ladder of levels can
-     get visibly heavier without leaving its own colour — Memory Match's
-     twelve cards use them four at a time (see `data/memory-levels.ts`).
-     Every one is mixed FROM the pair above rather than picked by eye: that
-     is what keeps them one hue at three shades instead of three yellows,
-     and it means recolouring gold once moves all three together. */
-  --color-gold-soft: color-mix(in srgb, var(--color-gold) 68%, #fff);
-  --color-gold-soft-dark: color-mix(in srgb, var(--color-gold-dark) 62%, #fff);
+  /* **Three STATES of the same gold, not twelve shades of it.** Memory
+     Match's level cards are coloured by what a card IS, never by where it
+     sits in the list: finished cards all wear the base gold above, the one
+     level to play next wears `-deep`, and every locked level wears `-quiet`.
+     So the colour is a fact a child can read — done / open / shut — rather
+     than a gradient down the page.
+
+     They were a per-level ladder for exactly one round (1–4 light, 5–8 base,
+     9–12 deep, four to a rung) and that was reverted: a shade that changes
+     with the level number is decoration, because nothing about the card
+     tells you which rung it is on. `--color-gold-soft`, the light end of
+     that ladder, is deleted with it. The deep pair survived because it now
+     means something.
+
+     Both are mixed FROM the base pair, never picked by eye — one hue at
+     three depths, and recolouring `--color-gold` once moves all of them. */
   --color-gold-deep: color-mix(in srgb, var(--color-gold) 72%, var(--color-gold-dark));
   --color-gold-deep-dark: color-mix(in srgb, var(--color-gold-dark) 78%, #000);
+  /* Shut: the gold drained into the site's own dormant tone, so a locked
+     card reads as the same material resting rather than as a different
+     colour. Every locked level is this exact pair — no ladder here either. */
+  --color-gold-quiet: color-mix(in srgb, var(--color-gold) 30%, var(--color-locked));
+  --color-gold-quiet-dark: color-mix(in srgb, var(--color-gold-dark) 26%, var(--color-locked-dark));
 
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
   --color-ink: #2f2a52;
@@ -1715,6 +1728,27 @@ button:disabled,
   .memory-card:not(.is-open):not(:disabled):hover .memory-card-inner {
     translate: none;
   }
+}
+
+/* The one card the child should open next: a soft ring of its own colour
+   around it, so "you are here" is visible before a single number is read —
+   the same job the numbers picker's "Next" pill and `.anim-pulse-invite` do
+   on their own grid.
+
+   It rides the WRAPPER, never the card: `.clay` owns the card's `box-shadow`
+   (inner highlight, inner shade, drop shadow all in one declaration), and a
+   second `box-shadow` on the same element would replace all three rather
+   than add to them. The wrapper needs the radius spelled out for the same
+   reason — it has no `.card` of its own to inherit one from.
+
+   `--glow-tone` defaults to the section's own colour, so this works on any
+   activity page without naming a hue. */
+.next-glow {
+  --glow-tone: var(--page-accent-color);
+  border-radius: 1.75rem;
+  box-shadow:
+    0 0 0 0.28rem color-mix(in srgb, var(--glow-tone) 32%, transparent),
+    0 0 1.75rem color-mix(in srgb, var(--glow-tone) 42%, transparent);
 }
 
 /* ---------------------------------------------------------------

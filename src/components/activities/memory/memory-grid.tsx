@@ -3,8 +3,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Check, Lock } from "lucide-react";
-import type { MemoryLevel } from "@/types/memory";
-import { memoryTone } from "@/data/memory-levels";
+import type { MemoryLevel, MemoryTone } from "@/types/memory";
 import { memoryKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
 
@@ -17,22 +16,50 @@ const ITEM_STAGGER = 0.06;
 
 const GOLD = { face: "var(--color-gold)", edge: "var(--color-gold-dark)" };
 
+/** What a card IS, which is the only thing its colour says. Sequential
+    unlocking means these three are exhaustive: a level is open only once the
+    one before it is finished, so there can never be an open level that is
+    neither finished nor the next one to play. */
+type LevelState = "done" | "next" | "locked";
+
+/**
+ * **Three shades of the one gold, one per state — never a shade per level.**
+ *
+ * Finished cards are all the base gold, every single one; the level to play
+ * next is the deep gold and wears a glow; every locked level is the same
+ * quiet, drained gold. So the colour on this page is information a child can
+ * read at a glance — done, open, shut — and two cards the same colour mean
+ * the same thing.
+ *
+ * The twelve were a per-level LADDER for one round (1–4 light, 5–8 base,
+ * 9–12 deep) and it was reverted on direct request, for the reason worth
+ * keeping: a shade tied to the level number is decoration, because nothing
+ * about a card tells you which rung it is on. Colour has to carry meaning or
+ * be one colour. Don't rebuild the ladder.
+ */
+const TONES: Record<LevelState, MemoryTone> = {
+  done: GOLD,
+  next: { face: "var(--color-gold-deep)", edge: "var(--color-gold-deep-dark)" },
+  locked: {
+    face: "var(--color-gold-quiet)",
+    edge: "var(--color-gold-quiet-dark)",
+  },
+};
+
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 type ChipVars = CSSProperties & {
   "--chip-face"?: string;
   "--chip-edge"?: string;
 };
+type GlowVars = CSSProperties & { "--glow-tone"?: string };
 
 /**
  * The twelve levels, three to a row, with the child's position in the set
  * above them.
  *
- * **Every card is gold**, because gold leads this game the way green leads
- * the puzzles — but not the SAME gold: the twelve climb three shades of it,
- * four levels to a shade (`memoryTone`, `data/memory-levels.ts`), so the
- * bottom of the grid is visibly heavier than the top and a child can see the
- * ladder getting harder before opening anything. One colour, three depths,
- * never three colours.
+ * **Every card is gold, in one of three shades — and the shade says what the
+ * card IS, not where it sits in the list** (`TONES` above): finished, next to
+ * play, or locked. Gold leads this game the way green leads the puzzles.
  *
  * What stops twelve gold cards reading as a keypad is that each
  * one shows its own BOARD in miniature — one pip per card, in that level's
@@ -60,19 +87,18 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
   const cast = levels.map((level, index) => {
     const previous = levels[index - 1];
 
-    return {
-      level,
-      index,
-      open: previous ? starsFor(previous.value) > 0 : true,
-      done: starsFor(level.value) > 0,
-    };
+    const open = previous ? starsFor(previous.value) > 0 : true;
+    const done = starsFor(level.value) > 0;
+    const state: LevelState = done ? "done" : open ? "next" : "locked";
+
+    return { level, index, open, done, state };
   });
 
   const finished = cast.filter(({ done }) => done).length;
 
   /* The one level the child has actually reached: the first open one they
-     have not finished. It rocks, so a glance says where to tap. */
-  const nextValue = cast.find(({ open, done }) => open && !done)?.level.value;
+     have not finished. It rocks and glows, so a glance says where to tap. */
+  const nextValue = cast.find(({ state }) => state === "next")?.level.value;
 
   return (
     <div>
@@ -84,10 +110,9 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
       />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
-        {cast.map(({ level, index, open, done }) => {
-          /* Which rung of gold this level sits on — 1–4 light, 5–8 the base
-             gold, 9–12 the deep one. */
-          const tone = memoryTone(level.value);
+        {cast.map(({ level, index, open, done, state }) => {
+          /* Done, next or locked — the only thing this card's colour says. */
+          const tone = TONES[state];
 
           /* `.clay` is declared after `.card` in globals.css, so its grain and
              inflated shading win over `.card`'s flat white — the fill itself
@@ -196,9 +221,17 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
           return (
             <li key={level.value}>
               {level.value === nextValue ? (
+                /* The glow rides this wrapper too, for the same reason the
+                   breathe does: `.clay` owns the card's own box-shadow and a
+                   second one on that element would wipe its clay shading. */
                 <span
-                  className="anim-breathe block"
-                  style={{ animationDelay: "1s" }}
+                  className="anim-breathe next-glow block"
+                  style={
+                    {
+                      animationDelay: "1s",
+                      "--glow-tone": "var(--color-gold-deep)",
+                    } as GlowVars
+                  }
                 >
                   {card}
                 </span>
