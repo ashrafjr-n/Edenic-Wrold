@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Check, Lock } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
+import { memoryTone } from "@/data/memory-levels";
 import { memoryKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
 
@@ -27,7 +28,13 @@ type ChipVars = CSSProperties & {
  * above them.
  *
  * **Every card is gold**, because gold leads this game the way green leads
- * the puzzles. What stops twelve gold cards reading as a keypad is that each
+ * the puzzles — but not the SAME gold: the twelve climb three shades of it,
+ * four levels to a shade (`memoryTone`, `data/memory-levels.ts`), so the
+ * bottom of the grid is visibly heavier than the top and a child can see the
+ * ladder getting harder before opening anything. One colour, three depths,
+ * never three colours.
+ *
+ * What stops twelve gold cards reading as a keypad is that each
  * one shows its own BOARD in miniature — one pip per card, in that level's
  * real column count — so level 1 is visibly six cards in two rows and level
  * 12 is visibly sixteen in four, before either is opened. The puzzles solve
@@ -78,6 +85,10 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
         {cast.map(({ level, index, open, done }) => {
+          /* Which rung of gold this level sits on — 1–4 light, 5–8 the base
+             gold, 9–12 the deep one. */
+          const tone = memoryTone(level.value);
+
           /* `.clay` is declared after `.card` in globals.css, so its grain and
              inflated shading win over `.card`'s flat white — the fill itself
              still has to come from an inline style, since `.card` sets the
@@ -85,8 +96,8 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
              would silently lose). */
           const style = {
             animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
-            backgroundColor: "var(--color-gold)",
-            "--clay-edge": "var(--color-gold-dark)",
+            backgroundColor: tone.face,
+            "--clay-edge": tone.edge,
           } as ClayVars;
 
           const face = (
@@ -139,14 +150,16 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
 
               {/* Which level this is, on every card — the same `.stage-chip`
                   the puzzles use, in gold rather than brand blue so it sits
-                  inside this game's own colour instead of cutting across it. */}
+                  inside this game's own colour instead of cutting across it.
+                  It takes the card's OWN shade, so the chip never reads as a
+                  different rung from the card it is sitting on. */}
               <span
                 aria-hidden
                 className="stage-chip absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5"
                 style={
                   {
-                    "--chip-face": "var(--color-gold)",
-                    "--chip-edge": "var(--color-gold-dark)",
+                    "--chip-face": tone.face,
+                    "--chip-edge": tone.edge,
                     color: "var(--color-ink)",
                   } as ChipVars
                 }

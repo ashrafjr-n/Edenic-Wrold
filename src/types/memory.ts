@@ -9,6 +9,14 @@ export interface MemoryFace {
   label: string;
 }
 
+/** A clay face/edge pair. The levels climb through three of these — the same
+    gold at three shades — so the ladder reads as getting heavier without ever
+    leaving the game's own colour. */
+export interface MemoryTone {
+  face: string;
+  edge: string;
+}
+
 export interface MemoryLevel {
   value: number;
   /** Pairs, so the deck is twice this. 2 → 4 cards, 10 → 20. */
