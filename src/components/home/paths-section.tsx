@@ -66,7 +66,11 @@ export function PathsSection() {
                   variant="calm"
                   href={href}
                   disabled={!href}
-                  className="btn3d--clay-white mt-auto px-6 py-3 text-base"
+                  /* `home-path-btn` is a pure CSS hook — see the dark-mode
+                     override in globals.css for why it needs its own class
+                     rather than sharing `.btn3d--clay-white`'s dark styling
+                     with every other white chip on the site. */
+                  className="btn3d--clay-white home-path-btn mt-auto px-6 py-3 text-base"
                 >
                   {action}
                   {href && <ArrowRight className="h-5 w-5" strokeWidth={2.75} />}

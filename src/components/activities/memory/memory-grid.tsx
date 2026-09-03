@@ -200,14 +200,20 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                   locked), so they can share one slot without ever
                   colliding. Was centred over the top edge, matching the
                   numbers picker's pill; moved here so all three status marks
-                  read from the same spot on every card. `tone.edge` — the
-                  darker of the two "next" gold values — is what keeps it
-                  legible against a card already filled with `tone.face`. */}
+                  read from the same spot on every card. `--color-gold-glow` —
+                  a bright orange, deliberately off the card's own gold family
+                  — is what keeps it legible: `tone.edge` (the dark end of
+                  THIS card's gold) was too close in hue to `tone.face` (the
+                  card itself) to read as a distinct "look here" mark next to
+                  the ✓ and 🔒 the other two states use, which are both
+                  genuinely different hues. Dark ink text, not white — the
+                  glow is light enough that white disappears on it, same call
+                  gold faces make everywhere else on the site. */}
               {state === "next" && (
                 <span
                   aria-hidden
-                  className="absolute right-1.5 top-1.5 rounded-full px-2 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:right-2.5 sm:top-2.5 sm:px-2.5 sm:text-xs"
-                  style={{ backgroundColor: tone.edge }}
+                  className="absolute right-1.5 top-1.5 rounded-full px-2 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--color-ink)] shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:right-2.5 sm:top-2.5 sm:px-2.5 sm:text-xs"
+                  style={{ backgroundColor: "var(--color-gold-glow)" }}
                 >
                   Next
                 </span>

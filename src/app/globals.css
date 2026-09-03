@@ -192,6 +192,16 @@
   --color-gold-quiet: color-mix(in srgb, var(--color-gold) 30%, var(--color-locked));
   --color-gold-quiet-dark: color-mix(in srgb, var(--color-gold-dark) 26%, var(--color-locked-dark));
 
+  /* The "next to play" card's own "Next" pill (`memory-grid.tsx`) used to sit
+     in `--color-gold-deep-dark`, the SAME gold family as the card underneath
+     it — a dark-brown-ish gold on a golden-yellow card, which reads as low
+     contrast next to the ✓ and 🔒 marks the other two states use (both
+     genuinely different hues from gold). A bright, warm orange instead: same
+     temperature as the gold family so it still belongs on this page, but far
+     enough off gold's own hue and considerably lighter/more saturated that it
+     actually pops as "look here" rather than blending into the card. */
+  --color-gold-glow: #ffa733;
+
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
   --color-ink: #2f2a52;
   --color-ink-soft: #7b76a3;
@@ -345,6 +355,23 @@ body {
   background-color: #f4f2fb;
 }
 
+/* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
+   lighter above for legibility as TEXT elsewhere on the page — but the
+   language chip (`.btn3d--icon-accent`) and "Join Edenic World" (plain
+   `.btn3d`, `--brand` face) use those same tokens as a BUTTON FACE, and a
+   lighter face is exactly the case where white content starts to wash out —
+   the same reasoning `.btn3d--icon-gold` already follows for the toggle
+   itself once it turns gold. Scoped to `header` only, not every `.btn3d` on
+   the site: everywhere else a colored button's face didn't change (only
+   `--brand`/`--accent`, both header-only faces here, moved). Also covers the
+   active `MainNav` pill (`.clay` + `text-white`, not a `.btn3d` at all) —
+   unlayered, so it wins over that Tailwind `text-white` utility regardless
+   of source order. */
+[data-theme="dark"] header .btn3d,
+[data-theme="dark"] header a.clay {
+  color: var(--color-ink);
+}
+
 /* The bloom exists to keep a pink numeral legible standing on the site's
    PALE ground with no card behind it — against a dark ground a numeral is
    already high-contrast with no help needed, and the same bright white
@@ -396,6 +423,52 @@ body {
     inset 0 8px 13px -5px rgb(255 255 255 / 8%),
     inset 0 -9px 15px -5px rgb(var(--shadow-hue) / 18%),
     0 12px 22px -12px rgb(var(--shadow-hue) / 30%);
+}
+
+/* `paths-section.tsx`'s two "Start learning"/"Start playing" buttons — pale
+   `.btn3d--clay-white` chips in light mode (correct there: a white chip
+   reads against the panel's own saturated color). Direct request for dark
+   mode specifically: these two become a dark-purple colored clay button
+   instead, white text. `#4a34b0` is the Learn panel's own `edge` value
+   (`data/home-paths.ts`) — the site's existing "dark purple," not a new hue.
+   `.home-path-btn` is what tags just these two (added in `paths-section.tsx`)
+   so the lesson hub's own `.btn3d--clay-white` chips elsewhere are untouched;
+   combined with the class for specificity, since a bare
+   `[data-theme="dark"] .home-path-btn` alone would tie with the plain
+   `.btn3d--clay-white` dark override above and lose on source order. */
+[data-theme="dark"] .home-path-btn.btn3d--clay-white {
+  background-color: #4a34b0;
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: #fff;
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 30%),
+    inset 0 -7px 11px -4px color-mix(in srgb, #2c1f75 60%, transparent),
+    0 14px 26px -10px color-mix(in srgb, #2c1f75 55%, transparent);
+  transition: background-color 0.2s ease;
+}
+
+[data-theme="dark"] .home-path-btn.btn3d--clay-white:hover:not(:disabled) {
+  background-color: color-mix(in srgb, #4a34b0 85%, black 15%);
+}
+
+[data-theme="dark"] .home-path-btn.btn3d--clay-white:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow:
+    inset 0 7px 12px -4px color-mix(in srgb, #2c1f75 65%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 20%),
+    0 5px 12px -8px color-mix(in srgb, #2c1f75 50%, transparent);
+}
+
+/* `PuzzleCta`'s "Puzzle Time" button — direct request: black/ink text in
+   dark mode instead of the white it wears in light mode. `--color-go`
+   itself is unchanged by theme (a colored clay face is self-consistent
+   regardless of page ground, same as every other colored `.btn3d`), so only
+   the text needs to move. `MemoryMatchCta`'s button already reads
+   `--color-ink` in both themes — no change needed there. */
+[data-theme="dark"] .puzzle-cta-btn {
+  color: var(--color-ink);
 }
 
 /* ---------------------------------------------------------------

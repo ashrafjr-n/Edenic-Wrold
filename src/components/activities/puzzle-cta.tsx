@@ -60,7 +60,9 @@ export function PuzzleCta({
         <Button3D
           tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
           href="/activities/puzzle"
-          className="px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
+          /* `puzzle-cta-btn` is a pure CSS hook for the dark-mode text-color
+             override in globals.css — see the comment there. */
+          className="puzzle-cta-btn px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
         >
           <Puzzle className="h-5 w-5" strokeWidth={2} />
           Puzzle Time
