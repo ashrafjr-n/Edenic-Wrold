@@ -22,6 +22,10 @@ const GREEN = { face: "var(--color-go)", edge: "var(--color-go-dark)" };
 /**
  * "9 / 15" and a clay bar, sitting above an activity's grid of levels.
  *
+ * The count is set against the label rather than beside it as an equal: a
+ * small muted caption on the left, the number itself big and in the
+ * activity's own colour on the right.
+ *
  * The grid alone said nothing about how far a child had got — fifteen cards
  * under one another read as a pile, not as a journey with a position in it.
  * This is the one line that turns the page into a thing being worked
@@ -50,15 +54,27 @@ export function ActivityProgress({
 
   return (
     <div className="anim-fade-up mb-6 sm:mb-8" style={{ animationDelay: "0.3s" }}>
+      {/* **The label and the count are deliberately not the same thing.** They
+          used to be one size and one weight, which read as a plain line of
+          text sitting above the grid. The label is now a small, light,
+          spaced-out caption in muted ink, and the count is the big fact —
+          bigger, bolder, and in the activity's own colour. The difference in
+          WEIGHT between the two is what makes the line read as designed
+          rather than typed, and it costs no extra element. */}
       <div className="mb-2 flex items-baseline justify-between gap-3 px-1 sm:mb-2.5">
-        <span className="text-sm font-bold text-[var(--color-ink)] sm:text-base">
+        <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink)]/45 sm:text-xs">
           {label}
         </span>
-        <span
-          className="text-sm font-bold sm:text-base"
-          style={{ color: tone.edge }}
-        >
-          {done} / {total}
+
+        {/* The total is the quieter half of the count — how many are done is
+            what a child is actually looking for. */}
+        <span className="flex items-baseline gap-0.5 font-bold leading-none">
+          <span className="text-lg sm:text-xl" style={{ color: tone.edge }}>
+            {done}
+          </span>
+          <span className="text-sm text-[var(--color-ink)]/40 sm:text-base">
+            / {total}
+          </span>
         </span>
       </div>
 
