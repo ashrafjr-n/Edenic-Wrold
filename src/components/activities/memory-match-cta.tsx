@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Brain } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -23,10 +24,22 @@ import memoryCard from "../../../public/assets/activity-page/memory-match/memory
     Live now that the twelve levels exist; it was presentation-only with no
     `href` for one round before that, exactly as `PuzzleCta` was. Its
     `ActivityCountBadge` ("0 / 12") was cut on direct request along with the
-    puzzle card's. */
-export function MemoryMatchCta({ className = "" }: { className?: string }) {
+    puzzle card's.
+
+    `style` exists only so the Activities page can stagger this card's own
+    entrance — see `PuzzleCta`'s doc comment for why. */
+export function MemoryMatchCta({
+  className = "",
+  style,
+}: {
+  className?: string;
+  style?: CSSProperties;
+}) {
   return (
-    <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
+    <div
+      className={`card relative aspect-[16/9] overflow-hidden ${className}`}
+      style={style}
+    >
       <Image
         src={memoryCard}
         alt="Pinki, Nova and Bloo playing a memory card game"

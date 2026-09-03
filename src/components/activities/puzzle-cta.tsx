@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Puzzle } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -18,10 +19,26 @@ import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.
     Full-bleed at `16:9`, with the button over the picture rather than in a
     row beneath it. It carried an `ActivityCountBadge` ("3 / 15") in its
     top-right corner until that was cut on direct request, which is why this
-    card is a pure Server Component again — nothing on it needs the browser. */
-export function PuzzleCta({ className = "" }: { className?: string }) {
+    card is a pure Server Component again — nothing on it needs the browser.
+
+    `style` exists only so the Activities page can stagger this card's own
+    entrance (`animationDelay`) — the same `anim-rise-in` timing every other
+    grid of cards on the site uses, applied via `className` from the caller.
+    This card stayed a static grid item with no choreography of its own until
+    a direct request pointed out that every other page on the site enters
+    with one and this was the exception. */
+export function PuzzleCta({
+  className = "",
+  style,
+}: {
+  className?: string;
+  style?: CSSProperties;
+}) {
   return (
-    <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
+    <div
+      className={`card relative aspect-[16/9] overflow-hidden ${className}`}
+      style={style}
+    >
       <Image
         src={puzzleCard}
         alt="Colourful puzzle pieces scattered across the card"

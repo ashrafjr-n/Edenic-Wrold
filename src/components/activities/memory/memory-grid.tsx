@@ -51,7 +51,6 @@ type ChipVars = CSSProperties & {
   "--chip-face"?: string;
   "--chip-edge"?: string;
 };
-type GlowVars = CSSProperties & { "--glow-tone"?: string };
 
 /**
  * The twelve levels, three to a row, with the child's position in the set
@@ -59,7 +58,14 @@ type GlowVars = CSSProperties & { "--glow-tone"?: string };
  *
  * **Every card is gold, in one of three shades — and the shade says what the
  * card IS, not where it sits in the list** (`TONES` above): finished, next to
- * play, or locked. Gold leads this game the way green leads the puzzles.
+ * play, or locked. Gold leads this game the way green leads the puzzles. The
+ * one card to play next also carries a static "Next" pill hung over its top
+ * edge — the exact mark the numbers picker uses for the same job — rather
+ * than an animated glow: a glow that rode the same wrapper as the idle
+ * breathe bounced with it, and being pure `box-shadow` outside the card's own
+ * `anim-rise-in` opacity, it was visible on the very first paint, before any
+ * card had faded in. A static pill INSIDE the card has neither problem — it
+ * fades in with everything else and never moves once it's there.
  *
  * What stops twelve gold cards reading as a keypad is that each
  * one shows its own BOARD in miniature — one pip per card, in that level's
@@ -95,10 +101,6 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
   });
 
   const finished = cast.filter(({ done }) => done).length;
-
-  /* The one level the child has actually reached: the first open one they
-     have not finished. It rocks and glows, so a glance says where to tap. */
-  const nextValue = cast.find(({ state }) => state === "next")?.level.value;
 
   return (
     <div>
@@ -192,6 +194,21 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                 <span className="stage-chip-word">Level</span>
                 {level.value}
               </span>
+
+              {/* The same "Next up" mark the numbers picker uses, shortened
+                  to fit a cell this size and hung over the card's top edge so
+                  it never crowds the miniature board. `tone.edge` — the
+                  darker of the two "next" gold values — is what keeps it
+                  legible against a card already filled with `tone.face`. */}
+              {state === "next" && (
+                <span
+                  aria-hidden
+                  className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:text-xs"
+                  style={{ backgroundColor: tone.edge }}
+                >
+                  Next
+                </span>
+              )}
             </>
           );
 
@@ -214,32 +231,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
             </span>
           );
 
-          /* The breathe lives on a WRAPPING span, never on the card:
-             `.card-lift:hover` animates `translate` on the card itself, and an
-             infinite animation on the same property would keep overriding the
-             hover. Held back until the last card has risen in. */
-          return (
-            <li key={level.value}>
-              {level.value === nextValue ? (
-                /* The glow rides this wrapper too, for the same reason the
-                   breathe does: `.clay` owns the card's own box-shadow and a
-                   second one on that element would wipe its clay shading. */
-                <span
-                  className="anim-breathe next-glow block"
-                  style={
-                    {
-                      animationDelay: "1s",
-                      "--glow-tone": "var(--color-gold-deep)",
-                    } as GlowVars
-                  }
-                >
-                  {card}
-                </span>
-              ) : (
-                card
-              )}
-            </li>
-          );
+          return <li key={level.value}>{card}</li>;
         })}
       </ul>
     </div>

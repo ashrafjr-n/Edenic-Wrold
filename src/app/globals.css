@@ -1730,27 +1730,6 @@ button:disabled,
   }
 }
 
-/* The one card the child should open next: a soft ring of its own colour
-   around it, so "you are here" is visible before a single number is read —
-   the same job the numbers picker's "Next" pill and `.anim-pulse-invite` do
-   on their own grid.
-
-   It rides the WRAPPER, never the card: `.clay` owns the card's `box-shadow`
-   (inner highlight, inner shade, drop shadow all in one declaration), and a
-   second `box-shadow` on the same element would replace all three rather
-   than add to them. The wrapper needs the radius spelled out for the same
-   reason — it has no `.card` of its own to inherit one from.
-
-   `--glow-tone` defaults to the section's own colour, so this works on any
-   activity page without naming a hue. */
-.next-glow {
-  --glow-tone: var(--page-accent-color);
-  border-radius: 1.75rem;
-  box-shadow:
-    0 0 0 0.28rem color-mix(in srgb, var(--glow-tone) 32%, transparent),
-    0 0 1.75rem color-mix(in srgb, var(--glow-tone) 42%, transparent);
-}
-
 /* ---------------------------------------------------------------
    Memory Match — the clock.
 
