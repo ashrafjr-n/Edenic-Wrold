@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
@@ -19,6 +19,15 @@ interface NumberGridProps {
       cells' tint and the "Next" badge — never a character colour, so every
       character's numbers page reads the same. */
   tone: { face: string; edge: string };
+  /** Shown above the progress bar, and ONLY to a child who has never finished
+      a number — Pinki pointing at where to start.
+
+      A named slot rather than `children` on purpose: `children` reads as
+      "this always renders", and this does not. The page builds the node so
+      `PinkiGuide` stays a Server Component; the grid decides whether it is
+      on screen, because the progress that decides that is read here and
+      nowhere else on this page. */
+  intro?: ReactNode;
 }
 
 type CellVars = CSSProperties & { "--tile-tint"?: string };
@@ -57,6 +66,7 @@ export function NumberGrid({
   lessonId,
   basePath,
   tone,
+  intro,
 }: NumberGridProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
@@ -91,6 +101,23 @@ export function NumberGrid({
 
   return (
     <div className="card w-full px-5 py-7 sm:px-9 sm:py-10">
+      {/* `hydrated` is load-bearing, not belt-and-braces: it is false on the
+          server AND on the first client render, so this is absent from the
+          server HTML and can never be a mismatch. Gating on `finished === 0`
+          alone would put Pinki in the HTML for everyone and then snatch her
+          away from a returning child the moment localStorage was read — a
+          flash of the wrong content, which is worse than arriving late.
+
+          In the flow, never absolute: at 320px a grid cell is only ~69px
+          wide, so an overlay on number 1 would be larger than the cell and
+          spill onto number 2, and that tile's top edge is already taken by
+          the "Next" pill. */}
+      {intro && hydrated && finished === 0 && (
+        <div className="anim-fade-up mb-6 flex justify-center sm:mb-8">
+          {intro}
+        </div>
+      )}
+
       <ActivityProgress
         label="Numbers"
         done={finished}

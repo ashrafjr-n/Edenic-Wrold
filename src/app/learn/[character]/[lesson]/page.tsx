@@ -3,10 +3,12 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { Crown } from "lucide-react";
 import { numberItems } from "@/data/number-items";
+import { numbersPickerScript } from "@/data/numbers-picker-script";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberGrid } from "@/components/learn/number/number-grid";
+import { PinkiGuide } from "@/components/learn/number/pinki-guide";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
@@ -105,12 +107,22 @@ export default async function LessonPage({ params }: LessonPageProps) {
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12">
+        {/* Built here rather than inside the grid so `PinkiGuide` stays a
+            Server Component — the grid is a Client Component only because
+            unlocking depends on saved progress, and there is no reason for
+            a static image and a line of text to be dragged into that
+            bundle. The grid decides WHEN this is on screen (only for a
+            child who has never finished a number); the page only decides
+            what it says. */}
         <NumberGrid
           items={numberItems}
           characterId={character.id}
           lessonId={lesson.id}
           basePath={`/learn/${character.id}/${lesson.id}`}
           tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+          intro={
+            <PinkiGuide pose="stick" line={numbersPickerScript.notStarted} />
+          }
         />
       </div>
     </main>
