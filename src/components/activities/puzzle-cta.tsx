@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { Puzzle } from "lucide-react";
-import { puzzleStages } from "@/data/puzzles";
-import { puzzleKey } from "@/lib/progress-keys";
 import { Button3D } from "@/components/ui/button-3d";
-import { ActivityCountBadge } from "./activity-count-badge";
 import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.jpg";
-
-const STAGE_KEYS = puzzleStages.map((stage) => puzzleKey(stage.value));
 
 /** The art is a **static import**, not a `/public` path: a static import is
     content-hashed into its URL, so replacing the file on disk changes the URL
@@ -14,29 +9,24 @@ const STAGE_KEYS = puzzleStages.map((stage) => puzzleKey(stage.value));
     which is exactly why a repainted card appeared not to update (same trap
     `ui/logo.tsx` documents).
 
-    Second card on the Activities page: the puzzle-pieces scene as a full-bleed
-    background, a light green-to-blue wash over it (mixed from the site's own
-    `--color-go`/`--brand` tokens, not a new hue) for legibility, and a green
-    clay "Puzzle Time" button centred on top, leading into `/activities/puzzle`.
+    First of the Activities page's two cards: the puzzle-pieces scene as a
+    full-bleed background, a light green-to-blue wash over it (mixed from the
+    site's own `--color-go`/`--brand` tokens, not a new hue) for legibility,
+    and a green clay "Puzzle Time" button centred on top, leading into
+    `/activities/puzzle`.
 
     Full-bleed at `16:9`, with the button over the picture rather than in a
-    row beneath it. */
+    row beneath it. It carried an `ActivityCountBadge` ("3 / 15") in its
+    top-right corner until that was cut on direct request, which is why this
+    card is a pure Server Component again — nothing on it needs the browser. */
 export function PuzzleCta({ className = "" }: { className?: string }) {
   return (
     <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
-      {/* How many stages are done, so the choosing page carries the same
-          sense of progress the stage grid does. */}
-      <ActivityCountBadge
-        keys={STAGE_KEYS}
-        noun="puzzles"
-        tint="var(--color-go-dark)"
-      />
-
       <Image
         src={puzzleCard}
         alt="Colourful puzzle pieces scattered across the card"
         fill
-        sizes="(min-width: 1024px) 27rem, 100vw"
+        sizes="(min-width: 1024px) 32rem, 100vw"
         className="object-cover"
       />
 

@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { Brain } from "lucide-react";
-import { memoryLevels } from "@/data/memory-levels";
-import { memoryKey } from "@/lib/progress-keys";
 import { Button3D } from "@/components/ui/button-3d";
-import { ActivityCountBadge } from "./activity-count-badge";
 import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";
-
-const LEVEL_KEYS = memoryLevels.map((level) => memoryKey(level.value));
 
 /** The art is a **static import**, not a `/public` path: a static import is
     content-hashed into its URL, so replacing the file on disk changes the URL
@@ -14,7 +9,7 @@ const LEVEL_KEYS = memoryLevels.map((level) => memoryKey(level.value));
     which is exactly why a repainted card appeared not to update (same trap
     `ui/logo.tsx` documents).
 
-    Third card on the Activities page, built to `PuzzleCta`'s recipe exactly —
+    Second of the Activities page's two cards, built to `PuzzleCta`'s recipe —
     full-bleed `16:9` picture, a light wash over it for legibility, one clay
     button centred on top — with **gold leading instead of green**. The wash
     is the same `color-mix` of two existing tokens (`--color-gold` into
@@ -26,21 +21,17 @@ const LEVEL_KEYS = memoryLevels.map((level) => memoryKey(level.value));
     the same call the puzzle stage's hint chip makes for its lightbulb.
 
     Live now that the twelve levels exist; it was presentation-only with no
-    `href` for one round before that, exactly as `PuzzleCta` was. */
+    `href` for one round before that, exactly as `PuzzleCta` was. Its
+    `ActivityCountBadge` ("0 / 12") was cut on direct request along with the
+    puzzle card's. */
 export function MemoryMatchCta({ className = "" }: { className?: string }) {
   return (
     <div className={`card relative aspect-[16/9] overflow-hidden ${className}`}>
-      <ActivityCountBadge
-        keys={LEVEL_KEYS}
-        noun="levels"
-        tint="var(--color-gold-dark)"
-      />
-
       <Image
         src={memoryCard}
         alt="Pinki, Nova and Bloo playing a memory card game"
         fill
-        sizes="(min-width: 1024px) 27rem, 100vw"
+        sizes="(min-width: 1024px) 32rem, 100vw"
         className="object-cover"
       />
 
