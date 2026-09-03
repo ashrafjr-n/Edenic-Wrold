@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import { Heart, Star } from "lucide-react";
+import { Brain } from "lucide-react";
 import { memoryLevels } from "@/data/memory-levels";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
+import {
+  HeadingMark,
+  HEADING_CHIP_SHAPE,
+  type HeadingChip,
+} from "@/components/ui/heading-mark";
 import { MemoryGrid } from "@/components/activities/memory/memory-grid";
 
 export const metadata: Metadata = {
@@ -10,23 +15,27 @@ export const metadata: Metadata = {
 };
 
 /**
- * The heading's mark: **a pair, found, with one card still to turn.**
+ * The heading's mark: **the puzzles' three chips exactly, in one gold, with
+ * one repeated icon.**
  *
- * The two outer cards are face up showing the same heart and wearing the very
- * same gold rim a matched pair gets on the board; the middle one is still
- * face down, in the game's real card back. So the picture at the top of the
- * page is a hand of Memory Match mid-game rather than a decoration — which is
- * the same job the puzzle page's three interlocking chips do for the puzzles.
+ * It used to be a hand of the game — a matched PAIR (two hearts) either side
+ * of one card still face down (a star), each in its own treatment. That was
+ * cut on direct request for the right reason: heart, star, heart does not
+ * read as "memory" to anyone, and varying the icon across the three chips
+ * turned the mark into decoration. One symbol repeated three times names a
+ * subject; three different symbols name nothing.
  *
- * No character on it, by request. It also can't carry one: the friends appear
- * as CARD FACES from level 10 on, so putting one here would quietly give away
- * one of the pictures the last levels are built on.
+ * The `Brain` is the same icon the Activities card's own button carries, so
+ * the game is marked the same way on the page that leads here and on the page
+ * itself. No character on it, by request — and it could not carry one anyway:
+ * the friends are card FACES from level 10 on, so a mascot here would give
+ * away one of the pictures the last levels are built on.
  */
-const CARDS = [
-  { kind: "face", tilt: "-14deg", size: "h-12 w-12 sm:h-14 sm:w-14", delay: 0.15 },
-  { kind: "back", tilt: "5deg", size: "h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]", delay: 0.23 },
-  { kind: "face", tilt: "13deg", size: "h-12 w-12 sm:h-14 sm:w-14", delay: 0.31 },
-] as const;
+const CHIPS: HeadingChip[] = HEADING_CHIP_SHAPE.map((shape) => ({
+  ...shape,
+  face: "var(--color-gold)",
+  edge: "var(--color-gold-dark)",
+}));
 
 export default function MemoryMatchPage() {
   return (
@@ -54,24 +63,10 @@ export default function MemoryMatchPage() {
             <BackButton href="/activities" label="Back to Activities" />
           </span>
 
-          <span className="flex items-center -space-x-2 sm:-space-x-2.5">
-            {CARDS.map(({ kind, tilt, size, delay }, index) => (
-              <span
-                key={index}
-                aria-hidden
-                className={`memory-mark anim-pop-in ${
-                  kind === "back" ? "memory-mark--back" : "memory-mark--face"
-                } ${size}`}
-                style={{ rotate: tilt, animationDelay: `${delay}s` }}
-              >
-                {kind === "back" ? (
-                  <Star className="h-1/2 w-1/2 fill-current" strokeWidth={2} />
-                ) : (
-                  <Heart className="h-1/2 w-1/2 fill-current" strokeWidth={2} />
-                )}
-              </span>
-            ))}
-          </span>
+          {/* Ink, not white: gold is the one face on the site pale enough
+              that a white icon disappears on it — the same call this game's
+              CTA button and the puzzle hint chip's lightbulb make. */}
+          <HeadingMark chips={CHIPS} icon={Brain} ink="var(--color-ink)" />
         </div>
 
         <div
@@ -81,7 +76,9 @@ export default function MemoryMatchPage() {
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
             Memory Match
           </h1>
-          <p className="mt-1 text-base text-[var(--color-ink)]/60 sm:text-lg">
+          {/* A step down from the `h1` in size AND weight — the line telling
+              a child what the page is for, not a second heading. */}
+          <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
             Find the matching friends!
           </p>
         </div>

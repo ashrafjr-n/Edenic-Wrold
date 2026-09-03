@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
 import { Puzzle } from "lucide-react";
 import { puzzleStages } from "@/data/puzzles";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
+import {
+  HeadingMark,
+  HEADING_CHIP_SHAPE,
+  type HeadingChip,
+} from "@/components/ui/heading-mark";
 import { PuzzleGrid } from "@/components/activities/puzzle/puzzle-grid";
 
 export const metadata: Metadata = {
@@ -10,37 +14,14 @@ export const metadata: Metadata = {
   description: "Fifteen picture puzzles to build, one piece at a time.",
 };
 
-type ClayVars = CSSProperties & { "--clay-edge"?: string };
-
-/** Three clay puzzle chips instead of a word. They lean into each other like
-    pieces waiting to be joined, and they're the same material as the cards
-    below — the heading of this page is a picture, not a label. */
-const CHIPS: { tone: ClayVars; tilt: string; size: string }[] = [
-  {
-    tone: {
-      backgroundColor: "var(--color-pinki)",
-      "--clay-edge": "var(--color-pinki-dark)",
-    },
-    tilt: "-12deg",
-    size: "h-11 w-11 sm:h-12 sm:w-12",
-  },
-  {
-    tone: {
-      backgroundColor: "var(--color-gold)",
-      "--clay-edge": "var(--color-gold-dark)",
-    },
-    tilt: "6deg",
-    size: "h-14 w-14 sm:h-16 sm:w-16",
-  },
-  {
-    tone: {
-      backgroundColor: "var(--color-bloo)",
-      "--clay-edge": "var(--color-bloo-dark)",
-    },
-    tilt: "14deg",
-    size: "h-11 w-11 sm:h-12 sm:w-12",
-  },
-];
+/** Three clay puzzle chips instead of a word — one per friend's colour, so
+    the mark is the three of them holding a piece each. Shape comes from
+    `HEADING_CHIP_SHAPE`, shared with Memory Match's mark. */
+const CHIPS: HeadingChip[] = [
+  { face: "var(--color-pinki)", edge: "var(--color-pinki-dark)" },
+  { face: "var(--color-gold)", edge: "var(--color-gold-dark)" },
+  { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
+].map((tone, index) => ({ ...tone, ...HEADING_CHIP_SHAPE[index] }));
 
 export default function PuzzleStagesPage() {
   return (
@@ -64,25 +45,7 @@ export default function PuzzleStagesPage() {
             <BackButton href="/activities" label="Back to Activities" />
           </span>
 
-          <span className="flex items-center -space-x-2 sm:-space-x-2.5">
-            {CHIPS.map(({ tone, tilt, size }, index) => (
-              <span
-                key={index}
-                aria-hidden
-                className={`clay anim-pop-in flex items-center justify-center rounded-2xl ${size}`}
-                style={{
-                  ...tone,
-                  rotate: tilt,
-                  animationDelay: `${0.15 + index * 0.08}s`,
-                }}
-              >
-                <Puzzle
-                  className="h-1/2 w-1/2 fill-current text-white"
-                  strokeWidth={2}
-                />
-              </span>
-            ))}
-          </span>
+          <HeadingMark chips={CHIPS} icon={Puzzle} />
         </div>
 
         {/* The chips alone said "puzzles" without saying what the page is for.
@@ -95,7 +58,11 @@ export default function PuzzleStagesPage() {
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
             Puzzle Time
           </h1>
-          <p className="mt-1 text-base text-[var(--color-ink)]/60 sm:text-lg">
+          {/* Deliberately a step down from the `h1` in BOTH size and weight —
+              it is the one line telling a child what the page is for, not a
+              second heading. At `text-base sm:text-lg` it sat close enough to
+              the title that the whole head read as heavy. */}
+          <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
             Complete the puzzles!
           </p>
         </div>
