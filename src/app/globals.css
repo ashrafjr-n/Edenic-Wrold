@@ -1732,14 +1732,30 @@ button:disabled,
   --clock-left: 100%;
   display: grid;
   place-items: center;
-  width: 5.5rem;
-  height: 5.5rem;
-  padding: 0.4rem;
+  width: 6.5rem;
+  height: 6.5rem;
+  padding: 0.5rem;
   border-radius: 9999px;
-  background: conic-gradient(
-    var(--color-gold) var(--clock-left),
-    color-mix(in srgb, var(--color-locked) 70%, transparent) 0
-  );
+  /* **The grain rides the RING itself**, layered over the conic gradient and
+     blended into it — the same tooth every other coloured clay surface on the
+     site carries, which is what keeps the dial from reading as a flat
+     progress ring dropped onto a clay page. Two background layers, so
+     `background-image` (not the `background` shorthand) is what `.is-spent`
+     overrides — the shorthand would reset the noise. */
+  background-image: var(--noise),
+    conic-gradient(
+      var(--color-gold) var(--clock-left),
+      color-mix(in srgb, var(--color-locked) 70%, transparent) 0
+    );
+  background-size: 180px 180px, auto;
+  background-blend-mode: overlay, normal;
+  /* The ring is a raised clay band now, not a painted circle: a highlight
+     along its top, a shade under it from the gold's own darker companion,
+     and one wide tinted drop shadow beneath the whole dial. */
+  box-shadow:
+    inset 0 4px 8px -3px rgb(255 255 255 / 55%),
+    inset 0 -5px 9px -3px color-mix(in srgb, var(--color-gold-dark) 45%, transparent),
+    0 16px 30px -14px color-mix(in srgb, var(--color-gold-dark) 55%, transparent);
   /* The ring redraws every second, so the sweep is eased rather than
      stepping — `background` itself cannot transition, which is exactly why
      the value is a custom property the gradient reads. */
@@ -1756,15 +1772,22 @@ button:disabled,
   height: 100%;
   border-radius: 9999px;
   color: var(--color-gold-dark);
-  background-color: var(--surface);
+  /* A pale gold, not plain white — the grain has to have something to push
+     against (an overlay blend on a near-white surface shows nothing, the same
+     reason `.tile-grain` is only worth applying to a tinted tile), and the
+     face reads as part of the same clay object as the ring around it. */
+  background-color: color-mix(in srgb, var(--color-gold) 14%, var(--surface));
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
   box-shadow:
-    inset 0 6px 11px -5px rgb(255 255 255 / 90%),
-    inset 0 -7px 12px -5px color-mix(in srgb, var(--color-gold-dark) 22%, transparent),
-    0 12px 24px -12px color-mix(in srgb, var(--color-gold-dark) 45%, transparent);
+    inset 0 8px 13px -5px rgb(255 255 255 / 95%),
+    inset 0 -9px 15px -5px color-mix(in srgb, var(--color-gold-dark) 32%, transparent),
+    0 14px 26px -12px color-mix(in srgb, var(--color-gold-dark) 50%, transparent);
 }
 
 .memory-clock-value {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -1774,26 +1797,36 @@ button:disabled,
    dormant lavender. Nothing about it says "you lost" — the board carries on
    exactly as before. */
 .memory-clock.is-spent {
-  background: color-mix(in srgb, var(--color-locked) 70%, transparent);
+  /* `background-image`, not the shorthand — the shorthand would drop the
+     grain layer the base rule sets up. */
+  background-image: var(--noise),
+    conic-gradient(
+      color-mix(in srgb, var(--color-locked) 70%, transparent) 0 100%
+    );
+  box-shadow:
+    inset 0 4px 8px -3px rgb(255 255 255 / 55%),
+    inset 0 -5px 9px -3px rgb(var(--shadow-hue) / 14%),
+    0 14px 26px -14px rgb(var(--shadow-hue) / 26%);
 }
 
 .memory-clock.is-spent .memory-clock-face {
   color: var(--color-locked-text);
+  background-color: color-mix(in srgb, var(--color-locked) 45%, var(--surface));
   box-shadow:
-    inset 0 6px 11px -5px rgb(255 255 255 / 90%),
-    inset 0 -7px 12px -5px rgb(var(--shadow-hue) / 16%),
-    0 10px 20px -12px rgb(var(--shadow-hue) / 28%);
+    inset 0 8px 13px -5px rgb(255 255 255 / 95%),
+    inset 0 -9px 15px -5px rgb(var(--shadow-hue) / 18%),
+    0 12px 22px -12px rgb(var(--shadow-hue) / 30%);
 }
 
 @media (width >= 40rem) {
   .memory-clock {
-    width: 6.5rem;
-    height: 6.5rem;
-    padding: 0.45rem;
+    width: 7.75rem;
+    height: 7.75rem;
+    padding: 0.55rem;
   }
 
   .memory-clock-value {
-    font-size: 1.875rem;
+    font-size: 2.25rem;
   }
 }
 

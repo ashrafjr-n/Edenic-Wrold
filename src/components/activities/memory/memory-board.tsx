@@ -10,6 +10,7 @@ import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { BackButton } from "@/components/ui/back-button";
+import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
 
 interface MemoryBoardProps {
@@ -154,42 +155,44 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
             <BackButton href="/activities/memory-match" label="Back to the levels" />
           </span>
 
-          {/* Only two things up here, as asked: which level this is, and the
-              clock — the clock as a big gold dial, since it is the one thing
-              on this screen that changes on its own and the child has to be
-              able to read it without looking away from the board for long. */}
-          <div className="flex flex-col items-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-ink)]/55 sm:text-sm">
-              Level {String(level.value).padStart(2, "0")}
-            </p>
+          {/* Which level this is, facing the back button across the row —
+              the two ends of the chrome row, same size and same colour. It
+              replaced a centred "LEVEL 01" caption above the clock, which
+              was a heading-sized piece of chrome for a single digit. */}
+          <span className="absolute right-0 top-0">
+            <LevelBadge value={level.value} label={`Level ${level.value}`} />
+          </span>
 
-            {/* The ring is the time left, drawn as a share of the level's own
-                target — a child who cannot yet read the number still sees it
-                going round. At zero it empties and the whole dial goes quiet
-                rather than red: the clock stops mattering there, it does not
-                start threatening. */}
-            <div
-              className={`memory-clock mt-1.5 ${remaining === 0 ? "is-spent" : ""}`}
-              style={
-                {
-                  "--clock-left": `${(remaining / level.seconds) * 100}%`,
-                } as ClockVars
-              }
-              /* Announced only when it runs out — a per-second live region
-                 would talk over the whole game. */
-              aria-live="off"
-              role="timer"
-              aria-label={`${remaining} seconds left`}
-            >
-              <span className="memory-clock-face">
-                <Timer
-                  className="h-3.5 w-3.5 opacity-70 sm:h-4 sm:w-4"
-                  strokeWidth={2.75}
-                  aria-hidden
-                />
-                <span className="memory-clock-value">{remaining}</span>
-              </span>
-            </div>
+          {/* The clock is the only thing in the middle now, and it sits
+              BELOW the line the two corner chips are on rather than level
+              with them — it is the one thing on this screen that changes on
+              its own, so it gets the centre of the page to itself. The ring
+              is the time left, drawn as a share of the level's own target, so
+              a child who cannot yet read the number still sees it going
+              round. At zero it empties and the whole dial goes quiet rather
+              than red: the clock stops mattering there, it does not start
+              threatening. */}
+          <div
+            className={`memory-clock mt-4 sm:mt-6 ${remaining === 0 ? "is-spent" : ""}`}
+            style={
+              {
+                "--clock-left": `${(remaining / level.seconds) * 100}%`,
+              } as ClockVars
+            }
+            /* Announced only when it runs out — a per-second live region
+               would talk over the whole game. */
+            aria-live="off"
+            role="timer"
+            aria-label={`${remaining} seconds left`}
+          >
+            <span className="memory-clock-face">
+              <Timer
+                className="h-4 w-4 opacity-70 sm:h-5 sm:w-5"
+                strokeWidth={2.75}
+                aria-hidden
+              />
+              <span className="memory-clock-value">{remaining}</span>
+            </span>
           </div>
         </div>
       </div>

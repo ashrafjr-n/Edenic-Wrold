@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import { BackButton } from "@/components/ui/back-button";
+import { LevelBadge } from "@/components/ui/level-badge";
 import { PuzzleHint } from "@/components/activities/puzzle/puzzle-hint";
 import {
   PuzzleBoard,
@@ -55,16 +56,22 @@ export function PuzzlePlay({
   return (
     <>
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* Back on the left, the hint chip opposite it on the right, both the
-            same size — one row of chrome, the way the lesson pages pair their
-            back button with the achievements crown. */}
+        {/* Back on the left; on the right, which stage this is and then the
+            hint chip. All three are the same size — one row of chrome, the
+            way the lesson pages pair their back button with the achievements
+            crown. The stage number rides beside the hint rather than sitting
+            in the middle of the row: it is a passing note, not a heading. */}
         <div
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
           <BackButton href="/activities/puzzle" label="Back to the puzzles" />
 
-          <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} />
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <LevelBadge value={stage} label={`Puzzle ${stage}`} />
+
+            <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} />
+          </div>
         </div>
       </div>
 
