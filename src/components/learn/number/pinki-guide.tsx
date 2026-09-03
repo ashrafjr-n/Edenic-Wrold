@@ -1,13 +1,15 @@
 import Image from "next/image";
 
-/** Pinki has three renders. Anything else falls back to `speak` rather than
+/** Pinki has five renders. Anything else falls back to `speak` rather than
     blocking a stage on art that does not exist yet. */
-export type PinkiPose = "speak" | "pen" | "celebrate";
+export type PinkiPose = "speak" | "pen" | "celebrate" | "stick" | "think";
 
 const POSE_IMAGE: Record<PinkiPose, string> = {
   speak: "/assets/learn-with-pinki/pinki/pinki-speak.png",
   pen: "/assets/learn-with-pinki/pinki/pinki-with-pen.png",
   celebrate: "/assets/learn-with-pinki/pinki/pinki-celebrate.png",
+  stick: "/assets/learn-with-pinki/pinki/pinki-with-a-stick.png",
+  think: "/assets/learn-with-pinki/pinki/pinki-think.png",
 };
 
 interface PinkiGuideProps {
