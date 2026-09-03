@@ -15,8 +15,29 @@ const ICON_SRC = {
   Profile: "/assets/png/profile.png",
 } as const;
 
+/* `home.png` and `activity.png` fill their 512×512 canvas almost edge to
+   edge with barely any built-in padding, while `learn.png` and
+   `profile.png` carry a generous margin around their own glyph — at
+   `.icon-mask`'s default `mask-size: contain` that read as Home and
+   Activities being visibly BIGGER/bolder than Learn and Profile despite an
+   identical 20×20 box, which is also what pushed their labels slightly out
+   of line with the other two inside the shared `h-16` flex-column tab.
+   Scaled down here instead of touching the source PNGs. Set on BOTH
+   `maskSize`/`WebkitMaskSize`: inline styles aren't run through Lightning
+   CSS's auto-prefixing, unlike `.icon-mask` itself. */
+const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
+  Home: "82%",
+  Learn: "contain",
+  Activities: "82%",
+  Profile: "contain",
+};
+
 const iconVar = (label: keyof typeof ICON_SRC) =>
-  ({ "--icon-src": `url(${ICON_SRC[label]})` }) as CSSProperties;
+  ({
+    "--icon-src": `url(${ICON_SRC[label]})`,
+    maskSize: ICON_SCALE[label],
+    WebkitMaskSize: ICON_SCALE[label],
+  }) as CSSProperties;
 
 /** App-style bottom tab bar — phone only (`sm:hidden`). Carries `MainNav`'s
     items (same `mainNav` data, same locked rules) but fixed to the viewport
