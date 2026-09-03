@@ -15,6 +15,7 @@ import { Button3D } from "@/components/ui/button-3d";
 import { NumberVideo } from "./number-video";
 import { Numeral } from "./numeral";
 import { PinkiGuide } from "./pinki-guide";
+import type { PinkiPose } from "./pinki-guide";
 import { StageDots } from "./stage-dots";
 import { SayItButton } from "./say-it-button";
 import { StrokeDemo } from "./stroke-demo";
@@ -162,7 +163,7 @@ export function NumberJourney({
 
   /* Pinki's pose and line for the stage on screen. Derived here rather than
      inline in the markup so each stage below is only its own content. */
-  const guide: { pose: "speak" | "pen" | "celebrate"; line: string } =
+  const guide: { pose: PinkiPose; line: string } =
     stage === "discover"
       ? { pose: "speak", line: script.discover }
       : stage === "reveal"
