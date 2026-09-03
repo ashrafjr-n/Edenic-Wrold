@@ -177,7 +177,11 @@ export function NumberJourney({
               }
             : stage === "find"
               ? {
-                  pose: "speak",
+                  /* `think`, not `speak`: this is the one stage that asks the
+                     child to choose rather than to listen, and it stays
+                     `think` on a miss too — "let's look again" is more of
+                     that same moment, not a different one. */
+                  pose: "think",
                   line: pickMissed ? script.findMiss : script.find,
                 }
               : stage === "count"
