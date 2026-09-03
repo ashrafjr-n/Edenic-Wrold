@@ -65,6 +65,10 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   rather than as flat plastic. White chips deliberately have none.
 - Purple carries every primary action; pink is its counterweight. Character colors
   are reserved for identity and only ever appear as a pale tile tint.
+- Each section of the site carries its own colour, and shared chrome inherits it
+  rather than naming one: a route sets `--page-accent-color` on its `<main>`, so
+  the one back button is green in the puzzles, gold in Memory Match, and each
+  friend's own accent on their lesson pages.
 - Everything is built from three blocks: `.card` (white panel), `.tile` (pale pastel
   square behind an icon or character) and `.clay` (a colored, softly inflated shape).
   `.card` and `.tile` are unlayered, so a Tailwind `rounded-*` utility cannot
