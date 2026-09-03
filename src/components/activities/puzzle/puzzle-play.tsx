@@ -1,9 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
-import { Button3D } from "@/components/ui/button-3d";
+import { BackButton } from "@/components/ui/back-button";
 import { PuzzleHint } from "@/components/activities/puzzle/puzzle-hint";
 import {
   PuzzleBoard,
@@ -63,17 +62,7 @@ export function PuzzlePlay({
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
-          <Button3D
-            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-            href="/activities/puzzle"
-            aria-label="Back to the puzzles"
-            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-          >
-            <ArrowLeft
-              className="h-5 w-5 text-white sm:h-6 sm:w-6"
-              strokeWidth={2.75}
-            />
-          </Button3D>
+          <BackButton href="/activities/puzzle" label="Back to the puzzles" />
 
           <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} />
         </div>

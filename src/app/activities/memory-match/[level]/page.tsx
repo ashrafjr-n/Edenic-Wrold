@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { findMemoryLevel, memoryLevels } from "@/data/memory-levels";
+import { pageAccent } from "@/components/ui/back-button";
 import { MemoryBoard } from "@/components/activities/memory/memory-board";
 
 export function generateStaticParams() {
@@ -27,7 +28,14 @@ export default async function MemoryLevelPage({ params }: MemoryLevelPageProps) 
     : "/activities/memory-match";
 
   return (
-    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+    <main
+      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      style={pageAccent(
+        "var(--color-gold)",
+        "var(--color-gold-dark)",
+        "var(--color-ink)",
+      )}
+    >
       {/* The header shows live state (the clock), so the whole screen —
           back button included — lives inside the client component that has
           it. */}

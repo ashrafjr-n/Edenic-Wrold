@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, RotateCcw, Star, Timer } from "lucide-react";
+import { ArrowRight, RotateCcw, Star, Timer } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
 import { memoryFaces } from "@/data/memory-levels";
 import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import { BackButton } from "@/components/ui/back-button";
 import { Celebration } from "@/components/ui/celebration";
 
 interface MemoryBoardProps {
@@ -150,17 +151,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
               sets `position: relative` and is UNLAYERED, so a Tailwind
               `absolute` utility on the button itself silently loses. */}
           <span className="absolute left-0 top-0">
-            <Button3D
-              tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-              href="/activities/memory-match"
-              aria-label="Back to the levels"
-              className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-            >
-              <ArrowLeft
-                className="h-5 w-5 text-white sm:h-6 sm:w-6"
-                strokeWidth={2.75}
-              />
-            </Button3D>
+            <BackButton href="/activities/memory-match" label="Back to the levels" />
           </span>
 
           {/* Only two things up here, as asked: which level this is, and the

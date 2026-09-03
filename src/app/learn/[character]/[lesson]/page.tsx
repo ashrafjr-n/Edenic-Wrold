@@ -1,10 +1,11 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { Button3D } from "@/components/ui/button-3d";
+import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberGrid } from "@/components/learn/number/number-grid";
 
 interface LessonPageProps {
@@ -31,23 +32,19 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (lesson.id !== "numbers") notFound();
 
   return (
-    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+    <main
+      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      style={pageAccent(character.accent, character.accentDark)}
+    >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
         >
-          <Button3D
-            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
+          <BackButton
             href={`/learn/${character.id}`}
-            aria-label={`Back to ${character.name}'s lessons`}
-            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-          >
-            <ArrowLeft
-              className="h-5 w-5 text-white sm:h-6 sm:w-6"
-              strokeWidth={2.75}
-            />
-          </Button3D>
+            label={`Back to ${character.name}'s lessons`}
+          />
 
           {/* The lesson's own icon and subject color, not a plain text pill —
               the chip carries some identity instead of just repeating the

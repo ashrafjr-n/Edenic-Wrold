@@ -24,12 +24,16 @@ export type PageAccentVars = CSSProperties & {
  * `var(--color-ink)` for a face too pale to carry white type, which on this
  * site means gold.
  */
-export function pageAccent(face: string, edge: string, ink?: string) {
+export function pageAccent(
+  face: string,
+  edge: string,
+  ink?: string,
+): PageAccentVars {
   return {
     "--page-accent-color": face,
     "--page-accent-edge": edge,
     ...(ink ? { "--page-accent-ink": ink } : {}),
-  } satisfies PageAccentVars;
+  };
 }
 
 /**

@@ -1,10 +1,11 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { Button3D } from "@/components/ui/button-3d";
+import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 
 export function generateStaticParams() {
@@ -47,8 +48,14 @@ export default async function CharacterLearnPage({
     },
   }));
 
+  /* This character owns the page, so the back button beneath reads the
+     accent from here — Nova's and Bloo's hubs come out right by default
+     rather than wearing Pinki's pink. */
   return (
-    <main className="relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28">
+    <main
+      className="relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28"
+      style={pageAccent(character.accent, character.accentDark)}
+    >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back and the (presentation-only, no achievements feature yet)
             trophy sit at the same level as the header's own icon chrome —
@@ -60,23 +67,12 @@ export default async function CharacterLearnPage({
           className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
         >
-          {/* Accent pink and grained, like every other back button on the
-              site — the default `playful` variant IS the clay recipe, so the
-              tone alone drives it and no modifier class is needed. It used to
-              be a white `.btn3d--clay-white` chip; the crown beside it still
-              is, which is what keeps "go back" and "chrome with no
-              destination yet" from reading as the same control. */}
-          <Button3D
-            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-            href="/learn"
-            aria-label="Back to Learn"
-            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-          >
-            <ArrowLeft
-              className="h-5 w-5 text-white sm:h-6 sm:w-6"
-              strokeWidth={2.75}
-            />
-          </Button3D>
+          {/* This character's own accent, handed down by the `<main>`
+              above — Pinki's is pink, Nova's lavender, Bloo's blue. The crown
+              beside it stays white on every page, which is what keeps "go
+              back" and "chrome with no destination yet" from reading as the
+              same control however this button is coloured. */}
+          <BackButton href="/learn" label="Back to Learn" />
 
           {/* Whose world this is. The hero banner is phone-only now, so
               without this the desktop page carried no trace of the character

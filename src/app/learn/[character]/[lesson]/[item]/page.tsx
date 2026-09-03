@@ -1,10 +1,11 @@
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { findNumberItem, numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { Button3D } from "@/components/ui/button-3d";
+import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { JourneyProgress } from "@/components/learn/number/journey-progress";
 import { NumberJourney } from "@/components/learn/number/number-journey";
 
@@ -60,7 +61,10 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
   return (
     /* Plain site ground, matching the hub and the number list above it — the
        saturated pink page was reverted the same way theirs already had been. */
-    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+    <main
+      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      style={pageAccent(character.accent, character.accentDark)}
+    >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
@@ -68,17 +72,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
         >
           {/* Out of the journey and back to the lesson list, not to the
               previous number — leaving is leaving. */}
-          <Button3D
-            tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-            href={lessonPath}
-            aria-label={`Back to ${lesson.name}`}
-            className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-          >
-            <ArrowLeft
-              className="h-5 w-5 text-white sm:h-6 sm:w-6"
-              strokeWidth={2.75}
-            />
-          </Button3D>
+          <BackButton href={lessonPath} label={`Back to ${lesson.name}`} />
 
           <JourneyProgress
             position={index + 1}

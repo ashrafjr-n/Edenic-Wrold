@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { ArrowLeft, Heart, Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import { memoryLevels } from "@/data/memory-levels";
-import { Button3D } from "@/components/ui/button-3d";
+import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { MemoryGrid } from "@/components/activities/memory/memory-grid";
 
 export const metadata: Metadata = {
@@ -30,7 +30,14 @@ const CARDS = [
 
 export default function MemoryMatchPage() {
   return (
-    <main className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20">
+    <main
+      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      style={pageAccent(
+        "var(--color-gold)",
+        "var(--color-gold-dark)",
+        "var(--color-ink)",
+      )}
+    >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Back on the left, the heading's own mark centred on the page —
             centred on the page itself rather than on the space left over,
@@ -44,17 +51,7 @@ export default function MemoryMatchPage() {
               `absolute` utility on the button itself silently loses and it
               stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
-            <Button3D
-              tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
-              href="/activities"
-              aria-label="Back to Activities"
-              className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-            >
-              <ArrowLeft
-                className="h-5 w-5 text-white sm:h-6 sm:w-6"
-                strokeWidth={2.75}
-              />
-            </Button3D>
+            <BackButton href="/activities" label="Back to Activities" />
           </span>
 
           <span className="flex items-center -space-x-2 sm:-space-x-2.5">

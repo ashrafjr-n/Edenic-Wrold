@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { findPuzzleStage, puzzleStages } from "@/data/puzzles";
 import { isUpright } from "@/lib/puzzle-pieces";
+import { pageAccent } from "@/components/ui/back-button";
 import { PuzzlePlay } from "@/components/activities/puzzle/puzzle-play";
 
 export function generateStaticParams() {
@@ -45,6 +46,7 @@ export default async function PuzzleStagePage({
       className={`relative flex flex-1 flex-col ${
         upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
       }`}
+      style={pageAccent("var(--color-go)", "var(--color-go-dark)")}
     >
       {/* The chrome row and the board are one client component: "Help", in
           the hint overlay at the top, places a piece on the board at the
