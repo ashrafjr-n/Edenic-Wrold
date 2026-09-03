@@ -184,10 +184,11 @@ the same ball in two colours, three letters in the same lettering, the three
 friends in the same silhouette — so the game turns from recognising into
 remembering. Each level carries a target time shown as a countdown dial, and
 nothing else: the clock stops at zero and goes quiet, the board stays playable,
-and a child can always finish. The twelve level cards climb three shades of the
-same gold, four levels to a shade, so the grid gets visibly heavier the further
-down it goes and the difficulty can be seen before a level is opened. Levels
-are not scored yet — finishing one marks it done and opens the next.
+and a child can always finish. The level cards are gold in one of three shades,
+and the shade says what the card is rather than where it sits: finished levels
+share one gold, the level to play next is deeper and glows, and locked ones are
+drained. Levels are not scored yet — finishing one marks it done and opens the
+next.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
