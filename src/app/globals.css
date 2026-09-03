@@ -77,6 +77,26 @@
   --accent-dark: #c8306f;
   --accent-soft: #ffe3ef;
 
+  /* **The colour of the section you are standing in.** Each route sets these
+     three on its own `<main>` and everything section-coloured inside reads
+     them instead of naming a colour itself — today that is `BackButton`, on
+     all seven pages that have one. Pinki's hub is pink, the puzzles are
+     green, Memory Match is gold, and Nova's and Bloo's hubs will be right by
+     default the day they open, because the route hands over the character's
+     accent rather than the button reaching for one.
+
+     The default is the brand's accent pink, which is what any page that
+     doesn't set them gets — the value every back button used to hardcode, so
+     an unclaimed page looks exactly as it did.
+
+     `--page-accent-ink` is what sits ON the face, and it is not always white:
+     gold is the one face on the site pale enough that white type disappears
+     on it (the same call Memory Match's CTA button and the puzzle hint chip
+     already make), so those pages hand over `--color-ink`. */
+  --page-accent-color: var(--accent);
+  --page-accent-edge: var(--accent-dark);
+  --page-accent-ink: #fff;
+
   /* Every shadow on the site is a tint of this, never a neutral grey — a
      grey shadow on a tinted ground reads as dirt. Still the old purple-leaning
      triple from when the ground was lavender — the ground moved to a pale
