@@ -51,10 +51,13 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
         <Image
           src={POSE_IMAGE[pose]}
           alt="Pinki"
-          width={475}
-          height={539}
-          /* Without this, next/image serves a 1080px file into a 160px box. */
-          sizes="(min-width: 640px) 224px, 160px"
+          /* The render's own 475x539 ratio, declared at the size this
+             actually paints (224px, the `sm` box) rather than at the file's
+             full pixel size. next/image builds its srcset from these, so
+             declaring 475 made it offer a 1080px file for a 224px box — and
+             a `sizes` attribute made it offer 3840px, which is worse. */
+          width={224}
+          height={254}
           className="anim-breathe h-40 w-40 object-contain drop-shadow-[0_18px_24px_rgba(92,78,190,0.3)] sm:h-56 sm:w-56"
         />
       </span>
