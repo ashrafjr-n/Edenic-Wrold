@@ -44,9 +44,13 @@ const BRAND_TONE = {
   text: "#fff",
 } as const;
 
+/* `--color-ink-fixed`, not `--color-ink`: the button this pairs with wears
+   `.btn3d--clay-white`, which is pinned pale in dark mode (globals.css), so
+   its text has to stay fixed dark too — `--color-ink` itself flips light
+   there. */
 const WHITE_TONE = {
   face: "var(--surface)",
-  text: "var(--color-ink)",
+  text: "var(--color-ink-fixed)",
 } as const;
 
 const FIND_CHOICES = 3;
@@ -311,8 +315,13 @@ export function NumberJourney({
               onClick={retryTrace}
               className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
             >
+              {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon
+                  rides inside a `.btn3d--clay-white` button, pinned pale
+                  regardless of theme (globals.css) — `--color-ink-soft`
+                  itself flips light in dark mode, for the same body-text
+                  reason `--color-ink` does. */}
               <RotateCcw
-                className="h-4 w-4 text-[var(--color-ink-soft)]"
+                className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
                 strokeWidth={2.75}
               />
               Try Again
@@ -507,8 +516,13 @@ export function NumberJourney({
               onClick={restart}
               className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
             >
+              {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon
+                  rides inside a `.btn3d--clay-white` button, pinned pale
+                  regardless of theme (globals.css) — `--color-ink-soft`
+                  itself flips light in dark mode, for the same body-text
+                  reason `--color-ink` does. */}
               <RotateCcw
-                className="h-4 w-4 text-[var(--color-ink-soft)]"
+                className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
                 strokeWidth={2.75}
               />
               Again

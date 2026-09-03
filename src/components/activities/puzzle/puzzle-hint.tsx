@@ -74,7 +74,10 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
       /* The scrim itself never animates: `pop-in` travels and overshoots, and
          on a full-screen dim that reads as the whole page lurching. It fades,
          the card pops. */
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-ink)]/70 p-7 sm:p-10"
+      /* `--color-ink-fixed`: a dimming scrim has to stay dark to do its
+         job regardless of page theme — `--color-ink` alone flips light in
+         dark mode, which would turn "dim the background" into the opposite. */
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-ink-fixed)]/70 p-7 sm:p-10"
     >
       <div
         className="card anim-pop-in relative w-full p-3 sm:p-4"
@@ -130,7 +133,10 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
               surprising thing a button in a dialog can do until then. */}
           <Button3D
             variant="calm"
-            tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
+            /* `--color-ink-fixed`: `.btn3d--clay-white`'s face is pinned
+               pale in dark mode (globals.css), so its text has to stay
+               fixed dark too — `--color-ink` itself flips light there. */
+            tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
             onClick={() => setOpen(false)}
             className="btn3d--clay-white px-5 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg"
           >
@@ -173,7 +179,9 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
         tone={{
           face: "var(--color-gold)",
           edge: "var(--color-gold-dark)",
-          text: "var(--color-ink)",
+          /* Gold is unaffected by theme, so its icon has to stay unaffected
+             too — `--color-ink` alone flips light in dark mode. */
+          text: "var(--color-ink-fixed)",
         }}
         onClick={() => setOpen(true)}
         aria-label="Hints — see the finished picture"

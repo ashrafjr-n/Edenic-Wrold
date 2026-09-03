@@ -8,14 +8,15 @@ import { useTheme } from "@/store/theme";
  * The header's Moon/Sun chip. Same accent-pink clay chrome the language
  * button wears (`.btn3d--icon-accent` in `globals.css` overrides the
  * `tone`/`variant` below regardless — kept for documentation, same as the
- * language button). It's the only piece of `HeaderChrome` with real
- * behavior: everything else there is still presentation only.
+ * language button), and it STAYS that pink face in dark mode too — only the
+ * icon inside it changes (Sun instead of Moon, and black instead of white,
+ * via the `[data-theme="dark"] header .btn3d` rule in globals.css). It's the
+ * only piece of `HeaderChrome` with real behavior: everything else there is
+ * still presentation only.
  *
- * The toggle itself is global — it renders on every page, since the header
- * is shared chrome — but flipping it only repaints `/` and `/activities`
- * (see `DarkScope`). Visiting any other page while it's "on" changes
- * nothing there; the icon and the persisted preference are the only things
- * that travel with you.
+ * Dark mode is site-wide (`ThemeSync` syncs `theme` onto `<html
+ * data-theme>`) — toggling this repaints every page, not just the one
+ * you're on.
  */
 export function ThemeToggle() {
   const theme = useTheme((state) => state.theme);
@@ -31,10 +32,12 @@ export function ThemeToggle() {
     <Button3D
       tone={{ face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" }}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      /* Gold once dark mode is ON, pink otherwise — tied to the toggle's own
-         state (see `.btn3d--icon-gold` in globals.css), not to page scope,
-         so the chip reads gold on every page the instant dark mode is on. */
-      className={`${isDark ? "btn3d--icon-gold" : "btn3d--icon-accent"} h-11 w-11 shrink-0`}
+      /* Always pink — direct request: the chip's FACE does not change with
+         dark mode, only the icon inside it (which goes black via the
+         `[data-theme="dark"] header .btn3d` rule in globals.css). An
+         earlier version swapped this to a gold face once dark mode turned
+         on; reverted, don't reintroduce it. */
+      className="btn3d--icon-accent h-11 w-11 shrink-0"
       onClick={toggleTheme}
     >
       {isDark ? (

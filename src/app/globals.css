@@ -204,6 +204,23 @@
 
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
   --color-ink: #2f2a52;
+  /* The SAME violet, but never overridden in dark mode — unlike `--color-ink`
+     itself (see `[data-theme="dark"]` below, where it flips light so body
+     text stays readable on a dark ground). This is for the opposite case:
+     text/icons sitting on a face that does NOT move with the theme (a gold
+     button, a chip pinned to a fixed pale value like `.btn3d--icon-accent`
+     or `.btn3d--clay-white`) still need genuinely DARK content regardless of
+     page theme, and reading `--color-ink` there would silently go light the
+     moment dark mode turns on — that bug is exactly why this token exists.
+     Every `tone.text`/`ink` prop on a gold or pinned-pale face uses this
+     one, never `--color-ink`. */
+  --color-ink-fixed: #2f2a52;
+  /* Same pairing for the SOFT/muted variant — an icon riding inside a
+     `.btn3d--clay-white` button (pinned pale regardless of theme) alongside
+     fixed-dark text needs a fixed-muted companion, not `--color-ink-soft`
+     itself (which also flips light in dark mode, for the same body-text
+     reason `--color-ink` does). */
+  --color-ink-soft-fixed: #7b76a3;
   --color-ink-soft: #7b76a3;
 
   /* Locked state: warm-neutral, so it reads as "resting" rather than
@@ -357,19 +374,23 @@ body {
 
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
    lighter above for legibility as TEXT elsewhere on the page — but the
-   language chip (`.btn3d--icon-accent`) and "Join Edenic World" (plain
-   `.btn3d`, `--brand` face) use those same tokens as a BUTTON FACE, and a
-   lighter face is exactly the case where white content starts to wash out —
-   the same reasoning `.btn3d--icon-gold` already follows for the toggle
-   itself once it turns gold. Scoped to `header` only, not every `.btn3d` on
-   the site: everywhere else a colored button's face didn't change (only
-   `--brand`/`--accent`, both header-only faces here, moved). Also covers the
-   active `MainNav` pill (`.clay` + `text-white`, not a `.btn3d` at all) —
-   unlayered, so it wins over that Tailwind `text-white` utility regardless
-   of source order. */
+   language chip, the dark-mode toggle, "Join Edenic World" (plain `.btn3d`,
+   `--brand` face) and the active `MainNav` pill (`.clay` + `text-white`, not
+   a `.btn3d` at all — the selector list has to name it separately) all use
+   those same tokens as a BUTTON FACE, and a lighter face is exactly the case
+   where white content starts to wash out. Scoped to `header` only, not every
+   `.btn3d` on the site: everywhere else a colored button's face didn't
+   change (only `--brand`/`--accent`, both header-only faces here, moved).
+
+   **`--color-ink-fixed`, not `--color-ink`.** The first version of this used
+   `--color-ink`, which flips LIGHT in dark mode (it's body text, further up
+   in this same block) — so "make the icon black" silently produced a pale
+   lavender icon instead, direct request corrected the same round. Unlayered,
+   so the `a.clay` branch wins over the Tailwind `text-white` utility on that
+   pill regardless of source order. */
 [data-theme="dark"] header .btn3d,
 [data-theme="dark"] header a.clay {
-  color: var(--color-ink);
+  color: var(--color-ink-fixed);
 }
 
 /* The bloom exists to keep a pink numeral legible standing on the site's
@@ -465,10 +486,15 @@ body {
    dark mode instead of the white it wears in light mode. `--color-go`
    itself is unchanged by theme (a colored clay face is self-consistent
    regardless of page ground, same as every other colored `.btn3d`), so only
-   the text needs to move. `MemoryMatchCta`'s button already reads
-   `--color-ink` in both themes — no change needed there. */
+   the text needs to move. `--color-ink-fixed`, not `--color-ink` — same bug
+   as the header rule above, corrected the same round: `--color-ink` flips
+   light in dark mode, which would have made this text paler instead of
+   black. `MemoryMatchCta`'s button reads `var(--color-ink-fixed)` too now
+   (`memory-match-cta.tsx`) — it LOOKED already-correct in light mode (where
+   `--color-ink` happens to already be dark) but was carrying the identical
+   bug, invisible until dark mode actually shipped. */
 [data-theme="dark"] .puzzle-cta-btn {
-  color: var(--color-ink);
+  color: var(--color-ink-fixed);
 }
 
 /* ---------------------------------------------------------------
@@ -984,12 +1010,15 @@ button:disabled,
   box-shadow: 0 4px 10px -6px rgb(var(--shadow-hue) / 30%);
 }
 
-/* The language chip is always accent pink, grain and all — not just on
-   hover — regardless of the `calm` variant passed alongside it. The
-   dark-mode chip wore this too, always, until it needed to actually show
-   its own state (see `.btn3d--icon-gold` below): now `ThemeToggle` picks
-   between the two based on `theme`, not this class alone. Declared after
-   `.btn3d--calm` so it wins on source order. */
+/* The language chip AND the dark-mode toggle are always accent pink, grain
+   and all — not just on hover, and not just in light mode. The toggle wore a
+   gold variant for one round, swapping its whole FACE once dark mode turned
+   on; reverted on direct request — the face stays pink always, only the
+   icon/text INSIDE it is allowed to change (see the `[data-theme="dark"]
+   header .btn3d` rule further down, which uses `--color-ink-fixed`, not
+   `--color-ink` — the bug that round shipped with, since `--color-ink`
+   itself goes light in dark mode and silently undid the "make it black"
+   request). Declared after `.btn3d--calm` so it wins on source order. */
 .btn3d--icon-accent {
   background-color: var(--accent);
   background-image: var(--noise);
@@ -1010,33 +1039,6 @@ button:disabled,
    untouched. */
 .btn3d--icon-accent:hover:not(:disabled) {
   background-color: color-mix(in srgb, var(--accent) 85%, black 15%);
-}
-
-/* `ThemeToggle`'s own chip once dark mode is ON — gold, not pink, echoing
-   the Sun icon it shows at that point (the same "gold is the good stuff"
-   convention the crown and the say-it button already use). Chosen by
-   `theme-toggle.tsx` reading the toggle's OWN state, not by page or
-   `[data-theme]` scope — the chip reads gold on every page the instant dark
-   mode turns on, matching what the icon inside it already shows. Same
-   recipe as `.btn3d--icon-accent`, gold in place of accent; `color:
-   var(--color-ink)` because gold is the one face on the site pale enough
-   that white type disappears on it (the hint chip's lightbulb, the Memory
-   Match CTA button make the same call). */
-.btn3d--icon-gold {
-  background-color: var(--color-gold);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  color: var(--color-ink);
-  box-shadow:
-    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
-    inset 0 -7px 11px -4px color-mix(in srgb, var(--color-gold-dark) 60%, transparent),
-    0 14px 26px -10px color-mix(in srgb, var(--color-gold-dark) 55%, transparent);
-  transition: background-color 0.2s ease;
-}
-
-.btn3d--icon-gold:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--color-gold) 85%, black 15%);
 }
 
 /* A WHITE clay chip — the same inflated material as a colored `.btn3d`

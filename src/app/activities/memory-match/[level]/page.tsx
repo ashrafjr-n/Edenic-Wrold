@@ -33,7 +33,8 @@ export default async function MemoryLevelPage({ params }: MemoryLevelPageProps) 
       style={pageAccent(
         "var(--color-gold)",
         "var(--color-gold-dark)",
-        "var(--color-ink)",
+        /* --color-ink-fixed, not --color-ink: gold is unaffected by theme, so its ink has to stay unaffected too. */
+        "var(--color-ink-fixed)",
       )}
     >
       {/* The header shows live state (the clock), so the whole screen —

@@ -62,7 +62,13 @@ export function MemoryMatchCta({
           tone={{
             face: "var(--color-gold)",
             edge: "var(--color-gold-dark)",
-            text: "var(--color-ink)",
+            /* `--color-ink-fixed`, not `--color-ink`: gold is unaffected by
+               theme, so its text has to stay unaffected too. `--color-ink`
+               itself flips light in dark mode (see globals.css), which
+               would have washed this text out the moment dark mode shipped
+               — it happened to look fine in light mode alone, which is
+               exactly how the bug hid until now. */
+            text: "var(--color-ink-fixed)",
           }}
           href="/activities/memory-match"
           className="px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"

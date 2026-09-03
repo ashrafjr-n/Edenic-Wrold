@@ -259,7 +259,10 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Button3D
                 variant="calm"
-                tone={{ face: "var(--surface)", text: "var(--color-ink)" }}
+                /* `--color-ink-fixed`: `.btn3d--clay-white`'s face is pinned
+                   pale in dark mode (globals.css), so its text has to stay
+                   fixed dark too — `--color-ink` itself flips light there. */
+                tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
                 onClick={again}
                 className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
               >
@@ -271,7 +274,10 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
                 tone={{
                   face: "var(--color-gold)",
                   edge: "var(--color-gold-dark)",
-                  text: "var(--color-ink)",
+                  /* Gold is unaffected by theme, so its text has to stay
+                     unaffected too — `--color-ink` alone flips light in dark
+                     mode. */
+                  text: "var(--color-ink-fixed)",
                 }}
                 href={nextHref}
                 className="px-6 py-3 text-base sm:px-7 sm:text-lg"

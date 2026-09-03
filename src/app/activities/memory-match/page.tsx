@@ -44,7 +44,8 @@ export default function MemoryMatchPage() {
       style={pageAccent(
         "var(--color-gold)",
         "var(--color-gold-dark)",
-        "var(--color-ink)",
+        /* --color-ink-fixed, not --color-ink: gold is unaffected by theme, so its ink has to stay unaffected too. */
+        "var(--color-ink-fixed)",
       )}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
@@ -66,7 +67,9 @@ export default function MemoryMatchPage() {
           {/* Ink, not white: gold is the one face on the site pale enough
               that a white icon disappears on it — the same call this game's
               CTA button and the puzzle hint chip's lightbulb make. */}
-          <HeadingMark chips={CHIPS} icon={Brain} ink="var(--color-ink)" />
+          {/* --color-ink-fixed, not --color-ink: the chips are gold, unaffected
+              by theme, so the icon on them has to stay unaffected too. */}
+          <HeadingMark chips={CHIPS} icon={Brain} ink="var(--color-ink-fixed)" />
         </div>
 
         <div
