@@ -148,6 +148,17 @@
   --color-gold: #f7c948;
   --color-gold-dark: #c9891a;
 
+  /* Three RUNGS of the same gold, light to deep, so a ladder of levels can
+     get visibly heavier without leaving its own colour — Memory Match's
+     twelve cards use them four at a time (see `data/memory-levels.ts`).
+     Every one is mixed FROM the pair above rather than picked by eye: that
+     is what keeps them one hue at three shades instead of three yellows,
+     and it means recolouring gold once moves all three together. */
+  --color-gold-soft: color-mix(in srgb, var(--color-gold) 68%, #fff);
+  --color-gold-soft-dark: color-mix(in srgb, var(--color-gold-dark) 62%, #fff);
+  --color-gold-deep: color-mix(in srgb, var(--color-gold) 72%, var(--color-gold-dark));
+  --color-gold-deep-dark: color-mix(in srgb, var(--color-gold-dark) 78%, #000);
+
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
   --color-ink: #2f2a52;
   --color-ink-soft: #7b76a3;
