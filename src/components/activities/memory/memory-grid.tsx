@@ -196,14 +196,17 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
               </span>
 
               {/* The same "Next up" mark the numbers picker uses, shortened
-                  to fit a cell this size and hung over the card's top edge so
-                  it never crowds the miniature board. `tone.edge` — the
-                  darker of the two "next" gold values — is what keeps it
-                  legible against a card already filled with `tone.face`. */}
+                  to fit a cell this size. **Inset from the top edge, not hung
+                  over it** — unlike the numbers picker's `.tile`, this card
+                  is `overflow-hidden` (it has to be, to clip the board art to
+                  its rounded corners), so a negative offset here was being
+                  cut in half by the card's own edge. `tone.edge` — the darker
+                  of the two "next" gold values — is what keeps it legible
+                  against a card already filled with `tone.face`. */}
               {state === "next" && (
                 <span
                   aria-hidden
-                  className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:text-xs"
+                  className="absolute top-1.5 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:top-2 sm:text-xs"
                   style={{ backgroundColor: tone.edge }}
                 >
                   Next
