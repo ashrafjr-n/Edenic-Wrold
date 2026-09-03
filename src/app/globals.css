@@ -233,6 +233,78 @@ body {
 }
 
 /* ---------------------------------------------------------------
+   Dark mode — a TRIAL, scoped to Home (`/`) and Activities (`/activities`)
+   ONLY, by direct request. `DarkScope` (`components/ui/dark-scope.tsx`) is
+   a `display:contents` div those two pages wrap their content in, carrying
+   `data-theme="dark"` when the header's Moon/Sun toggle
+   (`components/ui/theme-toggle.tsx`, state in `store/theme.ts`) is on.
+   Every selector below requires that attribute on an ANCESTOR, and nothing
+   outside these two pages ever renders one — so no other route can be
+   touched by this block no matter what the toggle is set to. Don't reuse
+   `DarkScope` elsewhere without extending the token set below to cover
+   whatever that page actually uses.
+
+   Absolute black (`#000`/`#0A0A0A`) is deliberately avoided: claymorphism
+   reads from the GAP between an inset highlight and an inset shade, and a
+   true black leaves no room on either side of it — the inflated look goes
+   flat. `--background` is a deep, quiet violet-navy instead, one step
+   DARKER than `--surface`, so a card still visibly lifts off the page the
+   same way a white card lifts off the pale ground in light mode.
+   --------------------------------------------------------------- */
+[data-theme="dark"] {
+  --background: #1e1b2e;
+  --surface: #2a2b3d;
+  --foreground: #ece8f7;
+
+  --color-ink: #ece8f7;
+  --color-ink-soft: #b3addc;
+  --color-locked-text: #8b84ac;
+
+  /* Raised a touch off their light-mode values: the same hue read straight
+     against a near-black ground comes across muddier than it does against
+     a pale one — especially where it's carrying TEXT (the "Meet the
+     friends" eyebrow, the scroll cue label) rather than sitting as a solid
+     button fill, which reads fine either way. */
+  --brand: #4dabf5;
+  --accent: #ff7fb8;
+}
+
+/* `.card`'s shadow is a tint of `--shadow-hue`, tuned for the pale ground —
+   against a near-black one the same recipe reads as almost nothing (a
+   translucent purple shadow over near-black has no gap left to show
+   against). Replaced outright: the highlight drops to almost nothing,
+   because there's no real light source in a dark UI to bounce back as
+   strongly as the light mode's 90% does, and a genuine dark shadow carries
+   the depth instead of a tinted one. Scoped to `box-shadow` ONLY —
+   `.card`'s `background` shorthand is left alone, so `.social-chip`'s own
+   per-platform fill (declared after `.card` in this file, same selector
+   specificity) still wins over it exactly as it does in light mode; `.card`
+   already picks up the new `--surface` for its background automatically,
+   with no override needed here. */
+[data-theme="dark"] .card {
+  box-shadow:
+    -6px -6px 14px rgb(255 255 255 / 4%),
+    8px 8px 18px rgb(0 0 0 / 50%);
+}
+
+[data-theme="dark"] .card-lift:hover {
+  box-shadow:
+    -6px -6px 14px rgb(255 255 255 / 4%),
+    10px 10px 22px rgb(0 0 0 / 55%);
+}
+
+/* `.btn3d--clay-white` reads its face from `--surface`, which is dark navy
+   in this scope now — but the two `PathsSection` buttons it's used on
+   (Home's "Start learning" / "Start playing") sit on a SATURATED colored
+   panel, not on the page ground, and exist specifically to read as a pale
+   chip against that panel's own color. That job doesn't change with the
+   page theme, so its face is pinned to a fixed pale value here instead of
+   following `--surface` down into navy. */
+[data-theme="dark"] .btn3d--clay-white {
+  background-color: #f4f2fb;
+}
+
+/* ---------------------------------------------------------------
    Three building blocks. Everything on the site is one of these.
 
    `.card`  — a white panel on the lavender ground, generous radius, one
