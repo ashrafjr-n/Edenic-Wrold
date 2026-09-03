@@ -15,7 +15,7 @@ All UI and content is English only.
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9 with a progress bar and star record, unlocked one at a time |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
-| `/activities` | Activities — three cards: Puzzle Time, Memory Match and Watch & Learn, each showing how far the child has got |
+| `/activities` | Activities — two cards: Puzzle Time and Memory Match |
 | `/activities/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/activities/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
 | `/activities/memory-match` | The twelve Memory Match levels, unlocked one at a time |
@@ -107,8 +107,8 @@ src/
     home/             Hero, friends introduction, Learn/Activities panels
     learn/            Friend picker, character cards, lesson cards
     learn/number/     Numerals, the tracing board, the quizzes, stars
-    activities/       The Activities cards and their progress badges, plus the
-                      puzzle and memory-match grids and boards
+    activities/       The two Activities cards, plus the puzzle and
+                      memory-match grids and boards
     layout/           Header, nav, footer
     ui/               Shared primitives (Button3D, SocialLinks, Logo, confetti,
                       stars, the progress bar)
@@ -180,8 +180,10 @@ the same ball in two colours, three letters in the same lettering, the three
 friends in the same silhouette — so the game turns from recognising into
 remembering. Each level carries a target time shown as a countdown dial, and
 nothing else: the clock stops at zero and goes quiet, the board stays playable,
-and a child can always finish. Levels are not scored yet — finishing one marks
-it done and opens the next.
+and a child can always finish. The twelve level cards climb three shades of the
+same gold, four levels to a shade, so the grid gets visibly heavier the further
+down it goes and the difficulty can be seen before a level is opened. Levels
+are not scored yet — finishing one marks it done and opens the next.
 
 The header's language, dark-mode and "Join Edenic World" controls are presentation
 only — none of them have behavior yet. "Join Edenic World" is also the profile entry
