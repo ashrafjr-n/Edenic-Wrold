@@ -1,6 +1,7 @@
-import { Languages, LogIn, Moon } from "lucide-react";
+import { Languages, LogIn } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { MainNav } from "./main-nav";
 
 /** A solid white bar spanning the full width. The logo is pinned to the far
@@ -33,10 +34,11 @@ export function Header() {
   );
 }
 
-/* Language and theme are always accent pink (`.btn3d--icon-accent` in
-   globals.css overrides the `tone`/`variant` below regardless) — not a hover
-   state, so the tone/variant props here are mostly documentation at this
-   point. Both are still presentation only; nothing is wired up yet. */
+/* Language is always accent pink (`.btn3d--icon-accent` in globals.css
+   overrides the `tone`/`variant` below regardless) — not a hover state, so
+   the tone/variant props here are mostly documentation at this point. Still
+   presentation only; nothing is wired up. Dark mode (`ThemeToggle`) is the
+   one real control in this row now — see its own doc comment. */
 function HeaderChrome() {
   return (
     <>
@@ -48,13 +50,7 @@ function HeaderChrome() {
         <Languages className="h-5 w-5" strokeWidth={2.25} />
       </Button3D>
 
-      <Button3D
-        tone={{ face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" }}
-        aria-label="Switch to dark mode"
-        className="btn3d--icon-accent h-11 w-11 shrink-0"
-      >
-        <Moon className="h-5 w-5" strokeWidth={2.25} />
-      </Button3D>
+      <ThemeToggle />
 
       {/* The brand blue. It doubles as the profile entry point: there's no
           profile to show until someone has joined. */}
