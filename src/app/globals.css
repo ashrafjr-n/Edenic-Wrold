@@ -233,16 +233,13 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Dark mode — a TRIAL, scoped to Home (`/`) and Activities (`/activities`)
-   ONLY, by direct request. `DarkScope` (`components/ui/dark-scope.tsx`) is
-   a `display:contents` div those two pages wrap their content in, carrying
-   `data-theme="dark"` when the header's Moon/Sun toggle
-   (`components/ui/theme-toggle.tsx`, state in `store/theme.ts`) is on.
-   Every selector below requires that attribute on an ANCESTOR, and nothing
-   outside these two pages ever renders one — so no other route can be
-   touched by this block no matter what the toggle is set to. Don't reuse
-   `DarkScope` elsewhere without extending the token set below to cover
-   whatever that page actually uses.
+   Dark mode — SITE-WIDE. `data-theme="dark"` lands on `<html>` itself
+   (`ThemeSync`, `components/ui/theme-sync.tsx`, syncing
+   `store/theme.ts`'s `theme`; the header's Moon/Sun `ThemeToggle` is what
+   sets it), so every selector below reaches every page. A `beforeInteractive`
+   inline script in `layout.tsx` sets the same attribute from `localStorage`
+   before the first paint, so a returning visitor never sees a flash of the
+   wrong theme.
 
    Absolute black (`#000`/`#0A0A0A`) is deliberately avoided: claymorphism
    reads from the GAP between an inset highlight and an inset shade, and a
@@ -250,7 +247,21 @@ body {
    flat. `--background` is a deep, quiet violet-navy instead, one step
    DARKER than `--surface`, so a card still visibly lifts off the page the
    same way a white card lifts off the pale ground in light mode.
-   --------------------------------------------------------------- */
+
+   `--shadow-hue: 0 0 0` is the one line doing the most work here: every
+   neutral shadow on the site is written as `rgb(var(--shadow-hue) / X%)`
+   (`.card`, `.card-lift:hover`, `.card-clay-white`, `.tile-clay`,
+   `.btn3d--calm` and its hover/active states, `.numeral-shadow`, the memory
+   clock, the level badge, and more) — flipping the token from its
+   purple-leaning triple to black recolors all of them from "a tinted shadow
+   tuned for a pale ground" (reads as almost nothing against a dark one) to
+   a real dark shadow, at each rule's own already-tuned opacity, with zero
+   need to touch every consumer individually.
+
+   What's still handled per-rule below is only what `--shadow-hue` can't
+   reach: LITERAL white insets (highlights meant to read as light bouncing
+   off a pale surface — meaningless once that surface goes dark navy) and
+   the few places that assume a pale ground outright (the numeral bloom). */
 [data-theme="dark"] {
   --background: #1e1b2e;
   --surface: #2a2b3d;
@@ -258,50 +269,79 @@ body {
 
   --color-ink: #ece8f7;
   --color-ink-soft: #b3addc;
-  --color-locked-text: #8b84ac;
+
+  --shadow-hue: 0 0 0;
 
   /* Raised a touch off their light-mode values: the same hue read straight
      against a near-black ground comes across muddier than it does against
      a pale one — especially where it's carrying TEXT (the "Meet the
-     friends" eyebrow, the scroll cue label) rather than sitting as a solid
-     button fill, which reads fine either way. */
+     friends" eyebrow, the scroll cue label, nav labels) rather than sitting
+     as a solid button fill, which reads fine either way. */
   --brand: #4dabf5;
   --accent: #ff7fb8;
 }
 
-/* `.card`'s shadow is a tint of `--shadow-hue`, tuned for the pale ground —
-   against a near-black one the same recipe reads as almost nothing (a
-   translucent purple shadow over near-black has no gap left to show
-   against). Replaced outright: the highlight drops to almost nothing,
-   because there's no real light source in a dark UI to bounce back as
-   strongly as the light mode's 90% does, and a genuine dark shadow carries
-   the depth instead of a tinted one. Scoped to `box-shadow` ONLY —
-   `.card`'s `background` shorthand is left alone, so `.social-chip`'s own
-   per-platform fill (declared after `.card` in this file, same selector
-   specificity) still wins over it exactly as it does in light mode; `.card`
-   already picks up the new `--surface` for its background automatically,
-   with no override needed here. */
-[data-theme="dark"] .card {
-  box-shadow:
-    -6px -6px 14px rgb(255 255 255 / 4%),
-    8px 8px 18px rgb(0 0 0 / 50%);
+/* The ground itself carries the site's grain in dark mode — direct request,
+   and a deliberate exception to the light-mode rule ("the site's near-white
+   `--background` deliberately carries no grain," `.tile-grain`'s own
+   comment): a near-white fill gives the overlay blend nothing to push
+   against, but a deep navy one does, so the grain actually reads as
+   material here instead of vanishing. `background-image`/`-size`/
+   `-blend-mode` only — `body`'s own `background-color` (via the `background`
+   shorthand) is untouched, so it still resolves through the new
+   `--background` above with no separate override needed. */
+[data-theme="dark"] body {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
 }
 
-[data-theme="dark"] .card-lift:hover {
+/* `.card-clay-white`'s face is `.card`'s own `background: var(--surface)`,
+   which just went dark navy — its LITERAL 90% white highlight (tuned for a
+   white face) would read as an unmotivated bright streak across the top of
+   a dark card instead of a highlight. Redeclared rather than patched: a
+   `box-shadow` can't be partially overridden, so the whole stack is
+   repeated here with only the first (highlight) layer's opacity changed —
+   the rest still reads `rgb(var(--shadow-hue) / X%)` at the SAME
+   percentages as the light-mode rule, which resolve to a real dark shadow
+   now that `--shadow-hue` is flipped above. */
+[data-theme="dark"] .card-clay-white {
   box-shadow:
-    -6px -6px 14px rgb(255 255 255 / 4%),
-    10px 10px 22px rgb(0 0 0 / 55%);
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
 }
 
-/* `.btn3d--clay-white` reads its face from `--surface`, which is dark navy
-   in this scope now — but the two `PathsSection` buttons it's used on
-   (Home's "Start learning" / "Start playing") sit on a SATURATED colored
-   panel, not on the page ground, and exist specifically to read as a pale
-   chip against that panel's own color. That job doesn't change with the
-   page theme, so its face is pinned to a fixed pale value here instead of
-   following `--surface` down into navy. */
+[data-theme="dark"] .card-clay-white.card-lift:hover {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 24%),
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* `.btn3d--clay-white` reads its face from `--surface` too, but every place
+   it's used (the lesson hub's back/achievements buttons, the home page's
+   two panel buttons, a locked lesson card's padlock chip) is a WHITE CHIP
+   sitting on a saturated colored surface, not on the page ground — that job
+   doesn't change with the page theme, so its face is pinned to a fixed pale
+   value instead of following `--surface` down into navy. Its own box-shadow
+   needs no override: the literal white highlight stays appropriate for a
+   face that's still pale, and the shade/outer shadow already flip to black
+   for free via `--shadow-hue`. */
 [data-theme="dark"] .btn3d--clay-white {
   background-color: #f4f2fb;
+}
+
+/* The bloom exists to keep a pink numeral legible standing on the site's
+   PALE ground with no card behind it — against a dark ground a numeral is
+   already high-contrast with no help needed, and the same bright white
+   radial glow reads as a stray, unmotivated blob instead. Dimmed rather
+   than removed outright: a faint version still reads as a soft glow, which
+   fits a numeral that's meant to look like an object sitting on the page. */
+[data-theme="dark"] .numeral-bloom {
+  opacity: 0.16;
 }
 
 /* ---------------------------------------------------------------
@@ -817,9 +857,12 @@ button:disabled,
   box-shadow: 0 4px 10px -6px rgb(var(--shadow-hue) / 30%);
 }
 
-/* The language and dark-mode chips are always accent pink, grain and all —
-   not just on hover — regardless of the `calm` variant passed alongside it.
-   Declared after `.btn3d--calm` so it wins on source order. */
+/* The language chip is always accent pink, grain and all — not just on
+   hover — regardless of the `calm` variant passed alongside it. The
+   dark-mode chip wore this too, always, until it needed to actually show
+   its own state (see `.btn3d--icon-gold` below): now `ThemeToggle` picks
+   between the two based on `theme`, not this class alone. Declared after
+   `.btn3d--calm` so it wins on source order. */
 .btn3d--icon-accent {
   background-color: var(--accent);
   background-image: var(--noise);
@@ -840,6 +883,33 @@ button:disabled,
    untouched. */
 .btn3d--icon-accent:hover:not(:disabled) {
   background-color: color-mix(in srgb, var(--accent) 85%, black 15%);
+}
+
+/* `ThemeToggle`'s own chip once dark mode is ON — gold, not pink, echoing
+   the Sun icon it shows at that point (the same "gold is the good stuff"
+   convention the crown and the say-it button already use). Chosen by
+   `theme-toggle.tsx` reading the toggle's OWN state, not by page or
+   `[data-theme]` scope — the chip reads gold on every page the instant dark
+   mode turns on, matching what the icon inside it already shows. Same
+   recipe as `.btn3d--icon-accent`, gold in place of accent; `color:
+   var(--color-ink)` because gold is the one face on the site pale enough
+   that white type disappears on it (the hint chip's lightbulb, the Memory
+   Match CTA button make the same call). */
+.btn3d--icon-gold {
+  background-color: var(--color-gold);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: var(--color-ink);
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--color-gold-dark) 60%, transparent),
+    0 14px 26px -10px color-mix(in srgb, var(--color-gold-dark) 55%, transparent);
+  transition: background-color 0.2s ease;
+}
+
+.btn3d--icon-gold:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-gold) 85%, black 15%);
 }
 
 /* A WHITE clay chip — the same inflated material as a colored `.btn3d`

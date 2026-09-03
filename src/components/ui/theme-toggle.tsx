@@ -19,14 +19,22 @@ import { useTheme } from "@/store/theme";
  */
 export function ThemeToggle() {
   const theme = useTheme((state) => state.theme);
+  const hydrated = useTheme((state) => state.hydrated);
   const toggleTheme = useTheme((state) => state.toggleTheme);
-  const isDark = theme === "dark";
+  /* Server HTML always has `theme: "light"` (the store's un-hydrated
+     default) — rendering the live `theme` before `hydrated` flips would
+     disagree with that first paint and throw a hydration error, same rule
+     `store/progress.ts` documents for its own `hydrated` flag. */
+  const isDark = hydrated && theme === "dark";
 
   return (
     <Button3D
       tone={{ face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" }}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="btn3d--icon-accent h-11 w-11 shrink-0"
+      /* Gold once dark mode is ON, pink otherwise — tied to the toggle's own
+         state (see `.btn3d--icon-gold` in globals.css), not to page scope,
+         so the chip reads gold on every page the instant dark mode is on. */
+      className={`${isDark ? "btn3d--icon-gold" : "btn3d--icon-accent"} h-11 w-11 shrink-0`}
       onClick={toggleTheme}
     >
       {isDark ? (

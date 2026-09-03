@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PuzzleCta } from "@/components/activities/puzzle-cta";
 import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
-import { DarkScope } from "@/components/ui/dark-scope";
 
 export const metadata: Metadata = {
   title: "Activities — Edenic World",
@@ -32,22 +31,18 @@ const ITEM_STAGGER = 0.12;
  */
 export default function ActivitiesPage() {
   return (
-    <DarkScope>
-      {/* `bg-[var(--background)]` explicit for the same reason `/`'s `main`
-          carries it now — see `DarkScope`'s doc comment. */}
-      <main className="flex flex-1 flex-col justify-center bg-[var(--background)] px-4 py-10 sm:px-8 sm:py-14">
-        <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:grid-cols-2">
-          <PuzzleCta
-            className="anim-rise-in"
-            style={{ animationDelay: `${ITEM_DELAY}s` }}
-          />
+    <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 sm:py-14">
+      <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:grid-cols-2">
+        <PuzzleCta
+          className="anim-rise-in"
+          style={{ animationDelay: `${ITEM_DELAY}s` }}
+        />
 
-          <MemoryMatchCta
-            className="anim-rise-in"
-            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
-          />
-        </div>
-      </main>
-    </DarkScope>
+        <MemoryMatchCta
+          className="anim-rise-in"
+          style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
+        />
+      </div>
+    </main>
   );
 }
