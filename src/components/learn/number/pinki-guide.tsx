@@ -4,7 +4,10 @@ import Image from "next/image";
     blocking a stage on art that does not exist yet. */
 export type PinkiPose = "speak" | "pen" | "celebrate" | "stick" | "think";
 
-const POSE_IMAGE: Record<PinkiPose, string> = {
+/* Exported so a second layout can reuse the map rather than restating it —
+   `NumbersIntro` needs the same paths at a different size. Nothing else
+   about this component is shared: that one owns its own layout. */
+export const POSE_IMAGE: Record<PinkiPose, string> = {
   speak: "/assets/learn-with-pinki/pinki/pinki-speak.png",
   pen: "/assets/learn-with-pinki/pinki/pinki-with-pen.png",
   celebrate: "/assets/learn-with-pinki/pinki/pinki-celebrate.png",
