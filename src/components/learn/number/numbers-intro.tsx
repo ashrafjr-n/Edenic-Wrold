@@ -79,7 +79,7 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
            standalone property. All three compose rather than overwriting one
            another — which is exactly why none of them is a hand-written
            `transform`. */
-        className="anim-pinki-lean-in pointer-events-none absolute -bottom-[9%] -right-[26%] z-10 block h-[63%] rotate-[-3deg] sm:-bottom-[7%] sm:-right-[9%] sm:h-[58%]"
+        className="anim-pinki-lean-in pointer-events-none absolute -bottom-[3%] -right-[26%] z-10 block h-[68%] rotate-[-3deg] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%]"
       >
         <Image
           src={POSE_IMAGE[pose]}
