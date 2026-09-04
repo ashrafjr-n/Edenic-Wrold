@@ -26,15 +26,19 @@ function pluralize(word: string, count: number): string {
 }
 
 /** The `count` stage's invite line — different per activity kind, since
-    "Give me ONE apple!" makes no sense for a puzzle piece or an outline
-    to colour in. `countHow` (the second, "how many do I have now" beat) only
-    ever applies to `give`, so it's computed separately below. */
+    "Pick ONE apple!" makes no sense for a puzzle piece or an outline to
+    colour in. `countHow` (the second, "how many did we pick" beat) only ever
+    applies to `give`, so it's computed separately below.
+
+    **"Pick", not "Give".** The child is choosing an item out of a tray, and
+    the second beat asks about that choice — the two lines have to describe
+    the same act or the question reads as being about something else. */
 function countLine(value: number, word: string): string {
   const activity = countActivityFor(value);
 
   switch (activity.kind) {
     case "give":
-      return `Give me ${word.toUpperCase()} ${pluralize(activity.itemLabel, value)}!`;
+      return `Pick ${word.toUpperCase()} ${pluralize(activity.itemLabel, value)}!`;
     case "complete":
       return `Complete Number ${value}!`;
     case "path":
@@ -59,12 +63,12 @@ function countLine(value: number, word: string): string {
 export function scriptFor(value: number): NumberScript {
   const word = WORDS[value] ?? String(value);
   const activity = countActivityFor(value);
-  /* ALWAYS the plural, unlike the invite line above. "Give me ONE apple!"
-     counts the items being asked for, so it agrees with the number; "How many
-     apples now?" is asking about a quantity in the abstract and takes the
+  /* ALWAYS the plural, unlike the invite line above. "Pick ONE apple!" counts
+     the items being asked for, so it agrees with the number; "How many apples
+     did we pick?" is asking about a quantity in the abstract and takes the
      plural whatever the answer turns out to be. Passing `value` here produced
-     "How many apple now?" on every number whose activity is `give` with a
-     target of one. */
+     "How many apple did we pick?" on every number whose activity is `give`
+     with a target of one. */
   const items =
     activity.kind === "give" ? pluralize(activity.itemLabel, 2) : "";
 
@@ -80,7 +84,9 @@ export function scriptFor(value: number): NumberScript {
     find: `Which one is ${word.toUpperCase()}?`,
     findMiss: "Hmm... let's look again!",
     count: countLine(value, word),
-    countHow: `How many ${items} now?`,
+    /* "did we pick", not "now": this asks about the act the child just
+       performed, not about the state of the basket in front of them. */
+    countHow: `How many ${items} did we pick?`,
     game: `Pop Number ${value}!`,
     celebrate: "Hooray! You did it!",
   };

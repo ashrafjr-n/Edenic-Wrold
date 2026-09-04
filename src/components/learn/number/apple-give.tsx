@@ -47,7 +47,7 @@ interface FlyState {
 }
 
 /**
- * "Give me ONE apple" (or star, or whatever `icon`/`itemLabel` says) — the
+ * "Pick ONE apple" (or star, or whatever `icon`/`itemLabel` says) — the
  * step that connects the numeral to a quantity.
  *
  * Both interactions work at once, on purpose: a child can **tap** an item to
@@ -176,7 +176,16 @@ export function AppleGive({
         )}
       </div>
 
-      <div className="flex items-center gap-4 sm:gap-8">
+      {/* The three lean together on a slow loop while none has been picked —
+          an invitation to touch them, gated the same way the basket's halo
+          is. Once the first one is on its way the child has worked out what
+          the tray is for, and a nudge still running would be asking for
+          attention the stage no longer needs. */}
+      <div
+        className={`flex items-center gap-4 sm:gap-8 ${
+          given.length === 0 && !flying ? "anim-item-nudge" : ""
+        }`}
+      >
         {Array.from({ length: ITEM_COUNT }, (_, id) => {
           const isGone = given.includes(id);
           const dragging = drag?.id === id && drag.moved;
@@ -187,7 +196,7 @@ export function AppleGive({
               key={id}
               type="button"
               disabled={isGone || isFlying}
-              aria-label={`Give Pinki ${article} ${itemLabel}`}
+              aria-label={`Pick ${article} ${itemLabel}`}
               onPointerDown={(event) => onPointerDown(event, id)}
               onPointerMove={(event) => onPointerMove(event, id)}
               onPointerUp={(event) => onPointerUp(event, id)}
