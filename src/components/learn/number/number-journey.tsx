@@ -517,46 +517,67 @@ export function NumberJourney({
        pinning that content to the top there left a large dead band between it
        and the bottom-anchored Pinki. Every other presence centres at all
        widths. */
-    <div
-      className={`relative flex w-full flex-1 flex-col items-center gap-4 sm:gap-6 ${
-        lead ? "justify-start sm:justify-center" : "justify-center"
-      }`}
-    >
+    <div className="relative flex w-full flex-1 flex-col">
+      {/* **The step rail belongs to the PAGE, not to the stage on screen.** It
+          is pinned to the top of the journey column, directly under the
+          "Number N of 9" bar, rather than sitting inside the centred group
+          with the activity — where it rode up and down the screen with
+          whatever was being worked on and ended up floating in the middle of
+          the page, immediately above the balloons. Where the child is inside
+          one number is chrome: it belongs in one fixed place at the top,
+          every stage. */}
       {stage !== "celebrate" && (
-        <StageDots
-          current={stageIndex}
-          total={WORKING_STAGES.length}
-          accent={accent}
-        />
+        <div className="flex shrink-0 justify-center pb-4 sm:pb-6">
+          <StageDots
+            current={stageIndex}
+            total={WORKING_STAGES.length}
+            accent={accent}
+          />
+        </div>
       )}
 
-      {/* WHERE she sits in the column is part of what her presence means.
-          `lead` comes after the activity, because she is the lower half of the
-          screen and her bubble carries the stage's buttons with it; `hero`
-          comes after the buttons, at the very end of the celebration screen. */}
-      {!heroLast && guideNode}
+      {/* The stage itself, centred in whatever height the rail leaves. `lead`
+          stacks from the TOP on a phone so the activity keeps the upper half
+          of the screen and Pinki fills the lower one beneath it; from `sm` it
+          centres again, because a desktop column is much taller than its
+          content and pinning it to the top left a dead band above the
+          bottom-anchored Pinki. */}
+      <div
+        className={`flex flex-1 flex-col items-center gap-4 sm:gap-6 ${
+          lead ? "justify-start sm:justify-center" : "justify-center"
+        }`}
+      >
+        {/* WHERE she sits in the column is part of what her presence means.
+            `lead` comes after the activity, because she is the lower half of
+            the screen and her bubble carries the stage's buttons with it;
+            `hero` comes after the buttons, at the very end of the celebration
+            screen. */}
+        {!heroLast && guideNode}
 
-      {body}
+        {body}
+
+        {lead ? (
+          <PinkiGuide
+            pose={guide.pose}
+            line={guide.line}
+            presence={guide.presence}
+          >
+            {actions}
+          </PinkiGuide>
+        ) : (
+          actions
+        )}
+
+        {heroLast && guideNode}
+      </div>
 
       {/* Life size, and positioned against THIS column rather than against the
-          bubble row below — she is sized as a share of its height, and it is
-          the box whose right edge crops her. Rendered here for that reason
-          alone; `data/number-guide.ts` still decides whether she appears. */}
+          stage's own box — she is sized as a share of its height, and it is
+          the box whose right edge crops her. A direct child of the root for
+          that reason alone; `data/number-guide.ts` still decides whether she
+          appears. She keeps `z-10`, under the guide column's `z-20`, so a
+          button is never painted over. */}
       {lead && <PinkiLean pose={guide.pose} placement={leanPlacement} />}
-
-      {lead ? (
-        <PinkiGuide
-          pose={guide.pose}
-          line={guide.line}
-          presence={guide.presence}
-        >
-          {actions}
-        </PinkiGuide>
-      ) : (
-        actions
-      )}
-
-      {heroLast && guideNode}
     </div>
   );
 }
