@@ -478,6 +478,11 @@ export function NumberJourney({
   }
 
   const lead = guide.presence === "lead";
+  /* `find` is the one stage that centres her: the child is choosing between
+     numerals laid across the width, so she stands behind the choice rather
+     than leaning in from one side of it. Every other `lead` stage keeps the
+     right-edge crop. */
+  const leanPlacement = stage === "find" ? "journeyCenter" : "journey";
 
   return (
     /* `relative` anchors both out-of-flow guides — `lead`'s life-size Pinki
@@ -523,7 +528,7 @@ export function NumberJourney({
           bubble row below — she is sized as a share of its height, and it is
           the box whose right edge crops her. Rendered here for that reason
           alone; `data/number-guide.ts` still decides whether she appears. */}
-      {lead && <PinkiLean pose={guide.pose} placement="journey" />}
+      {lead && <PinkiLean pose={guide.pose} placement={leanPlacement} />}
 
       {lead ? (
         <PinkiGuide
