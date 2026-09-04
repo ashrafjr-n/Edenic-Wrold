@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
+
+type ItemVars = CSSProperties & { "--item-nudge-delay"?: string };
 
 interface AppleGiveProps {
   /** How many items Pinki is asking for. */
@@ -176,20 +178,17 @@ export function AppleGive({
         )}
       </div>
 
-      {/* The three lean together on a slow loop while none has been picked —
+      {/* Each item leans on its own slow loop while none has been picked —
           an invitation to touch them, gated the same way the basket's halo
           is. Once the first one is on its way the child has worked out what
           the tray is for, and a nudge still running would be asking for
           attention the stage no longer needs. */}
-      <div
-        className={`flex items-center gap-4 sm:gap-8 ${
-          given.length === 0 && !flying ? "anim-item-nudge" : ""
-        }`}
-      >
+      <div className="flex items-center gap-4 sm:gap-8">
         {Array.from({ length: ITEM_COUNT }, (_, id) => {
           const isGone = given.includes(id);
           const dragging = drag?.id === id && drag.moved;
           const isFlying = flying?.id === id;
+          const nudging = given.length === 0 && !flying;
 
           return (
             <button
@@ -202,18 +201,25 @@ export function AppleGive({
               onPointerUp={(event) => onPointerUp(event, id)}
               onPointerCancel={() => setDrag(null)}
               /* `touch-action: none` or the drag scrolls the page instead. */
-              className={`touch-none rounded-3xl ${
+              className={`touch-none rounded-3xl ${nudging ? "anim-item-nudge" : ""} ${
                 isGone ? "pointer-events-none opacity-0" : "opacity-100"
               } ${dragging ? "" : "transition-all duration-300"}`}
               style={
-                dragging
-                  ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.15" }
-                  : isFlying
-                    ? {
-                        translate: `${flying.dx}px ${flying.dy}px`,
-                        scale: "0.35",
-                      }
-                    : undefined
+                {
+                  /* Staggers each item's own copy of the loop against its
+                     neighbours' so three identical animations never land in
+                     the same rotation at the same time — see the CSS note on
+                     `.anim-item-nudge`. */
+                  ...(nudging ? { "--item-nudge-delay": `${id * -1.1}s` } : {}),
+                  ...(dragging
+                    ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.15" }
+                    : isFlying
+                      ? {
+                          translate: `${flying.dx}px ${flying.dy}px`,
+                          scale: "0.35",
+                        }
+                      : {}),
+                } as ItemVars
               }
             >
               <Image

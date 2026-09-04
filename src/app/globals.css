@@ -1768,14 +1768,19 @@ button:disabled,
 /* ---------------------------------------------------------------
    The tray of items in the `give` count activity — "Pick ONE apple!"
 
-   All three lean together, stop, and lean again. It is an INVITATION, not
-   feedback: a child who has not worked out that the apples can be picked up
-   gets a nudge that says "these are the things to touch", and one that stops
-   short of asking for attention the rest of the time.
+   Each item leans on its own, out of sync with its neighbours — a direct
+   reversal of the one-animation-on-the-row version this replaced (see
+   CLAUDE.md's numbers-lesson notes for why that version existed). Moving
+   together read as one connected object rather than three separate things to
+   choose between; each item nudging on its own is what says "these are
+   three separate apples," which is the more important read for a counting
+   exercise. It is still an INVITATION, not feedback: a child who has not
+   worked out that the items can be picked up gets a nudge that says "these
+   are the things to touch," and one that stops short of asking for attention
+   the rest of the time.
 
-   ONE animation on the ROW rather than one per item, which is what makes them
-   move as a group — three copies of the same loop drift out of phase within a
-   cycle and read as three items fidgeting separately.
+   ONE animation on each item, so `animation-delay` (set per-item, inline)
+   is what keeps three copies of the same loop from ever landing in sync.
 
    Most of the cycle is rest: the whole lean happens in the first fifth and the
    remaining four fifths are still. That pause is the difference between a
@@ -1799,6 +1804,7 @@ button:disabled,
 
 .anim-item-nudge {
   animation: item-nudge 3.4s ease-in-out infinite;
+  animation-delay: var(--item-nudge-delay, 0s);
 }
 
 /* ---------------------------------------------------------------
