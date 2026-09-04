@@ -11,6 +11,11 @@ interface AppleGiveProps {
   icon: string;
   /** Singular word for the item (e.g. "apple", "star"). */
   itemLabel: string;
+  /** Mark the basket as the thing to aim for, while it is still empty.
+      Presentation only — it changes nothing about how giving works. The
+      journey passes this exactly when Pinki is holding the stick, so the halo
+      and the gesture arrive together or not at all. */
+  highlightTarget?: boolean;
   onGiven: () => void;
 }
 
@@ -57,7 +62,13 @@ interface FlyState {
  * over to the basket before it's counted, so tapping and dragging both end
  * the same way: watching it actually arrive.
  */
-export function AppleGive({ target, icon, itemLabel, onGiven }: AppleGiveProps) {
+export function AppleGive({
+  target,
+  icon,
+  itemLabel,
+  highlightTarget,
+  onGiven,
+}: AppleGiveProps) {
   const article = /^[aeiou]/i.test(itemLabel) ? "an" : "a";
   const basketRef = useRef<HTMLDivElement>(null);
   const [given, setGiven] = useState<number[]>([]);
@@ -136,10 +147,16 @@ export function AppleGive({ target, icon, itemLabel, onGiven }: AppleGiveProps) 
   return (
     <div className="flex flex-col items-center gap-6 sm:gap-8">
       {/* Pinki's basket. It shows what she has, so the count is visible the
-          whole time rather than only being asked about afterwards. */}
+          whole time rather than only being asked about afterwards.
+
+          The halo is on it only while it is EMPTY: once the first item is in,
+          the basket has shown the child what it is for and a light still
+          burning on it would be pointing at a finished instruction. */}
       <div
         ref={basketRef}
-        className="card flex h-28 min-w-[10rem] items-center justify-center gap-2 px-6 sm:h-32 sm:min-w-[13rem]"
+        className={`card flex h-28 min-w-[10rem] items-center justify-center gap-2 px-6 sm:h-32 sm:min-w-[13rem] ${
+          highlightTarget && given.length === 0 ? "guide-target" : ""
+        }`}
       >
         {given.length === 0 ? (
           <span className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">

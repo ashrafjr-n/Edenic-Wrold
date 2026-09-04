@@ -9,6 +9,11 @@ import type { CompleteNotch } from "@/data/number-complete";
 interface NumberCompleteProps {
   value: number;
   image: string;
+  /** Mark the gap as the thing to aim for, until the piece is home.
+      Presentation only — it changes nothing about how the drag works. The
+      journey passes this exactly when Pinki is holding the stick, so the halo
+      and the gesture arrive together or not at all. */
+  highlightTarget?: boolean;
   onFinish: () => void;
   onMiss: () => void;
 }
@@ -72,6 +77,7 @@ function cropStyle(notch: CompleteNotch): CSSProperties {
 export function NumberComplete({
   value,
   image,
+  highlightTarget,
   onFinish,
   onMiss,
 }: NumberCompleteProps) {
@@ -159,11 +165,14 @@ export function NumberComplete({
           className="select-none object-contain"
         />
 
+        {/* The gap, and the one place the piece belongs — so it is what the
+            halo marks while Pinki points at it. It goes the instant the piece
+            lands, along with the hole itself. */}
         <div
           ref={holeRef}
           className={`absolute rounded-xl border-2 border-dashed border-[var(--color-locked-dark)] bg-[var(--surface)] transition-opacity duration-300 ${
             solved ? "opacity-0" : "opacity-100"
-          }`}
+          } ${highlightTarget && !solved ? "guide-target" : ""}`}
           style={{
             left: `${notch.x}%`,
             top: `${notch.y}%`,

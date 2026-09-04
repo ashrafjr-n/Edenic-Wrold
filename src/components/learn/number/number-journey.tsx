@@ -9,13 +9,13 @@ import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
 import type { JourneyStage } from "@/types/number-journey";
 import { scriptFor } from "@/data/number-script";
 import { countActivityFor } from "@/data/count-activities";
+import { guideFor, pointsAtTarget } from "@/data/number-guide";
 import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { NumberVideo } from "./number-video";
 import { Numeral } from "./numeral";
 import { PinkiGuide } from "./pinki-guide";
-import type { PinkiPose } from "./pinki-guide";
 import { StageDots } from "./stage-dots";
 import { SayItButton } from "./say-it-button";
 import { StrokeDemo } from "./stroke-demo";
@@ -161,53 +161,28 @@ export function NumberJourney({
     setAttempt((count) => count + 1);
   };
 
-  /* Pinki's pose and line for the stage on screen. Derived here rather than
-     inline in the markup so each stage below is only its own content. */
-  const guide: { pose: PinkiPose; line: string } =
-    stage === "discover"
-      ? { pose: "speak", line: script.discover }
-      : stage === "reveal"
-        ? { pose: "speak", line: script.reveal }
-        : stage === "demo"
-          ? { pose: "pen", line: script.strokeHint }
-          : stage === "trace"
-            ? {
-                pose: "pen",
-                line: traceMissed ? script.traceMiss : script.traceInvite,
-              }
-            : stage === "find"
-              ? {
-                  /* `think`, not `speak`: this is the one stage that asks the
-                     child to choose rather than to listen, and it stays
-                     `think` on a miss too — "let's look again" is more of
-                     that same moment, not a different one. */
-                  pose: "think",
-                  line: pickMissed ? script.findMiss : script.find,
-                }
-              : stage === "count"
-                ? countActivity.kind === "give"
-                  ? {
-                      pose: appleGiven ? "celebrate" : "speak",
-                      line: pickMissed
-                        ? script.findMiss
-                        : appleGiven
-                          ? script.countHow
-                          : script.count,
-                    }
-                  : countActivity.kind === "complete"
-                    ? { pose: "pen", line: pickMissed ? script.traceMiss : script.count }
-                    : countActivity.kind === "color"
-                      ? { pose: "pen", line: script.count }
-                      : { pose: "speak", line: script.count }
-                : stage === "game"
-                  ? {
-                      pose: "speak",
-                      line: pickMissed ? script.findMiss : script.game,
-                    }
-                  : { pose: "celebrate", line: script.celebrate };
+  /* Pinki's whole appearance for the stage on screen — how big she is, what
+     she is doing and what she says. Resolved by `data/number-guide.ts` rather
+     than by a branch here: this was a forty-line nested ternary in the middle
+     of the component, and her size in particular has to have exactly one
+     answer, or the stage that asks for her and the component that draws her
+     can drift apart. */
+  const guide = guideFor(stage, script, {
+    countKind: countActivity.kind,
+    appleGiven,
+    traceMissed,
+    pickMissed,
+  });
+
+  /* Only meaningful where she is actually pointing — see `pointsAtTarget`. */
+  const marksTarget = pointsAtTarget(guide);
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 sm:gap-8">
+    /* `relative` is for the `aside` guide alone: she positions herself against
+       this box so she costs the stage no height. The phone gap is deliberately
+       tighter than the tablet one — every 8px here is 8px the activity below
+       keeps above the fold on a 320px screen. */
+    <div className="relative flex w-full flex-1 flex-col items-center justify-center gap-4 sm:gap-8">
       {stage !== "celebrate" && (
         <StageDots
           current={stageIndex}
@@ -216,13 +191,11 @@ export function NumberJourney({
         />
       )}
 
-      {/* Pinki opens every stage. She is the through-line that makes every
-          screen read as one journey rather than a string of exercises. */}
-      <PinkiGuide
-        pose={guide.pose}
-        line={guide.line}
-        size={stage === "celebrate" ? "lg" : "sm"}
-      />
+      {/* Pinki is on every stage. She is the through-line that makes every
+          screen read as one journey rather than a string of exercises — but
+          how MUCH of the screen she is changes with whose moment it is, which
+          is the whole of `data/number-guide.ts`. */}
+      <PinkiGuide pose={guide.pose} line={guide.line} presence={guide.presence} />
 
       {stage === "discover" && (
         <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
@@ -387,6 +360,7 @@ export function NumberJourney({
                   target={value}
                   icon={countActivity.icon}
                   itemLabel={countActivity.itemLabel}
+                  highlightTarget={marksTarget}
                   onGiven={() => setAppleGiven(true)}
                 />
               </div>
@@ -409,6 +383,7 @@ export function NumberJourney({
                 key={`complete-${attempt}`}
                 value={value}
                 image={image}
+                highlightTarget={marksTarget}
                 onFinish={() => setSolved(true)}
                 onMiss={pickMiss}
               />
