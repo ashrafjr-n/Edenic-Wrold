@@ -58,7 +58,9 @@ const WHITE_TONE = {
 
 const FIND_CHOICES = 3;
 const COUNT_CHOICES = 3;
-const POP_CHOICES = 5;
+/* Four, not five: the balloons are laid out two to a row, and five left one
+   floating alone under a full row of four. */
+const POP_CHOICES = 4;
 
 /** How much of the numeral has to be covered, per attempt. It falls with every
     miss so a child who is struggling always gets through — the third attempt

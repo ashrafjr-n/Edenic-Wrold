@@ -60,7 +60,10 @@ const STAGE_GUIDE: Record<
   find: { presence: "lead", pose: "think" },
   /* Overridden per activity below — `count` is four different exercises. */
   count: { presence: "lead", pose: "stick" },
-  game: { presence: "aside", pose: "speak" },
+  /* The balloons are the stage. She sat small and silent in its bottom-left
+     corner and was taken off it on direct request — the concentration this
+     asks for is exactly what a guide beside it competes with. */
+  game: { presence: "none", pose: "speak" },
   celebrate: { presence: "hero", pose: "celebrate" },
 };
 
