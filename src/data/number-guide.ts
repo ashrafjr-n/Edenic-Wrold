@@ -33,16 +33,13 @@ export interface GuideState {
  * is. She leads wherever her being there is the help (explaining, pointing,
  * cheering) and steps aside wherever the CONTENT is the lesson.
  *
- * The two `aside` rows are the ones worth defending:
- *
- * - `discover` is the reel and nothing else, sized as the hero of its own
- *   screen (`sm:h-[68vh]`). A large Pinki above it would push the very video
- *   she is introducing off the fold — the same mistake `NumbersIntro` was
- *   rebuilt to avoid on the picker, where a banner-sized guide hid the
- *   numerals it pointed at.
- * - `game` is five drifting balloons the child has to track and choose
- *   between. That is concentration, and a guide talking over it competes with
- *   the thing being asked.
+ * `discover` is the row worth defending: it is the reel and nothing else,
+ * sized as the hero of its own screen (`sm:h-[68vh]`). She used to sit in its
+ * bottom-left corner at `aside` — small, silent, out of the flow — and was
+ * taken off it entirely on direct request. The reasoning that put her there
+ * still holds and is why she must not come back: a guide standing in front of
+ * the thing she is introducing is not guidance, and the video is the whole
+ * stage.
  *
  * `celebrate` is the only `hero`: it is the emotional peak AND the one screen
  * with no activity underneath her to cover.
@@ -51,7 +48,8 @@ const STAGE_GUIDE: Record<
   JourneyStage,
   { presence: GuidePresence; pose: PinkiPose }
 > = {
-  discover: { presence: "aside", pose: "speak" },
+  /* The video is the stage — she is not on it at all. */
+  discover: { presence: "none", pose: "speak" },
   reveal: { presence: "lead", pose: "speak" },
   demo: { presence: "lead", pose: "pen" },
   trace: { presence: "lead", pose: "pen" },
