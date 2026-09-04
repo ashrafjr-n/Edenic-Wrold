@@ -38,7 +38,7 @@ function countLine(value: number, word: string): string {
     case "complete":
       return `Complete Number ${value}!`;
     case "path":
-      return `Help Pinki reach Number ${value}!`;
+      return `Walk me to Number ${value}!`;
     case "color":
       return `Color Number ${value}!`;
   }
@@ -46,6 +46,10 @@ function countLine(value: number, word: string): string {
 
 /**
  * Pinki's lines for one number.
+ *
+ * Short and spoken, not written: she is talking to a child, so a line is a
+ * phrase they can hold, and she speaks in the first person about her own
+ * game ("Walk me to Number 5!"), never about herself in the third.
  *
  * Kept as data rather than strings in the components for the ordinary reason —
  * the UI must not own its content — and one specific one: these are the script
@@ -60,18 +64,18 @@ export function scriptFor(value: number): NumberScript {
 
   return {
     word,
-    discover: `I found Number ${value}! Let's learn it together.`,
+    discover: `Look what I found — Number ${value}!`,
     reveal: `This is Number ${value}!`,
-    strokeHint: STROKE_HINTS[value] ?? "Watch how I draw it!",
-    traceInvite: "Your turn! Follow the dots with your finger.",
+    strokeHint: STROKE_HINTS[value] ?? "Watch me draw it!",
+    traceInvite: "Trace it with me!",
     /* The whole point of this line: a miss is Pinki offering to go again, not
        the app telling a child they failed. */
-    traceMiss: "Almost! Let's try again together.",
-    find: `Help me find ${word.toUpperCase()}!`,
+    traceMiss: "So close! Let's go again.",
+    find: `Which one is ${word.toUpperCase()}?`,
     findMiss: "Hmm... let's look again!",
     count: countLine(value, word),
-    countHow: `How many ${items} do I have now?`,
+    countHow: `How many ${items} now?`,
     game: `Pop Number ${value}!`,
-    celebrate: "We did it! You're amazing!",
+    celebrate: "Hooray! You did it!",
   };
 }
