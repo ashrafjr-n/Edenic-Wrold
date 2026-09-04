@@ -15,21 +15,30 @@ const ICON_SRC = {
   Profile: "/assets/png/profile.png",
 } as const;
 
-/* `home.png` and `activity.png` fill their 512×512 canvas almost edge to
-   edge with barely any built-in padding, while `learn.png` and
-   `profile.png` carry a generous margin around their own glyph — at
-   `.icon-mask`'s default `mask-size: contain` that read as Home and
-   Activities being visibly BIGGER/bolder than Learn and Profile despite an
-   identical 20×20 box, which is also what pushed their labels slightly out
-   of line with the other two inside the shared `h-16` flex-column tab.
-   Scaled down here instead of touching the source PNGs. Set on BOTH
-   `maskSize`/`WebkitMaskSize`: inline styles aren't run through Lightning
-   CSS's auto-prefixing, unlike `.icon-mask` itself. */
+/* One optical size for all four, MEASURED from each PNG rather than eyeballed.
+   The four glyphs fill their shared 512×512 canvas by very different amounts —
+   home 512×512 (a solid square), learn 512×392, activity 512×376, profile
+   342×428 — so `.icon-mask`'s plain `mask-size: contain` renders four
+   different sizes out of one 28×28 box. Each scale below is `512 / (the
+   glyph's own longest side)`, which fits every glyph to the same square, and
+   home then takes a 92% optical trim on top of that: a full-bleed square
+   silhouette reads noticeably heavier than a wide flat one at identical
+   width.
+
+   All four bounding boxes are centred in their canvas (verified), so
+   `.icon-mask`'s `mask-position: center` is what puts them on the same level
+   — nothing here needs to offset them.
+
+   **Re-measure this table if any of these PNGs is replaced.** It is
+   calibrated to the current files, and the previous version of it had gone
+   stale against exactly that. Set on BOTH `maskSize`/`WebkitMaskSize`:
+   inline styles aren't run through Lightning CSS's auto-prefixing, unlike
+   `.icon-mask` itself. */
 const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
-  Home: "82%",
-  Learn: "contain",
-  Activities: "82%",
-  Profile: "contain",
+  Home: "92%",
+  Learn: "100%",
+  Activities: "100%",
+  Profile: "120%",
 };
 
 const iconVar = (label: keyof typeof ICON_SRC) =>
@@ -80,7 +89,7 @@ export function BottomNav() {
                   other two. Never turns pink: there is nothing to press. */}
               <span
                 aria-hidden
-                className="icon-mask icon-mask-grain h-5 w-5"
+                className="icon-mask icon-mask-grain h-7 w-7"
                 style={{ ...iconStyle, color: "var(--brand)" } as CSSProperties}
               />
               <span className="text-[0.6875rem] font-semibold">{label}</span>
@@ -105,7 +114,7 @@ export function BottomNav() {
           >
             <span
               aria-hidden
-              className="icon-mask icon-mask-grain h-5 w-5"
+              className="icon-mask icon-mask-grain h-7 w-7"
               style={iconStyle}
             />
             {label}
@@ -130,7 +139,7 @@ export function BottomNav() {
       >
         <span
           aria-hidden
-          className="icon-mask icon-mask-grain h-5 w-5"
+          className="icon-mask icon-mask-grain h-7 w-7"
           style={iconVar("Profile")}
         />
         {profileNav.label}
