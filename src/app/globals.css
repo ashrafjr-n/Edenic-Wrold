@@ -1702,6 +1702,42 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   The tray of items in the `give` count activity — "Pick ONE apple!"
+
+   All three lean together, stop, and lean again. It is an INVITATION, not
+   feedback: a child who has not worked out that the apples can be picked up
+   gets a nudge that says "these are the things to touch", and one that stops
+   short of asking for attention the rest of the time.
+
+   ONE animation on the ROW rather than one per item, which is what makes them
+   move as a group — three copies of the same loop drift out of phase within a
+   cycle and read as three items fidgeting separately.
+
+   Most of the cycle is rest: the whole lean happens in the first fifth and the
+   remaining four fifths are still. That pause is the difference between a
+   gentle repeat and a wobble the child has to look past. `rotate` rather than
+   `transform`, so it never fights a `translate` or `scale` utility on the same
+   element (see "Type and buttons" in CLAUDE.md).
+   --------------------------------------------------------------- */
+@keyframes item-nudge {
+  0%,
+  16%,
+  100% {
+    rotate: 0deg;
+  }
+  4% {
+    rotate: -3.5deg;
+  }
+  10% {
+    rotate: 3.5deg;
+  }
+}
+
+.anim-item-nudge {
+  animation: item-nudge 3.4s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
    The count-stage activities that need a shared, breakpoint-aware size.
 
    `NumberComplete` draws the numeral, the hole cut out of it and the loose
@@ -1981,6 +2017,7 @@ button:disabled,
   .say-pulse,
   .say-pulse--invite,
   .anim-breathe,
+  .anim-item-nudge,
   .anim-pinki-lean-in,
   .anim-pulse-invite,
   .guide-target::after,
