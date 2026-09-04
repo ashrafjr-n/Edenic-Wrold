@@ -139,11 +139,13 @@ puzzles are built, and all are still being iterated on visually. Only Pinki has
 lesson content; Nova and Bloo are locked, and Numbers is the only lesson with
 items.
 
-Each number is one journey of eight stages, guided by Pinki throughout: meet the
-number in a short video, see it standing still and say it aloud, watch her
-write it, trace it, find it among others, give her one apple and say how many
-she has, pop the right balloon, and earn one to three stars for the whole
-journey. Finishing a number unlocks the next.
+Each number is one journey of eight stages: meet the number in a short video,
+see it standing still and say it aloud, watch Pinki write it, trace it, find it
+among others, pick one apple and say how many were picked, pop the right
+balloon, and finish on a celebration screen. Pinki guides five of the eight —
+the video, the tracing board and the balloon game are left to the child alone.
+One to three stars are scored for the whole journey and shown back on the
+picker. Finishing a number unlocks the next.
 
 The picker that leads into them shows the whole set at once: a "Numbers - 0 / 9"
 bar, then each numeral on its own cell with three star slots under it. The stars
