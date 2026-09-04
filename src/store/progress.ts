@@ -53,10 +53,42 @@ export const useProgress = create<ProgressState>()(
       /* `hydrated` is derived, never stored — persisting it would make a fresh
          load start out claiming it had already read storage. */
       partialize: (state) => ({ items: state.items }),
-      /* Fires after rehydration, and also when it fails (private mode, storage
-         disabled). Either way the UI has to stop waiting, so this sets the flag
-         unconditionally rather than only on success. */
+      /* Fires with the rehydrated state on success. It is deliberately still
+         guarded: on FAILURE zustand calls this with `undefined`, and setting
+         from here in that case is not merely useless but harmful — see the
+         block under this store for what happens instead. */
       onRehydrateStorage: () => (state) => state?.setHydrated(),
     },
   ),
 );
+
+/* **The failure path cannot flip `hydrated` from inside `create()`, so it is
+   flipped here.**
+
+   Rehydration fails on more than a disabled storage: `createJSONStorage`
+   short-circuits on `null` ALONE, so any other unparseable value reaches
+   `JSON.parse` and throws — a corrupted entry, and an empty string too.
+   Zustand catches that and calls `onRehydrateStorage`'s inner callback with
+   `undefined`, which is why the guard above can never handle it.
+
+   Removing the guard does not work either, and this is the part worth
+   keeping: `persist` runs `hydrate()` synchronously DURING `create()`, before
+   zustand has assigned the store's state, so `get()` is still `undefined`
+   there. On the success path that is harmless — `set(stateFromStorage, true)`
+   has populated the state before the callback runs. On the failure path that
+   `set` never happens, so calling `setHydrated()` from the callback does
+   `Object.assign({}, undefined, { hydrated: true })` — it WIPES `items` and
+   every action, persists that wreckage as `{"state":{}}`, and is then thrown
+   away wholesale when `create()` returns `configResult`. Measured, not
+   reasoned about: the flag stayed false, the stored value was corrupted a
+   second time, and no error surfaced anywhere because zustand's own
+   `toThenable` swallows throws on this path.
+
+   Running it out here, once the store genuinely exists, avoids all of that —
+   and the resulting write repairs the unreadable value instead of adding to
+   it. Safe to test synchronously because `localStorage` is synchronous, so
+   `hydrate()` has always finished by this line; an async storage would need
+   `onFinishHydration` instead. */
+if (typeof window !== "undefined" && !useProgress.getState().hydrated) {
+  useProgress.getState().setHydrated();
+}
