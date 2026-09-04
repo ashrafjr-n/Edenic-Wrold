@@ -62,7 +62,18 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
     /* Plain site ground, matching the hub and the number list above it — the
        saturated pink page was reverted the same way theirs already had been. */
     <main
-      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      /* **The phone padding is deliberately tight, and it is load-bearing.**
+         Pinki leads most of these stages at roughly twice the size she used
+         to be, and the point of that is to help — which she stops doing the
+         moment she pushes the activity she is introducing off the bottom of
+         the screen. Measured at 320x568: the fixed chrome (header, back row,
+         this padding, the journey's own, the bottom nav) took ~400px of 568
+         before a single stage rendered. `pb-16` here was the largest single
+         piece of that and was already redundant — `body` reserves its own
+         `pb-[calc(4rem+env(safe-area-inset-bottom))]` for the bottom nav, so
+         this was a second clearance stacked on top of the first. Tablet and
+         desktop keep the roomier spacing; they were never short of height. */
+      className="relative flex flex-1 flex-col pb-4 pt-3 sm:pb-20 sm:pt-5"
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
@@ -105,7 +116,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-6 py-4 sm:px-8 sm:py-10">
         <NumberJourney
           item={item}
           character={character}
