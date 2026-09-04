@@ -198,6 +198,13 @@ export function TraceBoard({
     (stroke) => stroke.length >= MIN_STROKE_POINTS,
   );
 
+  /* The invitation to start, and only that: a halo under the dots while the
+     board is still blank. The moment the child puts a finger down the thing
+     worth looking at is their own line, so it goes — a glow under a stroke
+     being drawn competes with it instead of guiding it. It stays away once
+     the trace is passed, too. */
+  const inviting = !locked && drawn.length === 0 && active.length === 0;
+
   return (
     <svg
       ref={surfaceRef}
@@ -212,6 +219,24 @@ export function TraceBoard({
       onPointerUp={handleUp}
       onPointerCancel={handleUp}
     >
+      {/* Under the dots, never over them: a much wider copy of the very same
+          path, breathing in the character's accent. Drawn from `guidePaths`
+          rather than a second definition so the halo can never sit anywhere
+          but exactly on the line the child is being asked to follow. */}
+      {inviting &&
+        guidePaths.map((path, index) => (
+          <path
+            key={`guide-glow-${index}`}
+            className="trace-guide-glow"
+            d={path}
+            fill="none"
+            stroke={accent}
+            strokeWidth={20}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+
       {guidePaths.map((path, index) => (
         <path
           key={`guide-${index}`}
