@@ -101,8 +101,11 @@ export function NumberGrid({
   const cellTint = `color-mix(in srgb, ${tone.face} 16%, #ffffff)`;
 
   return (
-    /* `relative` is here for the intro layer alone: it positions itself
-       against this card so it costs the card no height. */
+    /* `relative` is here for the intro layer alone, which positions itself
+       against this card so it costs the card no height. Deliberately NO
+       `overflow-hidden`: Pinki BREAKS OUT of this card, past its right and
+       bottom edges, so the card must not crop her. The page's `<main>` is
+       what stops her from widening the document — see the route. */
     <div className="card relative w-full px-5 py-7 sm:px-9 sm:py-10">
       {/* `hydrated` is load-bearing, not belt-and-braces: it is false on the
           server AND on the first client render, so this is absent from the

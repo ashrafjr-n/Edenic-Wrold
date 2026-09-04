@@ -1471,6 +1471,36 @@ button:disabled,
   will-change: transform;
 }
 
+/* ---------------------------------------------------------------
+   Pinki leaning into the number picker.
+
+   She ENTERS FROM THE EDGE SHE IS CUT OFF BY, which is the point: the crop
+   is deliberate, and an entrance that slides her in from off-card explains
+   it as "she just leaned in" rather than leaving it looking like a mistake.
+   A plain fade would not.
+
+   `translate`, never `transform`: the layer also carries a `rotate` utility
+   for her lean, and the image inside it runs `.anim-breathe` on `transform`.
+   All three are separate properties, so they compose instead of overwriting
+   each other on every tick.
+   --------------------------------------------------------------- */
+@keyframes pinki-lean-in {
+  from {
+    opacity: 0;
+    translate: 38% 6%;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.anim-pinki-lean-in {
+  /* Slower than the page's other entrances (0.6s): she is the biggest thing
+     on the card, and a large object arriving quickly reads as a jump. */
+  animation: pinki-lean-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Invites a tap on the one numeral the child has actually reached — the
    first open number with no stars yet. Uses the standalone `scale` property
    (not `transform`) so it never fights the numeral's own hover `scale-105`
@@ -1854,6 +1884,7 @@ button:disabled,
   .say-pulse,
   .say-pulse--invite,
   .anim-breathe,
+  .anim-pinki-lean-in,
   .anim-pulse-invite,
   .anim-reveal,
   .path-hint,

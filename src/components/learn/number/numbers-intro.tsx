@@ -38,6 +38,11 @@ interface NumbersIntroProps {
  * correction rather than the new artwork an earlier, upright-and-above
  * composition would have needed.
  *
+ * **She is deliberately CROPPED by the card's right edge**, which is why the
+ * card carries `overflow-hidden` and why she enters by sliding in from that
+ * same edge: the crop has to read as her leaning into the page, not as a
+ * picture that did not fit.
+ *
  * **-3°, chosen against -5° and -7° in the browser.** The lean is small for
  * two reasons that point the same way: past about 5° she stops reading as
  * standing and starts reading as tipping over, and — counter-intuitively —
@@ -60,12 +65,21 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
 
       <span
         aria-hidden
-        /* `anim-fade-up` animates `transform`, `.anim-breathe` on the image
-           animates `transform` too — but `rotate` is its own standalone
-           property in Tailwind v4, so it composes with both instead of being
-           overwritten on every tick. This is why the lean is a utility here
-           and never a hand-written `transform: rotate()`. */
-        className="anim-fade-up pointer-events-none absolute bottom-0 right-0 z-10 block w-[58%] rotate-[-3deg] sm:w-[52%]"
+        /* Sized by the card's HEIGHT, not its width. The card's aspect ratio
+           changes a lot between a phone and a desktop, so a width percentage
+           would make her a different fraction of the card at every size; a
+           height percentage keeps her the same share of it everywhere.
+           `w-auto` + `max-w-none` on the image is what lets her run wider
+           than the card and be cropped by it — Tailwind's preflight caps
+           images at `max-width: 100%`, which would otherwise squash her
+           back inside instead.
+
+           `.anim-pinki-lean-in` animates `translate`, `.anim-breathe` on the
+           image animates `transform`, and `rotate` here is a third,
+           standalone property. All three compose rather than overwriting one
+           another — which is exactly why none of them is a hand-written
+           `transform`. */
+        className="anim-pinki-lean-in pointer-events-none absolute -bottom-[9%] -right-[26%] z-10 block h-[63%] rotate-[-3deg] sm:-bottom-[7%] sm:-right-[9%] sm:h-[58%]"
       >
         <Image
           src={POSE_IMAGE[pose]}
@@ -75,7 +89,7 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
              needlessly large image into a box this small. */
           width={360}
           height={357}
-          className="anim-breathe h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(92,78,190,0.32)]"
+          className="anim-breathe h-full w-auto max-w-none object-contain drop-shadow-[0_18px_26px_rgba(92,78,190,0.32)]"
         />
       </span>
     </>

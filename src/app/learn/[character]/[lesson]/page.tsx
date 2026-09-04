@@ -35,7 +35,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <main
-      className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
+      /* `overflow-x-hidden` is for the picker's Pinki alone: she is sized to
+         break out past the card's right edge, and on a phone that edge is
+         close enough to the viewport that she would otherwise widen the
+         document — which on a phone does not merely add a scrollbar, it
+         widens the LAYOUT VIEWPORT and zooms the whole page out. */
+      className="relative flex flex-1 flex-col overflow-x-hidden pb-16 pt-5 sm:pb-20"
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
