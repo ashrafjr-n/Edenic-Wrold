@@ -1747,13 +1747,18 @@ button:disabled,
    so its paint layer lines up with the numeral it is masked to.
    --------------------------------------------------------------- */
 .numeral-stage {
-  --board-h: 12rem;
+  /* A size up, in step with the trace board: the field the child works on is
+     the subject of its stage, and these two (`complete` and `color`) were the
+     smallest of them. Not as large as the trace board's, because Pinki still
+     leads the `count` stage and the piece tray sits under the board here —
+     `path` is already the tallest of the four and was left alone. */
+  --board-h: 13.5rem;
   --board-w: calc(var(--board-h) * 426 / 585);
 }
 
 @media (width >= 40rem) {
   .numeral-stage {
-    --board-h: 15rem;
+    --board-h: 18rem;
   }
 }
 
