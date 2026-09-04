@@ -262,10 +262,9 @@ export function NumberJourney({
         <StrokeDemo strokes={strokes} accent={accent} />
       </div>
     );
-    /* Pushed down off the bubble so there is a clear band between Pinki's
-       line and the one thing to press here — it sat tight under the bubble
-       with her leaning across it. */
-    actions = <div className="mt-2 sm:mt-4">{nextButton("My turn!", BRAND_TONE)}</div>;
+    /* The band between her line and this button is `PinkiGuide`'s now — every
+       `lead` stage gets the same one, so this stage no longer sets its own. */
+    actions = nextButton("My turn!", BRAND_TONE);
   } else if (stage === "trace") {
     body = (
       /* Much larger than the demo card it follows, and the centre of its own

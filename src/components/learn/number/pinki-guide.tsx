@@ -122,7 +122,16 @@ export function PinkiGuide({
           {line}
         </p>
 
-        {children}
+        {/* **The buttons sit low, well clear of her line.** They used to
+            follow the bubble on the column's own gap, which put the one thing
+            to press tight under the sentence asking for it, with Pinki
+            leaning across both. The band between them is what separates
+            "here is what to do" from "here is how to do it" — and on a phone
+            the column runs from the top, so there is nothing under them to
+            lose. Rendered only when the stage HAS actions, so a stage with
+            none (an unsolved quiz) never adds an empty box under the
+            bubble. */}
+        {children && <div className="mt-6 sm:mt-8">{children}</div>}
       </div>
     );
   }
