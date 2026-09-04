@@ -144,7 +144,10 @@ export function NumberQuiz({
             <Numeral
               value={value}
               image={imageFor(value)}
-              sizeClass="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+              /* A size up at every breakpoint: these numerals ARE the
+                 question, and at the old size they were smaller than the
+                 apples the child had just counted. */
+              sizeClass="h-24 w-24 sm:h-32 sm:w-32 lg:h-36 lg:w-36"
               decorative
             />
           </button>

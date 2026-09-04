@@ -19,7 +19,7 @@ interface AppleGiveProps {
   onGiven: () => void;
 }
 
-/** More items than she asks for, or "give me one" is just "tap the item". */
+/** More items than she asks for, or "pick one" is just "tap the item". */
 const ITEM_COUNT = 3;
 /** Below this the pointer never really moved — treat it as a tap, not a drag,
     so a wobbly finger still counts as a press. */
