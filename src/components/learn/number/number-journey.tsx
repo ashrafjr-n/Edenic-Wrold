@@ -29,7 +29,6 @@ import { NumberPath } from "./number-path";
 import { NumberColor } from "./number-color";
 import { BalloonPop } from "./balloon-pop";
 import { Celebration } from "@/components/ui/celebration";
-import { StarReward } from "@/components/ui/star-reward";
 
 /* Green is the "you got it, carry on" button and nothing else, so it never
    appears on a step the child has not passed. Blue is the ordinary primary
@@ -413,18 +412,27 @@ export function NumberJourney({
         />
       </div>
     );
-    actions = solved ? nextButton("See my stars!", GO_TONE) : null;
+    /* Was "See my stars!" — the celebration screen does not show stars any
+       more, so the button can no longer promise them. */
+    actions = solved ? nextButton("Finish!", GO_TONE) : null;
   } else {
+    /* **No stars here.** The three-star tally was taken off this screen on
+       direct request — it is still scored and still recorded (see the effect
+       above), so the number list keeps showing what was earned; it is only
+       the celebration that no longer stops to count. What is left is the
+       thing that actually happened: the number is finished, and the next one
+       is open.
+
+       The confetti needs a sized box to burst from, and the stars used to be
+       it — so it wraps the title and the unlock pill now, which is the same
+       spot on the screen. */
     body = (
-      <>
+      <div className="relative flex flex-col items-center gap-4 sm:gap-6">
+        <Celebration />
+
         <p className="anim-fade-up text-center text-xl font-bold text-[var(--color-ink)] sm:text-2xl">
           Number {value} complete!
         </p>
-
-        <div className="relative">
-          <StarReward stars={stars} />
-          <Celebration />
-        </div>
 
         {/* The unlock is the payoff for the whole journey, so it is stated in
             words rather than left for the child to notice on the list — a
@@ -450,7 +458,7 @@ export function NumberJourney({
             </span>
           </div>
         )}
-      </>
+      </div>
     );
     actions = (
       <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
@@ -486,6 +494,16 @@ export function NumberJourney({
      right-edge crop. */
   const leanPlacement = stage === "find" ? "journeyCenter" : "journey";
 
+  /* `hero` is the one presence that comes AFTER the stage's buttons. It is the
+     celebration screen, and the two ways onward were asked to sit ABOVE her:
+     she is the last thing on the page there, at full size, with nothing under
+     her. Every other in-flow presence introduces what follows it, so it stays
+     first. */
+  const heroLast = guide.presence === "hero";
+  const guideNode = lead ? null : (
+    <PinkiGuide pose={guide.pose} line={guide.line} presence={guide.presence} />
+  );
+
   return (
     /* `relative` anchors both out-of-flow guides — `lead`'s life-size Pinki
        and `aside`'s corner one — against this column, so neither costs the
@@ -512,17 +530,11 @@ export function NumberJourney({
         />
       )}
 
-      {/* Pinki is on every stage, but WHERE she sits in the column is part of
-          what her presence means. `lead` comes after the activity, because she
-          is the lower half of the screen and her bubble carries the stage's
-          buttons with it; `hero` and `aside` come before it, unchanged. */}
-      {!lead && (
-        <PinkiGuide
-          pose={guide.pose}
-          line={guide.line}
-          presence={guide.presence}
-        />
-      )}
+      {/* WHERE she sits in the column is part of what her presence means.
+          `lead` comes after the activity, because she is the lower half of the
+          screen and her bubble carries the stage's buttons with it; `hero`
+          comes after the buttons, at the very end of the celebration screen. */}
+      {!heroLast && guideNode}
 
       {body}
 
@@ -543,6 +555,8 @@ export function NumberJourney({
       ) : (
         actions
       )}
+
+      {heroLast && guideNode}
     </div>
   );
 }
