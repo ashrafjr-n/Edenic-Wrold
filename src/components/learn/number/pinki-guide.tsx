@@ -105,7 +105,13 @@ export function PinkiGuide({
          share is wider from `sm` because the column grows much faster than
          she does there — at the phone value the bubble's tail ended up
          pointing across 150px of empty ground instead of at her. */
-      <div className="flex w-[54%] max-w-md flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
+      /* `relative z-20` puts this column ABOVE `PinkiLean` (z-10). She is
+         anchored to the bottom-right and wide enough to reach across this
+         column on a narrow screen, and she used to be painted over the top of
+         it — a button half-covered by her arm. She is `pointer-events-none`,
+         so this was only ever a paint-order problem; the buttons always
+         answered a tap. */
+      <div className="relative z-20 flex w-[54%] max-w-md flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
         <p className="speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base">
           {line}
         </p>

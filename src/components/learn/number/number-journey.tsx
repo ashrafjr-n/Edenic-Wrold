@@ -261,7 +261,10 @@ export function NumberJourney({
         <StrokeDemo strokes={strokes} accent={accent} />
       </div>
     );
-    actions = nextButton("My turn!", BRAND_TONE);
+    /* Pushed down off the bubble so there is a clear band between Pinki's
+       line and the one thing to press here — it sat tight under the bubble
+       with her leaning across it. */
+    actions = <div className="mt-2 sm:mt-4">{nextButton("My turn!", BRAND_TONE)}</div>;
   } else if (stage === "trace") {
     body = (
       <div className="card anim-rise-in relative aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
