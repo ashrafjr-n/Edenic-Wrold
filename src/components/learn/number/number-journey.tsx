@@ -453,8 +453,13 @@ export function NumberJourney({
             className="tile tile-round tile-grain anim-pop-in flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16"
             style={
               {
-                "--tile-tint":
-                  "color-mix(in srgb, var(--color-gold) 26%, var(--surface))",
+                /* Mixed with a LITERAL white, not `--surface`: this is a
+                   coloured clay object, and the site's rule is that those
+                   stay themselves in both themes (a gold button does). Mixed
+                   with `--surface` it followed the card into the dark and
+                   came out a muddy olive, which is not what a medal looks
+                   like. */
+                "--tile-tint": "color-mix(in srgb, var(--color-gold) 26%, #fff)",
                 animationDelay: "0.25s",
               } as CSSProperties
             }
