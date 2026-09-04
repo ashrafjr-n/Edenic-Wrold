@@ -227,26 +227,34 @@ export function NumberJourney({
       </div>
     );
   } else if (stage === "reveal") {
+    /* The numeral alone, and bigger than it was: it is the whole subject of
+       this stage, and it used to sit tight under the stage dots sharing its
+       screen with the say-it button. The top margin is what pushes it clear
+       of them. */
     body = (
-      <div className="anim-rise-in flex flex-col items-center gap-5 sm:gap-7">
+      <div className="anim-rise-in mt-3 sm:mt-6">
         <Numeral
           value={value}
           image={image}
-          sizeClass="h-28 w-28 sm:h-40 sm:w-40"
+          sizeClass="h-36 w-36 sm:h-52 sm:w-52"
         />
-
-        {/* The word, then the button that will speak it. Placed and timed now
-            so adding audio later changes no layout. */}
-        <div className="flex flex-col items-center gap-3 sm:gap-4">
-          <p className="text-center text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-            Can you say it?
-          </p>
-
-          <SayItButton word={script.word} />
-        </div>
       </div>
     );
-    actions = nextButton("Next", BRAND_TONE);
+    /* Both of the things the child can press, stacked in ONE column beside
+       Pinki rather than split across the screen — the gold say-it button
+       under her line, and the way onward under that. Placed and timed now so
+       adding audio later changes no layout. */
+    actions = (
+      <div className="flex flex-col items-start gap-3 sm:gap-4">
+        <p className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
+          Can you say it?
+        </p>
+
+        <SayItButton word={script.word} />
+
+        {nextButton("Next", BRAND_TONE)}
+      </div>
+    );
   } else if (stage === "demo") {
     body = (
       <div className="card anim-rise-in aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
