@@ -267,7 +267,11 @@ export function NumberJourney({
     actions = <div className="mt-2 sm:mt-4">{nextButton("My turn!", BRAND_TONE)}</div>;
   } else if (stage === "trace") {
     body = (
-      <div className="card anim-rise-in relative aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
+      /* Much larger than the demo card it follows, and the centre of its own
+         screen: Pinki is off this stage entirely, so the whole column is the
+         board's. This is the one thing the child does with their hand, and it
+         was the smallest object on the page. */
+      <div className="card anim-rise-in relative aspect-square w-full max-w-[17rem] p-4 sm:max-w-[24rem] sm:p-6">
         <TraceBoard
           key={attempt}
           strokes={strokes}

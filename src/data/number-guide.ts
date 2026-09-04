@@ -52,7 +52,11 @@ const STAGE_GUIDE: Record<
   discover: { presence: "none", pose: "speak" },
   reveal: { presence: "lead", pose: "speak" },
   demo: { presence: "lead", pose: "pen" },
-  trace: { presence: "lead", pose: "pen" },
+  /* The child's own drawing is the stage, and the board is now sized as the
+     whole screen — she is off it entirely so nothing leans over the surface
+     being drawn on. A missed attempt is answered by the board itself (the
+     red shake in `TraceBoard`), not by a line from her. */
+  trace: { presence: "none", pose: "pen" },
   find: { presence: "lead", pose: "think" },
   /* Overridden per activity below — `count` is four different exercises. */
   count: { presence: "lead", pose: "stick" },
