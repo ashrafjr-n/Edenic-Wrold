@@ -9,6 +9,12 @@ export const NUMBER_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
     tracing step rather than showing an empty video frame. */
 const videoIdByValue: Record<number, string> = {
   1: "ROgzR531dzc",
+  2: "3OHq7f5UNWM",
+  3: "JYlzOrXEki8",
+  4: "SjFDQX225vk",
+  5: "VjZGrSt9Dr0",
+  6: "HF4CutRhKIw",
+  7: "o7xHThfPVzc",
 };
 
 export const numberItems: NumberItem[] = NUMBER_VALUES.map((value) => ({
