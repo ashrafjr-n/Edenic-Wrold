@@ -10,7 +10,7 @@ type ThemeVars = CSSProperties & {
   "--lesson-hue-dark"?: string;
 };
 
-/** A locked card's fill plus the darker companion `.clay` shades it with. */
+/** An OPEN card's fill plus the darker companion `.clay` shades it with. */
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 const CARD_DELAY = 0.65;
@@ -66,33 +66,39 @@ export function LessonCard({
      that has not been walked yet instead of a silver one. */
   const dimTrack = `color-mix(in srgb, ${accent} 28%, #ffffff)`;
 
-  /* Both states are clay now — an open card in white (`.card-clay-white`), a
-     locked one in the character's own accent (`.clay`), so the two read as
-     the same material in two colours rather than one inflated card beside a
-     flat coloured slab. `.clay` is the site's recipe for a COLOURED clay
-     surface, and it is the right one here: its inset highlight is gentler
-     than `.card-clay-white`'s near-white one (which would blow out on a
-     saturated fill) and its shade and drop shadow are mixed from
-     `--clay-edge`, the fill's own darker companion, rather than the neutral
-     shadow hue. It carries the grain itself, which is why `.card-grain` is
-     gone from here.
+  /* **The OPEN card is the coloured one.** It is the character's own accent
+     with the grain (`.clay`); a LOCKED card is plain white
+     (`.card-clay-white`). Both states are still clay — the same material in
+     two colours — this is only which colour goes on which state, and it is
+     the reverse of what it was, on direct request. Everything below that
+     branches on `locked` for a COLOUR was flipped with it: leaving a chip or
+     a line of type on the side it used to be on would have put white on
+     white or pink on pink.
+
+     `.clay` is the site's recipe for a COLOURED clay surface, and it is the
+     right one for the accent fill: its inset highlight is gentler than
+     `.card-clay-white`'s near-white one (which would blow out on a saturated
+     fill) and its shade and drop shadow are mixed from `--clay-edge`, the
+     fill's own darker companion, rather than the neutral shadow hue. It
+     carries the grain itself, which is why no `.card-grain` sits beside it.
 
      `.card` sets the `background` SHORTHAND and is unlayered, so the fill has
      to come from an inline style — a Tailwind `bg-*` utility would silently
      lose. `.clay` is declared after `.card`, so its own `background-image`
-     (the grain) survives that shorthand. */
+     (the grain) survives that shorthand. `.card-lift` stays on the open card
+     either way: it is the one that is a `Link`. */
   const card = (
     <div
       className={`card group/lesson flex h-full overflow-hidden ${
-        locked ? "clay" : "card-clay-white card-lift"
+        locked ? "card-clay-white" : "clay card-lift"
       }`}
       style={
         locked
-          ? ({
+          ? undefined
+          : ({
               backgroundColor: "var(--character-accent)",
               "--clay-edge": "var(--character-accent-dark)",
             } as ClayVars)
-          : undefined
       }
     >
       {/* The art stands directly on the card — no `.tile` behind it any
@@ -122,8 +128,8 @@ export function LessonCard({
 
         {/* Step number, tablet and up only. Below `sm` the cards are a single
             stack and the rail outside the card carries the sequence instead,
-            so a number here would say the same thing twice. White on a
-            locked card, where the lesson hue would otherwise sit on the
+            so a number here would say the same thing twice. White on an
+            OPEN card, where the lesson hue would otherwise sit on the
             character's accent and muddy both.
 
             Positive inset, not the negative one it carried against the tile:
@@ -132,8 +138,8 @@ export function LessonCard({
         <span
           className="absolute left-1.5 top-1.5 hidden h-7 w-7 items-center justify-center rounded-full text-xs font-bold shadow-[0_8px_18px_-6px_rgb(92_78_190_/_45%)] sm:flex"
           style={{
-            backgroundColor: locked ? "var(--surface)" : "var(--lesson-accent)",
-            color: locked ? "var(--character-accent)" : "#fff",
+            backgroundColor: locked ? "var(--lesson-accent)" : "var(--surface)",
+            color: locked ? "#fff" : "var(--character-accent)",
           }}
         >
           {index + 1}
@@ -150,11 +156,20 @@ export function LessonCard({
                 (instead of hiding it) was what made the "Next up" card taller
                 than the rest despite the "adds a badge only, never a size
                 change" rule below. */}
+            {/* A WHITE pill with accent type, the same pairing
+                `.counter-chip--quiet` uses — only the open card is ever
+                featured, and the open card is now the accent one, so an
+                accent-filled pill would have sat on its own colour (invisible
+                outright below `sm`, where `--lesson-accent` IS the character
+                accent). */}
             <span
-              className={`mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs ${
+              className={`mb-1.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide sm:text-xs ${
                 featured ? "" : "invisible"
               }`}
-              style={{ backgroundColor: "var(--lesson-accent)" }}
+              style={{
+                backgroundColor: "var(--surface)",
+                color: "var(--lesson-accent)",
+              }}
               aria-hidden={!featured}
             >
               Next up
@@ -166,7 +181,7 @@ export function LessonCard({
             >
               {name}
             </h3>
-            {/* `--lesson-muted`, not a hard-coded ink: on a locked card the
+            {/* `--lesson-muted`, not a hard-coded ink: on an OPEN card the
                 body is the accent and this has to come back as white. */}
             <p
               className="mt-0.5 truncate text-xs sm:mt-1 sm:text-sm"
@@ -179,25 +194,25 @@ export function LessonCard({
           {/* Decorative, not a second control — the whole card is already the
               tappable target. It is also the card's only lock.
 
-              The chip swaps materials with the card: an open card is white,
-              so its chevron chip is the accent; a locked card IS the accent,
-              so its padlock chip is white. Either way it reads as clay on
+              The chip swaps materials with the card: an OPEN card IS the
+              accent, so its chevron chip is white; a locked card is white, so
+              its padlock chip is the accent. Either way it reads as clay on
               clay rather than as a colour laid over itself. */}
           <span
             className={`btn3d h-10 w-10 shrink-0 sm:h-12 sm:w-12 ${
-              locked ? "btn3d--clay-white" : "btn3d--clay-accent"
+              locked ? "btn3d--clay-accent" : "btn3d--clay-white"
             }`}
             aria-hidden
           >
             {locked ? (
               <Lock
-                className="h-4 w-4 sm:h-5 sm:w-5"
-                style={{ color: "var(--character-accent)" }}
+                className="h-4 w-4 text-white sm:h-5 sm:w-5"
                 strokeWidth={2.75}
               />
             ) : (
               <ChevronRight
-                className="h-5 w-5 text-white sm:h-6 sm:w-6"
+                className="h-5 w-5 sm:h-6 sm:w-6"
+                style={{ color: "var(--character-accent)" }}
                 strokeWidth={2.75}
               />
             )}
@@ -205,8 +220,10 @@ export function LessonCard({
         </div>
 
         {/* A progress bar on a lesson you cannot open yet is noise — a locked
-            card names what opens it instead, but still carries the same pink
-            item-count chip every card gets now. */}
+            card names what opens it instead, but still carries an item-count
+            chip like every card. The two chip faces swapped with the cards:
+            the pink one goes on the white (locked) card, and the white
+            `--quiet` one on the accent (open) card. */}
         {locked ? (
           <div className="flex items-center justify-between gap-3">
             <p
@@ -217,9 +234,7 @@ export function LessonCard({
                 ? `Unlocks after ${previousLessonName}`
                 : "Unlocks later"}
             </p>
-            <span className="counter-chip counter-chip--quiet">
-              {totalItems}
-            </span>
+            <span className="card-grain counter-chip">{totalItems}</span>
           </div>
         ) : (
           <div className="flex items-center gap-3 sm:gap-4">
@@ -233,7 +248,7 @@ export function LessonCard({
                 aria-hidden
               />
             </div>
-            <span className="card-grain counter-chip">
+            <span className="counter-chip counter-chip--quiet">
               {CURRENT_ITEMS} / {totalItems}
             </span>
           </div>
@@ -277,10 +292,10 @@ export function LessonCard({
     </div>
   );
 
-  /* No fade on a locked card any more. It used to sit at 78% from `sm` up so
-     it stepped back from the open ones; now that its body is a saturated
-     accent, fading it only washed the colour out — the white type and the
-     padlock chip are what separate it from a card you can open. */
+  /* No fade on a locked card, and none was reinstated when it went white:
+     it used to sit at 78% from `sm` up so it stepped back from the open ones,
+     and what separates it now is that the OPEN card is the saturated one —
+     a fade on top of that would only say the same thing twice. */
   const wrapperClass = `lesson-theme anim-fade-up relative ${
     locked ? "is-locked" : ""
   }`;

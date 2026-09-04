@@ -718,6 +718,19 @@ body {
     0 12px 22px -8px color-mix(in srgb, var(--clay-edge) 55%, transparent);
 }
 
+/* `.card-lift:hover` is `(0,2,0)` and `.clay` is `(0,1,0)`, so on hover it
+   would win and wipe both of `.clay`'s insets — an inflated card flattening
+   into a plain shadowed one for the duration of the lift. The same trap
+   `.card-clay-white.card-lift:hover` above documents, and it matters here now
+   that the lesson hub's LIFTING card is the coloured one. Declared with
+   `.clay` so the two can't drift. */
+.clay.card-lift:hover {
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 40%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--clay-edge) 45%, transparent),
+    0 20px 34px -10px color-mix(in srgb, var(--clay-edge) 62%, transparent);
+}
+
 /* ---------------------------------------------------------------
    Art on a colored panel.
 
@@ -873,11 +886,19 @@ body {
   }
 }
 
-/* A locked card's BODY is the character's own accent now, grained — so its
-   type is white at every width, not the locked grey it wore when the card
-   behind it was white. Declared after the phone block on purpose: that block
-   still swaps the accent tokens, this overrides only the type. */
-.lesson-theme.is-locked {
+/* **The OPEN card's body is the character's own accent, grained; a LOCKED
+   one is white.** That is the reverse of what it was, on direct request, and
+   the type has to follow the fill or half the hub is unreadable — so the
+   white type now rides `:not(.is-locked)` and a locked card falls back to
+   `.lesson-theme`'s ordinary ink, which is also what makes it correct in
+   dark mode for free (`--color-ink` flips light there, and the locked card's
+   `--surface` fill flips dark with it; the open card is a saturated pink in
+   both themes and keeps white type in both).
+
+   Declared after the phone block on purpose: that block still swaps the
+   accent tokens, this overrides only the type. `:not()` is what buys the
+   specificity to beat plain `.lesson-theme` above. */
+.lesson-theme:not(.is-locked) {
   --lesson-title: #fff;
   --lesson-muted: rgb(255 255 255 / 88%);
 }
