@@ -1160,33 +1160,66 @@ button:disabled,
   position: relative;
   background: var(--surface);
   border-radius: 1.5rem;
+  /* A pink outline in Pinki's own identity color — not a tinted fill (that
+     was tried, and removed, as a page-background match; see the numbers
+     journey notes in CLAUDE.md). A thin ring is what makes the bubble read as
+     a cartoon speech bubble that belongs to HER specifically, rather than a
+     generic white card that happens to sit near her. */
+  border: 2px solid var(--color-pinki);
   box-shadow:
     0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
     0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
 }
 
+/* The tail is TWO stacked triangles, not one: a bigger pink one behind
+   (`::before`) and a smaller white one in front (`::after`), inset by the
+   border's own width — so the tail reads as an outlined extension of the
+   bubble's border rather than a plain white sliver that could belong to
+   anything. Bigger than the old single triangle too, so it survives at a
+   glance instead of needing to be looked for. */
+.speech-bubble::before,
 .speech-bubble::after {
   content: "";
   position: absolute;
-  background: var(--surface);
-  /* A triangle rather than a rotated square: a rotated square pokes its
-     corners out past the bubble's rounded edge at this radius. */
-  left: -0.6rem;
   top: 50%;
   translate: 0 -50%;
-  width: 0.75rem;
-  height: 1.35rem;
+  /* A triangle rather than a rotated square: a rotated square pokes its
+     corners out past the bubble's rounded edge at this radius. */
   clip-path: polygon(100% 0, 100% 100%, 0 50%);
 }
 
+.speech-bubble::before {
+  left: -0.95rem;
+  width: 1.15rem;
+  height: 2rem;
+  background: var(--color-pinki);
+}
+
+.speech-bubble::after {
+  left: -0.6rem;
+  width: 0.8rem;
+  height: 1.5rem;
+  background: var(--surface);
+}
+
 @media (width < 40rem) {
+  .speech-bubble::before,
   .speech-bubble::after {
     left: 50%;
-    top: -0.6rem;
     translate: -50% 0;
-    width: 1.35rem;
-    height: 0.75rem;
     clip-path: polygon(0 100%, 100% 100%, 50% 0);
+  }
+
+  .speech-bubble::before {
+    top: -0.95rem;
+    width: 2rem;
+    height: 1.15rem;
+  }
+
+  .speech-bubble::after {
+    top: -0.6rem;
+    width: 1.5rem;
+    height: 0.8rem;
   }
 }
 
@@ -1195,14 +1228,24 @@ button:disabled,
    the bubble sits in the column her crop leaves free. The tail has to point
    at her, so it flips to the other side and stays there at every width: she
    is beside the bubble on a phone here, not above it. */
+.speech-bubble--left::before,
 .speech-bubble--left::after {
   left: auto;
-  right: -0.6rem;
   top: 50%;
   translate: 0 -50%;
-  width: 0.75rem;
-  height: 1.35rem;
   clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
+.speech-bubble--left::before {
+  right: -0.95rem;
+  width: 1.15rem;
+  height: 2rem;
+}
+
+.speech-bubble--left::after {
+  right: -0.6rem;
+  width: 0.8rem;
+  height: 1.5rem;
 }
 
 /* ---------------------------------------------------------------
