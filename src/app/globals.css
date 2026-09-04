@@ -1521,6 +1521,88 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   "Look here." — the thing Pinki is pointing at.
+
+   A soft halo behind the one element the child has to act on, so a glance at
+   the screen lands on the target rather than searching it. It only ever
+   appears where she is holding the stick (`pointsAtTarget` in
+   `data/number-guide.ts`): a light with nothing aiming at it is decoration,
+   and this site does not do decoration that pretends to be guidance.
+
+   **It animates `opacity` and `scale` and NOTHING else.** Both are handled by
+   the compositor, so the loop costs no layout and no repaint — this runs
+   under a child's finger on a cheap tablet while a drag is in flight. A
+   `filter: drop-shadow` pulse (the obvious alternative) re-filters the whole
+   subtree every frame instead, and an animated `box-shadow` spread repaints
+   it; neither is worth it for a halo.
+
+   `isolation: isolate` on the target is what lets the halo sit BEHIND its own
+   element at `z-index: -1` without falling behind the card underneath.
+   --------------------------------------------------------------- */
+@keyframes guide-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    scale: 0.94;
+  }
+  50% {
+    opacity: 0.7;
+    scale: 1.06;
+  }
+}
+
+.guide-target {
+  position: relative;
+  isolation: isolate;
+}
+
+.guide-target::after {
+  content: "";
+  position: absolute;
+  /* Reaches past the element on every side: the halo has to read as light
+     around the thing, not as a tint applied to it. */
+  inset: -12%;
+  z-index: -1;
+  border-radius: 999px;
+  /* The page's own accent, so the mark means the same thing on every
+     character's lesson — `closest-side` keeps it round whatever shape it is
+     stretched over. */
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--page-accent-color) 55%, transparent),
+    transparent 72%
+  );
+  animation: guide-glow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------
+   The dotted numeral, before the first stroke.
+
+   A second, much wider copy of the guide path lying under the dots, breathing
+   in the character's accent — the trace board's version of the halo above.
+   It is drawn only while the board is untouched: once the child is drawing,
+   the thing to look at is their own line, and a glow under it competes.
+
+   `stroke-opacity` rather than `opacity` so the animation touches the one
+   path and not the group, and NO SVG filter anywhere — filters are markedly
+   slow on mobile Safari, which is exactly the device doing the tracing.
+   --------------------------------------------------------------- */
+@keyframes trace-guide-glow {
+  0%,
+  100% {
+    stroke-opacity: 0.12;
+  }
+  50% {
+    stroke-opacity: 0.34;
+  }
+}
+
+.trace-guide-glow {
+  animation: trace-guide-glow 2s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
    Scroll reveal for the sections below the fold.
 
    The load-time timeline above is useless down here — those sections have
@@ -1886,6 +1968,8 @@ button:disabled,
   .anim-breathe,
   .anim-pinki-lean-in,
   .anim-pulse-invite,
+  .guide-target::after,
+  .trace-guide-glow,
   .anim-reveal,
   .path-hint,
   .anim-hero-parallax {
