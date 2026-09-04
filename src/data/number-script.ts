@@ -59,8 +59,14 @@ function countLine(value: number, word: string): string {
 export function scriptFor(value: number): NumberScript {
   const word = WORDS[value] ?? String(value);
   const activity = countActivityFor(value);
+  /* ALWAYS the plural, unlike the invite line above. "Give me ONE apple!"
+     counts the items being asked for, so it agrees with the number; "How many
+     apples now?" is asking about a quantity in the abstract and takes the
+     plural whatever the answer turns out to be. Passing `value` here produced
+     "How many apple now?" on every number whose activity is `give` with a
+     target of one. */
   const items =
-    activity.kind === "give" ? pluralize(activity.itemLabel, value) : "";
+    activity.kind === "give" ? pluralize(activity.itemLabel, 2) : "";
 
   return {
     word,
