@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { ArrowRight, RotateCcw, Unlock } from "lucide-react";
+import { ArrowRight, Crown, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -426,17 +426,55 @@ export function NumberJourney({
        it — so it wraps the title and the unlock pill now, which is the same
        spot on the screen. */
     body = (
-      <div className="relative flex flex-col items-center gap-4 sm:gap-6">
+      /* **The reward is a PANEL, not loose text on the ground.** The title and
+         the unlock used to float on the bare page between the confetti and
+         the two buttons — three pill-shaped things stacked in a column, two of
+         them the same green, and nothing saying which was the announcement and
+         which was the way onward. On a white `.card` the announcement has a
+         surface of its own, so the green pill inside it reads as news and the
+         green button below it reads as an action. The card is also what the
+         confetti bursts from, which is why it is `relative`. */
+      <div className="card anim-pop-in relative flex w-full max-w-sm flex-col items-center gap-4 px-6 py-6 text-center sm:max-w-lg sm:gap-5 sm:px-10 sm:py-8">
         <Celebration />
 
-        <p className="anim-fade-up text-center text-xl font-bold text-[var(--color-ink)] sm:text-2xl">
-          Number {value} complete!
-        </p>
+        {/* The crown stacks over the title on a phone and stands BESIDE it
+            from `sm`. Not a style choice: this screen also carries the two
+            buttons and a life-size Pinki under it, and at 1440x900 a stacked
+            badge is the difference between the whole celebration fitting the
+            viewport and her feet running off the bottom of it. */}
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+          {/* The crown is the site's own achievement mark — the same filled
+              one the header row's achievements chip carries — on a pale gold
+              tile, so finishing a number is marked with the language the rest
+              of the app already uses for "you earned this". Filled and one
+              solid silhouette: an outlined icon does not read as clay at this
+              size. */}
+          <span
+            className="tile tile-round tile-grain anim-pop-in flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16"
+            style={
+              {
+                "--tile-tint":
+                  "color-mix(in srgb, var(--color-gold) 26%, var(--surface))",
+                animationDelay: "0.25s",
+              } as CSSProperties
+            }
+          >
+            <Crown
+              className="h-7 w-7 fill-current sm:h-8 sm:w-8"
+              style={{ color: "var(--color-gold)" }}
+              strokeWidth={1.5}
+            />
+          </span>
+
+          <p className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
+            Number {value} complete!
+          </p>
+        </div>
 
         {/* The unlock is the payoff for the whole journey, so it is stated in
             words rather than left for the child to notice on the list — a
             green clay pill, not plain colored text, so it reads as its own
-            small reward next to the stars instead of a caption. */}
+            small reward instead of a caption. */}
         {nextValue && (
           <div
             className="clay anim-pop-in flex items-center gap-2 rounded-full px-5 py-2.5 sm:gap-2.5 sm:px-6 sm:py-3"
@@ -459,8 +497,10 @@ export function NumberJourney({
         )}
       </div>
     );
+    /* Clear of the card above them, the same way every `lead` stage's buttons
+       are clear of Pinki's bubble. */
     actions = (
-      <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
+      <div className="anim-fade-up mt-1 flex items-center gap-3 sm:mt-3 sm:gap-4">
         <Button3D
           variant="calm"
           tone={WHITE_TONE}
