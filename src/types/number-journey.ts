@@ -25,6 +25,39 @@ export const WORKING_STAGES = JOURNEY_STAGES.filter(
 );
 
 /**
+ * Pinki's five renders. A posture, never a decoration: `pen` is the two
+ * drawing stages, `think` the one stage that asks the child to CHOOSE rather
+ * than to listen, `stick` a stage with ONE unambiguous target to point at,
+ * `celebrate` a win, `speak` everything else.
+ *
+ * It lives here rather than in `pinki-guide.tsx` because `data/number-guide.ts`
+ * has to name a pose for every stage, and a data module must not import from a
+ * component. `pinki-guide.tsx` re-exports it, so every existing import of it
+ * from there still resolves — the same call `store/progress.ts` makes for the
+ * key builders it keeps in `lib/`.
+ */
+export type PinkiPose = "speak" | "pen" | "celebrate" | "stick" | "think";
+
+/**
+ * How much of the screen Pinki is, at one stage.
+ *
+ * She is the teacher, not a fixed ornament, so her size is a statement about
+ * whose moment this is. When she is genuinely helping — explaining, pointing,
+ * celebrating — she leads. When the CONTENT is the lesson (the reel, a game
+ * the child has to concentrate on) she gets out of its way, because a guide
+ * standing in front of the thing she is introducing is not guidance.
+ *
+ * - `hero`  — the biggest she ever is. Only where nothing sits under her.
+ * - `lead`  — large, with her speech bubble, in the flow above the activity.
+ * - `aside` — small, in the corner, absolutely positioned and SILENT: no
+ *             bubble, her line carried by a screen-reader-only paragraph so
+ *             it still reaches assistive tech and the future audio script.
+ *             Costs the stage no height at all.
+ * - `none`  — not rendered.
+ */
+export type GuidePresence = "hero" | "lead" | "aside" | "none";
+
+/**
  * What Pinki says at each point of one number's journey.
  *
  * Every line is written to be read aloud later: audio is not built yet, but
