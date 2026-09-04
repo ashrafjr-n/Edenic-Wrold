@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { ArrowRight, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
@@ -13,9 +13,11 @@ import { guideFor, pointsAtTarget } from "@/data/number-guide";
 import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import type { ButtonTone } from "@/components/ui/button-3d";
 import { NumberVideo } from "./number-video";
 import { Numeral } from "./numeral";
 import { PinkiGuide } from "./pinki-guide";
+import { PinkiLean } from "./pinki-lean";
 import { StageDots } from "./stage-dots";
 import { SayItButton } from "./say-it-button";
 import { StrokeDemo } from "./stroke-demo";
@@ -177,12 +179,309 @@ export function NumberJourney({
   /* Only meaningful where she is actually pointing — see `pointsAtTarget`. */
   const marksTarget = pointsAtTarget(guide);
 
+  /* Each stage is TWO pieces, not one block of markup: the thing the child
+     works on, and the buttons that move them along. They are split because
+     `lead` puts the buttons under Pinki's speech bubble, in the column her
+     crop leaves free on the left, while the activity stays above her — so the
+     two halves land in different places on the screen and cannot be one
+     fragment. Built above the return, per stage, rather than branched inside
+     the markup. */
+  const nextButton = (label: string, tone: ButtonTone) => (
+    <Button3D
+      tone={tone}
+      onClick={advance}
+      className="px-8 py-3 text-base sm:px-10 sm:text-lg"
+    >
+      {label}
+      <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+    </Button3D>
+  );
+
+  let body: ReactNode = null;
+  let actions: ReactNode = null;
+
+  if (stage === "discover") {
+    /* **The button sits BESIDE the reel from `sm` up, never underneath it**,
+       and it stays inside `body` for exactly that reason — the split into
+       body/actions exists so `lead` can move buttons under Pinki's bubble,
+       and this stage is `aside`, so it keeps the row it already had. Stacking
+       them capped the video's height to leave room below, which fought the
+       whole point of this stage; moving the button to the side is what
+       removed that ceiling. */
+    body = (
+      <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
+        {videoId && (
+          <NumberVideo videoId={videoId} value={value} image={image} />
+        )}
+
+        <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
+          <Button3D
+            tone={BRAND_TONE}
+            onClick={advance}
+            className="px-7 py-3 text-base sm:px-9 sm:py-4 sm:text-lg"
+          >
+            Next
+            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+          </Button3D>
+        </div>
+      </div>
+    );
+  } else if (stage === "reveal") {
+    body = (
+      <div className="anim-rise-in flex flex-col items-center gap-5 sm:gap-7">
+        <Numeral
+          value={value}
+          image={image}
+          sizeClass="h-28 w-28 sm:h-40 sm:w-40"
+        />
+
+        {/* The word, then the button that will speak it. Placed and timed now
+            so adding audio later changes no layout. */}
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
+          <p className="text-center text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
+            Can you say it?
+          </p>
+
+          <SayItButton word={script.word} />
+        </div>
+      </div>
+    );
+    actions = nextButton("Next", BRAND_TONE);
+  } else if (stage === "demo") {
+    body = (
+      <div className="card anim-rise-in aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
+        <StrokeDemo strokes={strokes} accent={accent} />
+      </div>
+    );
+    actions = nextButton("My turn!", BRAND_TONE);
+  } else if (stage === "trace") {
+    body = (
+      <div className="card anim-rise-in relative aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
+        <TraceBoard
+          key={attempt}
+          strokes={strokes}
+          accent={accent}
+          minCoverage={
+            TRACE_COVERAGE[Math.min(traceAttempt, TRACE_COVERAGE.length - 1)]
+          }
+          onFinish={() => setSolved(true)}
+          onMiss={() => {
+            setTraceMissed(true);
+            setTraceAttempt((count) => count + 1);
+            miss();
+          }}
+          locked={solved}
+        />
+        {solved && <Celebration />}
+      </div>
+    );
+    actions = (
+      <div className="anim-fade-up flex items-center gap-2 sm:gap-3">
+        <Button3D
+          variant="calm"
+          tone={WHITE_TONE}
+          onClick={retryTrace}
+          className="btn3d--clay-white px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base"
+        >
+          {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon rides
+              inside a `.btn3d--clay-white` button, pinned pale regardless of
+              theme (globals.css) — `--color-ink-soft` itself flips light in
+              dark mode, for the same body-text reason `--color-ink` does. */}
+          <RotateCcw
+            className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
+            strokeWidth={2.75}
+          />
+          Try Again
+        </Button3D>
+
+        {solved && nextButton("Next", GO_TONE)}
+      </div>
+    );
+  } else if (stage === "find") {
+    body = (
+      <div className="anim-rise-in relative">
+        <NumberQuiz
+          key={`find-${attempt}`}
+          choices={findChoices}
+          answer={value}
+          solved={solved}
+          onCorrect={() => setSolved(true)}
+          onWrong={pickMiss}
+        />
+        {solved && <Celebration />}
+      </div>
+    );
+    actions = solved ? nextButton("Next", GO_TONE) : null;
+  } else if (stage === "count") {
+    body =
+      countActivity.kind === "give" ? (
+        /* Two beats, because the point of this activity is the LINK: hand over
+           the item, then say what that many of it is called. Giving alone
+           teaches nothing about the numeral; asking alone teaches nothing
+           about quantity. */
+        !appleGiven ? (
+          <div className="anim-rise-in">
+            <AppleGive
+              key={`give-${attempt}`}
+              target={value}
+              icon={countActivity.icon}
+              itemLabel={countActivity.itemLabel}
+              highlightTarget={marksTarget}
+              onGiven={() => setAppleGiven(true)}
+            />
+          </div>
+        ) : (
+          <div className="anim-rise-in relative">
+            <NumberQuiz
+              key={`count-${attempt}`}
+              choices={countChoices}
+              answer={value}
+              solved={solved}
+              onCorrect={() => setSolved(true)}
+              onWrong={pickMiss}
+            />
+            {solved && <Celebration />}
+          </div>
+        )
+      ) : countActivity.kind === "complete" ? (
+        <div className="anim-rise-in relative">
+          <NumberComplete
+            key={`complete-${attempt}`}
+            value={value}
+            image={image}
+            highlightTarget={marksTarget}
+            onFinish={() => setSolved(true)}
+            onMiss={pickMiss}
+          />
+          {solved && <Celebration />}
+        </div>
+      ) : countActivity.kind === "path" ? (
+        <div className="anim-rise-in relative">
+          <NumberPath
+            key={`path-${attempt}`}
+            numbers={countActivity.numbers}
+            target={value}
+            accent={accent}
+            onFinish={() => setSolved(true)}
+          />
+          {solved && <Celebration />}
+        </div>
+      ) : (
+        <div className="anim-rise-in relative">
+          <NumberColor
+            key={`color-${attempt}`}
+            value={value}
+            image={image}
+            strokes={strokes}
+            accent={accent}
+            onFinish={() => setSolved(true)}
+          />
+          {solved && <Celebration />}
+        </div>
+      );
+    actions = solved ? nextButton("Next", GO_TONE) : null;
+  } else if (stage === "game") {
+    body = (
+      /* No sibling `<Celebration>` here, unlike the other stages — the
+         balloons keep drifting even after a win, so a burst centred on this
+         wrapper would land away from the popped balloon. `BalloonPop` bursts
+         its own confetti from the balloon itself. */
+      <div className="anim-rise-in relative">
+        <BalloonPop
+          key={`pop-${attempt}`}
+          choices={popChoices}
+          answer={value}
+          onCorrect={() => setSolved(true)}
+          onMiss={pickMiss}
+        />
+      </div>
+    );
+    actions = solved ? nextButton("See my stars!", GO_TONE) : null;
+  } else {
+    body = (
+      <>
+        <p className="anim-fade-up text-center text-xl font-bold text-[var(--color-ink)] sm:text-2xl">
+          Number {value} complete!
+        </p>
+
+        <div className="relative">
+          <StarReward stars={stars} />
+          <Celebration />
+        </div>
+
+        {/* The unlock is the payoff for the whole journey, so it is stated in
+            words rather than left for the child to notice on the list — a
+            green clay pill, not plain colored text, so it reads as its own
+            small reward next to the stars instead of a caption. */}
+        {nextValue && (
+          <div
+            className="clay anim-pop-in flex items-center gap-2 rounded-full px-5 py-2.5 sm:gap-2.5 sm:px-6 sm:py-3"
+            style={
+              {
+                backgroundColor: "var(--color-go)",
+                "--clay-edge": "var(--color-go-dark)",
+                animationDelay: "0.6s",
+              } as CSSProperties
+            }
+          >
+            <Unlock
+              className="h-5 w-5 text-white sm:h-6 sm:w-6"
+              strokeWidth={2.75}
+            />
+            <span className="text-base font-bold text-white sm:text-lg">
+              Number {nextValue} unlocked!
+            </span>
+          </div>
+        )}
+      </>
+    );
+    actions = (
+      <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
+        <Button3D
+          variant="calm"
+          tone={WHITE_TONE}
+          onClick={restart}
+          className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
+        >
+          <RotateCcw
+            className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
+            strokeWidth={2.75}
+          />
+          Again
+        </Button3D>
+
+        <Button3D
+          tone={GO_TONE}
+          href={nextHref}
+          className="px-8 py-3 text-base sm:px-10 sm:text-lg"
+        >
+          {nextValue ? `Number ${nextValue}` : "Finish"}
+          <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+        </Button3D>
+      </div>
+    );
+  }
+
+  const lead = guide.presence === "lead";
+
   return (
-    /* `relative` is for the `aside` guide alone: she positions herself against
-       this box so she costs the stage no height. The phone gap is deliberately
-       tighter than the tablet one — every 8px here is 8px the activity below
-       keeps above the fold on a 320px screen. */
-    <div className="relative flex w-full flex-1 flex-col items-center justify-center gap-4 sm:gap-8">
+    /* `relative` anchors both out-of-flow guides — `lead`'s life-size Pinki
+       and `aside`'s corner one — against this column, so neither costs the
+       stage any height. **No `overflow-hidden` here**: `lead` deliberately
+       runs past the right edge, and the route's `<main>` carries
+       `overflow-x-hidden` to stop that widening the document.
+
+       `lead` stacks from the TOP on a phone, so the activity keeps the upper
+       half of the screen and Pinki fills the lower one beneath it. From `sm`
+       it centres again: a desktop column is much taller than its content, and
+       pinning that content to the top there left a large dead band between it
+       and the bottom-anchored Pinki. Every other presence centres at all
+       widths. */
+    <div
+      className={`relative flex w-full flex-1 flex-col items-center gap-4 sm:gap-6 ${
+        lead ? "justify-start sm:justify-center" : "justify-center"
+      }`}
+    >
       {stage !== "celebrate" && (
         <StageDots
           current={stageIndex}
@@ -191,333 +490,36 @@ export function NumberJourney({
         />
       )}
 
-      {/* Pinki is on every stage. She is the through-line that makes every
-          screen read as one journey rather than a string of exercises — but
-          how MUCH of the screen she is changes with whose moment it is, which
-          is the whole of `data/number-guide.ts`. */}
-      <PinkiGuide pose={guide.pose} line={guide.line} presence={guide.presence} />
-
-      {stage === "discover" && (
-        <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
-          {/* This stage is the reel and nothing else — saying the word and
-              seeing the numeral are their own stage right after. It's the
-              hero of this screen from `sm` up: much bigger, with the buttons
-              moved beside it instead of underneath, so nothing competes with
-              it and nothing caps its height. */}
-          {videoId && (
-            <NumberVideo videoId={videoId} value={value} image={image} />
-          )}
-
-          <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
-            <Button3D
-              tone={BRAND_TONE}
-              onClick={advance}
-              className="px-7 py-3 text-base sm:px-9 sm:py-4 sm:text-lg"
-            >
-              Next
-              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-          </div>
-        </div>
+      {/* Pinki is on every stage, but WHERE she sits in the column is part of
+          what her presence means. `lead` comes after the activity, because she
+          is the lower half of the screen and her bubble carries the stage's
+          buttons with it; `hero` and `aside` come before it, unchanged. */}
+      {!lead && (
+        <PinkiGuide
+          pose={guide.pose}
+          line={guide.line}
+          presence={guide.presence}
+        />
       )}
 
-      {stage === "reveal" && (
-        <div className="anim-rise-in flex flex-col items-center gap-6 sm:gap-8">
-          <Numeral value={value} image={image} sizeClass="h-32 w-32 sm:h-44 sm:w-44" />
+      {body}
 
-          <div className="flex flex-col items-center gap-4 sm:gap-6">
-            {/* The word, then the button that will speak it. Placed and
-                timed now so adding audio later changes no layout. */}
-            <p className="text-center text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-              Can you say it?
-            </p>
+      {/* Life size, and positioned against THIS column rather than against the
+          bubble row below — she is sized as a share of its height, and it is
+          the box whose right edge crops her. Rendered here for that reason
+          alone; `data/number-guide.ts` still decides whether she appears. */}
+      {lead && <PinkiLean pose={guide.pose} placement="journey" />}
 
-            <SayItButton word={script.word} />
-          </div>
-
-          <Button3D
-            tone={BRAND_TONE}
-            onClick={advance}
-            className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-          >
-            Next
-            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-          </Button3D>
-        </div>
-      )}
-
-      {stage === "demo" && (
-        <>
-          <div className="card anim-rise-in aspect-square w-full max-w-[15rem] p-5 sm:max-w-[18rem] sm:p-6">
-            <StrokeDemo strokes={strokes} accent={accent} />
-          </div>
-
-          <Button3D
-            tone={BRAND_TONE}
-            onClick={advance}
-            className="anim-fade-up px-8 py-3 text-base sm:px-10 sm:text-lg"
-          >
-            My turn!
-            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-          </Button3D>
-        </>
-      )}
-
-      {stage === "trace" && (
-        <>
-          <div className="card anim-rise-in relative aspect-square w-full max-w-[15rem] p-5 sm:max-w-[18rem] sm:p-6">
-            <TraceBoard
-              key={attempt}
-              strokes={strokes}
-              accent={accent}
-              minCoverage={
-                TRACE_COVERAGE[
-                  Math.min(traceAttempt, TRACE_COVERAGE.length - 1)
-                ]
-              }
-              onFinish={() => setSolved(true)}
-              onMiss={() => {
-                setTraceMissed(true);
-                setTraceAttempt((count) => count + 1);
-                miss();
-              }}
-              locked={solved}
-            />
-            {solved && <Celebration />}
-          </div>
-
-          <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
-            <Button3D
-              variant="calm"
-              tone={WHITE_TONE}
-              onClick={retryTrace}
-              className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
-            >
-              {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon
-                  rides inside a `.btn3d--clay-white` button, pinned pale
-                  regardless of theme (globals.css) — `--color-ink-soft`
-                  itself flips light in dark mode, for the same body-text
-                  reason `--color-ink` does. */}
-              <RotateCcw
-                className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
-                strokeWidth={2.75}
-              />
-              Try Again
-            </Button3D>
-
-            {solved && (
-              <Button3D
-                tone={GO_TONE}
-                onClick={advance}
-                className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-              >
-                Next
-                <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-              </Button3D>
-            )}
-          </div>
-        </>
-      )}
-
-      {stage === "find" && (
-        <>
-          <div className="anim-rise-in relative">
-            <NumberQuiz
-              key={`find-${attempt}`}
-              choices={findChoices}
-              answer={value}
-              solved={solved}
-              onCorrect={() => setSolved(true)}
-              onWrong={pickMiss}
-            />
-            {solved && <Celebration />}
-          </div>
-
-          {solved && (
-            <Button3D
-              tone={GO_TONE}
-              onClick={advance}
-              className="anim-fade-up px-8 py-3 text-base sm:px-10 sm:text-lg"
-            >
-              Next
-              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-          )}
-        </>
-      )}
-
-      {stage === "count" && (
-        <>
-          {countActivity.kind === "give" ? (
-            /* Two beats, because the point of this activity is the LINK: hand
-               over the item, then say what that many of it is called. Giving
-               alone teaches nothing about the numeral; asking alone teaches
-               nothing about quantity. */
-            !appleGiven ? (
-              <div className="anim-rise-in">
-                <AppleGive
-                  key={`give-${attempt}`}
-                  target={value}
-                  icon={countActivity.icon}
-                  itemLabel={countActivity.itemLabel}
-                  highlightTarget={marksTarget}
-                  onGiven={() => setAppleGiven(true)}
-                />
-              </div>
-            ) : (
-              <div className="anim-rise-in relative">
-                <NumberQuiz
-                  key={`count-${attempt}`}
-                  choices={countChoices}
-                  answer={value}
-                  solved={solved}
-                  onCorrect={() => setSolved(true)}
-                  onWrong={pickMiss}
-                />
-                {solved && <Celebration />}
-              </div>
-            )
-          ) : countActivity.kind === "complete" ? (
-            <div className="anim-rise-in relative">
-              <NumberComplete
-                key={`complete-${attempt}`}
-                value={value}
-                image={image}
-                highlightTarget={marksTarget}
-                onFinish={() => setSolved(true)}
-                onMiss={pickMiss}
-              />
-              {solved && <Celebration />}
-            </div>
-          ) : countActivity.kind === "path" ? (
-            <div className="anim-rise-in relative">
-              <NumberPath
-                key={`path-${attempt}`}
-                numbers={countActivity.numbers}
-                target={value}
-                accent={accent}
-                onFinish={() => setSolved(true)}
-              />
-              {solved && <Celebration />}
-            </div>
-          ) : (
-            <div className="anim-rise-in relative">
-              <NumberColor
-                key={`color-${attempt}`}
-                value={value}
-                image={image}
-                strokes={strokes}
-                accent={accent}
-                onFinish={() => setSolved(true)}
-              />
-              {solved && <Celebration />}
-            </div>
-          )}
-
-          {solved && (
-            <Button3D
-              tone={GO_TONE}
-              onClick={advance}
-              className="anim-fade-up px-8 py-3 text-base sm:px-10 sm:text-lg"
-            >
-              Next
-              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-          )}
-        </>
-      )}
-
-      {stage === "game" && (
-        <>
-          {/* No sibling `<Celebration>` here, unlike the other stages — the
-              balloons keep drifting even after a win, so a burst centred on
-              this wrapper would land away from the popped balloon.
-              `BalloonPop` bursts its own confetti from the balloon itself. */}
-          <div className="anim-rise-in relative">
-            <BalloonPop
-              key={`pop-${attempt}`}
-              choices={popChoices}
-              answer={value}
-              onCorrect={() => setSolved(true)}
-              onMiss={pickMiss}
-            />
-          </div>
-
-          {solved && (
-            <Button3D
-              tone={GO_TONE}
-              onClick={advance}
-              className="anim-fade-up px-8 py-3 text-base sm:px-10 sm:text-lg"
-            >
-              See my stars!
-              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-          )}
-        </>
-      )}
-
-      {stage === "celebrate" && (
-        <>
-          <p className="anim-fade-up text-center text-xl font-bold text-[var(--color-ink)] sm:text-2xl">
-            Number {value} complete!
-          </p>
-
-          <div className="relative">
-            <StarReward stars={stars} />
-            <Celebration />
-          </div>
-
-          {/* The unlock is the payoff for the whole journey, so it is stated
-              in words rather than left for the child to notice on the list —
-              a green clay pill, not plain colored text, so it reads as its
-              own small reward next to the stars instead of a caption. */}
-          {nextValue && (
-            <div
-              className="clay anim-pop-in flex items-center gap-2 rounded-full px-5 py-2.5 sm:gap-2.5 sm:px-6 sm:py-3"
-              style={
-                {
-                  backgroundColor: "var(--color-go)",
-                  "--clay-edge": "var(--color-go-dark)",
-                  animationDelay: "0.6s",
-                } as CSSProperties
-              }
-            >
-              <Unlock className="h-5 w-5 text-white sm:h-6 sm:w-6" strokeWidth={2.75} />
-              <span className="text-base font-bold text-white sm:text-lg">
-                Number {nextValue} unlocked!
-              </span>
-            </div>
-          )}
-
-          <div className="anim-fade-up flex items-center gap-3 sm:gap-4">
-            <Button3D
-              variant="calm"
-              tone={WHITE_TONE}
-              onClick={restart}
-              className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
-            >
-              {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon
-                  rides inside a `.btn3d--clay-white` button, pinned pale
-                  regardless of theme (globals.css) — `--color-ink-soft`
-                  itself flips light in dark mode, for the same body-text
-                  reason `--color-ink` does. */}
-              <RotateCcw
-                className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
-                strokeWidth={2.75}
-              />
-              Again
-            </Button3D>
-
-            <Button3D
-              tone={GO_TONE}
-              href={nextHref}
-              className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-            >
-              {nextValue ? `Number ${nextValue}` : "Finish"}
-              <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-            </Button3D>
-          </div>
-        </>
+      {lead ? (
+        <PinkiGuide
+          pose={guide.pose}
+          line={guide.line}
+          presence={guide.presence}
+        >
+          {actions}
+        </PinkiGuide>
+      ) : (
+        actions
       )}
     </div>
   );

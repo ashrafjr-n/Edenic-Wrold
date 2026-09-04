@@ -40,13 +40,18 @@ const LEAN = {
    * containers are the same width at every breakpoint (both `px-6` inside a
    * centred max-width), so the same offsets land the same way.
    *
-   * The height percentage is lower than the picker's only because the journey
-   * column is TALLER than the picker's card, so a smaller share of it comes
-   * out at the same number of pixels. Measured at 390x844: 360px, which is
-   * the picker's 360px exactly.
+   * The phone percentage is lower than the picker's only because the journey
+   * column is TALLER than the picker's card there, so a smaller share of it
+   * comes out at the same number of pixels — measured at 390x844: 373px
+   * against the picker's 360px.
+   *
+   * From `sm` the relationship inverts and the percentage has to go UP: the
+   * journey column is SHORTER than the picker's card at desktop widths (694px
+   * against 882px at 1440x900), so the picker's own 62% would have left her a
+   * third smaller here rather than the same size.
    */
   journey: {
-    box: "-bottom-[1%] -right-[24%] h-[62%] sm:-bottom-[1%] sm:-right-[14%] sm:h-[58%]",
+    box: "-bottom-[1%] -right-[24%] h-[62%] sm:-bottom-[2%] sm:-right-[12%] sm:h-[72%]",
     painted: { width: 372, height: 368 },
   },
 } as const;

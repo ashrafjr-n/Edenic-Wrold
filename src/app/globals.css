@@ -1169,6 +1169,21 @@ button:disabled,
   }
 }
 
+/* The bubble when Pinki stands to its RIGHT rather than its left — the
+   journey's `lead` stages, where she is life size against the right edge and
+   the bubble sits in the column her crop leaves free. The tail has to point
+   at her, so it flips to the other side and stays there at every width: she
+   is beside the bubble on a phone here, not above it. */
+.speech-bubble--left::after {
+  left: auto;
+  right: -0.6rem;
+  top: 50%;
+  translate: 0 -50%;
+  width: 0.75rem;
+  height: 1.35rem;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
 /* ---------------------------------------------------------------
    "Watch me draw it."
 

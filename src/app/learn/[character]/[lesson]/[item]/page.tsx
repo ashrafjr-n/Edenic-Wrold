@@ -73,7 +73,13 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
          `pb-[calc(4rem+env(safe-area-inset-bottom))]` for the bottom nav, so
          this was a second clearance stacked on top of the first. Tablet and
          desktop keep the roomier spacing; they were never short of height. */
-      className="relative flex flex-1 flex-col pb-4 pt-3 sm:pb-20 sm:pt-5"
+      /* `overflow-x-hidden` is for the journey's life-size Pinki, exactly as
+         it is on the number picker: she is sized to break out past the
+         column's right edge, and on a phone that edge is close enough to the
+         viewport that she would otherwise widen the document — which on a
+         phone does not merely add a scrollbar, it widens the LAYOUT VIEWPORT
+         and zooms the whole page out. */
+      className="relative flex flex-1 flex-col overflow-x-hidden pb-4 pt-3 sm:pb-20 sm:pt-5"
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
