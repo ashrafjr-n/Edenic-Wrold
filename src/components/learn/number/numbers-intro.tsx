@@ -1,6 +1,5 @@
-import Image from "next/image";
-import { POSE_IMAGE } from "./pinki-guide";
-import type { PinkiPose } from "./pinki-guide";
+import { PinkiLean } from "./pinki-lean";
+import type { PinkiPose } from "@/types/number-journey";
 
 interface NumbersIntroProps {
   /** The welcome. Carried by the screen-reader line below, and written to be
@@ -14,11 +13,10 @@ interface NumbersIntroProps {
  * Pinki leaning into the picker, pointing a child who has never finished a
  * number at number 1.
  *
- * **She is an absolutely positioned layer inside the grid's card, not a
- * banner above it.** As a banner she cost 300px of vertical space at 320px,
- * which pushed the very numerals she points at off the bottom of the screen —
- * the guidance hid its own subject. Out of the flow she costs nothing: the
- * card is exactly the height it is without her.
+ * **The picture, the crop and the sizing all live in `PinkiLean`**, which the
+ * journey's `lead` stages use at the same scale. What stays here is the only
+ * thing that is genuinely about THIS page: which pose, and the screen-reader
+ * line that has to lead the card's reading order.
  *
  * **She overlaps the locked numerals on purpose, and that is safe by
  * construction.** This only ever renders when nothing has been finished,
@@ -38,20 +36,13 @@ interface NumbersIntroProps {
  * correction rather than the new artwork an earlier, upright-and-above
  * composition would have needed.
  *
- * **She is deliberately CROPPED by the card's right edge**, which is why the
- * card carries `overflow-hidden` and why she enters by sliding in from that
- * same edge: the crop has to read as her leaning into the page, not as a
- * picture that did not fit.
- *
- * **-3°, chosen against -5° and -7° in the browser.** The lean is small for
- * two reasons that point the same way: past about 5° she stops reading as
- * standing and starts reading as tipping over, and — counter-intuitively —
- * a DEEPER anti-clockwise lean aims the stick WORSE. Flattening it swings
- * the tip toward the bottom-left corner (7, 4) when the target is up and
- * left; the stick gets closer to number 1 as the lean approaches zero.
+ * **The lean gestures at the numerals; it does not strike number 1 exactly.**
+ * Counter-intuitively a DEEPER anti-clockwise lean aims the stick WORSE — it
+ * swings the tip toward the bottom-left corner (7, 4) when the target is up
+ * and left, so the stick gets closer to number 1 as the lean approaches zero.
  * Aiming it dead-on would need roughly +10° the other way, which tips her
- * backwards, away from the grid. So this gestures at the numerals rather
- * than striking number 1 exactly — which is what the reference does too.
+ * backwards, away from the grid. The reference this was built from is equally
+ * approximate. The angle itself lives in `PinkiLean`.
  */
 export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
   return (
@@ -63,35 +54,7 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
           announced once and not doubled by a description of the picture. */}
       <p className="sr-only">{line}</p>
 
-      <span
-        aria-hidden
-        /* Sized by the card's HEIGHT, not its width. The card's aspect ratio
-           changes a lot between a phone and a desktop, so a width percentage
-           would make her a different fraction of the card at every size; a
-           height percentage keeps her the same share of it everywhere.
-           `w-auto` + `max-w-none` on the image is what lets her run wider
-           than the card and be cropped by it — Tailwind's preflight caps
-           images at `max-width: 100%`, which would otherwise squash her
-           back inside instead.
-
-           `.anim-pinki-lean-in` animates `translate`, `.anim-breathe` on the
-           image animates `transform`, and `rotate` here is a third,
-           standalone property. All three compose rather than overwriting one
-           another — which is exactly why none of them is a hand-written
-           `transform`. */
-        className="anim-pinki-lean-in pointer-events-none absolute -bottom-[3%] -right-[26%] z-10 block h-[68%] rotate-[-3deg] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%]"
-      >
-        <Image
-          src={POSE_IMAGE[pose]}
-          alt=""
-          /* The painted size, not the file's 502x497 — next/image builds its
-             srcset from these, and declaring the file size makes it serve a
-             needlessly large image into a box this small. */
-          width={360}
-          height={357}
-          className="anim-breathe h-full w-auto max-w-none object-contain drop-shadow-[0_18px_26px_rgba(92,78,190,0.32)]"
-        />
-      </span>
+      <PinkiLean pose={pose} placement="picker" />
     </>
   );
 }
