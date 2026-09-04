@@ -26,9 +26,15 @@ export const POSE_IMAGE: Record<PinkiPose, string> = {
  * picker's own Pinki uses.
  */
 const PRESENCE = {
+  /* A size up on both breakpoints. She is the whole celebration screen now:
+     the stars have gone from it and the two ways onward sit above her, so
+     there is nothing left for her to crowd and every reason for her to be
+     the last, biggest thing on the page. `painted` follows the box and the
+     source PNG's own 502x497 aspect, so `next/image` neither upscales past
+     the asset nor serves one three times the size it draws. */
   hero: {
-    box: "h-36 w-36 sm:h-60 sm:w-60",
-    painted: { width: 211, height: 240 },
+    box: "h-48 w-48 sm:h-80 sm:w-80",
+    painted: { width: 320, height: 317 },
   },
   aside: {
     box: "h-16 w-16 sm:h-24 sm:w-24",
