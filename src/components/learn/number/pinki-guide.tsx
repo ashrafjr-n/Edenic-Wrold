@@ -120,21 +120,30 @@ export function PinkiGuide({
          it — a button half-covered by her arm. She is `pointer-events-none`,
          so this was only ever a paint-order problem; the buttons always
          answered a tap. */
-      <div className="relative z-20 flex w-[54%] max-w-md flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
+      <div className="relative z-20 flex w-[54%] max-w-md grow flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
         <p className="speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base">
           {line}
         </p>
 
-        {/* **The buttons sit low, well clear of her line.** They used to
-            follow the bubble on the column's own gap, which put the one thing
-            to press tight under the sentence asking for it, with Pinki
-            leaning across both. The band between them is what separates
-            "here is what to do" from "here is how to do it" — and on a phone
-            the column runs from the top, so there is nothing under them to
-            lose. Rendered only when the stage HAS actions, so a stage with
-            none (an unsolved quiz) never adds an empty box under the
-            bubble. */}
-        {children && <div className="mt-6 sm:mt-8">{children}</div>}
+        {/* **The buttons are pinned to the BOTTOM of the column, not hung
+            under the bubble.** `grow` on the column above makes it take all
+            the height the stage leaves, and `mt-auto` pushes the actions to
+            the far end of it — so the one thing to press sits low on the
+            screen, down beside Pinki, instead of tight under the sentence
+            asking for it with her leaning across both. A fixed margin was
+            tried first and was far too small to read as a move at all; the
+            distance has to come from the space that is actually free, which
+            changes with the stage and the screen. `pt-6` is only a floor, for
+            a stage whose activity is tall enough to leave almost none.
+            **`mb-16` on a phone is a deliberate lift back OFF the bottom** —
+            pinned flat against it the buttons sat on the bottom nav and read
+            as part of it. Desktop needs no lift: the route's own `sm:pb-20`
+            already leaves 120px under the column.
+            Rendered only when the stage HAS actions, so an unsolved quiz
+            never adds an empty box under the bubble. */}
+        {children && (
+          <div className="mb-16 mt-auto pt-6 sm:mb-0 sm:pt-8">{children}</div>
+        )}
       </div>
     );
   }
