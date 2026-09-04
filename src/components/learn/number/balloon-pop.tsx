@@ -15,17 +15,20 @@ interface BalloonPopProps {
 
 const BALLOON = "/assets/learn-with-pinki/other/ballon.png";
 
-/* One pink balloon asset, recoloured per position with `hue-rotate` — a row of
+/* One pink balloon asset, recoloured per position with `hue-rotate` — four
    different-coloured balloons out of a single file. The angles are picked to
-   land on colours that belong to this palette rather than sweeping the wheel. */
-const HUES = [0, 210, 80, 300, 140];
-const DRIFTS = ["3.2s", "3.8s", "3.4s", "4.1s", "3.6s"];
-const DELAYS = ["0s", "0.4s", "0.8s", "0.2s", "0.6s"];
+   land on colours that belong to this palette rather than sweeping the wheel.
+
+   Each list is read modulo its own length, so the layout can change the number
+   of balloons without any of these having to be resized with it. */
+const HUES = [0, 210, 80, 300];
+const DRIFTS = ["3.2s", "3.8s", "3.4s", "4.1s"];
+const DELAYS = ["0s", "0.4s", "0.8s", "0.2s"];
 
 /**
  * "Pop Number 1!" — the last challenge, as a game rather than a question.
  *
- * Identical in substance to a five-option multiple choice, and completely
+ * Identical in substance to a four-option multiple choice, and completely
  * different to be on the end of: the balloons drift, the right one bursts, and
  * a wrong one bobs away and comes back. A child who has just done four
  * teaching steps has earned something that feels like play.
@@ -59,7 +62,13 @@ export function BalloonPop({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+    /* A 2 x 2 BLOCK, not a wrapping row. Wrapping laid four balloons across
+       one line and dropped the fifth underneath on its own, which read as one
+       of them having been left out rather than as a set to choose from. A
+       fixed two-column grid says the same thing at every width, and it is
+       what fixes the choice count at four. `justify-items-center` keeps each
+       balloon centred in its cell as it drifts. */
+    <div className="grid grid-cols-2 justify-items-center gap-3 sm:gap-6">
       {choices.map((value, index) => {
         const isPopped = popped === value;
 
