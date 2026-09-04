@@ -115,7 +115,7 @@ export function PinkiLean({ pose, placement }: PinkiLeanProps) {
            upscaled one. */
         width={painted.width}
         height={painted.height}
-        className="anim-breathe h-full w-auto max-w-none object-contain drop-shadow-[0_18px_26px_rgba(92,78,190,0.32)]"
+        className="anim-breathe h-full w-auto max-w-none object-contain"
       />
     </span>
   );

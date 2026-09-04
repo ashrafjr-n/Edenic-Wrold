@@ -126,7 +126,7 @@ export function PinkiGuide({
       width={painted.width}
       height={painted.height}
       priority={presence !== "aside"}
-      className={`anim-breathe shrink-0 object-contain drop-shadow-[0_14px_18px_rgba(92,78,190,0.28)] ${box}`}
+      className={`anim-breathe shrink-0 object-contain ${box}`}
     />
   );
 
