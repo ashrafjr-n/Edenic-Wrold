@@ -1159,7 +1159,12 @@ button:disabled,
 .speech-bubble {
   position: relative;
   background: var(--surface);
-  border-radius: 1.5rem;
+  /* Was 1.5rem — at the bubble's usual one-line height that radius exceeds
+     half the box, so the browser clamps it to a full semicircle at both
+     ends with no flat edge left at all. The tail attaches along a flat
+     stretch of the border now instead of crossing a curve, which is what
+     let the curve visibly "step" around its base before. */
+  border-radius: 1.1rem;
   /* A pink outline in Pinki's own identity color — not a tinted fill (that
      was tried, and removed, as a page-background match; see the numbers
      journey notes in CLAUDE.md). A thin ring is what makes the bubble read as
@@ -1175,8 +1180,18 @@ button:disabled,
    (`::before`) and a smaller white one in front (`::after`), inset by the
    border's own width — so the tail reads as an outlined extension of the
    bubble's border rather than a plain white sliver that could belong to
-   anything. Bigger than the old single triangle too, so it survives at a
-   glance instead of needing to be looked for. */
+   anything.
+
+   **Proportioned wide-and-short, not tall-and-short, and overlapped DEEPLY
+   into the bubble.** An earlier version was taller than it reached (2rem
+   tall against under 1rem of actual reach, with barely 0.2rem hidden inside
+   the bubble) — screenshotted and confirmed to read exactly as a small flag
+   or a play-button chevron glued to the bubble's edge, not as a tail growing
+   out of it: the shallow overlap left the bubble's own rounded border
+   visibly stepping around the triangle's base instead of continuing under
+   it. The current shape reaches further than it is tall and hides more than
+   half its own size behind the bubble's edge, so there is no border seam
+   left to see. */
 .speech-bubble::before,
 .speech-bubble::after {
   content: "";
@@ -1189,16 +1204,16 @@ button:disabled,
 }
 
 .speech-bubble::before {
-  left: -0.95rem;
-  width: 1.15rem;
-  height: 2rem;
+  left: -0.7rem;
+  width: 1.45rem;
+  height: 1.1rem;
   background: var(--color-pinki);
 }
 
 .speech-bubble::after {
-  left: -0.6rem;
-  width: 0.8rem;
-  height: 1.5rem;
+  left: -0.55rem;
+  width: 1.15rem;
+  height: 0.8rem;
   background: var(--surface);
 }
 
@@ -1211,15 +1226,15 @@ button:disabled,
   }
 
   .speech-bubble::before {
-    top: -0.95rem;
-    width: 2rem;
-    height: 1.15rem;
+    top: -0.7rem;
+    width: 1.1rem;
+    height: 1.45rem;
   }
 
   .speech-bubble::after {
-    top: -0.6rem;
-    width: 1.5rem;
-    height: 0.8rem;
+    top: -0.55rem;
+    width: 0.8rem;
+    height: 1.15rem;
   }
 }
 
@@ -1227,25 +1242,59 @@ button:disabled,
    journey's `lead` stages, where she is life size against the right edge and
    the bubble sits in the column her crop leaves free. The tail has to point
    at her, so it flips to the other side and stays there at every width: she
-   is beside the bubble on a phone here, not above it. */
+   is beside the bubble on a phone here, not above it.
+
+   **Anchored toward the BOTTOM of the bubble, not its vertical center.** She
+   stands lower than the bubble, so a tail centred on the bubble's full
+   height pointed out level with its middle — over her head, not at her face —
+   on every stage whose line runs to two lines. Anchoring lower keeps the
+   tail close to where her face actually is regardless of how tall the
+   bubble grows. */
 .speech-bubble--left::before,
 .speech-bubble--left::after {
   left: auto;
-  top: 50%;
+  top: 66%;
   translate: 0 -50%;
   clip-path: polygon(0 0, 0 100%, 100% 50%);
 }
 
 .speech-bubble--left::before {
-  right: -0.95rem;
-  width: 1.15rem;
-  height: 2rem;
+  right: -0.7rem;
+  width: 1.45rem;
+  height: 1.1rem;
 }
 
 .speech-bubble--left::after {
-  right: -0.6rem;
+  right: -0.55rem;
+  width: 1.15rem;
+  height: 0.8rem;
+}
+
+/* The bubble when Pinki stands BELOW it instead of beside it — the `find`
+   stage, where `PinkiLean`'s `journeyCenter` placement puts her centred
+   under the quiz rather than cropped by an edge. Pointing `--left`'s tail
+   sideways here aimed it at empty air next to her rather than at her at all
+   (verified by screenshot) — a genuinely different direction, not a retuned
+   offset of `--left`, so it is its own modifier rather than a variable on
+   that one. */
+.speech-bubble--down::before,
+.speech-bubble--down::after {
+  left: 50%;
+  top: auto;
+  translate: -50% 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.speech-bubble--down::before {
+  bottom: -0.7rem;
+  width: 1.1rem;
+  height: 1.45rem;
+}
+
+.speech-bubble--down::after {
+  bottom: -0.55rem;
   width: 0.8rem;
-  height: 1.5rem;
+  height: 1.15rem;
 }
 
 /* ---------------------------------------------------------------
