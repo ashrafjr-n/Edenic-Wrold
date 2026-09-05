@@ -1176,65 +1176,71 @@ button:disabled,
     0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
 }
 
-/* The tail is TWO stacked triangles, not one: a bigger pink one behind
-   (`::before`) and a smaller white one in front (`::after`), inset by the
-   border's own width — so the tail reads as an outlined extension of the
-   bubble's border rather than a plain white sliver that could belong to
-   anything.
-
-   **Proportioned wide-and-short, not tall-and-short, and overlapped DEEPLY
-   into the bubble.** An earlier version was taller than it reached (2rem
-   tall against under 1rem of actual reach, with barely 0.2rem hidden inside
-   the bubble) — screenshotted and confirmed to read exactly as a small flag
-   or a play-button chevron glued to the bubble's edge, not as a tail growing
-   out of it: the shallow overlap left the bubble's own rounded border
-   visibly stepping around the triangle's base instead of continuing under
-   it. The current shape reaches further than it is tall and hides more than
-   half its own size behind the bubble's edge, so there is no border seam
-   left to see. */
+/* The tail is TWO stacked CSS border-triangles, not a clipped box: a bigger
+   pink one behind (`::before`) and a smaller white one in front (`::after`),
+   both anchored at the EXACT SAME flush edge (`left: 100%` / `right: 100%` /
+   `top: 100%` depending on direction) rather than at independently-offset
+   boxes. That single shared anchor is what actually matters here — an
+   earlier version built the tail from two clipped boxes positioned at
+   slightly different depths (their own offset AND their own width both
+   varied independently), so the smaller white layer's base sat shallower
+   than the bigger pink layer's base and never fully covered it: a strip of
+   solid pink showed at the base, right where the tail meets the bubble's own
+   fill, reading as a separate arrow-shaped piece glued on rather than one
+   continuous bubble. Anchoring both layers at the same edge and varying only
+   how far each REACHES (not where either one starts) means the smaller
+   layer's base always sits exactly on top of the bigger one's — no strip of
+   pink can ever show through. Each layer is `width:0; height:0` with one
+   colored border and the adjacent two transparent, the standard CSS
+   triangle technique — no `clip-path`, no SVG. */
 .speech-bubble::before,
 .speech-bubble::after {
   content: "";
   position: absolute;
   top: 50%;
   translate: 0 -50%;
-  /* A triangle rather than a rotated square: a rotated square pokes its
-     corners out past the bubble's rounded edge at this radius. */
-  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  right: 100%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
 }
 
+/* Points LEFT (portrait sits to the bubble's left): the colored side is the
+   RIGHT border — a border-triangle always points away from its transparent
+   sides, toward the one side left uncolored. */
 .speech-bubble::before {
-  left: -0.7rem;
-  width: 1.45rem;
-  height: 1.1rem;
-  background: var(--color-pinki);
+  border-width: 0.65rem 1rem 0.65rem 0;
+  border-right-color: var(--color-pinki);
 }
 
 .speech-bubble::after {
-  left: -0.55rem;
-  width: 1.15rem;
-  height: 0.8rem;
-  background: var(--surface);
+  border-width: 0.5rem 0.8rem 0.5rem 0;
+  border-right-color: var(--surface);
 }
 
 @media (width < 40rem) {
+  /* Portrait stacks ABOVE the bubble here, so the tail points UP instead —
+     colored BOTTOM border, anchored flush with the bubble's own top edge. */
   .speech-bubble::before,
   .speech-bubble::after {
+    top: auto;
+    right: auto;
+    bottom: 100%;
     left: 50%;
     translate: -50% 0;
-    clip-path: polygon(0 100%, 100% 100%, 50% 0);
   }
 
   .speech-bubble::before {
-    top: -0.7rem;
-    width: 1.1rem;
-    height: 1.45rem;
+    border-width: 0 0.65rem 1rem 0.65rem;
+    border-right-color: transparent;
+    border-bottom-color: var(--color-pinki);
   }
 
   .speech-bubble::after {
-    top: -0.55rem;
-    width: 0.8rem;
-    height: 1.15rem;
+    border-width: 0 0.5rem 0.8rem 0.5rem;
+    border-right-color: transparent;
+    border-bottom-color: var(--surface);
   }
 }
 
@@ -1244,6 +1250,9 @@ button:disabled,
    at her, so it flips to the other side and stays there at every width: she
    is beside the bubble on a phone here, not above it.
 
+   Points RIGHT: colored LEFT border, anchored flush with the bubble's own
+   right edge (`left: 100%`).
+
    **Anchored toward the BOTTOM of the bubble, not its vertical center.** She
    stands lower than the bubble, so a tail centred on the bubble's full
    height pointed out level with its middle — over her head, not at her face —
@@ -1252,22 +1261,21 @@ button:disabled,
    bubble grows. */
 .speech-bubble--left::before,
 .speech-bubble--left::after {
-  left: auto;
   top: 66%;
+  right: auto;
+  left: 100%;
   translate: 0 -50%;
-  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  border-color: transparent;
 }
 
 .speech-bubble--left::before {
-  right: -0.7rem;
-  width: 1.45rem;
-  height: 1.1rem;
+  border-width: 0.65rem 0 0.65rem 1rem;
+  border-left-color: var(--color-pinki);
 }
 
 .speech-bubble--left::after {
-  right: -0.55rem;
-  width: 1.15rem;
-  height: 0.8rem;
+  border-width: 0.5rem 0 0.5rem 0.8rem;
+  border-left-color: var(--surface);
 }
 
 /* The bubble when Pinki stands BELOW it instead of beside it — the `find`
@@ -1276,25 +1284,28 @@ button:disabled,
    sideways here aimed it at empty air next to her rather than at her at all
    (verified by screenshot) — a genuinely different direction, not a retuned
    offset of `--left`, so it is its own modifier rather than a variable on
-   that one. */
+   that one.
+
+   Points DOWN: colored TOP border, anchored flush with the bubble's own
+   bottom edge (`top: 100%`). */
 .speech-bubble--down::before,
 .speech-bubble--down::after {
+  top: 100%;
+  right: auto;
+  bottom: auto;
   left: 50%;
-  top: auto;
   translate: -50% 0;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-color: transparent;
 }
 
 .speech-bubble--down::before {
-  bottom: -0.7rem;
-  width: 1.1rem;
-  height: 1.45rem;
+  border-width: 1rem 0.65rem 0 0.65rem;
+  border-top-color: var(--color-pinki);
 }
 
 .speech-bubble--down::after {
-  bottom: -0.55rem;
-  width: 0.8rem;
-  height: 1.15rem;
+  border-width: 0.8rem 0.5rem 0 0.5rem;
+  border-top-color: var(--surface);
 }
 
 /* ---------------------------------------------------------------
