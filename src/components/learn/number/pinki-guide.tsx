@@ -59,6 +59,12 @@ interface PinkiGuideProps {
       journey keeps owning what its actions ARE and this only decides where
       they sit relative to her. */
   children?: ReactNode;
+  /** `lead` only: she is centred BELOW the bubble (the `find` stage's
+      `journeyCenter` placement) rather than cropped in from the right edge —
+      a genuinely different direction for the tail to point, not just a
+      retuned offset of the usual one, so the bubble column centres itself
+      too instead of hugging the left edge above her. */
+  centered?: boolean;
 }
 
 /**
@@ -89,6 +95,7 @@ export function PinkiGuide({
   line,
   presence = "lead",
   children,
+  centered = false,
 }: PinkiGuideProps) {
   if (presence === "none") return null;
 
@@ -120,8 +127,16 @@ export function PinkiGuide({
          it — a button half-covered by her arm. She is `pointer-events-none`,
          so this was only ever a paint-order problem; the buttons always
          answered a tap. */
-      <div className="relative z-20 flex w-[54%] max-w-md grow flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
-        <p className="speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base">
+      <div
+        className={`relative z-20 flex w-[54%] max-w-md grow flex-col gap-3 sm:w-[66%] sm:max-w-2xl sm:gap-4 ${
+          centered ? "items-center self-center" : "items-start self-start"
+        }`}
+      >
+        <p
+          className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base ${
+            centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left"
+          }`}
+        >
           {line}
         </p>
 

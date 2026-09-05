@@ -605,6 +605,7 @@ export function NumberJourney({
             pose={guide.pose}
             line={guide.line}
             presence={guide.presence}
+            centered={leanPlacement === "journeyCenter"}
           >
             {actions}
           </PinkiGuide>
