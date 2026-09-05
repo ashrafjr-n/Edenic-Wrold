@@ -41,3 +41,4 @@
 2026-09-02 update course backdrop
 2026-09-02 refactor hub copy
 2026-09-03 clean up button states
+2026-09-05 update card spacing
