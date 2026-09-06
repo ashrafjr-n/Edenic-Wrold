@@ -23,7 +23,7 @@ export const en = {
   nav: {
     home: "Home",
     learn: "Learn",
-    activities: "Activities",
+    play: "Activities",
     profile: "Profile",
     soon: "Soon",
     mainAriaLabel: "Main",

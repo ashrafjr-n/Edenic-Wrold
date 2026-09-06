@@ -14,13 +14,13 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 const ICON_SRC = {
   home: "/assets/png/home.png",
   learn: "/assets/png/learn.png",
-  activities: "/assets/png/activity.png",
+  play: "/assets/png/activity.png",
   profile: "/assets/png/profile.png",
 } as const;
 
 /* One optical size for all four, MEASURED from each PNG rather than eyeballed.
    The four glyphs fill their shared 512×512 canvas by very different amounts —
-   home 512×512 (a solid square), learn 512×392, activity 512×376, profile
+   home 512×512 (a solid square), learn 512×392, play 512×376, profile
    342×428 — so `.icon-mask`'s plain `mask-size: contain` renders four
    different sizes out of one 28×28 box. Each scale below is `512 / (the
    glyph's own longest side)`, which fits every glyph to the same square, and
@@ -40,7 +40,7 @@ const ICON_SRC = {
 const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
   home: "92%",
   learn: "100%",
-  activities: "100%",
+  play: "100%",
   profile: "120%",
 };
 
@@ -54,7 +54,7 @@ const iconVar = (id: keyof typeof ICON_SRC) =>
 /** App-style bottom tab bar — phone only (`sm:hidden`). Carries `MainNav`'s
     items (same `mainNav` data, same locked rules) but fixed to the viewport
     bottom instead of sitting in the header, the way a native app places its
-    primary navigation. Home/Learn/Activities move down here on a phone — see
+    primary navigation. Home/Learn/Play move down here on a phone — see
     `MainNav`, hidden below `sm` — and a fourth **Profile** tab joins them,
     which is the one thing on this bar `MainNav` has no counterpart for: it
     comes from `profileNav`, not `mainNav`, precisely so it stays out of the

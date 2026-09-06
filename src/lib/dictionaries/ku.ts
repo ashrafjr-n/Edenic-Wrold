@@ -24,7 +24,7 @@ export const ku: Dictionary = {
   nav: {
     home: "ماڵ",
     learn: "فێربوون",
-    activities: "چالاکی",
+    play: "چالاکی",
     profile: "پرۆفایل",
     soon: "بزووی",
     mainAriaLabel: "لیستا سەرەکی",
