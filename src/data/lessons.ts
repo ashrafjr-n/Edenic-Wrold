@@ -1,12 +1,12 @@
 import type { CharacterId } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
+/** `name`/`description` are translated content — see `dict.lessons` in the
+    dictionaries, not this file. */
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
     {
       id: "numbers",
-      name: "Learn Numbers",
-      description: "Learn numbers 1 to 9",
       image: "/assets/learn-with-pinki/pinki-numbers.png",
       theme: {
         accent: "var(--color-subject-numbers)",
@@ -17,8 +17,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
     },
     {
       id: "letters",
-      name: "Learn Letters",
-      description: "Learn the alphabet from A to Z",
       image: "/assets/learn-with-pinki/pinki-letters.png",
       theme: {
         accent: "var(--color-subject-letters)",
@@ -29,8 +27,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
     },
     {
       id: "colors",
-      name: "Learn Colors",
-      description: "Discover colors all around us",
       image: "/assets/learn-with-pinki/pinki-colors.png",
       theme: {
         accent: "var(--color-subject-colors)",

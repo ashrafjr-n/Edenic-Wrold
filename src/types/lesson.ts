@@ -8,11 +8,10 @@ export interface LessonTheme {
   accentDark: string;
 }
 
+/** `name`/`description` are translated content and live in the dictionaries
+    (`dict.lessons[id]`) instead of here. */
 export interface Lesson {
   id: LessonId;
-  name: string;
-  /** One line under the lesson name on its card. */
-  description: string;
   image: string;
   theme: LessonTheme;
   /** How many items this lesson actually contains — drives the "n / total"

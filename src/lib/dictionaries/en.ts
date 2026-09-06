@@ -53,8 +53,18 @@ export const en = {
     pathsHeading: "Where would you like to start?",
   },
   homePaths: {
-    learn: { title: "Learn", action: "Start learning" },
-    activities: { title: "Activities", action: "Start playing" },
+    learn: {
+      title: "Learn",
+      description:
+        "Pick a friend and work through their lessons — a short video, the shape itself, then tracing and a few questions.",
+      action: "Start learning",
+    },
+    activities: {
+      title: "Activities",
+      description:
+        "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
+      action: "Start playing",
+    },
   },
   learnPicker: {
     headingLearn: "Learn.",
