@@ -24,7 +24,7 @@ export const ku: Dictionary = {
   nav: {
     home: "ماڵ",
     learn: "فێربوون",
-    play: "چالاکی",
+    play: "یاری",
     profile: "پرۆفایل",
     soon: "بزووی",
     mainAriaLabel: "لیستا سەرەکی",
@@ -69,7 +69,7 @@ export const ku: Dictionary = {
       action: "دەستبکە ب فێربوونێ",
     },
     activities: {
-      title: "چالاکی",
+      title: "یاری",
       description:
         "تیپان ب تلییا خۆ بشوپینە، شێوەیان وەکهەڤ بکە، یا جودا بدۆزە — چالاکیێن بچویک پشتی هەر وانەیەکێ.",
       action: "دەستبکە ب یاریێ",
@@ -150,7 +150,7 @@ export const ku: Dictionary = {
     puzzleSubtitle: "پازلان تەمام بکە!",
     memoryTitle: "بیرا خۆ تاقی بکە",
     memorySubtitle: "هەڤالێن وەکهەڤ بدۆزە!",
-    backToActivities: "ڤەگەڕان بۆ چالاکییان",
+    backToActivities: "ڤەگەڕان بۆ یاریان",
     puzzleCtaButton: "دەمێ چێکرنا وێنەیان",
     puzzleCtaAlt: "پارچەیێن پازلێ یێن ڕەنگین ل سەر کارتێ بەلاڤبووی",
     memoryCtaButton: "بیرا خۆ تاقی بکە",
