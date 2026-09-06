@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { findMemoryLevel, memoryLevels } from "@/data/memory-levels";
 import { pageAccent } from "@/components/ui/back-button";
 import { MemoryBoard } from "@/components/activities/memory/memory-board";
+import { getDictionary } from "@/lib/locale";
 
 export function generateStaticParams() {
   return memoryLevels.map((level) => ({ level: String(level.value) }));
@@ -13,6 +14,7 @@ interface MemoryLevelPageProps {
 
 export default async function MemoryLevelPage({ params }: MemoryLevelPageProps) {
   const { level: levelId } = await params;
+  const dict = await getDictionary();
   const level = findMemoryLevel(Number(levelId));
 
   /* Which levels are open lives in the progress store, which is client-side,
@@ -40,7 +42,7 @@ export default async function MemoryLevelPage({ params }: MemoryLevelPageProps) 
       {/* The header shows live state (the clock), so the whole screen —
           back button included — lives inside the client component that has
           it. */}
-      <MemoryBoard level={level} nextHref={nextHref} />
+      <MemoryBoard level={level} nextHref={nextHref} dict={dict} />
     </main>
   );
 }

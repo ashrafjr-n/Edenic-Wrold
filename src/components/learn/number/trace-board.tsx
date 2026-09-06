@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
 import { scoreTrace, strokeToPath } from "@/lib/trace-score";
-import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface TraceBoardProps {

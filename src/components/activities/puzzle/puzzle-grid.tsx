@@ -7,9 +7,12 @@ import { Check, Lock } from "lucide-react";
 import type { PuzzleStage } from "@/types/puzzle";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface PuzzleGridProps {
   stages: PuzzleStage[];
+  dict: Dictionary;
 }
 
 const ITEM_DELAY = 0.15;
@@ -46,7 +49,7 @@ type VeilVars = CSSProperties & { "--veil-tone"?: string };
  * which is exactly what the server rendered — anything else is a hydration
  * mismatch.
  */
-export function PuzzleGrid({ stages }: PuzzleGridProps) {
+export function PuzzleGrid({ stages, dict }: PuzzleGridProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
@@ -73,7 +76,12 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
 
   return (
     <div>
-      <ActivityProgress label="Puzzles" done={finished} total={stages.length} />
+      <ActivityProgress
+        label={dict.activities.puzzlesLabel}
+        done={finished}
+        total={stages.length}
+        ariaLabel={format(dict.ui.completedAria, { label: dict.activities.puzzlesLabel })}
+      />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
         {cast.map(({ stage, index, open, done }) => {
@@ -146,7 +154,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
                       "--clay-edge": "var(--color-go-dark)",
                     } as ClayVars
                   }
-                  aria-label="Finished"
+                  aria-label={dict.activities.finished}
                 >
                   <Check
                     className="h-3.5 w-3.5 text-white sm:h-5 sm:w-5"
@@ -162,7 +170,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
                 aria-hidden
                 className="stage-chip absolute bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5"
               >
-                <span className="stage-chip-word">Level</span>
+                <span className="stage-chip-word">{dict.activities.levelWord}</span>
                 {stage.value}
               </span>
             </>
@@ -171,7 +179,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
           const card = open ? (
             <Link
               href={`/activities/puzzle/${stage.value}`}
-              aria-label={`Start puzzle ${stage.value}`}
+              aria-label={format(dict.activities.startPuzzleAria, { value: stage.value })}
               className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
               style={style}
             >
@@ -179,7 +187,7 @@ export function PuzzleGrid({ stages }: PuzzleGridProps) {
             </Link>
           ) : (
             <span
-              aria-label={`Puzzle ${stage.value}, locked`}
+              aria-label={format(dict.activities.lockedPuzzleAria, { value: stage.value })}
               className="card clay anim-rise-in relative block aspect-square overflow-hidden"
               style={style}
             >

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PuzzleCta } from "@/components/activities/puzzle-cta";
 import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
+import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Activities — Edenic World",
@@ -29,16 +30,20 @@ const ITEM_STAGGER = 0.12;
  * pause long enough to actually read as one-then-the-other rather than a
  * near-simultaneous flicker.
  */
-export default function ActivitiesPage() {
+export default async function ActivitiesPage() {
+  const dict = await getDictionary();
+
   return (
     <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 sm:py-14">
       <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:grid-cols-2">
         <PuzzleCta
+          dict={dict}
           className="anim-rise-in"
           style={{ animationDelay: `${ITEM_DELAY}s` }}
         />
 
         <MemoryMatchCta
+          dict={dict}
           className="anim-rise-in"
           style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
         />

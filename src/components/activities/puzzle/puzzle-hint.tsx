@@ -6,8 +6,11 @@ import Image from "next/image";
 import { Lightbulb, SkipForward, X } from "lucide-react";
 import type { PuzzlePicture } from "@/types/puzzle";
 import { Button3D } from "@/components/ui/button-3d";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface PuzzleHintProps {
+  dict: Dictionary["activities"];
   picture: PuzzlePicture;
   /** How many "Help" presses this stage has left. At zero the button is
       disabled rather than hidden — a child can see that help existed and has
@@ -34,7 +37,7 @@ interface PuzzleHintProps {
  * its siblings inside that header rather than the page, and the board and
  * tray drew straight over the top of it.
  */
-export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
+export function PuzzleHint({ picture, helpsLeft, onHelp, dict }: PuzzleHintProps) {
   /* No "have we mounted yet" flag: `open` starts false on the server AND on
      the first client render, and only a click can set it — by which point
      `document` certainly exists. So the portal is never reached during SSR
@@ -67,7 +70,7 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="The finished picture"
+      aria-label={dict.theFinishedPicture}
       /* The scrim closes it too — a child who taps anywhere should get back
          to the puzzle rather than be trapped. */
       onClick={() => setOpen(false)}
@@ -116,11 +119,11 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
             tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
             onClick={help}
             disabled={helpsLeft <= 0}
-            aria-label={`Help — put one piece in place. ${helpsLeft} left`}
+            aria-label={format(dict.helpButtonAria, { left: helpsLeft })}
             className="px-5 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg"
           >
             <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
-            Help
+            {dict.help}
             {/* The three presses, counted down where the child is looking
                 when they spend one. */}
             <span className="rounded-full bg-white/25 px-2 py-0.5 text-sm font-bold sm:text-base">
@@ -141,7 +144,7 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
             className="btn3d--clay-white px-5 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg"
           >
             <SkipForward className="h-5 w-5 fill-current" strokeWidth={2} />
-            Skip
+            {dict.skip}
           </Button3D>
         </div>
 
@@ -157,7 +160,7 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
           <Button3D
             tone={{ face: "var(--accent)", edge: "var(--accent-dark)" }}
             onClick={() => setOpen(false)}
-            aria-label="Close and go back to the puzzle"
+            aria-label={dict.closeHint}
             className="h-14 w-14 sm:h-16 sm:w-16"
           >
             <X className="h-7 w-7 sm:h-8 sm:w-8" strokeWidth={3.25} />
@@ -184,7 +187,7 @@ export function PuzzleHint({ picture, helpsLeft, onHelp }: PuzzleHintProps) {
           text: "var(--color-ink-fixed)",
         }}
         onClick={() => setOpen(true)}
-        aria-label="Hints — see the finished picture"
+        aria-label={dict.hintsButton}
         className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
       >
         <Lightbulb className="h-6 w-6 fill-current sm:h-7 sm:w-7" strokeWidth={2} />

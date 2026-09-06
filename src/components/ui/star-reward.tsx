@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 /** `reward` is the celebration screen's own size; `compact` is the summary
     row that sits under a numeral in a grid. Only the scale differs — what
@@ -10,6 +12,7 @@ interface StarRewardProps {
       still shows three empty slots, so a child can see what is on offer. */
   stars: number;
   size?: StarSize;
+  dict: Dictionary["ui"];
 }
 
 const MAX_STARS = 3;
@@ -37,14 +40,14 @@ const SIZES: Record<StarSize, { row: string; star: string }> = {
  * grid of unfinished numbers it would say nothing about there being stars to
  * win at all.
  */
-export function StarReward({ stars, size = "reward" }: StarRewardProps) {
+export function StarReward({ stars, size = "reward", dict }: StarRewardProps) {
   const scale = SIZES[size];
 
   return (
     <div
       className={`flex items-end ${scale.row}`}
       role="img"
-      aria-label={`${stars} out of ${MAX_STARS} stars`}
+      aria-label={format(dict.starsAria, { stars, max: MAX_STARS })}
     >
       {Array.from({ length: MAX_STARS }, (_, index) => {
         const earned = index < stars;

@@ -6,9 +6,12 @@ import { Check, Lock } from "lucide-react";
 import type { MemoryLevel, MemoryTone } from "@/types/memory";
 import { memoryKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface MemoryGridProps {
   levels: MemoryLevel[];
+  dict: Dictionary;
 }
 
 const ITEM_DELAY = 0.15;
@@ -83,7 +86,7 @@ type ChipVars = CSSProperties & {
  * localStorage it renders the nothing-finished-yet view, which is exactly
  * what the server rendered; anything else is a hydration mismatch.
  */
-export function MemoryGrid({ levels }: MemoryGridProps) {
+export function MemoryGrid({ levels, dict }: MemoryGridProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
@@ -105,10 +108,11 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
   return (
     <div>
       <ActivityProgress
-        label="Levels"
+        label={dict.activities.levelsLabel}
         done={finished}
         total={levels.length}
         tone={GOLD}
+        ariaLabel={format(dict.ui.completedAria, { label: dict.activities.levelsLabel })}
       />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
@@ -166,7 +170,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                       "--clay-edge": "var(--color-go-dark)",
                     } as ClayVars
                   }
-                  aria-label="Finished"
+                  aria-label={dict.activities.finished}
                 >
                   <Check
                     className="h-3.5 w-3.5 text-white sm:h-5 sm:w-5"
@@ -191,7 +195,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                   } as ChipVars
                 }
               >
-                <span className="stage-chip-word">Level</span>
+                <span className="stage-chip-word">{dict.activities.levelWord}</span>
                 {level.value}
               </span>
 
@@ -215,7 +219,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
                   className="absolute right-1.5 top-1.5 rounded-full px-2 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-[var(--color-ink)] shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:right-2.5 sm:top-2.5 sm:px-2.5 sm:text-xs"
                   style={{ backgroundColor: "var(--color-gold-glow)" }}
                 >
-                  Next
+                  {dict.activities.next}
                 </span>
               )}
             </>
@@ -224,7 +228,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
           const card = open ? (
             <Link
               href={`/activities/memory-match/${level.value}`}
-              aria-label={`Start level ${level.value} — ${level.pairs} pairs`}
+              aria-label={format(dict.activities.startLevelAria, { value: level.value, pairs: level.pairs })}
               className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
               style={style}
             >
@@ -232,7 +236,7 @@ export function MemoryGrid({ levels }: MemoryGridProps) {
             </Link>
           ) : (
             <span
-              aria-label={`Level ${level.value}, locked`}
+              aria-label={format(dict.activities.lockedLevelAria, { value: level.value })}
               className="card clay anim-rise-in relative block aspect-square overflow-hidden"
               style={style}
             >

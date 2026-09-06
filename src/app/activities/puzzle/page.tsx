@@ -8,6 +8,7 @@ import {
   type HeadingChip,
 } from "@/components/ui/heading-mark";
 import { PuzzleGrid } from "@/components/activities/puzzle/puzzle-grid";
+import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Puzzles — Edenic World",
@@ -23,7 +24,9 @@ const CHIPS: HeadingChip[] = [
   { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
 ].map((tone, index) => ({ ...tone, ...HEADING_CHIP_SHAPE[index] }));
 
-export default function PuzzleStagesPage() {
+export default async function PuzzleStagesPage() {
+  const dict = await getDictionary();
+
   return (
     <main
       className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
@@ -42,7 +45,7 @@ export default function PuzzleStagesPage() {
               Tailwind `absolute` utility on the button itself silently
               loses and it stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities" label="Back to Activities" />
+            <BackButton href="/activities" label={dict.activities.backToActivities} />
           </span>
 
           <HeadingMark chips={CHIPS} icon={Puzzle} />
@@ -56,20 +59,20 @@ export default function PuzzleStagesPage() {
           style={{ animationDelay: "0.25s" }}
         >
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
-            Puzzle Time
+            {dict.activities.puzzleTitle}
           </h1>
           {/* Deliberately a step down from the `h1` in BOTH size and weight —
               it is the one line telling a child what the page is for, not a
               second heading. At `text-base sm:text-lg` it sat close enough to
               the title that the whole head read as heavy. */}
           <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
-            Complete the puzzles!
+            {dict.activities.puzzleSubtitle}
           </p>
         </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
-        <PuzzleGrid stages={puzzleStages} />
+        <PuzzleGrid stages={puzzleStages} dict={dict} />
       </div>
     </main>
   );

@@ -9,8 +9,11 @@ import {
   PuzzleBoard,
   type PuzzleBoardHandle,
 } from "@/components/activities/puzzle/puzzle-board";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface PuzzlePlayProps {
+  dict: Dictionary;
   stage: number;
   picture: PuzzlePicture;
   grid: PuzzleGrid;
@@ -42,6 +45,7 @@ export function PuzzlePlay({
   grid,
   nextHref,
   upright,
+  dict,
 }: PuzzlePlayProps) {
   const board = useRef<PuzzleBoardHandle>(null);
   const [helpsLeft, setHelpsLeft] = useState(HELP_LIMIT);
@@ -65,12 +69,12 @@ export function PuzzlePlay({
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
-          <BackButton href="/activities/puzzle" label="Back to the puzzles" />
+          <BackButton href="/activities/puzzle" label={dict.activities.backToPuzzles} />
 
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <LevelBadge value={stage} label={`Puzzle ${stage}`} />
+            <LevelBadge value={stage} label={format(dict.activities.puzzleLabel, { value: stage })} />
 
-            <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} />
+            <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} dict={dict.activities} />
           </div>
         </div>
       </div>
@@ -86,6 +90,7 @@ export function PuzzlePlay({
           picture={picture}
           grid={grid}
           nextHref={nextHref}
+          dict={dict}
         />
       </div>
     </>

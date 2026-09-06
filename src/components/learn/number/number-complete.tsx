@@ -162,7 +162,7 @@ export function NumberComplete({
       >
         <Image
           src={image}
-          alt={`The number ${value}`}
+          alt={format(dict.numberValue, { value })}
           fill
           sizes="(min-width: 640px) 11rem, 9rem"
           draggable={false}
