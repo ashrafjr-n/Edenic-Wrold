@@ -3,8 +3,7 @@ import type { CountActivityConfig } from "@/types/count-activity";
 const DEFAULT_COUNT_ACTIVITY: CountActivityConfig = {
   kind: "give",
   icon: "/assets/icons/apple.png",
-  itemLabel: "apple",
-  itemLabelAr: "تفاحة",
+  itemLabel: { en: "apple", ar: "تفاحة", ku: "سێڤ" },
 };
 
 /**
@@ -21,8 +20,7 @@ const countActivityByValue: Record<number, CountActivityConfig> = {
   2: {
     kind: "give",
     icon: "/assets/learn-with-pinki/other/blue-flower.png",
-    itemLabel: "flower",
-    itemLabelAr: "زهرة",
+    itemLabel: { en: "flower", ar: "زهرة", ku: "گول" },
   },
   4: { kind: "complete" },
   5: { kind: "path", numbers: [3, 4, 5, 6, 7] },

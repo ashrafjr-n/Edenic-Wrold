@@ -19,7 +19,8 @@ const WORDS: Record<number, string> = {
 /** How each numeral is written, in stroke order — read out while Pinki draws
     it. Only the numbers whose journey has been designed are written by hand;
     the rest fall back to a generic line rather than a wrong one. English
-    only — `scriptForAr` below has its own copy (`dict.pinki.strokeHint1`). */
+    only — `scriptFromDict` below reads each locale's own copy
+    (`dict.pinki.strokeHint1`). */
 const STROKE_HINTS: Record<number, string> = {
   1: "A little flag... then straight down!",
 };
@@ -42,7 +43,7 @@ function countLine(value: number, word: string): string {
 
   switch (activity.kind) {
     case "give":
-      return `Pick ${word.toUpperCase()} ${pluralize(activity.itemLabel, value)}!`;
+      return `Pick ${word.toUpperCase()} ${pluralize(activity.itemLabel.en, value)}!`;
     case "complete":
       return `Complete Number ${value}!`;
     case "path":
@@ -55,8 +56,8 @@ function countLine(value: number, word: string): string {
 /**
  * Pinki's lines for one number, in English — the site's original
  * composition, byte-for-byte unchanged (the English locale must never
- * change; see CLAUDE.md's language switcher conventions). `scriptForAr`
- * below is the Arabic counterpart, composed separately rather than through
+ * change; see CLAUDE.md's language switcher conventions). `scriptFromDict`
+ * below covers every OTHER locale, composed separately rather than through
  * these same helpers, since English pluralization/casing rules don't apply.
  *
  * Short and spoken, not written: she is talking to a child, so a line is a
@@ -73,7 +74,7 @@ function scriptForEn(value: number): NumberScript {
      "How many apple did we pick?" on every number whose activity is `give`
      with a target of one. */
   const items =
-    activity.kind === "give" ? pluralize(activity.itemLabel, 2) : "";
+    activity.kind === "give" ? pluralize(activity.itemLabel.en, 2) : "";
 
   return {
     word,
@@ -96,17 +97,25 @@ function scriptForEn(value: number): NumberScript {
 }
 
 /**
- * Pinki's lines for one number, in Arabic. The number WORD itself
- * (`WORDS[value]`, e.g. "One") is the taught content and never translates —
- * only the sentence around it does, per CLAUDE.md's language switcher
- * conventions. Arabic dual/plural noun agreement is not modelled (see
- * `ar.ts`'s doc comment) — `countGive`/`countHow` use the bare digit and the
- * item's singular Arabic word regardless of count.
+ * Pinki's lines for one number in every locale EXCEPT English, composed from
+ * that locale's own `dict.pinki` templates. There is no per-language branch
+ * here on purpose: Arabic and Badini Kurdish differ only in the strings, so
+ * a third right-to-left language needs a dictionary and nothing else.
+ *
+ * The number WORD itself (`WORDS[value]`, e.g. "One") is the taught content
+ * and never translates — only the sentence around it does, per CLAUDE.md's
+ * language switcher conventions. Noun agreement after a numeral is not
+ * modelled in either language (see each dictionary's doc comment):
+ * `countGive`/`countHow` use the bare digit and the item's plain singular.
  */
-function scriptForAr(value: number, pinki: Dictionary["pinki"]): NumberScript {
+function scriptFromDict(
+  value: number,
+  locale: Locale,
+  pinki: Dictionary["pinki"],
+): NumberScript {
   const word = WORDS[value] ?? String(value);
   const activity = countActivityFor(value);
-  const itemLabel = activity.kind === "give" ? activity.itemLabelAr : "";
+  const itemLabel = activity.kind === "give" ? activity.itemLabel[locale] : "";
 
   const countTemplate =
     activity.kind === "give"
@@ -138,5 +147,5 @@ export function scriptFor(
   locale: Locale,
   dict: Dictionary,
 ): NumberScript {
-  return locale === "ar" ? scriptForAr(value, dict.pinki) : scriptForEn(value);
+  return locale === "en" ? scriptForEn(value) : scriptFromDict(value, locale, dict.pinki);
 }

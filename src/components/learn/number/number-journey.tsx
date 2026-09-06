@@ -109,11 +109,10 @@ export function NumberJourney({
      value it's next to, e.g. "تعلم مع Pinki" rendering as "Pinki تعلم مع". */
   const dir = dirFor(locale);
   const countActivity = countActivityFor(value);
-  const itemLabel = locale === "ar" && countActivity.kind === "give"
-    ? countActivity.itemLabelAr
-    : countActivity.kind === "give"
-      ? countActivity.itemLabel
-      : "";
+  /* The tray's own word for its item, in whatever language is on. One lookup
+     rather than a per-locale branch — see `types/count-activity.ts`. */
+  const itemLabel =
+    countActivity.kind === "give" ? countActivity.itemLabel[locale] : "";
 
   const [stage, setStage] = useState<JourneyStage>("discover");
   /* One flag across every stage: false is "still working", true is "passed —

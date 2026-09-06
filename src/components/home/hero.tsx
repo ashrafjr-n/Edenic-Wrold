@@ -2,16 +2,18 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { getDictionary, getLocale } from "@/lib/locale";
-import { dirFor } from "@/lib/format-dict";
+import { dirFor, isRtl } from "@/lib/format-dict";
 
 export async function Hero() {
   const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
-  /* The one deliberate layout change for Arabic (see CLAUDE.md's language
-     switcher conventions): on desktop the hero scene mirrors from the right
-     edge to the left, and the copy column mirrors with it — the two aren't
-     independently positioned, the column's `-ml-16`/`justify-start` only
-     make sense because the image sits on the opposite side. */
-  const isAr = locale === "ar";
+  /* The one deliberate layout change for a right-to-left locale (see
+     CLAUDE.md's language switcher conventions): on desktop the hero scene
+     mirrors from the right edge to the left, and the copy column mirrors with
+     it — the two aren't independently positioned, the column's
+     `-ml-16`/`justify-start` only make sense because the image sits on the
+     opposite side. Keyed off DIRECTION, not off `"ar"`, so Badini Kurdish
+     mirrors too without a second branch. */
+  const rtl = isRtl(locale);
 
   return (
     /* No negative margin any more: the header is a solid white bar, so running
@@ -24,7 +26,7 @@ export async function Hero() {
           `.hero-clip` cuts it to a wavy silhouette — a real edge, not a fade. */}
       <div
         className={`hero-clip relative h-[240px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:h-full lg:w-[70%] ${
-          isAr ? "hero-clip--rtl lg:left-0" : "lg:right-0"
+          rtl ? "hero-clip--rtl lg:left-0" : "lg:right-0"
         }`}
       >
         {/* `alt` is an Arabic sentence with "Edenic World" inside it and it
@@ -46,7 +48,7 @@ export async function Hero() {
 
       <div className="relative mx-auto flex max-w-7xl flex-col px-4 sm:px-8 lg:min-h-[32rem] lg:justify-center">
         <div
-          className={`max-w-xl text-center lg:text-left ${isAr ? "lg:-mr-16 lg:ml-auto lg:text-right" : "lg:-ml-16"}`}
+          className={`max-w-xl text-center lg:text-left ${rtl ? "lg:-mr-16 lg:ml-auto lg:text-right" : "lg:-ml-16"}`}
         >
           <h1 className="anim-drop-in text-5xl font-bold leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-6xl lg:text-7xl">
             <span className="text-[var(--color-gold)]">{dict.home.heroWelcome}</span>
@@ -70,7 +72,7 @@ export async function Hero() {
           </p>
 
           <div
-            className={`anim-fade-up mt-8 flex justify-center ${isAr ? "lg:justify-end" : "lg:justify-start"}`}
+            className={`anim-fade-up mt-8 flex justify-center ${rtl ? "lg:justify-end" : "lg:justify-start"}`}
             style={{ animationDelay: "0.35s" }}
           >
             <Button3D
