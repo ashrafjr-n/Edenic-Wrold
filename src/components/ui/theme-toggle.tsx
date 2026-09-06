@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { useTheme } from "@/store/theme";
@@ -17,6 +18,10 @@ import { useTheme } from "@/store/theme";
  * Dark mode is site-wide (`ThemeSync` syncs `theme` onto `<html
  * data-theme>`) — toggling this repaints every page, not just the one
  * you're on.
+ *
+ * The icon spins a full turn on every press, the chip itself staying put —
+ * the same acknowledgement the language chip's quarter turn gives, and the
+ * moment the Moon becomes the Sun is hidden inside it.
  */
 export function ThemeToggle() {
   const theme = useTheme((state) => state.theme);
@@ -27,6 +32,10 @@ export function ThemeToggle() {
      disagree with that first paint and throw a hydration error, same rule
      `store/progress.ts` documents for its own `hydrated` flag. */
   const isDark = hydrated && theme === "dark";
+  /* Counted rather than derived from `theme`, so the icon keeps turning the
+     SAME way on every press. A `rotate` read off the theme can only alternate
+     between two values, which winds back on every second press. */
+  const [turns, setTurns] = useState(0);
 
   return (
     <Button3D
@@ -38,13 +47,26 @@ export function ThemeToggle() {
          earlier version swapped this to a gold face once dark mode turned
          on; reverted, don't reintroduce it. */
       className="btn3d--icon-accent h-11 w-11 shrink-0"
-      onClick={toggleTheme}
+      onClick={() => {
+        toggleTheme();
+        setTurns((value) => value + 1);
+      }}
     >
-      {isDark ? (
-        <Sun className="h-5 w-5" strokeWidth={2.25} />
-      ) : (
-        <Moon className="h-5 w-5" strokeWidth={2.25} />
-      )}
+      {/* `inline-flex`, not a bare `<span>`: a transform on a non-replaced
+          INLINE element does nothing at all, the same trap
+          `.memory-card-inner` documents. `rotate` is its own property in
+          Tailwind v4, so this composes with `.btn3d:active`'s press instead
+          of overwriting it, and v4's `transition-transform` covers it. */}
+      <span
+        className="inline-flex transition-transform duration-500 ease-out"
+        style={{ rotate: `${turns * 360}deg` }}
+      >
+        {isDark ? (
+          <Sun className="h-5 w-5" strokeWidth={2.25} />
+        ) : (
+          <Moon className="h-5 w-5" strokeWidth={2.25} />
+        )}
+      </span>
     </Button3D>
   );
 }
