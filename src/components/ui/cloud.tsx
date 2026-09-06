@@ -2,14 +2,17 @@ import type { CSSProperties } from "react";
 
 export type CloudSize = "sm" | "md" | "lg";
 /**
- * Which silhouette. 1–3 are puffy clouds (20:11) so a sky full of them isn't
- * one shape repeated; **4 is a wide, flat BANK (40:11)** — a different kind
- * of object, not a fourth puff. Use it for a cloud that has to span
- * something: a puff stretched that wide shows only its middle lobe and reads
- * as a white dome. It carries its own aspect ratio, so don't assume every
- * variant is interchangeable in a fixed-ratio box.
+ * Which silhouette, so a sky full of clouds isn't one shape repeated. All
+ * three share the 20:11 box `.cloud` locks its aspect ratio to.
+ *
+ * A fourth existed for one round — a wide, flat BANK at 40:11, for a cloud
+ * that had to span a whole card, since a puff stretched that wide shows only
+ * its middle lobe and reads as a white dome. It went when the card that
+ * needed it was redesigned. Rebuild it (shape token, `aspect-ratio`, its own
+ * lobe highlights) if something has to span like that again — but a row of
+ * separate puffs is usually the better answer.
  */
-export type CloudVariant = 1 | 2 | 3 | 4;
+export type CloudVariant = 1 | 2 | 3;
 export type CloudTint = "white" | "sky" | "pink" | "lavender";
 
 interface CloudProps {
