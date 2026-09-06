@@ -155,7 +155,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
               sets `position: relative` and is UNLAYERED, so a Tailwind
               `absolute` utility on the button itself silently loses. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities/memory-match" label={dict.activities.backToLevels} />
+            <BackButton href="/play/memory-match" label={dict.activities.backToLevels} />
           </span>
 
           {/* Which level this is, facing the back button across the row —

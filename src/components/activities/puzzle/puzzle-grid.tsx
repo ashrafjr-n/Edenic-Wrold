@@ -178,7 +178,7 @@ export function PuzzleGrid({ stages, dict }: PuzzleGridProps) {
 
           const card = open ? (
             <Link
-              href={`/activities/puzzle/${stage.value}`}
+              href={`/play/puzzle/${stage.value}`}
               aria-label={format(dict.activities.startPuzzleAria, { value: stage.value })}
               className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
               style={style}

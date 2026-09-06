@@ -78,7 +78,7 @@ export function MemoryMatchCta({
                exactly how the bug hid until now. */
             text: "var(--color-ink-fixed)",
           }}
-          href="/activities/memory-match"
+          href="/play/memory-match"
           className="px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
         >
           <Brain className="h-5 w-5" strokeWidth={2} />

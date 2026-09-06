@@ -30,7 +30,7 @@ export interface PuzzleGrid {
 }
 
 export interface PuzzleStage {
-  /** 1–9. Also the URL segment under `/activities/puzzle`. */
+  /** 1–9. Also the URL segment under `/play/puzzle`. */
   value: number;
   tone: PuzzleTone;
   /** Undefined until that stage's art exists. A stage with no picture stays

@@ -25,7 +25,7 @@ export function itemKey(
 }
 
 /** Puzzles sit outside the character → lesson → item tree (they live under
-    `/activities`), but they are the same thing to the store: one key, best
+    `/play`), but they are the same thing to the store: one key, best
     score wins, one place completion lives. */
 export function puzzleKey(stage: number): ItemKey {
   return `puzzle.${stage}`;

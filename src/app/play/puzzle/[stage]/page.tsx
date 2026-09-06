@@ -33,8 +33,8 @@ export default async function PuzzleStagePage({
   const index = puzzleStages.indexOf(stage);
   const next = puzzleStages[index + 1];
   const nextHref = next?.picture
-    ? `/activities/puzzle/${next.value}`
-    : "/activities/puzzle";
+    ? `/play/puzzle/${next.value}`
+    : "/play/puzzle";
 
   /* A stage with an upright picture has to fit its board AND its heap of loose
      pieces on one phone screen — a child who has to scroll between the two

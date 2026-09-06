@@ -4,8 +4,8 @@ import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
 import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
-  title: "Activities — Edenic World",
-  description: "Fun videos and hands-on activities for kids at Edenic World.",
+  title: "Play — Edenic World",
+  description: "Puzzles and memory games for kids at Edenic World.",
 };
 
 const ITEM_DELAY = 0.1;

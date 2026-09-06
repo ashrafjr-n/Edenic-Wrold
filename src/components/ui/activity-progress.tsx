@@ -40,7 +40,7 @@ const GREEN = { face: "var(--color-go)", edge: "var(--color-go-dark)" };
  * progress store itself, so the store stays read in exactly one place per
  * page (the grid, which needs it for unlocking anyway).
  *
- * Shared by `/activities/puzzle`, `/activities/memory-match` and the numbers
+ * Shared by `/play/puzzle`, `/play/memory-match` and the numbers
  * picker (`/learn/[character]/[lesson]`). It was `PuzzleProgress` in
  * `components/activities/` until the second one arrived, and moved to
  * `components/ui/` when the third did — the same call `Celebration` and
