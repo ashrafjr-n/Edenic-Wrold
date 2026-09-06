@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Brain } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
+import { dirFor } from "@/lib/format-dict";
 import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";
 
 /** The art is a **static import**, not a `/public` path: a static import is
@@ -43,9 +44,13 @@ export function MemoryMatchCta({
       className={`card relative aspect-[16/9] overflow-hidden ${className}`}
       style={style}
     >
+      {/* `dir` because this `alt` names the three friends in Latin inside a
+          right-to-left sentence, and `alt` renders visually if the picture
+          fails to load — see `lib/format-dict.ts`'s `dirFor`. */}
       <Image
         src={memoryCard}
         alt={dict.activities.memoryCtaAlt}
+        dir={dirFor(dict.locale)}
         fill
         sizes="(min-width: 1024px) 32rem, 100vw"
         className="object-cover"
