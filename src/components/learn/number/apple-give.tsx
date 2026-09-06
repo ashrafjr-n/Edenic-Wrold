@@ -17,6 +17,9 @@ interface AppleGiveProps {
       active locale. */
   itemLabel: string;
   dict: Dictionary["journey"];
+  /** The invite text mixes this locale's words with the English item word
+      via `format()` — see `lib/format-dict.ts`'s `dirFor`. */
+  dir: "rtl" | "ltr";
   /** Mark the basket as the thing to aim for, while it is still empty.
       Presentation only — it changes nothing about how giving works. The
       journey passes this exactly when Pinki is holding the stick, so the halo
@@ -73,6 +76,7 @@ export function AppleGive({
   icon,
   itemLabel,
   dict,
+  dir,
   highlightTarget,
   onGiven,
 }: AppleGiveProps) {
@@ -168,7 +172,7 @@ export function AppleGive({
         }`}
       >
         {given.length === 0 ? (
-          <span className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
+          <span dir={dir} className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
             {format(dict.dropItem, { article, itemLabel })}
           </span>
         ) : (

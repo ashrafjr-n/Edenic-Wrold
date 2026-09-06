@@ -7,6 +7,10 @@ interface JourneyProgressProps {
   total: number;
   accent: string;
   dict: Dictionary["journey"];
+  /** The template mixes this locale's words with the two numbers via
+      `format()` — needed on the element itself so the browser doesn't fall
+      back to its default `ltr` (see `lib/format-dict.ts`'s `dirFor`). */
+  dir: "rtl" | "ltr";
 }
 
 /**
@@ -21,12 +25,13 @@ export function JourneyProgress({
   total,
   accent,
   dict,
+  dir,
 }: JourneyProgressProps) {
   const percent = Math.round((position / total) * 100);
 
   return (
     <div className="card card-pill flex min-w-0 flex-col gap-1.5 px-5 py-2.5 sm:px-6 sm:py-3">
-      <span className="whitespace-nowrap text-center text-xs font-bold text-[var(--color-ink)] sm:text-sm">
+      <span dir={dir} className="whitespace-nowrap text-center text-xs font-bold text-[var(--color-ink)] sm:text-sm">
         {format(dict.numberOf, { position, total })}
       </span>
 
