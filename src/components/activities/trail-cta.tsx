@@ -41,7 +41,7 @@ const CHARACTER = Object.fromEntries(characters.map((c) => [c.id, c]));
  * the bottom with all three friends standing together on it: it filled half
  * the card with a flat white mass, said nothing about what the Trail is, and
  * was called out as bad. A card for a stage map should show stages. The
- * `variant={4}` bank shape that version needed went with it.
+ * `variant={4}` bank shape that version needed is deleted with it.
  *
  * **The clouds are the site's own `<Cloud />`, over the same `.trail-sky--day`
  * gradient `/trail` itself wears** — blue by day, navy by night — so the card
