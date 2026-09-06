@@ -1,5 +1,5 @@
-import { getDictionary } from "@/lib/locale";
-import { dirFor } from "@/lib/format-dict";
+import { getDictionary, getLocale } from "@/lib/locale";
+import { dirFor, isRtl } from "@/lib/format-dict";
 
 /** Hand-drawn "Meet Edenic Friends" cue pointing down at `FriendsSection`.
     Static, by request — it used to idle-bob (`.anim-nudge-down`); that's gone.
@@ -16,25 +16,46 @@ import { dirFor } from "@/lib/format-dict";
     and to the rejected tilted-headline-word pattern. Don't reuse either
     exception elsewhere. */
 export async function HeroScrollCue() {
-  const dict = await getDictionary();
+  const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
+  /* The cue sits in the bottom corner the hero image does NOT occupy, and
+     `Hero` mirrors that image to the left edge in a right-to-left locale
+     (see its own comment) — so this has to mirror with it, or the label and
+     the arrow land on top of the picture. Only at `lg`: below it the image
+     is a full-width band stacked above, and the cue overlaps the seam under
+     it the same way in every language. */
+  const rtl = isRtl(locale);
 
   return (
     <div className="relative z-10 -mt-10 sm:-mt-14 lg:-mt-20">
-      <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8 lg:justify-start">
+      <div
+        className={`mx-auto flex max-w-7xl justify-center px-4 sm:px-8 ${
+          rtl ? "lg:justify-end" : "lg:justify-start"
+        }`}
+      >
         <div
-          className="anim-fade-up flex flex-col items-start pl-6 sm:pl-24 lg:pl-40"
+          className={`anim-fade-up flex flex-col items-start pl-6 sm:pl-24 ${
+            rtl ? "lg:items-end lg:pl-0 lg:pr-40" : "lg:pl-40"
+          }`}
           style={{ animationDelay: "0.5s" }}
         >
           <span
             dir={dirFor(dict.locale)}
-            className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl"
+            className={`text-lg font-semibold text-[var(--accent)] sm:text-xl ${
+              rtl ? "lg:rotate-2 -rotate-2" : "-rotate-2"
+            }`}
           >
             {dict.home.scrollCue}
           </span>
+          {/* Mirrored by flipping the whole drawing on its x axis, not by
+              redrawing the path: `scale` and `rotate` are separate properties
+              in Tailwind v4, so `-scale-x-100` composes with the tilt below
+              and turns it the other way for free. */}
           <svg
             aria-hidden
             viewBox="0 0 90 150"
-            className="mt-2 ml-8 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20"
+            className={`mt-2 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20 ${
+              rtl ? "ml-8 lg:-scale-x-100 lg:ml-0 lg:mr-8" : "ml-8"
+            }`}
             fill="none"
           >
             <path
