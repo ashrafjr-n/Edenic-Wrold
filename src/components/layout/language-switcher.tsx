@@ -19,9 +19,10 @@ interface LanguageSwitcherProps {
  * the header chrome, so the popover reads as part of it rather than a
  * generic browser-style dropdown.
  *
- * Only English and Arabic actually switch anything. Kurdish is shown, on
- * request, as a disabled row wearing the same "Soon" badge `MainNav` uses
- * for a section with no route yet — the shape exists, the language doesn't.
+ * All three rows are live: English, Arabic, and Badini Kurdish. Kurdish was
+ * a disabled "Soon" row for one round, back when its dictionary didn't exist
+ * — `LanguageRow` keeps the `disabled`/`soonLabel` branch for the next
+ * language that lands in that state.
  *
  * Switching writes the locale to a cookie (`setLocale`, a Server Action —
  * `cookies().set` there always carries `path: "/"`, unlike a client-side
@@ -90,7 +91,11 @@ export function LanguageSwitcher({ dict, locale }: LanguageSwitcherProps) {
             active={locale === "ar"}
             onSelect={() => choose("ar")}
           />
-          <LanguageRow label={dict.header.kurdish} disabled soonLabel={dict.nav.soon} />
+          <LanguageRow
+            label={dict.header.kurdish}
+            active={locale === "ku"}
+            onSelect={() => choose("ku")}
+          />
         </div>
       )}
     </div>
