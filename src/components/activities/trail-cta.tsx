@@ -16,17 +16,25 @@ import { dirFor } from "@/lib/format-dict";
  * `x` / `y` are shares of the scene box and `width` is the cloud's width as
  * a share of it too, so the whole arrangement scales with the box and
  * nothing needs re-tuning per breakpoint. The lower stops are slightly
- * larger — the only depth cue here, and enough at three stops.
+ * larger — the only depth cue among them, and enough at three stops.
+ *
+ * **Stepping-stone dots between the stops were built and cut.** Derived from
+ * these coordinates, two per gap, they looked right on paper and wrong on
+ * screen: at this scale consecutive clouds overlap horizontally, so every
+ * dot landed either behind a cloud or on top of one, reading as specks
+ * rather than as a path. The climb itself is what says "trail" here. If it
+ * is tried again, the clouds have to be spread far enough apart to leave a
+ * real gap first.
  */
 const STOPS = [
-  { id: "bloo", x: "19%", y: "4%", width: "40%", variant: 2 },
-  { id: "nova", x: "51%", y: "34%", width: "38%", variant: 1 },
-  { id: "pinki", x: "81%", y: "64%", width: "33%", variant: 3 },
+  { id: "bloo", x: 19, y: 4, width: 40, variant: 2 },
+  { id: "nova", x: 51, y: 34, width: 38, variant: 1 },
+  { id: "pinki", x: 81, y: 64, width: 33, variant: 3 },
 ] as const satisfies readonly {
   id: string;
-  x: string;
-  y: string;
-  width: string;
+  x: number;
+  y: number;
+  width: number;
   variant: CloudVariant;
 }[];
 
@@ -122,11 +130,24 @@ export function TrailCta({
         className="order-1 flex w-full justify-center p-6 pb-2 sm:p-8 sm:pb-2 lg:order-2 lg:flex-1 lg:p-8"
       >
         <div className="relative aspect-[8/5] w-full max-w-[23rem] lg:max-w-[30rem]">
+          {/* One big, low-contrast cloud drifting behind the stops — the same
+              two-layer depth the sky itself uses, so the card is a window
+              onto that sky rather than a flatter version of it. It sits
+              INSIDE the scene box on purpose: parked further left it ran out
+              of the box and under the description, since the two columns are
+              siblings with nothing clipping either. */}
+          <Cloud
+            variant={3}
+            tint="white"
+            className="cloud--far absolute bottom-[46%] left-[44%] -translate-x-1/2"
+            style={{ "--cloud-w": "58%" } as CSSProperties}
+          />
+
           {STOPS.map(({ id, x, y, width, variant }) => (
             <div
               key={id}
               className="absolute -translate-x-1/2"
-              style={{ left: x, bottom: y, width }}
+              style={{ left: `${x}%`, bottom: `${y}%`, width: `${width}%` }}
             >
               <Cloud
                 variant={variant}
