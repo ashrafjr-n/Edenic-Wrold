@@ -43,7 +43,8 @@ const CHARACTER = Object.fromEntries(characters.map((c) => [c.id, c]));
  * wider than the card and dropped most of the way below its bottom edge, so
  * what shows is a bank running the full width with the three friends
  * standing on it — over the same sky gradient `/trail` itself wears
- * (`.trail-sky--dawn`), so the card is a window onto the page it opens
+ * (`.trail-sky--day` — blue by day, navy by night, on direct request), so
+ * the card is a window onto the page it opens
  * rather than unrelated art. It costs no image request either: the cloud is
  * a CSS mask over a gradient, and the only downloads are the three character
  * renders the site already ships.
@@ -75,7 +76,7 @@ export function TrailCta({
 
   return (
     <div
-      className={`card trail-sky--dawn relative isolate flex min-h-[27rem] flex-col justify-start overflow-hidden sm:min-h-[28rem] lg:min-h-[23rem] ${className}`}
+      className={`card trail-sky--day relative isolate flex min-h-[27rem] flex-col justify-start overflow-hidden sm:min-h-[28rem] lg:min-h-[23rem] ${className}`}
       style={style}
     >
       {/* The scene. `-z-10` inside the card's own `isolate`: negative

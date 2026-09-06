@@ -61,7 +61,12 @@
      definition scales to any box, and a mask edge antialiases where a
      `clip-path` stair-steps.
 
-     Each is overlapping opaque ellipses plus a rounded base bar. Overlapping
+     Each is overlapping opaque circles on an ELLIPSE base — not a rounded
+     BAR, which is what these were first drawn with. A bar gives a dead-flat
+     bottom edge, and a cloud with a ruled-off underside reads as a sticker
+     however well it is shaded; an ellipse curves the underside so the whole
+     silhouette is round and the clay lighting has something to sit on.
+     Overlapping
      OPAQUE shapes in a mask union cleanly — there is no seam where two lobes
      meet, which is exactly what a stack of `border-radius` divs could not
      give: separate divs each carry their own shading and the joins show.
@@ -70,8 +75,8 @@
      Three silhouettes so a sky full of clouds isn't the same shape repeated;
      `variant` on the component picks one. All share the 20:11 viewBox the
      `.cloud` wrapper's `aspect-ratio` is locked to, so nothing distorts. */
-  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='10' y='60' width='180' height='46' rx='23'/%3E%3Ccircle cx='58' cy='64' r='30'/%3E%3Ccircle cx='102' cy='46' r='42'/%3E%3Ccircle cx='148' cy='62' r='32'/%3E%3C/g%3E%3C/svg%3E");
-  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='6' y='62' width='188' height='44' rx='22'/%3E%3Ccircle cx='66' cy='48' r='38'/%3E%3Ccircle cx='120' cy='58' r='34'/%3E%3Ccircle cx='158' cy='68' r='26'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='100' cy='80' rx='90' ry='26'/%3E%3Ccircle cx='56' cy='62' r='32'/%3E%3Ccircle cx='102' cy='46' r='42'/%3E%3Ccircle cx='150' cy='60' r='34'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='100' cy='82' rx='92' ry='24'/%3E%3Ccircle cx='64' cy='48' r='40'/%3E%3Ccircle cx='118' cy='58' r='36'/%3E%3Ccircle cx='158' cy='66' r='28'/%3E%3C/g%3E%3C/svg%3E");
   /* A WIDE, FLAT bank — six lobes across a 40:11 box, against the puffy
      three-lobe clouds above. It exists because a puffy cloud cannot be
      stretched to span a card: blown up to that width its middle lobe alone
@@ -79,8 +84,8 @@
      its lobes small relative to its width, so it stays recognisable at any
      width and gives the friends two peaks and a shoulder to stand on.
      `.cloud--v4` carries its own `aspect-ratio` to match. */
-  --cloud-shape-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='8' y='66' width='384' height='40' rx='20'/%3E%3Ccircle cx='58' cy='64' r='34'/%3E%3Ccircle cx='118' cy='50' r='42'/%3E%3Ccircle cx='182' cy='60' r='36'/%3E%3Ccircle cx='246' cy='48' r='44'/%3E%3Ccircle cx='308' cy='62' r='36'/%3E%3Ccircle cx='358' cy='72' r='26'/%3E%3C/g%3E%3C/svg%3E");
-  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='12' y='58' width='176' height='48' rx='24'/%3E%3Ccircle cx='62' cy='58' r='34'/%3E%3Ccircle cx='104' cy='42' r='38'/%3E%3Ccircle cx='146' cy='56' r='32'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='200' cy='84' rx='192' ry='22'/%3E%3Ccircle cx='58' cy='64' r='34'/%3E%3Ccircle cx='118' cy='50' r='42'/%3E%3Ccircle cx='182' cy='60' r='36'/%3E%3Ccircle cx='246' cy='48' r='44'/%3E%3Ccircle cx='308' cy='62' r='36'/%3E%3Ccircle cx='358' cy='72' r='26'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='100' cy='80' rx='88' ry='26'/%3E%3Ccircle cx='62' cy='58' r='36'/%3E%3Ccircle cx='104' cy='42' r='40'/%3E%3Ccircle cx='146' cy='56' r='34'/%3E%3C/g%3E%3C/svg%3E");
 
   /* Fades the art on a colored panel into its fill instead of letting it end
      on a rectangle edge. See `.panel-art`. */
@@ -538,15 +543,18 @@ bdi {
    is the brightest object on the page — the same "backwards from dormant"
    trap `--color-gold-quiet` documents.
 
-   Both are mixed toward `--background` (the dark ground itself) rather than
-   given hand-picked night hues, so a single token move keeps them in step,
-   and the light-mode palettes above stay the single source of the hue. */
+   `dawn` and `dream` mix toward `--background` so a single token move keeps
+   them in step with the page. **`day` is the exception and anchors to a
+   literal navy** (`#101a30` / `#0d1526`): it is the palette the Play card
+   and the trail itself wear, and it was asked for as a proper dark navy —
+   `--background` is a dark VIOLET, and mixing blue into violet lands on
+   indigo, not navy. */
 [data-theme="dark"] .trail-sky--day {
   background-image: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--color-bloo) 26%, var(--background)) 0%,
-    color-mix(in srgb, var(--color-bloo) 16%, var(--background)) 52%,
-    var(--background) 100%
+    color-mix(in srgb, var(--color-bloo) 30%, #101a30) 0%,
+    color-mix(in srgb, var(--color-bloo) 15%, #101a30) 55%,
+    #0d1526 100%
   );
 }
 
@@ -573,42 +581,48 @@ bdi {
    so they stay in the same family as every other raised surface on a dark
    page. The first pass mixed too little colour in and the bank came out a
    flat mid-grey that read as rock rather than cloud; these are tuned against
-   a dark-mode screenshot, not by arithmetic. The
-   top-highlight layer in `.cloud-body` is dimmed with them: at 85% white it
-   read as a lit rim on a night cloud. */
-[data-theme="dark"] .cloud-body {
-  background-image:
-    radial-gradient(
-      120% 78% at 50% 2%,
-      rgb(255 255 255 / 14%) 0%,
-      rgb(255 255 255 / 0%) 62%
-    ),
-    linear-gradient(
-      to bottom,
-      var(--cloud-face) 0%,
-      var(--cloud-face) 38%,
-      var(--cloud-shade) 100%
-    );
+   a dark-mode screenshot, not by arithmetic.
+
+   The per-lobe highlights are dimmed HARD here — 15% against daylight's
+   92%, not the third that was tried first. A white spot reads very
+   differently on a white face than on a grey-blue one: in daylight it melts
+   into the face and only shapes it, at night it sits ON it, and at a third
+   strength every lobe read as a separate polished sphere — a row of eggs
+   rather than one cloud. Only the two strength variables are overridden, so
+   every variant keeps its own lobe POSITIONS. */
+/* **On `.cloud`, NOT `.cloud-body`** — and that is a spec detail, not a
+   preference. `var()` inside a custom property is substituted when that
+   property is computed on the element DECLARING it, and `--cloud-lobes` is
+   declared on `.cloud`; `.cloud-body` only inherits the already-resolved
+   string. Setting these two on the body therefore changed nothing at all,
+   and the first dark pass shipped looking identical to daylight. */
+[data-theme="dark"] .cloud {
+  --cloud-hi: 15%;
+  --cloud-hi-soft: 9%;
 }
 
 [data-theme="dark"] .cloud--white {
-  --cloud-face: color-mix(in srgb, #dbe8fb 80%, var(--surface));
-  --cloud-shade: color-mix(in srgb, #dbe8fb 50%, var(--surface));
+  --cloud-face: color-mix(in srgb, #cfe2fb 80%, var(--surface));
+  --cloud-shade: color-mix(in srgb, #cfe2fb 58%, var(--surface));
+  --cloud-deep: color-mix(in srgb, #cfe2fb 34%, var(--surface));
 }
 
 [data-theme="dark"] .cloud--sky {
-  --cloud-face: color-mix(in srgb, var(--color-bloo) 52%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-bloo) 28%, var(--surface));
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 56%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 32%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 16%, var(--surface));
 }
 
 [data-theme="dark"] .cloud--pink {
-  --cloud-face: color-mix(in srgb, var(--color-pinki) 46%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-pinki) 24%, var(--surface));
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 50%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 28%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--color-pinki) 14%, var(--surface));
 }
 
 [data-theme="dark"] .cloud--lavender {
-  --cloud-face: color-mix(in srgb, var(--color-nova) 48%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-nova) 26%, var(--surface));
+  --cloud-face: color-mix(in srgb, var(--color-nova) 52%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 30%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 15%, var(--surface));
 }
 
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
@@ -1205,10 +1219,48 @@ bdi {
   display: block;
   width: var(--cloud-w);
   aspect-ratio: 20 / 11;
-  filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 20%));
+  /* TWO shadows, not one: a tight contact shadow just under the cloud plus a
+     wide ambient pool below it — the same two-layer grounding `.card` and the
+     friend-picker's characters use. One mid-distance shadow reads as a
+     sticker with a blur under it; a tight one plus a soft one reads as an
+     object resting in space. Kept low-opacity on purpose: the brief asked
+     for a soft shadow under the cloud, not a hard one. */
+  filter:
+    drop-shadow(0 6px 6px rgb(var(--shadow-hue) / 13%))
+    drop-shadow(0 18px 24px rgb(var(--shadow-hue) / 13%));
   pointer-events: none;
+  /* How hard the lobe highlights burn. A variable, not a literal, so dark
+     mode dims every lobe of every variant by changing two numbers rather
+     than restating all sixteen gradients. */
+  --cloud-hi: 92%;
+  --cloud-hi-soft: 72%;
+  --cloud-lobes:
+    radial-gradient(15% 27% at 45% 30%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(11% 20% at 23% 48%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 21% at 70% 45%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
+/* ---------------------------------------------------------------
+   What makes a masked shape read as CLAY rather than as a flat cut-out.
+
+   The first version was one linear gradient behind the mask, and it looked
+   exactly like what it was: a silhouette filled with a wash. A clay cloud is
+   several inflated BALLS stuck together, and a ball needs its own light —
+   so `--cloud-lobes` carries one soft white radial per lobe of that
+   variant's silhouette, each offset UP AND LEFT of the lobe's own centre so
+   every puff catches the light from the same direction. The middle lobe (the
+   tall one, nearest the viewer) is the brightest; the shoulders are dimmer.
+
+   Read the percentages against that variant's own viewBox in the shape
+   tokens above — they are the lobe centres, moved about a third of a radius
+   toward the light. **Redraw a shape and its lobe highlights have to move
+   with it**, or the light lands between the puffs instead of on them.
+
+   Under them: an underside band that darkens the bottom of the whole shape
+   with the tint's own shade colour (the "depth" that stops the bottom edge
+   floating), then the base top-to-bottom gradient. Four layers total, no
+   filters, no extra elements.
+   --------------------------------------------------------------- */
 .cloud-body {
   width: 100%;
   height: 100%;
@@ -1217,21 +1269,36 @@ bdi {
   mask-repeat: no-repeat;
   mask-position: center;
   background-image:
-    radial-gradient(
-      120% 78% at 50% 2%,
-      rgb(255 255 255 / 85%) 0%,
-      rgb(255 255 255 / 0%) 62%
+    var(--cloud-lobes),
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0%) var(--cloud-band, 46%),
+      color-mix(in srgb, var(--cloud-deep) 88%, transparent) 100%
     ),
     linear-gradient(
       to bottom,
       var(--cloud-face) 0%,
-      var(--cloud-face) 38%,
+      var(--cloud-face) 30%,
       var(--cloud-shade) 100%
     );
 }
 
+.cloud--v2 {
+  --cloud-lobes:
+    radial-gradient(14% 25% at 26% 32%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(13% 23% at 54% 43%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 75% 52%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
 .cloud--v2 .cloud-body {
   mask-image: var(--cloud-shape-2);
+}
+
+.cloud--v3 {
+  --cloud-lobes:
+    radial-gradient(14% 25% at 46% 27%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(13% 23% at 26% 43%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 68% 42%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v3 .cloud-body {
@@ -1242,9 +1309,23 @@ bdi {
    that gives it an explicit height (`.cloud--stretch`) drops the ratio
    altogether and lets the mask stretch, which is safe here in a way it isn't
    for a puff: the shape is authored `preserveAspectRatio='none'`, and a bank
-   pulled wider just reads as a longer bank. */
+   pulled wider just reads as a longer bank. Six lobes, so six highlights —
+   and they are NARROWER in x than the puffs' because this box is twice as
+   wide, so the same lobe is half the share of it. */
 .cloud--v4 {
   aspect-ratio: 40 / 11;
+  /* The bank starts its underside band higher up than a free-standing puff
+     does. It is always used cropped — dropped below the bottom of whatever
+     it is scenery for — so the deepest part of the band is off-screen, and
+     at the puffs' 46% the visible slice was an unshaded white expanse. */
+  --cloud-band: 26%;
+  --cloud-lobes:
+    radial-gradient(8% 28% at 58% 32%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(7.5% 27% at 26% 34%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 43% 45%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 74% 47%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6% 22% at 12% 49%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(4.5% 17% at 88% 58%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v4 .cloud-body {
@@ -1290,25 +1371,35 @@ bdi {
    white, never a new hue — the same rule the two Activities CTA washes
    follow. White is the default cloud; the other three are barely-there
    pastels, there so a sky of eight clouds isn't eight identical cut-outs.
-   The shade value is what the clay gradient sinks to at the bottom. */
+
+   THREE values each, not two, and the spread between them is what carries
+   the 3D: `--cloud-face` is the lit top, `--cloud-shade` the bottom of the
+   base gradient, `--cloud-deep` the underside band beneath that. The first
+   version ran face-to-shade only and at a much narrower spread, which is a
+   large part of why the clouds read flat — a clay object needs a real
+   distance between its lit and unlit sides, not a hint of one. */
 .cloud--white {
   --cloud-face: #ffffff;
-  --cloud-shade: color-mix(in srgb, var(--color-bloo) 20%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 46%, #ffffff);
 }
 
 .cloud--sky {
-  --cloud-face: color-mix(in srgb, var(--color-bloo) 5%, #ffffff);
-  --cloud-shade: color-mix(in srgb, var(--color-bloo) 32%, #ffffff);
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 36%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 58%, #ffffff);
 }
 
 .cloud--pink {
-  --cloud-face: color-mix(in srgb, var(--color-pinki) 5%, #ffffff);
-  --cloud-shade: color-mix(in srgb, var(--color-pinki) 26%, #ffffff);
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 30%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-pinki) 50%, #ffffff);
 }
 
 .cloud--lavender {
-  --cloud-face: color-mix(in srgb, var(--color-nova) 5%, #ffffff);
-  --cloud-shade: color-mix(in srgb, var(--color-nova) 26%, #ffffff);
+  --cloud-face: color-mix(in srgb, var(--color-nova) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 30%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 50%, #ffffff);
 }
 
 /* ---------------------------------------------------------------
