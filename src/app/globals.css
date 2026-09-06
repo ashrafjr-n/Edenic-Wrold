@@ -1242,9 +1242,10 @@ bdi {
   --cloud-hi: 92%;
   --cloud-hi-soft: 72%;
   --cloud-lobes:
-    radial-gradient(15% 27% at 45% 30%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(11% 20% at 23% 48%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(12% 21% at 70% 45%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(15% 27% at 39% 28%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 19% 49%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(11% 20% at 63% 42%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(8% 15% at 79% 59%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 /* ---------------------------------------------------------------
@@ -1292,9 +1293,10 @@ bdi {
 
 .cloud--v2 {
   --cloud-lobes:
-    radial-gradient(14% 25% at 26% 32%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(13% 23% at 54% 43%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(10% 18% at 75% 52%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(15% 27% at 56% 28%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(13% 23% at 33% 38%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 79% 50%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 16% 56%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v2 .cloud-body {
@@ -1303,9 +1305,10 @@ bdi {
 
 .cloud--v3 {
   --cloud-lobes:
-    radial-gradient(14% 25% at 46% 27%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(13% 23% at 26% 43%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(12% 22% at 68% 42%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(14% 26% at 47% 29%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(14% 26% at 23% 34%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(11% 19% at 71% 50%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(8% 14% at 14% 63%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v3 .cloud-body {
