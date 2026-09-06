@@ -1210,12 +1210,23 @@ button:disabled,
 .speech-bubble {
   position: relative;
   background: var(--surface);
-  /* Was 1.5rem — at the bubble's usual one-line height that radius exceeds
-     half the box, so the browser clamps it to a full semicircle at both
-     ends with no flat edge left at all. The tail attaches along a flat
-     stretch of the border now instead of crossing a curve, which is what
-     let the curve visibly "step" around its base before. */
-  border-radius: 1.1rem;
+  /* Was 1.5rem, then 1.1rem. The radius is not a taste setting here — it is
+     what decides how much STRAIGHT edge is left for the tail to stand on.
+     A one-line bubble is 44px tall on a phone and 52px on a desktop, so a
+     1.1rem (17.6px) radius left only 8.8px and 16.8px of flat border
+     respectively, against a tail 20px tall: the triangle's base ran past the
+     corner tangent, where the border has already curved away, and a wedge of
+     page showed between the two. It read as a stray "<" glued beside the
+     bubble rather than a tail growing out of it — reported on exactly the
+     one-line lines ("This is Number 1!") while the two-line ones ("A little
+     flag... then straight down!") looked right, because those are tall
+     enough to have the flat edge to spare.
+
+     0.8rem (12.8px) leaves 18.4px of flat edge on the shortest bubble the
+     site renders, which is what the tail below is sized against. Still well
+     clear of the semicircle clamp that 1.5rem hit. **Change this and the tail
+     sizes together, or re-check the shortest bubble.** */
+  border-radius: 0.8rem;
   /* A pink outline in Pinki's own identity color — not a tinted fill (that
      was tried, and removed, as a page-background match; see the numbers
      journey notes in CLAUDE.md). A thin ring is what makes the bubble read as
@@ -1261,12 +1272,12 @@ button:disabled,
    RIGHT border — a border-triangle always points away from its transparent
    sides, toward the one side left uncolored. */
 .speech-bubble::before {
-  border-width: 0.65rem 1rem 0.65rem 0;
+  border-width: 0.55rem 0.9rem 0.55rem 0;
   border-right-color: var(--color-pinki);
 }
 
 .speech-bubble::after {
-  border-width: 0.5rem 0.8rem 0.5rem 0;
+  border-width: 0.42rem 0.72rem 0.42rem 0;
   border-right-color: var(--surface);
 }
 
@@ -1283,13 +1294,13 @@ button:disabled,
   }
 
   .speech-bubble::before {
-    border-width: 0 0.65rem 1rem 0.65rem;
+    border-width: 0 0.55rem 0.9rem 0.55rem;
     border-right-color: transparent;
     border-bottom-color: var(--color-pinki);
   }
 
   .speech-bubble::after {
-    border-width: 0 0.5rem 0.8rem 0.5rem;
+    border-width: 0 0.42rem 0.72rem 0.42rem;
     border-right-color: transparent;
     border-bottom-color: var(--surface);
   }
@@ -1309,10 +1320,21 @@ button:disabled,
    height pointed out level with its middle — over her head, not at her face —
    on every stage whose line runs to two lines. Anchoring lower keeps the
    tail close to where her face actually is regardless of how tall the
-   bubble grows. */
+   bubble grows.
+
+   **...but never so low that the base leaves the straight edge.** A flat 66%
+   put the triangle's bottom corner past the bottom-left corner's tangent on
+   every ONE-LINE bubble, where the border has already curved inward — so the
+   tail hung with a visible wedge of page between it and the bubble and read
+   as a detached "<". `min()` keeps the 66% bias on a bubble tall enough to
+   afford it and pins the tail flush against the end of the flat run on one
+   that isn't: `100% - 1.35rem` is the radius (0.8rem) plus the tail's own
+   half-height (0.55rem), i.e. the lowest centre whose base still lands on
+   straight border. Both numbers are the ones set above — move either and
+   this has to move with it. */
 .speech-bubble--left::before,
 .speech-bubble--left::after {
-  top: 66%;
+  top: min(66%, 100% - 1.35rem);
   right: auto;
   left: 100%;
   translate: 0 -50%;
@@ -1320,12 +1342,12 @@ button:disabled,
 }
 
 .speech-bubble--left::before {
-  border-width: 0.65rem 0 0.65rem 1rem;
+  border-width: 0.55rem 0 0.55rem 0.9rem;
   border-left-color: var(--color-pinki);
 }
 
 .speech-bubble--left::after {
-  border-width: 0.5rem 0 0.5rem 0.8rem;
+  border-width: 0.42rem 0 0.42rem 0.72rem;
   border-left-color: var(--surface);
 }
 
@@ -1350,12 +1372,12 @@ button:disabled,
 }
 
 .speech-bubble--down::before {
-  border-width: 1rem 0.65rem 0 0.65rem;
+  border-width: 0.9rem 0.55rem 0 0.55rem;
   border-top-color: var(--color-pinki);
 }
 
 .speech-bubble--down::after {
-  border-width: 0.8rem 0.5rem 0 0.5rem;
+  border-width: 0.72rem 0.42rem 0 0.42rem;
   border-top-color: var(--surface);
 }
 
