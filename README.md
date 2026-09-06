@@ -192,10 +192,13 @@ share one gold, the level to play next is deeper and glows, and locked ones are
 drained. Levels are not scored yet — finishing one marks it done and opens the
 next.
 
-The header's language, dark-mode and "Join Edenic World" controls are presentation
-only — none of them have behavior yet. "Join Edenic World" is also the profile entry
-point, as is the Profile tab on the phone's bottom bar, so no progress, streaks or
-points appear anywhere before sign-in.
+The header's language switcher and dark-mode toggle both work. The site reads in
+English, Arabic and Badini Kurdish — the choice is a cookie, so every page keeps
+the URL it already had, and the taught content itself (numbers, letters, colours
+and the friends' names) stays English in all three, since that is what is being
+taught. "Join Edenic World" is still presentation only, and it doubles as the
+profile entry point, as does the Profile tab on the phone's bottom bar — so no
+progress, streaks or points appear anywhere before sign-in.
 
 Planned, in order:
 
