@@ -20,7 +20,7 @@ export const ar: Dictionary = {
   nav: {
     home: "الرئيسية",
     learn: "تعلّم",
-    activities: "أنشطة",
+    play: "أنشطة",
     profile: "الملف الشخصي",
     soon: "قريبًا",
     mainAriaLabel: "القائمة الرئيسية",
