@@ -7,6 +7,7 @@ import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
 import type { JourneyStage } from "@/types/number-journey";
+import type { Locale } from "@/types/locale";
 import { scriptFor } from "@/data/number-script";
 import { countActivityFor } from "@/data/count-activities";
 import { guideFor, pointsAtTarget } from "@/data/number-guide";
@@ -14,6 +15,8 @@ import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import type { ButtonTone } from "@/components/ui/button-3d";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import { NumberVideo } from "./number-video";
 import { Numeral } from "./numeral";
 import { PinkiGuide } from "./pinki-guide";
@@ -82,6 +85,8 @@ interface NumberJourneyProps {
   /** Where the journey goes next: the following number, or the number list. */
   nextHref: string;
   nextValue?: number;
+  dict: Dictionary;
+  locale: Locale;
 }
 
 export function NumberJourney({
@@ -90,11 +95,18 @@ export function NumberJourney({
   lessonId,
   nextHref,
   nextValue,
+  dict,
+  locale,
 }: NumberJourneyProps) {
   const { value, image, videoId, strokes } = item;
   const { accent } = character;
-  const script = scriptFor(value);
+  const script = scriptFor(value, locale, dict);
   const countActivity = countActivityFor(value);
+  const itemLabel = locale === "ar" && countActivity.kind === "give"
+    ? countActivity.itemLabelAr
+    : countActivity.kind === "give"
+      ? countActivity.itemLabel
+      : "";
 
   const [stage, setStage] = useState<JourneyStage>("discover");
   /* One flag across every stage: false is "still working", true is "passed —
@@ -212,7 +224,7 @@ export function NumberJourney({
     body = (
       <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
         {videoId && (
-          <NumberVideo videoId={videoId} value={value} image={image} />
+          <NumberVideo videoId={videoId} value={value} image={image} dict={dict.journey} />
         )}
 
         <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
@@ -221,7 +233,7 @@ export function NumberJourney({
             onClick={advance}
             className="px-7 py-3 text-base sm:px-9 sm:py-4 sm:text-lg"
           >
-            Next
+            {dict.journey.next}
             <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
           </Button3D>
         </div>
@@ -248,12 +260,12 @@ export function NumberJourney({
     actions = (
       <div className="flex flex-col items-start gap-3 sm:gap-4">
         <p className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-          Can you say it?
+          {dict.journey.canYouSayIt}
         </p>
 
-        <SayItButton word={script.word} />
+        <SayItButton word={script.word} dict={dict.journey} />
 
-        {nextButton("Next", BRAND_TONE)}
+        {nextButton(dict.journey.next, BRAND_TONE)}
       </div>
     );
   } else if (stage === "demo") {
@@ -264,7 +276,7 @@ export function NumberJourney({
     );
     /* The band between her line and this button is `PinkiGuide`'s now — every
        `lead` stage gets the same one, so this stage no longer sets its own. */
-    actions = nextButton("My turn!", BRAND_TONE);
+    actions = nextButton(dict.journey.myTurn, BRAND_TONE);
   } else if (stage === "trace") {
     body = (
       /* Much larger than the demo card it follows, and the centre of its own
@@ -286,6 +298,7 @@ export function NumberJourney({
             miss();
           }}
           locked={solved}
+          dict={dict.journey}
         />
         {solved && <Celebration />}
       </div>
@@ -306,10 +319,10 @@ export function NumberJourney({
             className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
             strokeWidth={2.75}
           />
-          Try Again
+          {dict.journey.tryAgain}
         </Button3D>
 
-        {solved && nextButton("Next", GO_TONE)}
+        {solved && nextButton(dict.journey.next, GO_TONE)}
       </div>
     );
   } else if (stage === "find") {
@@ -322,11 +335,12 @@ export function NumberJourney({
           solved={solved}
           onCorrect={() => setSolved(true)}
           onWrong={pickMiss}
+          dict={dict.journey}
         />
         {solved && <Celebration />}
       </div>
     );
-    actions = solved ? nextButton("Next", GO_TONE) : null;
+    actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
   } else if (stage === "count") {
     body =
       countActivity.kind === "give" ? (
@@ -340,7 +354,8 @@ export function NumberJourney({
               key={`give-${attempt}`}
               target={value}
               icon={countActivity.icon}
-              itemLabel={countActivity.itemLabel}
+              itemLabel={itemLabel}
+              dict={dict.journey}
               highlightTarget={marksTarget}
               onGiven={() => setAppleGiven(true)}
             />
@@ -354,6 +369,7 @@ export function NumberJourney({
               solved={solved}
               onCorrect={() => setSolved(true)}
               onWrong={pickMiss}
+              dict={dict.journey}
             />
             {solved && <Celebration />}
           </div>
@@ -367,6 +383,7 @@ export function NumberJourney({
             highlightTarget={marksTarget}
             onFinish={() => setSolved(true)}
             onMiss={pickMiss}
+            dict={dict.journey}
           />
           {solved && <Celebration />}
         </div>
@@ -378,6 +395,7 @@ export function NumberJourney({
             target={value}
             accent={accent}
             onFinish={() => setSolved(true)}
+            dict={dict.journey}
           />
           {solved && <Celebration />}
         </div>
@@ -390,11 +408,12 @@ export function NumberJourney({
             strokes={strokes}
             accent={accent}
             onFinish={() => setSolved(true)}
+            dict={dict.journey}
           />
           {solved && <Celebration />}
         </div>
       );
-    actions = solved ? nextButton("Next", GO_TONE) : null;
+    actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
   } else if (stage === "game") {
     body = (
       /* No sibling `<Celebration>` here, unlike the other stages — the
@@ -408,12 +427,13 @@ export function NumberJourney({
           answer={value}
           onCorrect={() => setSolved(true)}
           onMiss={pickMiss}
+          dict={dict.journey}
         />
       </div>
     );
     /* Was "See my stars!" — the celebration screen does not show stars any
        more, so the button can no longer promise them. */
-    actions = solved ? nextButton("Finish!", GO_TONE) : null;
+    actions = solved ? nextButton(dict.journey.finishExclaim, GO_TONE) : null;
   } else {
     /* **No stars here.** The three-star tally was taken off this screen on
        direct request — it is still scored and still recorded (see the effect
@@ -472,7 +492,7 @@ export function NumberJourney({
           </span>
 
           <p className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
-            Number {value} complete!
+            {format(dict.journey.numberComplete, { value })}
           </p>
         </div>
 
@@ -496,7 +516,7 @@ export function NumberJourney({
               strokeWidth={2.75}
             />
             <span className="text-base font-bold text-white sm:text-lg">
-              Number {nextValue} unlocked!
+              {format(dict.journey.numberUnlocked, { value: nextValue })}
             </span>
           </div>
         )}
@@ -516,7 +536,7 @@ export function NumberJourney({
             className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
             strokeWidth={2.75}
           />
-          Again
+          {dict.journey.again}
         </Button3D>
 
         <Button3D
@@ -524,7 +544,7 @@ export function NumberJourney({
           href={nextHref}
           className="px-8 py-3 text-base sm:px-10 sm:text-lg"
         >
-          {nextValue ? `Number ${nextValue}` : "Finish"}
+          {nextValue ? format(dict.journey.numberButton, { value: nextValue }) : dict.journey.finish}
           <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
         </Button3D>
       </div>
@@ -576,6 +596,7 @@ export function NumberJourney({
             current={stageIndex}
             total={WORKING_STAGES.length}
             accent={accent}
+            dict={dict.journey}
           />
         </div>
       )}

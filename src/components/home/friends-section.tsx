@@ -1,17 +1,20 @@
 import { characters } from "@/data/characters";
 import { SocialLinks } from "@/components/ui/social-links";
+import { getDictionary } from "@/lib/locale";
 import { FriendPod } from "./friend-pod";
 
 /** A group photo, not a row of boxes: the middle friend stands higher than the
     two beside her, so the trio reads as an arc instead of a list. */
 const POD_OFFSETS = ["lg:mt-16", "lg:mt-0", "lg:mt-16"];
 
-const cast = characters.map((character, index) => ({
-  character,
-  offset: POD_OFFSETS[index] ?? "",
-}));
+export async function FriendsSection() {
+  const dict = await getDictionary();
 
-export function FriendsSection() {
+  const cast = characters.map((character, index) => ({
+    character,
+    offset: POD_OFFSETS[index] ?? "",
+  }));
+
   return (
     <section
       id="friends"
@@ -22,27 +25,26 @@ export function FriendsSection() {
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-16">
           <div className="text-center lg:text-left">
             <span className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--accent)]">
-              Meet the friends
+              {dict.home.friendsEyebrow}
             </span>
 
             <h2
               id="friends-heading"
               className="mt-3 text-4xl font-bold leading-[1.1] tracking-tight text-[var(--color-ink)] sm:text-5xl"
             >
-              Three friends,
+              {dict.home.friendsHeadingLine1}
               <br />
-              one big world.
+              {dict.home.friendsHeadingLine2}
             </h2>
 
             <p className="mt-4 text-lg leading-relaxed text-[var(--color-ink)]/60">
-              Pinki, Nova and Bloo each keep their own set of lessons. Finish
-              one friend&apos;s world and the next one opens up.
+              {dict.home.friendsBody}
             </p>
 
             <hr className="my-8 border-0 border-t border-[var(--brand-soft)]" />
 
             <p className="text-sm font-semibold text-[var(--color-ink-soft)]">
-              Come say hello
+              {dict.home.comeSayHello}
             </p>
             <SocialLinks className="mt-4 justify-center lg:justify-start" />
           </div>
@@ -52,6 +54,7 @@ export function FriendsSection() {
               <FriendPod
                 key={character.id}
                 character={character}
+                tagline={dict.characters[character.id].tagline}
                 offset={offset}
               />
             ))}

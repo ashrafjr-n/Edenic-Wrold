@@ -11,6 +11,10 @@ export interface GiveActivity {
   icon: string;
   /** Singular word for the item (pluralized wherever it's spoken). */
   itemLabel: string;
+  /** Arabic singular word for the same item — Pinki's Arabic script and the
+      Arabic aria-labels use this instead of translating `itemLabel` at
+      render time. */
+  itemLabelAr: string;
 }
 
 /** The numeral is missing one piece; drag it back into place. */

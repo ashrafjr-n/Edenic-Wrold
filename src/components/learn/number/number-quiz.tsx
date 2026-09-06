@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { numberItems } from "@/data/number-items";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import { Numeral } from "./numeral";
 
 interface NumberQuizProps {
+  dict: Dictionary["journey"];
   /** The numbers on offer, answer included, already in display order. */
   choices: number[];
   answer: number;
@@ -59,6 +62,7 @@ export function NumberQuiz({
   solved,
   onCorrect,
   onWrong,
+  dict,
 }: NumberQuizProps) {
   const [wrong, setWrong] = useState<WrongPick[]>([]);
 
@@ -134,7 +138,7 @@ export function NumberQuiz({
             type="button"
             onClick={() => pick(value)}
             disabled={solved}
-            aria-label={`The number ${value}`}
+            aria-label={format(dict.numberValue, { value })}
             className={`rounded-3xl transition-opacity duration-300 disabled:cursor-default ${
               dimmed ? "opacity-30" : "opacity-100"
             } ${wrongPick ? "anim-wiggle" : ""} ${

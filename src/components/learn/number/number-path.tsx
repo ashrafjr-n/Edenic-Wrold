@@ -6,8 +6,11 @@ import Image from "next/image";
 import { Flame, Hand } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { Numeral } from "./numeral";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface NumberPathProps {
+  dict: Dictionary["journey"];
   /** The numbers shown along the path, in order. */
   numbers: readonly number[];
   /** Which one Pinki has to reach — always one of `numbers`. */
@@ -84,7 +87,7 @@ const imageFor = (value: number) =>
  * the route on a loop, showing what to do. It stops for good the moment they
  * take over, the same way `SayItButton`'s invite pulse does.
  */
-export function NumberPath({ numbers, target, accent, onFinish }: NumberPathProps) {
+export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPathProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const targetIndex = Math.max(0, numbers.indexOf(target));
   const targetSlot = SLOTS[targetIndex];
@@ -261,7 +264,7 @@ export function NumberPath({ numbers, target, accent, onFinish }: NumberPathProp
             setHeat(0);
           }}
           disabled={solved || snap !== null}
-          aria-label={`Drag Pinki toward number ${target}`}
+          aria-label={format(dict.dragPinkiToward, { value: target })}
           className={`absolute -translate-x-1/2 -translate-y-1/2 touch-none rounded-full ${
             drag?.moved || snap ? "" : "transition-all duration-300"
           }`}

@@ -6,6 +6,8 @@ type TileVars = CSSProperties & { "--tile-tint"?: string };
 
 interface FriendPodProps {
   character: Character;
+  /** Translated content — see `dict.characters[id].tagline`. */
+  tagline: string;
   /** Vertical offset class that staggers the pod out of line with its
       neighbours. Passed in so the arc lives in the section, not in the pod. */
   offset: string;
@@ -14,8 +16,8 @@ interface FriendPodProps {
 /** One friend standing in a pale circular tile, head rising clear of it. The
     overhang is the whole point — a character boxed inside its own tile looks
     pasted on; one breaking the edge looks like it is standing there. */
-export function FriendPod({ character, offset }: FriendPodProps) {
-  const { name, tagline, image, accent } = character;
+export function FriendPod({ character, tagline, offset }: FriendPodProps) {
+  const { name, image, accent } = character;
 
   /* The single place a character's own color is allowed to appear, and only
      as a pale wash — the saturated thing is always the render on top. */

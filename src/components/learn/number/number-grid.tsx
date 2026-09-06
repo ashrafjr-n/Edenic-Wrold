@@ -7,6 +7,8 @@ import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { ActivityProgress } from "@/components/ui/activity-progress";
 import { StarReward } from "@/components/ui/star-reward";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import { Numeral } from "./numeral";
 
 interface NumberGridProps {
@@ -29,6 +31,9 @@ interface NumberGridProps {
       on screen, because the progress that decides that is read here and
       nowhere else on this page. */
   intro?: ReactNode;
+  /** The whole dictionary — safe to pass wholesale since every leaf is a
+      plain string (see `lib/dictionaries/en.ts`'s doc comment). */
+  dict: Dictionary;
 }
 
 type CellVars = CSSProperties & { "--tile-tint"?: string };
@@ -68,6 +73,7 @@ export function NumberGrid({
   basePath,
   tone,
   intro,
+  dict,
 }: NumberGridProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
@@ -120,10 +126,11 @@ export function NumberGrid({
       {intro && hydrated && finished === 0 && intro}
 
       <ActivityProgress
-        label="Numbers"
+        label={dict.lessonPicker.numbersLabel}
         done={finished}
         total={items.length}
         tone={tone}
+        ariaLabel={format(dict.ui.completedAria, { label: dict.lessonPicker.numbersLabel })}
       />
 
       <ul className="grid grid-cols-3 gap-3 sm:gap-5">
@@ -176,7 +183,7 @@ export function NumberGrid({
                     className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:text-xs"
                     style={{ backgroundColor: tone.face }}
                   >
-                    Next
+                    {dict.lessonPicker.next}
                   </span>
                 )}
               </span>
@@ -199,7 +206,7 @@ export function NumberGrid({
                   <span
                     className="anim-rise-in flex flex-col items-center gap-2"
                     style={style}
-                    aria-label={`The number ${item.value}, locked`}
+                    aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
                   >
                     {cell}
                   </span>
@@ -208,7 +215,7 @@ export function NumberGrid({
                     href={`${basePath}/${item.value}`}
                     className="anim-rise-in flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-105"
                     style={style}
-                    aria-label={`Start the number ${item.value}, ${stars} of 3 stars`}
+                    aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
                   >
                     {cell}
                   </Link>

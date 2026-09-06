@@ -6,8 +6,11 @@ import Image from "next/image";
 import { Paintbrush } from "lucide-react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
 import { scoreTrace } from "@/lib/trace-score";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface NumberColorProps {
+  dict: Dictionary["journey"];
   value: number;
   image: string;
   /** The numeral's handwriting centrelines — reused here purely as the yardstick
@@ -66,6 +69,7 @@ export function NumberColor({
   strokes,
   accent,
   onFinish,
+  dict,
 }: NumberColorProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const finishedRef = useRef(false);
@@ -148,7 +152,7 @@ export function NumberColor({
         onPointerUp={handleUp}
         onPointerCancel={handleUp}
         role="img"
-        aria-label={`Color in the number ${value}`}
+        aria-label={format(dict.colorNumber, { value })}
       >
         {/* The empty outline. A pale fill masked to the numeral, with the rim
             drawn by four offset shadows on the wrapper — offsetting the masked

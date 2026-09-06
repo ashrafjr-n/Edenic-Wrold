@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 type ItemVars = CSSProperties & { "--item-nudge-delay"?: string };
 
@@ -11,8 +13,10 @@ interface AppleGiveProps {
   target: number;
   /** The item's icon — same clay-render style as the rest of `assets/icons`. */
   icon: string;
-  /** Singular word for the item (e.g. "apple", "star"). */
+  /** Singular word for the item (e.g. "apple", "star"), already in the
+      active locale. */
   itemLabel: string;
+  dict: Dictionary["journey"];
   /** Mark the basket as the thing to aim for, while it is still empty.
       Presentation only — it changes nothing about how giving works. The
       journey passes this exactly when Pinki is holding the stick, so the halo
@@ -68,9 +72,12 @@ export function AppleGive({
   target,
   icon,
   itemLabel,
+  dict,
   highlightTarget,
   onGiven,
 }: AppleGiveProps) {
+  /* English only — Arabic has no indefinite article, and `dict.dropItem`
+     /`dict.pickItemAria` simply don't reference `{article}` there. */
   const article = /^[aeiou]/i.test(itemLabel) ? "an" : "a";
   const basketRef = useRef<HTMLDivElement>(null);
   const [given, setGiven] = useState<number[]>([]);
@@ -162,7 +169,7 @@ export function AppleGive({
       >
         {given.length === 0 ? (
           <span className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-            Drop {article} {itemLabel} here
+            {format(dict.dropItem, { article, itemLabel })}
           </span>
         ) : (
           given.map((id) => (
@@ -195,7 +202,7 @@ export function AppleGive({
               key={id}
               type="button"
               disabled={isGone || isFlying}
-              aria-label={`Pick ${article} ${itemLabel}`}
+              aria-label={format(dict.pickItemAria, { article, itemLabel })}
               onPointerDown={(event) => onPointerDown(event, id)}
               onPointerMove={(event) => onPointerMove(event, id)}
               onPointerUp={(event) => onPointerUp(event, id)}

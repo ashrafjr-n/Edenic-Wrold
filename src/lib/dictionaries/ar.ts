@@ -92,6 +92,7 @@ export const ar: Dictionary = {
       description: "تعلّم الأبجدية الإنجليزية من A إلى Z",
     },
     colors: { name: "تعلّم الألوان", description: "اكتشف الألوان من حولك" },
+    shapes: { name: "تعلّم الأشكال", description: "اكتشف الأشكال من حولك" },
   },
   characterHub: {
     backToLearn: "العودة إلى التعلّم",
@@ -101,6 +102,7 @@ export const ar: Dictionary = {
     unlocksAfter: "يُفتح بعد إكمال {name}",
     unlocksLater: "يُفتح لاحقًا",
     startLesson: "ابدأ {name}",
+    learningCorner: "ركن {name} التعليمي",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",
@@ -110,6 +112,8 @@ export const ar: Dictionary = {
     startNumberAria: "ابدأ الرقم {value}، {stars} من 3 نجوم",
   },
   journey: {
+    pickerWelcome:
+      "مرحبًا! أنا بينكي. لنتعلّم أرقامنا معًا — اضغط على الرقم 1 لتبدأ! 🌟",
     backTo: "العودة إلى {lessonName}",
     numberOf: "الرقم {position} من {total}",
     stepOf: "الخطوة {current} من {total}",
@@ -130,6 +134,11 @@ export const ar: Dictionary = {
     dragPinkiToward: "اسحب بينكي نحو الرقم {value}",
     videoAbout: "فيديو قصير عن الرقم {value}",
     playVideoAbout: "شغّل الفيديو عن الرقم {value}",
+    myTurn: "دوري أنا!",
+    finishExclaim: "انتهيت!",
+    finish: "إنهاء",
+    numberComplete: "اكتمل الرقم {value}!",
+    numberUnlocked: "فُتح الرقم {value}!",
   },
   activities: {
     puzzleTitle: "وقت البازل",
@@ -168,5 +177,22 @@ export const ar: Dictionary = {
   ui: {
     completedAria: "{label} مكتمل",
     starsAria: "{stars} من {max} نجوم",
+  },
+  pinki: {
+    discover: "انظر ماذا وجدت — الرقم {value}!",
+    reveal: "هذا هو الرقم {value}!",
+    strokeHintDefault: "شاهدني أرسمه!",
+    strokeHint1: "علم صغير... ثم مباشرة للأسفل!",
+    traceInvite: "تتبّعه معي!",
+    traceMiss: "قريب جدًا! لنحاول مرة أخرى.",
+    find: "أيّهم هو {word}؟",
+    findMiss: "همم... لننظر مرة أخرى!",
+    countGive: "التقط {value} {itemLabel}!",
+    countComplete: "أكمل الرقم {value}!",
+    countPath: "امشِ معي إلى الرقم {value}!",
+    countColor: "لوّن الرقم {value}!",
+    countHow: "كم {itemLabel} التقطنا؟",
+    game: "افقع الرقم {value}!",
+    celebrate: "مرحى! لقد نجحت!",
   },
 };

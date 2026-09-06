@@ -4,8 +4,11 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Celebration } from "@/components/ui/celebration";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface BalloonPopProps {
+  dict: Dictionary["journey"];
   /** The numbers on the balloons, answer included, in display order. */
   choices: number[];
   answer: number;
@@ -41,6 +44,7 @@ export function BalloonPop({
   answer,
   onCorrect,
   onMiss,
+  dict,
 }: BalloonPopProps) {
   const [popped, setPopped] = useState<number | null>(null);
   const [bobbing, setBobbing] = useState<number | null>(null);
@@ -78,7 +82,7 @@ export function BalloonPop({
             type="button"
             onClick={() => pop(value)}
             disabled={popped !== null}
-            aria-label={`Pop the balloon with number ${value}`}
+            aria-label={format(dict.popBalloon, { value })}
             className={`balloon-drift relative disabled:cursor-default ${
               bobbing === value ? "anim-wiggle" : ""
             } ${popped !== null && !isPopped ? "opacity-40" : ""}`}

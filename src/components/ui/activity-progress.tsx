@@ -15,6 +15,10 @@ interface ActivityProgressProps {
   /** The activity's hero colour pair. Defaults to the puzzles' green, which
       is also the site's "you passed this" colour; memory match passes gold. */
   tone?: { face: string; edge: string };
+  /** Pre-formatted (`format(dict.ui.completedAria, { label })`) rather than
+      built here — this component has no dictionary access, and `label` is
+      already the caller's translated word. */
+  ariaLabel: string;
 }
 
 const GREEN = { face: "var(--color-go)", edge: "var(--color-go-dark)" };
@@ -49,6 +53,7 @@ export function ActivityProgress({
   done,
   total,
   tone = GREEN,
+  ariaLabel,
 }: ActivityProgressProps) {
   const percent = total > 0 ? (done / total) * 100 : 0;
 
@@ -81,7 +86,7 @@ export function ActivityProgress({
       <div
         className="puzzle-progress-track"
         role="progressbar"
-        aria-label={`${label} completed`}
+        aria-label={ariaLabel}
         aria-valuemin={0}
         aria-valuemax={total}
         aria-valuenow={done}

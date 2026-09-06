@@ -4,8 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
 import { scoreTrace, strokeToPath } from "@/lib/trace-score";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface TraceBoardProps {
+  dict: Dictionary["journey"];
   strokes: readonly NumberStroke[];
   accent: string;
   /** How much of the numeral counts as finished this attempt. It drops with
@@ -66,6 +69,7 @@ export function TraceBoard({
   onFinish,
   onMiss,
   locked,
+  dict,
 }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
   const [drawn, setDrawn] = useState<StrokePoint[][]>([]);
@@ -210,7 +214,7 @@ export function TraceBoard({
       ref={surfaceRef}
       viewBox="0 0 100 100"
       role="img"
-      aria-label="Trace the number with your finger"
+      aria-label={dict.traceInstruction}
       /* `touch-action: none` is what stops a drag from scrolling the page
          instead of drawing — the whole activity depends on it. */
       className={`h-full w-full touch-none select-none ${missed ? "anim-wiggle" : ""}`}

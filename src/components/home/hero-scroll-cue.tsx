@@ -1,3 +1,5 @@
+import { getDictionary } from "@/lib/locale";
+
 /** Hand-drawn "Meet Edenic Friends" cue pointing down at `FriendsSection`.
     Static, by request — it used to idle-bob (`.anim-nudge-down`); that's gone.
     A sibling between the two sections, not a child of either — `Hero` has
@@ -12,7 +14,9 @@
     so it earns the exception to "never hand-draw an SVG icon" (`vibe.md` §6)
     and to the rejected tilted-headline-word pattern. Don't reuse either
     exception elsewhere. */
-export function HeroScrollCue() {
+export async function HeroScrollCue() {
+  const dict = await getDictionary();
+
   return (
     <div className="relative z-10 -mt-10 sm:-mt-14 lg:-mt-20">
       <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8 lg:justify-start">
@@ -21,7 +25,7 @@ export function HeroScrollCue() {
           style={{ animationDelay: "0.5s" }}
         >
           <span className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl">
-            Meet Edenic Friends
+            {dict.home.scrollCue}
           </span>
           <svg
             aria-hidden
