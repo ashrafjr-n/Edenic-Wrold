@@ -1,4 +1,5 @@
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 
 /** Hand-drawn "Meet Edenic Friends" cue pointing down at `FriendsSection`.
     Static, by request — it used to idle-bob (`.anim-nudge-down`); that's gone.
@@ -24,7 +25,10 @@ export async function HeroScrollCue() {
           className="anim-fade-up flex flex-col items-start pl-6 sm:pl-24 lg:pl-40"
           style={{ animationDelay: "0.5s" }}
         >
-          <span className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl">
+          <span
+            dir={dirFor(dict.locale)}
+            className="-rotate-2 text-lg font-semibold text-[var(--accent)] sm:text-xl"
+          >
             {dict.home.scrollCue}
           </span>
           <svg

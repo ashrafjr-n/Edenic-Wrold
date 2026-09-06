@@ -3,6 +3,7 @@ import { Button3D } from "@/components/ui/button-3d";
 import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
+import { dirFor } from "@/lib/format-dict";
 import { MainNav } from "./main-nav";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { Locale } from "@/types/locale";
@@ -54,7 +55,7 @@ function HeaderChrome({ dict, locale }: { dict: Dictionary; locale: Locale }) {
         className="h-11 shrink-0 whitespace-nowrap px-4 text-sm sm:px-6 sm:text-base"
       >
         <LogIn className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
-        <span className="hidden sm:inline">{dict.header.joinFull}</span>
+        <span dir={dirFor(locale)} className="hidden sm:inline">{dict.header.joinFull}</span>
         <span className="sm:hidden">{dict.header.join}</span>
       </Button3D>
     </>
