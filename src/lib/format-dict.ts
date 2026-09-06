@@ -11,6 +11,10 @@
     title strings as well as visible text. */
 import type { Locale } from "@/types/locale";
 
+/** Every locale the site ships that is written right-to-left: Arabic, and
+    Badini Kurdish, which uses the Arabic-based Kurdish alphabet. */
+const RTL_LOCALES = new Set<Locale>(["ar", "ku"]);
+
 const FSI = "⁦";
 const PDI = "⁩";
 
@@ -62,5 +66,13 @@ export function format(template: string, vars: Record<string, string | number>):
     the hero's `<h1>` is Arabic on one line and "Edenic World." on the next,
     and turning that element `rtl` would move the Latin line's period instead. */
 export function dirFor(locale: Locale): "rtl" | "ltr" {
-  return locale === "ar" ? "rtl" : "ltr";
+  return RTL_LOCALES.has(locale) ? "rtl" : "ltr";
+}
+
+/** Both non-English locales are right-to-left: Arabic, and Badini Kurdish,
+    which is written in the Arabic-based Kurdish alphabet. Anything choosing a
+    LAYOUT by direction (the home hero mirrors its scene) asks this rather
+    than testing for one locale, so a third RTL language needs no new branch. */
+export function isRtl(locale: Locale): boolean {
+  return dirFor(locale) === "rtl";
 }
