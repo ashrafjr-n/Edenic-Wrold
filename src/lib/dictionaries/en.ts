@@ -4,6 +4,12 @@
  * typeof en`). The taught content itself (numeral words, letters, colors,
  * and every brand/character name) never lives here: it stays English (and
  * unchanged) in every locale, per CLAUDE.md's language switcher conventions.
+ *
+ * Every leaf is a plain string, never a function — some carry `{name}`-style
+ * placeholders, filled in with `format()` (`lib/format-dict.ts`) at the call
+ * site. This is what lets the WHOLE dictionary be handed to a Client
+ * Component as an ordinary prop: React can't serialize a function crossing
+ * the Server→Client boundary, so nothing here may be one.
  */
 export const en = {
   nav: {
@@ -29,8 +35,7 @@ export const en = {
       "A gentle place to learn letters, numbers and shapes — built for children under ten.",
     explore: "Explore",
     follow: "Follow",
-    copyright: (year: number) =>
-      `© ${year} Edenic World. Made for curious little people.`,
+    copyright: "© {year} Edenic World. Made for curious little people.",
   },
   home: {
     heroWelcome: "Welcome to",
@@ -57,9 +62,9 @@ export const en = {
     headingGrow: "Grow.",
     subtitle: "Pick a friend and start your learning adventure!",
     locked: "Locked",
-    learnWith: (name: string) => `Learn With ${name}`,
-    lockedAria: (name: string) => `${name} is locked`,
-    finishFirst: (name: string) => `Finish ${name}'s lessons first!`,
+    learnWith: "Learn With {name}",
+    lockedAria: "{name} is locked",
+    finishFirst: "Finish {name}'s lessons first!",
   },
   characters: {
     pinki: { tagline: "Counts everything and finds shapes in the whole wide world." },
@@ -76,39 +81,38 @@ export const en = {
     achievements: "Achievements",
     yourAchievements: "Your achievements",
     nextUp: "Next up",
-    unlocksAfter: (name: string) => `Unlocks after ${name}`,
+    unlocksAfter: "Unlocks after {name}",
     unlocksLater: "Unlocks later",
-    startLesson: (name: string) => `Start ${name}`,
+    startLesson: "Start {name}",
   },
   lessonPicker: {
-    backTo: (characterName: string) => `Back to ${characterName}'s lessons`,
+    backTo: "Back to {characterName}'s lessons",
     numbersLabel: "Numbers",
     next: "Next",
-    lockedNumberAria: (value: number) => `The number ${value}, locked`,
-    startNumberAria: (value: number, stars: number) =>
-      `Start the number ${value}, ${stars} of 3 stars`,
+    lockedNumberAria: "The number {value}, locked",
+    startNumberAria: "Start the number {value}, {stars} of 3 stars",
   },
   journey: {
-    backTo: (lessonName: string) => `Back to ${lessonName}`,
-    numberOf: (position: number, total: number) => `Number ${position} of ${total}`,
-    stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
+    backTo: "Back to {lessonName}",
+    numberOf: "Number {position} of {total}",
+    stepOf: "Step {current} of {total}",
     tryAgain: "Try Again",
     next: "Next",
     canYouSayIt: "Can you say it?",
-    sayWord: (word: string) => `Say ${word}`,
+    sayWord: "Say {word}",
     again: "Again",
-    numberButton: (value: number) => `Number ${value}`,
+    numberButton: "Number {value}",
     traceInstruction: "Trace the number with your finger",
     dragMissingPiece: "Drag the missing piece back into the number",
-    numberValue: (value: number) => `The number ${value}`,
+    numberValue: "The number {value}",
     whichOneIsThis: "Which one is this?",
-    dropItem: (itemLabel: string) => `Drop a ${itemLabel} here`,
-    pickItemAria: (itemLabel: string) => `Pick a ${itemLabel}`,
-    popBalloon: (value: number) => `Pop the balloon with number ${value}`,
-    colorNumber: (value: number) => `Color in the number ${value}`,
-    dragPinkiToward: (value: number) => `Drag Pinki toward number ${value}`,
-    videoAbout: (value: number) => `A short video about the number ${value}`,
-    playVideoAbout: (value: number) => `Play the video about the number ${value}`,
+    dropItem: "Drop a {itemLabel} here",
+    pickItemAria: "Pick a {itemLabel}",
+    popBalloon: "Pop the balloon with number {value}",
+    colorNumber: "Color in the number {value}",
+    dragPinkiToward: "Drag Pinki toward number {value}",
+    videoAbout: "A short video about the number {value}",
+    playVideoAbout: "Play the video about the number {value}",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
@@ -125,29 +129,28 @@ export const en = {
     finished: "Finished",
     backToPuzzles: "Back to the puzzles",
     backToLevels: "Back to the levels",
-    startPuzzleAria: (value: number) => `Start puzzle ${value}`,
-    lockedPuzzleAria: (value: number) => `Puzzle ${value}, locked`,
-    startLevelAria: (value: number, pairs: number) =>
-      `Start level ${value} — ${pairs} pairs`,
-    lockedLevelAria: (value: number) => `Level ${value}, locked`,
-    puzzleLabel: (value: number) => `Puzzle ${value}`,
-    levelLabel: (value: number) => `Level ${value}`,
-    puzzleBoardAria: (alt: string) => `Puzzle board — ${alt}`,
-    puzzlePieceAria: (index: number, total: number) => `Puzzle piece ${index} of ${total}`,
+    startPuzzleAria: "Start puzzle {value}",
+    lockedPuzzleAria: "Puzzle {value}, locked",
+    startLevelAria: "Start level {value} — {pairs} pairs",
+    lockedLevelAria: "Level {value}, locked",
+    puzzleLabel: "Puzzle {value}",
+    levelLabel: "Level {value}",
+    puzzleBoardAria: "Puzzle board — {alt}",
+    puzzlePieceAria: "Puzzle piece {index} of {total}",
     hintsButton: "Hints — see the finished picture",
     theFinishedPicture: "The finished picture",
-    helpButtonAria: (left: number) => `Help — put one piece in place. ${left} left`,
+    helpButtonAria: "Help — put one piece in place. {left} left",
     help: "Help",
     skip: "Skip",
     closeHint: "Close and go back to the puzzle",
     again: "Again",
     next: "Next",
-    secondsLeftAria: (n: number) => `${n} seconds left`,
-    cardFaceDownAria: (index: number) => `Card ${index} face down`,
+    secondsLeftAria: "{n} seconds left",
+    cardFaceDownAria: "Card {index} face down",
   },
   ui: {
-    completedAria: (label: string) => `${label} completed`,
-    starsAria: (stars: number, max: number) => `${stars} out of ${max} stars`,
+    completedAria: "{label} completed",
+    starsAria: "{stars} out of {max} stars",
   },
 };
 
