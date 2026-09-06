@@ -269,6 +269,18 @@ body {
     sans-serif;
 }
 
+/* An English value (a character name, a number, a taught word) sitting
+   inside an Arabic sentence needs its own bidi run, or the browser can
+   reorder the whole line around it — "Learn With Pinki" rendering as
+   "Pinki Learn With" once the surrounding words are Arabic. `format()`
+   (`lib/format-dict.ts`) already isolates every interpolated value with
+   Unicode FSI/PDI marks, which is the same isolation this gives an
+   element — this rule covers any `<bdi>` used directly in JSX on top of
+   that. */
+bdi {
+  unicode-bidi: isolate;
+}
+
 /* ---------------------------------------------------------------
    Dark mode — SITE-WIDE. `data-theme="dark"` lands on `<html>` itself
    (`ThemeSync`, `components/ui/theme-sync.tsx`, syncing
