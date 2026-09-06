@@ -3,6 +3,7 @@ import { findPuzzleStage, puzzleStages } from "@/data/puzzles";
 import { isUpright } from "@/lib/puzzle-pieces";
 import { pageAccent } from "@/components/ui/back-button";
 import { PuzzlePlay } from "@/components/activities/puzzle/puzzle-play";
+import { getDictionary } from "@/lib/locale";
 
 export function generateStaticParams() {
   return puzzleStages
@@ -18,6 +19,7 @@ export default async function PuzzleStagePage({
   params,
 }: PuzzleStagePageProps) {
   const { stage: stageId } = await params;
+  const dict = await getDictionary();
   const stage = findPuzzleStage(Number(stageId));
 
   /* Which stages are open lives in the progress store, which is client-side,
@@ -57,6 +59,7 @@ export default async function PuzzleStagePage({
         grid={stage.grid}
         nextHref={nextHref}
         upright={upright}
+        dict={dict}
       />
     </main>
   );

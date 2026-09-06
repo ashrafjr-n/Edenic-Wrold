@@ -12,11 +12,14 @@ import { Button3D } from "@/components/ui/button-3d";
 import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface MemoryBoardProps {
   level: MemoryLevel;
   /** The next level, or back to the list when this was the last one. */
   nextHref: string;
+  dict: Dictionary;
 }
 
 /** How long a wrong pair stays up before turning back over. Long enough to
@@ -54,7 +57,7 @@ type ClockVars = CSSProperties & { "--clock-left"?: string };
  * `PuzzlePlay` does — the header shows live state (the clock), so the whole
  * row has to be inside the client component that has it.
  */
-export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
+export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
   const complete = useProgress((state) => state.complete);
 
   /* Bumped by "Again", and the only thing that re-deals the board. It starts
@@ -152,7 +155,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
               sets `position: relative` and is UNLAYERED, so a Tailwind
               `absolute` utility on the button itself silently loses. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities/memory-match" label="Back to the levels" />
+            <BackButton href="/activities/memory-match" label={dict.activities.backToLevels} />
           </span>
 
           {/* Which level this is, facing the back button across the row —
@@ -160,7 +163,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
               replaced a centred "LEVEL 01" caption above the clock, which
               was a heading-sized piece of chrome for a single digit. */}
           <span className="absolute right-0 top-0">
-            <LevelBadge value={level.value} label={`Level ${level.value}`} />
+            <LevelBadge value={level.value} label={format(dict.activities.levelLabel, { value: level.value })} />
           </span>
 
           {/* The clock is the only thing in the middle now, and it sits
@@ -183,7 +186,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
                would talk over the whole game. */
             aria-live="off"
             role="timer"
-            aria-label={`${remaining} seconds left`}
+            aria-label={format(dict.activities.secondsLeftAria, { n: remaining })}
           >
             <span className="memory-clock-face">
               <Timer
@@ -219,7 +222,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
                 type="button"
                 onClick={() => flip(index)}
                 disabled={done || isMatched}
-                aria-label={open ? face.label : `Card ${index + 1}, face down`}
+                aria-label={open ? face.label : format(dict.activities.cardFaceDownAria, { index: index + 1 })}
                 className={`memory-card anim-rise-in ${open ? "is-open" : ""} ${
                   isMatched ? "is-matched" : ""
                 } ${isWrong ? "anim-wiggle" : ""}`}
@@ -267,7 +270,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
                 className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
               >
                 <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-                Again
+                {dict.activities.again}
               </Button3D>
 
               <Button3D
@@ -282,7 +285,7 @@ export function MemoryBoard({ level, nextHref }: MemoryBoardProps) {
                 href={nextHref}
                 className="px-6 py-3 text-base sm:px-7 sm:text-lg"
               >
-                Next
+                {dict.activities.next}
                 <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
               </Button3D>
             </div>

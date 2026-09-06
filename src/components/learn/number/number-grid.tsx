@@ -191,7 +191,7 @@ export function NumberGrid({
               {/* Always three slots, gold only for what was actually earned —
                   an unfinished number shows three empty ones rather than
                   nothing, so the reward is visible before it is won. */}
-              <StarReward stars={stars} size="compact" />
+              <StarReward stars={stars} size="compact" dict={dict.ui} />
             </>
           );
 

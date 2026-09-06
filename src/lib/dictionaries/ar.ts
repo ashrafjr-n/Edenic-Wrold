@@ -161,6 +161,7 @@ export const ar: Dictionary = {
     lockedLevelAria: "المستوى {value}، مقفل",
     puzzleLabel: "بازل {value}",
     levelLabel: "مستوى {value}",
+    levelWord: "مستوى",
     puzzleBoardAria: "لوحة البازل — {alt}",
     puzzlePieceAria: "قطعة البازل {index} من {total}",
     hintsButton: "تلميحات — شاهد الصورة الكاملة",

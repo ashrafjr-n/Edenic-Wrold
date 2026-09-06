@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Brain } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";
 
 /** The art is a **static import**, not a `/public` path: a static import is
@@ -29,9 +30,11 @@ import memoryCard from "../../../public/assets/activity-page/memory-match/memory
     `style` exists only so the Activities page can stagger this card's own
     entrance — see `PuzzleCta`'s doc comment for why. */
 export function MemoryMatchCta({
+  dict,
   className = "",
   style,
 }: {
+  dict: Dictionary;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -42,7 +45,7 @@ export function MemoryMatchCta({
     >
       <Image
         src={memoryCard}
-        alt="Pinki, Nova and Bloo playing a memory card game"
+        alt={dict.activities.memoryCtaAlt}
         fill
         sizes="(min-width: 1024px) 32rem, 100vw"
         className="object-cover"
@@ -74,7 +77,7 @@ export function MemoryMatchCta({
           className="px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
         >
           <Brain className="h-5 w-5" strokeWidth={2} />
-          Memory Match
+          {dict.activities.memoryCtaButton}
         </Button3D>
       </div>
     </div>

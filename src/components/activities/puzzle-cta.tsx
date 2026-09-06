@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Puzzle } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.jpg";
 
 /** The art is a **static import**, not a `/public` path: a static import is
@@ -28,9 +29,11 @@ import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.
     a direct request pointed out that every other page on the site enters
     with one and this was the exception. */
 export function PuzzleCta({
+  dict,
   className = "",
   style,
 }: {
+  dict: Dictionary;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -41,7 +44,7 @@ export function PuzzleCta({
     >
       <Image
         src={puzzleCard}
-        alt="Colourful puzzle pieces scattered across the card"
+        alt={dict.activities.puzzleCtaAlt}
         fill
         sizes="(min-width: 1024px) 32rem, 100vw"
         className="object-cover"
@@ -65,7 +68,7 @@ export function PuzzleCta({
           className="puzzle-cta-btn px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"
         >
           <Puzzle className="h-5 w-5" strokeWidth={2} />
-          Puzzle Time
+          {dict.activities.puzzleCtaButton}
         </Button3D>
       </div>
     </div>

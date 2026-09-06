@@ -160,6 +160,10 @@ export const en = {
     lockedLevelAria: "Level {value}, locked",
     puzzleLabel: "Puzzle {value}",
     levelLabel: "Level {value}",
+    /** The bare word, used beside the digit in the puzzle grid's stage chip
+        (`<span>{levelWord}</span>{value}`) — distinct from `levelLabel`
+        above, a single already-joined string used elsewhere as one label. */
+    levelWord: "Level",
     puzzleBoardAria: "Puzzle board — {alt}",
     puzzlePieceAria: "Puzzle piece {index} of {total}",
     hintsButton: "Hints — see the finished picture",

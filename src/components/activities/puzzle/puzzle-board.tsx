@@ -24,6 +24,8 @@ import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { Celebration } from "@/components/ui/celebration";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 export interface PuzzleBoardHandle {
   /** Flies one loose piece home, as the hint overlay's "Help" does. `false`
@@ -33,6 +35,7 @@ export interface PuzzleBoardHandle {
 }
 
 interface PuzzleBoardProps {
+  dict: Dictionary;
   stage: number;
   picture: PuzzlePicture;
   /** How this stage's picture is cut up. Later stages get harder by adding
@@ -193,6 +196,7 @@ export function PuzzleBoard({
   picture,
   grid,
   nextHref,
+  dict,
   ref,
 }: PuzzleBoardProps) {
   const pieces = piecesFor(grid);
@@ -458,7 +462,7 @@ export function PuzzleBoard({
           <div
             ref={boardRef}
             role="group"
-            aria-label={`Puzzle board — ${picture.alt}`}
+            aria-label={format(dict.activities.puzzleBoardAria, { alt: picture.alt })}
             className="relative overflow-hidden rounded-2xl bg-[var(--color-locked)]/40"
             style={{
               width: "var(--puzzle-w)",
@@ -569,7 +573,7 @@ export function PuzzleBoard({
                       releaseCapture(event);
                       setDrag(null);
                     }}
-                    aria-label={`Puzzle piece ${piece.id + 1} of ${total}`}
+                    aria-label={format(dict.activities.puzzlePieceAria, { index: piece.id + 1, total })}
                     /* `touch-none` or the drag scrolls the page instead of
                        moving the piece. */
                     /* `pointer-events-none` on the button, `auto` on the
@@ -638,7 +642,7 @@ export function PuzzleBoard({
             className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
           >
             <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-            Again
+            {dict.activities.again}
           </Button3D>
 
           <Button3D
@@ -646,7 +650,7 @@ export function PuzzleBoard({
             href={nextHref}
             className="px-6 py-3 text-base sm:px-7 sm:text-lg"
           >
-            Next
+            {dict.activities.next}
             <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
           </Button3D>
         </div>

@@ -8,6 +8,7 @@ import {
   type HeadingChip,
 } from "@/components/ui/heading-mark";
 import { MemoryGrid } from "@/components/activities/memory/memory-grid";
+import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Memory Match — Edenic World",
@@ -37,7 +38,9 @@ const CHIPS: HeadingChip[] = HEADING_CHIP_SHAPE.map((shape) => ({
   edge: "var(--color-gold-dark)",
 }));
 
-export default function MemoryMatchPage() {
+export default async function MemoryMatchPage() {
+  const dict = await getDictionary();
+
   return (
     <main
       className="relative flex flex-1 flex-col pb-16 pt-5 sm:pb-20"
@@ -61,7 +64,7 @@ export default function MemoryMatchPage() {
               `absolute` utility on the button itself silently loses and it
               stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities" label="Back to Activities" />
+            <BackButton href="/activities" label={dict.activities.backToActivities} />
           </span>
 
           {/* Ink, not white: gold is the one face on the site pale enough
@@ -77,18 +80,18 @@ export default function MemoryMatchPage() {
           style={{ animationDelay: "0.25s" }}
         >
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
-            Memory Match
+            {dict.activities.memoryTitle}
           </h1>
           {/* A step down from the `h1` in size AND weight — the line telling
               a child what the page is for, not a second heading. */}
           <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
-            Find the matching friends!
+            {dict.activities.memorySubtitle}
           </p>
         </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
-        <MemoryGrid levels={memoryLevels} />
+        <MemoryGrid levels={memoryLevels} dict={dict} />
       </div>
     </main>
   );
