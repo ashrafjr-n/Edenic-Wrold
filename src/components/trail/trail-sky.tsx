@@ -16,10 +16,12 @@ interface SkyCloud {
   size: CloudSize;
   variant: CloudVariant;
   tint: CloudTint;
-  /** `back` clouds sit further away: bigger, but faded so they read as
-      distance rather than as another object in the foreground. Depth is
-      opacity plus size only — no blur, which is expensive on the phones
-      doing the scrolling. */
+  /** `far` clouds sit further away: bigger, and only SLIGHTLY faded. Depth
+      is mostly size — the fade is held at 80% because the clay shading (the
+      per-lobe highlights and the underside band) is what makes a cloud read
+      as an object at all, and at the 55% this started on it washed straight
+      into the sky and the big background clouds went flat again. No blur
+      either: expensive on the phones doing the scrolling. */
   far?: boolean;
 }
 
@@ -84,7 +86,7 @@ export function TrailSky({ palette = "day", children, className = "" }: TrailSky
           size={cloud.size}
           variant={cloud.variant}
           tint={cloud.tint}
-          className={`absolute -z-10 ${cloud.far ? "opacity-55" : "opacity-95"}`}
+          className={`absolute -z-10 ${cloud.far ? "opacity-80" : "opacity-100"}`}
           style={{ top: cloud.top, left: cloud.left, right: cloud.right }}
         />
       ))}
