@@ -1,3 +1,4 @@
+import type { Locale } from "@/types/locale";
 /**
  * Site chrome and Pinki's speech, in English — the default locale and the
  * type source every other dictionary is checked against (`Dictionary =
@@ -12,6 +13,13 @@
  * the Server→Client boundary, so nothing here may be one.
  */
 export const en = {
+  /** Not chrome text — the one non-string leaf, so any component already
+      holding the whole `dict` can derive `dir="rtl"|"ltr"` for an element
+      whose text mixes this locale's words with an English value (a name, a
+      number) without a second `locale` prop or a second `getLocale()` call.
+      Typed via `Locale` rather than inferred, so `ar.ts` can declare `"ar"`
+      instead of being forced into this literal `"en"`. */
+  locale: "en" as Locale,
   nav: {
     home: "Home",
     learn: "Learn",

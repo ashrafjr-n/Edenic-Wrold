@@ -9,6 +9,8 @@
     a no-op when the surrounding text is English too, and screen readers
     skip these as formatting characters, so it's safe on aria-label/alt/
     title strings as well as visible text. */
+import type { Locale } from "@/types/locale";
+
 const FSI = "⁦";
 const PDI = "⁩";
 
@@ -23,4 +25,19 @@ const PDI = "⁩";
  */
 export function format(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => `${FSI}${vars[key] ?? ""}${PDI}`);
+}
+
+/** The isolate marks above stop a run from being reordered internally, but
+    they do NOT decide which SIDE of an English value the surrounding Arabic
+    words land on — that's the paragraph's own base direction, and every
+    element on this site is `dir`-less (inherits the browser default `ltr`,
+    since `<html>` never sets `dir` — see CLAUDE.md). An Arabic sentence with
+    an English name or number spliced in needs its OWN element carrying an
+    explicit `dir="rtl"` HTML attribute, or the bidi algorithm places that
+    whole Arabic run to the English value's LEFT regardless of the isolate
+    marks — reported as "تعلم مع Pinki" rendering as "Pinki تعلم مع". Pass
+    `dict.locale` (present on every dictionary, see `en.ts`) to any element
+    whose text mixes a template with a `format()`-filled value. */
+export function dirFor(locale: Locale): "rtl" | "ltr" {
+  return locale === "ar" ? "rtl" : "ltr";
 }

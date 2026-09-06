@@ -16,6 +16,7 @@ import type { Dictionary } from "./en";
  * form) — correct enough for a children's site, not grammatically complete.
  */
 export const ar: Dictionary = {
+  locale: "ar",
   nav: {
     home: "الرئيسية",
     learn: "تعلّم",
