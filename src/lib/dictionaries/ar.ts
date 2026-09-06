@@ -176,6 +176,13 @@ export const ar: Dictionary = {
     secondsLeftAria: "{n} ثانية متبقية",
     cardFaceDownAria: "البطاقة {index}، مقلوبة",
   },
+  worldTeaser: {
+    comingSoon: "قريبًا",
+    title: "ابنِ عالم Pinki و Nova و Bloo",
+    description:
+      "اجمع النقود من دروسك وألعابك، ثم أنفقها على تزيين غرفة خاصة لصديقك المفضّل.",
+    ariaLabel: "قريبًا: ابنِ عالم صديقك المفضّل",
+  },
   ui: {
     completedAria: "{label} مكتمل",
     starsAria: "{stars} من {max} نجوم",
