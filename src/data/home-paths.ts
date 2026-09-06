@@ -22,9 +22,9 @@ export const homePaths: HomePath[] = [
     edge: "#4a34b0",
   },
   {
-    id: "activities",
+    id: "play",
     art: { src: "/assets/icons/cloud.png", fit: "contain" },
-    href: "/activities",
+    href: "/play",
     face: "var(--accent)",
     edge: "var(--accent-dark)",
   },

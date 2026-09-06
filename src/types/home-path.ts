@@ -2,7 +2,7 @@
     section. `title`/`action` are translated content — see `dict.homePaths`
     in the dictionaries, not this file. */
 export interface HomePath {
-  id: "learn" | "activities";
+  id: "learn" | "play";
   /** Art bedded into the panel's fill, in place of an icon. */
   art: {
     src: string;
