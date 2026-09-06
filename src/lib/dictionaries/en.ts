@@ -67,7 +67,7 @@ export const en = {
         "Pick a friend and work through their lessons — a short video, the shape itself, then tracing and a few questions.",
       action: "Start learning",
     },
-    activities: {
+    play: {
       title: "Play",
       description:
         "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
