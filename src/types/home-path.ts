@@ -1,8 +1,8 @@
 /** One of the two ways into the site, as shown in the home page's closing
-    section. */
+    section. `title`/`action` are translated content — see `dict.homePaths`
+    in the dictionaries, not this file. */
 export interface HomePath {
-  title: string;
-  description: string;
+  id: "learn" | "activities";
   /** Art bedded into the panel's fill, in place of an icon. */
   art: {
     src: string;
@@ -11,8 +11,6 @@ export interface HomePath {
         `contain` rather than `cover`. */
     fit: "cover" | "contain";
   };
-  /** Label on the panel's button. */
-  action: string;
   /** Omitted while the section has no route yet — the panel then renders its
       action as a disabled chip rather than a dead link. */
   href?: string;

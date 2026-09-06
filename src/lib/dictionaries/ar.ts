@@ -57,8 +57,18 @@ export const ar: Dictionary = {
     pathsHeading: "من أين تحب أن تبدأ؟",
   },
   homePaths: {
-    learn: { title: "تعلّم", action: "ابدأ التعلّم" },
-    activities: { title: "أنشطة", action: "ابدأ اللعب" },
+    learn: {
+      title: "تعلّم",
+      description:
+        "اختر صديقًا وتقدّم في دروسه — فيديو قصير، ثم الشكل نفسه، ثم التتبّع وبضعة أسئلة.",
+      action: "ابدأ التعلّم",
+    },
+    activities: {
+      title: "أنشطة",
+      description:
+        "تتبّع الحروف بإصبعك، طابق الأشكال، اكتشف المختلف — تمارين عملية بسيطة بعد كل درس.",
+      action: "ابدأ اللعب",
+    },
   },
   learnPicker: {
     headingLearn: "تعلّم.",

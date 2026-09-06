@@ -9,24 +9,21 @@ import type { HomePath } from "@/types/home-path";
 
     The Learn panel's fill is hardcoded rather than `var(--brand)` on purpose:
     `--brand` moved from purple to sky blue site-wide, but this one panel was
-    kept purple deliberately, so it can't follow the token. */
+    kept purple deliberately, so it can't follow the token.
+
+    `title`/`description`/`action` are translated content — see
+    `dict.homePaths` in the dictionaries, not this file. */
 export const homePaths: HomePath[] = [
   {
-    title: "Learn",
-    description:
-      "Pick a friend and work through their lessons — a short video, the shape itself, then tracing and a few questions.",
+    id: "learn",
     art: { src: "/assets/learn.jpg", fit: "cover" },
-    action: "Start learning",
     href: "/learn",
     face: "#6d55e0",
     edge: "#4a34b0",
   },
   {
-    title: "Activities",
-    description:
-      "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
+    id: "activities",
     art: { src: "/assets/icons/cloud.png", fit: "contain" },
-    action: "Start playing",
     href: "/activities",
     face: "var(--accent)",
     edge: "var(--accent-dark)",
