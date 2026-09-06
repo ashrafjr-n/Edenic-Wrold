@@ -1,15 +1,20 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { LOCALE_COOKIE, type Locale } from "@/types/locale";
-import { en } from "./dictionaries/en";
+import { LOCALE_COOKIE, isLocale, type Locale } from "@/types/locale";
+import { en, type Dictionary } from "./dictionaries/en";
 import { ar } from "./dictionaries/ar";
+import { ku } from "./dictionaries/ku";
 
 export async function getLocale(): Promise<Locale> {
   const store = await cookies();
-  return store.get(LOCALE_COOKIE)?.value === "ar" ? "ar" : "en";
+  const saved = store.get(LOCALE_COOKIE)?.value;
+  /* A cookie is untrusted input: anything that isn't a locale we ship falls
+     back to English rather than indexing `DICTIONARIES` with it. */
+  return isLocale(saved) ? saved : "en";
 }
 
-export async function getDictionary() {
-  const locale = await getLocale();
-  return locale === "ar" ? ar : en;
+const DICTIONARIES: Record<Locale, Dictionary> = { en, ar, ku };
+
+export async function getDictionary(): Promise<Dictionary> {
+  return DICTIONARIES[await getLocale()];
 }
