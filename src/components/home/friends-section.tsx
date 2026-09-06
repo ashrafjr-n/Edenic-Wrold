@@ -1,6 +1,7 @@
 import { characters } from "@/data/characters";
 import { SocialLinks } from "@/components/ui/social-links";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 import { FriendPod } from "./friend-pod";
 
 /** A group photo, not a row of boxes: the middle friend stands higher than the
@@ -9,6 +10,7 @@ const POD_OFFSETS = ["lg:mt-16", "lg:mt-0", "lg:mt-16"];
 
 export async function FriendsSection() {
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
 
   const cast = characters.map((character, index) => ({
     character,
@@ -28,7 +30,12 @@ export async function FriendsSection() {
               {dict.home.friendsEyebrow}
             </span>
 
+            {/* Both halves of this heading and the paragraph under it end in a
+                full stop, and a full stop is bidi-neutral: with no explicit
+                base direction it takes the paragraph's LTR and jumps to the
+                wrong end of the Arabic run (see `dirFor`). */}
             <h2
+              dir={dir}
               id="friends-heading"
               className="mt-3 text-4xl font-bold leading-[1.1] tracking-tight text-[var(--color-ink)] sm:text-5xl"
             >
@@ -37,7 +44,7 @@ export async function FriendsSection() {
               {dict.home.friendsHeadingLine2}
             </h2>
 
-            <p className="mt-4 text-lg leading-relaxed text-[var(--color-ink)]/60">
+            <p dir={dir} className="mt-4 text-lg leading-relaxed text-[var(--color-ink)]/60">
               {dict.home.friendsBody}
             </p>
 
@@ -55,6 +62,7 @@ export async function FriendsSection() {
                 key={character.id}
                 character={character}
                 tagline={dict.characters[character.id].tagline}
+                dir={dir}
                 offset={offset}
               />
             ))}

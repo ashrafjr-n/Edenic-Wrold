@@ -8,6 +8,11 @@ interface FriendPodProps {
   character: Character;
   /** Translated content — see `dict.characters[id].tagline`. */
   tagline: string;
+  /** Base direction for the tagline. Every one of them ends in a full stop,
+      and a full stop is bidi-neutral: left to the page's default `ltr` it
+      resolves to the paragraph direction and renders on the wrong end of the
+      Arabic sentence (see `lib/format-dict.ts`'s `dirFor`). */
+  dir: "rtl" | "ltr";
   /** Vertical offset class that staggers the pod out of line with its
       neighbours. Passed in so the arc lives in the section, not in the pod. */
   offset: string;
@@ -16,7 +21,7 @@ interface FriendPodProps {
 /** One friend standing in a pale circular tile, head rising clear of it. The
     overhang is the whole point — a character boxed inside its own tile looks
     pasted on; one breaking the edge looks like it is standing there. */
-export function FriendPod({ character, tagline, offset }: FriendPodProps) {
+export function FriendPod({ character, tagline, dir, offset }: FriendPodProps) {
   const { name, image, accent } = character;
 
   /* The single place a character's own color is allowed to appear, and only
@@ -49,7 +54,7 @@ export function FriendPod({ character, tagline, offset }: FriendPodProps) {
         {name}
       </h3>
 
-      <p className="mt-3 max-w-[13rem] text-center text-sm leading-snug text-[var(--color-ink)]/60">
+      <p dir={dir} className="mt-3 max-w-[13rem] text-center text-sm leading-snug text-[var(--color-ink)]/60">
         {tagline}
       </p>
     </div>

@@ -9,6 +9,7 @@ const YEAR = new Date().getFullYear();
 
 export async function Footer() {
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
 
   return (
     /* A white slab rising out of the lavender ground, rounded only along the
@@ -18,7 +19,9 @@ export async function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:gap-16">
         <div>
           <Logo className="h-14" />
-          <p className="mt-4 max-w-xs text-base leading-relaxed text-[var(--color-ink)]/60">
+          {/* Ends in a full stop, which is bidi-neutral — same reason the
+              copyright line below carries a direction (see `dirFor`). */}
+          <p dir={dir} className="mt-4 max-w-xs text-base leading-relaxed text-[var(--color-ink)]/60">
             {dict.footer.tagline}
           </p>
         </div>
@@ -56,7 +59,7 @@ export async function Footer() {
       </div>
 
       <div className="mx-auto mt-12 max-w-7xl border-t border-[var(--brand-soft)] pt-6">
-        <p dir={dirFor(dict.locale)} className="text-center text-sm text-[var(--color-ink)]/50">
+        <p dir={dir} className="text-center text-sm text-[var(--color-ink)]/50">
           {format(dict.footer.copyright, { year: YEAR })}
         </p>
       </div>
