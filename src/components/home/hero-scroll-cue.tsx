@@ -50,16 +50,17 @@ export async function HeroScrollCue() {
               which way its hook reads, so `-scale-x-100` (the earlier
               approach) turned an arrow pointing down into one that read as
               pointing away/up instead of down. The fix is a rotation, not a
-              flip: at `lg`, `rotate-[30deg]` replaces the base
-              `-rotate-[30deg]` tilt with its mirror image about vertical — a
-              60° clockwise swing — which keeps the same unflipped path (and
-              so the same downward-pointing arrowhead) while leaning the
-              other way to match the cue's new corner. */}
+              flip: at `lg`, `rotate-[10deg]` replaces the base
+              `-rotate-[30deg]` tilt — still leaning the opposite way to
+              match the cue's mirrored corner, tuned back 20° counter-
+              clockwise from the first pass's `rotate-[30deg]` on direct
+              request. `lg:mr-14` (up from `lg:mr-8`) nudges the arrow
+              further left off the right edge it's aligned to, same request. */}
           <svg
             aria-hidden
             viewBox="0 0 90 150"
             className={`mt-2 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20 ${
-              rtl ? "ml-8 lg:rotate-[30deg] lg:ml-0 lg:mr-8" : "ml-8"
+              rtl ? "ml-8 lg:rotate-[10deg] lg:ml-0 lg:mr-14" : "ml-8"
             }`}
             fill="none"
           >
