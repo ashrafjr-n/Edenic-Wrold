@@ -4,11 +4,13 @@ import { ArrowRight } from "lucide-react";
 import { homePaths } from "@/data/home-paths";
 import { Button3D } from "@/components/ui/button-3d";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 export async function PathsSection() {
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
 
   return (
     <section
@@ -55,7 +57,10 @@ export async function PathsSection() {
 
                 <h3 className="text-3xl font-bold text-white">{copy.title}</h3>
 
-                <p className="mt-3 max-w-[17rem] text-base leading-relaxed text-white/85">
+                {/* Both panel descriptions end in a full stop — bidi-neutral,
+                    so it needs the element's own base direction or it lands
+                    on the wrong end of the Arabic run (see `dirFor`). */}
+                <p dir={dir} className="mt-3 max-w-[17rem] text-base leading-relaxed text-white/85">
                   {copy.description}
                 </p>
 

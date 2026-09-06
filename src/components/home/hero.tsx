@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { getDictionary, getLocale } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 
 export async function Hero() {
   const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
@@ -50,7 +51,14 @@ export async function Hero() {
             <span className="text-[var(--color-head-grow)]">World.</span>
           </h1>
 
+          {/* The full stop ending this sentence is a bidi-neutral, so without
+              an explicit base direction it resolves to the LTR paragraph and
+              lands on the WRONG end of the Arabic run — see `dirFor`. The
+              `<h1>` above deliberately gets none: `<br>` splits it into two
+              bidi paragraphs, the second being the Latin "Edenic World.",
+              whose own period would move if the element went `rtl`. */}
           <p
+            dir={dirFor(locale)}
             className="anim-drop-in mx-auto mt-5 max-w-md text-lg text-[var(--color-ink)]/65 sm:text-xl lg:mx-0"
             style={{ animationDelay: "0.2s" }}
           >
