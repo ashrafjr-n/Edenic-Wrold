@@ -19,9 +19,9 @@ import { dirFor } from "@/lib/format-dict";
  * larger — the only depth cue here, and enough at three stops.
  */
 const STOPS = [
-  { id: "bloo", x: "20%", y: "3%", width: "42%", variant: 2 },
-  { id: "nova", x: "52%", y: "33%", width: "40%", variant: 1 },
-  { id: "pinki", x: "82%", y: "63%", width: "34%", variant: 3 },
+  { id: "bloo", x: "19%", y: "4%", width: "40%", variant: 2 },
+  { id: "nova", x: "51%", y: "34%", width: "38%", variant: 1 },
+  { id: "pinki", x: "81%", y: "64%", width: "33%", variant: 3 },
 ] as const satisfies readonly {
   id: string;
   x: string;
@@ -121,7 +121,7 @@ export function TrailCta({
         aria-hidden
         className="order-1 flex w-full justify-center p-6 pb-2 sm:p-8 sm:pb-2 lg:order-2 lg:flex-1 lg:p-8"
       >
-        <div className="relative aspect-[7/5] w-full max-w-[22rem] lg:max-w-[26rem]">
+        <div className="relative aspect-[8/5] w-full max-w-[23rem] lg:max-w-[30rem]">
           {STOPS.map(({ id, x, y, width, variant }) => (
             <div
               key={id}
@@ -138,7 +138,7 @@ export function TrailCta({
                   lobe, so the friend sinks into it rather than balancing on
                   its outline. Percentages of the cloud's OWN box, so this
                   holds at every size the card takes. */}
-              <div className="absolute bottom-[58%] left-[46%] aspect-square h-[125%] -translate-x-1/2">
+              <div className="absolute bottom-[56%] left-[46%] aspect-square h-[116%] -translate-x-1/2">
                 <Image
                   src={CHARACTER[id].image}
                   alt=""
