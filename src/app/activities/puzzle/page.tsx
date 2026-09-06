@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/heading-mark";
 import { PuzzleGrid } from "@/components/activities/puzzle/puzzle-grid";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 
 export const metadata: Metadata = {
   title: "Puzzles — Edenic World",
@@ -65,7 +66,13 @@ export default async function PuzzleStagesPage() {
               it is the one line telling a child what the page is for, not a
               second heading. At `text-base sm:text-lg` it sat close enough to
               the title that the whole head read as heavy. */}
-          <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
+          {/* `dir` because it ends in an exclamation mark: bidi-neutral, so
+              without one it takes the page's `ltr` and renders on the wrong
+              end of the Arabic line (see `dirFor`). */}
+          <p
+            dir={dirFor(dict.locale)}
+            className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base"
+          >
             {dict.activities.puzzleSubtitle}
           </p>
         </div>

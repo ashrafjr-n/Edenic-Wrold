@@ -148,7 +148,11 @@ export function CharacterCard({
         {name}
       </h3>
 
+      {/* No English word in here, but every tagline ends in a full stop —
+          bidi-neutral, so with no base direction of its own it takes the
+          page's `ltr` and renders on the wrong end of the sentence. */}
       <p
+        dir={dir}
         className="anim-fade-up mt-3 max-w-[13rem] text-center text-sm leading-snug text-[var(--color-ink)]/60"
         style={{ animationDelay: delay.tagline }}
       >

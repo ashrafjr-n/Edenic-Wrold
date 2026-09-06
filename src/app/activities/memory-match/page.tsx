@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/heading-mark";
 import { MemoryGrid } from "@/components/activities/memory/memory-grid";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 
 export const metadata: Metadata = {
   title: "Memory Match — Edenic World",
@@ -84,7 +85,13 @@ export default async function MemoryMatchPage() {
           </h1>
           {/* A step down from the `h1` in size AND weight — the line telling
               a child what the page is for, not a second heading. */}
-          <p className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base">
+          {/* `dir` because it ends in an exclamation mark: bidi-neutral, so
+              without one it takes the page's `ltr` and renders on the wrong
+              end of the Arabic line (see `dirFor`). */}
+          <p
+            dir={dirFor(dict.locale)}
+            className="mt-1.5 text-sm font-medium text-[var(--color-ink)]/55 sm:text-base"
+          >
             {dict.activities.memorySubtitle}
           </p>
         </div>
