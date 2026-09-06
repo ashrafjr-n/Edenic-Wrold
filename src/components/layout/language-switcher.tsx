@@ -78,7 +78,7 @@ export function LanguageSwitcher({ dict, locale }: LanguageSwitcherProps) {
         <div
           role="menu"
           aria-label={dict.header.chooseLanguage}
-          className="card anim-pop-in absolute right-0 top-full z-30 mt-2 w-56 origin-top-right p-2"
+          className="card anim-pop-in absolute left-1/2 top-full z-30 mt-2 w-56 -translate-x-1/2 origin-top p-2"
         >
           <LanguageRow
             label={dict.header.english}
