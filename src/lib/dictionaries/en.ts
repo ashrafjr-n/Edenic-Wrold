@@ -185,6 +185,18 @@ export const en = {
     secondsLeftAria: "{n} seconds left",
     cardFaceDownAria: "Card {index} face down",
   },
+  /** The Play page's teaser card for the friend-world feature. Its own
+      namespace, not part of `activities`: nothing here labels a control or a
+      route, it is one card's worth of copy for something that does not exist
+      yet, and it should be easy to delete in one piece when the real thing
+      lands. */
+  worldTeaser: {
+    comingSoon: "Coming Soon",
+    title: "Build Pinki, Nova & Bloo's World",
+    description:
+      "Earn coins from your lessons and games, then spend them decorating a special room for your favourite friend.",
+    ariaLabel: "Coming soon: build your favourite friend's world",
+  },
   ui: {
     completedAria: "{label} completed",
     starsAria: "{stars} out of {max} stars",

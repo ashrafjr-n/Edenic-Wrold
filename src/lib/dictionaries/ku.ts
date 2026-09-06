@@ -180,6 +180,13 @@ export const ku: Dictionary = {
     secondsLeftAria: "{n} چرکە مایە",
     cardFaceDownAria: "کارتا {index}، سەرەژێر",
   },
+  worldTeaser: {
+    comingSoon: "بزووی",
+    title: "جیهانا Pinki، Nova و Bloo چێبکە",
+    description:
+      "ژ وانە و یاریێن خۆ درافان کۆبکە، پاشی ب وان ژوورەکا تایبەت بۆ هەڤالێ خۆ یێ دلخواز بخەملینە.",
+    ariaLabel: "بزووی: جیهانا هەڤالێ خۆ یێ دلخواز چێبکە",
+  },
   ui: {
     completedAria: "{label} تەمام بوو",
     starsAria: "{stars} ژ {max} ستێران",
