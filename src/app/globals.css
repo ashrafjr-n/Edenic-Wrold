@@ -608,28 +608,32 @@ bdi {
   --cloud-hi-soft: 9%;
 }
 
+/* The night ramp is computed ONCE here, and each tint below only supplies a
+   pale hue for it. Written per-tint at first, and the four drifted apart:
+   the white cloud was mixed from an already-pale value while the other three
+   were mixed from the SATURATED character tokens, so on a navy sky the blue
+   cloud was nearly invisible while the white one sat bright on top of it.
+   Clouds should differ in HUE at night, never in whether you can see them. */
+[data-theme="dark"] .cloud {
+  --cloud-face: color-mix(in srgb, var(--cloud-pale) 84%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--cloud-pale) 64%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--cloud-pale) 44%, var(--surface));
+}
+
 [data-theme="dark"] .cloud--white {
-  --cloud-face: color-mix(in srgb, #cfe2fb 84%, var(--surface));
-  --cloud-shade: color-mix(in srgb, #cfe2fb 66%, var(--surface));
-  --cloud-deep: color-mix(in srgb, #cfe2fb 46%, var(--surface));
+  --cloud-pale: #dfeafb;
 }
 
 [data-theme="dark"] .cloud--sky {
-  --cloud-face: color-mix(in srgb, var(--color-bloo) 56%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-bloo) 32%, var(--surface));
-  --cloud-deep: color-mix(in srgb, var(--color-bloo) 16%, var(--surface));
+  --cloud-pale: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
 }
 
 [data-theme="dark"] .cloud--pink {
-  --cloud-face: color-mix(in srgb, var(--color-pinki) 50%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-pinki) 28%, var(--surface));
-  --cloud-deep: color-mix(in srgb, var(--color-pinki) 14%, var(--surface));
+  --cloud-pale: color-mix(in srgb, var(--color-pinki) 38%, #ffffff);
 }
 
 [data-theme="dark"] .cloud--lavender {
-  --cloud-face: color-mix(in srgb, var(--color-nova) 52%, var(--surface));
-  --cloud-shade: color-mix(in srgb, var(--color-nova) 30%, var(--surface));
-  --cloud-deep: color-mix(in srgb, var(--color-nova) 15%, var(--surface));
+  --cloud-pale: color-mix(in srgb, var(--color-nova) 40%, #ffffff);
 }
 
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
