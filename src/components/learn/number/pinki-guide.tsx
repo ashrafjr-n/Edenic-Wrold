@@ -49,6 +49,12 @@ interface PinkiGuideProps {
   pose?: PinkiPose;
   /** What she says. Written to be read aloud once audio exists. */
   line: string;
+  /** `line` mixes this locale's words with an English name/number via
+      `format()` in most stages — needed on the elements rendering it below,
+      since the browser never sets `dir` on `<html>` (see `lib/format-dict.ts`'s
+      `dirFor`). Defaults to `"ltr"` so every existing English-only call site
+      is unaffected. */
+  dir?: "rtl" | "ltr";
   /** How much of the screen she is here — see `GuidePresence`. Rendering
       nothing for `none` is handled here rather than by every caller, so the
       stage table in `data/number-guide.ts` stays the only thing deciding it. */
@@ -96,6 +102,7 @@ export function PinkiGuide({
   presence = "lead",
   children,
   centered = false,
+  dir = "ltr",
 }: PinkiGuideProps) {
   if (presence === "none") return null;
 
@@ -133,6 +140,7 @@ export function PinkiGuide({
         }`}
       >
         <p
+          dir={dir}
           className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base ${
             centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left"
           }`}
@@ -195,7 +203,7 @@ export function PinkiGuide({
          screen reader should hear the same encouragement a sighted one sees on
          every other stage. */
       <>
-        <p className="sr-only">{line}</p>
+        <p dir={dir} className="sr-only">{line}</p>
 
         <span
           aria-hidden
@@ -214,7 +222,7 @@ export function PinkiGuide({
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-5">
         {portrait}
 
-        <p className="speech-bubble max-w-xs px-5 py-3 text-center text-base font-bold text-[var(--color-ink)] sm:max-w-sm sm:text-left sm:text-lg">
+        <p dir={dir} className="speech-bubble max-w-xs px-5 py-3 text-center text-base font-bold text-[var(--color-ink)] sm:max-w-sm sm:text-left sm:text-lg">
           {line}
         </p>
       </div>
