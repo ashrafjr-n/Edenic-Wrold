@@ -3,6 +3,7 @@ import { mainNav } from "@/data/nav";
 import { Logo } from "@/components/ui/logo";
 import { SocialLinks } from "@/components/ui/social-links";
 import { getDictionary } from "@/lib/locale";
+import { format } from "@/lib/format-dict";
 
 const YEAR = new Date().getFullYear();
 
@@ -56,7 +57,7 @@ export async function Footer() {
 
       <div className="mx-auto mt-12 max-w-7xl border-t border-[var(--brand-soft)] pt-6">
         <p className="text-center text-sm text-[var(--color-ink)]/50">
-          {dict.footer.copyright(YEAR)}
+          {format(dict.footer.copyright, { year: YEAR })}
         </p>
       </div>
     </footer>
