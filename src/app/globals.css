@@ -56,6 +56,15 @@
   --hero-shape-rtl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L0,600 C200,600 300,548 460,566 S730,620 870,594 S1040,516 1050,452 S1010,300 1024,196 S986,44 932,0 Z'/%3E%3C/svg%3E");
   --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
 
+  /* Two starfield TILES for the night sky, at different densities. They are
+     tiled rather than placed: the sky is one long scroll of unknown height,
+     and a fixed handful of stars would leave most of it empty. Two layers at
+     tile sizes sharing no common factor (260 / 170) is what stops the repeat
+     being visible — one tile alone reads as wallpaper the moment the page is
+     wider than it is. Dark mode only; see the `.trail-sky--*` dark rules. */
+  --sky-stars-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='18' cy='32' r='1.4' opacity='0.9'/%3E%3Ccircle cx='64' cy='12' r='1' opacity='0.6'/%3E%3Ccircle cx='110' cy='48' r='1.6' opacity='0.85'/%3E%3Ccircle cx='156' cy='22' r='1.1' opacity='0.7'/%3E%3Ccircle cx='188' cy='72' r='1.3' opacity='0.75'/%3E%3Ccircle cx='30' cy='96' r='1' opacity='0.55'/%3E%3Ccircle cx='78' cy='124' r='1.5' opacity='0.8'/%3E%3Ccircle cx='132' cy='104' r='1' opacity='0.6'/%3E%3Ccircle cx='168' cy='148' r='1.4' opacity='0.8'/%3E%3Ccircle cx='46' cy='168' r='1.2' opacity='0.7'/%3E%3Ccircle cx='100' cy='186' r='1' opacity='0.55'/%3E%3Ccircle cx='146' cy='192' r='1.3' opacity='0.7'/%3E%3C/g%3E%3C/svg%3E");
+  --sky-stars-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='24' cy='58' r='0.9' opacity='0.5'/%3E%3Ccircle cx='96' cy='26' r='1.1' opacity='0.6'/%3E%3Ccircle cx='140' cy='88' r='0.8' opacity='0.45'/%3E%3Ccircle cx='58' cy='140' r='1' opacity='0.55'/%3E%3Ccircle cx='176' cy='120' r='0.9' opacity='0.5'/%3E%3Ccircle cx='112' cy='170' r='0.8' opacity='0.45'/%3E%3C/g%3E%3C/svg%3E");
+
   /* Cloud silhouettes for `<Cloud />` (Edenic Trail's sky), as MASKS — the
      same technique `--hero-shape` uses, and for the same reason: one shape
      definition scales to any box, and a mask edge antialiases where a
@@ -535,44 +544,68 @@ bdi {
   background-color: #f4f2fb;
 }
 
-/* The trail sky at night. `--shadow-hue`'s flip to black covers the clouds'
-   drop shadow for free, but the sky's own fill and the cloud faces are the
-   two things it can't reach: a gradient mixed toward `#ffffff` stays a
-   daylight sky whatever the theme, and a pure-white cloud on a dark ground
-   is the brightest object on the page — the same "backwards from dormant"
-   trap `--color-gold-quiet` documents.
+/* The trail sky at NIGHT: indigo and deep purple, with stars.
+   ------------------------------------------------------------------
+   The first night sky was a blue-grey navy, and it was rejected outright —
+   cold and heavy, reading as "switched off" rather than as evening, which is
+   the wrong feeling entirely for a children's adventure. **A night sky here
+   is magic, not absence of day.** So: violet mixed into a deep purple base
+   rather than blue into near-black, and a starfield over it.
 
-   `dawn` and `dream` mix toward `--background` so a single token move keeps
-   them in step with the page. **`day` is the exception and anchors to a
-   literal navy** (`#101a30` / `#0d1526`): it is the palette the Play card
-   and the trail itself wear, and it was asked for as a proper dark navy —
-   `--background` is a dark VIOLET, and mixing blue into violet lands on
-   indigo, not navy. */
+   The hue is `--color-nova`, the site's own lavender, mixed into one deep
+   purple anchor — so the night sky belongs to the same palette as everything
+   else instead of introducing a colour nothing shares. `--background` is NOT
+   the anchor: it is a dark violet-grey tuned to sit under cards, and mixing
+   into it lands on the same muted indigo this replaced.
+
+   The two star tiles ride ON TOP of the gradient in the layer stack, so the
+   gradient must be listed last. Each tiled layer needs its own `size` and
+   `repeat` entry, which is what the shared rule below is for — a single
+   `background-size` would apply to the first layer only. */
 [data-theme="dark"] .trail-sky--day {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-bloo) 30%, #101a30) 0%,
-    color-mix(in srgb, var(--color-bloo) 15%, #101a30) 55%,
-    #0d1526 100%
-  );
+  background-image:
+    var(--sky-stars-a),
+    var(--sky-stars-b),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-nova) 40%, #191338) 0%,
+      color-mix(in srgb, var(--color-nova) 22%, #191338) 52%,
+      color-mix(in srgb, var(--color-nova) 7%, #191338) 100%
+    );
 }
 
 [data-theme="dark"] .trail-sky--dawn {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-bloo) 24%, var(--background)) 0%,
-    color-mix(in srgb, var(--color-pinki) 14%, var(--background)) 55%,
-    var(--background) 100%
-  );
+  background-image:
+    var(--sky-stars-a),
+    var(--sky-stars-b),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-nova) 36%, #191338) 0%,
+      color-mix(in srgb, var(--color-pinki) 20%, #191338) 55%,
+      color-mix(in srgb, var(--color-nova) 8%, #191338) 100%
+    );
 }
 
 [data-theme="dark"] .trail-sky--dream {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-nova) 26%, var(--background)) 0%,
-    color-mix(in srgb, var(--color-nova) 15%, var(--background)) 55%,
-    var(--background) 100%
-  );
+  background-image:
+    var(--sky-stars-a),
+    var(--sky-stars-b),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-nova) 48%, #191338) 0%,
+      color-mix(in srgb, var(--color-nova) 28%, #191338) 55%,
+      color-mix(in srgb, var(--color-nova) 10%, #191338) 100%
+    );
+}
+
+[data-theme="dark"] .trail-sky--day,
+[data-theme="dark"] .trail-sky--dawn,
+[data-theme="dark"] .trail-sky--dream {
+  background-size:
+    260px 260px,
+    170px 170px,
+    auto;
+  background-repeat: repeat, repeat, no-repeat;
 }
 
 /* Clouds go dusk rather than white — still clearly the lightest thing in
