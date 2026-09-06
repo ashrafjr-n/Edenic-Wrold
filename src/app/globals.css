@@ -56,6 +56,32 @@
   --hero-shape-rtl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L0,600 C200,600 300,548 460,566 S730,620 870,594 S1040,516 1050,452 S1010,300 1024,196 S986,44 932,0 Z'/%3E%3C/svg%3E");
   --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
 
+  /* Cloud silhouettes for `<Cloud />` (Edenic Trail's sky), as MASKS — the
+     same technique `--hero-shape` uses, and for the same reason: one shape
+     definition scales to any box, and a mask edge antialiases where a
+     `clip-path` stair-steps.
+
+     Each is overlapping opaque ellipses plus a rounded base bar. Overlapping
+     OPAQUE shapes in a mask union cleanly — there is no seam where two lobes
+     meet, which is exactly what a stack of `border-radius` divs could not
+     give: separate divs each carry their own shading and the joins show.
+     One mask, one element, one continuous clay gradient underneath it.
+
+     Three silhouettes so a sky full of clouds isn't the same shape repeated;
+     `variant` on the component picks one. All share the 20:11 viewBox the
+     `.cloud` wrapper's `aspect-ratio` is locked to, so nothing distorts. */
+  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='10' y='60' width='180' height='46' rx='23'/%3E%3Ccircle cx='58' cy='64' r='30'/%3E%3Ccircle cx='102' cy='46' r='42'/%3E%3Ccircle cx='148' cy='62' r='32'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='6' y='62' width='188' height='44' rx='22'/%3E%3Ccircle cx='66' cy='48' r='38'/%3E%3Ccircle cx='120' cy='58' r='34'/%3E%3Ccircle cx='158' cy='68' r='26'/%3E%3C/g%3E%3C/svg%3E");
+  /* A WIDE, FLAT bank — six lobes across a 40:11 box, against the puffy
+     three-lobe clouds above. It exists because a puffy cloud cannot be
+     stretched to span a card: blown up to that width its middle lobe alone
+     fills the box and it reads as a white dome, not a cloud. A bank keeps
+     its lobes small relative to its width, so it stays recognisable at any
+     width and gives the friends two peaks and a shoulder to stand on.
+     `.cloud--v4` carries its own `aspect-ratio` to match. */
+  --cloud-shape-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='8' y='66' width='384' height='40' rx='20'/%3E%3Ccircle cx='58' cy='64' r='34'/%3E%3Ccircle cx='118' cy='50' r='42'/%3E%3Ccircle cx='182' cy='60' r='36'/%3E%3Ccircle cx='246' cy='48' r='44'/%3E%3Ccircle cx='308' cy='62' r='36'/%3E%3Ccircle cx='358' cy='72' r='26'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Crect x='12' y='58' width='176' height='48' rx='24'/%3E%3Ccircle cx='62' cy='58' r='34'/%3E%3Ccircle cx='104' cy='42' r='38'/%3E%3Ccircle cx='146' cy='56' r='32'/%3E%3C/g%3E%3C/svg%3E");
+
   /* Fades the art on a colored panel into its fill instead of letting it end
      on a rectangle edge. See `.panel-art`. */
   --panel-art-fade: linear-gradient(to right, transparent 0%, #000 46%),
@@ -503,6 +529,86 @@ bdi {
    rule and this file's plain `.btn3d--clay-white` base. */
 [data-theme="dark"] .btn3d--clay-white:hover:not(:disabled) {
   background-color: #f4f2fb;
+}
+
+/* The trail sky at night. `--shadow-hue`'s flip to black covers the clouds'
+   drop shadow for free, but the sky's own fill and the cloud faces are the
+   two things it can't reach: a gradient mixed toward `#ffffff` stays a
+   daylight sky whatever the theme, and a pure-white cloud on a dark ground
+   is the brightest object on the page — the same "backwards from dormant"
+   trap `--color-gold-quiet` documents.
+
+   Both are mixed toward `--background` (the dark ground itself) rather than
+   given hand-picked night hues, so a single token move keeps them in step,
+   and the light-mode palettes above stay the single source of the hue. */
+[data-theme="dark"] .trail-sky--day {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bloo) 26%, var(--background)) 0%,
+    color-mix(in srgb, var(--color-bloo) 16%, var(--background)) 52%,
+    var(--background) 100%
+  );
+}
+
+[data-theme="dark"] .trail-sky--dawn {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bloo) 24%, var(--background)) 0%,
+    color-mix(in srgb, var(--color-pinki) 14%, var(--background)) 55%,
+    var(--background) 100%
+  );
+}
+
+[data-theme="dark"] .trail-sky--dream {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-nova) 26%, var(--background)) 0%,
+    color-mix(in srgb, var(--color-nova) 15%, var(--background)) 55%,
+    var(--background) 100%
+  );
+}
+
+/* Clouds go dusk rather than white — still clearly the lightest thing in
+   the sky, but never a glare. Mixed off `--surface` (the dark card colour)
+   so they stay in the same family as every other raised surface on a dark
+   page. The first pass mixed too little colour in and the bank came out a
+   flat mid-grey that read as rock rather than cloud; these are tuned against
+   a dark-mode screenshot, not by arithmetic. The
+   top-highlight layer in `.cloud-body` is dimmed with them: at 85% white it
+   read as a lit rim on a night cloud. */
+[data-theme="dark"] .cloud-body {
+  background-image:
+    radial-gradient(
+      120% 78% at 50% 2%,
+      rgb(255 255 255 / 14%) 0%,
+      rgb(255 255 255 / 0%) 62%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--cloud-face) 0%,
+      var(--cloud-face) 38%,
+      var(--cloud-shade) 100%
+    );
+}
+
+[data-theme="dark"] .cloud--white {
+  --cloud-face: color-mix(in srgb, #dbe8fb 80%, var(--surface));
+  --cloud-shade: color-mix(in srgb, #dbe8fb 50%, var(--surface));
+}
+
+[data-theme="dark"] .cloud--sky {
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 52%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 28%, var(--surface));
+}
+
+[data-theme="dark"] .cloud--pink {
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 46%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 24%, var(--surface));
+}
+
+[data-theme="dark"] .cloud--lavender {
+  --cloud-face: color-mix(in srgb, var(--color-nova) 48%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 26%, var(--surface));
 }
 
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
@@ -1067,6 +1173,179 @@ bdi {
   .hero-clip--rtl {
     mask-image: var(--hero-shape-rtl);
   }
+}
+
+/* ---------------------------------------------------------------
+   Clouds — the Edenic Trail's scenery (`components/ui/cloud.tsx`).
+
+   TWO elements, and the split is load-bearing, not tidiness: `filter` is
+   applied BEFORE `mask` on the same element, so a drop shadow declared on
+   the masked body would be cut away with everything outside the silhouette
+   (the same trap `.numeral-mask` documents). The wrapper carries the soft
+   outer shadow; the body carries the mask and the fill.
+
+   The clay read comes from ONE continuous vertical gradient across the
+   whole silhouette — lightest at the top, the tint's own deeper value
+   underneath — plus a soft top highlight. That is only possible because the
+   shape is a mask over a single box: overlapping shaded divs would show a
+   seam at every join.
+
+   NO grain here, deliberately. `--noise` blends `overlay`, and a near-white
+   fill gives an overlay blend nothing to push against — the same reason
+   `.tile-grain` is only worth putting on a TINTED tile and the site's own
+   near-white `--background` carries none in light mode.
+
+   Motion is deliberately absent and deliberately easy to add: a float
+   animation belongs on `.cloud` (the wrapper) animating `translate`, which
+   is its own property in Tailwind v4 and composites, so it will not fight
+   the body's mask or the wrapper's filter. Nothing needs restructuring for
+   it — see the component's own comment.
+   --------------------------------------------------------------- */
+.cloud {
+  display: block;
+  width: var(--cloud-w);
+  aspect-ratio: 20 / 11;
+  filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 20%));
+  pointer-events: none;
+}
+
+.cloud-body {
+  width: 100%;
+  height: 100%;
+  mask-image: var(--cloud-shape-1);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-image:
+    radial-gradient(
+      120% 78% at 50% 2%,
+      rgb(255 255 255 / 85%) 0%,
+      rgb(255 255 255 / 0%) 62%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--cloud-face) 0%,
+      var(--cloud-face) 38%,
+      var(--cloud-shade) 100%
+    );
+}
+
+.cloud--v2 .cloud-body {
+  mask-image: var(--cloud-shape-2);
+}
+
+.cloud--v3 .cloud-body {
+  mask-image: var(--cloud-shape-3);
+}
+
+/* The wide bank. Its own aspect ratio, not the puffs' 20:11 — and a caller
+   that gives it an explicit height (`.cloud--stretch`) drops the ratio
+   altogether and lets the mask stretch, which is safe here in a way it isn't
+   for a puff: the shape is authored `preserveAspectRatio='none'`, and a bank
+   pulled wider just reads as a longer bank. */
+.cloud--v4 {
+  aspect-ratio: 40 / 11;
+}
+
+.cloud--v4 .cloud-body {
+  mask-image: var(--cloud-shape-4);
+}
+
+.cloud--stretch {
+  aspect-ratio: auto;
+}
+
+/* Sizes live here rather than as Tailwind widths so a caller can override
+   with one inline `--cloud-w` (an inline custom property beats a class,
+   where two competing `w-*` utilities would just race on source order).
+   Each steps up once at `sm` — a cloud sized for a phone reads as a speck
+   on a desktop sky. */
+.cloud--sm {
+  --cloud-w: 7rem;
+}
+
+.cloud--md {
+  --cloud-w: 11rem;
+}
+
+.cloud--lg {
+  --cloud-w: 17rem;
+}
+
+@media (width >= 40rem) {
+  .cloud--sm {
+    --cloud-w: 9rem;
+  }
+
+  .cloud--md {
+    --cloud-w: 15rem;
+  }
+
+  .cloud--lg {
+    --cloud-w: 24rem;
+  }
+}
+
+/* Tints: every one is a `color-mix` of an EXISTING character token into
+   white, never a new hue — the same rule the two Activities CTA washes
+   follow. White is the default cloud; the other three are barely-there
+   pastels, there so a sky of eight clouds isn't eight identical cut-outs.
+   The shade value is what the clay gradient sinks to at the bottom. */
+.cloud--white {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 20%, #ffffff);
+}
+
+.cloud--sky {
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 5%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 32%, #ffffff);
+}
+
+.cloud--pink {
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 5%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 26%, #ffffff);
+}
+
+.cloud--lavender {
+  --cloud-face: color-mix(in srgb, var(--color-nova) 5%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 26%, #ffffff);
+}
+
+/* ---------------------------------------------------------------
+   The trail sky — the full-bleed gradient the clouds sit on
+   (`components/trail/trail-sky.tsx`).
+
+   Three palettes so the gradient can be chosen by eye in the browser rather
+   than argued about in the abstract; `TrailSky`'s `palette` prop picks one.
+   All three run light at the top to deeper at the bottom, so a long scroll
+   reads as descending through the sky, and all three are mixed from tokens
+   the site already owns.
+   --------------------------------------------------------------- */
+.trail-sky--day {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bloo) 16%, #ffffff) 0%,
+    color-mix(in srgb, var(--color-bloo) 42%, #ffffff) 48%,
+    color-mix(in srgb, var(--color-bloo) 66%, #ffffff) 100%
+  );
+}
+
+.trail-sky--dawn {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bloo) 14%, #ffffff) 0%,
+    color-mix(in srgb, var(--color-bloo) 38%, #ffffff) 42%,
+    color-mix(in srgb, var(--color-pinki) 30%, #ffffff) 100%
+  );
+}
+
+.trail-sky--dream {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-bloo) 12%, #ffffff) 0%,
+    color-mix(in srgb, var(--color-nova) 26%, #ffffff) 52%,
+    color-mix(in srgb, var(--color-nova) 44%, #ffffff) 100%
+  );
 }
 
 button,
