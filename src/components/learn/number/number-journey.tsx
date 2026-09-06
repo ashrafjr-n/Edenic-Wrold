@@ -206,13 +206,18 @@ export function NumberJourney({
      two halves land in different places on the screen and cannot be one
      fragment. Built above the return, per stage, rather than branched inside
      the markup. */
+  /* The label goes in its own `dir`-bearing span, the same way the celebrate
+     stage's "Number N" button does. Two of these labels end in an exclamation
+     mark ("My turn!", "Finish!"), which is a bidi-neutral: with the arrow icon
+     after it and no base direction of its own it takes the page's `ltr` and
+     renders on the wrong end of the Arabic label. */
   const nextButton = (label: string, tone: ButtonTone) => (
     <Button3D
       tone={tone}
       onClick={advance}
       className="px-8 py-3 text-base sm:px-10 sm:text-lg"
     >
-      {label}
+      <span dir={dir}>{label}</span>
       <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
     </Button3D>
   );

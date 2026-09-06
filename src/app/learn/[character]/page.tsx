@@ -147,9 +147,15 @@ export default async function CharacterLearnPage({
             className="card anim-pop-in relative mt-5 aspect-[2/1] w-full overflow-hidden sm:hidden"
             style={{ animationDelay: "0.2s" }}
           >
+            {/* `dir` on the image itself: `alt` is Arabic with the character's
+                Latin name spliced in, and it renders visually if the picture
+                ever fails to load — the isolate marks `format()` adds keep the
+                name from reordering, but only a base direction puts the run on
+                the right side (see `dirFor`). */}
             <Image
               src={character.heroImage}
               alt={format(dict.characterHub.learningCorner, { name: character.name })}
+              dir={dirFor(dict.locale)}
               fill
               sizes="100vw"
               priority
