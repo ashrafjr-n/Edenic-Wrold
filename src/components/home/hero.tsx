@@ -27,9 +27,13 @@ export async function Hero() {
           isAr ? "hero-clip--rtl lg:left-0" : "lg:right-0"
         }`}
       >
+        {/* `alt` is an Arabic sentence with "Edenic World" inside it and it
+            renders visually when the picture fails to load, so it needs a
+            base direction like any other mixed run (see `dirFor`). */}
         <Image
           src="/hero.png"
           alt={dict.home.heroAlt}
+          dir={dirFor(locale)}
           fill
           preload
           sizes="(max-width: 1024px) 100vw, 70vw"
