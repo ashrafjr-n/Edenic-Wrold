@@ -609,9 +609,9 @@ bdi {
 }
 
 [data-theme="dark"] .cloud--white {
-  --cloud-face: color-mix(in srgb, #cfe2fb 80%, var(--surface));
-  --cloud-shade: color-mix(in srgb, #cfe2fb 58%, var(--surface));
-  --cloud-deep: color-mix(in srgb, #cfe2fb 34%, var(--surface));
+  --cloud-face: color-mix(in srgb, #cfe2fb 84%, var(--surface));
+  --cloud-shade: color-mix(in srgb, #cfe2fb 66%, var(--surface));
+  --cloud-deep: color-mix(in srgb, #cfe2fb 46%, var(--surface));
 }
 
 [data-theme="dark"] .cloud--sky {
