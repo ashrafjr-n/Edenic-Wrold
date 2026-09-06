@@ -4,15 +4,18 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { mainNav, profileNav } from "@/data/nav";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 /* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
    `currentColor`, so `.nav-tab`'s own color rules (blue at rest, pink for
-   the current page) drive the icon exactly like they'd drive an inline SVG. */
+   the current page) drive the icon exactly like they'd drive an inline SVG.
+   Keyed by the nav item's stable `id`, not its translated `label` — a label
+   swap must never break this lookup. */
 const ICON_SRC = {
-  Home: "/assets/png/home.png",
-  Learn: "/assets/png/learn.png",
-  Activities: "/assets/png/activity.png",
-  Profile: "/assets/png/profile.png",
+  home: "/assets/png/home.png",
+  learn: "/assets/png/learn.png",
+  activities: "/assets/png/activity.png",
+  profile: "/assets/png/profile.png",
 } as const;
 
 /* One optical size for all four, MEASURED from each PNG rather than eyeballed.
@@ -35,17 +38,17 @@ const ICON_SRC = {
    inline styles aren't run through Lightning CSS's auto-prefixing, unlike
    `.icon-mask` itself. */
 const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
-  Home: "92%",
-  Learn: "100%",
-  Activities: "100%",
-  Profile: "120%",
+  home: "92%",
+  learn: "100%",
+  activities: "100%",
+  profile: "120%",
 };
 
-const iconVar = (label: keyof typeof ICON_SRC) =>
+const iconVar = (id: keyof typeof ICON_SRC) =>
   ({
-    "--icon-src": `url(${ICON_SRC[label]})`,
-    maskSize: ICON_SCALE[label],
-    WebkitMaskSize: ICON_SCALE[label],
+    "--icon-src": `url(${ICON_SRC[id]})`,
+    maskSize: ICON_SCALE[id],
+    WebkitMaskSize: ICON_SCALE[id],
   }) as CSSProperties;
 
 /** App-style bottom tab bar — phone only (`sm:hidden`). Carries `MainNav`'s
@@ -58,6 +61,9 @@ const iconVar = (label: keyof typeof ICON_SRC) =>
     header and the footer. The rest of the chrome (logo, language, dark mode,
     join) stays in the top header on every breakpoint.
 
+    `dict` is passed down from `layout.tsx` since a Client Component can't
+    call `getDictionary()` itself.
+
     Every tab reads blue+grain by default; the CURRENT page's tab is pink
     with lighter grain (`.nav-tab--current`, `globals.css`) — driven by the
     same `pathname`-derived `active` boolean that sets `aria-current`, not by
@@ -65,21 +71,22 @@ const iconVar = (label: keyof typeof ICON_SRC) =>
     a touch's `:active` state doesn't persist once the finger lifts, so a
     CSS-interaction-driven version snapped back to blue right after landing
     on the new page — see `globals.css` for the fuller story). */
-export function BottomNav() {
+export function BottomNav({ dict }: { dict: Dictionary }) {
   const pathname = usePathname();
 
   return (
     <nav
-      aria-label="Main"
+      aria-label={dict.nav.mainAriaLabel}
       className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
     >
-      {mainNav.map(({ label, href }) => {
-        const iconStyle = iconVar(label as keyof typeof ICON_SRC);
+      {mainNav.map(({ id, href }) => {
+        const label = dict.nav[id];
+        const iconStyle = iconVar(id);
 
         if (!href) {
           return (
             <span
-              key={label}
+              key={id}
               aria-disabled="true"
               className="flex h-16 cursor-default flex-col items-center justify-center gap-0.5 text-[var(--color-locked-text)]"
             >
@@ -94,7 +101,7 @@ export function BottomNav() {
               />
               <span className="text-[0.6875rem] font-semibold">{label}</span>
               <span className="rounded-full bg-[var(--color-locked)] px-1.5 py-px text-[0.5rem] font-bold uppercase tracking-wide">
-                Soon
+                {dict.nav.soon}
               </span>
             </span>
           );
@@ -105,7 +112,7 @@ export function BottomNav() {
 
         return (
           <Link
-            key={label}
+            key={id}
             href={href}
             aria-current={active ? "page" : undefined}
             className={`nav-tab flex h-16 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold ${
@@ -140,9 +147,9 @@ export function BottomNav() {
         <span
           aria-hidden
           className="icon-mask icon-mask-grain h-7 w-7"
-          style={iconVar("Profile")}
+          style={iconVar("profile")}
         />
-        {profileNav.label}
+        {dict.nav[profileNav.id]}
       </span>
     </nav>
   );
