@@ -612,6 +612,15 @@ bdi {
   --cloud-deep: color-mix(in srgb, var(--cloud-pale) 44%, var(--surface));
 }
 
+/* Same specificity as the dark `.cloud` ramp above, so it has to sit after
+   it to win. Far clouds at night are dimmer still — a night sky has less
+   light to lose in the first place. */
+[data-theme="dark"] .cloud--far {
+  opacity: 0.5;
+  --cloud-hi: 9%;
+  --cloud-hi-soft: 5%;
+}
+
 [data-theme="dark"] .cloud--white {
   --cloud-pale: #dfeafb;
 }
@@ -1341,6 +1350,28 @@ bdi {
   .cloud--lg {
     --cloud-w: 24rem;
   }
+}
+
+/* ---------------------------------------------------------------
+   Distance, as a SECOND LAYER rather than a smaller cloud.
+
+   A sky of clouds at one size and one weight has no depth in it, however
+   well each individual cloud is shaded — reported exactly that way. So the
+   sky is two layers: big `.cloud--far` ones drifting behind, and the smaller,
+   crisp stage clouds in front of them.
+
+   **Distance is lost CONTRAST first and opacity second**, which is what
+   atmospheric perspective actually is — a far object doesn't go
+   see-through, it goes closer to the colour of the air between you and it.
+   Dropping opacity alone was tried and reverted for exactly this reason: it
+   washed the clay shading out and the far clouds went flat, which is the
+   opposite of depth. So the lobe highlights are dimmed here too, and the
+   opacity only finishes the job.
+   --------------------------------------------------------------- */
+.cloud--far {
+  opacity: 0.62;
+  --cloud-hi: 50%;
+  --cloud-hi-soft: 32%;
 }
 
 /* Tints: every one is a `color-mix` of an EXISTING character token into
