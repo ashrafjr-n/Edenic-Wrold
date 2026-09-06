@@ -245,7 +245,7 @@
    generated utilities (`bg-pinki` etc.), so only the font is mapped into the
    Tailwind theme. Keep it that way — one system, not two. */
 @theme inline {
-  --font-sans: var(--font-fredoka);
+  --font-sans: var(--font-fredoka), var(--font-baloo);
 }
 
 /* Flat, single-color ground. The pastel radial gradients that used to live
@@ -256,7 +256,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
+  /* Fredoka has no Arabic glyphs, so `--font-baloo` (Baloo Bhaijaan 2) is the
+     fallback the browser reaches for per-character on any Arabic run — Latin
+     text keeps rendering in Fredoka throughout. */
+  font-family: var(--font-fredoka), var(--font-baloo), ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 /* ---------------------------------------------------------------
