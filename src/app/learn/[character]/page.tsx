@@ -8,6 +8,7 @@ import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 import { format } from "@/lib/format-dict";
 
 export function generateStaticParams() {
@@ -197,6 +198,7 @@ export default async function CharacterLearnPage({
               rail={rail}
               index={index}
               dict={dict.characterHub}
+              dir={dirFor(dict.locale)}
             />
           ))}
         </div>

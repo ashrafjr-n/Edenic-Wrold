@@ -47,6 +47,11 @@ interface LessonCardProps {
   rail: LessonRail;
   index: number;
   dict: Dictionary["characterHub"];
+  /** `description` and `unlocksAfter` can carry an English word inside this
+      locale's text (a lesson description quoting "A to Z", a name) — needed
+      on the elements rendering them below (see `lib/format-dict.ts`'s
+      `dirFor`). */
+  dir: "rtl" | "ltr";
 }
 
 export function LessonCard({
@@ -59,6 +64,7 @@ export function LessonCard({
   rail,
   index,
   dict,
+  dir,
 }: LessonCardProps) {
   const { id, image, theme, totalItems, locked } = lesson;
   const { accent } = character;
@@ -193,6 +199,7 @@ export function LessonCard({
             {/* `--lesson-muted`, not a hard-coded ink: on an OPEN card the
                 body is the accent and this has to come back as white. */}
             <p
+              dir={dir}
               className="mt-0.5 truncate text-xs sm:mt-1 sm:text-sm"
               style={{ color: "var(--lesson-muted)" }}
             >
@@ -236,6 +243,7 @@ export function LessonCard({
         {locked ? (
           <div className="flex items-center justify-between gap-3">
             <p
+              dir={dir}
               className="min-w-0 truncate text-xs font-semibold sm:text-sm"
               style={{ color: "var(--lesson-muted)" }}
             >
