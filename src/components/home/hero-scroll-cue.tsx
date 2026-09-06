@@ -46,15 +46,20 @@ export async function HeroScrollCue() {
           >
             {dict.home.scrollCue}
           </span>
-          {/* Mirrored by flipping the whole drawing on its x axis, not by
-              redrawing the path: `scale` and `rotate` are separate properties
-              in Tailwind v4, so `-scale-x-100` composes with the tilt below
-              and turns it the other way for free. */}
+          {/* NOT mirrored — a horizontal flip of a curling arrow reverses
+              which way its hook reads, so `-scale-x-100` (the earlier
+              approach) turned an arrow pointing down into one that read as
+              pointing away/up instead of down. The fix is a rotation, not a
+              flip: at `lg`, `rotate-[30deg]` replaces the base
+              `-rotate-[30deg]` tilt with its mirror image about vertical — a
+              60° clockwise swing — which keeps the same unflipped path (and
+              so the same downward-pointing arrowhead) while leaning the
+              other way to match the cue's new corner. */}
           <svg
             aria-hidden
             viewBox="0 0 90 150"
             className={`mt-2 h-24 w-16 -rotate-[30deg] text-[var(--accent)] sm:h-28 sm:w-20 ${
-              rtl ? "ml-8 lg:-scale-x-100 lg:ml-0 lg:mr-8" : "ml-8"
+              rtl ? "ml-8 lg:rotate-[30deg] lg:ml-0 lg:mr-8" : "ml-8"
             }`}
             fill="none"
           >
