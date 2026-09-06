@@ -50,28 +50,6 @@ interface SkyCloud {
 }
 
 /**
- * The BACKGROUND layer: a few big clouds drifting far behind the trail.
- *
- * They are not stops and never will be — they are what gives the sky depth,
- * and depth needs two layers of different visual weight, not one set of
- * equal clouds spread further apart. Big and low-contrast behind, small and
- * crisp in front: that reads as distance, where eight identical clouds read
- * as wallpaper.
- *
- * Unlike the stops these DO over-hang the edges (`-8%`, `96%`), because
- * nothing here has to be tapped and a cloud running off the side is what
- * says the sky continues past the screen. Their vertical spacing is
- * deliberately out of step with the stops' — a background that lines up with
- * the foreground stops being a background.
- */
-const DRIFT: Omit<SkyCloud, "size">[] = [
-  { top: "8%", left: "-8%", variant: 3, tint: "white" },
-  { top: "31%", left: "96%", variant: 1, tint: "lavender" },
-  { top: "58%", left: "-6%", variant: 2, tint: "sky" },
-  { top: "79%", left: "97%", variant: 3, tint: "white" },
-];
-
-/**
  * Where the stops sit, derived from the count rather than hand-placed.
  *
  * **Evenly spaced down the sky, in percentages.** The trail is one long
@@ -109,13 +87,14 @@ interface TrailSkyProps {
  * stage numbers, no characters, no progress. That is still the whole scope
  * of this step.
  *
- * **Two layers, and that is what makes it read as a sky rather than as
- * wallpaper.** `DRIFT` puts a few big, low-contrast clouds far behind;
- * `trailStops` puts the small crisp ones in front, on the path. Clouds of
- * one size at one weight have no depth in them however well each is shaded.
+ * **One layer of clouds, and every one of them is a stop.** A background
+ * layer of big low-contrast clouds (`DRIFT`, `.cloud--far`) drifted behind
+ * these for a while and was removed on direct request: the sky reads as a
+ * map when the only clouds on it are the ones a child can land on, and a
+ * second washed-out set beside them read as haze rather than as depth.
+ * `.cloud--far` itself stays — `TrailCta` still uses it.
  *
- * **The foreground clouds are the future stage nodes, and they are placed as
- * such.**
+ * **The clouds are the future stage nodes, and they are placed as such.**
  * They were scattered freely at first, which looked like weather; a map
  * needs a sequence. So they are evenly spaced down the page, they alternate
  * lanes, and — unlike the first version — **none of them over-hangs the
@@ -141,21 +120,6 @@ export function TrailSky({
     <div
       className={`trail-sky--${palette} relative isolate min-h-[100svh] w-full overflow-hidden ${className}`}
     >
-      {/* Behind everything, including the stops: `-z-20` against their
-          `-z-10`. Both still paint above the sky's own background, since a
-          negative z-index child of an `isolate` parent sits between the
-          parent's background and its in-flow content. */}
-      {DRIFT.map((cloud, index) => (
-        <Cloud
-          key={`drift-${index}`}
-          size="lg"
-          variant={cloud.variant}
-          tint={cloud.tint}
-          className="cloud--far absolute -z-20 -translate-x-1/2"
-          style={{ top: cloud.top, left: cloud.left }}
-        />
-      ))}
-
       {trailStops(stops).map((cloud, index) => (
         <Cloud
           key={index}
