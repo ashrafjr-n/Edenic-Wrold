@@ -1211,8 +1211,16 @@ button:disabled,
 }
 
 /* No face color to darken, so hover deepens the shading instead — same
-   choice `.btn3d--calm` already makes for the same reason. */
+   choice `.btn3d--calm` already makes for the same reason. `background-color`
+   has to be restated here: the base `.btn3d:hover` rule (equal specificity,
+   earlier in source) sets it to a 15%-black mix of `--btn-face`, and since
+   this rule didn't declare that property at all, that darkening mix was
+   winning by default — a white chip (the language switcher's unchosen
+   circles among them) went visibly grey/black on hover instead of staying
+   white. Pinning it back to `--surface` here is what the comment above
+   already claimed was true. */
 .btn3d--clay-white:hover:not(:disabled) {
+  background-color: var(--surface);
   box-shadow:
     inset 0 7px 10px -5px rgb(255 255 255 / 90%),
     inset 0 -9px 13px -5px rgb(var(--shadow-hue) / 28%),
