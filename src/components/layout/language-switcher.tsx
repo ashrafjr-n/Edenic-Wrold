@@ -40,7 +40,8 @@ const STAGGER = 0.06;
  * near the right edge and there is no room beside it. They spring out of the
  * chip, staggered, and the active one is the only filled one — see
  * `.lang-orb` in `globals.css` for the motion and why it uses
- * `animation-fill-mode: backwards`.
+ * `animation-fill-mode: backwards`, and `.lang-fan` for the phone-only clay
+ * plate behind the three.
  *
  * This replaced a `.card` popover listing the three languages as rows. The
  * chrome it sits in is a row of circular clay chips, and a rectangular panel
@@ -119,7 +120,7 @@ export function LanguageSwitcher({ dict, locale }: LanguageSwitcherProps) {
              `flex-row-reverse` so the FIRST language is the one nearest the
              chip and the fan reads outward in DOM order, matching the
              stagger below. */
-          className="absolute left-1/2 top-full z-30 mt-2.5 flex -translate-x-1/2 flex-col items-center gap-2.5 sm:left-auto sm:right-full sm:top-1/2 sm:mr-2.5 sm:mt-0 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-row-reverse"
+          className="lang-fan absolute left-1/2 top-full z-30 mt-2.5 flex -translate-x-1/2 flex-col items-center gap-2.5 sm:left-auto sm:right-full sm:top-1/2 sm:mr-2.5 sm:mt-0 sm:-translate-y-1/2 sm:translate-x-0 sm:flex-row-reverse"
         >
           {ORDER.map((id, index) => {
             const active = id === locale;
@@ -139,11 +140,11 @@ export function LanguageSwitcher({ dict, locale }: LanguageSwitcherProps) {
                 }
                 variant={active ? "playful" : "calm"}
                 /* The chosen language wears the chip's own accent; the rest
-                   are white clay. `.btn3d--clay-white` is the site's white
-                   chrome material — `calm` alone reads as a flat sticker
-                   beside a grained accent circle. */
+                   are white clay, unringed — on a phone `.lang-fan`'s plate
+                   is what holds the three together, so an outline on each
+                   one only repeats the chip's pink a second time. */
                 className={`lang-orb h-11 w-11 shrink-0 text-base font-bold ${
-                  active ? "btn3d--icon-accent" : "btn3d--clay-white lang-orb--rest"
+                  active ? "btn3d--icon-accent" : "btn3d--clay-white"
                 }`}
                 style={{ animationDelay: `${index * STAGGER}s` }}
               >
