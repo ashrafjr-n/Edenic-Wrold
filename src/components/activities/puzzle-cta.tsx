@@ -15,7 +15,7 @@ import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.
     full-bleed background, a light green-to-blue wash over it (mixed from the
     site's own `--color-go`/`--brand` tokens, not a new hue) for legibility,
     and a green clay "Puzzle Time" button centred on top, leading into
-    `/activities/puzzle`.
+    `/play/puzzle`.
 
     Full-bleed at `16:9`, with the button over the picture rather than in a
     row beneath it. It carried an `ActivityCountBadge` ("3 / 15") in its
@@ -62,7 +62,7 @@ export function PuzzleCta({
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <Button3D
           tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
-          href="/activities/puzzle"
+          href="/play/puzzle"
           /* `puzzle-cta-btn` is a pure CSS hook for the dark-mode text-color
              override in globals.css — see the comment there. */
           className="puzzle-cta-btn px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg"

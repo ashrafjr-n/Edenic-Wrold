@@ -6,7 +6,7 @@ import type { NavItem } from "@/types/nav";
 export const mainNav: NavItem[] = [
   { id: "home", href: "/" },
   { id: "learn", href: "/learn" },
-  { id: "play", href: "/activities" },
+  { id: "play", href: "/play" },
 ];
 
 /**

@@ -69,7 +69,7 @@ export function PuzzlePlay({
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
-          <BackButton href="/activities/puzzle" label={dict.activities.backToPuzzles} />
+          <BackButton href="/play/puzzle" label={dict.activities.backToPuzzles} />
 
           <div className="flex items-center gap-2.5 sm:gap-3">
             <LevelBadge value={stage} label={format(dict.activities.puzzleLabel, { value: stage })} />

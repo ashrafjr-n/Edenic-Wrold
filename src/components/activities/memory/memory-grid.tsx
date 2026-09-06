@@ -227,7 +227,7 @@ export function MemoryGrid({ levels, dict }: MemoryGridProps) {
 
           const card = open ? (
             <Link
-              href={`/activities/memory-match/${level.value}`}
+              href={`/play/memory-match/${level.value}`}
               aria-label={format(dict.activities.startLevelAria, { value: level.value, pairs: level.pairs })}
               className="card clay card-lift anim-rise-in relative block aspect-square overflow-hidden"
               style={style}

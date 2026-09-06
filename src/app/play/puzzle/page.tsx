@@ -46,7 +46,7 @@ export default async function PuzzleStagesPage() {
               Tailwind `absolute` utility on the button itself silently
               loses and it stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities" label={dict.activities.backToActivities} />
+            <BackButton href="/play" label={dict.activities.backToActivities} />
           </span>
 
           <HeadingMark chips={CHIPS} icon={Puzzle} />

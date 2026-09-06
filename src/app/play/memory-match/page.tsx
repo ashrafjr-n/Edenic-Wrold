@@ -65,7 +65,7 @@ export default async function MemoryMatchPage() {
               `absolute` utility on the button itself silently loses and it
               stays in the centred flex row. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/activities" label={dict.activities.backToActivities} />
+            <BackButton href="/play" label={dict.activities.backToActivities} />
           </span>
 
           {/* Ink, not white: gold is the one face on the site pale enough

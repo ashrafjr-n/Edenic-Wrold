@@ -26,8 +26,8 @@ export default async function MemoryLevelPage({ params }: MemoryLevelPageProps) 
   const index = memoryLevels.indexOf(level);
   const next = memoryLevels[index + 1];
   const nextHref = next
-    ? `/activities/memory-match/${next.value}`
-    : "/activities/memory-match";
+    ? `/play/memory-match/${next.value}`
+    : "/play/memory-match";
 
   return (
     <main
