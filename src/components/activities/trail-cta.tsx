@@ -132,7 +132,7 @@ export function TrailCta({
           sits below it. */}
       <div className="flex flex-col items-start gap-3 p-6 sm:p-8 lg:max-w-[52%] lg:p-10">
         {/* `--color-ink` / `--color-ink-soft`, NOT the `-fixed` pair: this
-            card's own sky gradient follows the theme (`.trail-sky--dawn` has
+            card's own sky gradient follows the theme (`.trail-sky--day` has
             a dark-mode fill), so its text has to follow with it. The fixed
             tokens are for text on a face pinned to one value regardless of
             theme — using them here shipped a title that went dark-on-dark
