@@ -23,7 +23,7 @@ export const en = {
   nav: {
     home: "Home",
     learn: "Learn",
-    play: "Activities",
+    play: "Play",
     profile: "Profile",
     soon: "Soon",
     mainAriaLabel: "Main",
@@ -68,7 +68,7 @@ export const en = {
       action: "Start learning",
     },
     activities: {
-      title: "Activities",
+      title: "Play",
       description:
         "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
       action: "Start playing",
@@ -152,7 +152,7 @@ export const en = {
     puzzleSubtitle: "Complete the puzzles!",
     memoryTitle: "Memory Match",
     memorySubtitle: "Find the matching friends!",
-    backToActivities: "Back to Activities",
+    backToActivities: "Back to Play",
     puzzleCtaButton: "Puzzle Time",
     puzzleCtaAlt: "Colourful puzzle pieces scattered across the card",
     memoryCtaButton: "Memory Match",

@@ -20,7 +20,7 @@ export const ar: Dictionary = {
   nav: {
     home: "الرئيسية",
     learn: "تعلّم",
-    play: "أنشطة",
+    play: "العب",
     profile: "الملف الشخصي",
     soon: "قريبًا",
     mainAriaLabel: "القائمة الرئيسية",
@@ -65,7 +65,7 @@ export const ar: Dictionary = {
       action: "ابدأ التعلّم",
     },
     activities: {
-      title: "أنشطة",
+      title: "العب",
       description:
         "تتبّع الحروف بإصبعك، طابق الأشكال، اكتشف المختلف — تمارين عملية بسيطة بعد كل درس.",
       action: "ابدأ اللعب",
@@ -146,7 +146,7 @@ export const ar: Dictionary = {
     puzzleSubtitle: "أكمل قطع البازل!",
     memoryTitle: "اختبر ذاكرتك",
     memorySubtitle: "اعثر على الأصدقاء المتطابقين!",
-    backToActivities: "العودة إلى الأنشطة",
+    backToActivities: "العودة إلى اللعب",
     puzzleCtaButton: "وقت تركيب الصور",
     puzzleCtaAlt: "قطع بازل ملوّنة متناثرة على البطاقة",
     memoryCtaButton: "اختبر ذاكرتك",
