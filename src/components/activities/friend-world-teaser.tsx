@@ -6,24 +6,38 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 
 /**
- * The Play page's third card: a teaser for the friend-world feature, which
- * does not exist yet.
+ * The Play page's first card: a teaser for the friend-world feature, which
+ * does not exist yet. It used to sit last, beneath the two games; moved to
+ * lead the page on direct request.
  *
  * **It is not a control, and deliberately not a link.** There is nowhere for
  * it to go, so it is a plain `<div>` — no `href`, no handler, no `disabled`
- * state to fake, and no toast or tooltip: the "Coming Soon" badge is the
- * whole message, and a card that answers a tap with a message saying nothing
- * happens is worse than one that visibly never invited the tap. Same "chrome
- * with no destination is still shown" pattern as the header's "Join Edenic
- * World" and the bottom bar's Profile tab. It is also why nothing here needs
- * the browser — this stays a Server Component with no state of any kind.
+ * state to fake, and no toast or tooltip on press. A card that answers a tap
+ * with a message saying nothing happens is worse than one that visibly never
+ * invited the tap. Same "chrome with no destination is still shown" pattern
+ * as the header's "Join Edenic World" and the bottom bar's Profile tab. It is
+ * also why nothing here needs the browser — this stays a Server Component
+ * with no state of any kind. **There is no "Coming Soon" badge any more** —
+ * cut on direct request; the sparkle now rides beside the title instead of
+ * spelling the state out in words.
  *
  * **Bigger than the two game cards on purpose.** They are `16:9` cells in a
- * two-column grid; this spans the whole width beneath them and is taller
- * than either, so it reads as a different WEIGHT of thing rather than a
- * third game. Its height is not a fixed ratio — the copy sets it, over a
- * `min-h` floor — so a long Arabic or Kurdish line grows the card instead of
- * being clipped by a ratio tuned to English.
+ * two-column grid; this spans the whole width above them and is taller than
+ * either, so it reads as a different WEIGHT of thing rather than a third
+ * game. Its height is not a fixed ratio — the copy sets it, over a `min-h`
+ * floor — so a long Arabic or Kurdish line grows the card instead of being
+ * clipped by a ratio tuned to English.
+ *
+ * **The copy is anchored to the TOP of the card, the friends stay grounded
+ * at the bottom.** It used to be the reverse — the whole card was
+ * bottom-aligned (`lg:items-end`), so the title sat on the floor with a slab
+ * of empty art above it. Now the outer row stretches both columns to the
+ * card's full height (no `items-end` override), the copy column keeps its
+ * own content pinned to its top (`justify-start`), and only the character
+ * row gets `lg:self-end` to stay standing on the card's bottom edge rather
+ * than floating centred in a stretched column. The vertical wash flipped
+ * with it — `to bottom` now, darkening the top where the text lives instead
+ * of the bottom where the art stands.
  *
  * **The copy and the friends are FLEX SIBLINGS, not stacked layers.** An
  * earlier version floated the renders in the corner on `position: absolute`
@@ -63,7 +77,7 @@ export function FriendWorldTeaser({
       aria-label={`${dict.worldTeaser.ariaLabel} — ${dict.worldTeaser.description}`}
       /* `cursor-default`, because a card is not a button: the pointer must
          never suggest there is something here to press. */
-      className={`card relative isolate flex min-h-[19rem] cursor-default select-none flex-col overflow-hidden sm:min-h-[20rem] lg:flex-row lg:items-end ${className}`}
+      className={`card relative isolate flex min-h-[19rem] cursor-default select-none flex-col overflow-hidden sm:min-h-[20rem] lg:flex-row ${className}`}
       style={style}
     >
       {/* The placeholder fill. `.clay`'s own grain recipe, applied by hand
@@ -92,39 +106,36 @@ export function FriendWorldTeaser({
         className="absolute inset-0 -z-10"
         style={{
           background:
-            "linear-gradient(to top, rgb(0 0 0 / 34%) 0%, transparent 62%), linear-gradient(to right, rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 14%) 48%, transparent 78%)",
+            "linear-gradient(to bottom, rgb(0 0 0 / 34%) 0%, transparent 62%), linear-gradient(to right, rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 14%) 48%, transparent 78%)",
         }}
       />
 
       {/* Second in the DOM on a phone (`order`), so a screen reader still
-          meets the badge and the title first at every width — the visual
-          order puts the art on top there, but the reading order shouldn't
-          follow it. */}
-      <div className="order-2 flex flex-1 flex-col justify-end gap-3 p-6 sm:p-8 lg:order-1 lg:p-9">
-        {/* `--color-ink`, NOT `--color-ink-fixed`: this badge's face is a
-            `.card`, which is `--surface` and follows the theme, so its text
-            has to follow with it — the rule under "Header conventions" in
-            CLAUDE.md. The fixed token rendered dark-on-dark here and the
-            badge vanished the moment dark mode was on. */}
-        <span className="card card-pill inline-flex w-fit items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-ink)] sm:text-sm">
+          meets the title first at every width — the visual order puts the
+          art on top there, but the reading order shouldn't follow it. */}
+      <div className="order-2 flex flex-1 flex-col justify-start gap-3 p-6 sm:p-8 lg:order-1 lg:p-9">
+        {/* The sparkle takes over from the deleted "Coming Soon" badge — a
+            small hint of magic leading the title rather than a label
+            spelling the state out. Decorative only, `aria-hidden`; the
+            card's own `role="img"` label already says what this is. */}
+        <div className="flex items-center gap-2">
           <Sparkles
-            className="h-3.5 w-3.5 shrink-0 text-[var(--color-gold)]"
-            strokeWidth={2.5}
+            aria-hidden
+            className="h-5 w-5 shrink-0 text-[var(--color-gold)] drop-shadow-[0_2px_6px_rgb(0_0_0/35%)] sm:h-6 sm:w-6"
+            strokeWidth={2.25}
             fill="currentColor"
           />
-          <span dir={dir}>{dict.worldTeaser.comingSoon}</span>
-        </span>
-
-        {/* Both lines carry `dir`: the title holds three Latin names inside
-            an Arabic or Kurdish sentence, and the description ends on a
-            bidi-neutral full stop — see `dirFor` for why each of those needs
-            a base direction of its own. */}
-        <h2
-          dir={dir}
-          className="text-2xl font-bold leading-tight text-white drop-shadow-[0_2px_10px_rgb(0_0_0/35%)] sm:text-3xl lg:text-4xl"
-        >
-          {dict.worldTeaser.title}
-        </h2>
+          {/* Both lines carry `dir`: the title holds three Latin names inside
+              an Arabic or Kurdish sentence, and the description ends on a
+              bidi-neutral full stop — see `dirFor` for why each of those
+              needs a base direction of its own. */}
+          <h2
+            dir={dir}
+            className="text-2xl font-bold leading-tight text-white drop-shadow-[0_2px_10px_rgb(0_0_0/35%)] sm:text-3xl lg:text-4xl"
+          >
+            {dict.worldTeaser.title}
+          </h2>
+        </div>
 
         <p
           dir={dir}
@@ -142,7 +153,7 @@ export function FriendWorldTeaser({
           as a group. */}
       <div
         aria-hidden
-        className="order-1 flex shrink-0 items-end justify-end gap-1 px-4 pt-5 sm:gap-3 sm:px-6 sm:pt-7 lg:order-2 lg:gap-5 lg:px-0 lg:pr-8 lg:pt-0"
+        className="order-1 flex shrink-0 items-end justify-end gap-1 px-4 pt-5 sm:gap-3 sm:px-6 sm:pt-7 lg:order-2 lg:gap-5 lg:self-end lg:px-0 lg:pr-8 lg:pt-0"
       >
         {characters.map((character, index) => (
           <div
