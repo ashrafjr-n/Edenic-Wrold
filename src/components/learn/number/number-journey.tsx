@@ -15,7 +15,7 @@ import { buildNumberChoices } from "@/lib/number-choices";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import type { ButtonTone } from "@/components/ui/button-3d";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { NumberVideo } from "./number-video";
 import { Numeral } from "./numeral";
@@ -101,6 +101,13 @@ export function NumberJourney({
   const { value, image, videoId, strokes } = item;
   const { accent } = character;
   const script = scriptFor(value, locale, dict);
+  /* Every line below mixes this locale's words with an English name/number
+     via `format()` — the isolate marks inside `format()` stop the value
+     itself from being scrambled, but the element carrying the mixed text
+     still needs an explicit `dir` or the browser (which never sets `dir` on
+     `<html>` — see CLAUDE.md) places the Arabic run on the wrong SIDE of the
+     value it's next to, e.g. "تعلم مع Pinki" rendering as "Pinki تعلم مع". */
+  const dir = dirFor(locale);
   const countActivity = countActivityFor(value);
   const itemLabel = locale === "ar" && countActivity.kind === "give"
     ? countActivity.itemLabelAr
@@ -356,6 +363,7 @@ export function NumberJourney({
               icon={countActivity.icon}
               itemLabel={itemLabel}
               dict={dict.journey}
+              dir={dir}
               highlightTarget={marksTarget}
               onGiven={() => setAppleGiven(true)}
             />
@@ -491,7 +499,7 @@ export function NumberJourney({
             />
           </span>
 
-          <p className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
+          <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
             {format(dict.journey.numberComplete, { value })}
           </p>
         </div>
@@ -515,7 +523,7 @@ export function NumberJourney({
               className="h-5 w-5 text-white sm:h-6 sm:w-6"
               strokeWidth={2.75}
             />
-            <span className="text-base font-bold text-white sm:text-lg">
+            <span dir={dir} className="text-base font-bold text-white sm:text-lg">
               {format(dict.journey.numberUnlocked, { value: nextValue })}
             </span>
           </div>
@@ -544,7 +552,14 @@ export function NumberJourney({
           href={nextHref}
           className="px-8 py-3 text-base sm:px-10 sm:text-lg"
         >
-          {nextValue ? format(dict.journey.numberButton, { value: nextValue }) : dict.journey.finish}
+          {/* `Button3D`'s `href` branch renders a `Link` and only forwards
+              `aria-label` from its rest props, so a `dir` prop passed to the
+              button itself would be silently dropped — wrapping just the
+              mixed text in its own `dir`-bearing span reaches both branches
+              without touching the shared component. */}
+          <span dir={dir}>
+            {nextValue ? format(dict.journey.numberButton, { value: nextValue }) : dict.journey.finish}
+          </span>
           <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
         </Button3D>
       </div>
@@ -565,7 +580,7 @@ export function NumberJourney({
      first. */
   const heroLast = guide.presence === "hero";
   const guideNode = lead ? null : (
-    <PinkiGuide pose={guide.pose} line={guide.line} presence={guide.presence} />
+    <PinkiGuide pose={guide.pose} line={guide.line} presence={guide.presence} dir={dir} />
   );
 
   return (
@@ -627,6 +642,7 @@ export function NumberJourney({
             line={guide.line}
             presence={guide.presence}
             centered={leanPlacement === "journeyCenter"}
+            dir={dir}
           >
             {actions}
           </PinkiGuide>
