@@ -34,7 +34,19 @@ export async function CharacterPicker() {
           plain block section, where `mx-auto` + `max-w-*` is enough). */}
       <div className="card mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-16 lg:py-16">
         <div className="mx-auto max-w-3xl text-center">
+          {/* `dir` here is NOT about the mixed-content case `dirFor` was added
+              for — every word of this heading is Arabic. It is about the FULL
+              STOP after each one. A period is a bidi-neutral character, and
+              the last one in the line has nothing strong after it, so it
+              takes the PARAGRAPH's direction instead of its word's. With the
+              element left `dir`-less that paragraph is `ltr`, which pushed
+              "انمُ."'s blue period out of its own span and parked it on the
+              far right, reading as a stray dot before "تعلّم". The three
+              periods are already inside their own coloured spans — the base
+              direction was the whole bug. Same trap for ANY Arabic string
+              ending in `.` or `!`. */}
           <h1
+            dir={dir}
             className="anim-drop-in text-4xl font-bold leading-tight tracking-tight text-[var(--color-ink)] sm:text-6xl"
             style={{ animationDelay: "0.15s" }}
           >
@@ -47,6 +59,7 @@ export async function CharacterPicker() {
             </span>
           </h1>
           <p
+            dir={dir}
             className="anim-drop-in mx-auto mt-3 max-w-xl text-lg text-[var(--color-ink)]/60 sm:text-xl"
             style={{ animationDelay: "0.35s" }}
           >
