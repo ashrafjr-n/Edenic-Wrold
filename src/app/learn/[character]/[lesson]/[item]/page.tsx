@@ -8,6 +8,8 @@ import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { JourneyProgress } from "@/components/learn/number/journey-progress";
 import { NumberJourney } from "@/components/learn/number/number-journey";
+import { getDictionary, getLocale } from "@/lib/locale";
+import { format } from "@/lib/format-dict";
 
 export function generateStaticParams() {
   return characters.flatMap((character) =>
@@ -45,6 +47,9 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
 
   const item = findNumberItem(Number(itemId));
   if (!item) notFound();
+
+  const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
+  const lessonName = dict.lessons[lesson.id].name;
 
   /* Which numbers are open lives in the progress store, which is
      client-side, so this route cannot gate on it — the lock is drawn on the
@@ -89,12 +94,16 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
         >
           {/* Out of the journey and back to the lesson list, not to the
               previous number — leaving is leaving. */}
-          <BackButton href={lessonPath} label={`Back to ${lesson.name}`} />
+          <BackButton
+            href={lessonPath}
+            label={format(dict.journey.backTo, { lessonName })}
+          />
 
           <JourneyProgress
             position={index + 1}
             total={numberItems.length}
             accent={character.accent}
+            dict={dict.journey}
           />
 
           {/* Same presentation-only achievements button as the hub and the
@@ -105,7 +114,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
             <Button3D
               variant="calm"
               tone={{ face: "var(--surface)" }}
-              aria-label="Achievements"
+              aria-label={dict.characterHub.achievements}
               className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
             >
               <Crown
@@ -116,7 +125,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
             </Button3D>
 
             <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
-              Your achievements
+              {dict.characterHub.yourAchievements}
             </span>
           </div>
         </div>
@@ -129,6 +138,8 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
           lessonId={lesson.id}
           nextHref={nextHref}
           nextValue={next?.value}
+          dict={dict}
+          locale={locale}
         />
       </div>
     </main>

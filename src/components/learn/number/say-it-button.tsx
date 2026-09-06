@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { Volume2 } from "lucide-react";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface SayItButtonProps {
+  dict: Dictionary["journey"];
   /** The number as a word: "One". */
   word: string;
 }
@@ -34,7 +37,7 @@ const SPEAK_MS = 1400;
  * ripple, which is enough for a child to connect the shape to the word even
  * with the sound off.
  */
-export function SayItButton({ word }: SayItButtonProps) {
+export function SayItButton({ word, dict }: SayItButtonProps) {
   const [speaking, setSpeaking] = useState(false);
   /* Whether the child has ever pressed this button. Drives the idle invite
      ring below — once they've found it once, it has done its job. */
@@ -73,7 +76,7 @@ export function SayItButton({ word }: SayItButtonProps) {
       <button
         type="button"
         onClick={say}
-        aria-label={`Say ${word}`}
+        aria-label={format(dict.sayWord, { word })}
         className={`btn3d relative gap-3 px-8 py-4 text-xl font-bold sm:px-10 sm:py-5 sm:text-2xl ${
           speaking ? "anim-jump" : ""
         }`}

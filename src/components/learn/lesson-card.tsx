@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Lock } from "lucide-react";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
 
@@ -33,6 +35,9 @@ export interface LessonRail {
 
 interface LessonCardProps {
   lesson: Lesson;
+  /** Translated content — see `dict.lessons[id]`. */
+  name: string;
+  description: string;
   /** The character hosting this lesson — supplies the card's world colors. */
   character: Character;
   /** Name of the lesson that must be finished first; locked cards only. */
@@ -41,17 +46,21 @@ interface LessonCardProps {
   featured?: boolean;
   rail: LessonRail;
   index: number;
+  dict: Dictionary["characterHub"];
 }
 
 export function LessonCard({
   lesson,
+  name,
+  description,
   character,
   previousLessonName,
   featured = false,
   rail,
   index,
+  dict,
 }: LessonCardProps) {
-  const { id, name, description, image, theme, totalItems, locked } = lesson;
+  const { id, image, theme, totalItems, locked } = lesson;
   const { accent } = character;
 
   const progressPercent = Math.round((CURRENT_ITEMS / totalItems) * 100);
@@ -172,7 +181,7 @@ export function LessonCard({
               }}
               aria-hidden={!featured}
             >
-              Next up
+              {dict.nextUp}
             </span>
 
             <h3
@@ -231,8 +240,8 @@ export function LessonCard({
               style={{ color: "var(--lesson-muted)" }}
             >
               {previousLessonName
-                ? `Unlocks after ${previousLessonName}`
-                : "Unlocks later"}
+                ? format(dict.unlocksAfter, { name: previousLessonName })
+                : dict.unlocksLater}
             </p>
             <span className="card-grain counter-chip">{totalItems}</span>
           </div>
@@ -320,7 +329,7 @@ export function LessonCard({
       href={`/learn/${character.id}/${id}`}
       className={`${wrapperClass} block`}
       style={wrapperStyle}
-      aria-label={`Start ${name}`}
+      aria-label={format(dict.startLesson, { name })}
     >
       {railColumn}
       {card}

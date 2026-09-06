@@ -3,10 +3,13 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { homePaths } from "@/data/home-paths";
 import { Button3D } from "@/components/ui/button-3d";
+import { getDictionary } from "@/lib/locale";
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
-export function PathsSection() {
+export async function PathsSection() {
+  const dict = await getDictionary();
+
   return (
     <section
       className="anim-reveal px-4 pb-20 sm:px-8 lg:pb-28"
@@ -17,14 +20,16 @@ export function PathsSection() {
           id="paths-heading"
           className="text-center text-4xl font-bold tracking-tight text-[var(--color-ink)] sm:text-5xl"
         >
-          Where would you like to start?
+          {dict.home.pathsHeading}
         </h2>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:gap-8">
-          {homePaths.map(
-            ({ title, description, art, action, href, face, edge }) => (
+          {homePaths.map(({ id, art, href, face, edge }) => {
+            const copy = dict.homePaths[id];
+
+            return (
               <article
-                key={title}
+                key={id}
                 /* `isolate` keeps the art's negative z-index inside the panel:
                    it drops behind the text but stays above the panel's own
                    fill, which is the only place it can read as bedded in. */
@@ -48,10 +53,10 @@ export function PathsSection() {
                   />
                 </div>
 
-                <h3 className="text-3xl font-bold text-white">{title}</h3>
+                <h3 className="text-3xl font-bold text-white">{copy.title}</h3>
 
                 <p className="mt-3 max-w-[17rem] text-base leading-relaxed text-white/85">
-                  {description}
+                  {copy.description}
                 </p>
 
                 {/* White button on a colored panel: the purple CTA that works
@@ -72,12 +77,12 @@ export function PathsSection() {
                      with every other white chip on the site. */
                   className="btn3d--clay-white home-path-btn mt-auto px-6 py-3 text-base"
                 >
-                  {action}
+                  {copy.action}
                   {href && <ArrowRight className="h-5 w-5" strokeWidth={2.75} />}
                 </Button3D>
               </article>
-            ),
-          )}
+            );
+          })}
         </div>
       </div>
     </section>

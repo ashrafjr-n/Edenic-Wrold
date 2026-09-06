@@ -4,6 +4,7 @@ const DEFAULT_COUNT_ACTIVITY: CountActivityConfig = {
   kind: "give",
   icon: "/assets/icons/apple.png",
   itemLabel: "apple",
+  itemLabelAr: "تفاحة",
 };
 
 /**
@@ -21,6 +22,7 @@ const countActivityByValue: Record<number, CountActivityConfig> = {
     kind: "give",
     icon: "/assets/learn-with-pinki/other/blue-flower.png",
     itemLabel: "flower",
+    itemLabelAr: "زهرة",
   },
   4: { kind: "complete" },
   5: { kind: "path", numbers: [3, 4, 5, 6, 7] },

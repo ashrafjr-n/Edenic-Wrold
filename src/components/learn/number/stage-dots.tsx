@@ -1,8 +1,12 @@
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
+
 interface StageDotsProps {
   /** 0-based index of the stage being worked on. */
   current: number;
   total: number;
   accent: string;
+  dict: Dictionary["journey"];
 }
 
 /**
@@ -13,12 +17,12 @@ interface StageDotsProps {
  * and how much is left. A child under ten cannot read "stage 4 of 6", but they
  * can see four dots filled and two to go.
  */
-export function StageDots({ current, total, accent }: StageDotsProps) {
+export function StageDots({ current, total, accent, dict }: StageDotsProps) {
   return (
     <div
       className="flex items-center gap-2"
       role="img"
-      aria-label={`Step ${current + 1} of ${total}`}
+      aria-label={format(dict.stepOf, { current: current + 1, total })}
     >
       {Array.from({ length: total }, (_, index) => {
         const done = index < current;

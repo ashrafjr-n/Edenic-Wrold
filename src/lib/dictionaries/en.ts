@@ -85,6 +85,10 @@ export const en = {
     numbers: { name: "Learn Numbers", description: "Learn numbers 1 to 9" },
     letters: { name: "Learn Letters", description: "Learn the alphabet from A to Z" },
     colors: { name: "Learn Colors", description: "Discover colors all around us" },
+    /* No character currently has a "shapes" lesson (dropped on direct
+       request — see CLAUDE.md), but `LessonId` still carries it, so this
+       entry exists purely so `dict.lessons[lesson.id]` type-checks. */
+    shapes: { name: "Learn Shapes", description: "Discover shapes all around us" },
   },
   characterHub: {
     backToLearn: "Back to Learn",
@@ -94,6 +98,7 @@ export const en = {
     unlocksAfter: "Unlocks after {name}",
     unlocksLater: "Unlocks later",
     startLesson: "Start {name}",
+    learningCorner: "{name}'s learning corner",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
@@ -103,6 +108,11 @@ export const en = {
     startNumberAria: "Start the number {value}, {stars} of 3 stars",
   },
   journey: {
+    /** Pinki's line on the number PICKER, for a child who has never finished
+        a number — distinct from the per-number script below it, which is
+        about the one numeral being worked on. */
+    pickerWelcome:
+      "Hi! I'm Pinki. Let's learn our numbers together — tap Number 1 to start! 🌟",
     backTo: "Back to {lessonName}",
     numberOf: "Number {position} of {total}",
     stepOf: "Step {current} of {total}",
@@ -116,13 +126,18 @@ export const en = {
     dragMissingPiece: "Drag the missing piece back into the number",
     numberValue: "The number {value}",
     whichOneIsThis: "Which one is this?",
-    dropItem: "Drop a {itemLabel} here",
-    pickItemAria: "Pick a {itemLabel}",
+    dropItem: "Drop {article} {itemLabel} here",
+    pickItemAria: "Pick {article} {itemLabel}",
     popBalloon: "Pop the balloon with number {value}",
     colorNumber: "Color in the number {value}",
     dragPinkiToward: "Drag Pinki toward number {value}",
     videoAbout: "A short video about the number {value}",
     playVideoAbout: "Play the video about the number {value}",
+    myTurn: "My turn!",
+    finishExclaim: "Finish!",
+    finish: "Finish",
+    numberComplete: "Number {value} complete!",
+    numberUnlocked: "Number {value} unlocked!",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
@@ -161,6 +176,32 @@ export const en = {
   ui: {
     completedAria: "{label} completed",
     starsAria: "{stars} out of {max} stars",
+  },
+  /** Pinki's spoken-line TEMPLATES for one number's journey — distinct from
+      `journey` above, which holds ordinary button/aria copy.
+      `data/number-script.ts` composes the final line per locale; the
+      English branch there reproduces the site's original hand-written
+      composition exactly (word.toUpperCase(), English pluralization) rather
+      than reading these templates, so these English entries exist only for
+      `Dictionary` shape parity with `ar.ts` — not read at runtime. `{value}`
+      is the bare numeral; `{word}`/`{itemLabel}` arrive pre-cased/pluralized
+      by the caller for whichever locale is active. */
+  pinki: {
+    discover: "Look what I found — Number {value}!",
+    reveal: "This is Number {value}!",
+    strokeHintDefault: "Watch me draw it!",
+    strokeHint1: "A little flag... then straight down!",
+    traceInvite: "Trace it with me!",
+    traceMiss: "So close! Let's go again.",
+    find: "Which one is {word}?",
+    findMiss: "Hmm... let's look again!",
+    countGive: "Pick {word} {itemLabel}!",
+    countComplete: "Complete Number {value}!",
+    countPath: "Walk me to Number {value}!",
+    countColor: "Color Number {value}!",
+    countHow: "How many {itemLabel} did we pick?",
+    game: "Pop Number {value}!",
+    celebrate: "Hooray! You did it!",
   },
 };
 

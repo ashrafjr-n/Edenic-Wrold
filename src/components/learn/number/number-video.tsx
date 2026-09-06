@@ -4,8 +4,11 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface NumberVideoProps {
+  dict: Dictionary["journey"];
   videoId: string;
   value: number;
   /** The clay numeral, standing in as the poster until the child presses play. */
@@ -61,7 +64,7 @@ function embedUrl(videoId: string): string {
  * Sized by HEIGHT, not width: the source is a vertical Short, so the frame is
  * as tall as the viewport comfortably allows and its width follows.
  */
-export function NumberVideo({ videoId, value, image }: NumberVideoProps) {
+export function NumberVideo({ videoId, value, image, dict }: NumberVideoProps) {
   const [playing, setPlaying] = useState(false);
 
   return (
@@ -77,7 +80,7 @@ export function NumberVideo({ videoId, value, image }: NumberVideoProps) {
       {playing ? (
         <iframe
           src={embedUrl(videoId)}
-          title={`A short video about the number ${value}`}
+          title={format(dict.videoAbout, { value })}
           /* `autoplay` has to be in `allow` as well as in the URL — the URL
              asking and the frame being permitted are two different things,
              and without this the player stays paused. */
@@ -89,7 +92,7 @@ export function NumberVideo({ videoId, value, image }: NumberVideoProps) {
         <button
           type="button"
           onClick={() => setPlaying(true)}
-          aria-label={`Play the video about the number ${value}`}
+          aria-label={format(dict.playVideoAbout, { value })}
           className="absolute inset-0 flex items-center justify-center"
         >
           {/* The numeral itself is the poster — a local asset that is already

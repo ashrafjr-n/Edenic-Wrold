@@ -5,8 +5,11 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import { completeNotchFor } from "@/data/number-complete";
 import type { CompleteNotch } from "@/data/number-complete";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface NumberCompleteProps {
+  dict: Dictionary["journey"];
   value: number;
   image: string;
   /** Mark the gap as the thing to aim for, until the piece is home.
@@ -80,6 +83,7 @@ export function NumberComplete({
   highlightTarget,
   onFinish,
   onMiss,
+  dict,
 }: NumberCompleteProps) {
   const notch = completeNotchFor(value);
   const holeRef = useRef<HTMLDivElement>(null);
@@ -193,7 +197,7 @@ export function NumberComplete({
         onPointerUp={onPointerUp}
         onPointerCancel={() => setDrag(null)}
         disabled={solved}
-        aria-label="Drag the missing piece back into the number"
+        aria-label={dict.dragMissingPiece}
         /* `touch-action: none` or the drag scrolls the page instead. */
         className={`touch-none rounded-2xl p-3 ${
           dragging || snap ? "" : "transition-all duration-300"

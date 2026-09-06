@@ -1,4 +1,7 @@
+import type { Dictionary } from "@/lib/dictionaries/en";
+import type { Locale } from "@/types/locale";
 import type { NumberScript } from "@/types/number-journey";
+import { format } from "@/lib/format-dict";
 import { countActivityFor } from "./count-activities";
 
 const WORDS: Record<number, string> = {
@@ -15,7 +18,8 @@ const WORDS: Record<number, string> = {
 
 /** How each numeral is written, in stroke order — read out while Pinki draws
     it. Only the numbers whose journey has been designed are written by hand;
-    the rest fall back to a generic line rather than a wrong one. */
+    the rest fall back to a generic line rather than a wrong one. English
+    only — `scriptForAr` below has its own copy (`dict.pinki.strokeHint1`). */
 const STROKE_HINTS: Record<number, string> = {
   1: "A little flag... then straight down!",
 };
@@ -49,18 +53,17 @@ function countLine(value: number, word: string): string {
 }
 
 /**
- * Pinki's lines for one number.
+ * Pinki's lines for one number, in English — the site's original
+ * composition, byte-for-byte unchanged (the English locale must never
+ * change; see CLAUDE.md's language switcher conventions). `scriptForAr`
+ * below is the Arabic counterpart, composed separately rather than through
+ * these same helpers, since English pluralization/casing rules don't apply.
  *
  * Short and spoken, not written: she is talking to a child, so a line is a
  * phrase they can hold, and she speaks in the first person about her own
  * game ("Walk me to Number 5!"), never about herself in the third.
- *
- * Kept as data rather than strings in the components for the ordinary reason —
- * the UI must not own its content — and one specific one: these are the script
- * that gets recorded when audio arrives, so they need to be readable in one
- * place rather than hunted through seven components.
  */
-export function scriptFor(value: number): NumberScript {
+function scriptForEn(value: number): NumberScript {
   const word = WORDS[value] ?? String(value);
   const activity = countActivityFor(value);
   /* ALWAYS the plural, unlike the invite line above. "Pick ONE apple!" counts
@@ -90,4 +93,50 @@ export function scriptFor(value: number): NumberScript {
     game: `Pop Number ${value}!`,
     celebrate: "Hooray! You did it!",
   };
+}
+
+/**
+ * Pinki's lines for one number, in Arabic. The number WORD itself
+ * (`WORDS[value]`, e.g. "One") is the taught content and never translates —
+ * only the sentence around it does, per CLAUDE.md's language switcher
+ * conventions. Arabic dual/plural noun agreement is not modelled (see
+ * `ar.ts`'s doc comment) — `countGive`/`countHow` use the bare digit and the
+ * item's singular Arabic word regardless of count.
+ */
+function scriptForAr(value: number, pinki: Dictionary["pinki"]): NumberScript {
+  const word = WORDS[value] ?? String(value);
+  const activity = countActivityFor(value);
+  const itemLabel = activity.kind === "give" ? activity.itemLabelAr : "";
+
+  const countTemplate =
+    activity.kind === "give"
+      ? pinki.countGive
+      : activity.kind === "complete"
+        ? pinki.countComplete
+        : activity.kind === "path"
+          ? pinki.countPath
+          : pinki.countColor;
+
+  return {
+    word,
+    discover: format(pinki.discover, { value }),
+    reveal: format(pinki.reveal, { value }),
+    strokeHint: value === 1 ? pinki.strokeHint1 : pinki.strokeHintDefault,
+    traceInvite: pinki.traceInvite,
+    traceMiss: pinki.traceMiss,
+    find: format(pinki.find, { word }),
+    findMiss: pinki.findMiss,
+    count: format(countTemplate, { value, word, itemLabel }),
+    countHow: format(pinki.countHow, { itemLabel }),
+    game: format(pinki.game, { value }),
+    celebrate: pinki.celebrate,
+  };
+}
+
+export function scriptFor(
+  value: number,
+  locale: Locale,
+  dict: Dictionary,
+): NumberScript {
+  return locale === "ar" ? scriptForAr(value, dict.pinki) : scriptForEn(value);
 }

@@ -3,12 +3,13 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { Crown } from "lucide-react";
 import { numberItems } from "@/data/number-items";
-import { numbersPickerScript } from "@/data/numbers-picker-script";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberGrid } from "@/components/learn/number/number-grid";
 import { NumbersIntro } from "@/components/learn/number/numbers-intro";
+import { getDictionary } from "@/lib/locale";
+import { format } from "@/lib/format-dict";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
@@ -33,6 +34,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
      locked, so this is a belt-and-braces guard rather than a live path. */
   if (lesson.id !== "numbers") notFound();
 
+  const dict = await getDictionary();
+  const lessonName = dict.lessons[lesson.id].name;
+
   return (
     <main
       /* `overflow-x-hidden` is for the picker's Pinki alone: she is sized to
@@ -50,7 +54,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         >
           <BackButton
             href={`/learn/${character.id}`}
-            label={`Back to ${character.name}'s lessons`}
+            label={format(dict.lessonPicker.backTo, { characterName: character.name })}
           />
 
           {/* The lesson's own icon and subject color, not a plain text pill —
@@ -83,7 +87,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
               />
             </div>
             <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-              {lesson.name}
+              {lessonName}
             </span>
           </div>
 
@@ -94,7 +98,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <Button3D
               variant="calm"
               tone={{ face: "var(--surface)" }}
-              aria-label="Achievements"
+              aria-label={dict.characterHub.achievements}
               className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
             >
               <Crown
@@ -105,7 +109,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </Button3D>
 
             <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
-              Your achievements
+              {dict.characterHub.yourAchievements}
             </span>
           </div>
         </div>
@@ -125,7 +129,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
           lessonId={lesson.id}
           basePath={`/learn/${character.id}/${lesson.id}`}
           tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
-          intro={<NumbersIntro line={numbersPickerScript.notStarted} />}
+          dict={dict}
+          intro={<NumbersIntro line={dict.journey.pickerWelcome} />}
         />
       </div>
     </main>

@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Lock, Play } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import { format } from "@/lib/format-dict";
+import type { Dictionary } from "@/lib/dictionaries/en";
 import type { Character } from "@/types/character";
 
 type TileVars = CSSProperties & { "--tile-tint"?: string };
@@ -20,17 +22,22 @@ const BUTTON_OFFSET = 0.3;
 
 interface CharacterCardProps {
   character: Character;
+  /** Translated content — see `dict.characters[id].tagline`. */
+  tagline: string;
   /** Name of the character that must be finished first; locked cards only. */
   previousName?: string;
   index: number;
+  dict: Dictionary["learnPicker"];
 }
 
 export function CharacterCard({
   character,
+  tagline,
   previousName,
   index,
+  dict,
 }: CharacterCardProps) {
-  const { name, tagline, image, accent, accentDark, locked } = character;
+  const { name, image, accent, accentDark, locked } = character;
 
   const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {
@@ -113,7 +120,7 @@ export function CharacterCard({
                 />
                 {previousName && (
                   <span className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
-                    Finish {previousName}&apos;s lessons first!
+                    {format(dict.finishFirst, { name: previousName })}
                   </span>
                 )}
               </span>
@@ -155,18 +162,18 @@ export function CharacterCard({
         }
         href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
-        aria-label={locked ? `${name} is locked` : `Learn with ${name}`}
+        aria-label={locked ? format(dict.lockedAria, { name }) : format(dict.learnWith, { name })}
         className="anim-fade-up mt-5 w-full max-w-[220px] px-5 py-3 text-sm sm:text-base"
         style={{ animationDelay: delay.button }}
       >
         {locked ? (
           <>
             <Lock className="h-4 w-4" strokeWidth={2.75} />
-            Locked
+            {dict.locked}
           </>
         ) : (
           <>
-            Learn With {name}
+            {format(dict.learnWith, { name })}
             <Play className="h-4 w-4 fill-current" strokeWidth={2.75} />
           </>
         )}

@@ -7,6 +7,8 @@ import { lessonsByCharacter } from "@/data/lessons";
 import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
+import { getDictionary } from "@/lib/locale";
+import { format } from "@/lib/format-dict";
 
 export function generateStaticParams() {
   return characters.map((character) => ({ character: character.id }));
@@ -27,6 +29,7 @@ export default async function CharacterLearnPage({
      locked friend should end up somewhere they can actually choose again. */
   if (character.locked) redirect("/learn");
 
+  const dict = await getDictionary();
   const lessons = lessonsByCharacter[character.id];
   /* The lesson to lead with. Once the progress store lands this becomes the
      first unlocked *and unfinished* one; for now the first unlocked lesson is
@@ -37,7 +40,9 @@ export default async function CharacterLearnPage({
     lesson,
     index,
     featured: index === featuredIndex,
-    previousName: lesson.locked ? lessons[index - 1]?.name : undefined,
+    previousName: lesson.locked
+      ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
+      : undefined,
     /* The phone rail lights up as far as the child can actually reach: the
        segment into a node is lit when that lesson is open, and the segment
        out of it when the next one is. */
@@ -72,7 +77,7 @@ export default async function CharacterLearnPage({
               beside it stays white on every page, which is what keeps "go
               back" and "chrome with no destination yet" from reading as the
               same control however this button is coloured. */}
-          <BackButton href="/learn" label="Back to Learn" />
+          <BackButton href="/learn" label={dict.characterHub.backToLearn} />
 
           {/* Whose world this is. The hero banner is phone-only now, so
               without this the desktop page carried no trace of the character
@@ -112,7 +117,7 @@ export default async function CharacterLearnPage({
             <Button3D
               variant="calm"
               tone={{ face: "var(--surface)" }}
-              aria-label="Achievements"
+              aria-label={dict.characterHub.achievements}
               className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
             >
               {/* A filled crown, not the outlined trophy that was here first —
@@ -127,7 +132,7 @@ export default async function CharacterLearnPage({
             </Button3D>
 
             <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
-              Your achievements
+              {dict.characterHub.yourAchievements}
             </span>
           </div>
         </div>
@@ -143,7 +148,7 @@ export default async function CharacterLearnPage({
           >
             <Image
               src={character.heroImage}
-              alt={`${character.name}'s learning corner`}
+              alt={format(dict.characterHub.learningCorner, { name: character.name })}
               fill
               sizes="100vw"
               priority
@@ -184,11 +189,14 @@ export default async function CharacterLearnPage({
             <LessonCard
               key={lesson.id}
               lesson={lesson}
+              name={dict.lessons[lesson.id].name}
+              description={dict.lessons[lesson.id].description}
               character={character}
               previousLessonName={previousName}
               featured={featured}
               rail={rail}
               index={index}
+              dict={dict.characterHub}
             />
           ))}
         </div>
