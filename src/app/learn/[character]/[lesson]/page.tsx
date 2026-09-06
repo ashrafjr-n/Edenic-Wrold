@@ -9,7 +9,7 @@ import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberGrid } from "@/components/learn/number/number-grid";
 import { NumbersIntro } from "@/components/learn/number/numbers-intro";
 import { getDictionary } from "@/lib/locale";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
@@ -130,7 +130,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           basePath={`/learn/${character.id}/${lesson.id}`}
           tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
           dict={dict}
-          intro={<NumbersIntro line={dict.journey.pickerWelcome} />}
+          intro={<NumbersIntro line={dict.journey.pickerWelcome} dir={dirFor(dict.locale)} />}
         />
       </div>
     </main>

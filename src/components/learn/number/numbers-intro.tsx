@@ -5,6 +5,10 @@ interface NumbersIntroProps {
   /** The welcome. Carried by the screen-reader line below, and written to be
       read aloud once audio exists — same as the journey's lines. */
   line: string;
+  /** Base direction for that line: it names "Number 1" and ends in "!", both
+      bidi-neutral runs that need a base direction of their own — the same
+      treatment `PinkiGuide` gives its own screen-reader line. */
+  dir: "rtl" | "ltr";
   /** Defaults to the pointing pose, which is the whole reason this exists. */
   pose?: PinkiPose;
 }
@@ -44,7 +48,7 @@ interface NumbersIntroProps {
  * backwards, away from the grid. The reference this was built from is equally
  * approximate. The angle itself lives in `PinkiLean`.
  */
-export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
+export function NumbersIntro({ line, dir, pose = "stick" }: NumbersIntroProps) {
   return (
     <>
       {/* First in the card's DOM, so a screen reader hears the welcome BEFORE
@@ -52,7 +56,7 @@ export function NumbersIntro({ line, pose = "stick" }: NumbersIntroProps) {
           in context, rather than as a stray string somewhere in the page. The
           image below carries `alt=""` and `aria-hidden` precisely so this is
           announced once and not doubled by a description of the picture. */}
-      <p className="sr-only">{line}</p>
+      <p dir={dir} className="sr-only">{line}</p>
 
       <PinkiLean pose={pose} placement="picker" />
     </>
