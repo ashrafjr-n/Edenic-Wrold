@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fredoka, Baloo_Bhaijaan_2 } from "next/font/google";
+import { Fredoka, Baloo_Bhaijaan_2, Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
@@ -23,6 +23,24 @@ const THEME_INIT_SCRIPT = `
   } catch (e) {}
 `;
 
+/* `--font-fredoka` does NOT expand to just "Fredoka". next/font emits a
+   metric-matched fallback face alongside it — `@font-face { font-family:
+   Fredoka Fallback; src: local(Arial) }` — and puts it inside the variable,
+   so the value is `"Fredoka", "Fredoka Fallback"`.
+
+   That matters here because **Arial has full Arabic coverage**. Written the
+   obvious way, `font-family: var(--font-fredoka), var(--font-rtl)` expands to
+   `Fredoka, "Fredoka Fallback", <arabic face>`, and every Arabic and Kurdish
+   character is served by Arial before the stack ever reaches the face chosen
+   for it. Measured with `CSS.getPlatformFontsForNode`: the Arabic site had
+   been rendering in Arial the whole time and Baloo Bhaijaan 2's faces never
+   left `unloaded`. `globals.css` fixes it by naming `Fredoka` itself first
+   and keeping `var(--font-fredoka)` further down for its fallback metrics —
+   see the `body` rule there.
+
+   `adjustFontFallback: false` is NOT the fix and is deliberately not used:
+   Next 16.3.3 still emits the `local(Arial)` face and its metric overrides
+   with the option set, so it silently changes nothing. */
 const fredoka = Fredoka({
   variable: "--font-fredoka",
   subsets: ["latin"],
@@ -34,8 +52,27 @@ const fredoka = Fredoka({
    only Arabic runs fall back to this one. */
 const balooBhaijaan = Baloo_Bhaijaan_2({
   variable: "--font-baloo",
-  subsets: ["arabic", "latin"],
+  /* `arabic` only: Latin is Fredoka's job in every locale, and a Latin
+     subset here would sit ahead of Fredoka's own fallback in the stack and
+     render Latin text in Baloo for the moment before Fredoka loads. */
+  subsets: ["arabic"],
   weight: ["400", "500", "600", "700", "800"],
+});
+
+/* Badini Kurdish, and ONLY Badini Kurdish. Baloo Bhaijaan 2 is the better
+   match for this site — rounded and playful next to Fredoka — but its file
+   has no glyph for ڕ ڵ ێ ۆ, four of the commonest letters in the Kurdish
+   alphabet (checked against the font's own cmap, not by eye). Without a face
+   that covers them, a Kurdish page renders most of a word in Baloo and those
+   four letters in whatever the OS happens to have, which is a different
+   typeface mid-word. Vazirmatn covers the whole Kurdish-Arabic alphabet and
+   is the closest of the fully-covering families to this site's feel — the
+   others (Noto Kufi/Naskh Arabic, Scheherazade New, Reem Kufi) are kufi or
+   bookish naskh. Arabic keeps Baloo; `globals.css` swaps between them on
+   `html[lang]`, so neither locale pays for the other's font. */
+const vazirmatn = Vazirmatn({
+  variable: "--font-kurdish",
+  subsets: ["arabic"],
 });
 
 export const metadata: Metadata = {
@@ -62,7 +99,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
        language switcher conventions). */
     <html
       lang={locale}
-      className={`${fredoka.variable} ${balooBhaijaan.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${balooBhaijaan.variable} ${vazirmatn.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">

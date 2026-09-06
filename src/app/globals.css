@@ -251,7 +251,7 @@
    generated utilities (`bg-pinki` etc.), so only the font is mapped into the
    Tailwind theme. Keep it that way — one system, not two. */
 @theme inline {
-  --font-sans: var(--font-fredoka), var(--font-baloo);
+  --font-sans: Fredoka, var(--font-rtl), var(--font-fredoka);
 }
 
 /* Flat, single-color ground. The pastel radial gradients that used to live
@@ -262,11 +262,36 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  /* Fredoka has no Arabic glyphs, so `--font-baloo` (Baloo Bhaijaan 2) is the
-     fallback the browser reaches for per-character on any Arabic run — Latin
-     text keeps rendering in Fredoka throughout. */
-  font-family: var(--font-fredoka), var(--font-baloo), ui-sans-serif, system-ui,
-    sans-serif;
+  /* Fredoka has no Arabic glyphs, so `--font-rtl` is the face the browser
+     reaches for per-character on any Arabic-script run — Latin text keeps
+     rendering in Fredoka throughout, which is what keeps "Pinki" and every
+     numeral looking the same in all three locales.
+
+     **The bare `Fredoka` first, then `var(--font-fredoka)` further down, is
+     deliberate and is the whole reason this works.** That variable expands to
+     `"Fredoka", "Fredoka Fallback"`, and next/font backs the fallback with
+     `src: local(Arial)` — a font that HAS full Arabic coverage, so putting
+     the variable first meant Arial served every Arabic and Kurdish character
+     and `--font-rtl` was never reached (see `layout.tsx`). Naming the real
+     family first gives Latin its font, `--font-rtl` then catches the
+     Arabic-script run, and the variable still trails behind so the
+     metric-matched fallback keeps doing its job before Fredoka loads. */
+  font-family: Fredoka, var(--font-rtl), var(--font-fredoka), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+/* Which Arabic-script face serves the current language. Baloo Bhaijaan 2 is
+   rounded and playful and is the right partner for Fredoka, but it has no
+   glyph for ڕ ڵ ێ ۆ — so Kurdish, which needs all four, gets Vazirmatn
+   instead (see `layout.tsx`). One custom property switched on `<html lang>`,
+   which `layout.tsx` already sets from the locale cookie: no component knows
+   about fonts, and neither locale downloads the other's face. */
+:root {
+  --font-rtl: var(--font-baloo);
+}
+
+html[lang="ku"] {
+  --font-rtl: var(--font-kurdish);
 }
 
 /* An English value (a character name, a number, a taught word) sitting
