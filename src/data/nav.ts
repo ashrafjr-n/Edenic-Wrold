@@ -1,10 +1,12 @@
 import type { NavItem } from "@/types/nav";
 
-/** The site's primary sections. */
+/** The site's primary sections. Labels are translated (`dict.nav`) by
+    whichever component renders them — this module only owns the routing
+    shape (`id` + `href`), never display text. */
 export const mainNav: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Learn", href: "/learn" },
-  { label: "Activities", href: "/activities" },
+  { id: "home", href: "/" },
+  { id: "learn", href: "/learn" },
+  { id: "activities", href: "/activities" },
 ];
 
 /**
@@ -16,4 +18,4 @@ export const mainNav: NavItem[] = [
  * isn't rendered. It carries no `href` because there is no profile to go to
  * until someone signs in.
  */
-export const profileNav: NavItem = { label: "Profile" };
+export const profileNav: NavItem = { id: "profile" };

@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { mainNav } from "@/data/nav";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 /** The only reason this is a Client Component is `usePathname` for the active
     pill. It's split out of `Header` so the header itself — logo, chrome, CTA —
-    stays on the server. */
-export function MainNav() {
+    stays on the server. `dict` is passed down from there since a Client
+    Component can't call `getDictionary()` itself. */
+export function MainNav({ dict }: { dict: Dictionary }) {
   const pathname = usePathname();
 
   return (
@@ -15,18 +17,23 @@ export function MainNav() {
        the nav would be invisible apart from its shadow. Bare items on the bar,
        with only the active one carrying color. Hidden below `sm` — on a phone
        these items move to `BottomNav`, a fixed app-style tab bar, instead. */
-    <nav aria-label="Main" className="hidden items-center gap-2 sm:flex sm:gap-4">
-      {mainNav.map(({ label, href }) => {
+    <nav
+      aria-label={dict.nav.mainAriaLabel}
+      className="hidden items-center gap-2 sm:flex sm:gap-4"
+    >
+      {mainNav.map(({ id, href }) => {
+        const label = dict.nav[id];
+
         if (!href) {
           return (
             <span
-              key={label}
+              key={id}
               aria-disabled="true"
               className="flex cursor-default items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-locked-text)] sm:px-5"
             >
               {label}
               <span className="rounded-full bg-[var(--color-locked)] px-1.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide">
-                Soon
+                {dict.nav.soon}
               </span>
             </span>
           );
@@ -38,7 +45,7 @@ export function MainNav() {
 
         return (
           <Link
-            key={label}
+            key={id}
             href={href}
             aria-current={active ? "page" : undefined}
             /* Active is a purple clay pill; the rest are bare text on the white
