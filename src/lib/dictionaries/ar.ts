@@ -176,12 +176,12 @@ export const ar: Dictionary = {
     secondsLeftAria: "{n} ثانية متبقية",
     cardFaceDownAria: "البطاقة {index}، مقلوبة",
   },
-  worldTeaser: {
-    comingSoon: "قريبًا",
-    title: "ابنِ عالم Pinki و Nova و Bloo",
+  trail: {
+    title: "Edenic Trail",
     description:
-      "اجمع النقود من دروسك وألعابك، ثم أنفقها على تزيين غرفة خاصة لصديقك المفضّل.",
-    ariaLabel: "قريبًا: ابنِ عالم صديقك المفضّل",
+      "طريق مغامرات يتسلّق السماء. اصعده مع Pinki و Nova و Bloo، محطة بعد محطة.",
+    cta: "ابدأ مغامرتك",
+    ctaContinue: "تابع",
   },
   ui: {
     completedAria: "{label} مكتمل",

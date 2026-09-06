@@ -185,17 +185,18 @@ export const en = {
     secondsLeftAria: "{n} seconds left",
     cardFaceDownAria: "Card {index} face down",
   },
-  /** The Play page's teaser card for the friend-world feature. Its own
-      namespace, not part of `activities`: nothing here labels a control or a
-      route, it is one card's worth of copy for something that does not exist
-      yet, and it should be easy to delete in one piece when the real thing
-      lands. */
-  worldTeaser: {
-    comingSoon: "Coming Soon",
-    title: "Build Pinki, Nova & Bloo's World",
+  /** The Edenic Trail — the adventure map. Its own namespace, not part of
+      `activities`: it is a section of the site in its own right, not one of
+      the two games. **"Edenic Trail" itself never translates** — it is a
+      brand name, the same rule that keeps Edenic World, Pinki, Nova and Bloo
+      English inside an Arabic or Kurdish sentence. It replaced `worldTeaser`,
+      the friend-world "Coming Soon" card this one was built over. */
+  trail: {
+    title: "Edenic Trail",
     description:
-      "Earn coins from your lessons and games, then spend them decorating a special room for your favourite friend.",
-    ariaLabel: "Coming soon: build your favourite friend's world",
+      "A path of adventures winding up through the sky. Climb it with Pinki, Nova and Bloo — one stop at a time.",
+    cta: "Start your adventure",
+    ctaContinue: "Continue",
   },
   ui: {
     completedAria: "{label} completed",
