@@ -1,5 +1,6 @@
 import { characters } from "@/data/characters";
 import { getDictionary } from "@/lib/locale";
+import { dirFor } from "@/lib/format-dict";
 import { CharacterCard } from "./character-card";
 
 /** The `/learn` landing step: choose a friend, then their lesson hub. This was
@@ -15,6 +16,7 @@ import { CharacterCard } from "./character-card";
  */
 export async function CharacterPicker() {
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
 
   /* Which character gates each locked one. */
   const cast = characters.map((character, index) => ({
@@ -69,6 +71,7 @@ export async function CharacterPicker() {
                 index={index}
                 previousName={previousName}
                 dict={dict.learnPicker}
+                dir={dir}
               />
             ))}
           </div>

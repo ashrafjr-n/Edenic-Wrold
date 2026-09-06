@@ -28,6 +28,10 @@ interface CharacterCardProps {
   previousName?: string;
   index: number;
   dict: Dictionary["learnPicker"];
+  /** `finishFirst`/`learnWith` mix this locale's words with the character's
+      English name via `format()` — needed on the elements rendering them
+      below (see `lib/format-dict.ts`'s `dirFor`). */
+  dir: "rtl" | "ltr";
 }
 
 export function CharacterCard({
@@ -36,6 +40,7 @@ export function CharacterCard({
   previousName,
   index,
   dict,
+  dir,
 }: CharacterCardProps) {
   const { name, image, accent, accentDark, locked } = character;
 
@@ -119,7 +124,7 @@ export function CharacterCard({
                   strokeWidth={2.5}
                 />
                 {previousName && (
-                  <span className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
+                  <span dir={dir} className="pointer-events-none absolute -top-3 left-1/2 w-max max-w-[11rem] -translate-x-1/2 -translate-y-full rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200 group-hover/lock:opacity-100">
                     {format(dict.finishFirst, { name: previousName })}
                   </span>
                 )}
@@ -173,7 +178,7 @@ export function CharacterCard({
           </>
         ) : (
           <>
-            {format(dict.learnWith, { name })}
+            <span dir={dir}>{format(dict.learnWith, { name })}</span>
             <Play className="h-4 w-4 fill-current" strokeWidth={2.75} />
           </>
         )}
