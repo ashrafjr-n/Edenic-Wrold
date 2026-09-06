@@ -493,6 +493,18 @@ bdi {
   background-color: #f4f2fb;
 }
 
+/* Hover pin, dark mode: without this, `.btn3d--clay-white:hover`'s own
+   `background-color: var(--surface)` (added to stop the chip darkening
+   toward black on hover — see that rule's comment) resolves `--surface` to
+   the dark ground here and undoes this base rule's pale pin the moment the
+   pointer is over the chip. Same value as the base rule above, just
+   restated for `:hover`, at a specificity high enough (the `[data-theme]`
+   attribute plus `:hover:not(:disabled)`) to beat both the light-mode hover
+   rule and this file's plain `.btn3d--clay-white` base. */
+[data-theme="dark"] .btn3d--clay-white:hover:not(:disabled) {
+  background-color: #f4f2fb;
+}
+
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
    lighter above for legibility as TEXT elsewhere on the page — but the
    language chip, the dark-mode toggle, "Join Edenic World" (plain `.btn3d`,
@@ -1218,7 +1230,14 @@ button:disabled,
    winning by default — a white chip (the language switcher's unchosen
    circles among them) went visibly grey/black on hover instead of staying
    white. Pinning it back to `--surface` here is what the comment above
-   already claimed was true. */
+   already claimed was true.
+
+   `var(--surface)` is a LIGHT-MODE-ONLY fix, not a theme-proof one — in dark
+   mode `--surface` itself resolves to the dark ground, so this rule would
+   otherwise flip the same white chip dark again on hover the moment dark
+   mode is on (the exact bug it exists to fix, reappearing one theme over).
+   The dark-mode hover pin lives next to `[data-theme="dark"]
+   .btn3d--clay-white`'s own pinned-pale base rule, not here. */
 .btn3d--clay-white:hover:not(:disabled) {
   background-color: var(--surface);
   box-shadow:
