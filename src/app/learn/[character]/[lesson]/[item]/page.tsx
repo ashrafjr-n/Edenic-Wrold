@@ -9,7 +9,7 @@ import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { JourneyProgress } from "@/components/learn/number/journey-progress";
 import { NumberJourney } from "@/components/learn/number/number-journey";
 import { getDictionary, getLocale } from "@/lib/locale";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 
 export function generateStaticParams() {
   return characters.flatMap((character) =>
@@ -104,6 +104,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
             total={numberItems.length}
             accent={character.accent}
             dict={dict.journey}
+            dir={dirFor(locale)}
           />
 
           {/* Same presentation-only achievements button as the hub and the
