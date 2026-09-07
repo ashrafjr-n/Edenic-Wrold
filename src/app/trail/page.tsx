@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TrailIntro } from "@/components/trail/trail-intro";
 import { TrailSky, type SkyPalette } from "@/components/trail/trail-sky";
 import { BackButton } from "@/components/ui/back-button";
 import { getDictionary } from "@/lib/locale";
@@ -66,6 +67,10 @@ export default async function TrailPage({
       <div className="fixed left-4 top-[5.25rem] z-10 sm:left-8 sm:top-[7rem]">
         <BackButton href="/play" label={dict.activities.backToActivities} />
       </div>
+
+      {/* Nova's welcome, over everything, waiting for the cloud transition
+          to clear before she arrives — see the component. */}
+      <TrailIntro dict={dict} />
     </main>
   );
 }
