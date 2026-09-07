@@ -10,6 +10,7 @@ import {
   type PuzzleBoardHandle,
 } from "@/components/activities/puzzle/puzzle-board";
 import { format } from "@/lib/format-dict";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface PuzzlePlayProps {
@@ -47,6 +48,14 @@ export function PuzzlePlay({
   upright,
   dict,
 }: PuzzlePlayProps) {
+  /* A puzzle stage is one screen a child drags across, so the page itself
+     holds still: a piece carried past the edge of the board must never take
+     the page with it. `touch-none` on a piece already stops a drag ON it from
+     scrolling; this stops the page scrolling at all for the whole stage.
+     An upright stage is measured to fit the viewport anyway (see
+     `--puzzle-space`); a landscape one is now cropped to it instead. */
+  useScrollLock(true);
+
   const board = useRef<PuzzleBoardHandle>(null);
   const [helpsLeft, setHelpsLeft] = useState(HELP_LIMIT);
 
