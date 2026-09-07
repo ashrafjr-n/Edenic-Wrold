@@ -128,6 +128,11 @@ export function TrailSky({
           size={cloud.size}
           variant={cloud.variant}
           tint={cloud.tint}
+          /* Only the first stop is "open" right now — no progress store
+             exists yet (see the file doc comment), so this is hand-picked
+             rather than read from saved state. Revisit the day stage
+             completion actually exists. */
+          active={index === 0}
           /* Centred ON its lane, not started at it — a lane is where the
              stage sits, and a cloud hung off the left of that mark would
              drift further right the bigger it got. */

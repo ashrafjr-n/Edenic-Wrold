@@ -19,6 +19,12 @@ interface CloudProps {
   size?: CloudSize;
   variant?: CloudVariant;
   tint?: CloudTint;
+  /** This is the one stage that's open right now — brighter lobes, a soft
+      white glow behind it, and a slow breathing scale (reusing
+      `.anim-pulse-invite`, the same "tap me" pulse the numbers picker puts
+      on its own next-up numeral). Purely a look: it never locks, dims, or
+      recolors any other cloud. */
+  active?: boolean;
   className?: string;
   style?: CSSProperties;
 }
@@ -60,6 +66,7 @@ export function Cloud({
   size = "md",
   variant = 1,
   tint = "white",
+  active = false,
   className = "",
   style,
 }: CloudProps) {
@@ -68,7 +75,7 @@ export function Cloud({
       aria-hidden
       className={`cloud cloud--${size} cloud--${tint} ${
         variant === 1 ? "" : `cloud--v${variant}`
-      } ${className}`}
+      } ${active ? "cloud--active anim-pulse-invite" : ""} ${className}`}
       style={style}
     >
       <span className="cloud-body block" />
