@@ -104,7 +104,18 @@ export function LessonCard({
      either way: it is the one that is a `Link`. */
   const card = (
     <div
-      className={`card group/lesson flex h-full overflow-hidden ${
+      /* **A row below `lg`, a PORTRAIT card from `lg` — art on top, words
+         underneath.** Three of these lesson rows side by side on a desktop
+         are only ~386px wide each, and the row layout spends 144px of that
+         on the art before the text column starts: every description
+         truncated to "Learn the alphabet fr…" and every unlock line to
+         "Unlocks after Learn N…". Turning the card upright at `lg` gives the
+         words the card's full width and gives the art room to be the size it
+         deserves, and it fills a desktop's height instead of leaving a band
+         of empty page above and below a row of letterboxes. Below `lg` this
+         is untouched — the phone stack and the tablet's two-up row both
+         still read left to right. */
+      className={`card group/lesson flex h-full overflow-hidden lg:flex-col ${
         locked ? "card-clay-white" : "clay card-lift"
       }`}
       style={
@@ -125,7 +136,7 @@ export function LessonCard({
           can be as large as possible without taking a single pixel from the
           text column beside it — the art's own aspect ratio (roughly 0.9)
           leaves the visual margin instead. */}
-      <div className="relative flex w-20 shrink-0 items-center justify-center sm:w-36">
+      <div className="relative flex w-20 shrink-0 items-center justify-center sm:w-36 lg:w-full lg:pt-9">
         <Image
           src={image}
           alt={name}
@@ -136,7 +147,7 @@ export function LessonCard({
              was grey all through — now the accent card around it says
              "not yet" and hiding the subject as well would only take away
              the one thing worth looking forward to. */
-          className={`h-20 w-20 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-36 sm:w-36 ${
+          className={`h-20 w-20 object-contain drop-shadow-[0_8px_12px_rgba(92,78,190,0.22)] transition-transform duration-300 sm:h-36 sm:w-36 lg:h-44 lg:w-44 xl:h-52 xl:w-52 ${
             locked ? "" : "group-hover/lesson:scale-110"
           }`}
         />
@@ -163,7 +174,7 @@ export function LessonCard({
 
       {/* Name, description, indicator and status all sit beside the icon —
           never stacked underneath it. */}
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2.5 p-4 sm:gap-3 sm:p-5 lg:justify-end lg:gap-4 lg:p-6">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             {/* Always rendered, just hidden when not featured — reserving the
@@ -200,7 +211,13 @@ export function LessonCard({
                 body is the accent and this has to come back as white. */}
             <p
               dir={dir}
-              className="mt-0.5 truncate text-xs sm:mt-1 sm:text-sm"
+              /* `truncate` is `white-space: nowrap` — right in the row
+                 layout, where the text column is narrow and a second line
+                 would change the card's height. Upright it has the whole
+                 card's width, so it wraps instead of ending in an ellipsis;
+                 the grid stretches every card to the tallest in the row, so
+                 an extra line costs nothing. */
+              className="mt-0.5 truncate text-xs sm:mt-1 sm:text-sm lg:whitespace-normal"
               style={{ color: "var(--lesson-muted)" }}
             >
               {description}
@@ -244,7 +261,7 @@ export function LessonCard({
           <div className="flex items-center justify-between gap-3">
             <p
               dir={dir}
-              className="min-w-0 truncate text-xs font-semibold sm:text-sm"
+              className="min-w-0 truncate text-xs font-semibold sm:text-sm lg:whitespace-normal"
               style={{ color: "var(--lesson-muted)" }}
             >
               {previousLessonName
