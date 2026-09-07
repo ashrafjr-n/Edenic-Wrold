@@ -181,7 +181,7 @@ export function PinkiGuide({
       alt={presence === "aside" ? "" : "Pinki"}
       width={painted.width}
       height={painted.height}
-      priority={presence !== "aside"}
+      preload={presence !== "aside"}
       className={`anim-breathe shrink-0 object-contain ${box}`}
     />
   );

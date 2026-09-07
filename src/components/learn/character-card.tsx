@@ -114,7 +114,7 @@ export function CharacterCard({
                   ? "opacity-75 grayscale-[0.55]"
                   : "group-hover/card:scale-105"
               }`}
-              priority={!locked}
+              preload={!locked}
             />
           </div>
 
