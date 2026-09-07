@@ -17,21 +17,29 @@ const REVIEW_WIDTH = { "--cloud-w": "300px" } as CSSProperties;
 export default function CloudPreviewPage() {
   return (
     <main className="flex flex-1 flex-col">
-      <section className="flex flex-col items-center gap-6 bg-[var(--background)] px-6 py-14">
+      <section className="flex flex-col items-center gap-6 bg-[var(--background)] px-6 py-10">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-soft)]">
           Light
         </p>
-        <Cloud variant={1} tint="white" style={REVIEW_WIDTH} />
+        <div className="flex flex-wrap items-end justify-center gap-8">
+          <Cloud variant={1} tint="white" style={REVIEW_WIDTH} />
+          <Cloud variant={2} tint="white" style={REVIEW_WIDTH} />
+          <Cloud variant={3} tint="white" style={REVIEW_WIDTH} />
+        </div>
       </section>
 
       <section
         data-theme="dark"
-        className="flex flex-col items-center gap-6 bg-[var(--background)] px-6 py-14"
+        className="flex flex-col items-center gap-6 bg-[var(--background)] px-6 py-10"
       >
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-soft)]">
           Dark
         </p>
-        <Cloud variant={1} tint="white" style={REVIEW_WIDTH} />
+        <div className="flex flex-wrap items-end justify-center gap-8">
+          <Cloud variant={1} tint="white" style={REVIEW_WIDTH} />
+          <Cloud variant={2} tint="white" style={REVIEW_WIDTH} />
+          <Cloud variant={3} tint="white" style={REVIEW_WIDTH} />
+        </div>
       </section>
     </main>
   );
