@@ -2,13 +2,16 @@
 
 import { create } from "zustand";
 
-/** How long the cover animation (`.page-veil--in` in globals.css) takes to
-    fully fill the screen — the trigger waits this long before calling
-    `router.push`, so the destination page never flashes in before the veil
-    has finished covering it. Keep this in sync with that animation's
-    duration by hand; it's two numbers, not worth wiring a shared constant
-    through CSS custom properties for. */
-export const TRAIL_COVER_MS = 560;
+/** How long the trigger waits before calling `router.push`, so the
+    destination never flashes in before the cloud drift has packed the
+    screen. Deliberately a little SHORTER than the drift's own worst case
+    (`.page-veil--in`'s 780ms plus the longest per-cloud stagger in
+    `PageTransitionOverlay`): the route swap only has to be hidden, and the
+    overlay waits for the pathname to actually change before it starts
+    clearing, so an early push costs nothing and a late one just makes the
+    whole transition feel slow. Hand-synced with those two — it's a handful
+    of numbers, not worth threading a shared constant through CSS. */
+export const TRAIL_COVER_MS = 860;
 
 interface PageTransitionState {
   /** True from the moment a cloud-veil navigation starts until the veil has

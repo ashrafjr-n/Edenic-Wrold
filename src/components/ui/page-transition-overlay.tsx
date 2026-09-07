@@ -1,56 +1,108 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
-import { Cloud } from "@/components/ui/cloud";
+import { Cloud, type CloudTint, type CloudVariant } from "@/components/ui/cloud";
 import { usePageTransition } from "@/store/page-transition";
 
-/** How long the veil holds fully covered once the destination page has
-    actually arrived, before it starts uncovering — a floor under a fast
-    (cached/prefetched) navigation so the cover never reads as a flicker. */
-const HOLD_MS = 260;
-/** Matches `.page-veil--out`'s animation-duration in globals.css. */
-const REVEAL_MS = 650;
+/** How long the drift holds packed once the destination page has actually
+    arrived, before it starts clearing — a floor under a fast (prefetched)
+    navigation so the cover never reads as a flicker. Long enough, too, that
+    the last-delayed cloud has finished rising before the exit begins. */
+const HOLD_MS = 300;
+/** `.page-veil--out`'s own duration plus the longest exit stagger below. */
+const REVEAL_MS = 1040;
 
-/** Where the decorative clouds sit inside the veil, as a percentage of the
-    full-screen panel — spread down the whole height so the slide always has
-    a few crossing the viewport, whichever moment it's judged at. Fixed, not
-    randomised: this can render while the previous page's tree is still
-    around, so a random layout risks the same hydration mismatch the trail's
-    own stops avoid by being a fixed table. */
-const VEIL_CLOUDS = [
-  { top: "10%", left: "18%", size: "lg", variant: 1, tint: "white" },
-  { top: "30%", left: "70%", size: "md", variant: 2, tint: "sky" },
-  { top: "52%", left: "28%", size: "lg", variant: 3, tint: "white" },
-  { top: "72%", left: "66%", size: "md", variant: 1, tint: "white" },
-  { top: "88%", left: "42%", size: "sm", variant: 2, tint: "sky" },
-] as const;
+interface VeilCloud {
+  top: string;
+  left: string;
+  /** Inline `--cloud-w`, in `vmax` — see the CSS block's note on why the
+      `sm/md/lg` rem sizes can't pack both a phone and a desktop. */
+  width: string;
+  variant: CloudVariant;
+  tint: CloudTint;
+  delay: string;
+}
+
+/** Six rows, top to bottom, starting above the screen and ending below it.
+    22% apart against a cloud that is ~34% of the viewport tall at these
+    widths, so each row's flat base is buried under the row beneath it. */
+const ROWS = [-12, 10, 32, 54, 76, 98];
+/** Four per row at 33% spacing against a ~62% viewport-wide cloud, which
+    leaves neighbours overlapping by about half. **That overlap is the whole
+    fix** and it is worth stating why: two clouds side by side meet in a V,
+    and a shallow V (heavy overlap) is covered by the dome of the row below,
+    while a deep one (the first version, 44% apart) cuts past that dome's
+    shoulder and shows a sliver of the PAGE through the drift. Every gap the
+    first layout left was one of those notches, never a row seam. */
+const COLUMNS = [-8, 25, 58, 91];
+/** Every other row is nudged half a column across, so a row's notches sit
+    over the middle of a cloud below rather than lining up into a channel
+    running down the screen. */
+const ROW_SHIFT = 16;
+/** Cycled per cloud on lengths that share no factor with the row/column
+    counts, so size, silhouette and tint drift against each other instead of
+    repeating down a column — the same trick `trailStops` uses. */
+const WIDTHS = [70, 62, 74, 66];
+const VARIANTS: CloudVariant[] = [1, 2, 3];
+const TINTS: CloudTint[] = ["white", "white", "sky", "white", "lavender", "white", "pink"];
 
 /**
- * A full-screen wall of clay clouds that rises from the bottom to cover the
- * page on the way to `/trail`, then continues rising off the top to reveal
- * it — the "flying through the sky" transition `TrailCta` triggers.
+ * The drift, derived rather than hand-placed — a fixed table either way (a
+ * random one would land differently every run and could never be tuned),
+ * but derived means a row or column can be added without re-typing
+ * twenty-four coordinates.
+ *
+ * **Delays run bottom-up.** Clouds are travelling upward, so the ones
+ * lowest on screen set off first; a top-down stagger reads as the drift
+ * sinking while it rises.
+ */
+function veilClouds(): VeilCloud[] {
+  return ROWS.flatMap((top, row) =>
+    COLUMNS.map((left, column) => {
+      const index = row * COLUMNS.length + column;
+      return {
+        top: `${top}%`,
+        left: `${left + (row % 2 ? ROW_SHIFT : 0)}%`,
+        width: `${WIDTHS[index % WIDTHS.length]}vmax`,
+        variant: VARIANTS[index % VARIANTS.length],
+        tint: TINTS[index % TINTS.length],
+        delay: `${(ROWS.length - 1 - row) * 45 + column * 25}ms`,
+      };
+    }),
+  );
+}
+
+const VEIL_CLOUDS = veilClouds();
+
+/**
+ * A drift of clay clouds that rises from below the viewport, packs the
+ * screen, then carries on up and off the top — the transition `TrailCta`
+ * plays on the way into `/trail`.
+ *
+ * **Clouds only: no panel, no gradient, no starfield behind them**, and it
+ * passes UNDER the header and bottom nav rather than over them (`z-10`
+ * against their `z-20`). Both were the other way round for one round and
+ * both were rejected — see the `.page-veil` block in `globals.css`.
  *
  * **Lives once in the root layout, not per-page.** The root layout doesn't
  * remount across a client navigation, so this component's own state (and
- * the CSS animation riding on it) survives the `router.push` untouched —
- * that's what lets the veil stay covering the screen while the new route's
- * RSC payload streams in behind it, instead of a fresh overlay per page.
+ * the animations riding on it) survive the `router.push` untouched — that's
+ * what keeps the drift on screen while the destination's RSC payload
+ * streams in behind it, instead of a fresh overlay per page.
  *
  * **State comes from `usePageTransition`, not local state alone**, because
  * the trigger (`TrailCta`) and this overlay are nowhere near each other in
- * the tree — the same reason `theme`/`progress` are zustand stores rather
- * than props.
+ * the tree — the same reason `theme`/`progress` are zustand stores.
  *
  * **`revealing` only flips once `pathname` has actually moved away from
- * where the transition STARTED**, not just once it differs from whatever
+ * where the transition STARTED**, not merely once it differs from whatever
  * pathname happened to be current at mount — `startPathRef` is captured the
  * instant `active` turns true (a ref, not state: writing it costs no
- * render) precisely so an already-elsewhere pathname at mount can never be
- * mistaken for "navigation just completed" the moment a transition begins.
- * Getting this wrong would reveal the OLD page while it's still covered,
- * before the new one has even started loading.
+ * render). Getting that wrong clears the drift off the OLD page, before the
+ * new one has even begun loading.
  */
 export function PageTransitionOverlay() {
   const active = usePageTransition((state) => state.active);
@@ -86,16 +138,22 @@ export function PageTransitionOverlay() {
   return createPortal(
     <div
       aria-hidden
-      className={`page-veil trail-sky--day ${revealing ? "page-veil--out" : "page-veil--in"}`}
+      className={`page-veil ${revealing ? "page-veil--out" : "page-veil--in"}`}
     >
       {VEIL_CLOUDS.map((cloud, index) => (
         <Cloud
           key={index}
-          size={cloud.size}
           variant={cloud.variant}
           tint={cloud.tint}
-          className="absolute -translate-x-1/2 -translate-y-1/2"
-          style={{ top: cloud.top, left: cloud.left }}
+          className="page-veil-cloud absolute"
+          style={
+            {
+              top: cloud.top,
+              left: cloud.left,
+              "--cloud-w": cloud.width,
+              animationDelay: cloud.delay,
+            } as CSSProperties
+          }
         />
       ))}
     </div>,
