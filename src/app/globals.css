@@ -2169,6 +2169,112 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   The speech CLOUD — Nova's voice on the Edenic Trail
+   (`components/trail/trail-intro.tsx`).
+
+   A bubble shaped like the sky it stands in: the same clay face
+   `.speech-bubble` has, with a puffy scalloped edge in place of a rounded
+   rectangle and two small puffs trailing toward the speaker in place of a
+   triangle tail.
+
+   **The silhouette is a MASK built as a UNION that always contains the text
+   box, so no string in any language can ever be clipped by the shape.** Six
+   layers: two crossed bars covering the whole box minus one puff on each
+   side (the content box is opaque by construction — the padding below is
+   what keeps the words inside them), plus four rows of tangent lobes
+   bulging exactly one puff OUT of each edge. Layers composite with
+   `mask-composite: add`, which is the initial value, so it is not restated.
+
+   **That containment guarantee is the whole reason this is not `<Cloud>`
+   reused.** A cloud silhouette's safe interior has to be tuned against the
+   shape by eye, and these two lines are three different lengths in three
+   languages — one of them would have ended up with a word outside the
+   cloud. Here the shape follows the text instead of the text fitting the
+   shape.
+
+   **`mask-repeat: round` is what fits a whole number of lobes to whatever
+   width the text happens to be**, at any string length, with no leftover
+   half-lobe at the end. The lobes are `ellipse closest-side`, never
+   `circle`: `round` scales a tile to make the count come out even, and an
+   ellipse scales with its tile so neighbours stay tangent, where a circle
+   would keep its radius and open a gap between every pair.
+
+   **Two elements, the same split `.cloud` uses and for the same reason** —
+   `filter` applies before `mask`, so the ring and the drop shadow have to
+   come from the wrapper or they would be cut away with everything outside
+   the silhouette (the trap `.numeral-mask` documents). The ring is four
+   offset `drop-shadow`s, exactly as `NumberColor` draws its outline: a
+   masked shape cannot take a `border`, which is how `.speech-bubble` wears
+   the speaker's colour.
+   --------------------------------------------------------------- */
+.cloud-bubble-wrap {
+  /* How far a lobe bulges past the text box, and the only number the whole
+     shape is built from — the bars inset by it, the lobes twice it across,
+     the padding below clears it. */
+  --puff: 0.8rem;
+  position: relative;
+  filter:
+    drop-shadow(2px 0 0 var(--bubble-ink, var(--color-pinki)))
+    drop-shadow(-2px 0 0 var(--bubble-ink, var(--color-pinki)))
+    drop-shadow(0 2px 0 var(--bubble-ink, var(--color-pinki)))
+    drop-shadow(0 -2px 0 var(--bubble-ink, var(--color-pinki)))
+    drop-shadow(0 16px 26px rgb(var(--shadow-hue) / 26%));
+}
+
+.cloud-bubble,
+.cloud-bubble-puff {
+  /* `--surface`, not a literal white, so the bubble follows the theme the
+     way `.speech-bubble` does and its text can stay `--color-ink`. The tint
+     at the foot is the speaker's own colour at a whisper — the underside
+     shade that stops a clay shape floating, the same idea `--cloud-deep`
+     carries on the trail's own clouds. */
+  background-image: linear-gradient(
+    to bottom,
+    var(--surface) 0%,
+    var(--surface) 42%,
+    color-mix(in srgb, var(--bubble-ink, var(--color-pinki)) 16%, var(--surface)) 100%
+  );
+}
+
+.cloud-bubble {
+  /* One puff of clearance on every side is what the mask's crossed bars
+     cover; the rest is ordinary breathing room. Declared here rather than
+     as utilities at the call site so a caller can't pad it too tightly and
+     push a word out into the lobes. */
+  padding: calc(var(--puff) + 0.55rem) calc(var(--puff) + 0.95rem);
+  mask-image:
+    radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
+    radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
+    radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
+    radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
+    linear-gradient(#000 0 0),
+    linear-gradient(#000 0 0);
+  mask-size:
+    calc(var(--puff) * 2) calc(var(--puff) * 2),
+    calc(var(--puff) * 2) calc(var(--puff) * 2),
+    calc(var(--puff) * 2) calc(var(--puff) * 2),
+    calc(var(--puff) * 2) calc(var(--puff) * 2),
+    100% calc(100% - var(--puff) * 2),
+    calc(100% - var(--puff) * 2) 100%;
+  mask-position: left top, left bottom, left top, right top, center, center;
+  mask-repeat:
+    round no-repeat,
+    round no-repeat,
+    no-repeat round,
+    no-repeat round,
+    no-repeat,
+    no-repeat;
+}
+
+/* The tail: two shrinking puffs stepping down toward the speaker, the
+   cartoon thought-cloud's tail rather than the triangle a rectangular
+   bubble takes. They are siblings inside the filtered wrapper, so the
+   wrapper's ring rounds each of them too — nothing to keep in step. */
+.cloud-bubble-puff {
+  border-radius: 50%;
+}
+
+/* ---------------------------------------------------------------
    "Watch me draw it."
 
    The numeral draws itself along the same centreline the child then traces,
