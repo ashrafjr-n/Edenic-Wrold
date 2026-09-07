@@ -47,7 +47,7 @@ const LEAN = {
        purpose: an iPad's card is much TALLER than a desktop's (the grid
        column is nearly the card's full width there), so the same percentage
        would have made her half a metre high. */
-    box: "block -bottom-[3%] -right-[26%] h-[68%] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%] md:-bottom-[1%] md:-right-[3%] md:h-[46%] lg:-right-[2%] lg:h-[56%]",
+    box: "block -bottom-[3%] -right-[26%] h-[68%] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%] md:-bottom-[1%] md:-right-[26%] md:h-[52%] lg:-right-[34%] lg:h-[56%]",
     painted: { width: 360, height: 357 },
   },
   /**

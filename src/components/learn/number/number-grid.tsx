@@ -112,7 +112,7 @@ export function NumberGrid({
        `overflow-hidden`: Pinki BREAKS OUT of this card, past its right and
        bottom edges, so the card must not crop her. The page's `<main>` is
        what stops her from widening the document — see the route. */
-    <div className="card relative w-full px-5 py-7 sm:px-9 sm:py-10">
+    <div className="card relative w-full px-5 py-7 sm:px-9 sm:py-10 lg:py-7">
       {/* `hydrated` is load-bearing, not belt-and-braces: it is false on the
           server AND on the first client render, so this is absent from the
           server HTML and can never be a mismatch. Gating on `finished === 0`
@@ -125,19 +125,18 @@ export function NumberGrid({
           introduces. */}
       {intro && hydrated && finished === 0 && intro}
 
-      {/* **The bar and the grid share a column, and from `lg` that column is
-          only half the card.** On a phone and a tablet the card is narrow
-          enough that the 3x3 grid fills it and Pinki leans in over the
-          numbers she is pointing at — which is the design there, because
-          the ones she covers are locked anyway. A desktop card is twice as
-          wide and twice as short: at full width the cells grow to ~215px and
-          the third row falls off the bottom of the screen, while Pinki, sized
-          as a share of the card, lands squarely on top of numbers 5, 6, 8 and
-          9. Holding the column to 26rem on an iPad and 28rem on a desktop does both jobs at once — the cells
-          come back to a tappable ~136px so all nine fit above the fold, and
-          the half of the card she now stands in is EMPTY, so she reads as
-          standing beside the grid pointing into it rather than lying across
-          it. Below `lg` this div has no width of its own and changes
+      {/* **The bar and the grid share a column, and from `md` that column is
+          what the CARD is sized to** — the route caps its container at this
+          width plus padding, so the card hugs the grid instead of running to
+          the page's width. The cap itself is what stops the cells growing to
+          ~215px on a desktop, which would push the third row off the bottom
+          of the screen. It used to sit inside a `max-w-5xl` card, which left
+          the whole right half of that card empty white — and emptier still
+          for a returning child, since the Pinki standing in it renders only
+          before the first number is finished. With the card back to the
+          grid's own size she leans in past its right edge the way she does on
+          a phone, over the locked numerals, and the card reads as finished in
+          both states. Below `md` this div has no width of its own and changes
           nothing. */}
       <div className="md:w-[26rem] lg:w-[28rem]">
       <ActivityProgress
