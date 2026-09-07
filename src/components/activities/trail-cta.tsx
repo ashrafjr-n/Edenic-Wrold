@@ -173,7 +173,7 @@ export function TrailCta({
 
       {/* Pure spacer — reserves the gap under the button so the (bigger,
           absolutely positioned) cloud below never has to sit under it. */}
-      <div aria-hidden className="mt-6 h-24 w-full sm:mt-8 sm:h-32 lg:h-40" />
+      <div aria-hidden className="mt-6 h-28 w-full sm:mt-8 sm:h-44 lg:h-60" />
 
       <div
         aria-hidden
@@ -183,7 +183,7 @@ export function TrailCta({
           src={trailCloud}
           /* Decorative — the panel's own heading names it. */
           alt=""
-          className="h-auto w-[22rem] select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[28rem] lg:w-[33rem]"
+          className="h-auto w-[25rem] select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[36rem] lg:w-[50rem]"
         />
       </div>
     </Link>
