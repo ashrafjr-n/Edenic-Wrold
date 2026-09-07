@@ -94,12 +94,31 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
       role="presentation"
     >
       <div
-        /* Her own colour on the bubble's ring and tail — `--bubble-ink`
-           defaults to Pinki, whose journey the bubble was built for. */
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 px-4 pb-6 sm:px-8 sm:pb-10"
+        /* **Anchored to Nova, not to the page's edge.** It sat in a
+           `justify-between` row along the bottom for a round, which pinned it
+           to the far left corner with her at the far right and a tail
+           pointing across an empty screen at nothing. The bubble belongs
+           beside the character speaking, so it is positioned against the
+           same edge she is: its right edge lands where her body starts, and
+           `--left`'s tail (biased low, toward where a face actually is)
+           points straight at her.
+
+           Her own colour on the ring and tail — `--bubble-ink` falls back to
+           Pinki, whose journey the bubble was built for. */
+        className={`anim-fade-up pointer-events-none absolute bottom-[40%] right-[38%] z-10 w-[58%] sm:w-[30%] ${
+          /* The pointing beat needs MORE clearance from her at desktop
+             widths: her raised finger reaches further left and higher than
+             her waving hand does, and at the greeting beat's placement the
+             bubble's tail landed straight over the fingertip — hiding the
+             one thing that beat exists to show. Measured against the pose,
+             not guessed. The phone needs no such shift: she is much wider
+             than the screen there, so the bubble already sits well clear
+             above her arm. */
+          pointing ? "sm:bottom-[46%] sm:right-[32%]" : "sm:bottom-[36%] sm:right-[26%]"
+        }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
-        <div className="anim-fade-up relative z-10 w-[56%] sm:w-[42%] lg:w-[32%]">
+        <div>
           <p
             dir={dir}
             className="speech-bubble speech-bubble--left px-4 py-3 text-sm font-semibold leading-snug text-[var(--color-ink)] sm:px-5 sm:py-3.5 sm:text-base"
@@ -118,6 +137,14 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
                  click bubbles to the catcher, which is what advances her —
                  no second handler to keep in step. */
               className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-3 px-5 py-2 text-sm sm:mt-4 sm:px-6 sm:py-2.5 sm:text-base"
+              /* `--btn-text` has to be set by hand here, exactly as
+                 `TrailCta` sets it: these are `Button3D`'s classes without
+                 `Button3D`, and it is the component that normally turns a
+                 tone into these variables — left unset the label rendered
+                 invisible on the white face. `--color-ink-fixed`, not
+                 `--color-ink`: `.btn3d--clay-white`'s face is pinned pale in
+                 both themes, so its text must be too. */
+              style={{ "--btn-text": "var(--color-ink-fixed)" } as CSSProperties}
             >
               <span dir={dir}>{dict.trail.introSkip}</span>
             </button>
