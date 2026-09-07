@@ -1674,11 +1674,53 @@ bdi {
 }
 
 .page-veil--in .page-veil-cloud {
-  animation: veil-cloud-rise 820ms cubic-bezier(0.24, 0.7, 0.3, 1) both;
+  animation: veil-cloud-rise 700ms cubic-bezier(0.24, 0.72, 0.28, 1) both;
 }
 
 .page-veil--out .page-veil-cloud {
-  animation: veil-cloud-exit 760ms cubic-bezier(0.5, 0, 0.72, 0.25) both;
+  animation: veil-cloud-exit 640ms cubic-bezier(0.5, 0, 0.72, 0.25) both;
+}
+
+/* Three whites, back to front, on direct request — pale, plain, then pure.
+   They are what separates one bank from the next now that none of them
+   carries a drop shadow (see the note above on why the filter had to go),
+   and they are the reason the stack still reads as three clouds passing
+   rather than one white sheet. Declared after every `.cloud--*` tint so
+   they win on source order at equal specificity. Same three-value ramp as
+   any other tint: lit face, base-gradient bottom, underside band. */
+.page-veil-cloud--far {
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 9%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 34%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 52%, #ffffff);
+}
+
+.page-veil-cloud--mid {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 24%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
+}
+
+.page-veil-cloud--near {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 12%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+}
+
+/* Dark mode keeps the same three-step order, but supplies it as three pale
+   HUES for the night ramp `[data-theme="dark"] .cloud` computes — a literal
+   white bank on a night sky is the brightest thing on the page, which is
+   backwards (the trap `--color-gold-quiet` documents). Equal specificity to
+   that ramp and to the tint rules, so these have to sit after both. */
+[data-theme="dark"] .page-veil-cloud--far {
+  --cloud-pale: #aebbd8;
+}
+
+[data-theme="dark"] .page-veil-cloud--mid {
+  --cloud-pale: #c8d5ef;
+}
+
+[data-theme="dark"] .page-veil-cloud--near {
+  --cloud-pale: #dfeafb;
 }
 
 button,

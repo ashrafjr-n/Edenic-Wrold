@@ -4,21 +4,22 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
-import { Cloud, type CloudTint } from "@/components/ui/cloud";
+import { Cloud } from "@/components/ui/cloud";
 import { usePageTransition } from "@/store/page-transition";
 
 /** How long the drift holds packed once the destination page has actually
     arrived, before it starts clearing — a floor under a fast (prefetched)
     navigation so the cover never reads as a flicker. Long enough, too, that
     the last-delayed bank has finished rising before the exit begins. */
-const HOLD_MS = 260;
+const HOLD_MS = 220;
 /** `.page-veil--out`'s own duration plus the longest exit stagger below. */
-const REVEAL_MS = 940;
+const REVEAL_MS = 860;
 
 interface VeilBank {
   top: string;
   height: string;
-  tint: CloudTint;
+  /** Which of the three whites — `.page-veil-cloud--far|mid|near`. */
+  shade: "far" | "mid" | "near";
   delay: string;
 }
 
@@ -52,15 +53,18 @@ const BANK_STEP = 35;
  * wide desktop, where `vh` alone would leave it narrower than the screen. */
 const BANK_W = `max(${(BANK_H * 2.4).toFixed(0)}vh, 115vw)`;
 
-/** Top to bottom, and the tints read as depth: the nearest bank (lowest on
-    screen, drawn last) is plain white, the ones behind it take a breath of
-    the sky's own blue and lavender. Delays run BOTTOM-UP — the banks travel
-    upward, so the lowest sets off first; staggering the other way reads as
-    the drift sinking while it rises. */
+/** Top to bottom — and they arrive IN THAT ORDER, one after the other, on
+    direct request: the bank that ends up highest sets off first and the
+    other two follow it up the screen. (It ran bottom-up for a round, which
+    is the physically obvious reading — the nearest cloud passing first —
+    but a queue is easier to follow than a wave, and this is a queue.)
+    `SHADE` is each one's own class: pale white behind, plain white, then
+    pure white in front, so the three read as depth rather than as one white
+    mass now that they carry no drop shadow to separate them. */
 const BANKS: VeilBank[] = [
-  { top: `${-0.41 * BANK_H}vh`, height: `${BANK_H}vh`, tint: "lavender", delay: "170ms" },
-  { top: `${-0.41 * BANK_H + BANK_STEP}vh`, height: `${BANK_H}vh`, tint: "sky", delay: "85ms" },
-  { top: `${-0.41 * BANK_H + BANK_STEP * 2}vh`, height: `${BANK_H}vh`, tint: "white", delay: "0ms" },
+  { top: `${-0.41 * BANK_H}vh`, height: `${BANK_H}vh`, shade: "far", delay: "0ms" },
+  { top: `${-0.41 * BANK_H + BANK_STEP}vh`, height: `${BANK_H}vh`, shade: "mid", delay: "110ms" },
+  { top: `${-0.41 * BANK_H + BANK_STEP * 2}vh`, height: `${BANK_H}vh`, shade: "near", delay: "220ms" },
 ];
 
 /**
@@ -140,8 +144,7 @@ export function PageTransitionOverlay() {
              screen on purpose: the shape's thin tapered ends stay off it, and
              only its solid middle is ever in frame. */
           variant={4}
-          tint={bank.tint}
-          className="page-veil-cloud cloud--stretch absolute left-1/2"
+          className={`page-veil-cloud page-veil-cloud--${bank.shade} cloud--stretch absolute left-1/2`}
           style={
             {
               top: bank.top,
