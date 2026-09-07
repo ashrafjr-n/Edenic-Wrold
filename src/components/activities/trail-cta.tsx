@@ -119,7 +119,16 @@ export function TrailCta({
     <Link
       href="/trail"
       onClick={handleClick}
-      className={`clay group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-8 text-center sm:p-10 lg:p-12 ${className}`}
+      /* **A centred column on a phone, a two-sided banner from `lg`.** The
+         column is right below `lg` — the cloud reads as the thing the card
+         is about, sitting under the words that name it. On a desktop the
+         same column made the card 570px tall, which pushed BOTH game cards
+         off the bottom of the screen: this is the page's lead card, not the
+         page. Turning it sideways puts the copy in the left half and the
+         cloud in the right, and the card comes down to about 350px with the
+         cloud no smaller. Every change is `lg:`-prefixed; below that width
+         this renders exactly as it did. */
+      className={`clay group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-8 text-center sm:p-10 lg:min-h-[22rem] lg:flex-row lg:items-center lg:p-12 lg:text-left ${className}`}
       style={
         {
           backgroundColor: "var(--color-bloo-dark)",
@@ -128,6 +137,13 @@ export function TrailCta({
         } as ClayVars
       }
     >
+      {/* The copy column. It is `contents` below `lg` — the children lay
+          themselves out in the card's own column exactly as they always did,
+          with no extra box in between — and becomes a real half-width column
+          from `lg`, which is what leaves the other half for the cloud.
+          `relative z-10` so the cloud, which bleeds across the card, is
+          painted behind the words rather than over them. */}
+      <div className="contents lg:relative lg:z-10 lg:flex lg:w-[46%] lg:flex-col lg:items-start">
       {/* Both lines carry `dir`: the title is a Latin brand name that must not
           be reordered inside an Arabic or Kurdish sentence, and the description
           ends on a bidi-neutral full stop, which takes the paragraph's LTR
@@ -172,18 +188,26 @@ export function TrailCta({
       </span>
 
       {/* Pure spacer — reserves the gap under the button so the (bigger,
-          absolutely positioned) cloud below never has to sit under it. */}
-      <div aria-hidden className="mt-6 h-28 w-full sm:mt-8 sm:h-44 lg:h-60" />
+          absolutely positioned) cloud below never has to sit under it. From
+          `lg` the cloud is BESIDE the copy rather than under it, so there is
+          nothing to reserve and the card's own `min-h` sets the height
+          instead. */}
+      <div aria-hidden className="mt-6 h-28 w-full sm:mt-8 sm:h-44 lg:hidden" />
+      </div>
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-[-10%] bottom-[-6%] flex justify-center sm:inset-x-[-6%] lg:inset-x-[-4%]"
+        className="pointer-events-none absolute inset-x-[-10%] bottom-[-6%] flex justify-center sm:inset-x-[-6%] lg:inset-x-auto lg:bottom-[-12%] lg:right-[-3%] lg:w-[52%]"
       >
         <Image
           src={trailCloud}
           /* Decorative — the panel's own heading names it. */
           alt=""
-          className="h-auto w-[25rem] select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[36rem] lg:w-[50rem]"
+          /* Still the biggest it has ever been on a desktop — it is simply
+             measured against the half of the card it now owns rather than
+             against the whole width, so the card can be a banner instead of
+             a tower. */
+          className="h-auto w-[25rem] max-w-none select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[36rem] lg:w-[34rem] xl:w-[38rem]"
         />
       </div>
     </Link>
