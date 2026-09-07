@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { TrailSky, type SkyPalette } from "@/components/trail/trail-sky";
+import { BackButton } from "@/components/ui/back-button";
+import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Edenic Trail — Edenic World",
@@ -36,12 +38,32 @@ export default async function TrailPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { sky } = await searchParams;
+  const dict = await getDictionary();
 
   return (
-    <main className="flex flex-1 flex-col">
+    /* No `pageAccent` here on purpose: this page has no colour of its own to
+       claim yet (there is no trail section palette until the stages land),
+       and `--page-accent-color`'s own default is the brand pink every back
+       button wore before that variable existed. */
+    <main className="relative flex flex-1 flex-col">
       {/* Twice the viewport, so the scroll behaviour and the cloud spread
           can both be judged now rather than after the path is drawn. */}
       <TrailSky palette={paletteFrom(sky)} className="min-h-[200svh]" />
+
+      {/* Over the sky rather than in a chrome row above it — the sky is
+          full-bleed and there is no row to sit in. `sticky` keeps it in
+          reach down a two-viewport scroll without `fixed`'s habit of
+          escaping to the viewport on a phone; `top` clears the header. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-full px-4 sm:px-8">
+        <div className="sticky top-4 z-10 flex sm:top-6">
+          <span className="pointer-events-auto">
+            <BackButton
+              href="/play"
+              label={dict.activities.backToActivities}
+            />
+          </span>
+        </div>
+      </div>
     </main>
   );
 }
