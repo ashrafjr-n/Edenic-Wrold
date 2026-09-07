@@ -1477,26 +1477,28 @@ bdi {
    picker's own "tap me" pulse rather than writing a second scale keyframe
    for the same motion. */
 .cloud--active {
-  position: relative;
-  isolation: isolate;
   --cloud-hi: 100%;
   --cloud-hi-soft: 92%;
   --cloud-face: #ffffff;
   --cloud-shade: color-mix(in srgb, var(--color-bloo) 10%, #ffffff);
   --cloud-deep: color-mix(in srgb, var(--color-bloo) 22%, #ffffff);
-}
-
-.cloud--active::before {
-  content: "";
-  position: absolute;
-  inset: -22%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    rgb(255 255 255 / 60%),
-    rgb(255 255 255 / 0%) 72%
-  );
+  /* **The glow is two white `drop-shadow`s on the same `filter` `.cloud`
+     already uses, NOT a positioned pseudo-element** — and that is a fix,
+     not a preference. The first version was a radial `::before`, which
+     needed `position: relative` on this class to anchor it: `.cloud--active`
+     is UNLAYERED css and Tailwind's `absolute` is in `@layer utilities`, so
+     that `position` silently beat the `absolute` every trail stop is placed
+     with and dropped the first cloud out of its lane into normal flow at
+     the top of the sky. Exactly the trap `.card`/`.tile` already document,
+     walked into anyway. A filter needs no positioning at all, and it hugs
+     the cloud's own silhouette instead of drawing a circle of light behind
+     a cloud-shaped object. The two grounding shadows below are `.cloud`'s
+     own, restated because `filter` replaces wholesale. */
+  filter:
+    drop-shadow(0 0 10px rgb(255 255 255 / 90%))
+    drop-shadow(0 0 28px rgb(255 255 255 / 65%))
+    drop-shadow(0 6px 6px rgb(var(--shadow-hue) / 13%))
+    drop-shadow(0 18px 24px rgb(var(--shadow-hue) / 13%));
 }
 
 /* ---------------------------------------------------------------
@@ -1539,56 +1541,79 @@ bdi {
 /* ---------------------------------------------------------------
    The cloud-veil page transition (`PageTransitionOverlay`).
 
-   A full-screen wall of clouds that rises from the bottom to cover the
-   page, holds, then continues rising off the top to reveal the destination
-   — the "flying through the sky" transition into `/trail`. Wears
-   `.trail-sky--day` itself (a real, opaque gradient fill, not just the
-   decorative clouds inside it) so coverage is guaranteed regardless of how
-   the clouds happen to be laid out, and so the transition already looks
-   like the place it's taking you to.
+   **Clouds and NOTHING ELSE.** No panel, no gradient, no sky behind them —
+   a dense drift of white clay clouds at mixed sizes and tints rises from
+   below the viewport, packs the screen, then carries on up and off the top.
+   The first version painted `.trail-sky--day` behind them as an opaque
+   "guaranteed coverage" backing, which (in dark mode) also dragged that
+   palette's tiled STARFIELD along with it. Both were rejected on sight: the
+   transition is a flight through cloud, not a picture of a sky sliding
+   past. Don't put a fill back behind these.
 
-   Portalled to `document.body` and `position: fixed`, so its `z-index`
-   only has to clear the header/bottom nav's own `z-20` — `100` does that
-   with room to spare, the same margin `puzzle-hint`'s modal leaves over
-   them.
+   **It passes UNDER the header and the bottom nav** — `z-index: 10`
+   against their `z-20`, deliberately the one overlay on the site that does
+   NOT out-rank the chrome (`puzzle-hint`'s modal at `z-50` is the
+   opposite case: it dims the page and owns the screen). The site's frame
+   stays put and the page content is what the clouds sweep over.
 
-   One `transform: translateY` animation per phase, not two properties —
-   `.page-veil--in` runs from fully below the viewport to `0%` (covers),
-   `.page-veil--out` continues in the SAME direction from `0%` to fully
-   above it (reveals), so the motion never reverses mid-transition. */
+   **Every cloud animates ITSELF, staggered, rather than the container
+   sliding as one sheet.** A rigid panel of clouds reads as a printed
+   backdrop on a lift; per-cloud `animation-delay` is what makes them read
+   as separate objects drifting up past each other at their own moments.
+   The x-centring lives INSIDE the keyframes (`-50%`) rather than in a
+   Tailwind `-translate-x-1/2`: v4 utilities set the same standalone
+   `translate` property these keyframes animate, and an animation overrides
+   it outright, so a class-based centring would simply be dropped mid-flight.
+
+   `both` fill mode, not `backwards`: the `from` state has to hold through
+   each cloud's stagger delay AND the `to` state has to hold through the
+   covered pause afterwards. (`.lang-orb` is `backwards` for the opposite
+   reason — it has to release `translate` back to a button's own press.)
+
+   Sizes are inline `--cloud-w` in `vmax`, not the `sm/md/lg` classes: the
+   veil has to be equally dense on a 390-wide phone and a 1440-wide desktop,
+   and a rem width that packs one screen leaves the other in gaps. */
 .page-veil {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 10;
   overflow: hidden;
   pointer-events: none;
-  will-change: transform;
 }
 
-@keyframes page-veil-cover {
+/* One soft shadow, not `.cloud`'s usual two: two dozen large filtered
+   elements are on screen at once here, and in a packed drift what a shadow
+   has to do is separate a cloud from the one behind it, not ground it on a
+   surface. */
+.page-veil-cloud {
+  filter: drop-shadow(0 12px 20px rgb(var(--shadow-hue) / 14%));
+  will-change: translate;
+}
+
+@keyframes veil-cloud-rise {
   from {
-    translate: 0 100%;
+    translate: -50% 125vh;
   }
   to {
-    translate: 0 0%;
+    translate: -50% 0;
   }
 }
 
-@keyframes page-veil-uncover {
+@keyframes veil-cloud-exit {
   from {
-    translate: 0 0%;
+    translate: -50% 0;
   }
   to {
-    translate: 0 -100%;
+    translate: -50% -125vh;
   }
 }
 
-.page-veil--in {
-  animation: page-veil-cover 560ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+.page-veil--in .page-veil-cloud {
+  animation: veil-cloud-rise 780ms cubic-bezier(0.22, 0.68, 0.3, 1) both;
 }
 
-.page-veil--out {
-  animation: page-veil-uncover 650ms cubic-bezier(0.5, 0, 0.75, 0) forwards;
+.page-veil--out .page-veil-cloud {
+  animation: veil-cloud-exit 720ms cubic-bezier(0.55, 0, 0.7, 0.2) both;
 }
 
 button,
@@ -2857,8 +2882,8 @@ button:disabled,
   .path-hint,
   .anim-hero-parallax,
   .lang-orb,
-  .page-veil--in,
-  .page-veil--out {
+  .page-veil--in .page-veil-cloud,
+  .page-veil--out .page-veil-cloud {
     animation: none;
   }
 
