@@ -1584,40 +1584,44 @@ bdi {
 }
 
 /* ---------------------------------------------------------------
-   The cloud-veil page transition (`PageTransitionOverlay`).
+   The cloud page transition (`PageTransitionOverlay`).
 
-   **Clouds and NOTHING ELSE.** No panel, no gradient, no sky behind them —
-   a dense drift of white clay clouds at mixed sizes and tints rises from
-   below the viewport, packs the screen, then carries on up and off the top.
-   The first version painted `.trail-sky--day` behind them as an opaque
-   "guaranteed coverage" backing, which (in dark mode) also dragged that
-   palette's tiled STARFIELD along with it. Both were rejected on sight: the
-   transition is a flight through cloud, not a picture of a sky sliding
-   past. Don't put a fill back behind these.
+   **THREE WIDE BANKS, not a crowd of puffs.** Each one spans more than the
+   full width of the screen, so the drift has no vertical seams at all —
+   which is what finally killed the gap problem. The first version packed
+   two dozen puffy clouds in a grid, and every gap it leaked was the V
+   between two neighbours in a row; the second widened them until the Vs
+   closed, at the cost of two dozen masked, filtered, animating elements on
+   screen at once. **Three is the same picture for an eighth of the work**,
+   and the shape reads better besides: a bank is long and flat, which is
+   what a cloud you fly THROUGH looks like.
 
-   **It passes UNDER the header and the bottom nav** — `z-index: 10`
-   against their `z-20`, deliberately the one overlay on the site that does
-   NOT out-rank the chrome (`puzzle-hint`'s modal at `z-50` is the
-   opposite case: it dims the page and owns the screen). The site's frame
-   stays put and the page content is what the clouds sweep over.
+   **Clouds and nothing else.** No panel, no gradient, no sky behind them —
+   an earlier version painted `.trail-sky--day` as a "guaranteed coverage"
+   backing, which in dark mode dragged that palette's tiled STARFIELD along
+   with it, and both were rejected on sight. Don't put a fill back here.
 
-   **Every cloud animates ITSELF, staggered, rather than the container
-   sliding as one sheet.** A rigid panel of clouds reads as a printed
-   backdrop on a lift; per-cloud `animation-delay` is what makes them read
-   as separate objects drifting up past each other at their own moments.
-   The x-centring lives INSIDE the keyframes (`-50%`) rather than in a
-   Tailwind `-translate-x-1/2`: v4 utilities set the same standalone
-   `translate` property these keyframes animate, and an animation overrides
-   it outright, so a class-based centring would simply be dropped mid-flight.
+   **It passes UNDER the header and the bottom nav** — `z-index: 10` against
+   their `z-20`, deliberately the one overlay on the site that does NOT
+   out-rank the chrome (`puzzle-hint`'s modal at `z-50` is the opposite
+   case: it dims the page and owns the screen).
 
-   `both` fill mode, not `backwards`: the `from` state has to hold through
-   each cloud's stagger delay AND the `to` state has to hold through the
-   covered pause afterwards. (`.lang-orb` is `backwards` for the opposite
-   reason — it has to release `translate` back to a button's own press.)
+   **Coverage is geometry, not luck.** A bank is opaque from roughly 40% of
+   its own height down to its base, so three of them at height H spaced
+   0.5H apart overlap by enough that the valleys between one bank's lobes
+   sit over the solid middle of the next — the sizes and offsets live in
+   `PageTransitionOverlay`, where they are derived from those two numbers.
 
-   Sizes are inline `--cloud-w` in `vmax`, not the `sm/md/lg` classes: the
-   veil has to be equally dense on a 390-wide phone and a 1440-wide desktop,
-   and a rem width that packs one screen leaves the other in gaps. */
+   **Each bank animates itself, staggered bottom-up.** They travel upward,
+   so the lowest sets off first; a top-down stagger reads as the drift
+   sinking while it rises. The x-centring lives INSIDE the keyframes
+   (`-50%`), never as a Tailwind `-translate-x-1/2`: v4 utilities set the
+   same standalone `translate` property these keyframes animate, and an
+   animation overrides it outright, so a class-based centring is dropped
+   for the whole flight. `both` fill mode, not `backwards` — the `from`
+   state has to hold through the stagger delay AND the `to` state through
+   the covered pause. (`.lang-orb` is `backwards` for the opposite reason:
+   it has to release `translate` back to a button's own press.) */
 .page-veil {
   position: fixed;
   inset: 0;
@@ -1626,12 +1630,12 @@ bdi {
   pointer-events: none;
 }
 
-/* One soft shadow, not `.cloud`'s usual two: two dozen large filtered
-   elements are on screen at once here, and in a packed drift what a shadow
-   has to do is separate a cloud from the one behind it, not ground it on a
-   surface. */
+/* One soft shadow rather than `.cloud`'s usual two: stacked banks need a
+   shadow to separate one from the one behind it, not to ground it on a
+   surface. Cheap enough at three elements to keep the drift smooth on a
+   tablet, which two dozen filtered clouds were not. */
 .page-veil-cloud {
-  filter: drop-shadow(0 12px 20px rgb(var(--shadow-hue) / 14%));
+  filter: drop-shadow(0 -2px 26px rgb(var(--shadow-hue) / 12%));
   will-change: translate;
 }
 
@@ -1654,11 +1658,11 @@ bdi {
 }
 
 .page-veil--in .page-veil-cloud {
-  animation: veil-cloud-rise 780ms cubic-bezier(0.22, 0.68, 0.3, 1) both;
+  animation: veil-cloud-rise 820ms cubic-bezier(0.24, 0.7, 0.3, 1) both;
 }
 
 .page-veil--out .page-veil-cloud {
-  animation: veil-cloud-exit 720ms cubic-bezier(0.55, 0, 0.7, 0.2) both;
+  animation: veil-cloud-exit 760ms cubic-bezier(0.5, 0, 0.72, 0.25) both;
 }
 
 button,
