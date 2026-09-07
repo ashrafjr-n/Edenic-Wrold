@@ -26,6 +26,16 @@ interface VeilBank {
 /**
  * Three wide banks, and the two numbers everything else falls out of.
  *
+ * **Every unit here is `lvh` — the LARGE viewport, deliberately.** This is
+ * a veil that has to cover the screen with no gap, so it wants the biggest
+ * the viewport can ever be; sized in `dvh` it would shrink to the currently
+ * visible height and re-measure mid-flight as the phone's chrome slides,
+ * which is exactly where a seam of page would show through. That is the
+ * opposite call from a LAYOUT box (`NumberVideo`, `.puzzle-upright`), which
+ * takes `svh` so it never overflows. `lvh` rather than plain `vh` only so
+ * the intent is stated: the two are the same height, but only one of them
+ * says which viewport it meant.
+ *
  * `BANK_H` is each bank's height as a share of the viewport; `BANK_STEP` is
  * how far apart they sit. **A bank is only opaque from about 40% of its own
  * height down** (above that you are among the lobes, where the silhouette
@@ -51,7 +61,7 @@ const BANK_STEP = 35;
  * cloud this variant exists to be. Sized off `vh` it holds roughly the same
  * proportions everywhere. The `vw` floor is what keeps it spanning a short,
  * wide desktop, where `vh` alone would leave it narrower than the screen. */
-const BANK_W = `max(${(BANK_H * 2.4).toFixed(0)}vh, 115vw)`;
+const BANK_W = `max(${(BANK_H * 2.4).toFixed(0)}lvh, 115vw)`;
 
 /** Top to bottom — and they arrive IN THAT ORDER, one after the other, on
     direct request: the bank that ends up highest sets off first and the
@@ -62,9 +72,9 @@ const BANK_W = `max(${(BANK_H * 2.4).toFixed(0)}vh, 115vw)`;
     pure white in front, so the three read as depth rather than as one white
     mass now that they carry no drop shadow to separate them. */
 const BANKS: VeilBank[] = [
-  { top: `${-0.41 * BANK_H}vh`, height: `${BANK_H}vh`, shade: "far", delay: "0ms" },
-  { top: `${-0.41 * BANK_H + BANK_STEP}vh`, height: `${BANK_H}vh`, shade: "mid", delay: "110ms" },
-  { top: `${-0.41 * BANK_H + BANK_STEP * 2}vh`, height: `${BANK_H}vh`, shade: "near", delay: "220ms" },
+  { top: `${-0.41 * BANK_H}lvh`, height: `${BANK_H}lvh`, shade: "far", delay: "0ms" },
+  { top: `${-0.41 * BANK_H + BANK_STEP}lvh`, height: `${BANK_H}lvh`, shade: "mid", delay: "110ms" },
+  { top: `${-0.41 * BANK_H + BANK_STEP * 2}lvh`, height: `${BANK_H}lvh`, shade: "near", delay: "220ms" },
 ];
 
 /**

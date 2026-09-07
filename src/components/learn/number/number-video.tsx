@@ -68,7 +68,16 @@ export function NumberVideo({ videoId, value, image, dict }: NumberVideoProps) {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <div className="card relative aspect-[9/16] h-[42vh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68vh] sm:max-h-[42rem]">
+    /* **`svh`, never `vh`.** `vh` is measured against the LARGE viewport —
+        the phone with its browser chrome hidden — so a `42vh` box is taller
+        than the screen actually has whenever that chrome is showing, and the
+        stage overflows and jumps as the bar slides in and out. `svh` is the
+        SMALL viewport, i.e. the height that is there in the worst case, so
+        the frame fits at every scroll position and nothing moves. `dvh`
+        would fit too, but it re-measures as the bar animates, which resizes
+        the video mid-scroll — the wrong trade for a box a child is watching.
+       Same call `.puzzle-upright` and `TrailSky` already make. */
+    <div className="card relative aspect-[9/16] h-[42svh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
       {/* Opens the connection to YouTube while the child is still looking at
           the poster, so pressing play doesn't also pay for the DNS lookup,
           TLS handshake and the `nocookie` → `youtube.com` redirect. A `<link>`
