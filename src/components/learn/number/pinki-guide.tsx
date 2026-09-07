@@ -139,10 +139,25 @@ export function PinkiGuide({
           centered ? "items-center self-center" : "items-start self-start"
         }`}
       >
+        {/* **From `sm` the bubble is only as wide as the line in it, and it
+            sits at the END of the column, next to her.** It was `w-full` at
+            every width, so on a desktop a four-word line came out as a 549px
+            frame with the words tucked into one corner of it — reported
+            exactly that way. `w-fit` cannot be the whole fix on its own: the
+            column is `items-start`, so a shrunk bubble would sit at the far
+            LEFT with its tail pointing across a couple of hundred pixels of
+            empty ground at a Pinki standing off the right edge — the same
+            fault the column's own width share was widened to cure. `self-end`
+            is what keeps the tail against her. **The phone keeps `w-full`**:
+            the column is 54% of a narrow screen there, a fitted bubble would
+            be a ragged little tab, and she stands directly under it rather
+            than beside it. The `centered` stage (`find`) needs no `self-*` —
+            its column is already `items-center`, so fitting the width is
+            enough. */}
         <p
           dir={dir}
-          className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:px-5 sm:py-3 sm:text-base ${
-            centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left"
+          className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:px-5 sm:py-3 sm:text-base ${
+            centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left sm:self-end"
           }`}
         >
           {line}
