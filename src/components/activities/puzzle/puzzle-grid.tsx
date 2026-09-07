@@ -83,7 +83,7 @@ export function PuzzleGrid({ stages, dict }: PuzzleGridProps) {
         ariaLabel={format(dict.ui.completedAria, { label: dict.activities.puzzlesLabel })}
       />
 
-      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
+      <ul className="grid grid-cols-3 gap-3 sm:gap-5 md:grid-cols-4 lg:gap-6 xl:grid-cols-5">
         {cast.map(({ stage, index, open, done }) => {
           /* `.clay` is declared after `.card` in globals.css, so its grain and
              inflated shading win over `.card`'s flat white — the fill itself

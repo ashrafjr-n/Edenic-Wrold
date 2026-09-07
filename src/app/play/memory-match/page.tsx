@@ -52,7 +52,31 @@ export default async function MemoryMatchPage() {
         "var(--color-ink-fixed)",
       )}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
+            {/* **The header stacks on a phone and becomes a ROW from `lg`.** As a
+          stack — mark, then title, then subtitle, all centred — it costs about
+          280px before the first card, which on a 900px-tall desktop pushed two
+          thirds of the set below the fold. Side by side it costs about 130px
+          and the grid starts near the top of the screen.
+
+          **The phone keeps the stack exactly as it was**: every change here is
+          `lg:`-prefixed, so below that width this is the same block layout it
+          always rendered. The back button moved out of the mark's own row and
+          onto this container, and `left-6 sm:left-8` reproduces the position
+          it had there to the pixel — that row sat inside this container's
+          content box, so its `left-0` WAS this padding.
+
+          Deliberately `lg`, not `md`: at an iPad's width the row leaves the
+          title cramped against the mark, and the stack still fits there. */}
+      <div className="relative mx-auto w-full max-w-7xl px-6 sm:px-8 lg:flex lg:items-center lg:justify-center lg:gap-7">
+        {/* Out of the flow, so the mark stays centred on the PAGE rather
+            than on the space the button leaves. The wrapper carries the
+            positioning, never the button: `.btn3d` sets `position:
+            relative` and is UNLAYERED, so a Tailwind `absolute` on the
+            button itself silently loses. */}
+        <span className="absolute left-6 top-0 sm:left-8">
+          <BackButton href="/play" label={dict.activities.backToActivities} />
+        </span>
+
         {/* Back on the left, the heading's own mark centred on the page —
             centred on the page itself rather than on the space left over,
             which is why the back button is taken out of the flow. */}
@@ -60,14 +84,6 @@ export default async function MemoryMatchPage() {
           className="anim-drop-in relative flex items-center justify-center"
           style={{ animationDelay: "0.1s" }}
         >
-          {/* The wrapper carries the positioning, not the button: `.btn3d`
-              sets `position: relative` and is UNLAYERED, so a Tailwind
-              `absolute` utility on the button itself silently loses and it
-              stays in the centred flex row. */}
-          <span className="absolute left-0 top-0">
-            <BackButton href="/play" label={dict.activities.backToActivities} />
-          </span>
-
           {/* Ink, not white: gold is the one face on the site pale enough
               that a white icon disappears on it — the same call this game's
               CTA button and the puzzle hint chip's lightbulb make. */}
@@ -77,7 +93,7 @@ export default async function MemoryMatchPage() {
         </div>
 
         <div
-          className="anim-fade-up mt-4 text-center sm:mt-5"
+          className="anim-fade-up mt-4 text-center sm:mt-5 lg:mt-0 lg:text-left"
           style={{ animationDelay: "0.25s" }}
         >
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-ink)] sm:text-3xl">
@@ -97,7 +113,7 @@ export default async function MemoryMatchPage() {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:max-w-5xl lg:py-6 xl:max-w-6xl">
         <MemoryGrid levels={memoryLevels} dict={dict} />
       </div>
     </main>
