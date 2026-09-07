@@ -33,13 +33,13 @@ export async function Hero() {
             renders visually when the picture fails to load, so it needs a
             base direction like any other mixed run (see `dirFor`). */}
         <Image
-          src="/hero.png"
+          src="/hero.webp"
           alt={dict.home.heroAlt}
           dir={dirFor(locale)}
           fill
           preload
           sizes="(max-width: 1024px) 100vw, 70vw"
-          /* `hero.png` centers the trio, unlike the old crop — nudged left just
+          /* `hero.webp` centers the trio, unlike the old crop — nudged left just
              enough to trim the empty castle side on the right without cutting
              off Bloo; all three friends stay inside the frame. */
           className="anim-hero-parallax object-cover object-[47%_46%]"
