@@ -115,7 +115,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12 lg:max-w-5xl lg:py-8">
         {/* Built here rather than inside the grid so `NumbersIntro` stays a
             Server Component — the grid is a Client Component only because
             unlocking depends on saved progress, and there is no reason for

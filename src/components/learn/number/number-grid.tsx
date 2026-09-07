@@ -125,6 +125,21 @@ export function NumberGrid({
           introduces. */}
       {intro && hydrated && finished === 0 && intro}
 
+      {/* **The bar and the grid share a column, and from `lg` that column is
+          only half the card.** On a phone and a tablet the card is narrow
+          enough that the 3x3 grid fills it and Pinki leans in over the
+          numbers she is pointing at — which is the design there, because
+          the ones she covers are locked anyway. A desktop card is twice as
+          wide and twice as short: at full width the cells grow to ~215px and
+          the third row falls off the bottom of the screen, while Pinki, sized
+          as a share of the card, lands squarely on top of numbers 5, 6, 8 and
+          9. Holding the column to 28rem does both jobs at once — the cells
+          come back to a tappable ~136px so all nine fit above the fold, and
+          the half of the card she now stands in is EMPTY, so she reads as
+          standing beside the grid pointing into it rather than lying across
+          it. Below `lg` this div has no width of its own and changes
+          nothing. */}
+      <div className="lg:w-[28rem]">
       <ActivityProgress
         label={dict.lessonPicker.numbersLabel}
         done={finished}
@@ -225,6 +240,7 @@ export function NumberGrid({
           );
         })}
       </ul>
+      </div>
     </div>
   );
 }

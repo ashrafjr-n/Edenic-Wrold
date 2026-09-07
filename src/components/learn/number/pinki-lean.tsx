@@ -36,7 +36,15 @@ const LEAN = {
    * asset. Raising it is an asset problem, not a markup one.
    */
   picker: {
-    box: "block -bottom-[3%] -right-[26%] h-[68%] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%]",
+    /* The `lg:` step is not a retune of the same composition — it is a
+       different one. Below `lg` she leans OVER the grid from the right, and
+       the numbers she covers are the locked ones. From `lg` the grid is held
+       to a 28rem column and she stands in the empty half beside it, so she
+       no longer has to be cropped by the card's edge to stay clear of the
+       numerals: `-right-[2%]` brings her most of the way back inside it, and
+       the smaller height share keeps her feet on the card instead of running
+       past the bottom of a short, wide desktop card. */
+    box: "block -bottom-[3%] -right-[26%] h-[68%] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%] lg:-bottom-[1%] lg:-right-[2%] lg:h-[56%]",
     painted: { width: 360, height: 357 },
   },
   /**
