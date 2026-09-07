@@ -1630,12 +1630,28 @@ bdi {
   pointer-events: none;
 }
 
-/* One soft shadow rather than `.cloud`'s usual two: stacked banks need a
-   shadow to separate one from the one behind it, not to ground it on a
-   surface. Cheap enough at three elements to keep the drift smooth on a
-   tablet, which two dozen filtered clouds were not. */
+/* **No `filter` and no lobe highlights on a veil bank, and both are
+   PERFORMANCE decisions, not visual ones** — this transition was reported
+   as stuttering, and measured (a 6x-throttled CPU, frame deltas over the
+   whole transition) it was: a 450ms worst frame.
+
+   A `drop-shadow` is the expensive half. A `translate` animation normally
+   runs on the compositor thread, where a busy main thread — and the main
+   thread IS busy here, rendering the route we are navigating to — cannot
+   stall it. A filter on the animating element takes that away: the layer
+   has to be re-filtered rather than merely re-positioned, which puts the
+   drift back at the mercy of whatever else is running. Nothing separates
+   these three banks except their own three shades of white, which is what
+   the shades are for.
+
+   `--cloud-lobes: none` drops six radial gradients per bank. Each bank is
+   most of the screen, so that is millions of device pixels of gradient to
+   rasterize the moment the overlay mounts — paid exactly when the child
+   taps. The base gradient and the underside band stay, so a bank is still
+   shaded clay rather than a flat cut-out, and at this speed nobody reads
+   per-lobe highlights anyway. */
 .page-veil-cloud {
-  filter: drop-shadow(0 -2px 26px rgb(var(--shadow-hue) / 12%));
+  --cloud-lobes: none;
   will-change: translate;
 }
 
