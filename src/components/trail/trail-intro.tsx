@@ -127,6 +127,17 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            which is what makes it read as a spoken block rather than a
            caption.
 
+           **From `sm` up it TRACKS HER, with the same `svh` term her own
+           offset carries** (`76.5% - 10.2svh`): once she moves a third of the
+           screen left to aim at the first stop, a bubble pinned to a fixed
+           percentage of the width would have been left sitting on her chest.
+           The `min(..., 100% - 21rem)` is a floor, not a second opinion — on
+           a small tablet the tracking value would push the 20rem bubble past
+           the left edge and clip its first word. The pointing beat also drops
+           from 58% to 48% there: she is beside the bubble now rather than
+           behind it, so it no longer has to ride above her head, and at 58%
+           it would have covered the very stop she is pointing at.
+
            Her own colour on the ring and the tint at its foot —
            `--bubble-ink` falls back to Pinki, whose journey the bubble was
            built for. */
@@ -151,8 +162,8 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
              hand and the tail would otherwise land across the fingertip —
              hiding the one thing that beat exists to show. */
           pointing
-            ? "bottom-[60%] sm:bottom-[58%] sm:right-[30%]"
-            : "bottom-[50%] sm:bottom-[46%] sm:right-[29%]"
+            ? "bottom-[60%] sm:bottom-[48%] sm:right-[min(calc(76.5%_-_10.2svh),calc(100%_-_21rem))]"
+            : "bottom-[50%] sm:bottom-[46%] sm:right-[min(calc(77.5%_-_10.2svh),calc(100%_-_21rem))]"
         }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
@@ -231,7 +242,45 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
           the crop is the design, and she enters from the edge that makes it. */}
       <span
         aria-hidden
-        /* **Her feet stand ON the bottom nav's top edge, not under it**
+        /* **She is placed so her POINTING FINGER lands on the first stop, and
+           that placement is geometry, not taste.** Her raised arm is drawn at
+           a fixed angle — about 32 degrees left of vertical, measured off the
+           PNG's own alpha (fingertip at 24,118 of 463x539) plus the -3deg
+           lean — so the only way to aim it is to move her until the first
+           cloud sits on that line. Moving her UP or DOWN cannot do it: the
+           cloud sits almost straight above her hand, and lifting her enough
+           to swing the line onto it (+100px on a phone) leaves her floating
+           off the bottom nav with her hand behind her own bubble. **The fix
+           is horizontal, and it points opposite ways at the two ends** — on a
+           phone her hand is already near the left edge and has to move RIGHT;
+           on a desktop she is a right-edge figure and has to move LEFT, by
+           roughly a third of the screen.
+
+           **`sm` and up is a `calc`, not a breakpoint ladder, because the
+           right offset depends on the viewport's ASPECT rather than its
+           width.** The stop sits at 23.5% of the WIDTH (its lane) while she
+           is sized off the HEIGHT (`h-[68%]`), so a portrait tablet and a
+           landscape one of the same width need opposite values — 1024x1366
+           wants her cropped by the right edge exactly as today, 1024x768
+           wants her a quarter of the screen further left. Solving
+           "fingertip x = lane x + tan(32deg) * (fingertip y - stop y)" for
+           the offset gives `76.5% - 69.5svh`, one declaration that is correct
+           at every ratio. Verified pointing at the stop at 768x1024,
+           820x1180, 1024x1366, 1024x768, 1180x820, 1280x800, 1366x768,
+           1440x900 and 1920x1080, with no width where she runs off the LEFT
+           edge. `svh` and never `vh`/`dvh`, like every other viewport unit on
+           the site.
+
+           **The phone keeps the crop and settles for the stop's left lobe.**
+           `-right-[34%]` is about 70px further right than she stood, which
+           puts the line on the cloud while leaving her second eye at the
+           screen edge; the next step out (`-38%`) aims dead centre and takes
+           that eye off the screen, which is the worse trade on the one screen
+           where she is already wider than the viewport. At 430px the line
+           passes ~12px outside the cloud's left edge rather than on it — the
+           lobe is soft and the difference is not visible.
+
+           **Her feet stand ON the bottom nav's top edge, not under it**
            (`calc(4rem + env(safe-area-inset-bottom))` — the same reserve
            `body` keeps for that bar, safe area included). She ran past the
            bottom of the screen for a round and the nav sat across her legs.
@@ -246,7 +295,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            makes her a different figure on every screen. The phone number is
            capped by the first cloud rather than by taste: any taller and her
            head reaches the stop she is pointing at. */
-        className="anim-pinki-lean-in pointer-events-none absolute bottom-[calc(4rem+0.9rem+env(safe-area-inset-bottom))] -right-[16%] h-[56%] rotate-[-3deg] sm:-bottom-[2%] sm:-right-[8%] sm:h-[68%]"
+        className="anim-pinki-lean-in pointer-events-none absolute bottom-[calc(4rem+0.9rem+env(safe-area-inset-bottom))] -right-[34%] h-[56%] rotate-[-3deg] sm:-bottom-[2%] sm:right-[calc(76.5%_-_69.5svh)] sm:h-[68%]"
       >
         {/* BOTH poses mount, and the beat crossfades between them. Swapping
             one element's `src` flashes an empty box while the second file
