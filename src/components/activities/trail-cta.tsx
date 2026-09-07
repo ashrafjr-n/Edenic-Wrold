@@ -1,9 +1,13 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import type { CSSProperties, MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Footprints } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
+import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
 import trailCloud from "../../../public/assets/activity-page/trial/trial-cloude.png";
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
@@ -65,6 +69,15 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
  * nothing else on the site uses them. Its text is `--color-ink-fixed`, not
  * `--color-ink`: that face is pinned pale in both themes while `--color-ink`
  * flips light in dark mode, which would leave pale on pale.
+ *
+ * **`"use client"` for exactly one reason: the cloud-veil transition.** A
+ * plain left-click is intercepted (`preventDefault` + `router.push` after
+ * the veil has had time to cover the screen — see
+ * `PageTransitionOverlay`/`usePageTransition`); a modified click (new tab,
+ * middle click, etc.) is left alone so the browser's own handling still
+ * applies. Still renders as a real `<Link>`, not a `<button>` — it keeps
+ * its `href`, its prefetch, and works with JS disabled (a disabled click
+ * handler just falls through to the normal navigation).
  */
 export function TrailCta({
   dict,
@@ -76,10 +89,31 @@ export function TrailCta({
   style?: CSSProperties;
 }) {
   const dir = dirFor(dict.locale);
+  const router = useRouter();
+  const startTransition = usePageTransition((state) => state.start);
+  const transitionActive = usePageTransition((state) => state.active);
+
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      transitionActive
+    ) {
+      return;
+    }
+    event.preventDefault();
+    startTransition();
+    window.setTimeout(() => router.push("/trail"), TRAIL_COVER_MS);
+  }
 
   return (
     <Link
       href="/trail"
+      onClick={handleClick}
       className={`clay group relative flex flex-col items-center overflow-hidden rounded-[2rem] p-8 text-center sm:p-10 lg:p-12 ${className}`}
       style={
         {
