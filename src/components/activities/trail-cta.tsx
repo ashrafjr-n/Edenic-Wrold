@@ -4,7 +4,9 @@ import type { CSSProperties, MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Footprints } from "lucide-react";
+/* Aliased: this file would otherwise have two `Cloud`s in scope, lucide's
+   icon and the site's own clay cloud component. */
+import { Cloud as CloudIcon } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
@@ -63,12 +65,15 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
  * documents). Character tokens don't move with the theme, so this panel is
  * the same blue and the same contrast in both.
  *
- * **The CTA carries a lucide `Footprints`** — a step back from `Compass`,
- * which read as generic rather than "trail". Footprints are the literal
- * thing this page is named after (a path you walk one step at a time) and
- * nothing else on the site uses them. Its text is `--color-ink-fixed`, not
- * `--color-ink`: that face is pinned pale in both themes while `--color-ink`
- * flips light in dark mode, which would leave pale on pale.
+ * **The CTA is a PINK clay pill carrying a lucide cloud.** Both were
+ * direct requests and both replaced something: the pill was white clay
+ * (`.btn3d--clay-white`, the site's usual answer for a button on a
+ * saturated panel), and the icon has now been `Compass` (cut as generic),
+ * then `Footprints`, then this. The cloud is what the card's own art and
+ * the whole destination are made of, so it names the place rather than the
+ * act. Its text is a literal white rather than a token: `--accent` is a
+ * fixed pink face in both themes, so the type on it must not follow the
+ * theme either — the trap `--color-ink` documents.
  *
  * **`"use client"` for exactly one reason: the cloud-veil transition.** A
  * plain left-click is intercepted (`preventDefault` + `router.push` after
@@ -141,22 +146,28 @@ export function TrailCta({
         {dict.trail.description}
       </p>
 
-      {/* White clay on a saturated panel: a coloured pill disappears on one.
-          This is `Button3D`'s own `calm` + `.btn3d--clay-white` output,
-          hand-copied onto a `<span>` — see the file doc comment for why it
-          can't be the component itself here. In normal flow, well clear of
-          the cloud bled in below it. */}
+      {/* **Accent pink, on direct request** — it was a white clay chip, the
+          usual answer for a button on a saturated panel. Pink is the site's
+          other hero colour and the one thing on this blue slab that is
+          neither the panel nor the cloud, so it reads as the action rather
+          than as more panel. `--accent-dark` is its own darker companion,
+          the same face/edge pairing every clay button uses.
+
+          Still `Button3D`'s markup hand-copied onto a `<span>` (the
+          `playful` recipe here, not `calm`) rather than the component — see
+          the file doc comment: the whole card is the `<a>`, and an `<a>`
+          cannot contain another link or button. */}
       <span
-        className="btn3d btn3d--calm btn3d--clay-white relative z-10 mt-6 whitespace-nowrap px-6 py-3 text-base sm:mt-8 sm:px-7 sm:py-3.5 sm:text-lg"
+        className="btn3d relative z-10 mt-6 whitespace-nowrap px-6 py-3 text-base sm:mt-8 sm:px-7 sm:py-3.5 sm:text-lg"
         style={
           {
-            "--btn-face": "var(--surface)",
-            "--btn-edge": "var(--surface)",
-            "--btn-text": "var(--color-ink-fixed)",
+            "--btn-face": "var(--accent)",
+            "--btn-edge": "var(--accent-dark)",
+            "--btn-text": "#fff",
           } as CSSProperties
         }
       >
-        <Footprints className="h-5 w-5" strokeWidth={2.25} />
+        <CloudIcon className="h-5 w-5" strokeWidth={2.25} />
         <span dir={dir}>{dict.trail.cta}</span>
       </span>
 
