@@ -11,10 +11,12 @@ import novaTalk from "../../../public/assets/activity-page/trial/nova/nova-talk.
 
 type BubbleVars = CSSProperties & { "--bubble-ink"?: string };
 
-/** `hello` → she introduces herself, with a Skip chip. `start` → she points
-    at the first stop and there is no button at all: the cloud she is
-    pointing at is the thing to press. `done` → she is gone for this visit. */
-type Beat = "hello" | "start" | "done";
+/** `hello` → she introduces herself, with a Skip chip and a tap-anywhere
+    catcher over the page. `start` → she points at the first stop **and
+    stays there**: no button, no catcher, nothing to dismiss her. That is
+    the resting state of this page until the first stage exists to walk
+    into — at which point tapping that cloud becomes what moves her on. */
+type Beat = "hello" | "start";
 
 /**
  * Nova, life size, welcoming a child onto the Edenic Trail.
@@ -59,13 +61,13 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
   const dir = dirFor(dict.locale);
 
   useEffect(() => {
-    if (!shown || beat === "done") return;
+    if (!shown || beat === "start") return;
     /* Keyboard parity with the tap-anywhere catcher: Escape, Enter and Space
        all move her on, so she is never a dead end for a child (or a tester)
        driving the page from a keyboard. */
     const onKey = (event: KeyboardEvent) => {
       if (!["Escape", "Enter", " "].includes(event.key)) return;
-      setBeat((current) => (current === "hello" ? "start" : "done"));
+      setBeat("start");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -79,18 +81,25 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
     return () => window.clearTimeout(timer);
   }, [transitionActive, shown]);
 
-  if (!shown || beat === "done") return null;
+  if (!shown) return null;
 
   const pointing = beat === "start";
 
   return (
-    /* The catcher. `fixed inset-0` so "tap anywhere" means anywhere, and
-       above the header's own `z-20` so a tap on the header counts too —
-       she is only two taps long, and a tap that quietly did nothing would
-       be the worse trade. */
+    /* **`z-10`, UNDER the header and the bottom nav** (both `z-20`), on
+       direct request: the tap-anywhere catcher covers the page but must
+       never swallow a tap meant for the site's own chrome, and Nova herself
+       must never cover the bottom nav. Sitting below them does both at once
+       — no header height to hardcode and keep in step, and the nav paints
+       over her rather than the other way round.
+
+       **The catcher only exists while she is greeting.** Once she is
+       pointing there is nothing left to advance, so the whole layer goes
+       `pointer-events-none` and the page underneath — the back button
+       included — is fully usable again with her still standing there. */
     <div
-      className="fixed inset-0 z-30 overflow-hidden"
-      onClick={() => setBeat(pointing ? "done" : "start")}
+      className={`fixed inset-0 z-10 overflow-hidden ${pointing ? "pointer-events-none" : ""}`}
+      onClick={pointing ? undefined : () => setBeat("start")}
       role="presentation"
     >
       <div
@@ -105,16 +114,22 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
 
            Her own colour on the ring and tail — `--bubble-ink` falls back to
            Pinki, whose journey the bubble was built for. */
-        className={`anim-fade-up pointer-events-none absolute bottom-[40%] right-[38%] z-10 w-[58%] sm:w-[30%] ${
-          /* The pointing beat needs MORE clearance from her at desktop
-             widths: her raised finger reaches further left and higher than
-             her waving hand does, and at the greeting beat's placement the
-             bubble's tail landed straight over the fingertip — hiding the
-             one thing that beat exists to show. Measured against the pose,
-             not guessed. The phone needs no such shift: she is much wider
-             than the screen there, so the bubble already sits well clear
-             above her arm. */
-          pointing ? "sm:bottom-[46%] sm:right-[32%]" : "sm:bottom-[36%] sm:right-[26%]"
+        className={`anim-fade-up pointer-events-none absolute bottom-[46%] left-4 z-10 w-[72%] sm:left-auto sm:w-[30%] ${
+          /* **It is allowed to lie OVER her**, on direct request — what
+             matters is that it reads as her speaking, not that it clears
+             her silhouette. That freedom is what makes a phone work at all
+             at this size: she is wider than the screen there, so there is
+             no space beside her to put it in, and a bubble squeezed into
+             what is left would be three words to a line.
+
+             The pointing beat still steps aside at desktop widths, and only
+             there: her raised finger reaches higher and further left than
+             her waving hand, and the tail otherwise lands straight across
+             the fingertip — hiding the one thing that beat exists to show.
+             On a phone she raises it clear above the bubble already. */
+          pointing
+            ? "sm:bottom-[52%] sm:right-[30%]"
+            : "sm:bottom-[42%] sm:right-[24%]"
         }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
@@ -156,7 +171,22 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
           the crop is the design, and she enters from the edge that makes it. */}
       <span
         aria-hidden
-        className="anim-pinki-lean-in pointer-events-none absolute -bottom-[2%] -right-[14%] h-[46%] rotate-[-3deg] sm:-right-[6%] sm:h-[58%]"
+        /* **Her feet stand ON the bottom nav's top edge, not under it**
+           (`calc(4rem + env(safe-area-inset-bottom))` — the same reserve
+           `body` keeps for that bar, safe area included). She ran past the
+           bottom of the screen for a round and the nav sat across her legs.
+           From `sm` the bar is gone, so she goes back to a hair below the
+           edge. The extra `0.9rem` over the bar's own height is the LEAN's
+           doing: a rotated element's bounding box is the axis-aligned box of
+           the rotated shape, so at `-3°` she reaches about 10px lower than
+           her own height says (measured) and would clip the bar's top edge
+           without it.
+
+           Sized by the VIEWPORT's height, never its width — a width share
+           makes her a different figure on every screen. The phone number is
+           capped by the first cloud rather than by taste: any taller and her
+           head reaches the stop she is pointing at. */
+        className="anim-pinki-lean-in pointer-events-none absolute bottom-[calc(4rem+0.9rem+env(safe-area-inset-bottom))] -right-[16%] h-[56%] rotate-[-3deg] sm:-bottom-[2%] sm:-right-[8%] sm:h-[68%]"
       >
         {/* BOTH poses mount, and the beat crossfades between them. Swapping
             one element's `src` flashes an empty box while the second file
