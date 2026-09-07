@@ -186,6 +186,27 @@ export function NumberColor({
             preserveAspectRatio="none"
             className="h-full w-full"
           >
+            {/* **The hint band, painted under the crayon on the same beat.**
+                The crayon moving on its own says "wave me about"; a line of
+                colour appearing under it as it goes is what actually says
+                "this is how the number gets coloured in". It lives INSIDE
+                the masked layer, so like every real stroke it can only show
+                where the numeral is — on a 6 or an 8 it reads as the glyph
+                filling in, never as a line drawn across the card. Gone the
+                instant the child's own finger lands. */}
+            {!hasPainted && (
+              <line
+                className="color-hint"
+                x1={22}
+                y1={50}
+                x2={78}
+                y2={50}
+                stroke={accent}
+                strokeWidth={BRUSH}
+                strokeLinecap="round"
+              />
+            )}
+
             {liveStrokes.map((stroke, index) => (
               <polyline
                 key={index}
@@ -212,11 +233,16 @@ export function NumberColor({
           }`}
         />
 
-        {/* The crayon, sitting on the number until the child picks it up —
-            an unlabelled outline says nothing about what to do with it. */}
+        {/* **The crayon SCRUBS side to side until the child takes over.** It
+            used to sit still in the middle wearing the numbers picker's
+            "tap me" pulse — which is the wrong instruction on the one stage
+            where tapping does nothing at all. Colouring is a movement, so
+            the demonstration has to be one: it sweeps the width of the
+            numeral on the same 1.8s beat as the band of colour underneath
+            it, and both stop for good on the first real stroke. */}
         {!hasPainted && (
           <span
-            className="anim-pulse-invite pointer-events-none absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--surface)] shadow-[0_10px_20px_-8px_rgb(var(--shadow-hue)/45%)] sm:h-16 sm:w-16"
+            className="anim-brush-scrub pointer-events-none absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--surface)] shadow-[0_10px_20px_-8px_rgb(var(--shadow-hue)/45%)] sm:h-16 sm:w-16"
             aria-hidden
           >
             <Paintbrush

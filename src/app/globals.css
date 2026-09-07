@@ -2708,6 +2708,67 @@ button:disabled,
    and never looks assembled when it lands. `NumberColor` uses the same box
    so its paint layer lines up with the numeral it is masked to.
    --------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   The colouring stage's own demonstration.
+
+   A crayon sitting still in the middle of an outline says "press me", and
+   pressing does nothing here — this activity is the one on the site that
+   needs a MOVEMENT explained, not a target pointed at. So the crayon scrubs
+   side to side and a band of colour is painted under it on the same beat,
+   which between them show the whole mechanic without a word of text. Both
+   stop for good the moment the child's own finger lands (`hasPainted`).
+
+   The crayon animates `translate` INCLUDING its own centring: the chip is
+   placed with Tailwind's `-translate-x-1/2 -translate-y-1/2`, which sets the
+   same standalone `translate` property, so a keyframe that only moved it
+   sideways would drop the centring for the whole animation — the trap
+   `NumberPath`'s token already documents. `rotate` and `scale` are separate
+   properties in v4 and compose with it for free.
+   --------------------------------------------------------------- */
+@keyframes brush-scrub {
+  0%,
+  100% {
+    translate: calc(-50% - 2.1rem) -50%;
+    rotate: -10deg;
+  }
+  50% {
+    translate: calc(-50% + 2.1rem) -50%;
+    rotate: 10deg;
+  }
+}
+
+.anim-brush-scrub {
+  animation: brush-scrub 1.8s ease-in-out infinite;
+}
+
+/* The band the crayon leaves behind it. `stroke-dasharray` is set to the
+   line's own length so one dash covers it exactly; the offset runs it on
+   with the crayon and the opacity takes it away again before the loop
+   repeats, so the numeral is never left half-coloured by the hint itself. */
+@keyframes color-hint {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0.9;
+  }
+  45% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+}
+
+.color-hint {
+  stroke-dasharray: 100;
+  animation: color-hint 1.8s ease-in-out infinite;
+}
+
 .numeral-stage {
   /* A size up, in step with the trace board: the field the child works on is
      the subject of its stage, and these two (`complete` and `color`) were the
@@ -2986,6 +3047,8 @@ button:disabled,
   .anim-item-nudge,
   .anim-pinki-lean-in,
   .anim-pulse-invite,
+  .anim-brush-scrub,
+  .color-hint,
   .guide-target::after,
   .trace-guide-glow,
   .anim-reveal,
