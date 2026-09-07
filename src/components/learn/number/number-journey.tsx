@@ -586,7 +586,15 @@ export function NumberJourney({
      numerals laid across the width, so she stands behind the choice rather
      than leaning in from one side of it. Every other `lead` stage keeps the
      right-edge crop. */
-  const leanPlacement = stage === "find" ? "journeyCenter" : "journey";
+  /* `complete` and `path` are the two count activities with a tall board —
+     a piece tray under the numeral, a route down the card — and at the
+     standard placement she stood on the half of it the child has to reach.
+     Resolved here rather than in the markup, like every other stage
+     decision on this screen. */
+  const tallCountBoard =
+    stage === "count" && (countActivity.kind === "complete" || countActivity.kind === "path");
+  const leanPlacement =
+    stage === "find" ? "journeyCenter" : tallCountBoard ? "journeyLow" : "journey";
 
   /* `hero` is the one presence that comes AFTER the stage's buttons. It is the
      celebration screen, and the two ways onward were asked to sit ABOVE her:
