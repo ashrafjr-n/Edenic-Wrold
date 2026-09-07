@@ -91,9 +91,9 @@
      Three silhouettes so a sky full of clouds isn't the same shape repeated;
      `variant` on the component picks one. All share the 20:11 viewBox the
      `.cloud` wrapper's `aspect-ratio` is locked to, so nothing distorts. */
-  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='38' cy='64' r='32'/%3E%3Ccircle cx='100' cy='48' r='46'/%3E%3Ccircle cx='161' cy='62' r='34'/%3E%3Cpath d='M38 60 L161 60 L161 96 C141 96 122 106 100 106 C78 106 58 96 38 96 Z'/%3E%3C/g%3E%3C/svg%3E");
-  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='100' cy='82' rx='76' ry='24'/%3E%3Ccircle cx='40' cy='70' r='26'/%3E%3Ccircle cx='76' cy='52' r='36'/%3E%3Ccircle cx='124' cy='44' r='42'/%3E%3Ccircle cx='166' cy='64' r='28'/%3E%3C/g%3E%3C/svg%3E");
-  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='100' cy='80' rx='74' ry='26'/%3E%3Ccircle cx='34' cy='76' r='22'/%3E%3Ccircle cx='58' cy='50' r='40'/%3E%3Ccircle cx='106' cy='44' r='40'/%3E%3Ccircle cx='150' cy='64' r='30'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26' cy='64' r='26'/%3E%3Ccircle cx='58' cy='48' r='27'/%3E%3Ccircle cx='98' cy='46' r='40'/%3E%3Ccircle cx='140' cy='50' r='28'/%3E%3Ccircle cx='174' cy='64' r='26'/%3E%3Crect x='26' y='68' width='148' height='22'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='24' cy='66' r='24'/%3E%3Ccircle cx='62' cy='44' r='34'/%3E%3Ccircle cx='104' cy='50' r='34'/%3E%3Ccircle cx='142' cy='52' r='26'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='24' y='68' width='152' height='22'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26' cy='64' r='26'/%3E%3Ccircle cx='62' cy='52' r='26'/%3E%3Ccircle cx='100' cy='48' r='34'/%3E%3Ccircle cx='140' cy='44' r='36'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='26' y='68' width='150' height='22'/%3E%3C/g%3E%3C/svg%3E");
 
   /* Fades the art on a colored panel into its fill instead of letting it end
      on a rectangle edge. See `.panel-art`. */
@@ -1280,9 +1280,11 @@ bdi {
   --cloud-hi: 92%;
   --cloud-hi-soft: 72%;
   --cloud-lobes:
-    radial-gradient(16% 30% at 42.5% 30%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(11% 21% at 14% 48%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(12% 22% at 75% 46%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(9% 17% at 9.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 24.9% 35.3%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(14% 26% at 43.0% 29.5%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 65.8% 36.8%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 83.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 /* ---------------------------------------------------------------
@@ -1330,10 +1332,11 @@ bdi {
 
 .cloud--v2 {
   --cloud-lobes:
-    radial-gradient(15% 27% at 56% 28%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(13% 23% at 33% 38%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(10% 18% at 79% 50%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(9% 17% at 16% 56%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(9% 16% at 8.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 25.9% 29.5%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 46.9% 34.9%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 67.1% 39.2%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 16% at 84.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v2 .cloud-body {
@@ -1342,10 +1345,11 @@ bdi {
 
 .cloud--v3 {
   --cloud-lobes:
-    radial-gradient(14% 26% at 47% 29%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(14% 26% at 23% 34%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(11% 19% at 71% 50%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
-    radial-gradient(8% 14% at 14% 63%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+    radial-gradient(9% 17% at 9.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 27.1% 39.2%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 44.9% 33.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(13% 24% at 64.6% 28.9%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 16% at 84.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
 }
 
 .cloud--v3 .cloud-body {
