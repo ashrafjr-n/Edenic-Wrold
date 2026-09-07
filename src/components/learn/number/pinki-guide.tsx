@@ -156,9 +156,23 @@ export function PinkiGuide({
             enough. */}
         <p
           dir={dir}
+          /* **`mt-auto` drops the bubble down beside her rather than leaving
+              it at the top of the column.** The actions below already claim
+              the free space with their own `mt-auto`; a second one splits it,
+              so the sentence lands level with her head and its tail points at
+              her face instead of floating a hundred pixels above her with
+              nothing in between — "this is Number 1!" read as a caption on
+              the page rather than as something she said. It is deliberately
+              an AUTO margin and not a fixed one: on a stage whose activity
+              fills the column there is no free space to take, so it
+              contributes nothing rather than pushing the buttons off the
+              screen. Skipped when there are no actions (an unsolved quiz),
+              where it would drop the bubble to the very bottom of the column
+              and onto her, and on the `centered` stage, where she stands
+              BELOW the bubble and down is exactly the wrong way. */
           className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:px-5 sm:py-3 sm:text-base ${
             centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left sm:self-end"
-          }`}
+          } ${!centered && children ? "mt-auto" : ""}`}
         >
           {line}
         </p>
