@@ -670,6 +670,20 @@ bdi {
   --cloud-pale: color-mix(in srgb, var(--color-nova) 40%, #ffffff);
 }
 
+/* Same specificity as the dark `.cloud` ramp above (attribute + one class),
+   so it has to sit after it to win — the same reason `.cloud--far`'s dark
+   override does. Reads whichever `--cloud-pale` that stop's own tint rule
+   already set (the first stop is tint "white", so `#dfeafb`), just mixed in
+   at a much higher share and with brighter lobes, so "the open one" still
+   reads brighter than every other cloud at night, not merely less dim. */
+[data-theme="dark"] .cloud--active {
+  --cloud-hi: 90%;
+  --cloud-hi-soft: 70%;
+  --cloud-face: color-mix(in srgb, var(--cloud-pale) 96%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--cloud-pale) 78%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--cloud-pale) 55%, var(--surface));
+}
+
 /* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
    lighter above for legibility as TEXT elsewhere on the page — but the
    language chip, the dark-mode toggle, "Join Edenic World" (plain `.btn3d`,
@@ -1446,6 +1460,46 @@ bdi {
 }
 
 /* ---------------------------------------------------------------
+   The one stage that's open right now (`<Cloud active>`).
+
+   Brighter, not a different colour — the ask was "whiter than the others,
+   like it's glowing", never a lock/dim treatment on its neighbours. Declared
+   after every `.cloud--*` tint above so it wins on source order at equal
+   specificity, whichever tint this particular cloud was cycled onto.
+
+   `--cloud-hi`/`-soft` push the lobe highlights past daylight's own ceiling,
+   and `--cloud-face`/`-shade`/`-deep` are pulled toward pure white — the
+   same three-value ramp every tint uses, just barely tinted at all. The
+   glow itself is a soft white radial sitting BEHIND the cloud
+   (`isolation: isolate` + `z-index: -1`, the same halo technique
+   `.guide-target::after` uses), and the whole thing breathes via
+   `.anim-pulse-invite` (applied in the component) — reusing the numbers
+   picker's own "tap me" pulse rather than writing a second scale keyframe
+   for the same motion. */
+.cloud--active {
+  position: relative;
+  isolation: isolate;
+  --cloud-hi: 100%;
+  --cloud-hi-soft: 92%;
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 10%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 22%, #ffffff);
+}
+
+.cloud--active::before {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 60%),
+    rgb(255 255 255 / 0%) 72%
+  );
+}
+
+/* ---------------------------------------------------------------
    The trail sky — the full-bleed gradient the clouds sit on
    (`components/trail/trail-sky.tsx`).
 
@@ -1480,6 +1534,61 @@ bdi {
     color-mix(in srgb, var(--color-nova) 26%, #ffffff) 52%,
     color-mix(in srgb, var(--color-nova) 44%, #ffffff) 100%
   );
+}
+
+/* ---------------------------------------------------------------
+   The cloud-veil page transition (`PageTransitionOverlay`).
+
+   A full-screen wall of clouds that rises from the bottom to cover the
+   page, holds, then continues rising off the top to reveal the destination
+   — the "flying through the sky" transition into `/trail`. Wears
+   `.trail-sky--day` itself (a real, opaque gradient fill, not just the
+   decorative clouds inside it) so coverage is guaranteed regardless of how
+   the clouds happen to be laid out, and so the transition already looks
+   like the place it's taking you to.
+
+   Portalled to `document.body` and `position: fixed`, so its `z-index`
+   only has to clear the header/bottom nav's own `z-20` — `100` does that
+   with room to spare, the same margin `puzzle-hint`'s modal leaves over
+   them.
+
+   One `transform: translateY` animation per phase, not two properties —
+   `.page-veil--in` runs from fully below the viewport to `0%` (covers),
+   `.page-veil--out` continues in the SAME direction from `0%` to fully
+   above it (reveals), so the motion never reverses mid-transition. */
+.page-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@keyframes page-veil-cover {
+  from {
+    translate: 0 100%;
+  }
+  to {
+    translate: 0 0%;
+  }
+}
+
+@keyframes page-veil-uncover {
+  from {
+    translate: 0 0%;
+  }
+  to {
+    translate: 0 -100%;
+  }
+}
+
+.page-veil--in {
+  animation: page-veil-cover 560ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.page-veil--out {
+  animation: page-veil-uncover 650ms cubic-bezier(0.5, 0, 0.75, 0) forwards;
 }
 
 button,
@@ -2747,7 +2856,9 @@ button:disabled,
   .anim-reveal,
   .path-hint,
   .anim-hero-parallax,
-  .lang-orb {
+  .lang-orb,
+  .page-veil--in,
+  .page-veil--out {
     animation: none;
   }
 
