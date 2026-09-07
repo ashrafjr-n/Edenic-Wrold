@@ -36,7 +36,6 @@ interface CharacterCardProps {
   tagline: string;
   /** Name of the character that must be finished first; locked cards only. */
   previousName?: string;
-  index: number;
   dict: Dictionary["learnPicker"];
   /** `finishFirst`/`learnWith` mix this locale's words with the character's
       English name via `format()` — needed on the elements rendering them
@@ -48,7 +47,6 @@ export function CharacterCard({
   character,
   tagline,
   previousName,
-  index,
   dict,
   dir,
 }: CharacterCardProps) {
