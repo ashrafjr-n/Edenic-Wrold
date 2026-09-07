@@ -2215,13 +2215,22 @@ button:disabled,
    the speaker's colour.
    --------------------------------------------------------------- */
 .cloud-bubble-wrap {
-  /* How far a lobe bulges past the text box, and the only number the whole
-     shape is built from — the inner rect is inset by it, each lobe is twice
-     it across, the padding clears it. It also sets how MANY lobes a bubble
-     gets (one per `2 x --puff` of edge), which is what decides whether the
-     shape reads as a cloud or as a doily: too small and the edge is a row
-     of tiny scallops. */
-  --puff: 1.15rem;
+  /* TWO numbers, and splitting them is what makes this read as a cloud.
+     `--puff` is how far a lobe bulges out — which is also how far the inner
+     rect is inset, and therefore the padding the text has to carry.
+     `--lobe` is half a lobe's width along the edge, so `2 x --lobe` of edge
+     buys one lobe.
+
+     **They are separate because a circular lobe cannot be both few and
+     shallow.** With one number for both, the only way to get a cloud's
+     four-or-five big lobes across a bubble this wide is a large radius —
+     and that radius IS the padding, so the bubble bloats. The first version
+     did exactly that and came out as seven small identical scallops with a
+     fat margin: a doily, screenshotted. Wide-and-shallow ellipses give five
+     lobes at half the bulge, which is both the cloudier shape and the
+     tighter box. */
+  --puff: 0.85rem;
+  --lobe: 1.7rem;
   position: relative;
   filter:
     drop-shadow(2px 0 0 var(--bubble-ink, var(--color-pinki)))
@@ -2252,7 +2261,7 @@ button:disabled,
      and the lobes are what give the bubble its air. Declared here rather
      than as utilities at the call site so a caller can't pad it below the
      puff and push a word out into the lobes. */
-  padding: calc(var(--puff) + 0.15rem) calc(var(--puff) + 0.4rem);
+  padding: calc(var(--puff) + 0.25rem) calc(var(--puff) + 0.4rem);
   mask-image:
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
@@ -2260,10 +2269,10 @@ button:disabled,
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
     linear-gradient(#000 0 0);
   mask-size:
-    calc(var(--puff) * 2) calc(var(--puff) * 2),
-    calc(var(--puff) * 2) calc(var(--puff) * 2),
-    calc(var(--puff) * 2) calc(var(--puff) * 2),
-    calc(var(--puff) * 2) calc(var(--puff) * 2),
+    calc(var(--lobe) * 2) calc(var(--puff) * 2),
+    calc(var(--lobe) * 2) calc(var(--puff) * 2),
+    calc(var(--puff) * 2) calc(var(--lobe) * 2),
+    calc(var(--puff) * 2) calc(var(--lobe) * 2),
     calc(100% - var(--puff) * 2) calc(100% - var(--puff) * 2);
   mask-position: left top, left bottom, left top, right top, center;
   mask-repeat:
