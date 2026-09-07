@@ -81,8 +81,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
               <Image
                 src={lesson.image}
                 alt=""
-                width={140}
-                height={140}
+                width={32}
+                height={32}
                 className="h-6 w-6 object-contain sm:h-7 sm:w-7"
               />
             </div>

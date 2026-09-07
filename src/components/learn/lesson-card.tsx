@@ -140,8 +140,8 @@ export function LessonCard({
         <Image
           src={image}
           alt={name}
-          width={220}
-          height={220}
+          width={144}
+          height={144}
           /* The art keeps its colour even when locked, at every width.
              It used to be desaturated on a phone, back when a locked card
              was grey all through — now the accent card around it says

@@ -217,6 +217,7 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
                   sizeClass={
                     isTarget ? "h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" : "h-9 w-9 sm:h-11 sm:w-11"
                   }
+                  sizes={isTarget ? "(min-width: 640px) 72px, 56px" : "(min-width: 640px) 44px, 36px"}
                   decorative
                 />
               </span>
@@ -287,8 +288,8 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
             <Image
               src={PINKI_TOKEN}
               alt="Pinki"
-              width={475}
-              height={539}
+              width={64}
+              height={73}
               draggable={false}
               className="h-full w-full select-none object-contain"
             />

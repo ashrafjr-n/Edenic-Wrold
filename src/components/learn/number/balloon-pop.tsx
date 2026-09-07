@@ -106,8 +106,8 @@ export function BalloonPop({
               <Image
                 src={BALLOON}
                 alt=""
-                width={428}
-                height={568}
+                width={96}
+                height={128}
                 className="h-24 w-auto object-contain sm:h-32"
                 /* Both effects in ONE inline `filter`: an inline style beats a
                    Tailwind `drop-shadow-*` utility outright, so splitting them
