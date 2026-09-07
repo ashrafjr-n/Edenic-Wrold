@@ -98,7 +98,7 @@ export default async function CharacterLearnPage({
                 alt=""
                 width={475}
                 height={539}
-                priority
+                preload
                 /* Scaled up and offset inside the circle so the crop lands on
                    the face — the source render is a full body, and the head
                    sits left of and above its center. Re-check this framing
@@ -158,7 +158,7 @@ export default async function CharacterLearnPage({
               dir={dirFor(dict.locale)}
               fill
               sizes="100vw"
-              priority
+              preload
               className="object-cover"
             />
           </div>

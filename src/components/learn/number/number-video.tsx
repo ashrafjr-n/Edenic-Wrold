@@ -103,7 +103,7 @@ export function NumberVideo({ videoId, value, image, dict }: NumberVideoProps) {
             alt=""
             fill
             sizes="(min-width: 640px) 24rem, 16rem"
-            priority
+            preload
             className="select-none object-contain p-10 opacity-90"
           />
 
