@@ -21,7 +21,6 @@ export async function CharacterPicker() {
   /* Which character gates each locked one. */
   const cast = characters.map((character, index) => ({
     character,
-    index,
     previousName: character.locked ? characters[index - 1]?.name : undefined,
   }));
 
@@ -76,12 +75,11 @@ export async function CharacterPicker() {
             900px before this. "Desktop" here means real desktop width. */}
         <div className="mx-auto mt-14 w-full max-w-6xl lg:mt-16">
           <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-end lg:justify-center lg:gap-14">
-            {cast.map(({ character, index, previousName }) => (
+            {cast.map(({ character, previousName }) => (
               <CharacterCard
                 key={character.id}
                 character={character}
                 tagline={dict.characters[character.id].tagline}
-                index={index}
                 previousName={previousName}
                 dict={dict.learnPicker}
                 dir={dir}
