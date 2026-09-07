@@ -15,6 +15,8 @@ const videoIdByValue: Record<number, string> = {
   5: "VjZGrSt9Dr0",
   6: "HF4CutRhKIw",
   7: "o7xHThfPVzc",
+  8: "uxALVq9hiwU",
+  9: "9eOrHh4bYns",
 };
 
 export const numberItems: NumberItem[] = NUMBER_VALUES.map((value) => ({
