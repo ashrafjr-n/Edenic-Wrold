@@ -115,7 +115,7 @@ export function MemoryGrid({ levels, dict }: MemoryGridProps) {
         ariaLabel={format(dict.ui.completedAria, { label: dict.activities.levelsLabel })}
       />
 
-      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
+      <ul className="grid grid-cols-3 gap-3 sm:gap-5 md:grid-cols-4 lg:gap-6 xl:grid-cols-6">
         {cast.map(({ level, index, open, done, state }) => {
           /* Done, next or locked — the only thing this card's colour says. */
           const tone = TONES[state];
