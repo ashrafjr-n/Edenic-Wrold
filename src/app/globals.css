@@ -2010,14 +2010,16 @@ button:disabled,
      a cartoon speech bubble belonging to the character beside it, rather than
      a generic white card that happens to sit near them.
 
-     `--bubble-ink` defaults to Pinki, whose journey is where this bubble was
-     built and still its only caller with no override. The trail's Nova sets
-     it to `--color-nova` — one variable rather than a second copy of the
-     bubble, since only the colour differs. It is the identity token
+     **The default lives in the `var()` FALLBACK, never as a declaration on
+     this class** — and that is the bug this shipped with for one round.
+     `--bubble-ink: var(--color-pinki)` declared here is a value set ON the
+     bubble itself, which beats anything an ancestor inherits down, so the
+     trail's Nova override silently did nothing and her bubble stayed pink.
+     A fallback applies only when nobody up the tree has set it, which is
+     exactly the rule wanted. It is the identity token
      (`--color-pinki`/`--color-nova`), never `--accent`: recolouring a mascot
      must never recolour the brand, and vice versa. */
-  --bubble-ink: var(--color-pinki);
-  border: 2px solid var(--bubble-ink);
+  border: 2px solid var(--bubble-ink, var(--color-pinki));
   box-shadow:
     0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
     0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
@@ -2058,7 +2060,7 @@ button:disabled,
    sides, toward the one side left uncolored. */
 .speech-bubble::before {
   border-width: 0.55rem 0.9rem 0.55rem 0;
-  border-right-color: var(--bubble-ink);
+  border-right-color: var(--bubble-ink, var(--color-pinki));
 }
 
 .speech-bubble::after {
@@ -2081,7 +2083,7 @@ button:disabled,
   .speech-bubble::before {
     border-width: 0 0.55rem 0.9rem 0.55rem;
     border-right-color: transparent;
-    border-bottom-color: var(--bubble-ink);
+    border-bottom-color: var(--bubble-ink, var(--color-pinki));
   }
 
   .speech-bubble::after {
@@ -2128,7 +2130,7 @@ button:disabled,
 
 .speech-bubble--left::before {
   border-width: 0.55rem 0 0.55rem 0.9rem;
-  border-left-color: var(--bubble-ink);
+  border-left-color: var(--bubble-ink, var(--color-pinki));
 }
 
 .speech-bubble--left::after {
@@ -2158,7 +2160,7 @@ button:disabled,
 
 .speech-bubble--down::before {
   border-width: 0.9rem 0.55rem 0 0.55rem;
-  border-top-color: var(--bubble-ink);
+  border-top-color: var(--bubble-ink, var(--color-pinki));
 }
 
 .speech-bubble--down::after {
