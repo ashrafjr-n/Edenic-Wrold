@@ -2178,12 +2178,19 @@ button:disabled,
    triangle tail.
 
    **The silhouette is a MASK built as a UNION that always contains the text
-   box, so no string in any language can ever be clipped by the shape.** Six
-   layers: two crossed bars covering the whole box minus one puff on each
-   side (the content box is opaque by construction — the padding below is
-   what keeps the words inside them), plus four rows of tangent lobes
-   bulging exactly one puff OUT of each edge. Layers composite with
-   `mask-composite: add`, which is the initial value, so it is not restated.
+   box, so no string in any language can ever be clipped by the shape.** Five
+   layers: ONE inner rectangle inset by a puff on every side (the content
+   box is opaque by construction — the padding below is what keeps the words
+   inside it), plus four rows of tangent lobes bulging exactly one puff OUT
+   of each of its edges. Layers composite with `mask-composite: add`, which
+   is the initial value, so it is not restated.
+
+   **The inner layer is ONE centred rect, never two crossed bars.** The
+   first version used a full-width bar plus a full-height bar, whose union
+   is the whole box minus its four corners — so the lobes had nothing to
+   bulge out of and the "cloud" shipped as a plain rounded rectangle
+   (screenshotted, not guessed). Every straight edge has to belong to the
+   inset rect, or the row of lobes on it is invisible.
 
    **That containment guarantee is the whole reason this is not `<Cloud>`
    reused.** A cloud silhouette's safe interior has to be tuned against the
@@ -2209,9 +2216,12 @@ button:disabled,
    --------------------------------------------------------------- */
 .cloud-bubble-wrap {
   /* How far a lobe bulges past the text box, and the only number the whole
-     shape is built from — the bars inset by it, the lobes twice it across,
-     the padding below clears it. */
-  --puff: 0.8rem;
+     shape is built from — the inner rect is inset by it, each lobe is twice
+     it across, the padding clears it. It also sets how MANY lobes a bubble
+     gets (one per `2 x --puff` of edge), which is what decides whether the
+     shape reads as a cloud or as a doily: too small and the edge is a row
+     of tiny scallops. */
+  --puff: 1.15rem;
   position: relative;
   filter:
     drop-shadow(2px 0 0 var(--bubble-ink, var(--color-pinki)))
@@ -2237,32 +2247,30 @@ button:disabled,
 }
 
 .cloud-bubble {
-  /* One puff of clearance on every side is what the mask's crossed bars
-     cover; the rest is ordinary breathing room. Declared here rather than
-     as utilities at the call site so a caller can't pad it too tightly and
-     push a word out into the lobes. */
-  padding: calc(var(--puff) + 0.55rem) calc(var(--puff) + 0.95rem);
+  /* One puff of clearance on every side is the inner rect itself; the small
+     remainder is the only actual breathing room, so the text sits close in
+     and the lobes are what give the bubble its air. Declared here rather
+     than as utilities at the call site so a caller can't pad it below the
+     puff and push a word out into the lobes. */
+  padding: calc(var(--puff) + 0.15rem) calc(var(--puff) + 0.4rem);
   mask-image:
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
     radial-gradient(ellipse closest-side, #000 96%, transparent 100%),
-    linear-gradient(#000 0 0),
     linear-gradient(#000 0 0);
   mask-size:
     calc(var(--puff) * 2) calc(var(--puff) * 2),
     calc(var(--puff) * 2) calc(var(--puff) * 2),
     calc(var(--puff) * 2) calc(var(--puff) * 2),
     calc(var(--puff) * 2) calc(var(--puff) * 2),
-    100% calc(100% - var(--puff) * 2),
-    calc(100% - var(--puff) * 2) 100%;
-  mask-position: left top, left bottom, left top, right top, center, center;
+    calc(100% - var(--puff) * 2) calc(100% - var(--puff) * 2);
+  mask-position: left top, left bottom, left top, right top, center;
   mask-repeat:
     round no-repeat,
     round no-repeat,
     no-repeat round,
     no-repeat round,
-    no-repeat,
     no-repeat;
 }
 
