@@ -76,9 +76,56 @@ const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
 });
 
+/* Shared by the page itself and by the share card, so the two can never
+   drift apart. */
+const SITE_DESCRIPTION =
+  "A playful learning world for children under 10 — numbers, letters, colours and games with Pinki, Nova and Bloo.";
+
+/**
+ * **Deliberately English in all three locales.** The site's language is a
+ * COOKIE (see CLAUDE.md's language-switcher notes), and no unfurler — Slack,
+ * WhatsApp, iMessage, a search crawler — sends one, so a translated
+ * description here could never actually reach the reader it was for; it would
+ * only make the card depend on whichever request happened to warm the cache.
+ * The visible site still translates in full.
+ *
+ * **No `metadataBase`, on purpose.** Next 16 already derives one on Vercel
+ * from `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_BRANCH_URL` / `VERCEL_URL`
+ * (`next/dist/lib/metadata/resolvers/resolve-url.js`), so the share card
+ * resolves to an absolute URL on the deployment with zero configuration.
+ * Setting one by hand would pin every preview deployment to the production
+ * host. Add `metadataBase: new URL("https://<domain>")` here the day a custom
+ * domain lands, and nothing else changes.
+ *
+ * The card itself is a file, not code: `opengraph-image.jpg` /
+ * `twitter-image.jpg` beside this file, with their `.alt.txt` companions.
+ * Next finds them by convention and writes every `og:image*` /
+ * `twitter:image*` tag from them, including the real pixel dimensions —
+ * which is the part unfurlers need in order to render a large card at all.
+ */
 export const metadata: Metadata = {
-  title: "Edenic World",
-  description: "Edenic World — a learning site for kids.",
+  title: {
+    default: "Edenic World — Learn. Play. Grow.",
+    /* A sub-page that sets its own `title` gets it branded automatically;
+       none does yet, and this is what makes that free when one does. */
+    template: "%s — Edenic World",
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: "Edenic World",
+  openGraph: {
+    type: "website",
+    siteName: "Edenic World",
+    title: "Edenic World — Learn. Play. Grow.",
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    /* The big-picture card rather than the thumbnail one — the whole point
+       of drawing a 1200x630 scene. */
+    card: "summary_large_image",
+    title: "Edenic World — Learn. Play. Grow.",
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
