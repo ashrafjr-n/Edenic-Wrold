@@ -1,10 +1,8 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { Crown } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
-import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberGrid } from "@/components/learn/number/number-grid";
 import { NumbersIntro } from "@/components/learn/number/numbers-intro";
@@ -91,27 +89,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </span>
           </div>
 
-          {/* Same presentation-only achievements button as the character hub,
-              in the same spot — this page's header row now matches that one
-              exactly rather than faking the balance with empty space. */}
-          <div className="group/tip relative shrink-0">
-            <Button3D
-              variant="calm"
-              tone={{ face: "var(--surface)" }}
-              aria-label={dict.characterHub.achievements}
-              className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
-            >
-              <Crown
-                className="h-5 w-5 fill-current sm:h-6 sm:w-6"
-                style={{ color: "var(--color-gold)" }}
-                strokeWidth={1.5}
-              />
-            </Button3D>
-
-            <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
-              {dict.characterHub.yourAchievements}
-            </span>
-          </div>
+          {/* An inert spacer, the size of the back button facing it. The
+              achievements crown that stood here was cut on direct request —
+              there is nothing to award yet — and it cannot simply be
+              deleted: the row is `justify-between`, so without something of
+              the back button's width on this side the lesson chip stops being
+              centred on the page and slides right. */}
+          <div aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
         </div>
       </div>
 

@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { ArrowRight, Crown, RotateCcw, Unlock } from "lucide-react";
+import { ArrowRight, PartyPopper, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -483,12 +483,15 @@ export function NumberJourney({
             badge is the difference between the whole celebration fitting the
             viewport and her feet running off the bottom of it. */}
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
-          {/* The crown is the site's own achievement mark — the same filled
-              one the header row's achievements chip carries — on a pale gold
-              tile, so finishing a number is marked with the language the rest
-              of the app already uses for "you earned this". Filled and one
-              solid silhouette: an outlined icon does not read as clay at this
-              size. */}
+          {/* **A party popper, not the crown that was here.** The crown was
+              the site's achievement mark, shared with the header's
+              achievements chip — and that chip has since been cut from both
+              numbers pages, so a trophy on this screen was pointing at an
+              award that no longer exists anywhere. This is a moment, not a
+              medal: the child finished a number, and the mark should say
+              "hooray" rather than "you have won a cup". Still filled and
+              still one solid silhouette on the same pale gold tile — an
+              outlined icon does not read as clay at this size. */}
           <span
             className="tile tile-round tile-grain anim-pop-in flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16"
             style={
@@ -504,7 +507,7 @@ export function NumberJourney({
               } as CSSProperties
             }
           >
-            <Crown
+            <PartyPopper
               className="h-7 w-7 fill-current sm:h-8 sm:w-8"
               style={{ color: "var(--color-gold)" }}
               strokeWidth={1.5}
