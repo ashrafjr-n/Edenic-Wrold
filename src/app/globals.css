@@ -95,6 +95,18 @@
   --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='24' cy='66' r='24'/%3E%3Ccircle cx='62' cy='44' r='34'/%3E%3Ccircle cx='104' cy='50' r='34'/%3E%3Ccircle cx='142' cy='52' r='26'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='24' y='68' width='152' height='22'/%3E%3C/g%3E%3C/svg%3E");
   --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26' cy='64' r='26'/%3E%3Ccircle cx='62' cy='52' r='26'/%3E%3Ccircle cx='100' cy='48' r='34'/%3E%3Ccircle cx='140' cy='44' r='36'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='26' y='68' width='150' height='22'/%3E%3C/g%3E%3C/svg%3E");
 
+  /* A WIDE, FLAT bank — six lobes across a 40:11 box, against the puffy
+     three-lobe clouds above. **Restored, having been deleted once** (the
+     card that needed it was redesigned): the page-transition drift is the
+     new caller, and it needs exactly what this exists for. A puffy cloud
+     cannot be stretched to span a screen — blown up that wide its middle
+     lobe alone fills the box and it reads as a white dome — while a bank
+     keeps its lobes small relative to its width and stays a cloud at any
+     width. Every neighbouring pair of lobes OVERLAPS (14-18 units of the
+     400-wide viewBox); two that merely touch meet in a cusp, which in a
+     white silhouette against a coloured sky reads as a crack. */
+  --cloud-shape-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='200' cy='84' rx='192' ry='22'/%3E%3Ccircle cx='58' cy='64' r='34'/%3E%3Ccircle cx='118' cy='50' r='42'/%3E%3Ccircle cx='182' cy='60' r='36'/%3E%3Ccircle cx='246' cy='48' r='44'/%3E%3Ccircle cx='308' cy='62' r='36'/%3E%3Ccircle cx='358' cy='72' r='26'/%3E%3C/g%3E%3C/svg%3E");
+
   /* Fades the art on a colored panel into its fill instead of letting it end
      on a rectangle edge. See `.panel-art`. */
   --panel-art-fade: linear-gradient(to right, transparent 0%, #000 46%),
@@ -1333,7 +1345,7 @@ bdi {
     var(--cloud-lobes),
     linear-gradient(
       to bottom,
-      rgb(255 255 255 / 0%) 46%,
+      rgb(255 255 255 / 0%) var(--cloud-band, 46%),
       color-mix(in srgb, var(--cloud-deep) 88%, transparent) 100%
     ),
     linear-gradient(
@@ -1368,6 +1380,39 @@ bdi {
 
 .cloud--v3 .cloud-body {
   mask-image: var(--cloud-shape-3);
+}
+
+/* The wide bank. Its own aspect ratio, not the puffs' 20:11 — and a caller
+   that gives it an explicit height (`.cloud--stretch`) drops the ratio
+   altogether and lets the mask stretch, which is safe here in a way it is
+   NOT for a puff: the shape is authored `preserveAspectRatio='none'`, and a
+   bank pulled taller or wider just reads as a longer bank. Six lobes, so six
+   highlights — narrower in x than the puffs' because this box is twice as
+   wide, so the same lobe is half the share of it. */
+.cloud--v4 {
+  aspect-ratio: 40 / 11;
+  /* The bank starts its underside band higher up than a free-standing puff
+     does. It is always used cropped — run off the edge of whatever it is
+     scenery for — so the deepest part of the band is off-screen, and at the
+     puffs' 46% the visible slice was an unshaded white expanse. */
+  --cloud-band: 26%;
+  --cloud-lobes:
+    radial-gradient(8% 28% at 58% 32%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(7.5% 27% at 26% 34%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 43% 45%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 74% 47%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6% 22% at 12% 49%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(4.5% 17% at 88% 58%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
+.cloud--v4 .cloud-body {
+  mask-image: var(--cloud-shape-4);
+}
+
+/* Drops the aspect ratio so an explicit height applies. Bank only — a puff
+   stretched off its 20:11 loses the roundness its lobes are drawn for. */
+.cloud--stretch {
+  aspect-ratio: auto;
 }
 
 
