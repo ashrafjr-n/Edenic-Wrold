@@ -105,7 +105,8 @@ interface TrailSkyProps {
  *
  * **Full width, no `max-w`, taller than the viewport.** `svh`, not `vh` — on
  * a phone `vh` is measured with the browser chrome hidden, which is exactly
- * the amount a `100vh` box then overflows by (the same call
+ * the amount a `100vh` box then overflows by (`vh` is the LARGE
+ * viewport; `svh` is the small one — the same call
  * `.puzzle-upright` already makes).
  *
  * `overflow-hidden` still guards the edges: a lane plus its wobble plus half

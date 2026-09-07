@@ -34,7 +34,7 @@ export interface GuideState {
  * cheering) and steps aside wherever the CONTENT is the lesson.
  *
  * `discover` is the row worth defending: it is the reel and nothing else,
- * sized as the hero of its own screen (`sm:h-[68vh]`). She used to sit in its
+ * sized as the hero of its own screen (`sm:h-[68svh]`). She used to sit in its
  * bottom-left corner at `aside` — small, silent, out of the flow — and was
  * taken off it entirely on direct request. The reasoning that put her there
  * still holds and is why she must not come back: a guide standing in front of

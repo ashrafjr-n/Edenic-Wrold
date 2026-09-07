@@ -1616,7 +1616,7 @@ bdi {
 
 @keyframes veil-cloud-rise {
   from {
-    translate: -50% 125vh;
+    translate: -50% 125lvh;
   }
   to {
     translate: -50% 0;
@@ -1628,7 +1628,7 @@ bdi {
     translate: -50% 0;
   }
   to {
-    translate: -50% -125vh;
+    translate: -50% -125lvh;
   }
 }
 
@@ -2719,7 +2719,7 @@ button:disabled,
   .anim-hero-parallax {
     animation: hero-parallax 1s linear both;
     animation-timeline: scroll(root block);
-    animation-range: 0 70vh;
+    animation-range: 0 70lvh;
   }
 }
 
