@@ -133,13 +133,13 @@ export function NumberGrid({
           wide and twice as short: at full width the cells grow to ~215px and
           the third row falls off the bottom of the screen, while Pinki, sized
           as a share of the card, lands squarely on top of numbers 5, 6, 8 and
-          9. Holding the column to 28rem does both jobs at once — the cells
+          9. Holding the column to 26rem on an iPad and 28rem on a desktop does both jobs at once — the cells
           come back to a tappable ~136px so all nine fit above the fold, and
           the half of the card she now stands in is EMPTY, so she reads as
           standing beside the grid pointing into it rather than lying across
           it. Below `lg` this div has no width of its own and changes
           nothing. */}
-      <div className="lg:w-[28rem]">
+      <div className="md:w-[26rem] lg:w-[28rem]">
       <ActivityProgress
         label={dict.lessonPicker.numbersLabel}
         done={finished}
