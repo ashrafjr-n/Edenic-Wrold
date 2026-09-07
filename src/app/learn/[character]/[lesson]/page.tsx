@@ -44,7 +44,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
          close enough to the viewport that she would otherwise widen the
          document — which on a phone does not merely add a scrollbar, it
          widens the LAYOUT VIEWPORT and zooms the whole page out. */
-      className="relative flex flex-1 flex-col overflow-x-hidden pb-16 pt-5 sm:pb-20"
+      className="relative flex flex-1 flex-col overflow-x-hidden pb-16 pt-5 sm:pb-20 lg:pb-6"
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
@@ -115,7 +115,21 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12 lg:max-w-5xl lg:py-8">
+      {/* **From `md` the container HUGS the grid instead of running to the
+          page's width.** It was `lg:max-w-5xl`, which made a 960px card for a
+          448px grid: the numerals sat in the left half and the right half was
+          empty white — and emptier still for a returning child, since the
+          Pinki who stood in it only renders before the first number is
+          finished. The cells cannot grow to fill that width (at ~215px the
+          third row leaves the screen), so the card is what had to come in.
+          The cap is the grid column's own width plus this container's
+          padding, which is why it is an exact `rem` rather than a Tailwind
+          step. `lg:py-4` with the route's `lg:pb-6` is what brings the whole
+          page back inside a 900px-tall viewport — measured at 1440x900: 1006
+          before, 900 exactly after, so all nine numerals are above the fold
+          the way the grid's own comment always intended. Phone and `sm`
+          untouched. */}
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12 md:max-w-[35rem] lg:max-w-[37rem] lg:py-4">
         {/* Built here rather than inside the grid so `NumbersIntro` stays a
             Server Component — the grid is a Client Component only because
             unlocking depends on saved progress, and there is no reason for
