@@ -121,7 +121,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            Her own colour on the ring and the tint at its foot —
            `--bubble-ink` falls back to Pinki, whose journey the bubble was
            built for. */
-        className={`anim-fade-up pointer-events-none absolute bottom-[46%] left-4 z-10 w-[64%] max-w-[15.5rem] sm:left-auto sm:w-[20rem] sm:max-w-none ${
+        className={`anim-fade-up pointer-events-none absolute left-4 z-10 w-[64%] max-w-[15.5rem] sm:left-auto sm:w-[20rem] sm:max-w-none ${
           /* **It is allowed to lie OVER her**, on direct request — what
              matters is that it reads as her speaking, not that it clears
              her silhouette. That freedom is what makes a phone work at all
@@ -129,14 +129,21 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
              no space beside her to put it in, and a bubble squeezed into
              what is left would be three words to a line.
 
-             The pointing beat still steps aside at desktop widths, and only
-             there: her raised finger reaches higher and further left than
-             her waving hand, and the tail otherwise lands straight across
-             the fingertip — hiding the one thing that beat exists to show.
-             On a phone she raises it clear above the bubble already. */
+             **The pointing beat rides much higher, at every width.** On
+             the greeting beat she is waving, so a bubble across her chest
+             is fine; on the pointing beat she has stepped forward and her
+             head fills the middle of the screen, and at the greeting's
+             height the bubble lay straight over her face — one eye and her
+             raised hand both under it (screenshotted at 390x844). It goes
+             up until its bottom edge clears her horns, which puts it in the
+             band of open sky between the first cloud and the top of her
+             head. It also steps further right at desktop widths, where her
+             raised finger reaches higher and further left than her waving
+             hand and the tail would otherwise land across the fingertip —
+             hiding the one thing that beat exists to show. */
           pointing
-            ? "sm:bottom-[52%] sm:right-[30%]"
-            : "sm:bottom-[42%] sm:right-[24%]"
+            ? "bottom-[60%] sm:bottom-[58%] sm:right-[30%]"
+            : "bottom-[46%] sm:bottom-[42%] sm:right-[24%]"
         }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
