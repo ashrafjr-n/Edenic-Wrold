@@ -148,41 +148,47 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
         <div>
-          {/* **A speech CLOUD, not a rectangle with a triangle on it** — she
-              is standing in a sky made of clay clouds, so her voice is one
-              too (`.cloud-bubble`, `globals.css`).
+          {/* **The site's own white clay, not a bubble shape of its own.**
+              `.card .card-clay-white` is the material every white chrome
+              surface here is made of — inner top highlight, inner bottom
+              shade, one wide soft drop shadow — and `.speech-clay` adds the
+              single thing a card doesn't have: a whisper of Nova's lavender
+              in the face, so the bubble doesn't read as one more of the
+              white stage clouds behind it. **No border, no outline, no
+              mask.** A lavender-ringed, scalloped cloud silhouette was built
+              here first and cut on direct request; 122 lines of mask
+              geometry became one line of reuse.
 
-              **The two shrinking puffs are its tail, and they step out of
-              the bubble's RIGHT edge, biased low** — exactly the direction
-              and the bias `.speech-bubble--left`'s triangle had, because
-              nothing about where Nova stands changed: she is to the right
-              of the bubble at every width and in every locale (the layout
-              never mirrors — see CLAUDE.md's language-switcher notes), and
-              a tail hung under the bubble would point at the ground beside
-              her instead of at her. They sit clear of the bubble with a
-              real gap, the way a thought cloud's tail does; touching it
-              would merge them into one blob through the wrapper's shared
-              ring. */}
-          <div className="cloud-bubble-wrap">
+              **The tail is two shrinking clay discs stepping out of the
+              bubble's RIGHT edge, biased low** — the direction
+              `.speech-bubble--left`'s triangle pointed, because Nova stands
+              to the right of the bubble at every width and in every locale
+              (the layout never mirrors). They are the same three classes as
+              the bubble plus `.card-pill`, so they are literally the same
+              material rather than a lookalike, and they can never drift from
+              it. `.card-pill` is what rounds them: `.card` sets
+              `border-radius` and is UNLAYERED, so a Tailwind `rounded-full`
+              would silently lose to it. */}
+          <div className="relative">
             <p
               dir={dir}
               /* `text-balance` is what "spread it over the lines, don't run
                  it out in one" actually is — the browser evens the lines out
                  itself, so a short Kurdish line and a long Arabic one both
                  come out as a block rather than one long line plus an
-                 orphan. Centred, because a cloud has no straight edge for
-                 ragged text to align to. */
-              className="cloud-bubble text-balance text-center text-base font-semibold leading-snug text-[var(--color-ink)] sm:text-lg"
+                 orphan. Centred, because the bubble is symmetrical and has
+                 no strong edge for ragged text to hang off. */
+              className="card card-clay-white speech-clay text-balance px-5 py-4 text-center text-base font-semibold leading-snug text-[var(--color-ink)] sm:px-6 sm:py-4.5 sm:text-lg"
             >
               {pointing ? dict.trail.introStart : dict.trail.introHello}
             </p>
             <span
               aria-hidden
-              className="cloud-bubble-puff absolute right-[-1.6rem] top-[62%] h-[1.15rem] w-[1.15rem] sm:right-[-1.9rem] sm:h-[1.35rem] sm:w-[1.35rem]"
+              className="card card-clay-white card-pill speech-clay absolute right-[-1.9rem] top-[64%] h-[1.5rem] w-[1.5rem] sm:right-[-2.2rem] sm:h-[1.75rem] sm:w-[1.75rem]"
             />
             <span
               aria-hidden
-              className="cloud-bubble-puff absolute right-[-3rem] top-[84%] h-[0.7rem] w-[0.7rem] sm:right-[-3.4rem] sm:h-[0.8rem] sm:w-[0.8rem]"
+              className="card card-clay-white card-pill speech-clay absolute right-[-3.4rem] top-[93%] h-[0.9rem] w-[0.9rem] sm:right-[-3.9rem] sm:h-[1.05rem] sm:w-[1.05rem]"
             />
           </div>
 
