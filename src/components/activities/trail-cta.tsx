@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import { Footprints } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 import trailCloud from "../../../public/assets/activity-page/trial/trial-cloude.png";
@@ -35,8 +35,9 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
  * absolutely positioned and plays no part in the card's own height, so
  * without this the card would size itself to the text and button alone and
  * the (much taller) cloud would ride up over both. The spacer's height is
- * tuned to roughly the cloud's own rendered height at each breakpoint; resize
- * one and check the other doesn't drift out of step.
+ * tuned to roughly the cloud's own rendered height at each breakpoint —
+ * **resize the cloud's `w-*` classes and shrink this in step**, or the card
+ * grows taller than the (now smaller) cloud actually needs.
  *
  * **The cloud is deliberately BIGGER than the card is tall enough to show
  * whole, and that's the point, not a bug.** It's centred and anchored to the
@@ -58,12 +59,12 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
  * documents). Character tokens don't move with the theme, so this panel is
  * the same blue and the same contrast in both.
  *
- * **The CTA carries a lucide `Compass`**, not the `Footprints` the numbers
- * journey and this card's own earlier version used — chosen for the same
- * "adventure" idea without repeating an icon another part of the site already
- * owns. Its text is `--color-ink-fixed`, not `--color-ink`: that face is
- * pinned pale in both themes while `--color-ink` flips light in dark mode,
- * which would leave pale on pale.
+ * **The CTA carries a lucide `Footprints`** — a step back from `Compass`,
+ * which read as generic rather than "trail". Footprints are the literal
+ * thing this page is named after (a path you walk one step at a time) and
+ * nothing else on the site uses them. Its text is `--color-ink-fixed`, not
+ * `--color-ink`: that face is pinned pale in both themes while `--color-ink`
+ * flips light in dark mode, which would leave pale on pale.
  */
 export function TrailCta({
   dict,
@@ -121,13 +122,13 @@ export function TrailCta({
           } as CSSProperties
         }
       >
-        <Compass className="h-5 w-5" strokeWidth={2.25} />
+        <Footprints className="h-5 w-5" strokeWidth={2.25} />
         <span dir={dir}>{dict.trail.cta}</span>
       </span>
 
       {/* Pure spacer — reserves the gap under the button so the (bigger,
           absolutely positioned) cloud below never has to sit under it. */}
-      <div aria-hidden className="mt-6 h-28 w-full sm:mt-8 sm:h-40 lg:h-48" />
+      <div aria-hidden className="mt-6 h-24 w-full sm:mt-8 sm:h-32 lg:h-40" />
 
       <div
         aria-hidden
@@ -137,7 +138,7 @@ export function TrailCta({
           src={trailCloud}
           /* Decorative — the panel's own heading names it. */
           alt=""
-          className="h-auto w-[26rem] select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[34rem] lg:w-[40rem]"
+          className="h-auto w-[22rem] select-none transition-transform duration-500 ease-out group-hover:scale-110 sm:w-[28rem] lg:w-[33rem]"
         />
       </div>
     </Link>
