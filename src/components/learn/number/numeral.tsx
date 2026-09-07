@@ -6,6 +6,11 @@ interface NumeralProps {
   image: string;
   /** Tailwind box size, e.g. `"h-28 w-28"`. The numeral fills it. */
   sizeClass: string;
+  /** What the numeral actually measures on screen, per breakpoint. Without
+      it `next/image` can only guess from `width`, and it guesses high: a
+      picker cell paints this at 64-112px and was being served a 640px file,
+      nine times over. */
+  sizes: string;
   locked?: boolean;
   /** Skips the alt text where a parent already labels the control. */
   decorative?: boolean;
@@ -40,6 +45,7 @@ export function Numeral({
   value,
   image,
   sizeClass,
+  sizes,
   locked = false,
   decorative = false,
   bloom = true,
@@ -63,8 +69,9 @@ export function Numeral({
       <Image
         src={image}
         alt={decorative ? "" : `The number ${value}`}
-        width={414}
-        height={600}
+        width={208}
+        height={302}
+        sizes={sizes}
         className={`relative h-full w-full object-contain ${
           locked ? "numeral-shadow--locked" : "numeral-shadow"
         }`}

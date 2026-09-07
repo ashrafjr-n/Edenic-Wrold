@@ -43,8 +43,8 @@ export function FriendPod({ character, tagline, dir, offset }: FriendPodProps) {
         <Image
           src={image}
           alt={name}
-          width={475}
-          height={539}
+          width={169}
+          height={192}
           sizes="176px"
           className="absolute bottom-3 left-1/2 h-44 w-auto -translate-x-1/2 object-contain drop-shadow-[0_14px_18px_rgba(92,78,190,0.22)] transition-transform duration-300 group-hover:scale-105 sm:h-48"
         />

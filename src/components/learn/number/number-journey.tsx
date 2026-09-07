@@ -268,6 +268,7 @@ export function NumberJourney({
           value={value}
           image={image}
           sizeClass="h-36 w-36 sm:h-52 sm:w-52"
+          sizes="(min-width: 640px) 208px, 144px"
         />
       </div>
     );

@@ -152,6 +152,7 @@ export function NumberQuiz({
                  question, and at the old size they were smaller than the
                  apples the child had just counted. */
               sizeClass="h-24 w-24 sm:h-32 sm:w-32 lg:h-36 lg:w-36"
+              sizes="(min-width: 1024px) 144px, (min-width: 640px) 128px, 96px"
               decorative
             />
           </button>

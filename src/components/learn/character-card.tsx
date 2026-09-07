@@ -107,8 +107,8 @@ export function CharacterCard({
             <Image
               src={image}
               alt={name}
-              width={475}
-              height={539}
+              width={282}
+              height={320}
               className={`h-64 w-auto object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.2)] transition-transform duration-300 sm:h-80 ${
                 locked
                   ? "opacity-75 grayscale-[0.55]"

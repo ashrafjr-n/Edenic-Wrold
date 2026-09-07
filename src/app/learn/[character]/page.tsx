@@ -96,8 +96,8 @@ export default async function CharacterLearnPage({
               <Image
                 src={character.image}
                 alt=""
-                width={475}
-                height={539}
+                width={64}
+                height={73}
                 preload
                 /* Scaled up and offset inside the circle so the crop lands on
                    the face — the source render is a full body, and the head
@@ -157,7 +157,11 @@ export default async function CharacterLearnPage({
               alt={format(dict.characterHub.learningCorner, { name: character.name })}
               dir={dirFor(dict.locale)}
               fill
-              sizes="100vw"
+              /* The banner is `sm:hidden`, but a hidden image is still
+                 fetched — at plain `100vw` a desktop asked for the 1920/3840
+                 rendition of a picture it never shows. The first clause
+                 makes the browser pick the smallest candidate there. */
+              sizes="(min-width: 640px) 1px, 100vw"
               preload
               className="object-cover"
             />

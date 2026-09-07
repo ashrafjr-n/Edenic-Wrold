@@ -164,6 +164,7 @@ export function NumberGrid({
                   value={item.value}
                   image={item.image}
                   sizeClass="h-16 w-16 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+                  sizes="(min-width: 1024px) 112px, (min-width: 640px) 96px, 64px"
                   locked={locked}
                   decorative
                   /* The cell is the numeral's ground now, so the halo has a
