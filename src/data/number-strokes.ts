@@ -46,9 +46,15 @@ export const numberStrokes: Record<number, readonly NumberStroke[]> = {
     ],
   ],
   /* Two strokes: the diagonal-and-bar, then the stem down through it. */
+  /* Measured off `numbers/4.png`'s own alpha rather than drawn by eye: the
+     stem's centre runs at x 62 (not 64), the crossbar sits at y 65 and
+     reaches from 16 to 84, and the diagonal that lands on its left end
+     passes through x 31.6 at mid-height. The old diagonal ran about five
+     units right of the glyph's, which made the drawn triangle visibly
+     narrower than the clay numeral beside it. */
   4: [
-    [[64, 12], [20, 66], [82, 66]],
-    [[64, 12], [64, 92]],
+    [[62, 8], [16, 65], [84, 65]],
+    [[62, 8], [62, 93]],
   ],
   5: [
     [
