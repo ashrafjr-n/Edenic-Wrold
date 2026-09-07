@@ -12,6 +12,7 @@ import { scriptFor } from "@/data/number-script";
 import { countActivityFor } from "@/data/count-activities";
 import { guideFor, pointsAtTarget } from "@/data/number-guide";
 import { buildNumberChoices } from "@/lib/number-choices";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import type { ButtonTone } from "@/components/ui/button-3d";
@@ -129,6 +130,12 @@ export function NumberJourney({
   /* Bumping this remounts whichever interactive stage is on screen, which is
      how a retry clears it — that state lives inside the stage, not up here. */
   const [attempt, setAttempt] = useState(0);
+
+  /* The tracing stage owns the screen: the child draws on it with a finger,
+     and the page sliding under that finger is the one thing that can ruin a
+     stroke. `touch-action: none` on the board already stops a drag ON it from
+     scrolling — this stops the page moving at all while the board is up. */
+  useScrollLock(stage === "trace");
 
   const complete = useProgress((state) => state.complete);
   const stars = starsFor(mistakes);
