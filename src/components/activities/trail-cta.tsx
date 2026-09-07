@@ -26,13 +26,20 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
  * card width is a solid mass of overlapping white; three friends spread over
  * the same strip reads as a path. From `sm` the panel is wide enough for the
  * two stops still to come, which is what says the trail carries on.
+ *
+ * **Only the LAST stop over-hangs the panel** — the trail runs off the right,
+ * the way it climbs. Pinki's used to run off the LEFT, which read as a
+ * cropped mistake rather than a continuation: the cloud silhouette got wider
+ * and flatter when `<Cloud />` was rebuilt on five lobes, so every `left` and
+ * `height` here was re-set against the new proportions. Re-measure them if
+ * the silhouette changes again.
  */
 const STOPS = [
-  { id: "pinki", left: 10, bottom: 2, height: 46, variant: 2, wide: false },
-  { id: null, left: 30, bottom: 30, height: 26, variant: 3, wide: true },
-  { id: "nova", left: 51, bottom: 6, height: 42, variant: 1, wide: false },
-  { id: null, left: 71, bottom: 40, height: 24, variant: 2, wide: true },
-  { id: "bloo", left: 89, bottom: 16, height: 38, variant: 3, wide: false },
+  { id: "pinki", left: 14, bottom: 2, height: 44, variant: 2, wide: false },
+  { id: null, left: 33, bottom: 30, height: 24, variant: 3, wide: true },
+  { id: "nova", left: 52, bottom: 6, height: 40, variant: 1, wide: false },
+  { id: null, left: 72, bottom: 38, height: 22, variant: 2, wide: true },
+  { id: "bloo", left: 93, bottom: 16, height: 36, variant: 3, wide: false },
 ] as const satisfies readonly {
   id: string | null;
   left: number;
@@ -156,7 +163,7 @@ export function TrailCta({
             CONTRAST before opacity, so on a saturated panel it reads as haze
             at a distance rather than as a see-through cloud. The only far
             cloud left on the site, now that the sky's own layer is gone. */}
-        <div className="absolute bottom-[24%] left-[38%] aspect-[20/11] h-[62%] -translate-x-1/2">
+        <div className="absolute bottom-[30%] left-[31%] aspect-[20/11] h-[56%] -translate-x-1/2">
           <Cloud
             variant={3}
             tint="white"
