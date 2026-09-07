@@ -184,7 +184,7 @@ export default async function CharacterLearnPage({
             `--character-accent*` is the phone fallback the lesson hues
             switch back to below `sm`. */}
         <div
-          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 lg:grid-cols-3"
+          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 md:max-w-2xl lg:max-w-7xl lg:grid-cols-3"
           style={
             {
               "--character-accent": character.accent,
