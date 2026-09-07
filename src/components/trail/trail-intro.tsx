@@ -143,10 +143,19 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
         <div>
           {/* **A speech CLOUD, not a rectangle with a triangle on it** — she
               is standing in a sky made of clay clouds, so her voice is one
-              too (`.cloud-bubble`, `globals.css`). The two puffs stepping
-              down to the right are its tail: she stands below and to the
-              right of it at every width, so they always point at her and
-              never need to flip per locale. */}
+              too (`.cloud-bubble`, `globals.css`).
+
+              **The two shrinking puffs are its tail, and they step out of
+              the bubble's RIGHT edge, biased low** — exactly the direction
+              and the bias `.speech-bubble--left`'s triangle had, because
+              nothing about where Nova stands changed: she is to the right
+              of the bubble at every width and in every locale (the layout
+              never mirrors — see CLAUDE.md's language-switcher notes), and
+              a tail hung under the bubble would point at the ground beside
+              her instead of at her. They sit clear of the bubble with a
+              real gap, the way a thought cloud's tail does; touching it
+              would merge them into one blob through the wrapper's shared
+              ring. */}
           <div className="cloud-bubble-wrap">
             <p
               dir={dir}
@@ -162,11 +171,11 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
             </p>
             <span
               aria-hidden
-              className="cloud-bubble-puff absolute -bottom-2.5 right-9 h-5 w-5 sm:right-11 sm:h-6 sm:w-6"
+              className="cloud-bubble-puff absolute right-[-1.6rem] top-[62%] h-[1.15rem] w-[1.15rem] sm:right-[-1.9rem] sm:h-[1.35rem] sm:w-[1.35rem]"
             />
             <span
               aria-hidden
-              className="cloud-bubble-puff absolute -bottom-8 right-3 h-3 w-3 sm:-bottom-9 sm:right-4 sm:h-3.5 sm:w-3.5"
+              className="cloud-bubble-puff absolute right-[-3rem] top-[84%] h-[0.7rem] w-[0.7rem] sm:right-[-3.4rem] sm:h-[0.8rem] sm:w-[0.8rem]"
             />
           </div>
 
@@ -180,7 +189,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
                  the first beat and has to be reachable by keyboard. Its
                  click bubbles to the catcher, which is what advances her —
                  no second handler to keep in step. */
-              className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-10 px-5 py-2 text-sm sm:mt-11 sm:px-6 sm:py-2.5 sm:text-base"
+              className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-4 px-5 py-2 text-sm sm:mt-5 sm:px-6 sm:py-2.5 sm:text-base"
               /* `--btn-text` has to be set by hand here, exactly as
                  `TrailCta` sets it: these are `Button3D`'s classes without
                  `Button3D`, and it is the component that normally turns a
