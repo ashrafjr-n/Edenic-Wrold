@@ -3,6 +3,7 @@ import { Fredoka, Baloo_Bhaijaan_2, Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
+import { PageTransitionOverlay } from "@/components/ui/page-transition-overlay";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { getDictionary, getLocale } from "@/lib/locale";
 import "./globals.css";
@@ -107,6 +108,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {THEME_INIT_SCRIPT}
         </Script>
         <ThemeSync />
+        <PageTransitionOverlay />
         <Header dict={dict} locale={locale} />
         {children}
         <BottomNav dict={dict} />
