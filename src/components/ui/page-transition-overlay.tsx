@@ -40,6 +40,17 @@ interface VeilBank {
  */
 const BANK_H = 68;
 const BANK_STEP = 35;
+/**
+ * How wide each bank is drawn — **in `vh`, tracking its own forced height,
+ * with a `vw` floor.** The height has to be a share of the VIEWPORT (three
+ * banks have to cover it), so a width in `vw` leaves the shape's aspect
+ * ratio at the mercy of the screen's: on a 390x844 phone a `150vw` bank came
+ * out three and a half times taller than the silhouette is drawn for, and
+ * its lobes stretched into tall fingers — the opposite of the long, flat
+ * cloud this variant exists to be. Sized off `vh` it holds roughly the same
+ * proportions everywhere. The `vw` floor is what keeps it spanning a short,
+ * wide desktop, where `vh` alone would leave it narrower than the screen. */
+const BANK_W = `max(${(BANK_H * 2.4).toFixed(0)}vh, 115vw)`;
 
 /** Top to bottom, and the tints read as depth: the nearest bank (lowest on
     screen, drawn last) is plain white, the ones behind it take a breath of
@@ -135,7 +146,7 @@ export function PageTransitionOverlay() {
             {
               top: bank.top,
               height: bank.height,
-              "--cloud-w": "150vw",
+              "--cloud-w": BANK_W,
               animationDelay: bank.delay,
             } as CSSProperties
           }
