@@ -41,28 +41,30 @@ export default async function TrailPage({
   const dict = await getDictionary();
 
   return (
-    /* No `pageAccent` here on purpose: this page has no colour of its own to
-       claim yet (there is no trail section palette until the stages land),
-       and `--page-accent-color`'s own default is the brand pink every back
-       button wore before that variable existed. */
-    <main className="relative flex flex-1 flex-col">
+    /* `trail-page` carries this route's back-button ink (`globals.css`):
+       white in daylight, black at night. It has to be a class rather than a
+       `pageAccent()` argument because the value CHANGES WITH THE THEME, and
+       `pageAccent` takes fixed strings. The face itself is the default
+       `--page-accent-color`, the brand pink every back button wore before
+       that variable existed — this page has no section colour of its own to
+       claim until the stages land. */
+    <main className="trail-page relative flex flex-1 flex-col">
       {/* Twice the viewport, so the scroll behaviour and the cloud spread
           can both be judged now rather than after the path is drawn. */}
       <TrailSky palette={paletteFrom(sky)} className="min-h-[200svh]" />
 
-      {/* Over the sky rather than in a chrome row above it — the sky is
-          full-bleed and there is no row to sit in. `sticky` keeps it in
-          reach down a two-viewport scroll without `fixed`'s habit of
-          escaping to the viewport on a phone; `top` clears the header. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-full px-4 sm:px-8">
-        <div className="sticky top-4 z-10 flex sm:top-6">
-          <span className="pointer-events-auto">
-            <BackButton
-              href="/play"
-              label={dict.activities.backToActivities}
-            />
-          </span>
-        </div>
+      {/* **`fixed`, not `sticky`** — it has to stay exactly where it is for
+          the whole two-viewport scroll, and the `sticky` version this
+          replaced did not: it was pinned inside an absolutely-positioned
+          wrapper, so it left with that wrapper instead of holding its spot.
+          `fixed` is measured against the viewport and simply cannot drift.
+
+          `top` clears the header with a real gap under it rather than
+          sitting against it, and the whole thing stays below the header's
+          own `z-20` (and below the transition veil's `z-10`, which is
+          portalled to `body` and so paints after this at the same level). */}
+      <div className="fixed left-4 top-[5.25rem] z-10 sm:left-8 sm:top-[7rem]">
+        <BackButton href="/play" label={dict.activities.backToActivities} />
       </div>
     </main>
   );
