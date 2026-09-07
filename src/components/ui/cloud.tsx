@@ -5,14 +5,16 @@ export type CloudSize = "sm" | "md" | "lg";
  * Which silhouette, so a sky full of clouds isn't one shape repeated. All
  * three share the 20:11 box `.cloud` locks its aspect ratio to.
  *
- * A fourth existed for one round — a wide, flat BANK at 40:11, for a cloud
- * that had to span a whole card, since a puff stretched that wide shows only
- * its middle lobe and reads as a white dome. It went when the card that
- * needed it was redesigned. Rebuild it (shape token, `aspect-ratio`, its own
- * lobe highlights) if something has to span like that again — but a row of
- * separate puffs is usually the better answer.
+ * **4 is a different KIND of object, not a fourth puff**: a wide, flat BANK
+ * at 40:11 with its own `aspect-ratio`, for a cloud that has to SPAN
+ * something — a puff stretched that wide shows only its middle lobe and
+ * reads as a white dome. It was deleted for a round and restored for the
+ * page-transition drift, where three banks cover the screen with no vertical
+ * seams at all. Pair it with `.cloud--stretch` (via `className`) to give it
+ * an explicit height; the shape is authored `preserveAspectRatio='none'`, so
+ * it simply reads as a longer bank.
  */
-export type CloudVariant = 1 | 2 | 3;
+export type CloudVariant = 1 | 2 | 3 | 4;
 export type CloudTint = "white" | "sky" | "pink" | "lavender";
 
 interface CloudProps {
