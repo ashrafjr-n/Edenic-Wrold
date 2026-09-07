@@ -8,12 +8,22 @@ import type { Character } from "@/types/character";
 
 type TileVars = CSSProperties & { "--tile-tint"?: string };
 
-/** The entrance timeline: the heading lands first, then each friend, name,
-    tagline and button in turn. Everything is on screen by ~1.5s. */
-const CARD_DELAY = 0.4;
-const CARD_STAGGER = 0.1;
-const FRIEND_DELAY = 0.65;
-const FRIEND_STAGGER = 0.13;
+/** The entrance timeline: the heading lands first, then the cast, then each
+    friend's name, tagline and button in turn. Everything is on screen by
+    ~1.2s.
+
+    **All three friends arrive TOGETHER — there is deliberately no per-card
+    stagger any more, and no `index` for one to read.** They were staggered
+    0.1s (the card) and 0.13s (the character) apart, so the three landed at
+    0.65 / 0.78 / 0.91s with the last settling at ~1.66s: late, and visibly
+    one-after-another on a page whose whole composition is a GROUP photo, not
+    a list (see the friend-picker conventions in CLAUDE.md). Direct request
+    to make their arrival consistent — so the stagger constants are gone
+    rather than set to zero, which is what keeps them from drifting back. The
+    offsets below still run in sequence WITHIN a card; that sequence is
+    identical for all three, which is what "together" means here. */
+const CARD_DELAY = 0.3;
+const FRIEND_DELAY = 0.45;
 /** Idle float starts once pop-in (0.75s) has settled, so the two never fight. */
 const POP_IN_DURATION = 0.75;
 const NAME_OFFSET = 0.15;
@@ -44,14 +54,13 @@ export function CharacterCard({
 }: CharacterCardProps) {
   const { name, image, accent, accentDark, locked } = character;
 
-  const friendDelay = FRIEND_DELAY + index * FRIEND_STAGGER;
   const delay = {
-    card: `${CARD_DELAY + index * CARD_STAGGER}s`,
-    friend: `${friendDelay}s`,
-    breathe: `${friendDelay + POP_IN_DURATION}s`,
-    name: `${friendDelay + NAME_OFFSET}s`,
-    tagline: `${friendDelay + TAGLINE_OFFSET}s`,
-    button: `${friendDelay + BUTTON_OFFSET}s`,
+    card: `${CARD_DELAY}s`,
+    friend: `${FRIEND_DELAY}s`,
+    breathe: `${FRIEND_DELAY + POP_IN_DURATION}s`,
+    name: `${FRIEND_DELAY + NAME_OFFSET}s`,
+    tagline: `${FRIEND_DELAY + TAGLINE_OFFSET}s`,
+    button: `${FRIEND_DELAY + BUTTON_OFFSET}s`,
   };
 
   /* The pale circle is the only place a character's own color appears here —
