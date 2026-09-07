@@ -15,9 +15,9 @@ import type { Locale } from "@/types/locale";
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
     <header className="sticky top-0 z-20 bg-[var(--surface)] shadow-[0_6px_20px_-16px_rgb(var(--shadow-hue)/45%)]">
-      <div className="flex flex-col items-center gap-4 px-5 py-4 sm:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-10">
+      <div className="flex flex-col items-center gap-4 px-5 py-2.5 sm:px-8 sm:py-4 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-10">
         <div className="flex w-full items-center justify-between gap-4 lg:w-auto lg:justify-start">
-          <Logo className="h-12 sm:h-14" />
+          <Logo className="h-11 sm:h-14" />
 
           {/* On a phone the chrome shares the logo's row and the nav drops
               below it; from `lg` all three tracks sit on one line. */}
@@ -26,7 +26,13 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           </div>
         </div>
 
-        <div className="order-last lg:order-none">
+        {/* `hidden sm:block`, not just `MainNav`'s own `hidden`: below `sm`
+            the nav has nothing to show, but the wrapper is still a flex child
+            and the column's `gap-4` was reserving 1rem under the logo row for
+            it. Hiding the wrapper is what actually takes that height back —
+            the phone header is the shortest it can be with a 44px chrome
+            button in it. */}
+        <div className="hidden sm:block sm:order-last lg:order-none">
           <MainNav dict={dict} />
         </div>
 
