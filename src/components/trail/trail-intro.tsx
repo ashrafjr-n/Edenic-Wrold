@@ -108,13 +108,20 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            to the far left corner with her at the far right and a tail
            pointing across an empty screen at nothing. The bubble belongs
            beside the character speaking, so it is positioned against the
-           same edge she is: its right edge lands where her body starts, and
-           `--left`'s tail (biased low, toward where a face actually is)
-           points straight at her.
+           same edge she is, with the cloud's two tail puffs stepping down
+           off its bottom-right corner toward her.
 
-           Her own colour on the ring and tail — `--bubble-ink` falls back to
-           Pinki, whose journey the bubble was built for. */
-        className={`anim-fade-up pointer-events-none absolute bottom-[46%] left-4 z-10 w-[72%] sm:left-auto sm:w-[30%] ${
+           **Deliberately narrow, and capped.** A wide box gives
+           `text-balance` nothing to balance — the line simply fits, and the
+           result is the one long stripe of text this replaced. At this width
+           every one of the three languages breaks over two or three lines,
+           which is what makes it read as a spoken block rather than a
+           caption.
+
+           Her own colour on the ring and the tint at its foot —
+           `--bubble-ink` falls back to Pinki, whose journey the bubble was
+           built for. */
+        className={`anim-fade-up pointer-events-none absolute bottom-[46%] left-4 z-10 w-[64%] max-w-[15.5rem] sm:left-auto sm:w-[20rem] sm:max-w-none ${
           /* **It is allowed to lie OVER her**, on direct request — what
              matters is that it reads as her speaking, not that it clears
              her silhouette. That freedom is what makes a phone work at all
@@ -134,12 +141,34 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
         <div>
-          <p
-            dir={dir}
-            className="speech-bubble speech-bubble--left px-4 py-3 text-sm font-semibold leading-snug text-[var(--color-ink)] sm:px-5 sm:py-3.5 sm:text-base"
-          >
-            {pointing ? dict.trail.introStart : dict.trail.introHello}
-          </p>
+          {/* **A speech CLOUD, not a rectangle with a triangle on it** — she
+              is standing in a sky made of clay clouds, so her voice is one
+              too (`.cloud-bubble`, `globals.css`). The two puffs stepping
+              down to the right are its tail: she stands below and to the
+              right of it at every width, so they always point at her and
+              never need to flip per locale. */}
+          <div className="cloud-bubble-wrap">
+            <p
+              dir={dir}
+              /* `text-balance` is what "spread it over the lines, don't run
+                 it out in one" actually is — the browser evens the lines out
+                 itself, so a short Kurdish line and a long Arabic one both
+                 come out as a block rather than one long line plus an
+                 orphan. Centred, because a cloud has no straight edge for
+                 ragged text to align to. */
+              className="cloud-bubble text-balance text-center text-base font-semibold leading-snug text-[var(--color-ink)] sm:text-lg"
+            >
+              {pointing ? dict.trail.introStart : dict.trail.introHello}
+            </p>
+            <span
+              aria-hidden
+              className="cloud-bubble-puff absolute -bottom-2.5 right-9 h-5 w-5 sm:right-11 sm:h-6 sm:w-6"
+            />
+            <span
+              aria-hidden
+              className="cloud-bubble-puff absolute -bottom-8 right-3 h-3 w-3 sm:-bottom-9 sm:right-4 sm:h-3.5 sm:w-3.5"
+            />
+          </div>
 
           {/* Only on the first beat. On the second the first cloud is the
               one thing to press, and a chip beside it would compete with
@@ -151,7 +180,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
                  the first beat and has to be reachable by keyboard. Its
                  click bubbles to the catcher, which is what advances her —
                  no second handler to keep in step. */
-              className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-3 px-5 py-2 text-sm sm:mt-4 sm:px-6 sm:py-2.5 sm:text-base"
+              className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-10 px-5 py-2 text-sm sm:mt-11 sm:px-6 sm:py-2.5 sm:text-base"
               /* `--btn-text` has to be set by hand here, exactly as
                  `TrailCta` sets it: these are `Button3D`'s classes without
                  `Button3D`, and it is the component that normally turns a
