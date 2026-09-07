@@ -121,7 +121,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            Her own colour on the ring and the tint at its foot —
            `--bubble-ink` falls back to Pinki, whose journey the bubble was
            built for. */
-        className={`anim-fade-up pointer-events-none absolute left-4 z-10 w-[64%] max-w-[15.5rem] sm:left-auto sm:w-[20rem] sm:max-w-none ${
+        className={`anim-fade-up pointer-events-none absolute left-1 z-10 w-[64%] max-w-[15.5rem] sm:left-auto sm:w-[20rem] sm:max-w-none ${
           /* **It is allowed to lie OVER her**, on direct request — what
              matters is that it reads as her speaking, not that it clears
              her silhouette. That freedom is what makes a phone work at all
@@ -143,7 +143,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
              hiding the one thing that beat exists to show. */
           pointing
             ? "bottom-[60%] sm:bottom-[58%] sm:right-[30%]"
-            : "bottom-[46%] sm:bottom-[42%] sm:right-[24%]"
+            : "bottom-[50%] sm:bottom-[46%] sm:right-[29%]"
         }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
