@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 import { usePageTransition } from "@/store/page-transition";
 import novaPoint from "../../../public/assets/activity-page/trial/nova/nova-point.png";
 import novaTalk from "../../../public/assets/activity-page/trial/nova/nova-talk.png";
@@ -59,6 +60,14 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
   const [beat, setBeat] = useState<Beat>("hello");
   const [shown, setShown] = useState(false);
   const dir = dirFor(dict.locale);
+
+  /* **The page holds still while she is on it.** She is `fixed`, so the sky
+     scrolls out from under her — a child flicking at her sees the map slide
+     away while she stays put, which reads as the page slipping rather than
+     as scrolling. Since the pointing beat is this page's resting state, that
+     means the trail does not scroll yet at all; the lock lifts on its own the
+     day she is dismissed by walking into the first stage. */
+  useScrollLock(shown);
 
   useEffect(() => {
     if (!shown || beat === "start") return;
