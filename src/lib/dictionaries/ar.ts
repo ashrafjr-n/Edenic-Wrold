@@ -182,6 +182,9 @@ export const ar: Dictionary = {
       "طريق مغامرات يتسلّق السماء. اصعده مع Pinki و Nova و Bloo، محطة بعد محطة.",
     cta: "ابدأ مغامرتك",
     ctaContinue: "تابع",
+    introHello: "مرحبًا! أنا Nova، دليلك في السماء.",
+    introStart: "هيا بنا، رحلتنا تبدأ من هنا!",
+    introSkip: "تخطَّ",
   },
   ui: {
     completedAria: "{label} مكتمل",

@@ -197,6 +197,14 @@ export const en = {
       "A path of adventures winding up through the sky. Climb it with Pinki, Nova and Bloo — one stop at a time.",
     cta: "Start your adventure",
     ctaContinue: "Continue",
+    /* Nova's welcome, the two beats she greets a child with on `/trail`.
+       She names herself in the first because a child meeting her here has
+       only seen her locked on `/learn`. The second deliberately does NOT
+       say "tap the cloud": tapping a stop does nothing yet, and promising
+       an action that isn't built is worse than pointing at one. */
+    introHello: "Hi! I am Nova, your guide up the sky.",
+    introStart: "Come on — our journey starts here!",
+    introSkip: "Skip",
   },
   ui: {
     completedAria: "{label} completed",

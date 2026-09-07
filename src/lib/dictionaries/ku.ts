@@ -186,6 +186,9 @@ export const ku: Dictionary = {
       "ڕێکەکا سەرپێهاتیان ب ئاسمانی ڤە هەلدکشیت. ب Pinki، Nova و Bloo ڕا هەلکشە، وەستگەه ب وەستگەه.",
     cta: "سەرپێهاتیا خۆ دەست پێ بکە",
     ctaContinue: "بەردەوام بە",
+    introHello: "سلاڤ! ئەز Nova مە، ڕێبەرا تە ب ئاسمانی ڤە.",
+    introStart: "وەرە، گەشتا مە ژ ڤێرێ دەست پێ دکەت!",
+    introSkip: "بازدان",
   },
   ui: {
     completedAria: "{label} تەمام بوو",
