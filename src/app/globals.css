@@ -132,7 +132,6 @@
 
   --accent: #f2569b;
   --accent-dark: #c8306f;
-  --accent-soft: #ffe3ef;
 
   /* **The colour of the section you are standing in.** Each route sets these
      three on its own `<main>` and everything section-coloured inside reads
@@ -179,11 +178,6 @@
   --color-bloo-soft: #e0f0fd;
   --color-bloo-dark: #2f86c4;
 
-  /* A generic lavender — not `--color-nova`. Nova's token is her identity;
-     this one is just a color in the box, used to bend the lesson hub's
-     ground away from a single flat hue. Recoloring Nova must not repaint a
-     page she isn't on. */
-  --color-lavender: #a48fe3;
 
   /* ---------------------------------------------------------------
      Lesson subjects own a hue each, from `sm` up: Numbers pink, Letters
@@ -217,7 +211,6 @@
      itself. Soft coral, not an alarming stop-sign red, to stay in the
      palette's family. Nowhere else on the site should reach for this. */
   --color-miss: #f2685f;
-  --color-miss-dark: #c94b43;
 
   /* The gold horns are the one feature all three characters share, so
      gold is the signature accent: it marks what's active/unlocked
@@ -1184,7 +1177,6 @@ bdi {
    --------------------------------------------------------------- */
 .lesson-theme {
   --lesson-accent: var(--lesson-hue);
-  --lesson-accent-dark: var(--lesson-hue-dark);
   --lesson-title: var(--color-ink);
   --lesson-muted: var(--color-ink-soft);
 }
@@ -1192,12 +1184,10 @@ bdi {
 @media (width < 40rem) {
   .lesson-theme {
     --lesson-accent: var(--character-accent);
-    --lesson-accent-dark: var(--character-accent-dark);
   }
 
   .lesson-theme.is-locked {
     --lesson-accent: var(--color-locked);
-    --lesson-accent-dark: var(--color-locked-dark);
   }
 }
 
