@@ -92,9 +92,10 @@ interface TrailSkyProps {
  * these for a while and was removed on direct request: the sky reads as a
  * map when the only clouds on it are the ones a child can land on, and a
  * second washed-out set beside them read as haze rather than as depth.
- * `.cloud--far` itself is still declared in `globals.css` but nothing
- * renders it any more — `TrailCta` was its last caller and no longer
- * draws clouds at all. Dead style, a `code hygiene` candidate.
+ * `.cloud--far` has since been deleted from `globals.css` too — it had no
+ * callers left. A far layer, if one is ever wanted again, should lose
+ * CONTRAST before opacity: dimming the lobe highlights is what reads as
+ * distance, while opacity alone just washes the clay shading flat.
  *
  * **The clouds are the future stage nodes, and they are placed as such.**
  * They were scattered freely at first, which looked like weather; a map
