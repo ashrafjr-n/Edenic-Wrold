@@ -162,8 +162,8 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
              hand and the tail would otherwise land across the fingertip —
              hiding the one thing that beat exists to show. */
           pointing
-            ? "bottom-[60%] sm:bottom-[48%] sm:right-[min(calc(76.5%_-_10.2svh),calc(100%_-_21rem))]"
-            : "bottom-[50%] sm:bottom-[46%] sm:right-[min(calc(77.5%_-_10.2svh),calc(100%_-_21rem))]"
+            ? "bottom-[60%] sm:bottom-[48%] sm:right-[min(calc(79.5%_-_10.2svh),calc(100%_-_21rem))]"
+            : "bottom-[50%] sm:bottom-[46%] sm:right-[min(calc(80.5%_-_10.2svh),calc(100%_-_21rem))]"
         }`}
         style={{ "--bubble-ink": "var(--color-nova)" } as BubbleVars}
       >
@@ -265,20 +265,25 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            wants her a quarter of the screen further left. Solving
            "fingertip x = lane x + tan(32deg) * (fingertip y - stop y)" for
            the offset gives `76.5% - 69.5svh`, one declaration that is correct
-           at every ratio. Verified pointing at the stop at 768x1024,
+           at every ratio. **It carries `79.5%` rather than that `76.5%`** —
+           a later direct request moved her a touch further left at every
+           width; the aim has enough margin on a wide screen to absorb it and
+           still land on the stop. Verified pointing at the stop at 768x1024,
            820x1180, 1024x1366, 1024x768, 1180x820, 1280x800, 1366x768,
            1440x900 and 1920x1080, with no width where she runs off the LEFT
            edge. `svh` and never `vh`/`dvh`, like every other viewport unit on
            the site.
 
-           **The phone keeps the crop and settles for the stop's left lobe.**
-           `-right-[34%]` is about 70px further right than she stood, which
-           puts the line on the cloud while leaving her second eye at the
-           screen edge; the next step out (`-38%`) aims dead centre and takes
-           that eye off the screen, which is the worse trade on the one screen
-           where she is already wider than the viewport. At 430px the line
-           passes ~12px outside the cloud's left edge rather than on it — the
-           lobe is soft and the difference is not visible.
+           **The phone GESTURES at the stop rather than striking it, and that
+           is the deliberate end of the trade.** `-right-[34%]` was the value
+           that actually put the line on the cloud, and the same later request
+           to move her left brought it back to `-28%`: her face returns to the
+           screen and the line now passes ~14px outside the stop's left edge
+           at 390 (38px at 430), which is the state Pinki's stick is already
+           in on the numbers picker. The other end of the range is `-38%`,
+           which aims dead centre and takes her second eye off the screen —
+           on the one screen where she is wider than the viewport, the crop
+           costs more than the last few degrees of aim.
 
            **Her feet stand ON the bottom nav's top edge, not under it**
            (`calc(4rem + env(safe-area-inset-bottom))` — the same reserve
@@ -295,7 +300,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            makes her a different figure on every screen. The phone number is
            capped by the first cloud rather than by taste: any taller and her
            head reaches the stop she is pointing at. */
-        className="anim-pinki-lean-in pointer-events-none absolute bottom-[calc(4rem+0.9rem+env(safe-area-inset-bottom))] -right-[34%] h-[56%] rotate-[-3deg] sm:-bottom-[2%] sm:right-[calc(76.5%_-_69.5svh)] sm:h-[68%]"
+        className="anim-pinki-lean-in pointer-events-none absolute bottom-[calc(4rem+0.9rem+env(safe-area-inset-bottom))] -right-[28%] h-[56%] rotate-[-3deg] sm:-bottom-[2%] sm:right-[calc(79.5%_-_69.5svh)] sm:h-[68%]"
       >
         {/* BOTH poses mount, and the beat crossfades between them. Swapping
             one element's `src` flashes an empty box while the second file
