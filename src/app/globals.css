@@ -1723,6 +1723,28 @@ bdi {
   --cloud-pale: #dfeafb;
 }
 
+/* ---------------------------------------------------------------
+   The trail page's back button ink.
+
+   `--page-accent-ink` defaults to white, which is right on every other
+   section colour on the site — they are all fixed tokens that do not move
+   with the theme. This page takes the DEFAULT accent, and `--accent` is one
+   of the two tokens deliberately raised LIGHTER in dark mode for legibility
+   as text elsewhere; a white arrow on that lighter pink washes out. So the
+   arrow goes black at night, the same call the header already makes for its
+   own chips (`--color-ink-fixed`, pinned dark in both themes — plain
+   `--color-ink` flips LIGHT in dark mode and would land pale on pale).
+
+   A class rather than a `pageAccent()` argument because the value has to
+   change with the theme, and that helper takes fixed strings. --------- */
+.trail-page {
+  --page-accent-ink: #fff;
+}
+
+[data-theme="dark"] .trail-page {
+  --page-accent-ink: var(--color-ink-fixed);
+}
+
 button,
 [role="button"] {
   cursor: pointer;
