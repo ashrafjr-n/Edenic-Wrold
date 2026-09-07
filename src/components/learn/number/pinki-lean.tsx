@@ -71,6 +71,24 @@ const LEAN = {
     painted: { width: 372, height: 368 },
   },
   /**
+   * `journey`, dropped and trimmed for the two `count` activities whose board
+   * is TALL: `complete` carries a piece tray under the numeral and `path`
+   * winds a route down the height of its card. At the standard placement she
+   * covered the bottom 145px of that board on a phone (measured at 390x844),
+   * which is exactly where the loose piece sits — the child could not see the
+   * thing they were being asked to drag.
+   *
+   * Lower ALONE cannot fix it: clearing a 346px board with a 396px figure
+   * would put her feet 70px below the screen. So she drops and comes down a
+   * size together, which leaves the whole activity visible with her head and
+   * her stick still in frame, cropped by the bottom nav the way every other
+   * placement is cropped by an edge. Measured: board bottom 512, her top 508.
+   */
+  journeyLow: {
+    box: "block -bottom-[18%] -right-[24%] h-[56%] sm:-bottom-[12%] sm:-right-[12%] sm:h-[62%]",
+    painted: { width: 372, height: 368 },
+  },
+  /**
    * The same figure at the same size and the same height off the bottom as
    * `journey`, moved to the HORIZONTAL CENTRE of the column instead of being
    * cropped by its right edge. Used by the `find` stage, where the child is
