@@ -147,10 +147,27 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
        language switcher conventions). */
     <html
       lang={locale}
-      className={`${fredoka.variable} ${balooBhaijaan.variable} ${vazirmatn.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${balooBhaijaan.variable} ${vazirmatn.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
+      {/* **`min-h-[100svh]`, and NOT `min-h-full` on an `h-full` `<html>`.**
+          That percentage pair was the site's one remaining dependency on the
+          DYNAMIC viewport: a percentage height resolves against the initial
+          containing block, which Chrome on Android re-sizes as its address
+          bar slides away, so `body` — and every `<main className="flex-1">`
+          in it — grew by the height of that bar mid-scroll. Measured at
+          390x844 against 390x926: `body` and `main` both gained exactly
+          82px, and every centred page shifted its content 41px with them
+          (the puzzle board, the trail's back button, the numbers grid).
+          `svh` is the SMALL viewport — the height that is there with the bar
+          showing — so it is the one value that never re-measures, which is
+          what the site's viewport-unit rule asks a LAYOUT box for. `100%` is
+          effectively `dvh` here, which that rule uses nowhere.
+
+          `<html>` keeps no height of its own now: it existed only to give
+          this percentage something to resolve against, and `body`'s
+          background still propagates to the canvas either way. */}
+      <body className="flex min-h-[100svh] flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
         <Script id="theme-init" strategy="beforeInteractive">
           {THEME_INIT_SCRIPT}
         </Script>
