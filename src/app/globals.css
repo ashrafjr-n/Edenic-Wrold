@@ -1979,37 +1979,38 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   The "Again" / "Try Again" button.
+   The "Again" / "Try Again" and "Next" buttons.
 
-   ONE button, on every screen that offers a replay — the trace board, the
-   lost balloon round, the celebration screen, a finished puzzle, a finished
-   memory level — and it behaves identically on all of them. The design is
-   the header's own: the dark-mode chip spins its icon a full turn on every
-   press, and that acknowledgement is what this borrows.
+   TWO buttons, ONE recipe (`components/ui/morph-button.tsx`). Every screen
+   that offers a replay carries the first — the trace board, the lost balloon
+   round, the celebration screen, a finished puzzle, a finished memory level —
+   and every screen with a way onward carries the second. The design is the
+   header's own: the dark-mode chip spins its icon a full turn on every press,
+   and that acknowledgement is what this borrows.
 
-   At rest it is a pill with the icon and the word. On press three things
-   happen AT ONCE, over the same ~0.45s: the word collapses to nothing, the
-   button's own side padding shrinks to match its height, and the icon turns
-   a full circle. What is left mid-press is a spinning disc exactly the size
-   of the back button in the corner — so the replay reads as the screen being
-   wound back, not as a label being pressed.
+   At rest each is a pill with an icon and a word. On press the word collapses
+   to nothing and the button's own side padding shrinks to match its height —
+   what is left is a disc exactly the size of the back button in the corner,
+   with the icon centred in it. **`AgainButton` also turns its icon a full
+   circle; `NextButton` deliberately does not** — an arrow that spun would say
+   "start over" in the one place that means the opposite (direct request).
 
-   The COLOUR is not declared here: `AgainButton` takes the section's
-   `--page-accent-*` trio (`components/ui/back-button.tsx`), the same way the
-   back button does, so it is Pinki's pink inside the numbers lesson without
-   any call site naming a colour. A caller that needs to keep a different
-   pairing (a white chip beside a coloured "Next") passes its own tone.
+   The COLOUR is not declared here: both take the section's `--page-accent-*`
+   trio (`components/ui/back-button.tsx`) by default, the same way the back
+   button does, so a replay is Pinki's pink inside the numbers lesson without
+   any call site naming a colour. A caller passes its own tone where the
+   section colour is already spoken for by the button standing beside it.
 
-   Sizes are fixed HERE rather than by Tailwind at each call site, because
-   the circle is arithmetic: the pressed padding is exactly
+   Sizes are fixed HERE rather than by Tailwind at each call site, because the
+   circle is arithmetic: the pressed padding is exactly
    `(block-size - icon width) / 2`, so a call site free to set `px-6` could
    only ever get an oval. Change one of these four numbers and change its
    pair with it.
    --------------------------------------------------------------- */
-.again-btn {
+.morph-btn {
   block-size: 3rem;
   padding-inline: 1.5rem;
-  /* The icon-to-label gap lives on the LABEL (see below) so that it can
+  /* The icon-to-word gap lives on the LABEL (see below) so that it can
      collapse with it — `.btn3d`'s own gap would survive the collapse and
      leave the icon sitting off-centre in the finished circle. */
   gap: 0;
@@ -2026,12 +2027,13 @@ button:disabled,
     padding 0.45s ease;
 }
 
-/* The turn itself. `rotate` is its own property in Tailwind v4 and in the
-   cascade, so it composes with `.btn3d:active`'s press `translate` instead of
-   overwriting it — the same reason the header's chip animates this property
-   and not `transform`. `inline-flex`, because a transform on a non-replaced
-   INLINE element does nothing at all. */
-.again-btn__icon {
+/* The turn itself, on `AgainButton` alone — `NextButton` renders this element
+   too but never changes its `rotate`. It is its own property in Tailwind v4
+   and in the cascade, so it composes with `.btn3d:active`'s press `translate`
+   instead of overwriting it, which is the same reason the header's chip
+   animates this and not `transform`. `inline-flex`, because a transform on a
+   non-replaced INLINE element does nothing at all. */
+.morph-btn__icon {
   display: inline-flex;
   transition: rotate 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2039,47 +2041,58 @@ button:disabled,
 /* **A 1fr → 0fr grid track, not a `max-width`.** Collapsing a `max-width`
    from a guessed ceiling spends the first part of the transition doing
    nothing at all (until the ceiling drops below the text's real width), which
-   reads as a stutter; a grid track interpolates from the label's OWN measured
-   width, so the collapse starts on the first frame in every language. The
-   inner span is what actually clips — the track shrinking does not hide
-   overflow by itself. */
-.again-btn__label {
+   reads as a stutter, and the width it has to clear is different in all three
+   languages. A grid track interpolates from the label's OWN measured width,
+   so the collapse starts on the first frame everywhere. The inner span is
+   what actually clips — the track shrinking does not hide overflow by
+   itself. */
+.morph-btn__label {
   display: grid;
   grid-template-columns: 1fr;
-  /* Physical `left`, not `padding-inline-start`: the site's layout never
-     mirrors (see the language-switcher notes), so the label is always to the
-     RIGHT of the icon — but an Arabic label carries `dir="rtl"`, which would
-     flip a logical property onto the wrong side. */
-  padding-left: 0.5rem;
   transition:
     grid-template-columns 0.45s ease,
-    padding-left 0.45s ease,
+    padding 0.45s ease,
     opacity 0.22s ease;
 }
 
-.again-btn__label > span {
+.morph-btn__label > span {
   overflow: hidden;
 }
 
-.again-btn.is-spinning {
+/* The gap, on whichever side of the word the icon actually sits — `Again`
+   leads with its icon, `Next` trails with its arrow. **Physical `left`/
+   `right`, not `padding-inline-*`**: the site's layout never mirrors (see the
+   language-switcher notes), so the word keeps the same side of the icon in
+   every locale — but an Arabic label carries `dir="rtl"`, which would flip a
+   logical property onto the wrong side. */
+.morph-btn__label--trailing {
+  padding-left: 0.5rem;
+}
+
+.morph-btn__label--leading {
+  padding-right: 0.5rem;
+}
+
+.morph-btn.is-morphed {
   /* (3rem − 1.25rem icon) / 2 — the pill lands exactly on a circle. */
   padding-inline: 0.875rem;
 }
 
-.again-btn.is-spinning .again-btn__label {
+.morph-btn.is-morphed .morph-btn__label {
   grid-template-columns: 0fr;
   padding-left: 0;
+  padding-right: 0;
   opacity: 0;
 }
 
 @media (width >= 40rem) {
-  .again-btn {
+  .morph-btn {
     block-size: 3.5rem;
     padding-inline: 1.75rem;
     font-size: 1rem;
   }
 
-  .again-btn.is-spinning {
+  .morph-btn.is-morphed {
     /* (3.5rem − 1.25rem) / 2. */
     padding-inline: 1.125rem;
   }
@@ -3321,13 +3334,13 @@ button:disabled,
     display: none;
   }
 
-  /* The Again button is a TRANSITION, not a keyframe animation, so the
-     `animation: none` list above cannot reach it. The press still collapses
+  /* The Again/Next buttons are a TRANSITION, not a keyframe animation, so the
+     `animation: none` list above cannot reach them. The press still collapses
      the word and shrinks the pill to a disc — that is the button telling the
      child it was pressed — it just does all of it instantly, with no turn. */
-  .again-btn,
-  .again-btn__icon,
-  .again-btn__label {
+  .morph-btn,
+  .morph-btn__icon,
+  .morph-btn__label {
     transition: none;
   }
 }

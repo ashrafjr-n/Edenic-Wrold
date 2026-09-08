@@ -19,8 +19,15 @@ type ToneVars = CSSProperties & {
     `calm` — solid face, no motion, soft shadow only, for the header chrome. */
 export type ButtonVariant = "playful" | "calm";
 
-interface Button3DProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Button3DProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   tone: ButtonTone;
+  /** Fires on BOTH branches — the `<button>` and the `<Link>`. Deliberately
+      argument-less: the two elements hand back different event types, and no
+      caller on the site has ever needed the event itself. Anything that does
+      (the Play page's trail card, which has to let a modified click through)
+      uses a raw `<Link>` rather than this component. */
+  onClick?: () => void;
   variant?: ButtonVariant;
   /** Renders as a `Link` styled identically to the button, for navigation. */
   href?: string;
@@ -63,6 +70,11 @@ export function Button3D({
         className={classes}
         style={toneVars}
         aria-label={props["aria-label"]}
+        /* Forwarded because a LINK can still want to react to its own press
+           — `NextButton` collapses its label the moment it is clicked, on the
+           way to the page it is pointing at. Navigation is still the `href`'s
+           job; this only lets the button acknowledge the tap. */
+        onClick={props.onClick}
       >
         {children}
       </Link>

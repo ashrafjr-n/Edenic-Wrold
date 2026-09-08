@@ -7,7 +7,6 @@ import type {
   Ref,
 } from "react";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import {
   isUpright,
@@ -22,8 +21,7 @@ import {
 import type { PuzzlePiece } from "@/lib/puzzle-pieces";
 import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
-import { Button3D } from "@/components/ui/button-3d";
-import { AgainButton } from "@/components/ui/again-button";
+import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -644,14 +642,13 @@ export function PuzzleBoard({
             className="btn3d--clay-white"
           />
 
-          <Button3D
+          {/* The shared forward button — it closes into its own arrow on
+              press, the same shape the "Again" beside it closes into. */}
+          <NextButton
+            label={dict.activities.next}
             tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
             href={nextHref}
-            className="px-6 py-3 text-base sm:px-7 sm:text-lg"
-          >
-            {dict.activities.next}
-            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-          </Button3D>
+          />
         </div>
       )}
     </div>

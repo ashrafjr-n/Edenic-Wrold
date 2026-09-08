@@ -3,13 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowRight, Star, Timer } from "lucide-react";
+import { Star, Timer } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
 import { memoryFaces } from "@/data/memory-levels";
 import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
-import { Button3D } from "@/components/ui/button-3d";
-import { AgainButton } from "@/components/ui/again-button";
+import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
@@ -274,7 +273,10 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
                 className="btn3d--clay-white"
               />
 
-              <Button3D
+              {/* The shared forward button — it closes into its own arrow on
+                  press, the same shape the "Again" beside it closes into. */}
+              <NextButton
+                label={dict.activities.next}
                 tone={{
                   face: "var(--color-gold)",
                   edge: "var(--color-gold-dark)",
@@ -284,11 +286,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
                   text: "var(--color-ink-fixed)",
                 }}
                 href={nextHref}
-                className="px-6 py-3 text-base sm:px-7 sm:text-lg"
-              >
-                {dict.activities.next}
-                <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-              </Button3D>
+              />
             </div>
           </div>
         )}
