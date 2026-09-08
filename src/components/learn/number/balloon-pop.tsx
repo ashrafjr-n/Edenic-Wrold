@@ -231,7 +231,18 @@ export function BalloonPop({
             <span
               className="balloon-drift block"
               style={
-                { "--drift-duration": at(DRIFTS, index) } as CSSProperties
+                {
+                  "--drift-duration": at(DRIFTS, index),
+                  /* **The bob waits for the flight, and that is a fix, not a
+                     flourish.** A balloon parked at `top: 100%` is exactly
+                     flush with the sky's bottom edge, so an infinite bob
+                     starting at 0s lifted it 12px into view and left its tip
+                     showing for the whole of its `--rise-delay` — several
+                     balloons peeking over the bottom edge before any of them
+                     had set off. Held back by the same delay, it sits
+                     genuinely hidden until it starts to rise. */
+                  "--drift-delay": `${at(DELAYS, index)}s`,
+                } as CSSProperties
               }
             >
               {/* The wrong-pop wiggle and the burst share this element: both
