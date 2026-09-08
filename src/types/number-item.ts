@@ -13,6 +13,13 @@ export interface NumberItem {
   /** 1–9. Also the route segment: `/learn/pinki/numbers/1`. */
   value: number;
   image: string;
+  /** The render's own pixel size. Needed because the nine numerals did NOT
+      all come off one canvas — 1–3 are 412x606 and 4–9 are 426x585 — and
+      `NumberComplete` has to size its board to the numeral's OWN ratio, or
+      `object-contain` letterboxes it and the hole and the loose piece end up
+      measured in slightly different spaces. Invisible on the small notch that
+      activity used to cut; obvious now that the piece is half the numeral. */
+  imageSize: { width: number; height: number };
   /** YouTube id for this number's short. Optional — the videos are being
       produced progressively, and an item without one simply starts the child
       at the tracing step instead of showing an empty frame. */

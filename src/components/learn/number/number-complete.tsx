@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
-import { completeNotchFor } from "@/data/number-complete";
+import { COMPLETE_NOTCH } from "@/data/number-complete";
 import type { CompleteNotch } from "@/data/number-complete";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -12,6 +12,9 @@ interface NumberCompleteProps {
   dict: Dictionary["journey"];
   value: number;
   image: string;
+  /** The render's own pixel size, so the board can take the numeral's OWN
+      aspect — see the `--board-w` override below. */
+  imageSize: { width: number; height: number };
   /** Mark the gap as the thing to aim for, until the piece is home.
       Presentation only — it changes nothing about how the drag works. The
       journey passes this exactly when Pinki is holding the stick, so the halo
@@ -20,13 +23,6 @@ interface NumberCompleteProps {
   onFinish: () => void;
   onMiss: () => void;
 }
-
-/** The numeral PNGs' own pixel size. The hole's position and the piece's crop
-    both read the notch rect against this exact box, edge to edge — the board
-    is sized to the same ratio (`--board-w`/`--board-h` in `globals.css`), so
-    there is no `object-contain` letterboxing to throw the percentages off. */
-const IMAGE_W = 426;
-const IMAGE_H = 585;
 
 /** Below this the pointer never really moved. A tap does NOT solve this —
     putting the piece back IS the exercise, so it has to be carried there. */
@@ -68,11 +64,14 @@ function cropStyle(notch: CompleteNotch): CSSProperties {
  * `--board-w`/`--board-h` pair, because a piece that is even slightly bigger
  * than its gap never looks like it fits when it lands.
  *
- * The notch is a plain rectangle rather than a shape cut around the glyph's
- * silhouette — a jigsaw-style square reads clearly to a small child and needs
- * no per-pixel masking. The "hole" is just a `--surface`-colored rectangle
- * painted over that part of the numeral (the pixels are still underneath), so
- * completing it is only a matter of fading that rectangle away.
+ * **The cut is the numeral's whole BOTTOM HALF** (`COMPLETE_NOTCH`) — see that
+ * constant for why it is one rectangle for all nine rather than a chunk tuned
+ * per numeral. The notch is a plain rectangle rather than a shape cut around
+ * the glyph's silhouette: a jigsaw-style square reads clearly to a small child
+ * and needs no per-pixel masking. The "hole" is just a `--surface`-colored
+ * rectangle painted over that part of the numeral (the pixels are still
+ * underneath), so completing it is only a matter of fading that rectangle
+ * away.
  *
  * Dragging is required: a tap does nothing. Carrying the piece to the gap is
  * the whole exercise, so solving it by tapping would skip the activity.
@@ -80,12 +79,13 @@ function cropStyle(notch: CompleteNotch): CSSProperties {
 export function NumberComplete({
   value,
   image,
+  imageSize,
   highlightTarget,
   onFinish,
   onMiss,
   dict,
 }: NumberCompleteProps) {
-  const notch = completeNotchFor(value);
+  const notch = COMPLETE_NOTCH;
   const holeRef = useRef<HTMLDivElement>(null);
 
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -155,7 +155,24 @@ export function NumberComplete({
   };
 
   return (
-    <div className="card card-clay-white numeral-stage flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7">
+    /* **`--board-w` is overridden to THIS numeral's own aspect**, rather than
+       taking `.numeral-stage`'s shared 426/585. The nine renders came off two
+       different canvases, so on 1–3 the shared ratio letterboxed the image
+       inside the board — and the hole is positioned in BOARD percent while
+       the loose piece is cropped in IMAGE percent, so a letterbox quietly
+       puts the two in different spaces. With the board on the image's own
+       ratio there is nothing to letterbox and the two are the same box again.
+       It was a couple of percent and invisible while the notch was a small
+       chunk; at half the numeral it would show as a visible step where the
+       piece lands. */
+    <div
+      className="card card-clay-white numeral-stage flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7"
+      style={
+        {
+          "--board-w": `calc(var(--board-h) * ${imageSize.width} / ${imageSize.height})`,
+        } as CSSProperties
+      }
+    >
       <div
         className="relative"
         style={{ width: "var(--board-w)", height: "var(--board-h)" }}
@@ -164,7 +181,7 @@ export function NumberComplete({
           src={image}
           alt={format(dict.numberValue, { value })}
           fill
-          sizes="(min-width: 640px) 11rem, 9rem"
+          sizes="(min-width: 640px) 14rem, 10rem"
           draggable={false}
           className="select-none object-contain"
         />
@@ -229,8 +246,8 @@ export function NumberComplete({
           <Image
             src={image}
             alt=""
-            width={IMAGE_W}
-            height={IMAGE_H}
+            width={imageSize.width}
+            height={imageSize.height}
             draggable={false}
             className="pointer-events-none select-none"
             style={cropStyle(notch)}

@@ -105,7 +105,7 @@ export function NumberJourney({
   dict,
   locale,
 }: NumberJourneyProps) {
-  const { value, image, videoId, strokes } = item;
+  const { value, image, imageSize, videoId, strokes } = item;
   const { accent } = character;
   const script = scriptFor(value, locale, dict);
   /* Every line below mixes this locale's words with an English name/number
@@ -438,6 +438,7 @@ export function NumberJourney({
             key={`complete-${attempt}`}
             value={value}
             image={image}
+            imageSize={imageSize}
             highlightTarget={marksTarget}
             onFinish={() => setSolved(true)}
             onMiss={pickMiss}
@@ -503,6 +504,7 @@ export function NumberJourney({
           key={`game-complete-${attempt}`}
           value={value}
           image={image}
+          imageSize={imageSize}
           highlightTarget={marksTarget}
           onFinish={() => setSolved(true)}
           onMiss={pickMiss}
@@ -511,7 +513,17 @@ export function NumberJourney({
         {solved && <Celebration />}
       </div>
     ) : gameFailed ? (
-      <TargetBalloon choices={popChoices} value={value} />
+      /* **The way back into the round sits directly UNDER the balloon that
+         got away**, on direct request, rather than down in Pinki's own column
+         with the rest of the stage's buttons. She is asking the child to pop
+         THAT balloon, and the button that deals it again belongs with the
+         thing it re-deals — an "Again" on the far side of the screen made the
+         balloon look like a picture rather than the subject. It is the reason
+         this stage puts its action in `body` and leaves `actions` empty. */
+      <div className="flex flex-col items-center gap-5 sm:gap-6">
+        <TargetBalloon choices={popChoices} value={value} />
+        <AgainButton label={dict.journey.again} onPress={retryGame} dir={dir} />
+      </div>
     ) : (
       <BalloonPop
         key={`pop-${attempt}`}
@@ -530,15 +542,9 @@ export function NumberJourney({
     );
     /* Was "See my stars!" — the celebration screen does not show stars any
        more, so the button can no longer promise them. */
-    actions = solved ? (
-      nextButton(dict.journey.finishExclaim, GO_TONE)
-    ) : gameFailed ? (
-      /* The only thing on the screen to press, so it takes the lesson's own
-         pink rather than the ordinary blue "carry on" it used to wear —
-         nothing is being carried on from here, the round is being wound
-         back, which is exactly what the button now looks like. */
-      <AgainButton label={dict.journey.again} onPress={retryGame} dir={dir} />
-    ) : null;
+    /* Nothing for a lost round: its "Again" lives under the balloon in `body`
+       above, not in Pinki's column. */
+    actions = solved ? nextButton(dict.journey.finishExclaim, GO_TONE) : null;
   } else {
     /* **No stars here.** The three-star tally was taken off this screen on
        direct request — it is still scored and still recorded (see the effect
@@ -763,11 +769,21 @@ export function NumberJourney({
             pose={guide.pose}
             line={guide.line}
             presence={guide.presence}
-            lowered={leanPlacement === "journeyGive"}
-            /* The apple-count quiz is solved but carries no Next button of
-               its own — see `bubbleDown`'s own doc comment for why `children`
-               alone can't tell PinkiGuide the round is over here. */
-            bubbleDown={stage === "count" && countActivity.kind === "give" && appleGiven && solved}
+            /* **The whole `give` stage is lowered, both of its beats.** The
+               tray beat because she is standing lower there (`journeyGive`);
+               the quiz beat because its line was sitting tight under the
+               three numerals and was asked to come down a little. Passing it
+               for both is also what FIXES the bubble jumping: the quiz used
+               to switch to `mt-auto` the moment it was answered, which on a
+               stage with no button sent the line to the very bottom of the
+               column and across Pinki's legs — it read as the question being
+               asked a second time, somewhere else, while the stage waited to
+               move on. A fixed drop is the same in both states, so nothing
+               moves at the moment the child gets it right. */
+            lowered={
+              leanPlacement === "journeyGive" ||
+              (stage === "count" && countActivity.kind === "give")
+            }
             dir={dir}
           >
             {actions}
