@@ -65,26 +65,20 @@ interface PinkiGuideProps {
       journey keeps owning what its actions ARE and this only decides where
       they sit relative to her. */
   children?: ReactNode;
-  /** `lead` only: she is standing lower than usual (the apple tray's
-      `journeyGive` placement), so her line comes down with her rather than
-      staying tucked under the activity with its tail reaching past her head.
-      A FIXED drop, not a second `mt-auto` — an auto margin on a stage with no
-      buttons sends the bubble to the very bottom of the column and onto her
-      legs. */
+  /** `lead` only: drop the bubble a fixed distance below the top of the
+      column. Two stages ask for it, for two reasons: the apple TRAY, where
+      she is standing lower than usual (`journeyGive`) and her line has to
+      come down with her rather than reaching past her head; and the apple
+      COUNT quiz, whose line sat tight under the three numerals and was asked
+      to come down a little.
+
+      **It is a FIXED drop and must never become a second `mt-auto`.** On a
+      stage with no buttons an auto margin sends the bubble to the very bottom
+      of the column and across her legs — which is exactly what the apple quiz
+      used to do the instant it was answered correctly, reading as the
+      question being asked again somewhere else while the stage waited to move
+      on. A fixed drop is the same before and after, so nothing jumps. */
   lowered?: boolean;
-  /** `lead` only: the round this stage is running is SOLVED, even though
-      there may be no `children` to show for it. `children` alone used to be
-      the signal for dropping the bubble down beside her face (`mt-auto`) —
-      true for every stage except the apple-count quiz, which auto-advances
-      with no Next button at all once it is right. Without this, that one
-      quiz never got its `mt-auto` and the bubble sat pinned to the top of
-      the column through the whole celebration, floating well above her
-      instead of landing beside her face — exactly the bug the `mt-auto`
-      comment below was written to prevent, reintroduced by removing the
-      button that used to carry it. Every other `lead` stage already has
-      `children` truthy at the moment it matters, so this is additive and
-      changes nothing about them. */
-  bubbleDown?: boolean;
 }
 
 /**
@@ -116,7 +110,6 @@ export function PinkiGuide({
   presence = "lead",
   children,
   lowered = false,
-  bubbleDown = false,
   dir = "ltr",
 }: PinkiGuideProps) {
   if (presence === "none") return null;
@@ -175,16 +168,15 @@ export function PinkiGuide({
               an AUTO margin and not a fixed one: on a stage whose activity
               fills the column there is no free space to take, so it
               contributes nothing rather than pushing the buttons off the
-              screen. Skipped while there is neither a `children` action NOR
-              `bubbleDown` (an unsolved quiz), where it would drop the bubble
-              to the very bottom of the column and onto her. `bubbleDown` is
-              the escape hatch for a stage that is DONE but has nothing to
-              show for it — the apple-count quiz auto-advances with no Next
-              button, so `children` alone can no longer tell "solved" apart
-              from "still working" the way it does everywhere else. */
+              screen. **Skipped entirely on a stage with no buttons**, where
+              it would drop the bubble to the very bottom of the column and
+              onto her — those stages take the fixed `lowered` drop instead
+              (see that prop). `mt` beats `my`/`mt-auto` only by source order
+              here, so the two are deliberately exclusive rather than both
+              being in the class list at once. */
           className={`speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:self-end sm:px-5 sm:py-3 sm:text-base ${
-            children || bubbleDown ? "mt-auto" : ""
-          } ${lowered ? "mt-8 sm:mt-12" : ""}`}
+            lowered ? "mt-8 sm:mt-12" : children ? "mt-auto" : ""
+          }`}
         >
           {line}
         </p>

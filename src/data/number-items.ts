@@ -19,9 +19,16 @@ const videoIdByValue: Record<number, string> = {
   9: "9eOrHh4bYns",
 };
 
+/** The two canvases the numeral renders were exported on. Measured off the
+    files, not assumed — see `NumberItem.imageSize` for why anything reads
+    this at all. */
+const TALL_CANVAS = { width: 412, height: 606 };
+const WIDE_CANVAS = { width: 426, height: 585 };
+
 export const numberItems: NumberItem[] = NUMBER_VALUES.map((value) => ({
   value,
   image: `/assets/learn-with-pinki/learn-numbers/numbers/${value}.png`,
+  imageSize: value <= 3 ? TALL_CANVAS : WIDE_CANVAS,
   videoId: videoIdByValue[value],
   strokes: numberStrokes[value],
 }));

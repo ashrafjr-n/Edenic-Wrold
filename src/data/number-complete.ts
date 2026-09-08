@@ -1,10 +1,9 @@
-/** A rectangular notch cut from a numeral's own render, in the SAME 0–100
-    percent space as the numeral PNG itself (edge to edge — there is no
-    `object-contain` letterboxing between this data and the image, so these
-    numbers are tuned against the actual pixels, not a guess). A plain
-    rectangle rather than a shape traced around the glyph's silhouette: a
-    jigsaw-style square reads clearly to a small child and needs no
-    per-pixel masking. */
+/** The rectangle cut out of a numeral's own render, in the SAME 0–100 percent
+    space as the numeral PNG itself (edge to edge — `NumberComplete` sizes its
+    board to that numeral's own aspect, so there is no `object-contain`
+    letterboxing between this data and the image). A plain rectangle rather
+    than a shape traced around the glyph's silhouette: a jigsaw-style square
+    reads clearly to a small child and needs no per-pixel masking. */
 export interface CompleteNotch {
   x: number;
   y: number;
@@ -12,29 +11,24 @@ export interface CompleteNotch {
   h: number;
 }
 
-/** Only numbers using the `complete` activity need an entry — picked by eye
-    against the actual render, one clearly separable chunk per numeral. */
-const notchByValue: Record<number, CompleteNotch> = {
-  /* The right-hand end of 2's flat base bar, cut back to where the diagonal
-     lands on it. Measured off `numbers/2.png`'s own alpha rather than picked
-     by eye: this rect is 95% solid pixels, and the bar's right edge runs to
-     x 96 at its widest (y 85–90). 2 uses this at the `game` stage, not at
-     `count` — see `data/game-activities.ts`. */
-  2: { x: 70, y: 75, w: 26, h: 22 },
-  /* The rounded foot at the bottom of 4's vertical stroke, with a little
-     clearance all round — a rect that clips the stem leaves a sliver of it
-     still showing beside the gap, and the piece then never looks like it
-     belongs there. */
-  4: { x: 49, y: 76, w: 36, h: 23 },
-  /* The curled tip of 9's tail, up to where it runs back into the bowl. */
-  9: { x: 4, y: 65, w: 36, h: 28 },
-};
-
-/** A safety-net rect for a number that reaches `complete` without a tuned
-    entry — should not normally happen, since only numbers with an entry
-    above are ever configured for this activity. */
-const FALLBACK_NOTCH: CompleteNotch = { x: 55, y: 75, w: 28, h: 22 };
-
-export function completeNotchFor(value: number): CompleteNotch {
-  return notchByValue[value] ?? FALLBACK_NOTCH;
-}
+/**
+ * **The BOTTOM HALF of the numeral, and the same rectangle for every one of
+ * them.** Direct request: the piece used to be a small hand-tuned chunk — the
+ * right-hand end of 2's base bar, the foot of 4's stem, the curl of 9's tail —
+ * each measured off that numeral's own alpha, and each was reported as far too
+ * small to read as "part of the number is missing".
+ *
+ * A half is also why this stopped needing a per-number table at all. Measured
+ * across all nine renders, every glyph's alpha box starts within 1.5% of the
+ * top of its canvas and ends within 3% of the bottom, so its own vertical
+ * midpoint lands on 49.6–50.0 in every case — one `y: 50` is the honest cut
+ * for all of them, not an approximation that happens to work. Full width for
+ * the same reason: the widest glyph reaches 99% of its canvas, so a rect inset
+ * to any particular numeral would clip that one and float free of the rest.
+ *
+ * If a single numeral ever needs its own cut again, this goes back to a
+ * `Record<number, CompleteNotch>` keyed by value — but do not add one
+ * speculatively, the whole point of the change was that nine identical halves
+ * are more legible than nine clever chunks.
+ */
+export const COMPLETE_NOTCH: CompleteNotch = { x: 0, y: 50, w: 100, h: 50 };
