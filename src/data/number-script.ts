@@ -95,6 +95,10 @@ function scriptForEn(value: number): NumberScript {
        still floating. An invitation to go again, never a verdict — the same
        rule `traceMiss` follows. */
     gameRetry: `Try again — pop the Number ${value} balloon!`,
+    /* The same sentence the `count` stage uses for this board: it is the same
+       exercise, so it gets the same words rather than a second phrasing for
+       the child to decode. */
+    gameComplete: `Complete Number ${value}!`,
     celebrate: "Hooray! You did it!",
   };
 }
@@ -141,6 +145,10 @@ function scriptFromDict(
     countHow: format(pinki.countHow, { itemLabel }),
     game: format(pinki.game, { value }),
     gameRetry: format(pinki.gameRetry, { value }),
+    /* `countComplete`, not a key of its own — the `complete` board says the
+       same thing wherever it appears, so a second template would only be
+       another string to keep in step across three locales. */
+    gameComplete: format(pinki.countComplete, { value }),
     celebrate: pinki.celebrate,
   };
 }

@@ -1,5 +1,6 @@
 import type { CountActivityKind } from "@/types/count-activity";
 import type {
+  GameActivityKind,
   GuidePresence,
   JourneyStage,
   NumberScript,
@@ -19,6 +20,8 @@ export interface StageGuide {
     booleans — the caller already holds them together. */
 export interface GuideState {
   countKind: CountActivityKind;
+  /** Which exercise the `game` stage is running for this number. */
+  gameKind: GameActivityKind;
   /** `give` only: the item is in the basket and the question has begun. */
   appleGiven: boolean;
   traceMissed: boolean;
@@ -68,8 +71,9 @@ const STAGE_GUIDE: Record<
   /* The balloons are the stage while they are still rising. She sat small and
      silent in its bottom-left corner and was taken off it on direct request —
      the concentration this asks for is exactly what a guide beside it competes
-     with. `guideFor` overrides this to `lead` once every balloon has escaped,
-     when there is no activity left for her to stand in front of. */
+     with. `guideFor` overrides this twice: to `lead` once every balloon has
+     escaped, and for the whole of the `complete` game, which is a board with
+     one target to point at rather than a race. */
   game: { presence: "none", pose: "speak" },
   celebrate: { presence: "hero", pose: "celebrate" },
 };
@@ -104,6 +108,15 @@ function poseFor(
   basePose: PinkiPose,
   state: GuideState,
 ): PinkiPose {
+  /* The `complete` game is the `complete` count board under another name — one
+     unambiguous gap to aim at, so she holds the stick there exactly as she
+     does at `count`, and `pointsAtTarget` lights the gap to match. */
+  if (stage === "game") {
+    return state.gameKind === "complete" && !state.gameFailed
+      ? COUNT_POSE.complete
+      : basePose;
+  }
+
   if (stage !== "count") return basePose;
 
   /* Giving has two beats: point at the basket, then be pleased with what is
@@ -148,6 +161,11 @@ function lineFor(
       return countLine(script, state);
     case "game":
       if (state.gameFailed) return script.gameRetry;
+      if (state.gameKind === "complete") {
+        /* A drag, so a miss is answered the way a missed trace is — an offer
+           to go again, not a verdict. Same call `countLine` makes. */
+        return state.pickMissed ? script.traceMiss : script.gameComplete;
+      }
       return state.pickMissed ? script.findMiss : script.game;
     case "celebrate":
       return script.celebrate;
@@ -172,13 +190,17 @@ export function guideFor(
   const base = STAGE_GUIDE[stage];
 
   return {
-    /* The one presence the table cannot state on its own: the balloon game is
-       hers only once it has been LOST. While the balloons are rising she is
-       off the stage entirely (the concentration it asks for is exactly what a
-       guide beside it competes with); once they have all escaped there is no
-       activity left for her to stand in front of, and the child needs to be
-       told what happened and offered another go. */
-    presence: stage === "game" && state.gameFailed ? "lead" : base.presence,
+    /* The two presences the table cannot state on its own, both on `game`.
+       The BALLOON round is hers only once it has been lost: while they are
+       rising she is off the stage entirely (the concentration it asks for is
+       exactly what a guide beside it competes with), and once they have all
+       escaped there is no activity left for her to stand in front of. The
+       `complete` game is hers throughout, like the `complete` count board it
+       reuses — a numeral with a gap is a thing to be shown, not a race. */
+    presence:
+      stage === "game" && (state.gameFailed || state.gameKind === "complete")
+        ? "lead"
+        : base.presence,
     pose: poseFor(stage, base.pose, state),
     line: lineFor(stage, script, state),
   };

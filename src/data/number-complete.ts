@@ -15,6 +15,12 @@ export interface CompleteNotch {
 /** Only numbers using the `complete` activity need an entry — picked by eye
     against the actual render, one clearly separable chunk per numeral. */
 const notchByValue: Record<number, CompleteNotch> = {
+  /* The right-hand end of 2's flat base bar, cut back to where the diagonal
+     lands on it. Measured off `numbers/2.png`'s own alpha rather than picked
+     by eye: this rect is 95% solid pixels, and the bar's right edge runs to
+     x 96 at its widest (y 85–90). 2 uses this at the `game` stage, not at
+     `count` — see `data/game-activities.ts`. */
+  2: { x: 70, y: 75, w: 26, h: 22 },
   /* The rounded foot at the bottom of 4's vertical stroke, with a little
      clearance all round — a rect that clips the stem leaves a sliver of it
      still showing beside the gap, and the piece then never looks like it
