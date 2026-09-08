@@ -9,11 +9,13 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface BalloonPopProps {
   dict: Dictionary["journey"];
-  /** The numbers on the balloons, answer included, in display order. */
+  /** The numbers on the balloons, answer included, in flight order. */
   choices: number[];
   answer: number;
   onCorrect: () => void;
   onMiss: () => void;
+  /** Every balloon rose off the top with the right one still floating. */
+  onEscape: () => void;
 }
 
 const BALLOON = "/assets/learn-with-pinki/other/ballon.png";
@@ -22,32 +24,60 @@ const BALLOON = "/assets/learn-with-pinki/other/ballon.png";
    different-coloured balloons out of a single file. The angles are picked to
    land on colours that belong to this palette rather than sweeping the wheel.
 
-   Each list is read modulo its own length, so the layout can change the number
-   of balloons without any of these having to be resized with it. */
+   Every list is read modulo its own length, so the number of balloons can
+   change without any of them having to be resized with it. `LANES` are
+   percentages of the sky's width and `RISE`/`DELAYS` are the flight itself:
+   slow enough that a child has time to find the right numeral, staggered so
+   the four never travel as a block. Fixed tables, never `Math.random()` —
+   this stage renders on the server too, and a random flight would hydrate
+   mismatched (the same rule the puzzle tray and the quiz decoys follow). */
 const HUES = [0, 210, 80, 300];
+const LANES = [18, 46, 72, 90];
+const RISE = [9, 11, 8.5, 10.5];
+const DELAYS = [0, 1.8, 3.4, 0.9];
 const DRIFTS = ["3.2s", "3.8s", "3.4s", "4.1s"];
-const DELAYS = ["0s", "0.4s", "0.8s", "0.2s"];
+
+const at = <T,>(list: readonly T[], index: number): T =>
+  list[index % list.length];
+
+/** When one balloon leaves the sky, in seconds from the round starting. */
+const escapesAt = (index: number) => at(RISE, index) + at(DELAYS, index);
 
 /**
  * "Pop Number 1!" — the last challenge, as a game rather than a question.
  *
- * Identical in substance to a four-option multiple choice, and completely
- * different to be on the end of: the balloons drift, the right one bursts, and
- * a wrong one bobs away and comes back. A child who has just done four
- * teaching steps has earned something that feels like play.
+ * **The balloons rise, and the round can be lost.** They drift up out of a
+ * fixed sky, one carrying the number the child is learning, and that one has
+ * to be popped before it leaves the top. A wrong pop is still never marked
+ * wrong and never removes the balloon — it bobs and stays poppable, so
+ * nothing can be eliminated by guessing — but letting the right one escape
+ * ends the round and hands the stage back to Pinki, who offers another go.
  *
- * A wrong pop is never marked wrong and never removes the balloon — it stays
- * poppable, so nothing can be eliminated by guessing.
+ * This replaced a static 2 x 2 grid of the same four balloons. Identical in
+ * substance to a four-option multiple choice either way; the difference is
+ * that a child who has just done four teaching steps gets something that
+ * behaves like a game.
  */
 export function BalloonPop({
   choices,
   answer,
   onCorrect,
   onMiss,
+  onEscape,
   dict,
 }: BalloonPopProps) {
   const [popped, setPopped] = useState<number | null>(null);
   const [bobbing, setBobbing] = useState<number | null>(null);
+
+  /* The last balloon to leave the sky, so exactly ONE of them can end the
+     round. Derived from the flight tables rather than counted as the balloons
+     go: a counter would have to be incremented from an event handler and read
+     back in the same tick, and this answer is already fixed before the round
+     starts. */
+  const lastOut = choices.reduce(
+    (last, _, index) => (escapesAt(index) > escapesAt(last) ? index : last),
+    0,
+  );
 
   const pop = (value: number) => {
     if (popped !== null) return;
@@ -66,13 +96,11 @@ export function BalloonPop({
   };
 
   return (
-    /* A 2 x 2 BLOCK, not a wrapping row. Wrapping laid four balloons across
-       one line and dropped the fifth underneath on its own, which read as one
-       of them having been left out rather than as a set to choose from. A
-       fixed two-column grid says the same thing at every width, and it is
-       what fixes the choice count at four. `justify-items-center` keeps each
-       balloon centred in its cell as it drifts. */
-    <div className="grid grid-cols-2 justify-items-center gap-3 sm:gap-6">
+    /* The sky is a plain white `.card`, the same surface the demo and trace
+       boards use — a play area, not a painted scene. `overflow-hidden` is what
+       crops a balloon at both ends of its flight, and it also stops one that
+       has left being tappable, since a clip clips hit-testing too. */
+    <div className="card balloon-sky anim-rise-in relative w-full max-w-[22rem] overflow-hidden sm:max-w-[30rem]">
       {choices.map((value, index) => {
         const isPopped = popped === value;
 
@@ -83,45 +111,76 @@ export function BalloonPop({
             onClick={() => pop(value)}
             disabled={popped !== null}
             aria-label={format(dict.popBalloon, { value })}
-            className={`balloon-drift relative disabled:cursor-default ${
-              bobbing === value ? "anim-wiggle" : ""
-            } ${popped !== null && !isPopped ? "opacity-40" : ""}`}
+            /* `top-full` puts it just under the sky; `.balloon-rise` carries
+               it up through and out of the top. `left` is a lane rather than a
+               utility because the keyframe owns `translate`, x-centring
+               included. */
+            className={`balloon-rise absolute top-full disabled:cursor-default ${
+              popped !== null && !isPopped ? "opacity-40" : ""
+            }`}
+            onAnimationEnd={(event) => {
+              /* The bob and the burst are animations on DESCENDANTS and bubble
+                 up here as well, so the flight is told apart by its target
+                 rather than by a keyframe name the build could rewrite. */
+              if (event.target !== event.currentTarget) return;
+              if (index === lastOut && popped === null) onEscape();
+            }}
             style={
               {
-                "--drift-duration": DRIFTS[index % DRIFTS.length],
-                "--drift-delay": DELAYS[index % DELAYS.length],
+                left: `${at(LANES, index)}%`,
+                "--rise-duration": `${at(RISE, index)}s`,
+                "--rise-delay": `${at(DELAYS, index)}s`,
+                /* A popped balloon stops where it was hit: the burst reads as
+                   the balloon going, not as it slipping away mid-burst. */
+                animationPlayState: isPopped ? "paused" : undefined,
               } as CSSProperties
             }
           >
-            <span className={`relative block ${isPopped ? "balloon-pop" : ""}`}>
-              {/* Nested inside the popped balloon itself, not centred on the
-                  whole row: every balloon keeps drifting via `balloon-drift`
-                  on the button above, so a burst positioned against the row's
-                  own centre would land wherever the balloon happened to be
-                  when it popped — usually not there. As a descendant it
-                  inherits the same drift transform and bursts from exactly
-                  where the balloon is. */}
-              {isPopped && <Celebration />}
+            {/* The bob rides `transform` while the flight above rides
+                `translate`, which is the only reason the two can run at once
+                on the same balloon. */}
+            <span
+              className="balloon-drift block"
+              style={
+                { "--drift-duration": at(DRIFTS, index) } as CSSProperties
+              }
+            >
+              {/* The wrong-pop wiggle and the burst share this element: both
+                  ride `transform`, and a balloon can never be doing both. It
+                  is the innermost layer so neither touches the bob above it. */}
+              <span
+                className={`relative block ${isPopped ? "balloon-pop" : ""} ${
+                  bobbing === value ? "anim-wiggle" : ""
+                }`}
+              >
+                {/* Nested inside the popped balloon itself, not centred on the
+                    sky: the balloon is somewhere up its own lane by the time
+                    it is hit, and a burst positioned against the box would
+                    land wherever the row used to be. As a descendant it
+                    inherits the flight and bursts from exactly where the
+                    balloon is. */}
+                {isPopped && <Celebration />}
 
-              <Image
-                src={BALLOON}
-                alt=""
-                width={96}
-                height={128}
-                className="h-24 w-auto object-contain sm:h-32"
-                /* Both effects in ONE inline `filter`: an inline style beats a
-                   Tailwind `drop-shadow-*` utility outright, so splitting them
-                   silently drops the shadow. */
-                style={{
-                  filter: `hue-rotate(${HUES[index % HUES.length]}deg) drop-shadow(0 14px 18px rgb(92 78 190 / 28%))`,
-                }}
-              />
+                <Image
+                  src={BALLOON}
+                  alt=""
+                  width={96}
+                  height={128}
+                  className="h-24 w-auto object-contain sm:h-28"
+                  /* Both effects in ONE inline `filter`: an inline style beats
+                     a Tailwind `drop-shadow-*` utility outright, so splitting
+                     them silently drops the shadow. */
+                  style={{
+                    filter: `hue-rotate(${at(HUES, index)}deg) drop-shadow(0 14px 18px rgb(92 78 190 / 28%))`,
+                  }}
+                />
 
-              {/* The numeral as type, not the clay render: a 3D numeral on a
-                  3D balloon is two materials fighting, and white Fredoka on a
-                  saturated balloon is far easier to read at this size. */}
-              <span className="absolute inset-0 flex items-center justify-center pb-4 text-3xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] sm:text-4xl">
-                {value}
+                {/* The numeral as type, not the clay render: a 3D numeral on a
+                    3D balloon is two materials fighting, and white Fredoka on
+                    a saturated balloon is far easier to read at this size. */}
+                <span className="absolute inset-0 flex items-center justify-center pb-4 text-3xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] sm:text-4xl">
+                  {value}
+                </span>
               </span>
             </span>
           </button>

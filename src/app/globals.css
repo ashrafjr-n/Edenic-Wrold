@@ -2233,6 +2233,57 @@ button:disabled,
   animation: balloon-pop 0.4s ease-out both;
 }
 
+/* The sky the balloons rise through.
+
+   **Its height is a custom property, not a Tailwind utility**, because the
+   rise keyframe below has to travel exactly one box plus one balloon and can
+   only read a variable. For the same reason it carries NO `min-height` or
+   `max-height`: a clamped box and an unclamped keyframe disagree, and the
+   balloon then either freezes short of the top edge or leaves the screen long
+   before its animation — and its `animationend` — has fired.
+
+   `svh`, never `vh`: `vh` is measured against the LARGE viewport, so a box
+   sized against it is taller than a phone actually has whenever the browser
+   chrome is showing. Same call `NumberVideo` and `TrailSky` make. */
+.balloon-sky {
+  --sky-h: 42svh;
+  height: var(--sky-h);
+}
+
+@media (width >= 40rem) {
+  .balloon-sky {
+    --sky-h: 56svh;
+  }
+}
+
+/* One balloon's whole flight, bottom to top. It is placed at `top: 100%`, so
+   `0` is fully below the sky and `-(sky + its own height)` is fully above it —
+   which is why the box's height has to be a variable this can read.
+
+   **The x-centring lives INSIDE the keyframes.** Tailwind v4's
+   `-translate-x-1/2` sets the same standalone `translate` property this
+   animates, and an animation overrides a normal declaration outright, so a
+   class-based centring would be silently dropped for the whole flight — the
+   trap `.page-veil-cloud` already documents.
+
+   `linear`, not `ease`: an eased rise slows to a stop at the top, which reads
+   as the balloon hesitating rather than drifting away. The gentle bob and tilt
+   ride a child element on `transform` (`.balloon-drift`), so the two compose
+   instead of fighting over one property. */
+@keyframes balloon-rise {
+  from {
+    translate: -50% 0;
+  }
+  to {
+    translate: -50% calc(-1 * var(--sky-h) - 100%);
+  }
+}
+
+.balloon-rise {
+  animation: balloon-rise var(--rise-duration, 10s) linear var(--rise-delay, 0s)
+    both;
+}
+
 /* A right answer jumps rather than flashing a tick — the motion says "yes"
    without a word, which is the whole approach on these pages. */
 @keyframes jump {
@@ -3008,6 +3059,7 @@ button:disabled,
   .anim-wiggle,
   .anim-jump,
   .balloon-drift,
+  .balloon-rise,
   .stroke-draw,
   .pen-tip,
   .say-pulse,
@@ -3027,6 +3079,15 @@ button:disabled,
   .page-veil--in .page-veil-cloud,
   .page-veil--out .page-veil-cloud {
     animation: none;
+  }
+
+  /* A balloon is placed BELOW its sky and the rise keyframe is what brings it
+     into view, so losing that animation alone would leave the game with an
+     empty box. It parks mid-sky instead — every balloon reachable, nothing
+     ever escaping, so the round simply cannot time out. That is the right
+     trade here: the child pops at their own pace. */
+  .balloon-rise {
+    translate: -50% calc(-0.5 * var(--sky-h) - 50%);
   }
 
   .confetti-piece {
