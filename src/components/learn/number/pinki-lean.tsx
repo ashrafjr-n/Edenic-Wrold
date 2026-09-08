@@ -67,6 +67,22 @@ const LEAN = {
     painted: { width: 372, height: 368 },
   },
   /**
+   * `journey`, dropped a little, for the `give` count activity — the apple
+   * tray. Same size, just standing lower: the items grew on direct request
+   * and at the standard placement her head sat straight under them, so the
+   * tray and her face were competing for the same band of a phone screen. She
+   * loses a little more of her feet to the bottom edge, which is the crop
+   * every other placement already takes.
+   *
+   * Deliberately NOT `journeyLow`: that one drops much further AND comes down
+   * a size, which is right for a tall board with a piece tray under it and
+   * wrong here, where nothing needs clearing below the items.
+   */
+  journeyGive: {
+    box: "block -bottom-[11%] -right-[24%] h-[62%] sm:-bottom-[8%] sm:-right-[12%] sm:h-[72%]",
+    painted: { width: 372, height: 368 },
+  },
+  /**
    * `journey`, dropped and trimmed for the two `count` activities whose board
    * is TALL: `complete` carries a piece tray under the numeral and `path`
    * winds a route down the height of its card. At the standard placement she
