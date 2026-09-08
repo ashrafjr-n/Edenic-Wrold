@@ -226,7 +226,6 @@ export const en = {
     strokeHint1: "A little flag... then straight down!",
     traceInvite: "Trace it with me!",
     traceMiss: "So close! Let's go again.",
-    find: "Which one is {word}?",
     findMiss: "Hmm... let's look again!",
     countGive: "Pick {word} {itemLabel}!",
     countComplete: "Complete Number {value}!",
@@ -234,6 +233,7 @@ export const en = {
     countColor: "Color Number {value}!",
     countHow: "How many {itemLabel} did we pick?",
     game: "Pop Number {value}!",
+    gameRetry: "Try again — pop the Number {value} balloon!",
     celebrate: "Hooray! You did it!",
   },
 };

@@ -2127,37 +2127,6 @@ button:disabled,
   border-left-color: var(--surface);
 }
 
-/* The bubble when Pinki stands BELOW it instead of beside it — the `find`
-   stage, where `PinkiLean`'s `journeyCenter` placement puts her centred
-   under the quiz rather than cropped by an edge. Pointing `--left`'s tail
-   sideways here aimed it at empty air next to her rather than at her at all
-   (verified by screenshot) — a genuinely different direction, not a retuned
-   offset of `--left`, so it is its own modifier rather than a variable on
-   that one.
-
-   Points DOWN: colored TOP border, anchored flush with the bubble's own
-   bottom edge (`top: 100%`). */
-.speech-bubble--down::before,
-.speech-bubble--down::after {
-  top: 100%;
-  right: auto;
-  bottom: auto;
-  left: 50%;
-  translate: -50% 0;
-  border-color: transparent;
-}
-
-.speech-bubble--down::before {
-  border-width: 0.9rem 0.55rem 0 0.55rem;
-  border-top-color: var(--bubble-ink, var(--color-pinki));
-}
-
-.speech-bubble--down::after {
-  border-width: 0.72rem 0.42rem 0 0.42rem;
-  border-top-color: var(--surface);
-}
-
-
 /* ---------------------------------------------------------------
    "Watch me draw it."
 
