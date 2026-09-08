@@ -634,9 +634,10 @@ export function NumberJourney({
     (stage === "count" &&
       (countActivity.kind === "complete" || countActivity.kind === "path")) ||
     /* The `complete` GAME is the same tall board, so she stands clear of it
-       the same way — until it is solved, when the piece is home and the
-       "Finish!" button wants the room instead. */
-    (stage === "game" && gameActivity === "complete" && !solved);
+       the same way. Deliberately NOT dropped when it is solved: moving her
+       back up the moment the piece lands makes her jump, and lands her across
+       the bottom of the very numeral the child has just finished. */
+    (stage === "game" && gameActivity === "complete");
   /* The apple tray is not a tall board, but its items grew, so she stands a
      little lower there too — see `journeyGive`. Only while the tray is still
      up: once it is answered the stage is a three-numeral quiz and she goes
