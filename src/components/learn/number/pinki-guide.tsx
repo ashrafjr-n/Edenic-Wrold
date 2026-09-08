@@ -72,6 +72,19 @@ interface PinkiGuideProps {
       buttons sends the bubble to the very bottom of the column and onto her
       legs. */
   lowered?: boolean;
+  /** `lead` only: the round this stage is running is SOLVED, even though
+      there may be no `children` to show for it. `children` alone used to be
+      the signal for dropping the bubble down beside her face (`mt-auto`) —
+      true for every stage except the apple-count quiz, which auto-advances
+      with no Next button at all once it is right. Without this, that one
+      quiz never got its `mt-auto` and the bubble sat pinned to the top of
+      the column through the whole celebration, floating well above her
+      instead of landing beside her face — exactly the bug the `mt-auto`
+      comment below was written to prevent, reintroduced by removing the
+      button that used to carry it. Every other `lead` stage already has
+      `children` truthy at the moment it matters, so this is additive and
+      changes nothing about them. */
+  bubbleDown?: boolean;
 }
 
 /**
@@ -103,6 +116,7 @@ export function PinkiGuide({
   presence = "lead",
   children,
   lowered = false,
+  bubbleDown = false,
   dir = "ltr",
 }: PinkiGuideProps) {
   if (presence === "none") return null;
@@ -161,11 +175,15 @@ export function PinkiGuide({
               an AUTO margin and not a fixed one: on a stage whose activity
               fills the column there is no free space to take, so it
               contributes nothing rather than pushing the buttons off the
-              screen. Skipped when there are no actions (an unsolved quiz),
-              where it would drop the bubble to the very bottom of the column
-              and onto her. */
+              screen. Skipped while there is neither a `children` action NOR
+              `bubbleDown` (an unsolved quiz), where it would drop the bubble
+              to the very bottom of the column and onto her. `bubbleDown` is
+              the escape hatch for a stage that is DONE but has nothing to
+              show for it — the apple-count quiz auto-advances with no Next
+              button, so `children` alone can no longer tell "solved" apart
+              from "still working" the way it does everywhere else. */
           className={`speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:self-end sm:px-5 sm:py-3 sm:text-base ${
-            children ? "mt-auto" : ""
+            children || bubbleDown ? "mt-auto" : ""
           } ${lowered ? "mt-8 sm:mt-12" : ""}`}
         >
           {line}
