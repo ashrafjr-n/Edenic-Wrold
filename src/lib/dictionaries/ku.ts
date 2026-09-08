@@ -101,8 +101,6 @@ export const ku: Dictionary = {
   },
   characterHub: {
     backToLearn: "ڤەگەڕان بۆ فێربوونێ",
-    achievements: "دەستکەفتن",
-    yourAchievements: "دەستکەفتنێن تە",
     nextUp: "یا دی",
     unlocksAfter: "پشتی {name} ڤەدبیت",
     unlocksLater: "دویڤ ڕا ڤەدبیت",

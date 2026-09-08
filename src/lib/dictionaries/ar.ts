@@ -97,8 +97,6 @@ export const ar: Dictionary = {
   },
   characterHub: {
     backToLearn: "العودة إلى التعلّم",
-    achievements: "الإنجازات",
-    yourAchievements: "إنجازاتك",
     nextUp: "التالي",
     unlocksAfter: "يُفتح بعد إكمال {name}",
     unlocksLater: "يُفتح لاحقًا",
