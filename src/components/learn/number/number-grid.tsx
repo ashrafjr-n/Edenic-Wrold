@@ -112,7 +112,7 @@ export function NumberGrid({
        `overflow-hidden`: Pinki BREAKS OUT of this card, past its right and
        bottom edges, so the card must not crop her. The page's `<main>` is
        what stops her from widening the document — see the route. */
-    <div className="card relative w-full px-5 py-7 sm:px-9 sm:py-10 lg:py-7">
+    <div className="card card-clay-white relative w-full px-5 py-7 sm:px-9 sm:py-10 lg:py-7">
       {/* `hydrated` is load-bearing, not belt-and-braces: it is false on the
           server AND on the first client render, so this is absent from the
           server HTML and can never be a mismatch. Gating on `finished === 0`

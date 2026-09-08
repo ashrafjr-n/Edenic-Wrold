@@ -161,7 +161,7 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
   };
 
   return (
-    <div className="card anim-rise-in flex flex-row items-stretch gap-4 p-5 sm:gap-6 sm:p-7">
+    <div className="card card-clay-white anim-rise-in flex flex-row items-stretch gap-4 p-5 sm:gap-6 sm:p-7">
       <div
         ref={boardRef}
         className="relative h-72 w-56 shrink-0 sm:h-[22rem] sm:w-72"
@@ -245,7 +245,7 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
             }
             aria-hidden
           >
-            <span className="card card-pill flex h-11 w-11 items-center justify-center sm:h-12 sm:w-12">
+            <span className="card card-clay-white card-pill flex h-11 w-11 items-center justify-center sm:h-12 sm:w-12">
               <Hand
                 className="h-6 w-6 sm:h-7 sm:w-7"
                 style={{ color: accent }}
@@ -284,7 +284,7 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
             scale: drag?.moved ? "1.1" : "1",
           }}
         >
-          <span className="card card-pill anim-breathe flex h-14 w-14 items-center justify-center p-1 sm:h-16 sm:w-16">
+          <span className="card card-clay-white card-pill anim-breathe flex h-14 w-14 items-center justify-center p-1 sm:h-16 sm:w-16">
             <Image
               src={PINKI_TOKEN}
               alt="Pinki"

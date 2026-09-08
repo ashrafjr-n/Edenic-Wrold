@@ -142,7 +142,7 @@ export function NumberColor({
   );
 
   return (
-    <div className="card numeral-stage anim-rise-in flex flex-col items-center p-5 sm:p-7">
+    <div className="card card-clay-white numeral-stage anim-rise-in flex flex-col items-center p-5 sm:p-7">
       <div
         ref={boardRef}
         className="relative touch-none select-none"
