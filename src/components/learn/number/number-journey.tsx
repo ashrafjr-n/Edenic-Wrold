@@ -803,6 +803,10 @@ export function NumberJourney({
             line={guide.line}
             presence={guide.presence}
             lowered={leanPlacement === "journeyGive"}
+            /* The apple-count quiz is solved but carries no Next button of
+               its own — see `bubbleDown`'s own doc comment for why `children`
+               alone can't tell PinkiGuide the round is over here. */
+            bubbleDown={stage === "count" && countActivity.kind === "give" && appleGiven && solved}
             dir={dir}
           >
             {actions}
