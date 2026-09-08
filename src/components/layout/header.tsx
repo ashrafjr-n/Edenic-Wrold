@@ -14,7 +14,17 @@ import type { Locale } from "@/types/locale";
     the edges. Only the nav is centred. */
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
-    <header className="sticky top-0 z-20 bg-[var(--surface)] shadow-[0_6px_20px_-16px_rgb(var(--shadow-hue)/45%)]">
+    /* **`z-30`, above every page. It was `z-20` and that was not enough.**
+       The numbers journey's stage group carries `relative z-20` of its own
+       (it has to out-rank `PinkiLean`), and a later sibling at the SAME rank
+       wins — so on the balloon game the sky card painted over the header, and
+       the language fan, which drops out of the header onto the page below it,
+       opened BEHIND that card. Site chrome has to out-rank page content
+       everywhere rather than tie with it, so the header and the bottom nav
+       both moved up a tier together. `PageTransitionOverlay` still passes
+       under both (`z-10`), and `PuzzleHint`'s modal still owns the screen
+       (`z-50`, portalled to `body`). */
+    <header className="sticky top-0 z-30 bg-[var(--surface)] shadow-[0_6px_20px_-16px_rgb(var(--shadow-hue)/45%)]">
       <div className="flex flex-col items-center gap-4 px-5 py-2.5 sm:px-8 sm:py-4 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:px-10">
         <div className="flex w-full items-center justify-between gap-4 lg:w-auto lg:justify-start">
           <Logo className="h-11 sm:h-14" />
