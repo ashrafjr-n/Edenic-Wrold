@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowRight, RotateCcw, Star, Timer } from "lucide-react";
+import { ArrowRight, Star, Timer } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
 import { memoryFaces } from "@/data/memory-levels";
 import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import { AgainButton } from "@/components/ui/again-button";
 import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
@@ -260,18 +261,18 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
             <Celebration />
 
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              <Button3D
-                variant="calm"
-                /* `--color-ink-fixed`: `.btn3d--clay-white`'s face is pinned
-                   pale in dark mode (globals.css), so its text has to stay
-                   fixed dark too — `--color-ink` itself flips light there. */
+              {/* The site's one replay button — same collapse-and-spin as
+                  the numbers lesson's, and it keeps the WHITE clay face
+                  rather than taking this section's gold from
+                  `--page-accent-*`: the "Next" beside it is already gold, and
+                  two gold pills side by side lose which of them is the way
+                  onward. */}
+              <AgainButton
+                label={dict.activities.again}
+                onPress={again}
                 tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
-                onClick={again}
-                className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
-              >
-                <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-                {dict.activities.again}
-              </Button3D>
+                className="btn3d--clay-white"
+              />
 
               <Button3D
                 tone={{
