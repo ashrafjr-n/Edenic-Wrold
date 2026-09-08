@@ -2246,21 +2246,22 @@ button:disabled,
    sized against it is taller than a phone actually has whenever the browser
    chrome is showing. Same call `NumberVideo` and `TrailSky` make. */
 .balloon-sky {
-  --sky-h: 54svh;
+  --sky-h: 60svh;
   height: var(--sky-h);
 }
 
 /* The two numbers are the most the stage can hold with its own "Finish!"
    button under it, measured rather than picked: at 390x844 the column has
-   580px for the sky unsolved, and the button costs about 68 of them. 51svh
-   from `sm` clears 1440x900, 820x1180 and 768x1024 the same way — 52 left
-   4px on the first of those. The two viewports it
+   581px for the sky unsolved, and the button costs about 68 of them — so
+   60svh is the most a phone can give it, and 52svh the most 1440x900 can.
+   Both are AT that ceiling now, on direct request: there is no more height to
+   take on this stage without the "Finish!" button going below the fold. The two viewports it
    does NOT clear are 320x568 and 1440x700, which scroll a little on this
    stage — an accepted trade for a sky a child can actually play in, on
    direct request. */
 @media (width >= 40rem) {
   .balloon-sky {
-    --sky-h: 51svh;
+    --sky-h: 52svh;
   }
 }
 
