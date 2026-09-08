@@ -2559,18 +2559,26 @@ button:disabled,
 .guide-target::after {
   content: "";
   position: absolute;
-  /* Reaches past the element on every side: the halo has to read as light
-     around the thing, not as a tint applied to it. */
-  inset: -12%;
+  /* **Reaches WELL past the element, and the two numbers below are why.**
+     `closest-side` measures to the halo box's own edge, so with the old
+     `inset: -12%` and a `transparent 72%` stop the gradient faded out to
+     nothing INSIDE the element it was meant to ring — invisible on anything
+     with a fill, and only readable at all on the quiz numerals because those
+     are transparent PNGs and the glow showed through around the digit. The
+     colour now holds to 45% of the radius and fades over the rest, so there
+     is real light outside the element's own edge. */
+  inset: -24%;
   z-index: -1;
   border-radius: 999px;
   /* The page's own accent, so the mark means the same thing on every
-     character's lesson — `closest-side` keeps it round whatever shape it is
-     stretched over. */
+     character's lesson. No shape keyword, so it is an ELLIPSE — it has to
+     stretch to whatever box it is put on, and a circle on the apple basket
+     (much wider than it is tall) would light the middle and leave the ends
+     dark. */
   background: radial-gradient(
     closest-side,
-    color-mix(in srgb, var(--page-accent-color) 55%, transparent),
-    transparent 72%
+    color-mix(in srgb, var(--page-accent-color) 55%, transparent) 45%,
+    transparent 100%
   );
   animation: guide-glow 2s ease-in-out infinite;
   pointer-events: none;
