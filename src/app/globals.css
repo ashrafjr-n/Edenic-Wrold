@@ -2250,9 +2250,13 @@ button:disabled,
   height: var(--sky-h);
 }
 
+/* 46svh from `sm`, not the 56 it started at: a short desktop (measured at
+   1440x700) ran 52px past the viewport at the larger value, and the whole
+   round has to be on screen at once — a balloon that escapes below the fold
+   escapes unseen. */
 @media (width >= 40rem) {
   .balloon-sky {
-    --sky-h: 56svh;
+    --sky-h: 46svh;
   }
 }
 
