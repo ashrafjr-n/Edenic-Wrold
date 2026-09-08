@@ -62,9 +62,15 @@ export default async function TrailPage({
 
           `top` clears the header with a real gap under it rather than
           sitting against it, and the whole thing stays below the header's
-          own `z-20` (and below the transition veil's `z-10`, which is
-          portalled to `body` and so paints after this at the same level). */}
-      <div className="fixed left-4 top-[5.25rem] z-10 sm:left-8 sm:top-[7rem]">
+          own `z-30`.
+
+          **`z-20` so it out-ranks `TrailIntro`'s catcher, which is `z-10`
+          and renders after it.** At the same rank the catcher won, and
+          Nova's greeting swallowed the first press: a child had to tap once
+          to move her on and only then could go back. Above her the button
+          answers straight away, and every OTHER tap on the sky still
+          advances her, which is the only thing that catcher is for. */}
+      <div className="fixed left-4 top-[5.25rem] z-20 sm:left-8 sm:top-[7rem]">
         <BackButton href="/play" label={dict.activities.backToActivities} />
       </div>
 
