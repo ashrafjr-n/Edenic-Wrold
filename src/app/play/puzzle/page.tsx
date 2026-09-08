@@ -54,7 +54,14 @@ export default async function PuzzleStagesPage() {
             positioning, never the button: `.btn3d` sets `position:
             relative` and is UNLAYERED, so a Tailwind `absolute` on the
             button itself silently loses. */}
-        <span className="absolute left-6 top-0 sm:left-8">
+        {/* **`z-10` is not decoration — without it this button cannot be
+            pressed at all.** The heading row below is `relative` (positioned,
+            `z-auto`) and comes LATER in the DOM, so it paints over anything
+            positioned before it — and it is a full-width flex row, so its box
+            covers this corner even though its chips are centred. The click
+            landed on that row and the page never navigated. Verified by
+            `elementFromPoint` on the button's own centre, before and after. */}
+        <span className="absolute left-6 top-0 z-10 sm:left-8">
           <BackButton href="/play" label={dict.activities.backToActivities} />
         </span>
 
