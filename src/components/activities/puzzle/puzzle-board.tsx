@@ -7,7 +7,7 @@ import type {
   Ref,
 } from "react";
 import Image from "next/image";
-import { ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import {
   isUpright,
@@ -23,6 +23,7 @@ import type { PuzzlePiece } from "@/lib/puzzle-pieces";
 import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import { AgainButton } from "@/components/ui/again-button";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -632,18 +633,16 @@ export function PuzzleBoard({
         /* No stars: the finished picture IS the reward here, and a second
            star currency next to the lessons' own would only muddy both. */
         <div className="anim-pop-in flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <Button3D
-            variant="calm"
-            /* `--color-ink-fixed`: `.btn3d--clay-white`'s face is pinned
-               pale in dark mode (globals.css), so its text has to stay
-               fixed dark too — `--color-ink` itself flips light there. */
+          {/* Same shared replay button the numbers lesson uses, keeping the
+              WHITE clay face rather than this section's green: the "Next"
+              beside it is already green, and the pair would stop reading as
+              a secondary and a primary. */}
+          <AgainButton
+            label={dict.activities.again}
+            onPress={reset}
             tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
-            onClick={reset}
-            className="btn3d--clay-white px-6 py-3 text-base sm:px-7 sm:text-lg"
-          >
-            <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-            {dict.activities.again}
-          </Button3D>
+            className="btn3d--clay-white"
+          />
 
           <Button3D
             tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
