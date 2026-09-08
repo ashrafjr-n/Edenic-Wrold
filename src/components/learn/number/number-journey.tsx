@@ -611,7 +611,16 @@ export function NumberJourney({
      decision on this screen. */
   const tallCountBoard =
     stage === "count" && (countActivity.kind === "complete" || countActivity.kind === "path");
-  const leanPlacement = tallCountBoard ? "journeyLow" : "journey";
+  /* The apple tray is not a tall board, but its items grew, so she stands a
+     little lower there too — see `journeyGive`. Only while the tray is still
+     up: once it is answered the stage is a three-numeral quiz and she goes
+     back to her usual place. */
+  const givingItems = stage === "count" && countActivity.kind === "give" && !appleGiven;
+  const leanPlacement = tallCountBoard
+    ? "journeyLow"
+    : givingItems
+      ? "journeyGive"
+      : "journey";
 
   /* `hero` is the one presence that comes AFTER the stage's buttons. It is the
      celebration screen, and the two ways onward were asked to sit ABOVE her:
