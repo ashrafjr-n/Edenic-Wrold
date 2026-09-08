@@ -167,7 +167,7 @@ export function AppleGive({
           burning on it would be pointing at a finished instruction. */}
       <div
         ref={basketRef}
-        className={`card flex h-28 min-w-[10rem] items-center justify-center gap-2 px-6 sm:h-32 sm:min-w-[13rem] ${
+        className={`card flex h-32 min-w-[11rem] items-center justify-center gap-2 px-6 sm:h-36 sm:min-w-[14rem] ${
           highlightTarget && given.length === 0 ? "guide-target" : ""
         }`}
       >
@@ -183,7 +183,7 @@ export function AppleGive({
               alt=""
               width={140}
               height={140}
-              className="anim-pop-in h-14 w-14 object-contain sm:h-16 sm:w-16"
+              className="anim-pop-in h-16 w-16 object-contain sm:h-20 sm:w-20"
             />
           ))
         )}
@@ -239,7 +239,7 @@ export function AppleGive({
                 width={140}
                 height={140}
                 draggable={false}
-                className="h-20 w-20 select-none object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] sm:h-24 sm:w-24"
+                className="h-24 w-24 select-none object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] sm:h-28 sm:w-28"
               />
             </button>
           );
