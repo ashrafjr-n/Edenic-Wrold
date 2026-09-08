@@ -166,7 +166,7 @@ export function NumberComplete({
        chunk; at half the numeral it would show as a visible step where the
        piece lands. */
     <div
-      className="card card-clay-white numeral-stage flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7"
+      className="card card-clay-white numeral-stage numeral-stage--half flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7"
       style={
         {
           "--board-w": `calc(var(--board-h) * ${imageSize.width} / ${imageSize.height})`,
