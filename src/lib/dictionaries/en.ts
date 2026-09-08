@@ -164,7 +164,6 @@ export const en = {
     lockedPuzzleAria: "Puzzle {value}, locked",
     startLevelAria: "Start level {value} — {pairs} pairs",
     lockedLevelAria: "Level {value}, locked",
-    puzzleLabel: "Puzzle {value}",
     levelLabel: "Level {value}",
     /** The bare word, used beside the digit in the puzzle grid's stage chip
         (`<span>{levelWord}</span>{value}`) — distinct from `levelLabel`
@@ -176,7 +175,6 @@ export const en = {
     theFinishedPicture: "The finished picture",
     helpButtonAria: "Help — put one piece in place. {left} left",
     help: "Help",
-    skip: "Skip",
     closeHint: "Close and go back to the puzzle",
     again: "Again",
     next: "Next",
