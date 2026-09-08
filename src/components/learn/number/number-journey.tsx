@@ -31,7 +31,7 @@ import { AppleGive } from "./apple-give";
 import { NumberComplete } from "./number-complete";
 import { NumberPath } from "./number-path";
 import { NumberColor } from "./number-color";
-import { BalloonPop } from "./balloon-pop";
+import { BalloonPop, TargetBalloon } from "./balloon-pop";
 import { Celebration } from "@/components/ui/celebration";
 
 /* Green is the "you got it, carry on" button and nothing else, so it never
@@ -434,16 +434,19 @@ export function NumberJourney({
       );
     actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
   } else if (stage === "game") {
-    /* **A lost round takes the sky off the screen entirely.** The balloons
-       have all gone by then, so leaving the box up would show an empty white
-       card under Pinki's "let's try again" — the stage becomes her and the
-       Again button, and pressing it brings the sky back.
+    /* **A lost round takes the sky off the screen entirely**, and puts the
+       balloon that got away in its place — centred, above Pinki, so "pop the
+       Number 1 balloon" is shown as well as said. The sky itself has to go:
+       every balloon has left by then, so leaving the box up would be an empty
+       panel over her line.
 
        No sibling `<Celebration>` here either, unlike the other stages: the
        balloons are still rising when one is popped, so a burst centred on this
        wrapper would land away from it. `BalloonPop` bursts its own confetti
        from inside the balloon. */
-    body = gameFailed ? null : (
+    body = gameFailed ? (
+      <TargetBalloon choices={popChoices} value={value} />
+    ) : (
       <BalloonPop
         key={`pop-${attempt}`}
         choices={popChoices}

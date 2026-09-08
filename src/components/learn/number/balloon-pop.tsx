@@ -51,6 +51,81 @@ const at = <T,>(list: readonly T[], index: number): T =>
 const escapesAt = (index: number) => at(RISE, index) + at(DELAYS, index);
 
 /**
+ * One balloon: the recoloured render with its numeral painted on it.
+ *
+ * The PARENT supplies `position: relative` — both callers already wrap this in
+ * a span carrying an animation of their own, so adding a third element here
+ * would only be a box for the numeral to be absolute against.
+ */
+function BalloonArt({
+  value,
+  hue,
+  sizeClass,
+}: {
+  value: number;
+  hue: number;
+  /** The balloon's own height, per breakpoint. */
+  sizeClass: string;
+}) {
+  return (
+    <>
+      <Image
+        src={BALLOON}
+        alt=""
+        width={96}
+        height={128}
+        className={`w-auto object-contain ${sizeClass}`}
+        /* Both effects in ONE inline `filter`: an inline style beats a
+           Tailwind `drop-shadow-*` utility outright, so splitting them
+           silently drops the shadow. */
+        style={{
+          filter: `hue-rotate(${hue}deg) drop-shadow(0 14px 18px rgb(92 78 190 / 28%))`,
+        }}
+      />
+
+      {/* The numeral as type, not the clay render: a 3D numeral on a 3D
+          balloon is two materials fighting, and white Fredoka on a saturated
+          balloon is far easier to read at this size. */}
+      <span className="absolute inset-0 flex items-center justify-center pb-4 text-3xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] sm:text-4xl lg:text-5xl">
+        {value}
+      </span>
+    </>
+  );
+}
+
+/**
+ * The balloon that got away, held up above Pinki while she asks for another
+ * go — so "pop the Number 1 balloon" is shown as well as said.
+ *
+ * **It wears the hue that balloon actually had in the round**, read off the
+ * same `choices` order the game is dealt from, rather than a fixed colour: the
+ * child is being shown the thing they were meant to catch, not a new
+ * decoration. `aria-hidden` because her line already names it.
+ */
+export function TargetBalloon({
+  choices,
+  value,
+}: {
+  choices: number[];
+  value: number;
+}) {
+  const index = choices.indexOf(value);
+
+  return (
+    <span
+      aria-hidden
+      className="balloon-drift anim-pop-in relative block"
+    >
+      <BalloonArt
+        value={value}
+        hue={at(HUES, index < 0 ? 0 : index)}
+        sizeClass="h-32 sm:h-40"
+      />
+    </span>
+  );
+}
+
+/**
  * "Pop Number 1!" — the last challenge, as a game rather than a question.
  *
  * **The balloons rise, and the round can be lost.** They drift up out of a
@@ -175,26 +250,11 @@ export function BalloonPop({
                     balloon is. */}
                 {isPopped && <Celebration />}
 
-                <Image
-                  src={BALLOON}
-                  alt=""
-                  width={96}
-                  height={128}
-                  className="h-24 w-auto object-contain sm:h-32 lg:h-36"
-                  /* Both effects in ONE inline `filter`: an inline style beats
-                     a Tailwind `drop-shadow-*` utility outright, so splitting
-                     them silently drops the shadow. */
-                  style={{
-                    filter: `hue-rotate(${at(HUES, index)}deg) drop-shadow(0 14px 18px rgb(92 78 190 / 28%))`,
-                  }}
+                <BalloonArt
+                  value={value}
+                  hue={at(HUES, index)}
+                  sizeClass="h-24 sm:h-32 lg:h-36"
                 />
-
-                {/* The numeral as type, not the clay render: a 3D numeral on a
-                    3D balloon is two materials fighting, and white Fredoka on
-                    a saturated balloon is far easier to read at this size. */}
-                <span className="absolute inset-0 flex items-center justify-center pb-4 text-3xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] sm:text-4xl">
-                  {value}
-                </span>
               </span>
             </span>
           </button>
