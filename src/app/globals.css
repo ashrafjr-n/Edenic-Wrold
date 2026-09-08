@@ -1978,6 +1978,113 @@ button:disabled,
     inset 0 -5px 9px -4px rgb(255 255 255 / 65%);
 }
 
+/* ---------------------------------------------------------------
+   The "Again" / "Try Again" button.
+
+   ONE button, on every screen that offers a replay — the trace board, the
+   lost balloon round, the celebration screen, a finished puzzle, a finished
+   memory level — and it behaves identically on all of them. The design is
+   the header's own: the dark-mode chip spins its icon a full turn on every
+   press, and that acknowledgement is what this borrows.
+
+   At rest it is a pill with the icon and the word. On press three things
+   happen AT ONCE, over the same ~0.45s: the word collapses to nothing, the
+   button's own side padding shrinks to match its height, and the icon turns
+   a full circle. What is left mid-press is a spinning disc exactly the size
+   of the back button in the corner — so the replay reads as the screen being
+   wound back, not as a label being pressed.
+
+   The COLOUR is not declared here: `AgainButton` takes the section's
+   `--page-accent-*` trio (`components/ui/back-button.tsx`), the same way the
+   back button does, so it is Pinki's pink inside the numbers lesson without
+   any call site naming a colour. A caller that needs to keep a different
+   pairing (a white chip beside a coloured "Next") passes its own tone.
+
+   Sizes are fixed HERE rather than by Tailwind at each call site, because
+   the circle is arithmetic: the pressed padding is exactly
+   `(block-size - icon width) / 2`, so a call site free to set `px-6` could
+   only ever get an oval. Change one of these four numbers and change its
+   pair with it.
+   --------------------------------------------------------------- */
+.again-btn {
+  block-size: 3rem;
+  padding-inline: 1.5rem;
+  /* The icon-to-label gap lives on the LABEL (see below) so that it can
+     collapse with it — `.btn3d`'s own gap would survive the collapse and
+     leave the icon sitting off-centre in the finished circle. */
+  gap: 0;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  /* `.btn3d` already declares a `transition`, and this block is unlayered at
+     the same specificity, so the whole list has to be restated — dropping the
+     first four here would take the button's own hover and press with it. */
+  transition:
+    background-color 0.2s ease,
+    translate 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease,
+    padding 0.45s ease;
+}
+
+/* The turn itself. `rotate` is its own property in Tailwind v4 and in the
+   cascade, so it composes with `.btn3d:active`'s press `translate` instead of
+   overwriting it — the same reason the header's chip animates this property
+   and not `transform`. `inline-flex`, because a transform on a non-replaced
+   INLINE element does nothing at all. */
+.again-btn__icon {
+  display: inline-flex;
+  transition: rotate 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* **A 1fr → 0fr grid track, not a `max-width`.** Collapsing a `max-width`
+   from a guessed ceiling spends the first part of the transition doing
+   nothing at all (until the ceiling drops below the text's real width), which
+   reads as a stutter; a grid track interpolates from the label's OWN measured
+   width, so the collapse starts on the first frame in every language. The
+   inner span is what actually clips — the track shrinking does not hide
+   overflow by itself. */
+.again-btn__label {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Physical `left`, not `padding-inline-start`: the site's layout never
+     mirrors (see the language-switcher notes), so the label is always to the
+     RIGHT of the icon — but an Arabic label carries `dir="rtl"`, which would
+     flip a logical property onto the wrong side. */
+  padding-left: 0.5rem;
+  transition:
+    grid-template-columns 0.45s ease,
+    padding-left 0.45s ease,
+    opacity 0.22s ease;
+}
+
+.again-btn__label > span {
+  overflow: hidden;
+}
+
+.again-btn.is-spinning {
+  /* (3rem − 1.25rem icon) / 2 — the pill lands exactly on a circle. */
+  padding-inline: 0.875rem;
+}
+
+.again-btn.is-spinning .again-btn__label {
+  grid-template-columns: 0fr;
+  padding-left: 0;
+  opacity: 0;
+}
+
+@media (width >= 40rem) {
+  .again-btn {
+    block-size: 3.5rem;
+    padding-inline: 1.75rem;
+    font-size: 1rem;
+  }
+
+  .again-btn.is-spinning {
+    /* (3.5rem − 1.25rem) / 2. */
+    padding-inline: 1.125rem;
+  }
+}
+
 
 /* ---------------------------------------------------------------
    The number journey.
@@ -2158,9 +2265,35 @@ button:disabled,
    both are set inline from the measured length, in the strokes' own 0–100
    units.
    --------------------------------------------------------------- */
+/* **`--stroke-offset` is how a numeral with more than one stroke draws them
+   IN ORDER, and it exists because the obvious way does not work.** The demo
+   used to be a single `<path>` holding every stroke, joined by a `moveto`, on
+   the assumption that a zero-length move lets one dash offset run straight
+   from the end of one stroke into the start of the next. It does not: the
+   dash pattern RESTARTS at every subpath, so both of number 4's strokes were
+   revealed at once — the crossbar, the diagonal and the stem all growing
+   together, which is what "the 4 is drawn wrong" actually was.
+
+   So each stroke is now its own `<path>`, and each is told how much of the
+   numeral is drawn BEFORE it (`--stroke-offset`) out of the whole
+   (`--stroke-length`). The dash pattern is the numeral's full length on every
+   one of them, and the offset simply starts that stroke's own dash further
+   back — so while the pen is still on an earlier stroke this one sits inside
+   the pattern's gap and shows nothing, and it finishes exactly when the pen
+   leaves it. One shared animation, no per-stroke delays or durations to keep
+   in step, and a one-stroke numeral draws precisely as it always did.
+
+   **Both ends are handed over as finished numbers (`--stroke-from` /
+   `--stroke-to`), never assembled here with `calc()`.** Chrome leaves a
+   `calc()` in a keyframe unresolved — the computed value stays the literal
+   string `calc(226.246px)` — and then cannot interpolate it against a plain
+   number, so it swaps between the two keyframes discretely instead: the
+   numeral sat invisible for the whole draw and appeared complete in a single
+   frame. Measured with `getComputedStyle`, not guessed. Do the arithmetic in
+   `StrokeDemo` and keep these two values plain. */
 @keyframes stroke-draw {
   0% {
-    stroke-dashoffset: var(--stroke-length);
+    stroke-dashoffset: var(--stroke-from, var(--stroke-length));
   }
   /* Drawn by 62%, then held: the finished numeral has to sit still long
      enough to be read before the loop starts over. A keyframe stop cannot be
@@ -2168,7 +2301,7 @@ button:disabled,
      sizes the duration around it. */
   62%,
   100% {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: var(--stroke-to, 0);
   }
 }
 
@@ -3186,6 +3319,16 @@ button:disabled,
 
   .confetti-piece {
     display: none;
+  }
+
+  /* The Again button is a TRANSITION, not a keyframe animation, so the
+     `animation: none` list above cannot reach it. The press still collapses
+     the word and shrinks the pill to a disc — that is the button telling the
+     child it was pressed — it just does all of it instantly, with no turn. */
+  .again-btn,
+  .again-btn__icon,
+  .again-btn__label {
+    transition: none;
   }
 }
 
