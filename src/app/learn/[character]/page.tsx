@@ -1,10 +1,8 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
-import { Crown } from "lucide-react";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
-import { Button3D } from "@/components/ui/button-3d";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
@@ -63,27 +61,30 @@ export default async function CharacterLearnPage({
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* Back and the (presentation-only, no achievements feature yet)
-            trophy sit at the same level as the header's own icon chrome —
-            same size and shape, just white instead of accent pink, since
-            they're chrome on top of an already-saturated page. No heading
-            text below them any more — the hero scene and the lesson list
-            carry the page on their own. */}
+        {/* Back on the left, the character chip on the right. **The white
+            achievements crown that used to close this row is DELETED**, on
+            direct request and for the reason the numbers pages' own crowns
+            were cut before it: nothing is awarded yet, so it was chrome
+            pointing at a screen that does not exist. Unlike those two rows,
+            this one needed no spacer in its place — the chip simply moved
+            into the corner it left, which is what `justify-between` gives
+            for free. No heading text below them either; the hero scene and
+            the lesson list carry the page on their own. */}
         <div
           className="anim-drop-in flex items-center justify-between gap-3"
           style={{ animationDelay: "0.1s" }}
         >
           {/* This character's own accent, handed down by the `<main>`
-              above — Pinki's is pink, Nova's lavender, Bloo's blue. The crown
-              beside it stays white on every page, which is what keeps "go
-              back" and "chrome with no destination yet" from reading as the
-              same control however this button is coloured. */}
+              above — Pinki's is pink, Nova's lavender, Bloo's blue. */}
           <BackButton href="/learn" label={dict.characterHub.backToLearn} />
 
           {/* Whose world this is. The hero banner is phone-only now, so
-              without this the desktop page carried no trace of the character
-              at all — and this fills the dead span between the two buttons
-              at the same time. */}
+              without this the desktop page would carry no trace of the
+              character at all. **It sits at the RIGHT end of the row**, in
+              the corner the achievements crown used to hold — it was centred
+              between the two buttons, and with one of them gone a centred
+              chip would have floated in the middle of an otherwise empty
+              row. */}
           <div className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6">
             <div
               className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
@@ -108,32 +109,6 @@ export default async function CharacterLearnPage({
             </div>
             <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
               {character.name}
-            </span>
-          </div>
-
-          {/* Presentation only — there is no achievements screen yet. The
-              tooltip is the same `group/*` hover pattern the locked lesson
-              cards use, so an unexplained icon still says what it is. */}
-          <div className="group/tip relative shrink-0">
-            <Button3D
-              variant="calm"
-              tone={{ face: "var(--surface)" }}
-              aria-label={dict.characterHub.achievements}
-              className="btn3d--clay-white h-12 w-12 sm:h-14 sm:w-14"
-            >
-              {/* A filled crown, not the outlined trophy that was here first —
-                  a trophy's thin stem and handles break up at this size, while
-                  a crown stays one chunky silhouette, which is what reads as
-                  clay next to the character renders. */}
-              <Crown
-                className="h-5 w-5 fill-current sm:h-6 sm:w-6"
-                style={{ color: "var(--color-gold)" }}
-                strokeWidth={1.5}
-              />
-            </Button3D>
-
-            <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-max rounded-xl bg-[var(--color-ink-fixed)] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100">
-              {dict.characterHub.yourAchievements}
             </span>
           </div>
         </div>

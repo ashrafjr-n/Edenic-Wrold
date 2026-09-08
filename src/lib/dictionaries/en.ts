@@ -100,8 +100,6 @@ export const en = {
   },
   characterHub: {
     backToLearn: "Back to Learn",
-    achievements: "Achievements",
-    yourAchievements: "Your achievements",
     nextUp: "Next up",
     unlocksAfter: "Unlocks after {name}",
     unlocksLater: "Unlocks later",
