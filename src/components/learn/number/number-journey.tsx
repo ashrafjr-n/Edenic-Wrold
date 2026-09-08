@@ -72,6 +72,14 @@ const POP_CHOICES = 4;
     change, and anything longer reads as the app thinking. */
 const STAGE_LEAVE_MS = 200;
 
+/** How long the "how many apples" answer is left on screen, celebrating,
+    before the journey carries the child on by itself. Long enough for the
+    confetti and the numeral's own jump to read as "yes, that one", short
+    enough that nobody is waiting — this stage has no Next button at all, on
+    direct request, because a right answer is already the child saying they
+    are ready. */
+const AUTO_ADVANCE_MS = 1100;
+
 /** How much of the numeral has to be covered, per attempt. It falls with every
     miss so a child who is struggling always gets through — the third attempt
     accepts more or less anything drawn on the numeral. */
@@ -149,6 +157,8 @@ export function NumberJourney({
      mounted yet — see `go` below. */
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
+  /* The one stage that moves on without being asked — see `AUTO_ADVANCE_MS`. */
+  const autoTimer = useRef<number | undefined>(undefined);
 
   /* The tracing stage owns the screen: the child draws on it with a finger,
      and the page sliding under that finger is the one thing that can ruin a
@@ -158,7 +168,13 @@ export function NumberJourney({
 
   /* The one timer this component owns. Cleared on unmount so a child who
      leaves mid-transition never lands a `setState` on a gone component. */
-  useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(leaveTimer.current);
+      window.clearTimeout(autoTimer.current);
+    },
+    [],
+  );
 
   const complete = useProgress((state) => state.complete);
   const stars = starsFor(mistakes);
@@ -197,6 +213,15 @@ export function NumberJourney({
       setGameFailed(false);
       setStage(JOURNEY_STAGES[stageIndex + 1]);
     });
+
+  /* Celebrate the right answer where it was given, then carry on — the whole
+     point of a stage with no Next button. Scheduled from the handler that
+     knows the answer was right, not from an effect watching `solved`. */
+  const solveAndGo = () => {
+    setSolved(true);
+    window.clearTimeout(autoTimer.current);
+    autoTimer.current = window.setTimeout(advance, AUTO_ADVANCE_MS);
+  };
 
   const miss = () => setMistakes((count) => count + 1);
 
@@ -422,7 +447,8 @@ export function NumberJourney({
               choices={countChoices}
               answer={value}
               solved={solved}
-              onCorrect={() => setSolved(true)}
+              /* The one stage that carries itself on — see `solveAndGo`. */
+              onCorrect={solveAndGo}
               onWrong={pickMiss}
               dict={dict.journey}
             />
@@ -468,7 +494,18 @@ export function NumberJourney({
           {solved && <Celebration />}
         </div>
       );
-    actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
+    /* **"How many apples did we pick?" has NO Next button**, on direct
+       request: picking the right numeral IS the child saying they are done,
+       so the stage celebrates and then moves on by itself. The other three
+       count activities keep theirs — they finish on a drag or a filled-in
+       outline, where a moment to look at the finished numeral is the reward
+       and taking it away would cut that short. */
+    const countAutoAdvances =
+      countActivity.kind === "give" && appleGiven;
+    actions =
+      solved && !countAutoAdvances
+        ? nextButton(dict.journey.next, GO_TONE)
+        : null;
   } else if (stage === "game") {
     /* **A lost round takes the sky off the screen entirely**, and puts the
        balloon that got away in its place — centred, above Pinki, so "pop the
