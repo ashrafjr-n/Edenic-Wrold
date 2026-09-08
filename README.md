@@ -16,7 +16,7 @@ names and the friends' own names — since that is the subject, not the chrome.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
 | `/learn/[character]/[lesson]` | Number picker — 1 to 9 with a progress bar and star record, unlocked one at a time |
-| `/learn/[character]/[lesson]/[item]` | One number's journey — eight stages, guided by Pinki |
+| `/learn/[character]/[lesson]/[item]` | One number's journey — seven stages, guided by Pinki |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
@@ -176,11 +176,13 @@ puzzles are built, and all are still being iterated on visually. Only Pinki has
 lesson content; Nova and Bloo are locked, and Numbers is the only lesson with
 items.
 
-Each number is one journey of eight stages: meet the number in a short video,
-see it standing still and say it aloud, watch Pinki write it, trace it, find it
-among others, pick one apple and say how many were picked, pop the right
-balloon, and finish on a celebration screen. Pinki guides five of the eight —
-the video, the tracing board and the balloon game are left to the child alone.
+Each number is one journey of seven stages: meet the number in a short video,
+see it standing still and say it aloud, watch Pinki write it, trace it, pick one
+apple and say how many were picked, catch the right balloon before it floats
+away, and finish on a celebration screen. Pinki guides four of the seven — the
+video, the tracing board and the balloon game are left to the child alone, and
+she only steps back onto the balloons if the round is lost, to offer another
+go.
 One to three stars are scored for the whole journey and shown back on the
 picker. Finishing a number unlocks the next.
 
