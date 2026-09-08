@@ -177,9 +177,11 @@ lesson content; Nova and Bloo are locked, and Numbers is the only lesson with
 items.
 
 Each number is one journey of seven stages: meet the number in a short video,
-see it standing still and say it aloud, watch Pinki write it, trace it, pick one
-apple and say how many were picked, catch the right balloon before it floats
-away, and finish on a celebration screen. Pinki guides four of the seven — the
+see it standing still and say it aloud, watch Pinki write it, trace it, pick
+apples and say how many were picked, play one last game, and finish on a
+celebration screen. The last game is usually catching the right balloon before
+it floats away; some numbers get a different one — number 2 drags a missing
+piece back into the numeral instead. Pinki guides four of the seven — the
 video, the tracing board and the balloon game are left to the child alone, and
 she only steps back onto the balloons if the round is lost, to offer another
 go.
