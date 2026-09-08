@@ -30,11 +30,14 @@ const BALLOON = "/assets/learn-with-pinki/other/ballon.png";
    slow enough that a child has time to find the right numeral, staggered so
    the four never travel as a block. Fixed tables, never `Math.random()` —
    this stage renders on the server too, and a random flight would hydrate
-   mismatched (the same rule the puzzle tray and the quiz decoys follow). */
-const HUES = [0, 210, 80, 300];
-const LANES = [18, 46, 72, 90];
+   mismatched (the same rule the puzzle tray and the quiz decoys follow).
+
+   The hues are pink / orange / green / purple: the old set had one at 80deg,
+   which came out olive — fine on white, muddy against a blue sky. */
+const HUES = [0, 45, 145, 285];
+const LANES = [16, 41, 66, 85];
 const RISE = [9, 11, 8.5, 10.5];
-const DELAYS = [0, 1.8, 3.4, 0.9];
+const DELAYS = [0, 1.2, 2.6, 0.6];
 const DRIFTS = ["3.2s", "3.8s", "3.4s", "4.1s"];
 
 const at = <T,>(list: readonly T[], index: number): T =>
@@ -96,11 +99,18 @@ export function BalloonPop({
   };
 
   return (
-    /* The sky is a plain white `.card`, the same surface the demo and trace
-       boards use — a play area, not a painted scene. `overflow-hidden` is what
-       crops a balloon at both ends of its flight, and it also stops one that
-       has left being tappable, since a clip clips hit-testing too. */
-    <div className="card balloon-sky anim-rise-in relative w-full max-w-[22rem] overflow-hidden sm:max-w-[30rem]">
+    /* **A real sky, borrowed rather than invented**: `.trail-sky--day` is the
+       gradient the Edenic Trail already runs on, and it is the one surface on
+       the site a balloon can plausibly rise through. A plain white `.card`
+       was tried first and read as a large empty panel with something moving
+       in the bottom of it. Both are `.card` underneath, so the radius, the
+       shadow and the dark-mode behaviour (the palette brings its own night
+       ramp AND its starfield) come for free.
+
+       `overflow-hidden` crops a balloon at both ends of its flight, and it is
+       also what stops one that has already left being tappable — a clip clips
+       hit-testing too. */
+    <div className="card trail-sky--day balloon-sky anim-rise-in relative w-full max-w-[22rem] overflow-hidden sm:max-w-[32rem]">
       {choices.map((value, index) => {
         const isPopped = popped === value;
 
@@ -166,7 +176,7 @@ export function BalloonPop({
                   alt=""
                   width={96}
                   height={128}
-                  className="h-24 w-auto object-contain sm:h-28"
+                  className="h-24 w-auto object-contain sm:h-32"
                   /* Both effects in ONE inline `filter`: an inline style beats
                      a Tailwind `drop-shadow-*` utility outright, so splitting
                      them silently drops the shadow. */
