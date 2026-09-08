@@ -77,7 +77,7 @@ export function NumberVideo({ videoId, value, image, dict }: NumberVideoProps) {
         would fit too, but it re-measures as the bar animates, which resizes
         the video mid-scroll — the wrong trade for a box a child is watching.
        Same call `.puzzle-upright` and `TrailSky` already make. */
-    <div className="card relative aspect-[9/16] h-[42svh] max-h-[24rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
+    <div className="card relative aspect-[9/16] h-[52svh] max-h-[28rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
       {/* Opens the connection to YouTube while the child is still looking at
           the poster, so pressing play doesn't also pay for the DNS lookup,
           TLS handshake and the `nocookie` → `youtube.com` redirect. A `<link>`
