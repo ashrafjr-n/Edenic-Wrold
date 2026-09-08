@@ -128,7 +128,10 @@ export function NumberQuiz({
   });
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 lg:gap-10">
+    /* The top margin drops the row clear of the question above it — the
+       numerals used to sit tight under "How many apples did we pick?" and
+       read as part of the same block rather than as the answers to it. */
+    <div className="mt-6 flex flex-wrap items-center justify-center gap-4 sm:mt-10 sm:gap-8 lg:gap-10">
       {view.map(({ value, wrongPick, dimmed, hinted, solvedAnswer }) => {
         return (
           <button
