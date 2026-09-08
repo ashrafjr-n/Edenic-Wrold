@@ -162,32 +162,54 @@ export function AppleGive({
       {/* Pinki's basket. It shows what she has, so the count is visible the
           whole time rather than only being asked about afterwards.
 
-          The halo is on it only while it is EMPTY: once the first item is in,
-          the basket has shown the child what it is for and a light still
+          **The halo lives on this WRAPPER, not on the basket itself, and that
+          is a fix rather than tidying.** A `z-index: -1` pseudo-element paints
+          behind its parent's CONTENT but still on top of that parent's own
+          background — so on a `.card`, which has one, `.guide-target` came out
+          as a pink stain inside the box instead of light around it, and the
+          "put it here" cue read as a smudge. On a background-less wrapper it
+          paints behind the card and finally looks like a halo. Anywhere
+          `.guide-target` is put on something with a fill, it needs this.
+
+          Both cues are on only while the basket is EMPTY: once the first item
+          is in, it has shown the child what it is for, and a light still
           burning on it would be pointing at a finished instruction. */}
-      <div
-        ref={basketRef}
-        className={`card flex h-32 min-w-[11rem] items-center justify-center gap-2 px-6 sm:h-36 sm:min-w-[14rem] ${
+      <span
+        className={`relative block ${
           highlightTarget && given.length === 0 ? "guide-target" : ""
         }`}
       >
-        {given.length === 0 ? (
-          <span dir={dir} className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
-            {format(dict.dropItem, { article, itemLabel })}
-          </span>
-        ) : (
-          given.map((id) => (
-            <Image
-              key={id}
-              src={icon}
-              alt=""
-              width={140}
-              height={140}
-              className="anim-pop-in h-16 w-16 object-contain sm:h-20 sm:w-20"
-            />
-          ))
-        )}
-      </div>
+        <div
+          ref={basketRef}
+          /* The dashed accent rim is the same mark `NumberComplete` puts
+             around the gap in its numeral — this site's way of saying
+             "something belongs here" — so the drop zone reads as one before
+             Pinki has said a word. It goes the moment there is something in
+             the basket. */
+          className={`card card-clay-white flex h-32 min-w-[11rem] items-center justify-center gap-2 px-6 sm:h-36 sm:min-w-[14rem] ${
+            given.length === 0
+              ? "border-2 border-dashed border-[var(--page-accent-color)]"
+              : ""
+          }`}
+        >
+          {given.length === 0 ? (
+            <span dir={dir} className="text-sm font-semibold text-[var(--color-ink-soft)] sm:text-base">
+              {format(dict.dropItem, { article, itemLabel })}
+            </span>
+          ) : (
+            given.map((id) => (
+              <Image
+                key={id}
+                src={icon}
+                alt=""
+                width={140}
+                height={140}
+                className="anim-pop-in h-16 w-16 object-contain sm:h-20 sm:w-20"
+              />
+            ))
+          )}
+        </div>
+      </span>
 
       {/* Each item leans on its own slow loop while none has been picked —
           an invitation to touch them, gated the same way the basket's halo
