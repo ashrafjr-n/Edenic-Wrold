@@ -65,6 +65,13 @@ interface PinkiGuideProps {
       journey keeps owning what its actions ARE and this only decides where
       they sit relative to her. */
   children?: ReactNode;
+  /** `lead` only: she is standing lower than usual (the apple tray's
+      `journeyGive` placement), so her line comes down with her rather than
+      staying tucked under the activity with its tail reaching past her head.
+      A FIXED drop, not a second `mt-auto` — an auto margin on a stage with no
+      buttons sends the bubble to the very bottom of the column and onto her
+      legs. */
+  lowered?: boolean;
 }
 
 /**
@@ -95,6 +102,7 @@ export function PinkiGuide({
   line,
   presence = "lead",
   children,
+  lowered = false,
   dir = "ltr",
 }: PinkiGuideProps) {
   if (presence === "none") return null;
@@ -158,7 +166,7 @@ export function PinkiGuide({
               and onto her. */
           className={`speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:self-end sm:px-5 sm:py-3 sm:text-base ${
             children ? "mt-auto" : ""
-          }`}
+          } ${lowered ? "mt-8 sm:mt-12" : ""}`}
         >
           {line}
         </p>
