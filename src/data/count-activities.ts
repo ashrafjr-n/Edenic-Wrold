@@ -9,19 +9,16 @@ const DEFAULT_COUNT_ACTIVITY: CountActivityConfig = {
 /**
  * Per-number override for the `count` stage.
  *
- * 1 and 3 use the default (apples) — a target that small is exactly what the
- * give/drag tray was built for. 2 gives flowers instead, purely for variety.
+ * 1, 2 and 3 all use the default (apples) — a target that small is exactly
+ * what the give/drag tray was built for. 2 handed over blue flowers for a
+ * while, purely for variety; that was reverted on direct request, and
+ * `other/blue-flower.png` is left in `public/` unused rather than deleted.
  * From 4 up, giving breaks down (only 3 items in the tray), so each of those
  * numbers gets a different mini-activity, rotating through the three kinds
  * so no two neighbours repeat: complete → path → colour → path → colour →
  * complete.
  */
 const countActivityByValue: Record<number, CountActivityConfig> = {
-  2: {
-    kind: "give",
-    icon: "/assets/learn-with-pinki/other/blue-flower.png",
-    itemLabel: { en: "flower", ar: "زهرة", ku: "گول" },
-  },
   4: { kind: "complete" },
   5: { kind: "path", numbers: [3, 4, 5, 6, 7] },
   6: { kind: "color" },
