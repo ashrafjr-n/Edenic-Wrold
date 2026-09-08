@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Lightbulb, SkipForward, X } from "lucide-react";
+import { Lightbulb, X } from "lucide-react";
 import type { PuzzlePicture } from "@/types/puzzle";
 import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
@@ -114,7 +114,12 @@ export function PuzzleHint({ picture, helpsLeft, onHelp, dict }: PuzzleHintProps
           />
         </div>
 
-        <div className="mt-3 flex items-center justify-center gap-3 sm:mt-4 sm:gap-4">
+        {/* **Help alone. There is no "Skip" beside it any more** — it was
+            asked for as appearance only, never given a job, and was deleted on
+            direct request. Don't rebuild it: a button whose only behaviour is
+            to close the dialog it is in says nothing the cross in the corner
+            does not already say. */}
+        <div className="mt-3 flex items-center justify-center sm:mt-4">
           <Button3D
             tone={{ face: "var(--color-go)", edge: "var(--color-go-dark)" }}
             onClick={help}
@@ -129,22 +134,6 @@ export function PuzzleHint({ picture, helpsLeft, onHelp, dict }: PuzzleHintProps
             <span className="rounded-full bg-white/25 px-2 py-0.5 text-sm font-bold sm:text-base">
               {helpsLeft}
             </span>
-          </Button3D>
-
-          {/* Skip is deliberately inert for now — asked for as appearance
-              only, with its job still to be decided. Closing is the least
-              surprising thing a button in a dialog can do until then. */}
-          <Button3D
-            variant="calm"
-            /* `--color-ink-fixed`: `.btn3d--clay-white`'s face is pinned
-               pale in dark mode (globals.css), so its text has to stay
-               fixed dark too — `--color-ink` itself flips light there. */
-            tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
-            onClick={() => setOpen(false)}
-            className="btn3d--clay-white px-5 py-2.5 text-base sm:px-6 sm:py-3 sm:text-lg"
-          >
-            <SkipForward className="h-5 w-5 fill-current" strokeWidth={2} />
-            {dict.skip}
           </Button3D>
         </div>
 
