@@ -155,7 +155,7 @@ export function NumberComplete({
   };
 
   return (
-    <div className="card card-clay-white numeral-stage anim-rise-in flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7">
+    <div className="card card-clay-white numeral-stage flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7">
       <div
         className="relative"
         style={{ width: "var(--board-w)", height: "var(--board-h)" }}
