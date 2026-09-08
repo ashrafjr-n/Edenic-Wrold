@@ -12,7 +12,7 @@ import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface MemoryBoardProps {
@@ -163,7 +163,12 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
               replaced a centred "LEVEL 01" caption above the clock, which
               was a heading-sized piece of chrome for a single digit. */}
           <span className="absolute right-0 top-0">
-            <LevelBadge value={level.value} label={format(dict.activities.levelLabel, { value: level.value })} />
+            <LevelBadge
+              value={level.value}
+              word={dict.activities.levelWord}
+              label={format(dict.activities.levelLabel, { value: level.value })}
+              dir={dirFor(dict.locale)}
+            />
           </span>
 
           {/* The clock is the only thing in the middle now, and it sits

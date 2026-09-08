@@ -9,7 +9,7 @@ import {
   PuzzleBoard,
   type PuzzleBoardHandle,
 } from "@/components/activities/puzzle/puzzle-board";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
@@ -81,7 +81,14 @@ export function PuzzlePlay({
           <BackButton href="/play/puzzle" label={dict.activities.backToPuzzles} />
 
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <LevelBadge value={stage} label={format(dict.activities.puzzleLabel, { value: stage })} />
+            {/* `levelLabel`, not `puzzleLabel`: the badge SAYS "Level" now, so
+                reading out "Puzzle 7" would disagree with what is on it. */}
+            <LevelBadge
+              value={stage}
+              word={dict.activities.levelWord}
+              label={format(dict.activities.levelLabel, { value: stage })}
+              dir={dirFor(dict.locale)}
+            />
 
             <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} dict={dict.activities} />
           </div>
