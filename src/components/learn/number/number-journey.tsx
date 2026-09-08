@@ -60,8 +60,8 @@ const WHITE_TONE = {
 } as const;
 
 const COUNT_CHOICES = 3;
-/* Four, not five: the balloons are laid out two to a row, and five left one
-   floating alone under a full row of four. */
+/* Four balloons rising through the sky at once. Fewer reads as no game at
+   all; more turns "find the numeral" into a crowd on a phone-width board. */
 const POP_CHOICES = 4;
 
 /** How much of the numeral has to be covered, per attempt. It falls with every
@@ -126,6 +126,11 @@ export function NumberJourney({
   const [pickMissed, setPickMissed] = useState(false);
   /* The count stage has two beats: hand over the apple, then say how many. */
   const [appleGiven, setAppleGiven] = useState(false);
+  /* The balloon game is the one stage that can be LOST: the right balloon rose
+     off the top without being popped. Not a failure state in the site's usual
+     sense — nothing is marked wrong and nothing is lost — it just ends the
+     round, so Pinki comes back on to ask for another go. */
+  const [gameFailed, setGameFailed] = useState(false);
   /* Bumping this remounts whichever interactive stage is on screen, which is
      how a retry clears it — that state lives inside the stage, not up here. */
   const [attempt, setAttempt] = useState(0);
@@ -155,6 +160,7 @@ export function NumberJourney({
     setSolved(false);
     setTraceMissed(false);
     setPickMissed(false);
+    setGameFailed(false);
     setStage(JOURNEY_STAGES[stageIndex + 1]);
   };
 
@@ -176,6 +182,15 @@ export function NumberJourney({
     setAttempt((count) => count + 1);
   };
 
+  const retryGame = () => {
+    setGameFailed(false);
+    setPickMissed(false);
+    /* Bumping `attempt` remounts `BalloonPop`, which is what re-launches the
+       flight — the balloons' positions live in CSS animations inside it, not
+       in any state up here. */
+    setAttempt((count) => count + 1);
+  };
+
   const restart = () => {
     setStage("discover");
     setSolved(false);
@@ -184,6 +199,7 @@ export function NumberJourney({
     setTraceMissed(false);
     setPickMissed(false);
     setAppleGiven(false);
+    setGameFailed(false);
     setAttempt((count) => count + 1);
   };
 
@@ -198,7 +214,7 @@ export function NumberJourney({
     appleGiven,
     traceMissed,
     pickMissed,
-    gameFailed: false,
+    gameFailed,
   });
 
   /* Only meaningful where she is actually pointing — see `pointsAtTarget`. */
@@ -418,25 +434,45 @@ export function NumberJourney({
       );
     actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
   } else if (stage === "game") {
-    body = (
-      /* No sibling `<Celebration>` here, unlike the other stages — the
-         balloons keep drifting even after a win, so a burst centred on this
-         wrapper would land away from the popped balloon. `BalloonPop` bursts
-         its own confetti from the balloon itself. */
-      <div className="anim-rise-in relative">
-        <BalloonPop
-          key={`pop-${attempt}`}
-          choices={popChoices}
-          answer={value}
-          onCorrect={() => setSolved(true)}
-          onMiss={pickMiss}
-          dict={dict.journey}
-        />
-      </div>
+    /* **A lost round takes the sky off the screen entirely.** The balloons
+       have all gone by then, so leaving the box up would show an empty white
+       card under Pinki's "let's try again" — the stage becomes her and the
+       Again button, and pressing it brings the sky back.
+
+       No sibling `<Celebration>` here either, unlike the other stages: the
+       balloons are still rising when one is popped, so a burst centred on this
+       wrapper would land away from it. `BalloonPop` bursts its own confetti
+       from inside the balloon. */
+    body = gameFailed ? null : (
+      <BalloonPop
+        key={`pop-${attempt}`}
+        choices={popChoices}
+        answer={value}
+        onCorrect={() => setSolved(true)}
+        onMiss={pickMiss}
+        onEscape={() => {
+          setGameFailed(true);
+          /* A whole round let go counts the same as a wrong pick — it is the
+             one thing the star tally is built from. */
+          miss();
+        }}
+        dict={dict.journey}
+      />
     );
     /* Was "See my stars!" — the celebration screen does not show stars any
        more, so the button can no longer promise them. */
-    actions = solved ? nextButton(dict.journey.finishExclaim, GO_TONE) : null;
+    actions = solved ? (
+      nextButton(dict.journey.finishExclaim, GO_TONE)
+    ) : gameFailed ? (
+      <Button3D
+        tone={BRAND_TONE}
+        onClick={retryGame}
+        className="px-8 py-3 text-base sm:px-10 sm:text-lg"
+      >
+        <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
+        <span dir={dir}>{dict.journey.again}</span>
+      </Button3D>
+    ) : null;
   } else {
     /* **No stars here.** The three-star tally was taken off this screen on
        direct request — it is still scored and still recorded (see the effect
