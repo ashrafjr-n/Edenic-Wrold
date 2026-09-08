@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, PartyPopper, RotateCcw, Unlock } from "lucide-react";
+import { ArrowRight, PartyPopper, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -34,6 +34,7 @@ import { NumberPath } from "./number-path";
 import { NumberColor } from "./number-color";
 import { BalloonPop, TargetBalloon } from "./balloon-pop";
 import { Celebration } from "@/components/ui/celebration";
+import { AgainButton } from "@/components/ui/again-button";
 
 /* Green is the "you got it, carry on" button and nothing else, so it never
    appears on a step the child has not passed. Blue is the ordinary primary
@@ -49,15 +50,6 @@ const BRAND_TONE = {
   face: "var(--brand)",
   edge: "var(--brand-dark)",
   text: "#fff",
-} as const;
-
-/* `--color-ink-fixed`, not `--color-ink`: the button this pairs with wears
-   `.btn3d--clay-white`, which is pinned pale in dark mode (globals.css), so
-   its text has to stay fixed dark too — `--color-ink` itself flips light
-   there. */
-const WHITE_TONE = {
-  face: "var(--surface)",
-  text: "var(--color-ink-fixed)",
 } as const;
 
 const COUNT_CHOICES = 3;
@@ -400,22 +392,17 @@ export function NumberJourney({
     );
     actions = (
       <div className="anim-fade-up flex items-center gap-2 sm:gap-3">
-        <Button3D
-          variant="calm"
-          tone={WHITE_TONE}
-          onClick={retryTrace}
-          className="btn3d--clay-white px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base"
-        >
-          {/* `--color-ink-soft-fixed`, not `--color-ink-soft`: this icon rides
-              inside a `.btn3d--clay-white` button, pinned pale regardless of
-              theme (globals.css) — `--color-ink-soft` itself flips light in
-              dark mode, for the same body-text reason `--color-ink` does. */}
-          <RotateCcw
-            className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
-            strokeWidth={2.75}
-          />
-          {dict.journey.tryAgain}
-        </Button3D>
+        {/* Pink, and nothing here says so: `AgainButton` takes the section's
+            own `--page-accent-*`, which this route sets from the character —
+            so it is Pinki's pink beside a green "Next", and it would be
+            Nova's lavender on her lesson without a line changing. It was a
+            white clay chip before the replay button became one shared,
+            spinning design site-wide. */}
+        <AgainButton
+          label={dict.journey.tryAgain}
+          onPress={retryTrace}
+          dir={dir}
+        />
 
         {solved && nextButton(dict.journey.next, GO_TONE)}
       </div>
@@ -556,14 +543,11 @@ export function NumberJourney({
     actions = solved ? (
       nextButton(dict.journey.finishExclaim, GO_TONE)
     ) : gameFailed ? (
-      <Button3D
-        tone={BRAND_TONE}
-        onClick={retryGame}
-        className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-      >
-        <RotateCcw className="h-5 w-5" strokeWidth={2.75} />
-        <span dir={dir}>{dict.journey.again}</span>
-      </Button3D>
+      /* The only thing on the screen to press, so it takes the lesson's own
+         pink rather than the ordinary blue "carry on" it used to wear —
+         nothing is being carried on from here, the round is being wound
+         back, which is exactly what the button now looks like. */
+      <AgainButton label={dict.journey.again} onPress={retryGame} dir={dir} />
     ) : null;
   } else {
     /* **No stars here.** The three-star tally was taken off this screen on
@@ -660,18 +644,7 @@ export function NumberJourney({
        are clear of Pinki's bubble. */
     actions = (
       <div className="anim-fade-up mt-1 flex items-center gap-3 sm:mt-3 sm:gap-4">
-        <Button3D
-          variant="calm"
-          tone={WHITE_TONE}
-          onClick={restart}
-          className="btn3d--clay-white px-6 py-3 text-sm sm:text-base"
-        >
-          <RotateCcw
-            className="h-4 w-4 text-[var(--color-ink-soft-fixed)]"
-            strokeWidth={2.75}
-          />
-          {dict.journey.again}
-        </Button3D>
+        <AgainButton label={dict.journey.again} onPress={restart} dir={dir} />
 
         <Button3D
           tone={GO_TONE}
