@@ -90,7 +90,7 @@ const BANKS: VeilBank[] = [
  *
  * **Clouds only: no panel, no gradient, no starfield behind them**, and it
  * passes UNDER the header and bottom nav rather than over them (`z-10`
- * against their `z-20`). Both were the other way round for one round and
+ * against their `z-30`). Both were the other way round for one round and
  * both were rejected.
  *
  * **Lives once in the root layout, not per-page.** The root layout doesn't

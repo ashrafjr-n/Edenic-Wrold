@@ -77,7 +77,9 @@ export function BottomNav({ dict }: { dict: Dictionary }) {
   return (
     <nav
       aria-label={dict.nav.mainAriaLabel}
-      className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
+      /* `z-30`, moved up with the header — see its comment for why `z-20`
+         was not enough. The two are one tier of site chrome. */
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
     >
       {mainNav.map(({ id, href }) => {
         const label = dict.nav[id];

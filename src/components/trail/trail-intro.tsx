@@ -95,7 +95,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
   const pointing = beat === "start";
 
   return (
-    /* **`z-10`, UNDER the header and the bottom nav** (both `z-20`), on
+    /* **`z-10`, UNDER the header and the bottom nav** (both `z-30`), on
        direct request: the tap-anywhere catcher covers the page but must
        never swallow a tap meant for the site's own chrome, and Nova herself
        must never cover the bottom nav. Sitting below them does both at once
