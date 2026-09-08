@@ -309,7 +309,7 @@ export function NumberJourney({
     );
   } else if (stage === "demo") {
     body = (
-      <div className="card anim-rise-in aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
+      <div className="card card-clay-white anim-rise-in aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
         <StrokeDemo strokes={strokes} accent={accent} />
       </div>
     );
@@ -322,7 +322,7 @@ export function NumberJourney({
          screen: Pinki is off this stage entirely, so the whole column is the
          board's. This is the one thing the child does with their hand, and it
          was the smallest object on the page. */
-      <div className="card anim-rise-in relative aspect-square w-full max-w-[17rem] p-4 sm:max-w-[24rem] sm:p-6">
+      <div className="card card-clay-white anim-rise-in relative aspect-square w-full max-w-[17rem] p-4 sm:max-w-[24rem] sm:p-6">
         <TraceBoard
           key={attempt}
           strokes={strokes}
@@ -517,7 +517,7 @@ export function NumberJourney({
          surface of its own, so the green pill inside it reads as news and the
          green button below it reads as an action. The card is also what the
          confetti bursts from, which is why it is `relative`. */
-      <div className="card anim-pop-in relative flex w-full max-w-sm flex-col items-center gap-4 px-6 py-6 text-center sm:max-w-lg sm:gap-5 sm:px-10 sm:py-8">
+      <div className="card card-clay-white anim-pop-in relative flex w-full max-w-sm flex-col items-center gap-4 px-6 py-6 text-center sm:max-w-lg sm:gap-5 sm:px-10 sm:py-8">
         <Celebration />
 
         {/* The crown stacks over the title on a phone and stands BESIDE it
