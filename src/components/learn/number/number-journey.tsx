@@ -10,6 +10,7 @@ import type { JourneyStage } from "@/types/number-journey";
 import type { Locale } from "@/types/locale";
 import { scriptFor } from "@/data/number-script";
 import { countActivityFor } from "@/data/count-activities";
+import { gameActivityFor } from "@/data/game-activities";
 import { guideFor, pointsAtTarget } from "@/data/number-guide";
 import { buildNumberChoices } from "@/lib/number-choices";
 import { useScrollLock } from "@/lib/use-scroll-lock";
@@ -109,6 +110,9 @@ export function NumberJourney({
      value it's next to, e.g. "تعلم مع Pinki" rendering as "Pinki تعلم مع". */
   const dir = dirFor(locale);
   const countActivity = countActivityFor(value);
+  /* Which exercise this number's LAST stage runs. Most pop balloons; see
+     `data/game-activities.ts`. */
+  const gameActivity = gameActivityFor(value);
   /* The tray's own word for its item, in whatever language is on. One lookup
      rather than a per-locale branch — see `types/count-activity.ts`. */
   const itemLabel =
@@ -215,6 +219,7 @@ export function NumberJourney({
     traceMissed,
     pickMissed,
     gameFailed,
+    gameKind: gameActivity,
   });
 
   /* Only meaningful where she is actually pointing — see `pointsAtTarget`. */
@@ -444,7 +449,23 @@ export function NumberJourney({
        balloons are still rising when one is popped, so a burst centred on this
        wrapper would land away from it. `BalloonPop` bursts its own confetti
        from inside the balloon. */
-    body = gameFailed ? (
+    body = gameActivity === "complete" ? (
+      /* The same board the `count` stage gives 4 and 9, as this number's last
+         challenge instead of the balloons — see `data/game-activities.ts` for
+         the rule that stops one number getting it twice. */
+      <div className="anim-rise-in relative">
+        <NumberComplete
+          key={`game-complete-${attempt}`}
+          value={value}
+          image={image}
+          highlightTarget={marksTarget}
+          onFinish={() => setSolved(true)}
+          onMiss={pickMiss}
+          dict={dict.journey}
+        />
+        {solved && <Celebration />}
+      </div>
+    ) : gameFailed ? (
       <TargetBalloon choices={popChoices} value={value} />
     ) : (
       <BalloonPop
@@ -609,14 +630,19 @@ export function NumberJourney({
      standard placement she stood on the half of it the child has to reach.
      Resolved here rather than in the markup, like every other stage
      decision on this screen. */
-  const tallCountBoard =
-    stage === "count" && (countActivity.kind === "complete" || countActivity.kind === "path");
+  const tallBoard =
+    (stage === "count" &&
+      (countActivity.kind === "complete" || countActivity.kind === "path")) ||
+    /* The `complete` GAME is the same tall board, so she stands clear of it
+       the same way — until it is solved, when the piece is home and the
+       "Finish!" button wants the room instead. */
+    (stage === "game" && gameActivity === "complete" && !solved);
   /* The apple tray is not a tall board, but its items grew, so she stands a
      little lower there too — see `journeyGive`. Only while the tray is still
      up: once it is answered the stage is a three-numeral quiz and she goes
      back to her usual place. */
   const givingItems = stage === "count" && countActivity.kind === "give" && !appleGiven;
-  const leanPlacement = tallCountBoard
+  const leanPlacement = tallBoard
     ? "journeyLow"
     : givingItems
       ? "journeyGive"

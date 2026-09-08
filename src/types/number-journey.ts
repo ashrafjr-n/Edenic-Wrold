@@ -18,6 +18,19 @@ export const JOURNEY_STAGES = [
 
 export type JourneyStage = (typeof JOURNEY_STAGES)[number];
 
+/**
+ * What the `game` stage does for a given number — the same idea
+ * `CountActivityKind` already applies to `count`, and for the same reason:
+ * the last stage should not be the identical exercise nine times running.
+ *
+ * `balloons` is the default and the one this stage was built around;
+ * `complete` re-uses `NumberComplete`, the drag-the-missing-piece board the
+ * `count` stage gives numbers 4 and 9. A number that uses `complete` HERE must
+ * not also use it at `count`, or the child does the same thing twice in one
+ * journey — see `data/game-activities.ts`.
+ */
+export type GameActivityKind = "balloons" | "complete";
+
 /** The stages the child actually works through — what the step rail counts. */
 export const WORKING_STAGES = JOURNEY_STAGES.filter(
   (stage) => stage !== "celebrate",
@@ -83,5 +96,9 @@ export interface NumberScript {
   /** The balloon game only: every balloon rose off the screen with the right
       one still floating, so she asks for another go rather than moving on. */
   gameRetry: string;
+  /** The `complete` game instead of the balloons. Deliberately the same
+      sentence the `count` stage uses for that board — it is the same
+      exercise, so it gets the same words. */
+  gameComplete: string;
   celebrate: string;
 }
