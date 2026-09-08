@@ -739,7 +739,15 @@ export function NumberJourney({
            does NOT include `solved`, which only adds a button — keying on
            that would remount the balloons the moment one is popped. */
         key={`${stage}-${appleGiven}-${gameFailed}`}
-        className={`stage-swap flex flex-1 flex-col items-center gap-4 sm:gap-6 ${
+        /* **`relative z-20` is not decoration — it is what the transition
+           cost.** Animating `opacity`/`translate` makes this group its own
+           stacking context, which traps the guide column's `z-20` INSIDE it:
+           `PinkiLean` is a sibling that comes later in the DOM, so she started
+           painting over her own speech bubble (her stick drawn straight across
+           the words). Ranking the whole group above her `z-10` puts it back,
+           and it also settles the activity/Pinki order the same way at every
+           stage — she leans in from BEHIND the board rather than across it. */
+        className={`stage-swap relative z-20 flex flex-1 flex-col items-center gap-4 sm:gap-6 ${
           leaving ? "stage-swap--out" : ""
         } ${lead ? "justify-start sm:justify-center" : "justify-center"}`}
       >

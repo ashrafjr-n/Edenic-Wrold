@@ -524,6 +524,19 @@ bdi {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
+/* Pinki's bubble took `.card-clay-white`'s two insets so it reads as the same
+   material as every board it sits beside — which means it inherits the same
+   dark-mode problem, and needs the same answer. Its own outer shadow layers
+   differ from `.card-clay-white`'s, so the stack is restated in full rather
+   than reused: a `box-shadow` cannot be partially overridden. */
+[data-theme="dark"] .speech-bubble {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
+    0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
+}
+
 /* `.btn3d--clay-white` reads its face from `--surface` too, but every place
    it's used (the lesson hub's back/achievements buttons, the home page's
    two panel buttons, a locked lesson card's padlock chip) is a WHITE CHIP
@@ -2009,7 +2022,16 @@ button:disabled,
      (`--color-pinki`/`--color-nova`), never `--accent`: recolouring a mascot
      must never recolour the brand, and vice versa. */
   border: 2px solid var(--bubble-ink, var(--color-pinki));
+  /* **The two insets are what make it clay rather than a flat outlined box.**
+     Every other surface in the numbers journey is `.card .card-clay-white` —
+     inner top highlight, inner bottom shade, wide tinted drop shadow — and
+     the bubble was the one thing on those screens still reading as a plain
+     panel with a ring drawn on it. Same recipe, at the same values, so it
+     belongs to the same material; the outline stays, because that is what
+     ties the bubble to the character beside it. */
   box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
     0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
     0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
 }
