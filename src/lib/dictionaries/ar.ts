@@ -197,7 +197,6 @@ export const ar: Dictionary = {
     strokeHint1: "علم صغير... ثم مباشرة للأسفل!",
     traceInvite: "تتبّعه معي!",
     traceMiss: "قريب جدًا! لنحاول مرة أخرى.",
-    find: "أيّهم هو {word}؟",
     findMiss: "همم... لننظر مرة أخرى!",
     countGive: "التقط {value} {itemLabel}!",
     countComplete: "أكمل الرقم {value}!",
@@ -205,6 +204,7 @@ export const ar: Dictionary = {
     countColor: "لوّن الرقم {value}!",
     countHow: "كم {itemLabel} التقطنا؟",
     game: "افقع الرقم {value}!",
+    gameRetry: "حاول مرة أخرى — افقع بالون الرقم {value}!",
     celebrate: "مرحى! لقد نجحت!",
   },
 };

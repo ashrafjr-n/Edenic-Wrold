@@ -11,7 +11,6 @@ export const JOURNEY_STAGES = [
   "reveal",
   "demo",
   "trace",
-  "find",
   "count",
   "game",
   "celebrate",
@@ -26,9 +25,10 @@ export const WORKING_STAGES = JOURNEY_STAGES.filter(
 
 /**
  * Pinki's five renders. A posture, never a decoration: `pen` is the two
- * drawing stages, `think` the one stage that asks the child to CHOOSE rather
- * than to listen, `stick` a stage with ONE unambiguous target to point at,
- * `celebrate` a win, `speak` everything else.
+ * drawing stages, `stick` a stage with ONE unambiguous target to point at,
+ * `celebrate` a win, `speak` everything else. `think` is the catalogue's
+ * spare — it was the `find` stage's pose, and that stage was cut; it stays
+ * in the union because the render exists, but nothing names it today.
  *
  * It lives here rather than in `pinki-guide.tsx` because `data/number-guide.ts`
  * has to name a pose for every stage, and a data module must not import from a
@@ -75,10 +75,13 @@ export interface NumberScript {
   traceInvite: string;
   /** Shown when a trace attempt does not land. Never says "wrong". */
   traceMiss: string;
-  find: string;
+  /** Shown after a wrong pick in the `count` quiz or a wrong balloon pop. */
   findMiss: string;
   count: string;
   countHow: string;
   game: string;
+  /** The balloon game only: every balloon rose off the screen with the right
+      one still floating, so she asks for another go rather than moving on. */
+  gameRetry: string;
   celebrate: string;
 }

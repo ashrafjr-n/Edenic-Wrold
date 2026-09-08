@@ -59,7 +59,6 @@ const WHITE_TONE = {
   text: "var(--color-ink-fixed)",
 } as const;
 
-const FIND_CHOICES = 3;
 const COUNT_CHOICES = 3;
 /* Four, not five: the balloons are laid out two to a row, and five left one
    floating alone under a full row of four. */
@@ -149,7 +148,6 @@ export function NumberJourney({
   }, [stage, complete, character.id, lessonId, value, stars]);
 
   const stageIndex = JOURNEY_STAGES.indexOf(stage);
-  const findChoices = buildNumberChoices(value, FIND_CHOICES);
   const countChoices = buildNumberChoices(value, COUNT_CHOICES);
   const popChoices = buildNumberChoices(value, POP_CHOICES);
 
@@ -200,6 +198,7 @@ export function NumberJourney({
     appleGiven,
     traceMissed,
     pickMissed,
+    gameFailed: false,
   });
 
   /* Only meaningful where she is actually pointing — see `pointsAtTarget`. */
@@ -344,22 +343,6 @@ export function NumberJourney({
         {solved && nextButton(dict.journey.next, GO_TONE)}
       </div>
     );
-  } else if (stage === "find") {
-    body = (
-      <div className="anim-rise-in relative">
-        <NumberQuiz
-          key={`find-${attempt}`}
-          choices={findChoices}
-          answer={value}
-          solved={solved}
-          onCorrect={() => setSolved(true)}
-          onWrong={pickMiss}
-          dict={dict.journey}
-        />
-        {solved && <Celebration />}
-      </div>
-    );
-    actions = solved ? nextButton(dict.journey.next, GO_TONE) : null;
   } else if (stage === "count") {
     body =
       countActivity.kind === "give" ? (
@@ -582,10 +565,6 @@ export function NumberJourney({
   }
 
   const lead = guide.presence === "lead";
-  /* `find` is the one stage that centres her: the child is choosing between
-     numerals laid across the width, so she stands behind the choice rather
-     than leaning in from one side of it. Every other `lead` stage keeps the
-     right-edge crop. */
   /* `complete` and `path` are the two count activities with a tall board —
      a piece tray under the numeral, a route down the card — and at the
      standard placement she stood on the half of it the child has to reach.
@@ -593,8 +572,7 @@ export function NumberJourney({
      decision on this screen. */
   const tallCountBoard =
     stage === "count" && (countActivity.kind === "complete" || countActivity.kind === "path");
-  const leanPlacement =
-    stage === "find" ? "journeyCenter" : tallCountBoard ? "journeyLow" : "journey";
+  const leanPlacement = tallCountBoard ? "journeyLow" : "journey";
 
   /* `hero` is the one presence that comes AFTER the stage's buttons. It is the
      celebration screen, and the two ways onward were asked to sit ABOVE her:
@@ -664,7 +642,6 @@ export function NumberJourney({
             pose={guide.pose}
             line={guide.line}
             presence={guide.presence}
-            centered={leanPlacement === "journeyCenter"}
             dir={dir}
           >
             {actions}

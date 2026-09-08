@@ -201,7 +201,6 @@ export const ku: Dictionary = {
     strokeHint1: "ئالایەکا بچویک... پاشی ڕاست بەرەڤ خوارێ!",
     traceInvite: "دگەل من بشوپینە!",
     traceMiss: "زۆر نێزیک بوو! دیسا هەول بدەین.",
-    find: "{word} کیژە؟",
     findMiss: "هومم... دیسا بنێڕین!",
     countGive: "{value} {itemLabel} هەلبژێرە!",
     countComplete: "ژمارا {value} تەمام بکە!",
@@ -209,6 +208,7 @@ export const ku: Dictionary = {
     countColor: "ژمارا {value} ڕەنگ بکە!",
     countHow: "مە چەند {itemLabel} هەلبژارت؟",
     game: "ژمارا {value} بتەقینە!",
+    gameRetry: "دیسا هەول بدە — بالۆنا ژمارا {value} بتەقینە!",
     celebrate: "هوورا! تە کر!",
   },
 };

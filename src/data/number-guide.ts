@@ -23,12 +23,15 @@ export interface GuideState {
   appleGiven: boolean;
   traceMissed: boolean;
   pickMissed: boolean;
+  /** `game` only: every balloon rose off the screen with the right one still
+      floating. The round is over and she comes back on to offer another. */
+  gameFailed: boolean;
 }
 
 /**
  * How much of the screen Pinki is at each stage, and what she is doing there.
  *
- * **This table is the whole design, so read it as one thing rather than eight.**
+ * **This table is the whole design, so read it as one thing rather than seven.**
  * Her size is not decoration that happens to vary — it says whose moment this
  * is. She leads wherever her being there is the help (explaining, pointing,
  * cheering) and steps aside wherever the CONTENT is the lesson.
@@ -43,6 +46,9 @@ export interface GuideState {
  *
  * `celebrate` is the only `hero`: it is the emotional peak AND the one screen
  * with no activity underneath her to cover.
+ *
+ * `game` is the one row this table cannot state on its own — see `guideFor`
+ * below, which puts her back on it at `lead` once the round has been LOST.
  */
 const STAGE_GUIDE: Record<
   JourneyStage,
@@ -57,12 +63,13 @@ const STAGE_GUIDE: Record<
      being drawn on. A missed attempt is answered by the board itself (the
      red shake in `TraceBoard`), not by a line from her. */
   trace: { presence: "none", pose: "pen" },
-  find: { presence: "lead", pose: "think" },
   /* Overridden per activity below — `count` is four different exercises. */
   count: { presence: "lead", pose: "stick" },
-  /* The balloons are the stage. She sat small and silent in its bottom-left
-     corner and was taken off it on direct request — the concentration this
-     asks for is exactly what a guide beside it competes with. */
+  /* The balloons are the stage while they are still rising. She sat small and
+     silent in its bottom-left corner and was taken off it on direct request —
+     the concentration this asks for is exactly what a guide beside it competes
+     with. `guideFor` overrides this to `lead` once every balloon has escaped,
+     when there is no activity left for her to stand in front of. */
   game: { presence: "none", pose: "speak" },
   celebrate: { presence: "hero", pose: "celebrate" },
 };
@@ -137,11 +144,10 @@ function lineFor(
       return script.strokeHint;
     case "trace":
       return state.traceMissed ? script.traceMiss : script.traceInvite;
-    case "find":
-      return state.pickMissed ? script.findMiss : script.find;
     case "count":
       return countLine(script, state);
     case "game":
+      if (state.gameFailed) return script.gameRetry;
       return state.pickMissed ? script.findMiss : script.game;
     case "celebrate":
       return script.celebrate;
@@ -166,7 +172,13 @@ export function guideFor(
   const base = STAGE_GUIDE[stage];
 
   return {
-    presence: base.presence,
+    /* The one presence the table cannot state on its own: the balloon game is
+       hers only once it has been LOST. While the balloons are rising she is
+       off the stage entirely (the concentration it asks for is exactly what a
+       guide beside it competes with); once they have all escaped there is no
+       activity left for her to stand in front of, and the child needs to be
+       told what happened and offered another go. */
+    presence: stage === "game" && state.gameFailed ? "lead" : base.presence,
     pose: poseFor(stage, base.pose, state),
     line: lineFor(stage, script, state),
   };

@@ -85,13 +85,16 @@ function scriptForEn(value: number): NumberScript {
     /* The whole point of this line: a miss is Pinki offering to go again, not
        the app telling a child they failed. */
     traceMiss: "So close! Let's go again.",
-    find: `Which one is ${word.toUpperCase()}?`,
     findMiss: "Hmm... let's look again!",
     count: countLine(value, word),
     /* "did we pick", not "now": this asks about the act the child just
        performed, not about the state of the basket in front of them. */
     countHow: `How many ${items} did we pick?`,
     game: `Pop Number ${value}!`,
+    /* Said when every balloon has risen off the screen with the right one
+       still floating. An invitation to go again, never a verdict — the same
+       rule `traceMiss` follows. */
+    gameRetry: `Try again — pop the Number ${value} balloon!`,
     celebrate: "Hooray! You did it!",
   };
 }
@@ -133,11 +136,11 @@ function scriptFromDict(
     strokeHint: value === 1 ? pinki.strokeHint1 : pinki.strokeHintDefault,
     traceInvite: pinki.traceInvite,
     traceMiss: pinki.traceMiss,
-    find: format(pinki.find, { word }),
     findMiss: pinki.findMiss,
     count: format(countTemplate, { value, word, itemLabel }),
     countHow: format(pinki.countHow, { itemLabel }),
     game: format(pinki.game, { value }),
+    gameRetry: format(pinki.gameRetry, { value }),
     celebrate: pinki.celebrate,
   };
 }

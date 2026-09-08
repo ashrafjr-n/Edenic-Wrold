@@ -6,11 +6,7 @@ import type { PinkiPose } from "@/types/number-journey";
  * The places a life-size Pinki leans into the page, and the numbers that make
  * each one work.
  *
- * The `display` lives in each box string rather than on the wrapper, because
- * the centred placement needs `flex` where the two cropped ones need `block`
- * — and a Tailwind display utility in the shared class would fight the one in
- * the box on source order rather than on specificity.
- *
+
  * **Both are sized by the HEIGHT of the box they are positioned against, never
  * its width.** That box's aspect ratio changes a lot between a phone and a
  * desktop, so a width percentage makes her a different fraction of it at every
@@ -86,24 +82,6 @@ const LEAN = {
    */
   journeyLow: {
     box: "block -bottom-[18%] -right-[24%] h-[56%] sm:-bottom-[12%] sm:-right-[12%] sm:h-[62%]",
-    painted: { width: 372, height: 368 },
-  },
-  /**
-   * The same figure at the same size and the same height off the bottom as
-   * `journey`, moved to the HORIZONTAL CENTRE of the column instead of being
-   * cropped by its right edge. Used by the `find` stage, where the child is
-   * choosing between numerals laid across the width and she reads as standing
-   * behind the choice rather than off to one side of it.
-   *
-   * `inset-x-0` plus `justify-center` rather than an auto margin: she is wider
-   * than the column on a phone, and an auto margin on an over-wide box
-   * collapses to the left edge, while flex centring still centres it and lets
-   * the overflow fall evenly either side (the route's `<main>` carries
-   * `overflow-x-hidden` for exactly that). It also stays off `translate`,
-   * which `.anim-pinki-lean-in` already owns.
-   */
-  journeyCenter: {
-    box: "flex justify-center inset-x-0 -bottom-[1%] h-[62%] sm:-bottom-[2%] sm:h-[72%]",
     painted: { width: 372, height: 368 },
   },
 } as const;

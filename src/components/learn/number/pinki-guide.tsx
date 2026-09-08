@@ -65,12 +65,6 @@ interface PinkiGuideProps {
       journey keeps owning what its actions ARE and this only decides where
       they sit relative to her. */
   children?: ReactNode;
-  /** `lead` only: she is centred BELOW the bubble (the `find` stage's
-      `journeyCenter` placement) rather than cropped in from the right edge —
-      a genuinely different direction for the tail to point, not just a
-      retuned offset of the usual one, so the bubble column centres itself
-      too instead of hugging the left edge above her. */
-  centered?: boolean;
 }
 
 /**
@@ -101,7 +95,6 @@ export function PinkiGuide({
   line,
   presence = "lead",
   children,
-  centered = false,
   dir = "ltr",
 }: PinkiGuideProps) {
   if (presence === "none") return null;
@@ -134,11 +127,7 @@ export function PinkiGuide({
          it — a button half-covered by her arm. She is `pointer-events-none`,
          so this was only ever a paint-order problem; the buttons always
          answered a tap. */
-      <div
-        className={`relative z-20 flex w-[54%] max-w-md grow flex-col gap-3 sm:w-[66%] sm:max-w-2xl sm:gap-4 ${
-          centered ? "items-center self-center" : "items-start self-start"
-        }`}
-      >
+      <div className="relative z-20 flex w-[54%] max-w-md grow flex-col items-start gap-3 self-start sm:w-[66%] sm:max-w-2xl sm:gap-4">
         {/* **From `sm` the bubble is only as wide as the line in it, and it
             sits at the END of the column, next to her.** It was `w-full` at
             every width, so on a desktop a four-word line came out as a 549px
@@ -151,9 +140,7 @@ export function PinkiGuide({
             is what keeps the tail against her. **The phone keeps `w-full`**:
             the column is 54% of a narrow screen there, a fitted bubble would
             be a ragged little tab, and she stands directly under it rather
-            than beside it. The `centered` stage (`find`) needs no `self-*` —
-            its column is already `items-center`, so fitting the width is
-            enough. */}
+            than beside it. */}
         <p
           dir={dir}
           /* **`mt-auto` drops the bubble down beside her rather than leaving
@@ -168,11 +155,10 @@ export function PinkiGuide({
               contributes nothing rather than pushing the buttons off the
               screen. Skipped when there are no actions (an unsolved quiz),
               where it would drop the bubble to the very bottom of the column
-              and onto her, and on the `centered` stage, where she stands
-              BELOW the bubble and down is exactly the wrong way. */
-          className={`speech-bubble w-full px-4 py-2.5 text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:px-5 sm:py-3 sm:text-base ${
-            centered ? "speech-bubble--down text-center" : "speech-bubble--left text-left sm:self-end"
-          } ${!centered && children ? "mt-auto" : ""}`}
+              and onto her. */
+          className={`speech-bubble speech-bubble--left w-full px-4 py-2.5 text-left text-sm font-bold text-[var(--color-ink)] sm:w-fit sm:self-end sm:px-5 sm:py-3 sm:text-base ${
+            children ? "mt-auto" : ""
+          }`}
         >
           {line}
         </p>
