@@ -79,7 +79,7 @@ const LEAN = {
    * wrong here, where nothing needs clearing below the items.
    */
   journeyGive: {
-    box: "block -bottom-[11%] -right-[24%] h-[62%] sm:-bottom-[8%] sm:-right-[12%] sm:h-[72%]",
+    box: "block -bottom-[7%] -right-[24%] h-[62%] sm:-bottom-[8%] sm:-right-[12%] sm:h-[72%]",
     painted: { width: 372, height: 368 },
   },
   /**
