@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, PartyPopper, Unlock } from "lucide-react";
+import { PartyPopper, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
 import { JOURNEY_STAGES, WORKING_STAGES } from "@/types/number-journey";
@@ -15,7 +15,6 @@ import { guideFor, pointsAtTarget } from "@/data/number-guide";
 import { buildNumberChoices } from "@/lib/number-choices";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
-import { Button3D } from "@/components/ui/button-3d";
 import type { ButtonTone } from "@/components/ui/button-3d";
 import { format, dirFor } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -34,7 +33,7 @@ import { NumberPath } from "./number-path";
 import { NumberColor } from "./number-color";
 import { BalloonPop, TargetBalloon } from "./balloon-pop";
 import { Celebration } from "@/components/ui/celebration";
-import { AgainButton } from "@/components/ui/again-button";
+import { AgainButton, NextButton } from "@/components/ui/morph-button";
 
 /* Green is the "you got it, carry on" button and nothing else, so it never
    appears on a step the child has not passed. Blue is the ordinary primary
@@ -285,15 +284,13 @@ export function NumberJourney({
      mark ("My turn!", "Finish!"), which is a bidi-neutral: with the arrow icon
      after it and no base direction of its own it takes the page's `ltr` and
      renders on the wrong end of the Arabic label. */
+  /* Every way onward in the journey — "Next", "My turn!", "Finish!" — is the
+     same shared `NextButton`, so it collapses into its own arrow on press the
+     way the replay button collapses into its icon. It keeps its tone (green
+     for "you passed this", blue for the ordinary way on); only the shape and
+     the press are shared. */
   const nextButton = (label: string, tone: ButtonTone) => (
-    <Button3D
-      tone={tone}
-      onClick={advance}
-      className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-    >
-      <span dir={dir}>{label}</span>
-      <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-    </Button3D>
+    <NextButton label={label} tone={tone} onPress={advance} dir={dir} />
   );
 
   let body: ReactNode = null;
@@ -314,14 +311,7 @@ export function NumberJourney({
         )}
 
         <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
-          <Button3D
-            tone={BRAND_TONE}
-            onClick={advance}
-            className="px-7 py-3 text-base sm:px-9 sm:py-4 sm:text-lg"
-          >
-            {dict.journey.next}
-            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-          </Button3D>
+          {nextButton(dict.journey.next, BRAND_TONE)}
         </div>
       </div>
     );
@@ -646,21 +636,19 @@ export function NumberJourney({
       <div className="anim-fade-up mt-1 flex items-center gap-3 sm:mt-3 sm:gap-4">
         <AgainButton label={dict.journey.again} onPress={restart} dir={dir} />
 
-        <Button3D
+        {/* A LINK, not a handler — this one leaves the page for the next
+            number. `NextButton` still collapses on the press, which is what
+            is on screen while that route mounts. */}
+        <NextButton
+          label={
+            nextValue
+              ? format(dict.journey.numberButton, { value: nextValue })
+              : dict.journey.finish
+          }
           tone={GO_TONE}
           href={nextHref}
-          className="px-8 py-3 text-base sm:px-10 sm:text-lg"
-        >
-          {/* `Button3D`'s `href` branch renders a `Link` and only forwards
-              `aria-label` from its rest props, so a `dir` prop passed to the
-              button itself would be silently dropped — wrapping just the
-              mixed text in its own `dir`-bearing span reaches both branches
-              without touching the shared component. */}
-          <span dir={dir}>
-            {nextValue ? format(dict.journey.numberButton, { value: nextValue }) : dict.journey.finish}
-          </span>
-          <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-        </Button3D>
+          dir={dir}
+        />
       </div>
     );
   }
