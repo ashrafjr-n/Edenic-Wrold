@@ -45,16 +45,28 @@ export const numberStrokes: Record<number, readonly NumberStroke[]> = {
       [26, 83],
     ],
   ],
-  /* Two strokes: the diagonal-and-bar, then the stem down through it. */
-  /* Measured off `numbers/4.png`'s own alpha rather than drawn by eye: the
-     stem's centre runs at x 62 (not 64), the crossbar sits at y 65 and
-     reaches from 16 to 84, and the diagonal that lands on its left end
-     passes through x 31.6 at mid-height. The old diagonal ran about five
-     units right of the glyph's, which made the drawn triangle visibly
-     narrower than the clay numeral beside it. */
+  /* **Two strokes: the crossbar left-to-right, THEN up the diagonal and
+     straight back down through it.** The stroke ORDER here was wrong and was
+     corrected on direct request — it used to start at the apex, run the
+     diagonal down-left and turn right along the bar, then lift and come back
+     to that same apex for the stem. Two things were wrong with it: the pen
+     began in mid-air at the top of the numeral with nothing drawn to start
+     from, and it retraced its own starting point, so the demo showed the
+     child a movement no hand makes. Written the way it is actually taught:
+     lay the bar down first, come back to its left end, climb to the top, and
+     drop the stem through the bar you already have — which is what makes the
+     crossing read as a crossing.
+
+     The geometry itself is unchanged and still measured off `numbers/4.png`'s
+     own alpha rather than drawn by eye: the crossbar sits at y 65 and reaches
+     from x 16 to x 84, the stem's centre runs at x 62 (not 64), and the
+     diagonal joins the bar's left end to the apex, passing through x 31.6 at
+     mid-height. Scoring is coverage-based (`lib/trace-score.ts` measures how
+     much of the guide was covered, not in what order), so re-ordering the
+     strokes changes the DEMO and nothing about how a trace is judged. */
   4: [
-    [[62, 8], [16, 65], [84, 65]],
-    [[62, 8], [62, 93]],
+    [[16, 65], [84, 65]],
+    [[16, 65], [62, 8], [62, 93]],
   ],
   5: [
     [
