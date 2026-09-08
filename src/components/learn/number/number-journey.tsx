@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, PartyPopper, RotateCcw, Unlock } from "lucide-react";
 import type { Character } from "@/types/character";
 import type { NumberItem } from "@/types/number-item";
@@ -64,6 +64,13 @@ const COUNT_CHOICES = 3;
 /* Four balloons rising through the sky at once. Fewer reads as no game at
    all; more turns "find the numeral" into a crowd on a phone-width board. */
 const POP_CHOICES = 4;
+
+/** How long the stage on screen takes to fade out before the next one is
+    mounted. Kept in step with `.stage-out`'s own 0.2s in `globals.css` by
+    comment — the same hand-synced arrangement the cloud page transition uses.
+    Short on purpose: this is a hand-off between two exercises, not a scene
+    change, and anything longer reads as the app thinking. */
+const STAGE_LEAVE_MS = 200;
 
 /** How much of the numeral has to be covered, per attempt. It falls with every
     miss so a child who is struggling always gets through — the third attempt
@@ -138,12 +145,20 @@ export function NumberJourney({
   /* Bumping this remounts whichever interactive stage is on screen, which is
      how a retry clears it — that state lives inside the stage, not up here. */
   const [attempt, setAttempt] = useState(0);
+  /* True while the stage on screen is fading out and the next one has not been
+     mounted yet — see `go` below. */
+  const [leaving, setLeaving] = useState(false);
+  const leaveTimer = useRef<number | undefined>(undefined);
 
   /* The tracing stage owns the screen: the child draws on it with a finger,
      and the page sliding under that finger is the one thing that can ruin a
      stroke. `touch-action: none` on the board already stops a drag ON it from
      scrolling — this stops the page moving at all while the board is up. */
   useScrollLock(stage === "trace");
+
+  /* The one timer this component owns. Cleared on unmount so a child who
+     leaves mid-transition never lands a `setState` on a gone component. */
+  useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
   const complete = useProgress((state) => state.complete);
   const stars = starsFor(mistakes);
@@ -160,13 +175,28 @@ export function NumberJourney({
   const countChoices = buildNumberChoices(value, COUNT_CHOICES);
   const popChoices = buildNumberChoices(value, POP_CHOICES);
 
-  const advance = () => {
-    setSolved(false);
-    setTraceMissed(false);
-    setPickMissed(false);
-    setGameFailed(false);
-    setStage(JOURNEY_STAGES[stageIndex + 1]);
+  /* **Every move between stages goes through here**, so the swap always
+     looks the same: the stage on screen fades out, and only once it has does
+     the next one mount and fade in. It is an event handler with a timer in
+     it, not an effect watching state — the transition is caused by the press,
+     which is exactly where `nextjs-principles.md` says this belongs. */
+  const go = (change: () => void) => {
+    setLeaving(true);
+    window.clearTimeout(leaveTimer.current);
+    leaveTimer.current = window.setTimeout(() => {
+      change();
+      setLeaving(false);
+    }, STAGE_LEAVE_MS);
   };
+
+  const advance = () =>
+    go(() => {
+      setSolved(false);
+      setTraceMissed(false);
+      setPickMissed(false);
+      setGameFailed(false);
+      setStage(JOURNEY_STAGES[stageIndex + 1]);
+    });
 
   const miss = () => setMistakes((count) => count + 1);
 
@@ -195,17 +225,18 @@ export function NumberJourney({
     setAttempt((count) => count + 1);
   };
 
-  const restart = () => {
-    setStage("discover");
+  const restart = () =>
+    go(() => {
+      setStage("discover");
     setSolved(false);
     setMistakes(0);
     setTraceAttempt(0);
     setTraceMissed(false);
     setPickMissed(false);
-    setAppleGiven(false);
-    setGameFailed(false);
-    setAttempt((count) => count + 1);
-  };
+      setAppleGiven(false);
+      setGameFailed(false);
+      setAttempt((count) => count + 1);
+    });
 
   /* Pinki's whole appearance for the stage on screen — how big she is, what
      she is doing and what she says. Resolved by `data/number-guide.ts` rather
@@ -260,7 +291,7 @@ export function NumberJourney({
        whole point of this stage; moving the button to the side is what
        removed that ceiling. */
     body = (
-      <div className="anim-rise-in flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
+      <div className="flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
         {videoId && (
           <NumberVideo videoId={videoId} value={value} image={image} dict={dict.journey} />
         )}
@@ -283,7 +314,7 @@ export function NumberJourney({
        screen with the say-it button. The top margin is what pushes it clear
        of them. */
     body = (
-      <div className="anim-rise-in mt-3 sm:mt-6">
+      <div className="mt-3 sm:mt-6">
         <Numeral
           value={value}
           image={image}
@@ -309,7 +340,7 @@ export function NumberJourney({
     );
   } else if (stage === "demo") {
     body = (
-      <div className="card card-clay-white anim-rise-in aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
+      <div className="card card-clay-white aspect-square w-full max-w-[13rem] p-4 sm:max-w-[16rem] sm:p-6">
         <StrokeDemo strokes={strokes} accent={accent} />
       </div>
     );
@@ -322,7 +353,7 @@ export function NumberJourney({
          screen: Pinki is off this stage entirely, so the whole column is the
          board's. This is the one thing the child does with their hand, and it
          was the smallest object on the page. */
-      <div className="card card-clay-white anim-rise-in relative aspect-square w-full max-w-[17rem] p-4 sm:max-w-[24rem] sm:p-6">
+      <div className="card card-clay-white relative aspect-square w-full max-w-[17rem] p-4 sm:max-w-[24rem] sm:p-6">
         <TraceBoard
           key={attempt}
           strokes={strokes}
@@ -372,7 +403,7 @@ export function NumberJourney({
            teaches nothing about the numeral; asking alone teaches nothing
            about quantity. */
         !appleGiven ? (
-          <div className="anim-rise-in">
+          <div>
             <AppleGive
               key={`give-${attempt}`}
               target={value}
@@ -385,7 +416,7 @@ export function NumberJourney({
             />
           </div>
         ) : (
-          <div className="anim-rise-in relative">
+          <div className="relative">
             <NumberQuiz
               key={`count-${attempt}`}
               choices={countChoices}
@@ -399,7 +430,7 @@ export function NumberJourney({
           </div>
         )
       ) : countActivity.kind === "complete" ? (
-        <div className="anim-rise-in relative">
+        <div className="relative">
           <NumberComplete
             key={`complete-${attempt}`}
             value={value}
@@ -412,7 +443,7 @@ export function NumberJourney({
           {solved && <Celebration />}
         </div>
       ) : countActivity.kind === "path" ? (
-        <div className="anim-rise-in relative">
+        <div className="relative">
           <NumberPath
             key={`path-${attempt}`}
             numbers={countActivity.numbers}
@@ -424,7 +455,7 @@ export function NumberJourney({
           {solved && <Celebration />}
         </div>
       ) : (
-        <div className="anim-rise-in relative">
+        <div className="relative">
           <NumberColor
             key={`color-${attempt}`}
             value={value}
@@ -453,7 +484,7 @@ export function NumberJourney({
       /* The same board the `count` stage gives 4 and 9, as this number's last
          challenge instead of the balloons — see `data/game-activities.ts` for
          the rule that stops one number getting it twice. */
-      <div className="anim-rise-in relative">
+      <div className="relative">
         <NumberComplete
           key={`game-complete-${attempt}`}
           value={value}
@@ -699,9 +730,18 @@ export function NumberJourney({
           content and pinning it to the top left a dead band above the
           bottom-anchored Pinki. */}
       <div
-        className={`flex flex-1 flex-col items-center gap-4 sm:gap-6 ${
-          lead ? "justify-start sm:justify-center" : "justify-center"
-        }`}
+        /* **The `key` is what replays the entrance.** Changing it remounts the
+           whole group, which restarts `.stage-swap`'s animation — a class
+           alone would not, since the element never leaves the DOM. It counts
+           the two IN-STAGE activity changes as swaps too, because they are
+           ones: handing the apple over replaces the tray with a question, and
+           losing the balloons replaces the sky with Pinki. It deliberately
+           does NOT include `solved`, which only adds a button — keying on
+           that would remount the balloons the moment one is popped. */
+        key={`${stage}-${appleGiven}-${gameFailed}`}
+        className={`stage-swap flex flex-1 flex-col items-center gap-4 sm:gap-6 ${
+          leaving ? "stage-swap--out" : ""
+        } ${lead ? "justify-start sm:justify-center" : "justify-center"}`}
       >
         {/* WHERE she sits in the column is part of what her presence means.
             `lead` comes after the activity, because she is the lower half of

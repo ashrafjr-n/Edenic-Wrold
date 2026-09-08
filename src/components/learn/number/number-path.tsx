@@ -161,7 +161,7 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
   };
 
   return (
-    <div className="card card-clay-white anim-rise-in flex flex-row items-stretch gap-4 p-5 sm:gap-6 sm:p-7">
+    <div className="card card-clay-white flex flex-row items-stretch gap-4 p-5 sm:gap-6 sm:p-7">
       <div
         ref={boardRef}
         className="relative h-72 w-56 shrink-0 sm:h-[22rem] sm:w-72"

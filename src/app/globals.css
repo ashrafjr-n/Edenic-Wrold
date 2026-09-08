@@ -2424,6 +2424,59 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   Moving between two activities in one number's journey.
+
+   ONE transition owns the whole swap, rather than each stage animating its
+   own card in: the child is being carried from one exercise to the next, and
+   four different entrances (a scale-up here, a pop there, nothing at all on a
+   third) read as four unrelated screens. Every `anim-rise-in` inside the
+   journey's stages was removed when this landed — put one back and the stage
+   plays two entrances at once.
+
+   The OUT half is what makes it a transition rather than an entrance:
+   `NumberJourney` sets the leaving class, waits `STAGE_LEAVE_MS` (kept in
+   step with the duration below by comment, the same way the cloud veil's
+   timings are), and only then changes the stage. A `key` on the group
+   remounts it, which is what replays the IN half.
+
+   `opacity` and `translate` only — both compositor properties, so a stage
+   carrying a video, a canvas or four drifting balloons still swaps cheaply.
+   `translate` rather than `transform`, since Tailwind utilities inside the
+   group own `transform` (see the type-and-buttons rules).
+   --------------------------------------------------------------- */
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes stage-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+
+.stage-swap {
+  animation: stage-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Declared after `.stage-swap` so it wins on source order — both land on the
+   same element while a stage is on its way out. */
+.stage-swap--out {
+  animation: stage-out 0.2s ease-in forwards;
+}
+
+/* ---------------------------------------------------------------
    Celebration confetti.
 
    CSS rather than canvas-confetti: the whole site's animation is keyframes,
@@ -3073,6 +3126,8 @@ button:disabled,
   .anim-pop-in,
   .anim-fade-up,
   .anim-rise-in,
+  .stage-swap,
+  .stage-swap--out,
   .anim-wiggle,
   .anim-jump,
   .balloon-drift,

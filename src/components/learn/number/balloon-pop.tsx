@@ -189,7 +189,7 @@ export function BalloonPop({
        `overflow-hidden` crops a balloon at both ends of its flight, and it is
        also what stops one that has already left being tappable — a clip clips
        hit-testing too. */
-    <div className="card card-clay-white trail-sky--day balloon-sky anim-rise-in relative w-full overflow-hidden">
+    <div className="card card-clay-white trail-sky--day balloon-sky relative w-full overflow-hidden">
       {choices.map((value, index) => {
         const isPopped = popped === value;
 
