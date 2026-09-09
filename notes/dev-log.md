@@ -44,3 +44,4 @@
 2026-09-05 update card spacing
 2026-09-06 rename card spacing
 2026-09-09 tidy header alignment
+2026-09-09 adjust bottom nav
