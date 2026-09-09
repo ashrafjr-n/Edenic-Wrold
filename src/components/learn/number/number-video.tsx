@@ -32,20 +32,22 @@ export function NumberVideo({ src, value, image, dict }: NumberVideoProps) {
   const [playing, setPlaying] = useState(false);
 
   return (
-    /* **`svh`, never `vh`.** `vh` is measured against the LARGE viewport —
-        the phone with its browser chrome hidden — so a `42vh` box is taller
-        than the screen actually has whenever that chrome is showing, and the
-        stage overflows and jumps as the bar slides in and out. `svh` is the
-        SMALL viewport, i.e. the height that is there in the worst case, so
-        the frame fits at every scroll position and nothing moves. `dvh`
-        would fit too, but it re-measures as the bar animates, which resizes
-        the video mid-scroll — the wrong trade for a box a child is watching.
-       Same call `.puzzle-upright` and `TrailSky` already make. */
     <div className="card card-clay-white relative aspect-[9/16] h-[60svh] max-h-[32rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
+      {/* The numeral now stands behind the clip at every stage, not just
+          before it — a placeholder for a slow connection, not only a
+          poster shown before the tap. */}
+      <Image
+        src={image}
+        alt=""
+        fill
+        sizes="(min-width: 640px) 24rem, 16rem"
+        preload
+        className="select-none object-contain p-10 opacity-90"
+      />
+
       {playing ? (
         <video
           src={src}
-          autoPlay
           loop
           playsInline
           preload="none"
@@ -59,18 +61,6 @@ export function NumberVideo({ src, value, image, dict }: NumberVideoProps) {
           aria-label={format(dict.playVideoAbout, { value })}
           className="absolute inset-0 flex items-center justify-center"
         >
-          {/* The numeral itself is the poster — a local asset that is already
-              on the page, so the facade costs no extra request and can never
-              show an empty grey frame while a thumbnail loads. */}
-          <Image
-            src={image}
-            alt=""
-            fill
-            sizes="(min-width: 640px) 24rem, 16rem"
-            preload
-            className="select-none object-contain p-10 opacity-90"
-          />
-
           <span
             className="clay relative flex h-20 w-20 items-center justify-center rounded-full sm:h-24 sm:w-24"
             style={
