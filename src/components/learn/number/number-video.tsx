@@ -41,7 +41,7 @@ export function NumberVideo({ src, value, image, dict }: NumberVideoProps) {
         would fit too, but it re-measures as the bar animates, which resizes
         the video mid-scroll — the wrong trade for a box a child is watching.
        Same call `.puzzle-upright` and `TrailSky` already make. */
-    <div className="card card-clay-white relative aspect-[9/16] h-[52svh] max-h-[28rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
+    <div className="card card-clay-white relative aspect-[9/16] h-[60svh] max-h-[32rem] min-h-[15rem] shrink-0 overflow-hidden sm:h-[68svh] sm:max-h-[42rem]">
       {playing ? (
         <video
           src={src}
