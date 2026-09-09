@@ -105,7 +105,7 @@ export function NumberJourney({
   dict,
   locale,
 }: NumberJourneyProps) {
-  const { value, image, imageSize, videoId, strokes } = item;
+  const { value, image, imageSize, video, strokes } = item;
   const { accent } = character;
   const script = scriptFor(value, locale, dict);
   /* Every line below mixes this locale's words with an English name/number
@@ -306,9 +306,7 @@ export function NumberJourney({
        removed that ceiling. */
     body = (
       <div className="flex w-full flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10 lg:gap-14">
-        {videoId && (
-          <NumberVideo videoId={videoId} value={value} image={image} dict={dict.journey} />
-        )}
+        <NumberVideo src={video} value={value} image={image} dict={dict.journey} />
 
         <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-4">
           {nextButton(dict.journey.next, BRAND_TONE)}
