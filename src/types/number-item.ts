@@ -20,9 +20,7 @@ export interface NumberItem {
       measured in slightly different spaces. Invisible on the small notch that
       activity used to cut; obvious now that the piece is half the numeral. */
   imageSize: { width: number; height: number };
-  /** YouTube id for this number's short. Optional — the videos are being
-      produced progressively, and an item without one simply starts the child
-      at the tracing step instead of showing an empty frame. */
-  videoId?: string;
+  /** Local clip for this number's short, served straight from `/public`. */
+  video: string;
   strokes: readonly NumberStroke[];
 }
