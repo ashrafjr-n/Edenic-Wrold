@@ -132,7 +132,6 @@ export const ar: Dictionary = {
     colorNumber: "لوّن الرقم {value}",
     dragPinkiToward: "اسحب بينكي نحو الرقم {value}",
     videoAbout: "فيديو قصير عن الرقم {value}",
-    playVideoAbout: "شغّل الفيديو عن الرقم {value}",
     myTurn: "دوري أنا!",
     finishExclaim: "انتهيت!",
     finish: "إنهاء",
