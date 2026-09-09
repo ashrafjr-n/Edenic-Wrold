@@ -42,7 +42,7 @@ export function NumberVideo({ src, value, image, dict }: NumberVideoProps) {
         autoPlay
         loop
         playsInline
-        preload="none"
+        preload="auto"
         aria-label={format(dict.videoAbout, { value })}
         className="absolute inset-0 h-full w-full object-cover"
       />
