@@ -138,7 +138,6 @@ export const en = {
     colorNumber: "Color in the number {value}",
     dragPinkiToward: "Drag Pinki toward number {value}",
     videoAbout: "A short video about the number {value}",
-    playVideoAbout: "Play the video about the number {value}",
     myTurn: "My turn!",
     finishExclaim: "Finish!",
     finish: "Finish",
