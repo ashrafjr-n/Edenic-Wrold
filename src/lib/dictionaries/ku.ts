@@ -136,7 +136,6 @@ export const ku: Dictionary = {
     colorNumber: "ژمارا {value} ڕەنگ بکە",
     dragPinkiToward: "Pinki بەرەڤ ژمارا {value} بکێشە",
     videoAbout: "ڤیدیۆیەکا کورت دەربارەی ژمارا {value}",
-    playVideoAbout: "ڤیدیۆیێ دەربارەی ژمارا {value} لێدە",
     myTurn: "دۆرا منە!",
     finishExclaim: "خلاس!",
     finish: "خلاسکرن",
