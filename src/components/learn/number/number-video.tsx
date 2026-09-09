@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
