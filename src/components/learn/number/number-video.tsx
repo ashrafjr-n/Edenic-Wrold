@@ -11,14 +11,13 @@ interface NumberVideoProps {
 }
 
 /**
- * The number's short, behind our own play button.
+ * The number's short — autoplaying, looping, with sound.
  *
- * **The `<video>` does not mount until the child presses play** — the same
- * facade the old YouTube embed used, kept because it still does the job:
- * nothing is fetched until the tap (this is the lazy load, no extra
- * attribute needed), and because playback starts inside that click's own
- * user gesture, the browser allows it to autoplay WITH sound rather than
- * forcing it muted.
+ * **The numeral sits behind the `<video>` as a placeholder**, not just a
+ * poster shown before playback starts: it stays in the DOM the whole time,
+ * so if the clip is slow to fetch on a poor connection (or a browser blocks
+ * the unmuted autoplay below), the stage never shows an empty black frame —
+ * it shows the same numeral art the rest of this stage already uses.
  *
  * Sized by HEIGHT, not width: the source is a vertical clip, so the frame is
  * as tall as the viewport comfortably allows and its width follows.
