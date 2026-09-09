@@ -39,6 +39,7 @@ export function NumberVideo({ src, value, image, dict }: NumberVideoProps) {
 
       <video
         src={src}
+        autoPlay
         loop
         playsInline
         preload="none"
