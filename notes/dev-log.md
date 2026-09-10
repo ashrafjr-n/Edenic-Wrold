@@ -45,3 +45,4 @@
 2026-09-06 rename card spacing
 2026-09-09 tidy header alignment
 2026-09-09 adjust bottom nav
+2026-09-10 document tracing board
