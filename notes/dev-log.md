@@ -46,3 +46,4 @@
 2026-09-09 tidy header alignment
 2026-09-09 adjust bottom nav
 2026-09-10 document tracing board
+2026-09-11 polish back button position
