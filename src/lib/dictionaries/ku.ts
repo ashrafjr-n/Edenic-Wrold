@@ -115,8 +115,6 @@ export const ku: Dictionary = {
     startNumberAria: "ژمارا {value} دەستپێبکە، {stars} ژ 3 ستێران",
   },
   journey: {
-    pickerWelcome:
-      "سلاڤ! ئەز Pinki مە. با ب هەڤ ڕا ژمارەیێن خۆ فێربین — ژمارا 1 بتکینە دا دەست پێ بکەی! 🌟",
     backTo: "ڤەگەڕان بۆ {lessonName}",
     numberOf: "ژمارا {position} ژ {total}",
     stepOf: "پێنگاڤا {current} ژ {total}",
