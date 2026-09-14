@@ -3309,6 +3309,46 @@ button:disabled,
   animation: path-hint-travel 3.4s ease-in-out infinite;
 }
 
+/* The "how to solve it" ghost on the complete-the-numeral drag: the loose
+   piece lifts itself into the gap, holds, comes back down, then wiggles in
+   place — where it belongs, demonstrated rather than pointed at, now that
+   `complete` gets no Pinki at all (see `NumberComplete`/`data/number-guide.ts`).
+   `--hint-dx`/`--hint-dy` arrive as measured pixel offsets (the piece's own
+   centre -> the hole's), the same arithmetic the real drop already uses. */
+@keyframes complete-hint {
+  0%,
+  8% {
+    translate: 0 0;
+    scale: 1;
+  }
+  30%,
+  48% {
+    translate: var(--hint-dx) var(--hint-dy);
+    scale: 1.05;
+  }
+  64% {
+    translate: 0 0;
+    scale: 1;
+  }
+  70% {
+    translate: -0.35rem 0;
+  }
+  76% {
+    translate: 0.35rem 0;
+  }
+  82% {
+    translate: -0.2rem 0;
+  }
+  88%,
+  100% {
+    translate: 0 0;
+  }
+}
+
+.complete-hint {
+  animation: complete-hint 4.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-pop-in,
@@ -3334,6 +3374,7 @@ button:disabled,
   .trace-guide-glow,
   .anim-reveal,
   .path-hint,
+  .complete-hint,
   .anim-hero-parallax,
   .lang-orb,
   .page-veil--in .page-veil-cloud,
