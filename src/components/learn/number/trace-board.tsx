@@ -45,7 +45,7 @@ function distanceSquared(a: StrokePoint, b: StrokePoint): number {
 }
 
 /** After the pen lifts on an attempt that did NOT pass, the child gets this
-    long to carry on before it is judged — a 4 is two strokes and a small
+    long to carry on before it is judged — a 4 is three strokes and a small
     child pauses between them, so a numeral must never be failed mid-way.
     Starting another stroke cancels the pending judgement outright.
 
