@@ -112,6 +112,8 @@ export const en = {
     next: "Next",
     lockedNumberAria: "The number {value}, locked",
     startNumberAria: "Start the number {value}, {stars} of 3 stars",
+    ctaStart: "Start",
+    ctaNextLesson: "Next Lesson",
   },
   journey: {
     backTo: "Back to {lessonName}",

@@ -109,6 +109,8 @@ export const ar: Dictionary = {
     next: "التالي",
     lockedNumberAria: "الرقم {value}، مقفل",
     startNumberAria: "ابدأ الرقم {value}، {stars} من 3 نجوم",
+    ctaStart: "بدء",
+    ctaNextLesson: "الدرس التالي",
   },
   journey: {
     backTo: "العودة إلى {lessonName}",
