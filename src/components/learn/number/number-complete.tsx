@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import { COMPLETE_NOTCH } from "@/data/number-complete";
@@ -75,6 +75,17 @@ function cropStyle(notch: CompleteNotch): CSSProperties {
  *
  * Dragging is required: a tap does nothing. Carrying the piece to the gap is
  * the whole exercise, so solving it by tapping would skip the activity.
+ *
+ * **No card behind the numeral, and no Pinki either — direct request.** This
+ * used to sit in a `.card card-clay-white` panel with Pinki leading beside it
+ * (`data/number-guide.ts` gives every `complete` activity `presence: "none"`
+ * now, on `count` and on `game`); both are gone, and the numeral and its
+ * piece stand directly on the page. What replaces her pointing at the gap is
+ * `complete-hint`: the loose piece demonstrates the move itself, lifting into
+ * the hole, holding, coming back down and wiggling in place, on a loop that
+ * stops for good the moment the child's own first press takes over — the
+ * same "stops once they take over" rule `path-hint`/`color-hint` already
+ * follow.
  */
 export function NumberComplete({
   value,
@@ -87,17 +98,45 @@ export function NumberComplete({
 }: NumberCompleteProps) {
   const notch = COMPLETE_NOTCH;
   const holeRef = useRef<HTMLDivElement>(null);
+  const pieceRef = useRef<HTMLButtonElement>(null);
 
   const [drag, setDrag] = useState<DragState | null>(null);
   const [snap, setSnap] = useState<{ dx: number; dy: number } | null>(null);
   const [solved, setSolved] = useState(false);
   const [wrong, setWrong] = useState(false);
+  /** The piece's own centre -> the hole's own centre, in pixels — the exact
+      arithmetic the real drop uses in `onPointerUp` below, just measured
+      ahead of time so `complete-hint` has somewhere to travel to. */
+  const [hint, setHint] = useState<{ dx: number; dy: number } | null>(null);
+  /* The hint plays until the child's first real press, then never again —
+     the same "stops for good once they take over" rule the path/colour
+     hints already follow. */
+  const [hasStarted, setHasStarted] = useState(false);
 
   const locked = solved || snap !== null;
   const dragging = drag?.moved ?? false;
 
+  const measureHint = useCallback(() => {
+    const hole = holeRef.current?.getBoundingClientRect();
+    const piece = pieceRef.current?.getBoundingClientRect();
+    if (!hole || !piece) return;
+    setHint({
+      dx: hole.left + hole.width / 2 - (piece.left + piece.width / 2),
+      dy: hole.top + hole.height / 2 - (piece.top + piece.height / 2),
+    });
+  }, []);
+
+  /* Re-measured on resize — the board's `--board-h` (and so everything's
+     pixel size) changes at the `sm` breakpoint. */
+  useEffect(() => {
+    measureHint();
+    window.addEventListener("resize", measureHint);
+    return () => window.removeEventListener("resize", measureHint);
+  }, [measureHint]);
+
   const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (locked) return;
+    setHasStarted(true);
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({ startX: event.clientX, startY: event.clientY, dx: 0, dy: 0, moved: false });
   };
@@ -166,7 +205,7 @@ export function NumberComplete({
        chunk; at half the numeral it would show as a visible step where the
        piece lands. */
     <div
-      className="card card-clay-white numeral-stage numeral-stage--half flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7"
+      className="numeral-stage numeral-stage--half flex flex-col items-center gap-4 p-5 sm:gap-6 sm:p-7"
       style={
         {
           "--board-w": `calc(var(--board-h) * ${imageSize.width} / ${imageSize.height})`,
@@ -183,7 +222,14 @@ export function NumberComplete({
           fill
           sizes="(min-width: 640px) 14rem, 10rem"
           draggable={false}
-          className="select-none object-contain"
+          /* A small grow alongside the confetti, direct request — the
+             numeral itself is the thing that just got finished, so it gets
+             a beat of its own rather than only the piece disappearing into
+             it. `transition-transform` (Tailwind v4) covers the standalone
+             `scale` property, and nothing else on this element moves. */
+          className={`select-none object-contain transition-transform duration-500 ease-out ${
+            solved ? "scale-[1.12]" : ""
+          }`}
         />
 
         {/* The gap, and the one place the piece belongs — so it is what the
@@ -208,6 +254,7 @@ export function NumberComplete({
           comfortably bigger than the piece itself, which is pinned to the
           hole's exact size. */}
       <button
+        ref={pieceRef}
         type="button"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -215,20 +262,29 @@ export function NumberComplete({
         onPointerCancel={() => setDrag(null)}
         disabled={solved}
         aria-label={dict.dragMissingPiece}
-        /* `touch-action: none` or the drag scrolls the page instead. */
+        /* `touch-action: none` or the drag scrolls the page instead.
+           `complete-hint` (see `globals.css`) replaces the plain idle
+           `anim-breathe` this used to carry — it plays the whole move
+           (lift into the hole, hold, come back, wiggle) instead of just
+           marking the piece as liftable, and it stops for good the moment
+           `hasStarted` flips true. */
         className={`touch-none rounded-2xl p-3 ${
           dragging || snap ? "" : "transition-all duration-300"
         } ${wrong ? "anim-wiggle" : ""} ${
-          !dragging && !snap && !solved ? "anim-breathe" : ""
+          !dragging && !snap && !solved && !hasStarted && hint ? "complete-hint" : ""
         } ${solved ? "pointer-events-none" : ""}`}
-        style={{
-          translate: drag?.moved
-            ? `${drag.dx}px ${drag.dy}px`
-            : snap
-              ? `${snap.dx}px ${snap.dy}px`
-              : undefined,
-          scale: dragging ? "1.06" : "1",
-        }}
+        style={
+          {
+            "--hint-dx": `${hint?.dx ?? 0}px`,
+            "--hint-dy": `${hint?.dy ?? 0}px`,
+            translate: drag?.moved
+              ? `${drag.dx}px ${drag.dy}px`
+              : snap
+                ? `${snap.dx}px ${snap.dy}px`
+                : undefined,
+            scale: dragging ? "1.06" : "1",
+          } as CSSProperties
+        }
       >
         <span
           className="relative block overflow-hidden rounded-[0.6rem]"
