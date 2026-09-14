@@ -86,7 +86,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <main
-      className="relative flex flex-1 flex-col pb-36 sm:pb-28 lg:pb-16"
+      /* `pb-[6.75rem]` (108px) on a phone matches the fixed Continue bar's
+         own measured height exactly — it used to be `pb-36` (144px), 36px
+         too much, which opened a bare gap of page background between the
+         sheet's bottom row and the bar every time the page was scrolled all
+         the way down. */
+      className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-28 lg:pb-16"
       style={pageAccent(character.accent, character.accentDark)}
     >
       {/* ================= Phone + tablet (< lg) ================= */}
