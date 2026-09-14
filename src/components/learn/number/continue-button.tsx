@@ -17,8 +17,16 @@ interface ContinueButtonProps {
 }
 
 /**
- * The "Continue" CTA to the first open-and-unfinished number, looping back
- * to the last one once all nine are done.
+ * The CTA to the first open-and-unfinished number, looping back to the last
+ * one once all nine are done.
+ *
+ * **The label carries three states, not just "Continue"**: before the first
+ * number has ever been finished (nothing to continue yet) it reads "Start";
+ * once every number has stars it reads "Next Lesson" (there is nowhere to
+ * send that click yet — Letters/Colors are still statically locked in
+ * `data/lessons.ts` — so it keeps pointing at `continueValue`, the same
+ * replay-number-9 link "Continue" already used); anywhere in between it is
+ * the ordinary "Continue".
  *
  * Its own tiny Client Component, deliberately NOT part of `NumberList` —
  * the desktop layout places it inline in a sticky sidebar while phone and
@@ -53,13 +61,23 @@ export function ContinueButton({
 
   const continueValue = nextValue ?? items[items.length - 1].value;
 
+  /* Nothing is open past number 1 until number 1 itself has stars — the
+     same condition the unlock check above already uses — so this is exactly
+     "the only open number is number 1", the first-ever-play state. */
+  const label =
+    starsFor(items[0].value) === 0
+      ? dict.lessonPicker.ctaStart
+      : nextValue === undefined
+        ? dict.lessonPicker.ctaNextLesson
+        : dict.trail.ctaContinue;
+
   return (
     <Button3D
       href={`${basePath}/${continueValue}`}
       tone={{ face: tone.face, edge: tone.edge }}
       className={`flex items-center justify-center gap-2 ${className}`}
     >
-      {dict.trail.ctaContinue}
+      {label}
       <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
     </Button3D>
   );
