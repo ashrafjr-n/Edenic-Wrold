@@ -24,6 +24,10 @@ export interface GuideState {
   gameKind: GameActivityKind;
   /** `give` only: the item is in the basket and the question has begun. */
   appleGiven: boolean;
+  /** `path`/`color` only: the child has already reached the target or filled
+      the outline in — swaps her pose to `celebrate` and the line to praise,
+      the same "be pleased with the result" beat `give` already has. */
+  solved: boolean;
   traceMissed: boolean;
   pickMissed: boolean;
   /** `game` only: every balloon rose off the screen with the right one still
@@ -125,6 +129,16 @@ function poseFor(
     return state.appleGiven ? "celebrate" : COUNT_POSE.give;
   }
 
+  /* `path`/`color` have no single target to point the stick at (see
+     `COUNT_POSE` above), so a plain `speak` is all they had once solved too —
+     she never actually said anything different. Now that she does
+     (`script.countDone`), the pose has to change with it or a celebrate line
+     would come out of a speaking pose. `complete` needs no such branch: it
+     is `"none"` before this function even runs (see `guideFor`). */
+  if ((state.countKind === "path" || state.countKind === "color") && state.solved) {
+    return "celebrate";
+  }
+
   return COUNT_POSE[state.countKind];
 }
 
@@ -135,9 +149,14 @@ function countLine(script: NumberScript, state: GuideState): string {
   }
 
   /* `complete` is a drag, so a miss is answered the way a missed trace is —
-     an offer to go again, not a verdict. */
+     an offer to go again, not a verdict. Moot in practice now that `complete`
+     renders no guide at all (see `guideFor`), kept for the day it might. */
   if (state.countKind === "complete" && state.pickMissed) {
     return script.traceMiss;
+  }
+
+  if ((state.countKind === "path" || state.countKind === "color") && state.solved) {
+    return script.countDone;
   }
 
   return script.count;
@@ -189,18 +208,29 @@ export function guideFor(
 ): StageGuide {
   const base = STAGE_GUIDE[stage];
 
+  /* **`complete` gets no guide at all, on `count` or on `game` — direct
+     request.** The drag-the-piece board is the whole activity now; what used
+     to be her pointing at the gap is a looping demo on the piece itself
+     instead (see `NumberComplete`'s own `complete-hint` animation), and the
+     gap's `.guide-target` halo (still lit — `pointsAtTarget` reads the pose
+     below, not this) is enough of a "look here" without her standing over
+     it. `gameFailed` can never be true in the same beat as `gameKind ===
+     "complete"` — that branch never mounts `BalloonPop`, so nothing ever
+     sets it — but `"none"` is checked first regardless, so the two can never
+     race. */
+  const presence =
+    stage === "count" && state.countKind === "complete"
+      ? "none"
+      : stage === "game"
+        ? state.gameKind === "complete"
+          ? "none"
+          : state.gameFailed
+            ? "lead"
+            : base.presence
+        : base.presence;
+
   return {
-    /* The two presences the table cannot state on its own, both on `game`.
-       The BALLOON round is hers only once it has been lost: while they are
-       rising she is off the stage entirely (the concentration it asks for is
-       exactly what a guide beside it competes with), and once they have all
-       escaped there is no activity left for her to stand in front of. The
-       `complete` game is hers throughout, like the `complete` count board it
-       reuses — a numeral with a gap is a thing to be shown, not a race. */
-    presence:
-      stage === "game" && (state.gameFailed || state.gameKind === "complete")
-        ? "lead"
-        : base.presence,
+    presence,
     pose: poseFor(stage, base.pose, state),
     line: lineFor(stage, script, state),
   };

@@ -198,6 +198,7 @@ export const ar: Dictionary = {
     countPath: "امشِ معي إلى الرقم {value}!",
     countColor: "لوّن الرقم {value}!",
     countHow: "كم {itemLabel} التقطنا؟",
+    countDone: "أحسنت!",
     game: "افقع الرقم {value}!",
     gameRetry: "حاول مرة أخرى — افقع بالون الرقم {value}!",
     celebrate: "مرحى! لقد نجحت!",

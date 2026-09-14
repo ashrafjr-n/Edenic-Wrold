@@ -224,6 +224,7 @@ export const en = {
     countPath: "Walk me to Number {value}!",
     countColor: "Color Number {value}!",
     countHow: "How many {itemLabel} did we pick?",
+    countDone: "Well done!",
     game: "Pop Number {value}!",
     gameRetry: "Try again — pop the Number {value} balloon!",
     celebrate: "Hooray! You did it!",
