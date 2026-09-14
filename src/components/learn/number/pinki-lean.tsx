@@ -56,21 +56,40 @@ const LEAN = {
     painted: { width: 372, height: 368 },
   },
   /**
-   * `journey`, dropped and trimmed for the two `count` activities whose board
-   * is TALL: `complete` carries a piece tray under the numeral and `path`
-   * winds a route down the height of its card. At the standard placement she
-   * covered the bottom 145px of that board on a phone (measured at 390x844),
-   * which is exactly where the loose piece sits — the child could not see the
-   * thing they were being asked to drag.
+   * `journey`, dropped and trimmed for the `count` activities whose board is
+   * TALL. It was built for two of them — `complete` carried a piece tray
+   * under the numeral and `path` winds a route down the height of its card —
+   * but `complete` now gets no Pinki at all (`data/number-guide.ts` gives it
+   * `presence: "none"`), so this placement is exercised by `path` alone. At
+   * the standard placement she covered the bottom 145px of that board on a
+   * phone (measured at 390x844), which is exactly where the loose piece
+   * sits — the child could not see the thing they were being asked to drag.
    *
    * Lower ALONE cannot fix it: clearing a 346px board with a 396px figure
    * would put her feet 70px below the screen. So she drops and comes down a
    * size together, which leaves the whole activity visible with her head and
    * her stick still in frame, cropped by the bottom nav the way every other
    * placement is cropped by an edge. Measured: board bottom 512, her top 508.
+   *
+   * **`-right-[24%]` on a phone moved to `-right-[18%]`, on direct request**
+   * ("shift her a little left") — she sat that much further into the right
+   * edge's crop than the activity beside her needed; the `sm` figure and
+   * every other number are untouched.
    */
   journeyLow: {
-    box: "block -bottom-[18%] -right-[24%] h-[56%] sm:-bottom-[12%] sm:-right-[12%] sm:h-[62%]",
+    box: "block -bottom-[18%] -right-[18%] h-[56%] sm:-bottom-[12%] sm:-right-[12%] sm:h-[62%]",
+    painted: { width: 372, height: 368 },
+  },
+  /**
+   * `journey`, dropped a little on a phone only, for the `color` count
+   * activity. Direct request: at the standard `-bottom-[1%]` she stood close
+   * enough to the top of `.numeral-stage`'s own card that her head touched
+   * it. `color`'s board isn't tall like `complete`'s/`path`'s, so this only
+   * needs a small drop, not `journeyLow`'s size-down too. `sm` is untouched —
+   * the desktop sidebar layout doesn't have the same board directly above her.
+   */
+  journeyColor: {
+    box: "block -bottom-[7%] -right-[24%] h-[62%] sm:-bottom-[2%] sm:-right-[12%] sm:h-[72%]",
     painted: { width: 372, height: 368 },
   },
 } as const;
