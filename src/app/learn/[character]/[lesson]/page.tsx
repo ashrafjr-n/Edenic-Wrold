@@ -4,8 +4,8 @@ import Image from "next/image";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
-import { NumberGrid } from "@/components/learn/number/number-grid";
-import { NumbersIntro } from "@/components/learn/number/numbers-intro";
+import { Cloud } from "@/components/ui/cloud";
+import { NumberList } from "@/components/learn/number/number-list";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -13,12 +13,21 @@ interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
 }
 
+type AvatarVars = CSSProperties & { "--tile-tint"?: string };
+
 /**
  * The lesson's own page: pick a number.
  *
- * This used to redirect straight to number 1. It became a real page so a
- * child can see the whole journey laid out — one open number and eight still
- * to come — instead of being dropped into the middle of it.
+ * **Reworked to a hero-then-list layout on direct request** — the old
+ * design (a plain "Learn Numbers" chip in the header row, then one big
+ * white card holding a 3x3 grid of number tiles) was called out as
+ * unfinished and out of step with the rest of the site. This follows the
+ * order and rhythm of a reference lesson-list screen instead: a hero
+ * (Pinki, the back button, a couple of decorative clouds), an overlapping
+ * white sheet carrying the character/subject identity and a short
+ * description, a small stats row, then the nine numbers as list rows
+ * (`NumberList`) closed by a "Continue" button — not the reference's own
+ * colours, just its arrangement, kept in this site's own clay language.
  */
 export default async function LessonPage({ params }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
@@ -33,103 +42,96 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (lesson.id !== "numbers") notFound();
 
   const dict = await getDictionary();
-  const lessonName = dict.lessons[lesson.id].name;
+  const dir = dirFor(dict.locale);
 
   return (
     <main
-      /* `overflow-x-hidden` is for the picker's Pinki alone: she is sized to
-         break out past the card's right edge, and on a phone that edge is
-         close enough to the viewport that she would otherwise widen the
-         document — which on a phone does not merely add a scrollbar, it
-         widens the LAYOUT VIEWPORT and zooms the whole page out. */
-      className="relative flex flex-1 flex-col overflow-x-hidden pb-16 pt-5 sm:pb-20 lg:pb-6"
+      className="relative flex flex-1 flex-col pb-16 sm:pb-20 lg:pb-10"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
+        {/* The hero: Pinki, a couple of decorative clouds, and the back
+            button floating over it — the reference's photo-then-sheet
+            opening, in this site's own accent tint instead of a sky photo. */}
         <div
-          className="anim-drop-in flex items-center justify-between gap-3"
-          style={{ animationDelay: "0.1s" }}
+          className="anim-pop-in relative mt-5 h-[36svh] min-h-[13rem] w-full shrink-0 overflow-hidden rounded-[1.75rem] sm:h-[32svh]"
+          style={{
+            backgroundColor: `color-mix(in srgb, ${lesson.theme.accent} 16%, var(--surface))`,
+          }}
         >
-          <BackButton
-            href={`/learn/${character.id}`}
-            label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+          <Cloud
+            size="sm"
+            variant={2}
+            tint="sky"
+            className="absolute left-[6%] top-[14%] opacity-70"
+          />
+          <Cloud
+            size="md"
+            variant={3}
+            tint="white"
+            className="absolute right-[-8%] top-[8%] opacity-80"
           />
 
-          {/* The lesson's own icon and subject color, not a plain text pill —
-              the chip carries some identity instead of just repeating the
-              back button's row with a label. Same shape as the character
-              chip on the hub page, themed to the lesson instead. */}
-          <div
-            className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6"
-            style={
-              {
-                "--lesson-accent": lesson.theme.accent,
-              } as CSSProperties
-            }
-          >
-            <div
-              className="tile tile-round relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden sm:h-11 sm:w-11"
-              style={
-                {
-                  "--tile-tint":
-                    "color-mix(in srgb, var(--lesson-accent) 22%, white)",
-                } as CSSProperties
-              }
+          <div className="absolute left-4 top-4 z-10 sm:left-5 sm:top-5">
+            <BackButton
+              href={`/learn/${character.id}`}
+              label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+            />
+          </div>
+
+          <Image
+            src="/assets/learn-with-pinki/pinki/pinki-learn-numbers.png"
+            alt=""
+            width={340}
+            height={379}
+            sizes="(min-width: 640px) 340px, 300px"
+            className="pointer-events-none absolute bottom-0 left-1/2 h-[90%] w-auto max-w-none -translate-x-1/2 object-contain"
+          />
+        </div>
+
+        {/* The overlapping white sheet: who this is (Pinki), what it is
+            (Numbers), and why (the lesson's own description) — the
+            reference's "Science" / "Dinosaur World" pairing, mapped onto
+            content this page actually has instead of two copies of the
+            same word. */}
+        <div className="card card-clay-white relative z-10 -mt-6 w-full px-5 py-6 sm:px-8 sm:py-8">
+          <div className="flex items-center gap-2">
+            <span
+              className="tile tile-round relative h-8 w-8 shrink-0 overflow-hidden"
+              style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
             >
               <Image
-                src={lesson.image}
+                src={character.image}
                 alt=""
-                width={32}
-                height={32}
-                className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+                width={64}
+                height={73}
+                className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
               />
-            </div>
-            <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-              {lessonName}
+            </span>
+            <span
+              className="text-xs font-bold uppercase tracking-wide sm:text-sm"
+              style={{ color: character.accent }}
+            >
+              {character.name}
             </span>
           </div>
 
-          {/* An inert spacer, the size of the back button facing it. The
-              achievements crown that stood here was cut on direct request —
-              there is nothing to award yet — and it cannot simply be
-              deleted: the row is `justify-between`, so without something of
-              the back button's width on this side the lesson chip stops being
-              centred on the page and slides right. */}
-          <div aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
-        </div>
-      </div>
+          <h1 className="mt-2 text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
+            {dict.lessonPicker.numbersLabel}
+          </h1>
+          <p dir={dir} className="mt-1.5 text-sm text-[var(--color-ink)]/60 sm:text-base">
+            {dict.lessons.numbers.description}
+          </p>
 
-      {/* **From `md` the container HUGS the grid instead of running to the
-          page's width.** It was `lg:max-w-5xl`, which made a 960px card for a
-          448px grid: the numerals sat in the left half and the right half was
-          empty white — and emptier still for a returning child, since the
-          Pinki who stood in it only renders before the first number is
-          finished. The cells cannot grow to fill that width (at ~215px the
-          third row leaves the screen), so the card is what had to come in.
-          The cap is the grid column's own width plus this container's
-          padding, which is why it is an exact `rem` rather than a Tailwind
-          step. `lg:py-4` with the route's `lg:pb-6` is what brings the whole
-          page back inside a 900px-tall viewport — measured at 1440x900: 1006
-          before, 900 exactly after, so all nine numerals are above the fold
-          the way the grid's own comment always intended. Phone and `sm`
-          untouched. */}
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 sm:py-12 md:max-w-[35rem] lg:max-w-[37rem] lg:py-4">
-        {/* Built here rather than inside the grid so `NumbersIntro` stays a
-            Server Component — the grid is a Client Component only because
-            unlocking depends on saved progress, and there is no reason for
-            a static image and a line of text to be dragged into that
-            bundle. The grid decides WHEN and WHERE this is on screen (above
-            its card, only for a child who has never finished a number); the
-            page only decides what it says. */}
-        <NumberGrid
-          items={numberItems}
-          characterId={character.id}
-          lessonId={lesson.id}
-          basePath={`/learn/${character.id}/${lesson.id}`}
-          tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
-          dict={dict}
-          intro={<NumbersIntro line={dict.journey.pickerWelcome} dir={dirFor(dict.locale)} />}
-        />
+          <NumberList
+            items={numberItems}
+            characterId={character.id}
+            lessonId={lesson.id}
+            basePath={`/learn/${character.id}/${lesson.id}`}
+            tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+            dict={dict}
+          />
+        </div>
       </div>
     </main>
   );
