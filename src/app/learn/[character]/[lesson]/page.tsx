@@ -4,7 +4,6 @@ import Image from "next/image";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
-import { Cloud } from "@/components/ui/cloud";
 import { NumberList } from "@/components/learn/number/number-list";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
@@ -23,11 +22,19 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * white card holding a 3x3 grid of number tiles) was called out as
  * unfinished and out of step with the rest of the site. This follows the
  * order and rhythm of a reference lesson-list screen instead: a hero
- * (Pinki, the back button, a couple of decorative clouds), an overlapping
- * white sheet carrying the character/subject identity and a short
- * description, a small stats row, then the nine numbers as list rows
- * (`NumberList`) closed by a "Continue" button — not the reference's own
- * colours, just its arrangement, kept in this site's own clay language.
+ * (Pinki, the back button), an overlapping white sheet carrying the
+ * character/subject identity and a short description, then the nine
+ * numbers as list rows (`NumberList`) — not the reference's own colours,
+ * just its arrangement, kept in this site's own clay language.
+ *
+ * **Pinki is `sticky`, not a boxed panel** — a direct correction after the
+ * first pass: no tinted background, no decorative clouds, just her render
+ * pinned under the header while the white sheet (and the list inside it)
+ * scrolls up and over her, exactly the effect the reference's photo-under-
+ * sheet composition has. `top` is the header's own rendered height so she
+ * sticks flush beneath it rather than under it. `NumberList` renders its
+ * own `Button3D` as a SEPARATE `fixed` bar pinned to the viewport bottom
+ * (above the phone's `BottomNav`), so it never scrolls out of reach.
  */
 export default async function LessonPage({ params }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
@@ -46,33 +53,16 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <main
-      className="relative flex flex-1 flex-col pb-16 sm:pb-20 lg:pb-10"
+      className="relative flex flex-1 flex-col pb-36 sm:pb-28"
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
-        {/* The hero: Pinki, a couple of decorative clouds, and the back
-            button floating over it — the reference's photo-then-sheet
-            opening, in this site's own accent tint instead of a sky photo. */}
-        <div
-          className="anim-pop-in relative mt-5 h-[36svh] min-h-[13rem] w-full shrink-0 overflow-hidden rounded-[1.75rem] sm:h-[32svh]"
-          style={{
-            backgroundColor: `color-mix(in srgb, ${lesson.theme.accent} 16%, var(--surface))`,
-          }}
-        >
-          <Cloud
-            size="sm"
-            variant={2}
-            tint="sky"
-            className="absolute left-[6%] top-[14%] opacity-70"
-          />
-          <Cloud
-            size="md"
-            variant={3}
-            tint="white"
-            className="absolute right-[-8%] top-[8%] opacity-80"
-          />
-
-          <div className="absolute left-4 top-4 z-10 sm:left-5 sm:top-5">
+        {/* The hero: just Pinki and the back button, `sticky` under the
+            header (`z-0`, so the header's own `z-30` still wins) — no
+            panel, no tint, no clouds behind her, on direct request. The
+            white sheet below is what scrolls up and covers her. */}
+        <div className="sticky top-[4.25rem] z-0 flex h-[34svh] min-h-[12rem] w-full shrink-0 items-end justify-center sm:top-[4.75rem] sm:h-[30svh] lg:top-[5.5rem]">
+          <div className="absolute left-4 top-0 z-10 sm:left-5">
             <BackButton
               href={`/learn/${character.id}`}
               label={format(dict.lessonPicker.backTo, { characterName: character.name })}
@@ -85,7 +75,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             width={340}
             height={379}
             sizes="(min-width: 640px) 340px, 300px"
-            className="pointer-events-none absolute bottom-0 left-1/2 h-[90%] w-auto max-w-none -translate-x-1/2 object-contain"
+            className="pointer-events-none h-full w-auto max-w-none object-contain"
           />
         </div>
 
@@ -93,7 +83,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
             (Numbers), and why (the lesson's own description) — the
             reference's "Science" / "Dinosaur World" pairing, mapped onto
             content this page actually has instead of two copies of the
-            same word. */}
+            same word. Opaque and `z-10`, above the sticky hero, so it
+            covers her as the page scrolls. */}
         <div className="card card-clay-white relative z-10 -mt-6 w-full px-5 py-6 sm:px-8 sm:py-8">
           <div className="flex items-center gap-2">
             <span
