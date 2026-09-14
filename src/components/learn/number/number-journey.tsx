@@ -263,6 +263,7 @@ export function NumberJourney({
   const guide = guideFor(stage, script, {
     countKind: countActivity.kind,
     appleGiven,
+    solved,
     traceMissed,
     pickMissed,
     gameFailed,
@@ -451,6 +452,7 @@ export function NumberJourney({
             numbers={countActivity.numbers}
             target={value}
             accent={accent}
+            large={countActivity.large}
             onFinish={() => setSolved(true)}
             dict={dict.journey}
           />
@@ -658,9 +660,12 @@ export function NumberJourney({
   }
 
   const lead = guide.presence === "lead";
-  /* `complete` and `path` are the two count activities with a tall board —
-     a piece tray under the numeral, a route down the card — and at the
+  /* `complete` and `path` are the two count activities with a tall board — a
+     piece tray under the numeral, a route down the card — and at the
      standard placement she stood on the half of it the child has to reach.
+     `complete`'s own half of this is dead in practice now (it gets no guide
+     at all, `lead` is always false for it — see `data/number-guide.ts`), left
+     as-is rather than pulled apart from the still-live `path`/game branches.
      Resolved here rather than in the markup, like every other stage
      decision on this screen. */
   const tallBoard =
@@ -676,11 +681,16 @@ export function NumberJourney({
      up: once it is answered the stage is a three-numeral quiz and she goes
      back to her usual place. */
   const givingItems = stage === "count" && countActivity.kind === "give" && !appleGiven;
+  /* The `color` board isn't tall, but at the standard placement her head sat
+     against the board's own card on a phone — see `journeyColor`. */
+  const coloring = stage === "count" && countActivity.kind === "color";
   const leanPlacement = tallBoard
     ? "journeyLow"
-    : givingItems
-      ? "journeyGive"
-      : "journey";
+    : coloring
+      ? "journeyColor"
+      : givingItems
+        ? "journeyGive"
+        : "journey";
 
   /* `hero` is the one presence that comes AFTER the stage's buttons. It is the
      celebration screen, and the two ways onward were asked to sit ABOVE her:
