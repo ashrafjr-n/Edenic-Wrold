@@ -17,6 +17,10 @@ interface NumberPathProps {
   target: number;
   /** The character's colour, used to ring the stop she has to reach. */
   accent: string;
+  /** A bigger board — number 7's own activity only, direct request. The
+      `SLOTS` percentages stay exactly the same either way; only the box
+      they are read against grows. */
+  large?: boolean;
   onFinish: () => void;
 }
 
@@ -87,7 +91,14 @@ const imageFor = (value: number) =>
  * the route on a loop, showing what to do. It stops for good the moment they
  * take over, the same way `SayItButton`'s invite pulse does.
  */
-export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPathProps) {
+export function NumberPath({
+  numbers,
+  target,
+  accent,
+  large = false,
+  onFinish,
+  dict,
+}: NumberPathProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const targetIndex = Math.max(0, numbers.indexOf(target));
   const targetSlot = SLOTS[targetIndex];
@@ -164,7 +175,11 @@ export function NumberPath({ numbers, target, accent, onFinish, dict }: NumberPa
     <div className="card card-clay-white flex flex-row items-stretch gap-4 p-5 sm:gap-6 sm:p-7">
       <div
         ref={boardRef}
-        className="relative h-72 w-56 shrink-0 sm:h-[22rem] sm:w-72"
+        className={`relative shrink-0 ${
+          large
+            ? "h-80 w-64 sm:h-[25rem] sm:w-[20rem]"
+            : "h-72 w-56 sm:h-[22rem] sm:w-72"
+        }`}
       >
         <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
           <polyline
