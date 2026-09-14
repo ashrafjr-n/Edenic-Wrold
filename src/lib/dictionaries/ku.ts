@@ -202,6 +202,7 @@ export const ku: Dictionary = {
     countPath: "من بگهینە ژمارا {value}!",
     countColor: "ژمارا {value} ڕەنگ بکە!",
     countHow: "مە چەند {itemLabel} هەلبژارت؟",
+    countDone: "زۆر باشە!",
     game: "ژمارا {value} بتەقینە!",
     gameRetry: "دیسا هەول بدە — بالۆنا ژمارا {value} بتەقینە!",
     celebrate: "هوورا! تە کر!",

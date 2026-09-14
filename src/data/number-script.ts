@@ -90,6 +90,7 @@ function scriptForEn(value: number): NumberScript {
     /* "did we pick", not "now": this asks about the act the child just
        performed, not about the state of the basket in front of them. */
     countHow: `How many ${items} did we pick?`,
+    countDone: "Well done!",
     game: `Pop Number ${value}!`,
     /* Said when every balloon has risen off the screen with the right one
        still floating. An invitation to go again, never a verdict — the same
@@ -143,6 +144,7 @@ function scriptFromDict(
     findMiss: pinki.findMiss,
     count: format(countTemplate, { value, word, itemLabel }),
     countHow: format(pinki.countHow, { itemLabel }),
+    countDone: pinki.countDone,
     game: format(pinki.game, { value }),
     gameRetry: format(pinki.gameRetry, { value }),
     /* `countComplete`, not a key of its own — the `complete` board says the
