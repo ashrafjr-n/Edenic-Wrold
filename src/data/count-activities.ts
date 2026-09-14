@@ -22,7 +22,15 @@ const countActivityByValue: Record<number, CountActivityConfig> = {
   4: { kind: "complete" },
   5: { kind: "path", numbers: [3, 4, 5, 6, 7] },
   6: { kind: "color" },
-  7: { kind: "path", numbers: [5, 6, 7, 8, 9] },
+  /* **Deliberately NOT centred, unlike every other `path` number** — with
+     the target in the middle of a 5-number run it always lands on the same
+     LEFT-hand stop the fixed zigzag (`NumberPath`'s `SLOTS`) happens to put
+     there, which put 5 and 7 on the identical spot. Shifting the run so 7 is
+     fourth rather than third moves it to the zigzag's next stop instead — a
+     right-hand one — with no change to the shared geometry, which is still
+     every other path number's. `large` is the other half of the same direct
+     request: a bigger board just for this one. */
+  7: { kind: "path", numbers: [4, 5, 6, 7, 8], large: true },
   8: { kind: "color" },
   9: { kind: "complete" },
 };
