@@ -1,80 +1,62 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { ArrowRight, Check, Hash, Lock, Play } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
-import { ActivityProgress } from "@/components/ui/activity-progress";
 import { StarReward } from "@/components/ui/star-reward";
+import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { Numeral } from "./numeral";
 
-interface NumberGridProps {
+interface NumberListProps {
   items: NumberItem[];
   characterId: string;
   lessonId: string;
   /** `/learn/pinki/numbers` — each numeral appends its own value. */
   basePath: string;
-  /** The lesson's own subject colour pair, used for the progress bar, the
-      cells' tint and the "Next" badge — never a character colour, so every
-      character's numbers page reads the same. */
+  /** The lesson's own subject colour pair — never a character colour, so
+      every character's numbers page reads the same. */
   tone: { face: string; edge: string };
-  /** Rendered as the card's first child, and ONLY to a child who has never
-      finished a number — Pinki pointing at where to start. She positions
-      herself absolutely against the card, so she adds no height to it.
-
-      A named slot rather than `children` on purpose: `children` reads as
-      "this always renders", and this does not. The page builds the node so
-      `PinkiGuide` stays a Server Component; the grid decides whether it is
-      on screen, because the progress that decides that is read here and
-      nowhere else on this page. */
-  intro?: ReactNode;
   /** The whole dictionary — safe to pass wholesale since every leaf is a
       plain string (see `lib/dictionaries/en.ts`'s doc comment). */
   dict: Dictionary;
 }
 
-type CellVars = CSSProperties & { "--tile-tint"?: string };
+type RowVars = CSSProperties & {
+  "--tile-tint"?: string;
+  "--clay-edge"?: string;
+};
 
-const ITEM_DELAY = 0.2;
-const ITEM_STAGGER = 0.07;
+const MAX_STARS = 3;
+const ROW_DELAY = 0.15;
+const ROW_STAGGER = 0.06;
 
 /**
- * The nine numerals, as the way into the lesson.
- *
- * **The grid lives inside one white `.card`, and each numeral stands on its
- * own tinted `.tile` cell inside it.** Both of those are reversals, made on
- * direct request: the numerals used to float straight on the page background
- * with nothing around them at all, which left the page with no structure and
- * nothing tying it to the rest of the site. An earlier version had gone the
- * other way — every numeral in its own white `.card` on the bare page — and
- * was rejected because a sheet of white containers on a white ground made the
- * numbers the smallest thing on screen. The cell being a pale TINT inside a
- * white card is what avoids both: the parent card gives the page its
- * structure, and the cell reads as a distinct, tappable object because it is
- * a different colour from the card it sits on, not because it is a second
- * white box on a white box.
- *
- * A number is open when the one before it has been finished, so the grid of
- * lavender numerals turns pink one at a time as the child works through them.
- * The first is always open.
+ * The nine numbers, as a lesson-list — one row per number, replacing the old
+ * 3x3 tile grid on direct request (it read as unfinished and out of step
+ * with the rest of the site). Reworked to the order and rhythm of a
+ * reference screenshot: a stats row, then one card-row per item with a
+ * numeral badge, a title, its stars, and a status mark (locked / next /
+ * done) on the trailing edge — closed by a "Continue" button to the next
+ * open number.
  *
  * A Client Component only because unlocking and stars depend on saved
  * progress. Until the store has read localStorage it renders the
  * nothing-finished-yet view, which is exactly what the server rendered —
  * anything else is a hydration mismatch.
  */
-export function NumberGrid({
+export function NumberList({
   items,
   characterId,
   lessonId,
   basePath,
   tone,
-  intro,
   dict,
-}: NumberGridProps) {
+}: NumberListProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
@@ -94,153 +76,160 @@ export function NumberGrid({
     };
   });
 
-  const finished = cast.filter(({ stars }) => stars > 0).length;
-
-  /* The one number the child has actually reached: the first open number
-     with no stars yet. It pulses and carries the badge, so a child glancing
-     at the grid knows exactly where to tap instead of scanning all nine. */
+  const totalStars = cast.reduce((sum, { stars }) => sum + stars, 0);
   const nextValue = cast.find(({ locked, stars }) => !locked && stars === 0)
     ?.item.value;
+  /* All nine finished leaves no "next" number — loop the Continue button
+     back to the last one rather than leaving it with nowhere to go. */
+  const continueValue = nextValue ?? items[items.length - 1].value;
 
-  /* Pale enough that the pink numeral standing on it stays the saturated
-     thing — the site's one rule for where a subject colour may appear. */
-  const cellTint = `color-mix(in srgb, ${tone.face} 16%, #ffffff)`;
+  const rowTint = `color-mix(in srgb, ${tone.face} 12%, #ffffff)`;
 
   return (
-    /* `relative` is here for the intro layer alone, which positions itself
-       against this card so it costs the card no height. Deliberately NO
-       `overflow-hidden`: Pinki BREAKS OUT of this card, past its right and
-       bottom edges, so the card must not crop her. The page's `<main>` is
-       what stops her from widening the document — see the route. */
-    <div className="card card-clay-white relative w-full px-5 py-7 sm:px-9 sm:py-10 lg:py-7">
-      {/* `hydrated` is load-bearing, not belt-and-braces: it is false on the
-          server AND on the first client render, so this is absent from the
-          server HTML and can never be a mismatch. Gating on `finished === 0`
-          alone would put Pinki in the HTML for everyone and then snatch her
-          away from a returning child the moment localStorage was read — a
-          flash of the wrong content, which is worse than arriving late.
+    <>
+      <div className="mt-5 flex gap-3">
+        <span
+          className="tile flex items-center gap-2 px-3.5 py-2.5"
+          style={{ "--tile-tint": rowTint } as RowVars}
+        >
+          <Hash className="h-4 w-4" style={{ color: tone.edge }} strokeWidth={2.75} />
+          <span className="text-sm font-bold text-[var(--color-ink-fixed)]">
+            {items.length}{" "}
+            <span className="font-medium text-[var(--color-ink-soft-fixed)]">
+              {dict.lessonPicker.numbersLabel}
+            </span>
+          </span>
+        </span>
 
-          First child on purpose: the intro's screen-reader line has to lead
-          the card's reading order, ahead of the count and the numerals it
-          introduces. */}
-      {intro && hydrated && finished === 0 && intro}
+        <span
+          className="tile flex items-center gap-2 px-3.5 py-2.5"
+          style={{ "--tile-tint": rowTint } as RowVars}
+        >
+          <Image
+            src="/assets/icons/yellow-star.png"
+            alt=""
+            width={20}
+            height={20}
+            className="h-4 w-4 object-contain"
+          />
+          <span className="text-sm font-bold text-[var(--color-ink-fixed)]">
+            {totalStars}
+            <span className="font-medium text-[var(--color-ink-soft-fixed)]">
+              /{items.length * MAX_STARS}
+            </span>
+          </span>
+        </span>
+      </div>
 
-      {/* **The bar and the grid share a column, and from `md` that column is
-          what the CARD is sized to** — the route caps its container at this
-          width plus padding, so the card hugs the grid instead of running to
-          the page's width. The cap itself is what stops the cells growing to
-          ~215px on a desktop, which would push the third row off the bottom
-          of the screen. It used to sit inside a `max-w-5xl` card, which left
-          the whole right half of that card empty white — and emptier still
-          for a returning child, since the Pinki standing in it renders only
-          before the first number is finished. With the card back to the
-          grid's own size she leans in past its right edge the way she does on
-          a phone, over the locked numerals, and the card reads as finished in
-          both states. Below `md` this div has no width of its own and changes
-          nothing. */}
-      <div className="md:w-[26rem] lg:w-[28rem]">
-      <ActivityProgress
-        label={dict.lessonPicker.numbersLabel}
-        done={finished}
-        total={items.length}
-        tone={tone}
-        ariaLabel={format(dict.ui.completedAria, { label: dict.lessonPicker.numbersLabel })}
-      />
-
-      <ul className="grid grid-cols-3 gap-3 sm:gap-5">
+      <ul className="mt-5 flex flex-col gap-3">
         {cast.map(({ item, index, locked, stars }) => {
           const isNext = item.value === nextValue;
-          const style = {
-            animationDelay: `${ITEM_DELAY + index * ITEM_STAGGER}s`,
+          const rowStyle: RowVars = {
+            animationDelay: `${ROW_DELAY + index * ROW_STAGGER}s`,
+            "--tile-tint": isNext
+              ? `color-mix(in srgb, ${tone.face} 16%, #ffffff)`
+              : rowTint,
           };
+          const rowClass =
+            "tile tile-clay anim-rise-in flex items-center gap-3 border-2 p-2.5 sm:gap-4 sm:p-3";
+          const rowBorderColor = isNext ? tone.face : "transparent";
 
-          const cell = (
+          const row = (
             <>
               <span
-                className="tile tile-clay relative flex aspect-square w-full items-center justify-center"
-                style={{ "--tile-tint": cellTint } as CellVars}
+                className="tile tile-clay relative flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16"
+                style={{ "--tile-tint": "#ffffff" } as RowVars}
               >
                 <Numeral
                   value={item.value}
                   image={item.image}
-                  sizeClass="h-16 w-16 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
-                  sizes="(min-width: 1024px) 112px, (min-width: 640px) 96px, 64px"
+                  sizeClass="h-10 w-10 sm:h-12 sm:w-12"
+                  sizes="48px"
                   locked={locked}
                   decorative
-                  /* The cell is the numeral's ground now, so the halo has a
-                     surface to fight with — left on, it washes a light blob
-                     into the middle of every tint. */
                   bloom={false}
-                  /* The padlock goes on the CELL's corner below, not the
-                     glyph's: sized against a numeral this small it covered
-                     half the digit. */
                   badge={false}
                 />
-
-                {/* `.lock-chip` — the site's one padlock badge, corner-mounted
-                    the same way the friend picker and the lesson cards mount
-                    theirs, so "not yet" reads identically everywhere. */}
-                {locked && (
-                  <span className="lock-chip absolute right-1 top-1 h-6 w-6 sm:right-1.5 sm:top-1.5 sm:h-7 sm:w-7">
-                    <Lock
-                      className="h-3 w-3 sm:h-3.5 sm:w-3.5"
-                      strokeWidth={2.75}
-                    />
-                  </span>
-                )}
-
-                {/* The same "Next up" mark the lesson hub uses, shortened to
-                    fit a cell this size and hung over the tile's top edge so
-                    it never crowds the numeral. */}
-                {isNext && (
-                  <span
-                    aria-hidden
-                    className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-white shadow-[0_6px_12px_-6px_rgb(var(--shadow-hue)/50%)] sm:text-xs"
-                    style={{ backgroundColor: tone.face }}
-                  >
-                    {dict.lessonPicker.next}
-                  </span>
-                )}
               </span>
 
-              {/* Always three slots, gold only for what was actually earned —
-                  an unfinished number shows three empty ones rather than
-                  nothing, so the reward is visible before it is won. */}
-              <StarReward stars={stars} size="compact" dict={dict.ui} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-bold text-[var(--color-ink-fixed)] sm:text-base">
+                  {format(dict.journey.numberButton, { value: item.value })}
+                </span>
+                <StarReward stars={stars} size="compact" dict={dict.ui} />
+              </span>
+
+              {locked ? (
+                <span
+                  aria-hidden
+                  className="lock-chip flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10"
+                >
+                  <Lock className="h-4 w-4" strokeWidth={2.75} />
+                </span>
+              ) : stars > 0 ? (
+                <span
+                  aria-hidden
+                  className="clay flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10"
+                  style={
+                    {
+                      backgroundColor: "var(--color-go)",
+                      "--clay-edge": "var(--color-go-dark)",
+                    } as RowVars
+                  }
+                >
+                  <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                </span>
+              ) : (
+                <span
+                  aria-hidden
+                  className="clay flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10"
+                  style={
+                    {
+                      backgroundColor: tone.face,
+                      "--clay-edge": tone.edge,
+                    } as RowVars
+                  }
+                >
+                  <Play className="h-3.5 w-3.5 fill-white text-white" strokeWidth={0} />
+                </span>
+              )}
             </>
           );
 
           return (
             <li key={item.value}>
-              {/* The pulse lives on a WRAPPING span so its continuous `scale`
-                  never fights the link's hover `scale` — Tailwind v4's
-                  `scale` is its own standalone property, and an infinite
-                  animation on the same element would keep overriding it. */}
-              <span className={`block ${isNext ? "anim-pulse-invite" : ""}`}>
-                {locked ? (
-                  <span
-                    className="anim-rise-in flex flex-col items-center gap-2"
-                    style={style}
-                    aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
-                  >
-                    {cell}
-                  </span>
-                ) : (
-                  <Link
-                    href={`${basePath}/${item.value}`}
-                    className="anim-rise-in flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-105"
-                    style={style}
-                    aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
-                  >
-                    {cell}
-                  </Link>
-                )}
-              </span>
+              {locked ? (
+                <span
+                  className={rowClass}
+                  style={{ ...rowStyle, borderColor: rowBorderColor }}
+                  aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
+                >
+                  {row}
+                </span>
+              ) : (
+                <Link
+                  href={`${basePath}/${item.value}`}
+                  className={`${rowClass} transition-transform duration-300 hover:scale-[1.015]`}
+                  style={{ ...rowStyle, borderColor: rowBorderColor }}
+                  aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
+                >
+                  {row}
+                </Link>
+              )}
             </li>
           );
         })}
       </ul>
-      </div>
-    </div>
+
+      <Button3D
+        href={`${basePath}/${continueValue}`}
+        tone={{ face: tone.face, edge: tone.edge }}
+        className="anim-fade-up mt-6 flex w-full items-center justify-center gap-2 py-3.5 text-base sm:py-4 sm:text-lg"
+        style={{ animationDelay: `${ROW_DELAY + items.length * ROW_STAGGER}s` }}
+      >
+        {dict.trail.ctaContinue}
+        <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
+      </Button3D>
+    </>
   );
 }
