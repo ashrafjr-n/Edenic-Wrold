@@ -187,7 +187,6 @@ export const ku: Dictionary = {
   },
   ui: {
     completedAria: "{label} تەمام بوو",
-    starsAria: "{stars} ژ {max} ستێران",
   },
   pinki: {
     discover: "بنێڕە من چ دیت — ژمارا {value}!",

@@ -265,12 +265,6 @@
      Every `tone.text`/`ink` prop on a gold or pinned-pale face uses this
      one, never `--color-ink`. */
   --color-ink-fixed: #2f2a52;
-  /* Same pairing for the SOFT/muted variant — an icon riding inside a
-     `.btn3d--clay-white` button (pinned pale regardless of theme) alongside
-     fixed-dark text needs a fixed-muted companion, not `--color-ink-soft`
-     itself (which also flips light in dark mode, for the same body-text
-     reason `--color-ink` does). */
-  --color-ink-soft-fixed: #7b76a3;
   --color-ink-soft: #7b76a3;
 
   /* Locked state: warm-neutral, so it reads as "resting" rather than
