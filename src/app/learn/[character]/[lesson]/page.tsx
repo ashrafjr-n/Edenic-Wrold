@@ -73,11 +73,16 @@ export default async function LessonPage({ params }: LessonPageProps) {
       style={pageAccent(character.accent, character.accentDark)}
     >
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-0 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
-        {/* The header row — back button, same place and same entrance
-            timing every other route uses. Its own `px-6` compensates for
-            the column losing its padding below `sm`, for the sheet's sake. */}
+        {/* The header row — back button, same place every other route
+            uses. **`sticky`, not in-flow: it must NEVER scroll out of
+            view** (a standing rule, not specific to this page — see
+            CLAUDE.md). `z-20` keeps it above both the sticky hero (`z-0`)
+            and the white sheet that scrolls over it (`z-10`), so it stays
+            reachable and visible for the whole scroll, not just until the
+            sheet covers Pinki. Its own `px-6` compensates for the column
+            losing its padding below `sm`, for the sheet's sake. */}
         <div
-          className="anim-drop-in mt-5 flex items-center px-6 sm:px-0"
+          className="anim-drop-in sticky top-[4.25rem] z-20 mt-5 flex items-center px-6 sm:top-[4.75rem] sm:px-0 lg:top-[5.5rem]"
           style={{ animationDelay: "0.1s" }}
         >
           <BackButton
