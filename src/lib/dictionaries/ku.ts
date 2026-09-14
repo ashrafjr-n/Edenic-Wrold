@@ -113,6 +113,8 @@ export const ku: Dictionary = {
     next: "یا دی",
     lockedNumberAria: "ژمارا {value}، قوفلکری",
     startNumberAria: "ژمارا {value} دەستپێبکە، {stars} ژ 3 ستێران",
+    ctaStart: "دەستپێبکە",
+    ctaNextLesson: "وانا دی",
   },
   journey: {
     backTo: "ڤەگەڕان بۆ {lessonName}",
