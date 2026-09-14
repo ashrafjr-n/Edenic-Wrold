@@ -10,7 +10,7 @@ import { Cloud as CloudIcon } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
-import trailCloud from "../../../public/assets/activity-page/trial/trial-cloude.png";
+import trailCloud from "../../../public/assets/play/trail/trail-cloud.png";
 
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 

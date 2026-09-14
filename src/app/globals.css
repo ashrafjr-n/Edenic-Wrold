@@ -1092,7 +1092,7 @@ bdi {
    A flat PNG icon that still recolors like an SVG one.
 
    `BottomNav`'s three tab icons are plain black-on-transparent PNGs
-   (`public/assets/png`), not lucide — masked to `currentColor` instead of
+   (`public/assets/nav-icons`), not lucide — masked to `currentColor` instead of
    drawn as an `<img>`, so a parent's `color` drives the icon exactly like it
    would drive an inline SVG's `fill`. Lightning CSS adds the
    `-webkit-mask-*` prefixes automatically (same as `.hero-clip`/`.panel-art`

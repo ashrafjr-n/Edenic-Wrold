@@ -12,10 +12,10 @@ import type { Dictionary } from "@/lib/dictionaries/en";
    Keyed by the nav item's stable `id`, not its translated `label` — a label
    swap must never break this lookup. */
 const ICON_SRC = {
-  home: "/assets/png/home.png",
-  learn: "/assets/png/learn.png",
-  play: "/assets/png/activity.png",
-  profile: "/assets/png/profile.png",
+  home: "/assets/nav-icons/home.png",
+  learn: "/assets/nav-icons/learn.png",
+  play: "/assets/nav-icons/activity.png",
+  profile: "/assets/nav-icons/profile.png",
 } as const;
 
 /* One optical size for all four, MEASURED from each PNG rather than eyeballed.

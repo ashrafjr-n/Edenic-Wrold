@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Puzzle } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import puzzleCard from "../../../public/assets/activity-page/puzzle/puzzle-card.jpg";
+import puzzleCard from "../../../public/assets/play/puzzle/puzzle-card.jpg";
 
 /** The art is a **static import**, not a `/public` path: a static import is
     content-hashed into its URL, so replacing the file on disk changes the URL

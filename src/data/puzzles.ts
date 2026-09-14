@@ -1,18 +1,18 @@
-import puzzle1 from "../../public/assets/activity-page/puzzle/1/puzzle-1.jpg";
-import puzzle2 from "../../public/assets/activity-page/puzzle/2/puzzle-2.jpg";
-import puzzle3 from "../../public/assets/activity-page/puzzle/3/puzzle-3.jpg";
-import puzzle4 from "../../public/assets/activity-page/puzzle/4/puzzle-4.jpg";
-import puzzle5 from "../../public/assets/activity-page/puzzle/5/puzzle-5.jpg";
-import puzzle6 from "../../public/assets/activity-page/puzzle/6/puzzle-6.jpg";
-import puzzle7 from "../../public/assets/activity-page/puzzle/7/puzzle-7.jpg";
-import puzzle8 from "../../public/assets/activity-page/puzzle/8/puzzle-8.jpg";
-import puzzle9 from "../../public/assets/activity-page/puzzle/9/puzzle-9.jpg";
-import puzzle10 from "../../public/assets/activity-page/puzzle/10/puzzle-10.jpg";
-import puzzle11 from "../../public/assets/activity-page/puzzle/11/puzzle-11.jpg";
-import puzzle12 from "../../public/assets/activity-page/puzzle/12/puzzle-12.jpg";
-import puzzle13 from "../../public/assets/activity-page/puzzle/13/puzzle-13.jpg";
-import puzzle14 from "../../public/assets/activity-page/puzzle/14/puzzle-14.jpg";
-import puzzle15 from "../../public/assets/activity-page/puzzle/15/puzzle-15.jpg";
+import puzzle1 from "../../public/assets/play/puzzle/1/puzzle-1.jpg";
+import puzzle2 from "../../public/assets/play/puzzle/2/puzzle-2.jpg";
+import puzzle3 from "../../public/assets/play/puzzle/3/puzzle-3.jpg";
+import puzzle4 from "../../public/assets/play/puzzle/4/puzzle-4.jpg";
+import puzzle5 from "../../public/assets/play/puzzle/5/puzzle-5.jpg";
+import puzzle6 from "../../public/assets/play/puzzle/6/puzzle-6.jpg";
+import puzzle7 from "../../public/assets/play/puzzle/7/puzzle-7.jpg";
+import puzzle8 from "../../public/assets/play/puzzle/8/puzzle-8.jpg";
+import puzzle9 from "../../public/assets/play/puzzle/9/puzzle-9.jpg";
+import puzzle10 from "../../public/assets/play/puzzle/10/puzzle-10.jpg";
+import puzzle11 from "../../public/assets/play/puzzle/11/puzzle-11.jpg";
+import puzzle12 from "../../public/assets/play/puzzle/12/puzzle-12.jpg";
+import puzzle13 from "../../public/assets/play/puzzle/13/puzzle-13.jpg";
+import puzzle14 from "../../public/assets/play/puzzle/14/puzzle-14.jpg";
+import puzzle15 from "../../public/assets/play/puzzle/15/puzzle-15.jpg";
 import type { PuzzleStage, PuzzleTone } from "@/types/puzzle";
 
 /** A colour each, so a wall of unopened puzzles reads as that many different

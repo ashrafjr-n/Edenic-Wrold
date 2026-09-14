@@ -7,8 +7,8 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { usePageTransition } from "@/store/page-transition";
-import novaPoint from "../../../public/assets/activity-page/trial/nova/nova-point.png";
-import novaTalk from "../../../public/assets/activity-page/trial/nova/nova-talk.png";
+import novaPoint from "../../../public/assets/play/trail/nova/nova-point.png";
+import novaTalk from "../../../public/assets/play/trail/nova/nova-talk.png";
 
 type BubbleVars = CSSProperties & { "--bubble-ink"?: string };
 
