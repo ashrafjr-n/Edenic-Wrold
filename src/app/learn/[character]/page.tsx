@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
+import { numberItems } from "@/data/number-items";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
@@ -39,6 +40,10 @@ export default async function CharacterLearnPage({
     lesson,
     index,
     featured: index === featuredIndex,
+    /* Numbers is the only lesson with items built so far (see the item
+       route's own guard) — Letters/Colors get an empty list, which is what
+       `LessonProgress` reads as "0 done" until they exist for real. */
+    items: lesson.id === "numbers" ? numberItems.map((item) => item.value) : [],
     previousName: lesson.locked
       ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
       : undefined,
@@ -171,12 +176,13 @@ export default async function CharacterLearnPage({
             } as CSSProperties
           }
         >
-          {cast.map(({ lesson, index, featured, previousName, rail }) => (
+          {cast.map(({ lesson, index, featured, items, previousName, rail }) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
               name={dict.lessons[lesson.id].name}
               description={dict.lessons[lesson.id].description}
+              items={items}
               character={character}
               previousLessonName={previousName}
               featured={featured}

@@ -6,6 +6,7 @@ import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { Character } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
+import { LessonProgress } from "./lesson-progress";
 
 type ThemeVars = CSSProperties & {
   "--lesson-hue"?: string;
@@ -17,10 +18,6 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
-
-/** Placeholder until the real progress store (zustand + persist, see
-    CLAUDE.md's "Planned" table) exists — every lesson reads as untouched. */
-const CURRENT_ITEMS = 0;
 
 /** How this card sits on the phone-only progress rail. Grouped into one prop
     so the component doesn't grow four more positional booleans. */
@@ -38,6 +35,9 @@ interface LessonCardProps {
   /** Translated content — see `dict.lessons[id]`. */
   name: string;
   description: string;
+  /** Every item this lesson is made of — see `LessonProgress`. Empty for a
+      lesson with no items built yet. */
+  items: readonly (number | string)[];
   /** The character hosting this lesson — supplies the card's world colors. */
   character: Character;
   /** Name of the lesson that must be finished first; locked cards only. */
@@ -58,6 +58,7 @@ export function LessonCard({
   lesson,
   name,
   description,
+  items,
   character,
   previousLessonName,
   featured = false,
@@ -69,7 +70,6 @@ export function LessonCard({
   const { id, image, theme, totalItems, locked } = lesson;
   const { accent } = character;
 
-  const progressPercent = Math.round((CURRENT_ITEMS / totalItems) * 100);
   const isFirst = index === 0;
 
   /* The rail's lit color stays the CHARACTER's accent, not the lesson's:
@@ -271,21 +271,12 @@ export function LessonCard({
             <span className="card-grain counter-chip">{totalItems}</span>
           </div>
         ) : (
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-locked)] sm:h-2.5">
-              <div
-                className="h-full rounded-full"
-                style={{
-                  width: `${progressPercent}%`,
-                  backgroundColor: "var(--lesson-accent)",
-                }}
-                aria-hidden
-              />
-            </div>
-            <span className="counter-chip counter-chip--quiet">
-              {CURRENT_ITEMS} / {totalItems}
-            </span>
-          </div>
+          <LessonProgress
+            characterId={character.id}
+            lessonId={id}
+            items={items}
+            totalItems={totalItems}
+          />
         )}
       </div>
     </div>
