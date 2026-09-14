@@ -183,7 +183,6 @@ export const ar: Dictionary = {
   },
   ui: {
     completedAria: "{label} مكتمل",
-    starsAria: "{stars} من {max} نجوم",
   },
   pinki: {
     discover: "انظر ماذا وجدت — الرقم {value}!",

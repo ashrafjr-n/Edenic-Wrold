@@ -43,10 +43,10 @@ const GREEN = { face: "var(--color-go)", edge: "var(--color-go-dark)" };
  * Shared by `/play/puzzle`, `/play/memory-match` and the numbers
  * picker (`/learn/[character]/[lesson]`). It was `PuzzleProgress` in
  * `components/activities/` until the second one arrived, and moved to
- * `components/ui/` when the third did — the same call `Celebration` and
- * `StarReward` made rather than being imported across sections. Only the
- * label and the two colour tokens differ between the three, which is not
- * enough to justify a second copy of the bar.
+ * `components/ui/` when the third did — the same call `Celebration` made
+ * rather than being imported across sections. Only the label and the two
+ * colour tokens differ between the three, which is not enough to justify a
+ * second copy of the bar.
  */
 export function ActivityProgress({
   label,

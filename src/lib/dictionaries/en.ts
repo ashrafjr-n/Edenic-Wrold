@@ -200,7 +200,6 @@ export const en = {
   },
   ui: {
     completedAria: "{label} completed",
-    starsAria: "{stars} out of {max} stars",
   },
   /** Pinki's spoken-line TEMPLATES for one number's journey — distinct from
       `journey` above, which holds ordinary button/aria copy.
