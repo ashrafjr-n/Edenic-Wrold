@@ -4,7 +4,7 @@ import { Brain } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
-import memoryCard from "../../../public/assets/activity-page/memory-match/memory-match.jpg";
+import memoryCard from "../../../public/assets/play/memory-match/memory-match.jpg";
 
 /** The art is a **static import**, not a `/public` path: a static import is
     content-hashed into its URL, so replacing the file on disk changes the URL

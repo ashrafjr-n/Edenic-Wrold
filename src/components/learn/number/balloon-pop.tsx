@@ -18,7 +18,7 @@ interface BalloonPopProps {
   onEscape: () => void;
 }
 
-const BALLOON = "/assets/learn-with-pinki/other/ballon.png";
+const BALLOON = "/assets/learn-with-pinki/balloon/balloon.png";
 
 /* One pink balloon asset, recoloured per position with `hue-rotate` — four
    different-coloured balloons out of a single file. The angles are picked to
