@@ -2,10 +2,9 @@
 
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Lock, Play } from "lucide-react";
+import { Check, Lock, Play } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
-import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { Numeral } from "./numeral";
@@ -33,19 +32,24 @@ const ROW_DELAY = 0.15;
 const ROW_STAGGER = 0.06;
 
 /**
- * The nine numbers, as a lesson-list — one row per number, replacing the old
- * 3x3 tile grid on direct request (it read as unfinished and out of step
- * with the rest of the site). Every row is the site's own white clay card
- * (`.card card-clay-white`, not a coloured tile) with a numeral badge, its
- * title, and a status mark on the trailing edge — no star count on the row
- * any more, on direct request; stars still drive the lock/next/done split
- * underneath, they just aren't drawn.
+ * The nine numbers — TWO renderings of the same data, swapped by CSS
+ * breakpoint, never both visible at once:
  *
- * The "Continue" button is its OWN `fixed` bar at the bottom of the
- * viewport, not part of this flow — see the JSX below. The numbers-count
- * chip that used to lead this list moved to the route's own eyebrow row
- * (static data, no progress read needed) — this component starts straight
- * on the rows now.
+ * **Below `sm` (phone, frozen — do not touch): a stacked row list**, one
+ * `.card card-clay-white` per number. This is the only thing a phone ever
+ * sees; it replaced the old 3x3 tile grid on direct request.
+ *
+ * **`sm` and up (tablet + desktop): a grid of upright cards** — the site's
+ * own lesson-hub card language (`/learn/[character]`) reused here rather
+ * than invented: `.card clay` (coloured, grained) for an open number,
+ * `.card card-clay-white` for a locked one, a white "Next" pill on the one
+ * to play next, a numeral standing on its own white badge for contrast
+ * against the coloured fill. 2 columns from `sm`, 3 from `lg` — a genuinely
+ * different composition for wider screens, not the phone list stretched
+ * out; the page itself forks around it too (see `page.tsx`'s doc comment).
+ *
+ * The "Continue" button lives OUTSIDE this component entirely now —
+ * `ContinueButton`, placed differently per breakpoint by the route.
  *
  * A Client Component only because unlocking depends on saved progress.
  * Until the store has read localStorage it renders the nothing-finished-yet
@@ -81,13 +85,11 @@ export function NumberList({
 
   const nextValue = cast.find(({ locked, stars }) => !locked && stars === 0)
     ?.item.value;
-  /* All nine finished leaves no "next" number — loop the Continue button
-     back to the last one rather than leaving it with nowhere to go. */
-  const continueValue = nextValue ?? items[items.length - 1].value;
 
   return (
     <>
-      <ul className="mt-5 flex flex-col gap-2.5">
+      {/* ---------- Phone: stacked rows (`sm:hidden`) ---------- */}
+      <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
         {cast.map(({ item, index, locked, stars }) => {
           const isNext = item.value === nextValue;
           const rowStyle: RowVars = {
@@ -181,27 +183,117 @@ export function NumberList({
         })}
       </ul>
 
-      {/* A fixed bar, not part of the card's own flow — "always at the
-          bottom of the screen" was a direct request. Sits above the
-          phone's `BottomNav` (which reserves `4rem + safe-area` for
-          itself) and fades the page into it so scrolling content never
-          cuts hard against the button. The route's own bottom padding
-          (`pb-36 sm:pb-28`) is what keeps the last row clear of this. */}
-      <div
-        className="pointer-events-none fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 pb-4 pt-10 sm:bottom-0 sm:pb-6"
-        style={{ background: "linear-gradient(to top, var(--background) 55%, transparent)" }}
-      >
-        <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
-          <Button3D
-            href={`${basePath}/${continueValue}`}
-            tone={{ face: tone.face, edge: tone.edge }}
-            className="flex w-full items-center justify-center gap-2 py-3.5 text-base sm:py-4 sm:text-lg"
-          >
-            {dict.trail.ctaContinue}
-            <ArrowRight className="h-5 w-5" strokeWidth={2.75} />
-          </Button3D>
-        </div>
-      </div>
+      {/* ---------- Tablet + desktop: a grid of cards (`hidden sm:grid`) ---------- */}
+      <ul className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+        {cast.map(({ item, index, locked, stars }) => {
+          const isNext = item.value === nextValue;
+          const unlocked = !locked;
+          const cardStyle: RowVars = {
+            animationDelay: `${ROW_DELAY + index * ROW_STAGGER}s`,
+            ...(unlocked
+              ? { backgroundColor: tone.face, "--clay-edge": tone.edge }
+              : {}),
+          };
+          const cardClass = `card card-lift anim-rise-in relative flex aspect-[3/4] flex-col justify-between p-4 lg:p-5 ${
+            unlocked ? "clay" : "card-clay-white"
+          }`;
+
+          const card = (
+            <>
+              <div className="flex flex-1 items-center justify-center">
+                <span
+                  className="tile tile-round flex h-24 w-24 items-center justify-center lg:h-28 lg:w-28"
+                  style={{ "--tile-tint": "#ffffff" } as RowVars}
+                >
+                  <Numeral
+                    value={item.value}
+                    image={item.image}
+                    sizeClass="h-16 w-16 lg:h-20 lg:w-20"
+                    sizes="(min-width: 1024px) 80px, 64px"
+                    locked={locked}
+                    decorative
+                    bloom={false}
+                    badge={false}
+                  />
+                </span>
+              </div>
+
+              <div className="flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                  {isNext && (
+                    <span
+                      className="mb-1.5 inline-block rounded-full bg-white px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide"
+                      style={{ color: tone.edge }}
+                    >
+                      {dict.lessonPicker.next}
+                    </span>
+                  )}
+                  <div
+                    className={`truncate text-lg font-bold lg:text-xl ${
+                      unlocked ? "text-white" : "text-[var(--color-ink)]"
+                    }`}
+                  >
+                    {format(dict.journey.numberButton, { value: item.value })}
+                  </div>
+                </div>
+
+                {locked ? (
+                  <span
+                    aria-hidden
+                    className="lock-chip flex h-10 w-10 shrink-0 items-center justify-center"
+                  >
+                    <Lock className="h-4 w-4" strokeWidth={2.75} />
+                  </span>
+                ) : stars > 0 ? (
+                  <span
+                    aria-hidden
+                    className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white"
+                    style={{ "--clay-edge": "var(--color-locked)" } as RowVars}
+                  >
+                    <Check className="h-4 w-4" style={{ color: "var(--color-go)" }} strokeWidth={3} />
+                  </span>
+                ) : (
+                  <span
+                    aria-hidden
+                    className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white"
+                    style={{ "--clay-edge": "var(--color-locked)" } as RowVars}
+                  >
+                    <Play
+                      className="h-4 w-4"
+                      style={{ color: tone.edge }}
+                      fill="currentColor"
+                      strokeWidth={0}
+                    />
+                  </span>
+                )}
+              </div>
+            </>
+          );
+
+          return (
+            <li key={item.value}>
+              {locked ? (
+                <span
+                  className={cardClass}
+                  style={cardStyle}
+                  aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
+                >
+                  {card}
+                </span>
+              ) : (
+                <Link
+                  href={`${basePath}/${item.value}`}
+                  className={cardClass}
+                  style={cardStyle}
+                  aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
+                >
+                  {card}
+                </Link>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </>
   );
 }

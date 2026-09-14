@@ -6,6 +6,7 @@ import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberList } from "@/components/learn/number/number-list";
+import { ContinueButton } from "@/components/learn/number/continue-button";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -51,6 +52,22 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * side margin as the rest of the page and left visible gutters either
  * side of it. The back-button row keeps its own `px-6` so IT doesn't
  * follow the sheet to the edge.
+ *
+ * **The page forks in two at `lg`, on direct request — "لا تلمس الهاتف،
+ * غير التصميم كلو للديسكتوب" (don't touch the phone, change the WHOLE
+ * design for desktop, not just enlarge it).** Everything above this
+ * point renders ONLY below `lg` (the whole column carries `lg:hidden`) —
+ * phone is untouched pixel-for-pixel, and it is also what a tablet gets,
+ * except `NumberList`'s own grid (not rows) shows there from `sm` up.
+ * From `lg` a SEPARATE block takes over: a sticky left sidebar (Pinki,
+ * title, description, the stat chip, `ContinueButton` inline) beside a
+ * 3-column grid of number cards — the same card language
+ * `/learn/[character]`'s lesson hub already uses (`.card clay` open,
+ * `.card card-clay-white` locked, a white "Next" pill), not invented for
+ * this page. `ContinueButton` was pulled out of `NumberList` for exactly
+ * this: two unrelated JSX trees (a fixed bottom bar below `lg`, inline in
+ * the sidebar at `lg`) both need it, and neither should reach into the
+ * list's internals to get it.
  */
 export default async function LessonPage({ params }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
@@ -69,10 +86,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <main
-      className="relative flex flex-1 flex-col pb-36 sm:pb-28"
+      className="relative flex flex-1 flex-col pb-36 sm:pb-28 lg:pb-16"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-0 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
+      {/* ================= Phone + tablet (< lg) ================= */}
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-0 sm:px-8 md:max-w-[35rem] lg:hidden lg:max-w-[37rem]">
         {/* The header row — back button, same place every other route
             uses. **`sticky`, not in-flow: it must NEVER scroll out of
             view** (a standing rule, not specific to this page — see
@@ -168,6 +186,124 @@ export default async function LessonPage({ params }: LessonPageProps) {
             tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
             dict={dict}
           />
+        </div>
+      </div>
+
+      {/* Continue — a fixed bar above the phone's `BottomNav`, exactly as
+          before (this used to live inside `NumberList`). `lg:hidden`
+          because the desktop layout below renders its own inline one. */}
+      <div
+        className="pointer-events-none fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 pb-4 pt-10 sm:bottom-0 sm:pb-6 lg:hidden"
+        style={{ background: "linear-gradient(to top, var(--background) 55%, transparent)" }}
+      >
+        <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
+          <ContinueButton
+            items={numberItems}
+            characterId={character.id}
+            lessonId={lesson.id}
+            basePath={`/learn/${character.id}/${lesson.id}`}
+            tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+            dict={dict}
+            className="w-full py-3.5 text-base sm:py-4 sm:text-lg"
+          />
+        </div>
+      </div>
+
+      {/* ================= Desktop (lg and up) ================= */}
+      <div className="mx-auto hidden w-full max-w-7xl flex-1 px-8 lg:flex xl:px-12">
+        <div className="flex w-full flex-1 flex-col">
+          {/* Header row: back button (still sticky — same standing rule)
+              on the left, the character chip on the right, spanning the
+              full width — the same shape `/learn/[character]`'s own hub
+              page uses for this row. */}
+          <div className="anim-drop-in sticky top-8 z-20 flex items-center justify-between gap-3" style={{ animationDelay: "0.1s" }}>
+            <BackButton
+              href={`/learn/${character.id}`}
+              label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+            />
+
+            <div className="card card-pill flex min-w-0 items-center gap-3 py-1.5 pl-1.5 pr-6">
+              <span
+                className="tile tile-round relative h-11 w-11 shrink-0 overflow-hidden"
+                style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
+              >
+                <Image
+                  src={character.image}
+                  alt=""
+                  width={64}
+                  height={73}
+                  className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
+                />
+              </span>
+              <span className="truncate text-base font-bold text-[var(--color-ink)]">
+                {character.name}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-1 items-start gap-10 xl:gap-14">
+            {/* Sticky sidebar — everything that was the phone's "hero +
+                sheet" becomes one persistent panel here instead of a
+                scroll-reveal trick, which only makes sense against a
+                single scrolling column. No card behind it, on purpose:
+                the hub page's own header chrome sits directly on the
+                page ground too — the numbered CARDS are the only cards
+                on this side of the page. */}
+            <div className="sticky top-28 flex w-[22rem] shrink-0 flex-col xl:w-[24rem]">
+              <Image
+                src="/assets/learn-with-pinki/pinki/pinki-learn-numbers.png"
+                alt=""
+                width={320}
+                height={356}
+                sizes="320px"
+                className="mx-auto h-56 w-auto object-contain xl:h-64"
+              />
+
+              <span
+                className="clay mt-2 inline-flex w-fit items-center gap-1.5 self-start rounded-full px-3.5 py-2 text-sm font-bold text-white"
+                style={
+                  {
+                    backgroundColor: lesson.theme.accent,
+                    "--clay-edge": lesson.theme.accentDark,
+                  } as CSSProperties
+                }
+              >
+                <Hash className="h-4 w-4" strokeWidth={2.75} />
+                {numberItems.length} {dict.lessonPicker.numbersLabel}
+              </span>
+
+              <h1 className="mt-4 text-4xl font-bold text-[var(--color-ink)] xl:text-5xl">
+                {dict.lessonPicker.numbersLabel}
+              </h1>
+              <p dir={dir} className="mt-3 text-base text-[var(--color-ink)]/60">
+                {dict.lessons.numbers.description}
+              </p>
+
+              <ContinueButton
+                items={numberItems}
+                characterId={character.id}
+                lessonId={lesson.id}
+                basePath={`/learn/${character.id}/${lesson.id}`}
+                tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+                dict={dict}
+                className="mt-6 w-full py-3.5 text-base"
+              />
+            </div>
+
+            {/* The numbers, as a grid — `NumberList`'s own `lg:grid-cols-3`
+                output; the row markup inside it stays `sm:hidden` and
+                never shows here. */}
+            <div className="flex-1">
+              <NumberList
+                items={numberItems}
+                characterId={character.id}
+                lessonId={lesson.id}
+                basePath={`/learn/${character.id}/${lesson.id}`}
+                tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+                dict={dict}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </main>
