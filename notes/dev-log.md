@@ -49,3 +49,4 @@
 2026-09-11 polish back button position
 2026-09-12 adjust font loading
 2026-09-12 tidy button states
+2026-09-14 adjust locale strings
