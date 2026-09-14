@@ -30,8 +30,15 @@ export interface CompleteActivity {
 export interface PathActivity {
   kind: "path";
   /** The numbers shown along the path, in order. Must contain the number
-      this activity belongs to, at (or near) the middle. */
+      this activity belongs to — usually at (or near) the middle, which is
+      also where the target ends up on the board (`NumberPath`'s `SLOTS` is
+      a fixed zigzag indexed by position in this array). Number 7's own
+      entry deliberately breaks that — see `data/count-activities.ts`. */
   numbers: readonly number[];
+  /** A bigger board, direct request for number 7's — see `NumberPath`. Not
+      the default, so a number that just needs the ordinary size (5) never
+      has to say so. */
+  large?: boolean;
 }
 
 /** The numeral is an empty outline; colour it in. */

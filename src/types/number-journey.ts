@@ -92,6 +92,10 @@ export interface NumberScript {
   findMiss: string;
   count: string;
   countHow: string;
+  /** `path`/`color` only: replaces `count` once the child has solved it —
+      paired with the `celebrate` pose, the same "pleased with the result"
+      beat `give` already has via `countHow`. */
+  countDone: string;
   game: string;
   /** The balloon game only: every balloon rose off the screen with the right
       one still floating, so she asks for another go rather than moving on. */
