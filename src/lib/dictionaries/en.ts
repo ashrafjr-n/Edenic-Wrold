@@ -114,11 +114,6 @@ export const en = {
     startNumberAria: "Start the number {value}, {stars} of 3 stars",
   },
   journey: {
-    /** Pinki's line on the number PICKER, for a child who has never finished
-        a number — distinct from the per-number script below it, which is
-        about the one numeral being worked on. */
-    pickerWelcome:
-      "Hi! I'm Pinki. Let's learn our numbers together — tap Number 1 to start! 🌟",
     backTo: "Back to {lessonName}",
     numberOf: "Number {position} of {total}",
     stepOf: "Step {current} of {total}",

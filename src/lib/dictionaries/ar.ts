@@ -111,8 +111,6 @@ export const ar: Dictionary = {
     startNumberAria: "ابدأ الرقم {value}، {stars} من 3 نجوم",
   },
   journey: {
-    pickerWelcome:
-      "مرحبًا! أنا بينكي. لنتعلّم أرقامنا معًا — اضغط على الرقم 1 لتبدأ! 🌟",
     backTo: "العودة إلى {lessonName}",
     numberOf: "الرقم {position} من {total}",
     stepOf: "الخطوة {current} من {total}",

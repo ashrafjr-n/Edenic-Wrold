@@ -20,33 +20,6 @@ import type { PinkiPose } from "@/types/number-journey";
  */
 const LEAN = {
   /**
-   * The number picker. She points a child who has never finished a number at
-   * number 1, and the composition is tuned to exactly that: the bearing from
-   * her hand to number 1 measures 41.8° at 320px and 41.5° at 390px, so a
-   * fixed angle genuinely tracks it. **Do not retune these against the journey
-   * below** — they answer a different question.
-   *
-   * `painted` stays at the value the picker has always shipped. She renders
-   * larger than this at desktop widths, but the source PNG is 502x497, so
-   * declaring the desktop box would only ask `next/image` to upscale past the
-   * asset. Raising it is an asset problem, not a markup one.
-   */
-  picker: {
-    /* The `lg:` step is not a retune of the same composition — it is a
-       different one. Below `md` she leans OVER the grid from the right, and
-       the numbers she covers are the locked ones. From `md` the grid is held
-       to its own column and she stands in the empty half beside it, so she
-       no longer has to be cropped by the card's edge to stay clear of the
-       numerals: `-right-[2%]` brings her most of the way back inside it, and
-       the smaller height share keeps her feet on the card instead of running
-       past the bottom of it. The `md` share is the smaller of the two on
-       purpose: an iPad's card is much TALLER than a desktop's (the grid
-       column is nearly the card's full width there), so the same percentage
-       would have made her half a metre high. */
-    box: "block -bottom-[3%] -right-[26%] h-[68%] sm:-bottom-[2%] sm:-right-[9%] sm:h-[62%] md:-bottom-[1%] md:-right-[26%] md:h-[52%] lg:-right-[34%] lg:h-[56%]",
-    painted: { width: 360, height: 357 },
-  },
-  /**
    * One number's journey. Same scale and the same crop against the right
    * edge, against the journey column instead of the picker's card — the two
    * containers are the same width at every breakpoint (both `px-6` inside a
