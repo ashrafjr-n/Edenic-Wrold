@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Hash, Lock, Play } from "lucide-react";
+import { ArrowRight, Check, Lock, Play } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
@@ -42,7 +42,10 @@ const ROW_STAGGER = 0.06;
  * underneath, they just aren't drawn.
  *
  * The "Continue" button is its OWN `fixed` bar at the bottom of the
- * viewport, not part of this flow — see the JSX below.
+ * viewport, not part of this flow — see the JSX below. The numbers-count
+ * chip that used to lead this list moved to the route's own eyebrow row
+ * (static data, no progress read needed) — this component starts straight
+ * on the rows now.
  *
  * A Client Component only because unlocking depends on saved progress.
  * Until the store has read localStorage it renders the nothing-finished-yet
@@ -84,21 +87,6 @@ export function NumberList({
 
   return (
     <>
-      <div className="mt-5">
-        <span
-          className="tile inline-flex items-center gap-2 px-3.5 py-2.5"
-          style={{ "--tile-tint": `color-mix(in srgb, ${tone.face} 10%, #ffffff)` } as RowVars}
-        >
-          <Hash className="h-4 w-4" style={{ color: tone.edge }} strokeWidth={2.75} />
-          <span className="text-sm font-bold text-[var(--color-ink-fixed)]">
-            {items.length}{" "}
-            <span className="font-medium text-[var(--color-ink-soft-fixed)]">
-              {dict.lessonPicker.numbersLabel}
-            </span>
-          </span>
-        </span>
-      </div>
-
       <ul className="mt-5 flex flex-col gap-2.5">
         {cast.map(({ item, index, locked, stars }) => {
           const isNext = item.value === nextValue;
