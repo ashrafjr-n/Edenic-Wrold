@@ -52,3 +52,4 @@
 2026-09-14 adjust locale strings
 2026-09-14 polish spell step
 2026-09-15 tidy word card
+2026-09-16 adjust tracing board
