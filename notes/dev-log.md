@@ -54,3 +54,4 @@
 2026-09-15 tidy word card
 2026-09-16 adjust tracing board
 2026-09-17 document tracing board
+2026-09-23 simplify image sizes
