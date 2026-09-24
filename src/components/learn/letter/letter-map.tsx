@@ -189,27 +189,19 @@ function MapNode({ node, state, href, accent, pinkiOnLeft, dict }: MapNodeProps)
   return (
     <>
       {/* The next thing to play: ringed in the lesson's colour, breathing,
-          with a "Start" flag over it and Pinki beside it. */}
+          with Pinki beside it pointing at it. (A "Start" flag over it was
+          tried and cut — it sat on the unit banner above the first node.) */}
       {current && (
-        <>
-          <span
-            className="card card-pill anim-drop-in absolute -top-11 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap px-4 py-1.5 text-sm font-bold sm:-top-12 sm:text-base"
-            style={{ color: accent.backgroundColor }}
-            aria-hidden
-          >
-            {dict.lessonPicker.ctaStart}
-          </span>
-          <Image
-            src="/assets/learn-with-pinki/pinki/pinki-with-a-stick.png"
-            alt=""
-            width={112}
-            height={111}
-            sizes="112px"
-            className={`anim-breathe pointer-events-none absolute top-1/2 h-24 w-auto max-w-none -translate-y-1/2 object-contain sm:h-28 ${
-              pinkiOnLeft ? "right-full mr-3 -scale-x-100" : "left-full ml-3"
-            }`}
-          />
-        </>
+        <Image
+          src="/assets/learn-with-pinki/pinki/pinki-with-a-stick.png"
+          alt=""
+          width={112}
+          height={111}
+          sizes="112px"
+          className={`anim-breathe pointer-events-none absolute top-1/2 h-24 w-auto max-w-none -translate-y-1/2 object-contain sm:h-28 ${
+            pinkiOnLeft ? "right-full mr-3 -scale-x-100" : "left-full ml-3"
+          }`}
+        />
       )}
 
       <Link
