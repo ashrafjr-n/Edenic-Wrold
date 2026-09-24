@@ -9,7 +9,6 @@ import { letterNodeStates, type LetterNodeState } from "@/lib/letter-progress";
 import { itemKey, useProgress } from "@/store/progress";
 import { format, dirFor } from "@/lib/format-dict";
 import type { LetterNode } from "@/types/letter-item";
-import type { LessonTheme } from "@/types/lesson";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { LetterGlyph } from "./letter-glyph";
 
@@ -22,7 +21,8 @@ interface LetterMapProps {
   characterId: string;
   lessonId: string;
   basePath: string;
-  theme: LessonTheme;
+  /** Pinki's pink — the section's colour, not the Letters subject violet. */
+  tone: { face: string; edge: string };
   dict: Dictionary;
 }
 
@@ -37,7 +37,7 @@ type Clay = CSSProperties & { "--clay-edge"?: string };
  * Reads the progress store, so like every reader on the site it renders the
  * nothing-finished map until `hydrated` (A current, the rest locked).
  */
-export function LetterMap({ characterId, lessonId, basePath, theme, dict }: LetterMapProps) {
+export function LetterMap({ characterId, lessonId, basePath, tone, dict }: LetterMapProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
@@ -53,7 +53,7 @@ export function LetterMap({ characterId, lessonId, basePath, theme, dict }: Lett
       .filter(({ node }) => node.unit === unit),
   }));
 
-  const accent: Clay = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
+  const accent: Clay = { backgroundColor: tone.face, "--clay-edge": tone.edge };
   const dir = dirFor(dict.locale);
 
   return (
@@ -135,30 +135,41 @@ function MapNode({ node, state, href, accent, pinkiOnLeft, dict }: MapNodeProps)
         n: node.unit,
       });
 
-  /* The disc itself: white clay holding the clay letter, or — for a unit's
-     challenge — the lesson's own colour holding a trophy. */
-  const disc = isLetter ? (
-    <span
-      className={`card card-clay-white card-pill flex items-center justify-center ${
-        current ? "h-20 w-20 sm:h-24 sm:w-24" : "h-[4.5rem] w-[4.5rem] sm:h-20 sm:w-20"
-      }`}
-    >
-      <LetterGlyph
-        letter={node.id}
-        capital
-        sizeClass={current ? "h-11 sm:h-14" : "h-9 sm:h-11"}
-        sizes="56px"
-        className={locked ? "opacity-35 grayscale" : ""}
-      />
+  const size = current ? "h-24 w-24 sm:h-28 sm:w-28" : "h-20 w-20 sm:h-24 sm:w-24";
+
+  /* **Clay, the site's way: the OPEN node is the coloured one** (the lesson
+     hub's rule) — a pink clay disc; a locked node is white clay, dimmed.
+     A letter stands on its own small white clay face inside the disc, the
+     way a numeral stands on its white badge on a coloured card: a pink clay
+     letter straight on pink clay would disappear. */
+  const disc = locked ? (
+    <span className={`card card-clay-white card-pill flex items-center justify-center ${size}`}>
+      {isLetter ? (
+        <LetterGlyph
+          letter={node.id}
+          capital
+          sizeClass="h-9 sm:h-11"
+          sizes="44px"
+          className="opacity-40 grayscale"
+        />
+      ) : (
+        <Trophy className="h-9 w-9 text-[var(--color-locked-text)] sm:h-10 sm:w-10" strokeWidth={2.25} />
+      )}
     </span>
   ) : (
-    <span
-      className={`clay flex items-center justify-center rounded-full text-white ${
-        current ? "h-20 w-20 sm:h-24 sm:w-24" : "h-[4.5rem] w-[4.5rem] sm:h-20 sm:w-20"
-      } ${locked ? "opacity-50" : ""}`}
-      style={accent}
-    >
-      <Trophy className="h-9 w-9 sm:h-10 sm:w-10" strokeWidth={2.25} />
+    <span className={`clay flex items-center justify-center rounded-full ${size}`} style={accent}>
+      {isLetter ? (
+        <span className="card card-clay-white card-pill flex h-[70%] w-[70%] items-center justify-center">
+          <LetterGlyph
+            letter={node.id}
+            capital
+            sizeClass={current ? "h-10 sm:h-12" : "h-8 sm:h-10"}
+            sizes="48px"
+          />
+        </span>
+      ) : (
+        <Trophy className="h-10 w-10 text-white sm:h-12 sm:w-12" strokeWidth={2.25} />
+      )}
     </span>
   );
 
@@ -188,9 +199,9 @@ function MapNode({ node, state, href, accent, pinkiOnLeft, dict }: MapNodeProps)
 
   return (
     <>
-      {/* The next thing to play: ringed in the lesson's colour, breathing,
-          with Pinki beside it pointing at it. (A "Start" flag over it was
-          tried and cut — it sat on the unit banner above the first node.) */}
+      {/* The next thing to play: bigger, breathing, glowing, with Pinki
+          beside it pointing at it. (A "Start" flag over it was tried and cut
+          — it sat on the unit banner above the first node.) */}
       {current && (
         <Image
           src="/assets/learn-with-pinki/pinki/pinki-with-a-stick.png"
@@ -204,20 +215,17 @@ function MapNode({ node, state, href, accent, pinkiOnLeft, dict }: MapNodeProps)
         />
       )}
 
+      {/* The current node wears `.guide-target`, the site's "look here"
+          glow — it is exactly what that is for: the one thing Pinki is
+          pointing at. */}
       <Link
         href={href}
         aria-label={label}
-        className={`relative block rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 ${
-          current ? "anim-pulse-invite" : ""
+        className={`relative block rounded-full transition-[scale] duration-200 hover:scale-105 active:scale-95 ${
+          current ? "guide-target anim-pulse-invite" : ""
         }`}
       >
-        {current ? (
-          <span className="clay block rounded-full p-1.5 sm:p-2" style={accent}>
-            {disc}
-          </span>
-        ) : (
-          disc
-        )}
+        {disc}
         {badge}
       </Link>
     </>
