@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Hash } from "lucide-react";
 import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
-import { BackButton, pageAccent } from "@/components/ui/back-button";
+import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { NumberList } from "@/components/learn/number/number-list";
 import { ContinueButton } from "@/components/learn/number/continue-button";
 import { LettersPage } from "@/components/learn/letter/letters-page";
@@ -99,26 +99,34 @@ export default async function LessonPage({ params }: LessonPageProps) {
       className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-28 lg:pb-16"
       style={pageAccent(character.accent, character.accentDark)}
     >
+      {/* ONE back row for both layouts below — `BackRow` puts the button
+          where it is on every page. The character chip is the desktop's
+          only (the phone sheet carries its own identity row). */}
+      <BackRow
+        href={`/learn/${character.id}`}
+        label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+      >
+        <div className="card card-pill hidden min-w-0 items-center gap-3 py-1.5 pl-1.5 pr-6 lg:flex">
+          <span
+            className="tile tile-round relative h-11 w-11 shrink-0 overflow-hidden"
+            style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
+          >
+            <Image
+              src={character.image}
+              alt=""
+              width={64}
+              height={73}
+              className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
+            />
+          </span>
+          <span className="truncate text-base font-bold text-[var(--color-ink)]">
+            {character.name}
+          </span>
+        </div>
+      </BackRow>
+
       {/* ================= Phone + tablet (< lg) ================= */}
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-0 sm:px-8 md:max-w-[35rem] lg:hidden lg:max-w-[37rem]">
-        {/* The header row — back button, same place every other route
-            uses. **`sticky`, not in-flow: it must NEVER scroll out of
-            view** (a standing rule, not specific to this page — see
-            CLAUDE.md). `z-20` keeps it above both the sticky hero (`z-0`)
-            and the white sheet that scrolls over it (`z-10`), so it stays
-            reachable and visible for the whole scroll, not just until the
-            sheet covers Pinki. Its own `px-6` compensates for the column
-            losing its padding below `sm`, for the sheet's sake. */}
-        <div
-          className="anim-drop-in sticky top-[4.25rem] z-20 mt-5 flex items-center px-6 sm:top-[4.75rem] sm:px-0 lg:top-[5.5rem]"
-          style={{ animationDelay: "0.1s" }}
-        >
-          <BackButton
-            href={`/learn/${character.id}`}
-            label={format(dict.lessonPicker.backTo, { characterName: character.name })}
-          />
-        </div>
-
         {/* The hero: just Pinki, `sticky` under the header (`z-0`, so the
             header's own `z-30` still wins) — no panel, no tint, no clouds
             behind her, on direct request. The white sheet below is what
@@ -222,35 +230,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
       {/* ================= Desktop (lg and up) ================= */}
       <div className="mx-auto hidden w-full max-w-7xl flex-1 px-8 lg:flex xl:px-12">
         <div className="flex w-full flex-1 flex-col">
-          {/* Header row: back button (still sticky — same standing rule)
-              on the left, the character chip on the right, spanning the
-              full width — the same shape `/learn/[character]`'s own hub
-              page uses for this row. */}
-          <div className="anim-drop-in sticky top-8 z-20 flex items-center justify-between gap-3" style={{ animationDelay: "0.1s" }}>
-            <BackButton
-              href={`/learn/${character.id}`}
-              label={format(dict.lessonPicker.backTo, { characterName: character.name })}
-            />
-
-            <div className="card card-pill flex min-w-0 items-center gap-3 py-1.5 pl-1.5 pr-6">
-              <span
-                className="tile tile-round relative h-11 w-11 shrink-0 overflow-hidden"
-                style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
-              >
-                <Image
-                  src={character.image}
-                  alt=""
-                  width={64}
-                  height={73}
-                  className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
-                />
-              </span>
-              <span className="truncate text-base font-bold text-[var(--color-ink)]">
-                {character.name}
-              </span>
-            </div>
-          </div>
-
           <div className="mt-10 flex flex-1 items-start gap-10 xl:gap-14">
             {/* Sticky sidebar — everything that was the phone's "hero +
                 sheet" becomes one persistent panel here instead of a
