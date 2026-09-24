@@ -246,6 +246,7 @@ export const ar: Dictionary = {
     soundMiss: "همم... اسمع مرة أخرى!",
     match: "طابق الحروف الكبيرة والصغيرة!",
     bubbles: "افقع كل {letter}!",
+    bubblesBig: "افقع كل {letter} كبير!",
     build: "لنكتب {word}!",
     find: "جِد الحرف {letter}!",
     good: "أحسنت!",

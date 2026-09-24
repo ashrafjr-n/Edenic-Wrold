@@ -250,6 +250,7 @@ export const ku: Dictionary = {
     soundMiss: "هومم... دیسا گوهداری بکە!",
     match: "تیپێن مەزن و بچویک بگەهینە ئێک!",
     bubbles: "هەمی {letter} بتەقینە!",
+    bubblesBig: "هەمی {letter} یێن مەزن بتەقینە!",
     build: "وەرە {word} بنڤیسین!",
     find: "تیپا {letter} بدۆزە!",
     good: "زۆر باشە!",

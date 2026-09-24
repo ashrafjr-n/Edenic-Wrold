@@ -277,6 +277,7 @@ export const en = {
     soundMiss: "Hmm... listen again!",
     match: "Match the big and small letters!",
     bubbles: "Pop every {letter}!",
+    bubblesBig: "Pop every big {letter}!",
     build: "Let's spell {word}!",
     find: "Find the letter {letter}!",
     good: "Well done!",

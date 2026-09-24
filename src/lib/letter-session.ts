@@ -24,7 +24,10 @@ export type LetterStep =
   | { kind: "trace"; letter: LetterId; capital: boolean }
   | { kind: "sound-pick"; letter: LetterId; choices: OwnedWord[] }
   | { kind: "match"; letters: LetterId[]; smallOrder: LetterId[] }
-  | { kind: "bubbles"; letter: LetterId; bubbles: Bubble[] }
+  /** `bigOnly`: the targets are the CAPITAL letter and the decoys are its
+      small form — the first letter's version, when there is no other
+      learned letter to use as a decoy. */
+  | { kind: "bubbles"; letter: LetterId; bubbles: Bubble[]; bigOnly: boolean }
   | { kind: "build"; word: LetterWord; tiles: string[] }
   | { kind: "find"; letter: LetterId; choices: LetterId[] };
 
@@ -87,7 +90,7 @@ function soundPick(letter: LetterId, rand: () => number): LetterStep {
   const decoys = shuffle(
     ALL_WORDS.filter((word) => !soundsAlike(word.letter, letter)),
     rand,
-  ).slice(0, 2);
+  ).slice(0, 3);
   return { kind: "sound-pick", letter, choices: shuffle([answer, ...decoys], rand) };
 }
 
@@ -95,24 +98,35 @@ function match(letters: LetterId[], rand: () => number): LetterStep {
   return { kind: "match", letters, smallOrder: shuffle(letters, rand) };
 }
 
-const BUBBLE_COUNT = 8;
-const BUBBLE_TARGETS = 3;
+const BUBBLE_COUNT = 9;
+const BUBBLE_TARGETS = 4;
 
-function bubbles(letter: LetterId, pool: LetterId[], rand: () => number): LetterStep {
-  const others = pool.filter((id) => id !== letter);
+/**
+ * **Decoys come only from letters the child has already learned** (plus the
+ * letter itself) — a child on A has never met B, so B cannot be the thing
+ * they tell A apart from. With nothing learned yet, the game becomes "pop
+ * every BIG A" among small a's: the one other shape the child does know.
+ */
+function bubbles(letter: LetterId, learned: LetterId[], rand: () => number): LetterStep {
+  const others = learned.filter((id) => id !== letter);
+  const bigOnly = others.length === 0;
+
   const targets: Bubble[] = Array.from({ length: BUBBLE_TARGETS }, (_, i) => ({
     letter,
-    capital: i % 2 === 0,
+    capital: bigOnly || i % 2 === 0,
   }));
-  const decoys: Bubble[] = Array.from({ length: BUBBLE_COUNT - BUBBLE_TARGETS }, (_, i) => ({
-    letter: others[Math.floor(rand() * others.length)] ?? letter,
-    capital: i % 2 === 1,
-  })).filter((bubble) => bubble.letter !== letter);
-  return { kind: "bubbles", letter, bubbles: shuffle([...targets, ...decoys], rand) };
+  const decoys: Bubble[] = Array.from({ length: BUBBLE_COUNT - BUBBLE_TARGETS }, (_, i) =>
+    bigOnly
+      ? { letter, capital: false }
+      : { letter: others[Math.floor(rand() * others.length)], capital: i % 2 === 1 },
+  );
+  return { kind: "bubbles", letter, bubbles: shuffle([...targets, ...decoys], rand), bigOnly };
 }
 
-function find(letter: LetterId, pool: LetterId[], rand: () => number): LetterStep {
-  const decoys = shuffle(pool.filter((id) => id !== letter), rand).slice(0, 3);
+/** Find the letter among up to three LEARNED letters; none learned, no game. */
+function find(letter: LetterId, learned: LetterId[], rand: () => number): LetterStep | undefined {
+  const decoys = shuffle(learned.filter((id) => id !== letter), rand).slice(0, 3);
+  if (decoys.length === 0) return undefined;
   return { kind: "find", letter, choices: shuffle([letter, ...decoys], rand) };
 }
 
@@ -138,16 +152,6 @@ function build(
   return { kind: "build", word, tiles: shuffle([...word.word, ...spare], rand) };
 }
 
-/** Up to `count` letters to practise beside `letter`: the most recently
-    learned first, then — on the first letters, before there are enough —
-    the ones coming next. */
-function companions(letter: LetterId, known: LetterId[], count: number): LetterId[] {
-  const order = letterItems.map((item) => item.id);
-  const learned = known.filter((id) => id !== letter).reverse();
-  const upcoming = order.slice(order.indexOf(letter) + 1);
-  return [...learned, ...upcoming].slice(0, count);
-}
-
 interface SessionProgress {
   /** Letters the child has finished, in A–Z order. */
   known: LetterId[];
@@ -161,10 +165,12 @@ interface SessionProgress {
 /**
  * The exercises for one map node.
  *
- * A letter: meet it, write it big, hear it in a word, write it small, match
- * it, find it among others, then spell a word with it once that is possible
- * — or review a shaky earlier letter instead. The reel leads when there is
- * one.
+ * A letter: meet it, write it big, hear it in a word, write it small, pop
+ * it among the letters already learned, then spell a word with it once that
+ * is possible (or find it, or hear it once more), and review a shaky earlier
+ * letter. The reel leads when there is one. **Only learned letters ever
+ * appear beside it** — nothing from later in the alphabet. Matching big to
+ * small across several letters is a CHALLENGE exercise only.
  *
  * A checkpoint: the whole unit, mixed — no new teaching, only finding,
  * hearing, matching and spelling what the unit taught.
@@ -176,7 +182,7 @@ export function sessionFor(node: LetterNode, progress: SessionProgress): LetterS
     const letter = node.id;
     const item = letterItems.find((entry) => entry.id === letter);
     const known = new Set<LetterId>([...progress.known, letter]);
-    const pool = [letter, ...companions(letter, progress.known, 5)];
+    const learned = progress.known.filter((id) => id !== letter);
     const review = progress.shaky.find((id) => id !== letter);
     const spell = build(known, [letter], rand);
 
@@ -186,9 +192,8 @@ export function sessionFor(node: LetterNode, progress: SessionProgress): LetterS
       { kind: "trace", letter, capital: true },
       soundPick(letter, rand),
       { kind: "trace", letter, capital: false },
-      match([letter, ...companions(letter, progress.known, 2)], rand),
-      bubbles(letter, pool, rand),
-      spell ?? find(letter, pool, rand),
+      bubbles(letter, learned, rand),
+      spell ?? find(letter, learned, rand) ?? soundPick(letter, rand),
       review ? soundPick(review, rand) : undefined,
     ];
     return steps.filter((step): step is LetterStep => step !== undefined);
