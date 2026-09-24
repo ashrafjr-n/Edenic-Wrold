@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2 } from "lucide-react";
 import type { LetterItem, LetterWord } from "@/types/letter-item";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { cueFor, playCue } from "@/lib/cue";
@@ -83,10 +84,25 @@ function WordCard({ word, letter, dict }: WordCardProps) {
       type="button"
       onClick={say}
       aria-label={format(dict.letters.hearWord, { word: word.word })}
-      className={`card card-clay-white flex w-full flex-col items-center gap-1.5 px-2 py-3 transition-transform duration-200 active:scale-95 sm:py-4 ${
+      className={`card card-clay-white relative flex w-full flex-col items-center gap-1.5 px-2 py-3 transition-transform duration-200 active:scale-95 sm:py-4 ${
         speaking ? "anim-jump" : ""
       }`}
     >
+      {/* The little gold speaker says "tap to HEAR this" — a card to look at
+          and listen to, not an answer to choose. */}
+      <span
+        aria-hidden
+        className="clay absolute -right-1.5 -top-1.5 flex h-7 w-7 items-center justify-center rounded-full"
+        style={
+          {
+            backgroundColor: "var(--color-gold)",
+            "--clay-edge": "var(--color-gold-dark)",
+            color: "var(--color-ink-fixed)",
+          } as React.CSSProperties
+        }
+      >
+        <Volume2 className="h-4 w-4" strokeWidth={2.75} />
+      </span>
       <WordPicture
         word={word}
         sizeClass="h-14 w-14 sm:h-16 sm:w-16"
@@ -95,7 +111,7 @@ function WordCard({ word, letter, dict }: WordCardProps) {
       />
       <span className="text-sm font-bold text-[var(--color-ink)] sm:text-base">
         {word.word.slice(0, at)}
-        <span style={{ color: "var(--color-subject-letters)" }}>{word.word[at]}</span>
+        <span style={{ color: "var(--page-accent-color)" }}>{word.word[at]}</span>
         {word.word.slice(at + 1)}
       </span>
     </button>
