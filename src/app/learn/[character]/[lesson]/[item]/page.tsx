@@ -2,24 +2,26 @@ import { notFound, redirect } from "next/navigation";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { findNumberItem, numberItems } from "@/data/number-items";
+import { findLetterNode, letterNodes } from "@/data/letter-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { JourneyProgress } from "@/components/learn/number/journey-progress";
 import { NumberJourney } from "@/components/learn/number/number-journey";
+import { LetterSession } from "@/components/learn/letter/letter-session";
 import { getDictionary, getLocale } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
 export function generateStaticParams() {
   return characters.flatMap((character) =>
-    lessonsByCharacter[character.id]
-      .filter((lesson) => lesson.id === "numbers")
-      .flatMap((lesson) =>
-        numberItems.map((item) => ({
-          character: character.id,
-          lesson: lesson.id,
-          item: String(item.value),
-        })),
-      ),
+    lessonsByCharacter[character.id].flatMap((lesson) => {
+      const items =
+        lesson.id === "numbers"
+          ? numberItems.map((item) => String(item.value))
+          : lesson.id === "letters"
+            ? letterNodes.map((node) => node.id)
+            : [];
+      return items.map((item) => ({ character: character.id, lesson: lesson.id, item }));
+    }),
   );
 }
 
@@ -39,8 +41,36 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
   if (route.status === "locked") redirect(route.backHref);
 
   const { character, lesson } = route;
-  /* Numbers is the only lesson with items built so far. The others are all
-     locked, so this is a belt-and-braces guard rather than a live path. */
+
+  /* A Letters node — a letter or a unit's challenge — is a session, not a
+     number journey. Like the numbers, which nodes are open lives in the
+     client-side store, so the lock is drawn on the map, not enforced here. */
+  if (lesson.id === "letters") {
+    const node = findLetterNode(itemId);
+    if (!node) notFound();
+    const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
+
+    return (
+      <main
+        className="relative flex flex-1 flex-col overflow-x-hidden pb-6 pt-3 sm:pb-20 sm:pt-5"
+        style={pageAccent(character.accent, character.accentDark)}
+      >
+        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 sm:px-8">
+          <LetterSession
+            node={node}
+            characterId={character.id}
+            lessonId={lesson.id}
+            theme={lesson.theme}
+            dict={dict}
+            locale={locale}
+          />
+        </div>
+      </main>
+    );
+  }
+
+  /* Colors has no items yet and is locked, so this is a belt-and-braces
+     guard rather than a live path. */
   if (lesson.id !== "numbers") notFound();
 
   const item = findNumberItem(Number(itemId));
