@@ -225,7 +225,7 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
 
       <div
         key={`${round}-${index}-${finished}`}
-        className={`stage-swap relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center gap-6 pt-6 sm:gap-8 sm:pt-10 ${
+        className={`stage-swap relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center gap-6 pt-6 sm:gap-7 sm:pt-7 ${
           leaving ? "stage-swap--out" : ""
         }`}
       >
