@@ -7,6 +7,7 @@ import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { NumberList } from "@/components/learn/number/number-list";
 import { ContinueButton } from "@/components/learn/number/continue-button";
+import { LettersPage } from "@/components/learn/letter/letters-page";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -77,8 +78,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (route.status === "locked") redirect(route.backHref);
 
   const { character, lesson } = route;
-  /* Numbers is the only lesson with items built so far. The others are all
-     locked, so this is a belt-and-braces guard rather than a live path. */
+  /* Letters is a different page altogether — a map, not this list. */
+  if (lesson.id === "letters") {
+    return <LettersPage character={character} lesson={lesson} dict={await getDictionary()} />;
+  }
+  /* Colors has no items yet and is locked, so this is a belt-and-braces
+     guard rather than a live path. */
   if (lesson.id !== "numbers") notFound();
 
   const dict = await getDictionary();
