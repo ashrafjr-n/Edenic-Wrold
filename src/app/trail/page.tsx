@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { TrailIntro } from "@/components/trail/trail-intro";
 import { TrailSky, type SkyPalette } from "@/components/trail/trail-sky";
-import { BackButton } from "@/components/ui/back-button";
+import { BACK_FIXED, BackButton } from "@/components/ui/back-button";
 import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
@@ -60,9 +60,10 @@ export default async function TrailPage({
           wrapper, so it left with that wrapper instead of holding its spot.
           `fixed` is measured against the viewport and simply cannot drift.
 
-          `top` clears the header with a real gap under it rather than
-          sitting against it, and the whole thing stays below the header's
-          own `z-30`.
+          Its SPOT is the site's one back-button spot (`BACK_FIXED` from
+          `back-button.tsx`): 20px under the header at every width. It used to be its own
+          numbers — 16px in on a phone, and at tablet width `top-[7rem]` put
+          it UNDER the 140px-tall header, invisible.
 
           **`z-20` so it out-ranks `TrailIntro`'s catcher, which is `z-10`
           and renders after it.** At the same rank the catcher won, and
@@ -70,7 +71,7 @@ export default async function TrailPage({
           to move her on and only then could go back. Above her the button
           answers straight away, and every OTHER tap on the sky still
           advances her, which is the only thing that catcher is for. */}
-      <div className="fixed left-4 top-[5.25rem] z-20 sm:left-8 sm:top-[7rem]">
+      <div className={BACK_FIXED}>
         <BackButton href="/play" label={dict.activities.backToActivities} />
       </div>
 
