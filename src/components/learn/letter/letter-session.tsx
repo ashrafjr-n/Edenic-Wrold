@@ -10,12 +10,11 @@ import { format, dirFor } from "@/lib/format-dict";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { LetterId, LetterNode } from "@/types/letter-item";
-import type { LessonTheme } from "@/types/lesson";
 import type { Locale } from "@/types/locale";
 import type { PinkiPose } from "@/types/number-journey";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import { BackButton } from "@/components/ui/back-button";
-import { NextButton } from "@/components/ui/morph-button";
+import { BackRow } from "@/components/ui/back-button";
+import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { LetterCoach } from "./letter-coach";
 import { LetterWatch } from "./letter-watch";
 import { LetterMeet } from "./letter-meet";
@@ -47,7 +46,8 @@ interface LetterSessionProps {
   node: LetterNode;
   characterId: string;
   lessonId: string;
-  theme: LessonTheme;
+  /** Pinki's pink — the section's colour, not the Letters subject violet. */
+  tone: { face: string; edge: string };
   dict: Dictionary;
   locale: Locale;
 }
@@ -62,7 +62,7 @@ interface LetterSessionProps {
  * deal for the whole round — finishing the letter changes the progress, and
  * the list must not reshuffle under the celebration.
  */
-export function LetterSession({ node, characterId, lessonId, theme, dict, locale }: LetterSessionProps) {
+export function LetterSession({ node, characterId, lessonId, tone, dict, locale }: LetterSessionProps) {
   const dir = dirFor(locale);
   const hydrated = useProgress((state) => state.hydrated);
   const complete = useProgress((state) => state.complete);
@@ -134,7 +134,18 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
     : 0;
 
   const lines = dict.lettersPinki;
-  const coach = step ? coachFor(step, { solved, missed, board }, lines, locale) : null;
+  const coach = finished
+    ? {
+        pose: "celebrate" as const,
+        line:
+          node.kind === "letter"
+            ? format(lines.celebrate, { letter: node.id.toUpperCase() })
+            : lines.challengeDone,
+        cue: cueFor.pinki(locale, "celebrate", node.id),
+      }
+    : step
+      ? coachFor(step, { solved, missed, board }, lines, locale)
+      : null;
 
   let body: ReactNode = null;
   let action: ReactNode = null;
@@ -142,7 +153,26 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
     <NextButton label={dict.journey.next} tone={tone} onPress={advance} dir={dir} />
   );
 
-  if (step?.kind === "watch") {
+  if (finished) {
+    body = <LetterCelebrate node={node} next={next} dict={dict} dir={dir} />;
+    action = (
+      <div className="flex items-center gap-3 sm:gap-4">
+        <AgainButton label={dict.journey.again} onPress={restart} dir={dir} />
+        <NextButton
+          label={
+            next
+              ? next.kind === "letter"
+                ? format(dict.letters.letterOf, { letter: next.id.toUpperCase() })
+                : dict.letters.challenge
+              : dict.journey.finish
+          }
+          tone={GO_TONE}
+          href={next ? `${basePath}/${next.id}` : basePath}
+          dir={dir}
+        />
+      </div>
+    );
+  } else if (step?.kind === "watch") {
     const item = findLetterItem(step.letter);
     body = item?.video ? (
       <LetterWatch
@@ -161,7 +191,7 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
       <LetterTrace
         item={item}
         capital={step.capital}
-        accent={theme.accent}
+        accent={tone.face}
         dict={dict}
         dir={dir}
         onBoard={() => setBoard(true)}
@@ -176,9 +206,9 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
       step.kind === "sound-pick" ? (
         <SoundPick letter={step.letter} choices={step.choices} {...shared} />
       ) : step.kind === "match" ? (
-        <CaseMatch letters={step.letters} smallOrder={step.smallOrder} accent={theme.accent} {...shared} />
+        <CaseMatch letters={step.letters} smallOrder={step.smallOrder} accent={tone.face} {...shared} />
       ) : step.kind === "bubbles" ? (
-        <LetterBubbles letter={step.letter} bubbles={step.bubbles} {...shared} />
+        <LetterBubbles letter={step.letter} bubbles={step.bubbles} bigOnly={step.bigOnly} {...shared} />
       ) : step.kind === "build" ? (
         <WordBuild word={step.word} tiles={step.tiles} {...shared} />
       ) : (
@@ -188,58 +218,54 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col">
+    <>
       {/* The chrome row: out to the map, and how far through the session the
-          child is — a filling bar, not numbered steps, as a child reads it. */}
-      <div
-        className="anim-drop-in sticky top-[4.25rem] z-20 flex items-center gap-4 sm:top-[4.75rem] sm:gap-6 lg:top-[5.5rem]"
-        style={{ animationDelay: "0.1s" }}
-      >
-        <BackButton href={basePath} label={dict.letters.backToMap} />
-        {!finished && (
-          <div
-            className="puzzle-progress-track flex-1"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progressShare * 100)}
-            aria-label={
-              node.kind === "letter"
-                ? format(dict.letters.letterOf, { letter: node.id.toUpperCase() })
-                : format(dict.letters.unitChallenge, { n: node.unit })
-            }
-          >
-            <span
-              className="puzzle-progress-fill transition-[width] duration-500 ease-out"
-              style={
-                {
-                  width: `${progressShare * 100}%`,
-                  "--bar-face": theme.accent,
-                  "--bar-edge": theme.accentDark,
-                } as CSSProperties
+          child is — a filling bar, not numbered steps. `BackRow` puts the
+          button where it is on every other page; the bar is centred on the
+          page between it and a spacer of its own width. */}
+      <BackRow href={basePath} label={dict.letters.backToMap}>
+        <div className="flex flex-1 justify-center">
+          {!finished && (
+            <div
+              className="puzzle-progress-track w-full max-w-2xl"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(progressShare * 100)}
+              aria-label={
+                node.kind === "letter"
+                  ? format(dict.letters.letterOf, { letter: node.id.toUpperCase() })
+                  : format(dict.letters.unitChallenge, { n: node.unit })
               }
-            />
-          </div>
-        )}
-      </div>
+            >
+              <span
+                className="puzzle-progress-fill transition-[width] duration-500 ease-out"
+                style={
+                  {
+                    width: `${progressShare * 100}%`,
+                    "--bar-face": tone.face,
+                    "--bar-edge": tone.edge,
+                  } as CSSProperties
+                }
+              />
+            </div>
+          )}
+        </div>
+        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+      </BackRow>
 
+      {/* Three bands, always in the same places: Pinki's instruction at the
+          top, the exercise filling — and centred in — whatever height is
+          left, and the way onward in a fixed-height slot at the bottom, so
+          nothing jumps when the button appears and no screen is a small
+          board floating in empty space. */}
       <div
         key={`${round}-${index}-${finished}`}
-        className={`stage-swap relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center gap-6 pt-6 sm:gap-7 sm:pt-7 ${
+        className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pt-5 sm:px-8 sm:pt-7 ${
           leaving ? "stage-swap--out" : ""
         }`}
       >
-        {finished && steps ? (
-          <LetterCelebrate
-            node={node}
-            next={next}
-            basePath={basePath}
-            dict={dict}
-            dir={dir}
-            locale={locale}
-            onAgain={restart}
-          />
-        ) : coach ? (
+        {coach && (
           <>
             <LetterCoach
               pose={coach.pose}
@@ -248,12 +274,14 @@ export function LetterSession({ node, characterId, lessonId, theme, dict, locale
               listenLabel={dict.letters.listenAgain}
               dir={dir}
             />
-            {body}
-            <div className="flex min-h-14 items-center justify-center">{action}</div>
+            <div className="flex w-full flex-1 flex-col items-center justify-center py-5 sm:py-6">
+              {body}
+            </div>
+            <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
           </>
-        ) : null}
+        )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -297,7 +325,7 @@ function coachFor(
     case "match":
       return say("match", "stick");
     case "bubbles":
-      return say("bubbles", "stick");
+      return say(step.bigOnly ? "bubblesBig" : "bubbles", "stick");
     case "build":
       return say("build", "speak", { word: step.word.word });
     case "find":
