@@ -4,6 +4,7 @@ import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { numberItems } from "@/data/number-items";
+import { letterItems } from "@/data/letter-items";
 import { BackButton, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
@@ -40,10 +41,15 @@ export default async function CharacterLearnPage({
     lesson,
     index,
     featured: index === featuredIndex,
-    /* Numbers is the only lesson with items built so far (see the item
-       route's own guard) — Letters/Colors get an empty list, which is what
-       `LessonProgress` reads as "0 done" until they exist for real. */
-    items: lesson.id === "numbers" ? numberItems.map((item) => item.value) : [],
+    /* What `LessonProgress` counts as done. Colors has no items yet, so its
+       empty list reads as "0 done" until it exists for real. The Letters
+       checkpoints are not in here — the card counts letters, 0 / 26. */
+    items:
+      lesson.id === "numbers"
+        ? numberItems.map((item) => item.value)
+        : lesson.id === "letters"
+          ? letterItems.map((item) => item.id)
+          : [],
     previousName: lesson.locked
       ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
       : undefined,

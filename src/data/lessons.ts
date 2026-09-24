@@ -22,8 +22,8 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-letters)",
         accentDark: "var(--color-subject-letters-dark)",
       },
-      totalItems: 30,
-      locked: true,
+      totalItems: 26,
+      locked: false,
     },
     {
       id: "colors",
