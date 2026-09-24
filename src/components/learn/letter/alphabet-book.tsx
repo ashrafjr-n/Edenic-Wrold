@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { BookOpen, X } from "lucide-react";
 import { letterItems } from "@/data/letter-items";
 import { itemKey, useProgress } from "@/store/progress";
-import type { LessonTheme } from "@/types/lesson";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { Button3D } from "@/components/ui/button-3d";
 import { LetterGlyph } from "./letter-glyph";
@@ -13,7 +12,7 @@ import { WordPicture } from "./word-picture";
 interface AlphabetBookProps {
   characterId: string;
   lessonId: string;
-  theme: LessonTheme;
+  tone: { face: string; edge: string };
   dict: Dictionary;
 }
 
@@ -27,7 +26,7 @@ interface AlphabetBookProps {
  * Escape to close and focus trapping for free, and hands focus back to the
  * button on close.
  */
-export function AlphabetBook({ characterId, lessonId, theme, dict }: AlphabetBookProps) {
+export function AlphabetBook({ characterId, lessonId, tone, dict }: AlphabetBookProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
@@ -39,7 +38,7 @@ export function AlphabetBook({ characterId, lessonId, theme, dict }: AlphabetBoo
   return (
     <>
       <Button3D
-        tone={{ face: theme.accent, edge: theme.accentDark }}
+        tone={tone}
         onClick={() => dialogRef.current?.showModal()}
         className="flex w-full items-center justify-center gap-2.5 py-3 text-base sm:text-lg"
       >
@@ -88,10 +87,9 @@ export function AlphabetBook({ characterId, lessonId, theme, dict }: AlphabetBoo
               return (
                 <li
                   key={item.id}
-                  className={`tile tile-clay flex aspect-[3/4] flex-col items-center justify-center gap-1.5 p-2 ${
+                  className={`card card-clay-white flex aspect-[3/4] flex-col items-center justify-center gap-1.5 p-2 ${
                     done ? "" : "opacity-45"
                   }`}
-                  style={{ "--tile-tint": "var(--surface)" } as React.CSSProperties}
                 >
                   <span className="flex items-end gap-0.5">
                     <LetterGlyph
