@@ -10,14 +10,16 @@ import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
 import { LetterGlyph } from "./letter-glyph";
 
-/* Soft clay faces, one per slot — the four character/brand hues, so no new
-   colour enters the site. Fixed by position, not random: this renders on the
-   server first. */
-const FACES = ["var(--color-bloo)", "var(--color-gold)", "var(--color-go)", "var(--color-nova)"];
+/* Soft clay faces, one per slot — existing hues only, and never pink: the
+   letters themselves are pink clay and would vanish on it. Fixed by
+   position, not random: this renders on the server first. */
+const FACES = ["var(--color-bloo)", "var(--color-gold)", "var(--color-go)"];
 
 interface LetterBubblesProps {
   letter: LetterId;
   bubbles: Bubble[];
+  /** Only the CAPITAL counts — see `bigOnly` in `lib/letter-session.ts`. */
+  bigOnly: boolean;
   dict: Dictionary;
   onSolved: () => void;
   onMiss: () => void;
@@ -28,15 +30,16 @@ interface LetterBubblesProps {
  * learns both are the same letter. A wrong bubble wobbles and stays; the
  * letter's own bubbles pop and are gone.
  */
-export function LetterBubbles({ letter, bubbles, dict, onSolved, onMiss }: LetterBubblesProps) {
+export function LetterBubbles({ letter, bubbles, bigOnly, dict, onSolved, onMiss }: LetterBubblesProps) {
   const [popped, setPopped] = useState<number[]>([]);
   const [wrong, setWrong] = useState<number | null>(null);
-  const targets = bubbles.filter((bubble) => bubble.letter === letter).length;
+  const isTarget = (bubble: Bubble) => bubble.letter === letter && (!bigOnly || bubble.capital);
+  const targets = bubbles.filter(isTarget).length;
 
   const tap = (bubble: Bubble, index: number) => {
     if (popped.includes(index)) return;
     void playCue(cueFor.letterName(bubble.letter));
-    if (bubble.letter !== letter) {
+    if (!isTarget(bubble)) {
       setWrong(index);
       onMiss();
       return;
@@ -47,8 +50,10 @@ export function LetterBubbles({ letter, bubbles, dict, onSolved, onMiss }: Lette
   };
 
   return (
-    <div className="relative w-full max-w-lg">
-      <ul className="grid grid-cols-4 gap-3 sm:gap-5">
+    /* Three across, and as large as the column allows — nine bubbles are the
+       whole screen's game, not a strip across the top of it. */
+    <div className="relative w-full max-w-sm sm:max-w-[min(32rem,44svh)]">
+      <ul className="grid grid-cols-3 gap-4 sm:gap-6">
         {bubbles.map((bubble, index) => {
           const gone = popped.includes(index);
           const face = FACES[index % FACES.length];
@@ -57,7 +62,7 @@ export function LetterBubbles({ letter, bubbles, dict, onSolved, onMiss }: Lette
             <li
               key={index}
               className="anim-breathe flex justify-center"
-              style={{ animationDelay: `${(index % 4) * 0.35}s` }}
+              style={{ animationDelay: `${(index % 3) * 0.4 + Math.floor(index / 3) * 0.2}s` }}
             >
               <button
                 type="button"
@@ -67,7 +72,7 @@ export function LetterBubbles({ letter, bubbles, dict, onSolved, onMiss }: Lette
                 aria-label={format(dict.letters.bubbleAria, {
                   letter: bubble.capital ? bubble.letter.toUpperCase() : bubble.letter,
                 })}
-                className={`clay flex aspect-square w-full max-w-[5.5rem] items-center justify-center rounded-full transition-[scale,opacity] duration-300 ${
+                className={`clay flex aspect-square w-full items-center justify-center rounded-full transition-[scale,opacity] duration-300 ${
                   gone ? "pointer-events-none scale-0 opacity-0" : "active:scale-90"
                 } ${wrong === index ? "anim-wiggle" : ""}`}
                 style={
@@ -80,8 +85,8 @@ export function LetterBubbles({ letter, bubbles, dict, onSolved, onMiss }: Lette
                 <LetterGlyph
                   letter={bubble.letter}
                   capital={bubble.capital}
-                  sizeClass="h-9 sm:h-11"
-                  sizes="44px"
+                  sizeClass="h-12 sm:h-16"
+                  sizes="(min-width: 640px) 64px, 48px"
                 />
               </button>
             </li>
