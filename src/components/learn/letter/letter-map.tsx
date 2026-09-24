@@ -7,7 +7,7 @@ import { Check, Lock, Trophy } from "lucide-react";
 import { letterNodes } from "@/data/letter-items";
 import { letterNodeStates, type LetterNodeState } from "@/lib/letter-progress";
 import { itemKey, useProgress } from "@/store/progress";
-import { format } from "@/lib/format-dict";
+import { format, dirFor } from "@/lib/format-dict";
 import type { LetterNode } from "@/types/letter-item";
 import type { LessonTheme } from "@/types/lesson";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -54,6 +54,7 @@ export function LetterMap({ characterId, lessonId, basePath, theme, dict }: Lett
   }));
 
   const accent: Clay = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
+  const dir = dirFor(dict.locale);
 
   return (
     <div className="flex flex-col gap-10 pb-6 sm:gap-12">
@@ -73,10 +74,10 @@ export function LetterMap({ characterId, lessonId, basePath, theme, dict }: Lett
               className="clay flex w-full max-w-sm items-center justify-between gap-3 rounded-full px-5 py-2.5 text-white sm:py-3"
               style={accent}
             >
-              <span className="text-base font-bold sm:text-lg">
+              <span dir={dir} className="text-base font-bold sm:text-lg">
                 {format(dict.letters.unitLabel, { n: unit })}
               </span>
-              <span className="text-sm font-semibold opacity-90 sm:text-base">
+              <span dir={dir} className="text-sm font-semibold opacity-90 sm:text-base">
                 {format(dict.letters.unitRange, { from, to })}
               </span>
             </div>
