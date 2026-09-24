@@ -52,7 +52,7 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
 
     return (
       <main
-        className="relative flex flex-1 flex-col overflow-x-hidden pb-6 pt-3 sm:pb-20 sm:pt-5"
+        className="relative flex flex-1 flex-col overflow-x-hidden pb-6 pt-3 sm:pb-8 sm:pt-5"
         style={pageAccent(character.accent, character.accentDark)}
       >
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 sm:px-8">
