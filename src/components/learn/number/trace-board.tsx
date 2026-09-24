@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { NumberStroke, StrokePoint } from "@/types/number-item";
-import { scoreTrace, strokeToPath } from "@/lib/trace-score";
+import { STRICT_ACCURACY, scoreStrokes, scoreTrace, strokeToPath } from "@/lib/trace-score";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface TraceBoardProps {
@@ -20,6 +20,10 @@ interface TraceBoardProps {
   onMiss: () => void;
   /** Frozen once the reward is showing, so the drawing stays on screen. */
   locked: boolean;
+  /** Letters: EVERY stroke must reach `minCoverage` on its own and the
+      drawing must stay on the shape (`scoreStrokes`). Numerals keep the
+      gentler whole-shape measure. */
+  strict?: boolean;
 }
 
 /** Nothing is committed until the finger has actually travelled — a tap
@@ -56,6 +60,11 @@ function distanceSquared(a: StrokePoint, b: StrokePoint): number {
     depended on how many `pointermove` events the device happened to fire. */
 const JUDGE_DELAY_MS = 1400;
 
+/** Strict boards wait longer: a letter can be four strokes (E), and every
+    one of them now has to be there, so a pause between two must not be
+    judged as the child being done. */
+const STRICT_JUDGE_DELAY_MS = 2600;
+
 /** How long the wrong stroke stays on screen, shaking and red, before it
     clears itself for another try — long enough to register as feedback,
     short enough that a child isn't left waiting to draw again. */
@@ -69,6 +78,7 @@ export function TraceBoard({
   onMiss,
   locked,
   dict,
+  strict = false,
 }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
   const [drawn, setDrawn] = useState<StrokePoint[][]>([]);
@@ -175,10 +185,18 @@ export function TraceBoard({
        like 4 takes two strokes, so passing is checked immediately but FAILING
        waits — the child gets `JUDGE_DELAY_MS` to carry on before the attempt
        is called a miss, and any new stroke cancels that judgement. */
-    const result = scoreTrace(strokes, finished);
-    if (result.coverage >= minCoverage) {
-      onFinish(result.coverage);
-      return;
+    if (strict) {
+      const { weakest, accuracy } = scoreStrokes(strokes, finished);
+      if (weakest >= minCoverage && accuracy >= STRICT_ACCURACY) {
+        onFinish(weakest);
+        return;
+      }
+    } else {
+      const result = scoreTrace(strokes, finished);
+      if (result.coverage >= minCoverage) {
+        onFinish(result.coverage);
+        return;
+      }
     }
 
     cancelJudge();
@@ -193,7 +211,7 @@ export function TraceBoard({
         setMissed(false);
         missTimeoutRef.current = null;
       }, MISS_FLASH_MS);
-    }, JUDGE_DELAY_MS);
+    }, strict ? STRICT_JUDGE_DELAY_MS : JUDGE_DELAY_MS);
   };
 
   const guidePaths = strokes.map(strokeToPath);

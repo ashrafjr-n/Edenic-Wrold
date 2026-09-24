@@ -100,6 +100,47 @@ export function scoreTrace(
   return { coverage, stars };
 }
 
+/** A guide stroke shorter than this is a DOT (i, j). It is drawn, but a child
+    who skips it is not held to it — a tap is not a stroke. */
+const DOT_LENGTH = 6;
+
+/** Strict tracing (the letters): how much of the drawing must stay ON the
+    letter. Without it a scribble over the whole board covers every stroke. */
+export const STRICT_ACCURACY = 0.6;
+
+export interface StrokeScore {
+  /** Coverage of the LEAST-covered stroke, 0–1 — so every stroke counts. */
+  weakest: number;
+  /** How much of the drawing stayed on the letter, 0–1. */
+  accuracy: number;
+}
+
+/**
+ * Stroke by stroke, for letters. `scoreTrace` measures coverage of the
+ * whole shape, which lets one long stroke carry a letter: B's two bumps are
+ * most of its length, so a child could skip the stem and still pass. Here
+ * each stroke is covered on its own, and the weakest one decides.
+ */
+export function scoreStrokes(
+  guideStrokes: readonly NumberStroke[],
+  drawn: readonly StrokePoint[][],
+): StrokeScore {
+  const drawnPoints = drawn.flat();
+  const allGuide = guideStrokes.flatMap(sampleStroke);
+  if (drawnPoints.length === 0 || allGuide.length === 0) return { weakest: 0, accuracy: 0 };
+
+  const coverages = guideStrokes
+    .filter((stroke) => strokeLength(stroke) >= DOT_LENGTH)
+    .map((stroke) => {
+      const points = sampleStroke(stroke);
+      return points.filter((point) => isNear(point, drawnPoints)).length / points.length;
+    });
+  const accuracy =
+    drawnPoints.filter((point) => isNear(point, allGuide)).length / drawnPoints.length;
+
+  return { weakest: Math.min(...coverages), accuracy };
+}
+
 /** How long a stroke is, in the strokes' own 0–100 units. Used to set the
     dash length that makes the numeral draw itself in `StrokeDemo`. */
 export function strokeLength(stroke: NumberStroke): number {
