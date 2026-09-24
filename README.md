@@ -94,7 +94,9 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - Each section of the site carries its own colour, and shared chrome inherits it
   rather than naming one: a route sets `--page-accent-color` on its `<main>`, so
   the one back button is green in the puzzles, gold in Memory Match, and each
-  friend's own accent on their lesson pages.
+  friend's own accent on their lesson pages. It also sits in the same spot on
+  every page — the edge of the page's content, just under the header — and
+  stays there while the page scrolls; one shared row places it, not each page.
 - Everything is built from three blocks: `.card` (white panel), `.tile` (pale pastel
   square behind an icon or character) and `.clay` (a colored, softly inflated shape).
   `.card` and `.tile` are unlayered, so a Tailwind `rounded-*` utility cannot
@@ -227,9 +229,18 @@ sound and three words that start with it), watch Pinki write the capital and
 trace it on writing lines, hear the sound and pick the picture that has it,
 write the small letter, match capitals to small letters, pop every bubble
 holding the letter, and — once the child has every letter a word needs — spell
-a short word one sound at a time (`cab` after C, `bed` after E). A letter that
-went badly comes back as a review exercise in later sessions. Challenges mix
-the whole unit with no new teaching. Pinki gives every instruction from the
+a short word one sound at a time (`cab` after C, `bed` after E). Only letters
+the child has already learned ever appear beside the new one (on A, the bubble
+game is "pop every big A" among small a's). A letter that went badly comes back
+as a review exercise in later sessions. Challenges mix the whole unit with no
+new teaching, and are where matching capitals to small letters lives.
+Questions look different from teaching: a pink clay panel with a "?" and the
+sound to answer from, over four large picture answers. Letter tracing is
+stricter than the numerals': every stroke has to be traced (numbered start
+dots show the order) and the drawing has to stay on the letter, so a scribble
+never passes. Every screen of a session is three fixed bands — Pinki's line,
+the exercise filling the space, the button — sized to fit phone, tablet and
+desktop without scrolling. The whole lesson wears Pinki's pink. Pinki gives every instruction from the
 top of the screen, with a speaker beside her line, so a child who cannot read
 can still follow. Finished letters fill **My Alphabet Book**, a page per
 letter in A–Z order. Sessions are dealt from a seed, never `Math.random()`.
