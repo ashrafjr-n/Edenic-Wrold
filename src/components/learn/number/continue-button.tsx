@@ -4,11 +4,13 @@ import { ArrowRight } from "lucide-react";
 import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
+import { lessonsByCharacter } from "@/data/lessons";
+import type { CharacterId } from "@/types/character";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface ContinueButtonProps {
   items: NumberItem[];
-  characterId: string;
+  characterId: CharacterId;
   lessonId: string;
   basePath: string;
   tone: { face: string; edge: string };
@@ -71,9 +73,20 @@ export function ContinueButton({
         ? dict.lessonPicker.ctaNextLesson
         : dict.trail.ctaContinue;
 
+  /* Once every number is done, "Next Lesson" really goes to the next lesson
+     — the first open one after this in the character's list. */
+  const lessons = lessonsByCharacter[characterId];
+  const nextLesson = lessons
+    .slice(lessons.findIndex((lesson) => lesson.id === lessonId) + 1)
+    .find((lesson) => !lesson.locked);
+  const href =
+    nextValue === undefined && nextLesson
+      ? `/learn/${characterId}/${nextLesson.id}`
+      : `${basePath}/${continueValue}`;
+
   return (
     <Button3D
-      href={`${basePath}/${continueValue}`}
+      href={href}
       tone={{ face: tone.face, edge: tone.edge }}
       className={`flex items-center justify-center gap-2 ${className}`}
     >
