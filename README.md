@@ -15,7 +15,7 @@ names and the friends' own names — since that is the subject, not the chrome.
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's lesson hub |
-| `/learn/[character]/[lesson]` | Number picker — 1 to 9 with a progress bar and star record, unlocked one at a time |
+| `/learn/[character]/[lesson]` | Number picker — 1 to 9, unlocked one at a time, with a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One number's journey — seven stages, guided by Pinki |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -143,13 +143,13 @@ src/
   components/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, lesson cards
-    learn/number/     Numerals, the tracing board, the quizzes, stars
+    learn/number/     The number list, numerals, the seven journey stages
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
     layout/           Header, nav, language switcher, footer
     ui/               Shared primitives (Button3D, BackButton, Cloud, Logo,
-                      confetti, stars, the progress bar, the page transition)
+                      confetti, the progress bar, the page transition)
   data/               Characters, lessons, numbers, puzzles, memory levels,
                       navigation, socials, home panels
   lib/                Dictionaries and locale, trace scoring, quiz decoys,
@@ -158,15 +158,16 @@ src/
   store/              Progress, theme and page-transition state (zustand)
   types/              Shared TypeScript types
 public/
-  hero.png            Home hero scene
+  hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
   assets/learn.jpg    Learn panel artwork
   assets/friends/     Mascot artwork
   assets/icons/       3D icons — Memory Match's card faces, the Play panel art
-  assets/png/         The phone bottom bar's four masked icons
-  assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9, props
-  assets/activity-page/     The Play card art, the fifteen puzzle pictures,
-                            the Memory Match scene and Nova's trail poses
+  assets/nav-icons/   The phone bottom bar's four masked icons
+  assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9,
+                            the number videos, props
+  assets/play/              The fifteen puzzle pictures, the Memory Match
+                            scene, the trail cloud and Nova's trail poses
 ```
 
 ## Current status
@@ -185,25 +186,27 @@ piece back into the numeral instead. Pinki guides four of the seven — the
 video, the tracing board and the balloon game are left to the child alone, and
 she only steps back onto the balloons if the round is lost, to offer another
 go.
-One to three stars are scored for the whole journey and shown back on the
-picker. Finishing a number unlocks the next.
+Finishing a number unlocks the next.
 
-The picker that leads into them shows the whole set at once: a "Numbers - 0 / 9"
-bar, then each numeral on its own cell with three star slots under it. The stars
-are empty until a number is actually finished and turn gold one at a time after
-that, so a child can see both what has been earned and what is still on offer;
-numbers that are not open yet keep the same padlock the friend picker uses.
+The picker that leads into them is two layouts. On a phone and tablet, Pinki
+stays pinned at the top while a white sheet carrying the nine numbers scrolls
+up over her — rows on a phone, a two-column card grid on a tablet — with a
+Continue button fixed at the bottom. On a desktop it becomes a sticky sidebar
+beside a three-column grid of number cards. Each number shows a tick when
+finished, a play mark when it is next, and a padlock while locked; the button
+reads Start, Continue or Next Lesson depending on how far the child has got.
 
 Tracing is a custom SVG and Pointer Events board, scored on how much of the
 numeral the child covered and how much of their drawing stayed on it — no
 drawing library. The bar drops with every attempt, so a child always gets
-through, and nothing on these pages ever tells a child they are wrong. The video
-is a `youtube-nocookie.com` embed with suggestions and branding turned down, so
-nothing on the page offers a way off the site.
+through; a missed stroke shakes and fades in a soft coral, the one place a
+miss is shown. Everywhere else a wrong answer only wiggles. Each number's video
+is a local, compressed `mp4` that plays on arrival, with the numeral behind it
+as a placeholder — nothing on the page offers a way off the site.
 
-**Number 1 is the designed one.** Numbers 2–9 run on the same pipeline; 2–7 have
-their own video, 8–9 do not yet, and none of their handwriting paths has been
-trace-tested.
+**Number 1 is the designed one.** Numbers 2–9 run on the same pipeline, and all
+nine have their own video; none of the handwriting paths for 2–9 has been
+trace-tested yet.
 
 Audio is planned and designed for — the "say the word" button, its states and
 its timing are already built — but no clips exist yet.
@@ -251,7 +254,7 @@ Planned, in order:
 
 1. The trail itself — the path, the stage pages, and progress along it
 2. Voice for Pinki and for each number word
-3. Videos for numbers 8 and 9, and trace-testing every number's handwriting path
+3. Trace-testing every number's handwriting path
 4. Letters and Colours, then Nova's and Bloo's lessons
 5. Progressive unlocking across characters and lessons (it works within a lesson)
 6. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
