@@ -154,6 +154,8 @@ interface SessionProgress {
   /** Finished letters that did not go smoothly (fewer than 3 stars) — the
       ones a later session quietly brings back. */
   shaky: LetterId[];
+  /** Which replay this is — "Again" deals a fresh session, not the same one. */
+  round?: number;
 }
 
 /**
@@ -168,7 +170,7 @@ interface SessionProgress {
  * hearing, matching and spelling what the unit taught.
  */
 export function sessionFor(node: LetterNode, progress: SessionProgress): LetterStep[] {
-  const rand = random(`${node.id}:${progress.known.join("")}`);
+  const rand = random(`${node.id}:${progress.known.join("")}:${progress.round ?? 0}`);
 
   if (node.kind === "letter") {
     const letter = node.id;
