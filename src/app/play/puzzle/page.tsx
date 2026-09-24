@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Puzzle } from "lucide-react";
 import { puzzleStages } from "@/data/puzzles";
-import { BackButton, pageAccent } from "@/components/ui/back-button";
+import { BACK_FIXED, BackButton, pageAccent } from "@/components/ui/back-button";
 import {
   HeadingMark,
   HEADING_CHIP_SHAPE,
@@ -54,14 +54,13 @@ export default async function PuzzleStagesPage() {
             positioning, never the button: `.btn3d` sets `position:
             relative` and is UNLAYERED, so a Tailwind `absolute` on the
             button itself silently loses. */}
-        {/* **`z-10` is not decoration — without it this button cannot be
-            pressed at all.** The heading row below is `relative` (positioned,
-            `z-auto`) and comes LATER in the DOM, so it paints over anything
-            positioned before it — and it is a full-width flex row, so its box
-            covers this corner even though its chips are centred. The click
-            landed on that row and the page never navigated. Verified by
-            `elementFromPoint` on the button's own centre, before and after. */}
-        <span className="absolute left-6 top-0 z-10 sm:left-8">
+        {/* `BACK_FIXED`: the site's one back-button spot, pinned so it stays
+            for the whole scroll (it was `absolute` and scrolled away with the
+            heading). **Its `z-20` is also what keeps it pressable** — the
+            heading row below is positioned and later in the DOM, so at a
+            lower rank it paints over this corner and swallows the tap.
+            Verified with `elementFromPoint` on the button's centre. */}
+        <span className={BACK_FIXED}>
           <BackButton href="/play" label={dict.activities.backToActivities} />
         </span>
 
