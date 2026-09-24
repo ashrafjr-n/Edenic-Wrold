@@ -5,7 +5,7 @@ import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { numberItems } from "@/data/number-items";
 import { letterItems } from "@/data/letter-items";
-import { BackButton, pageAccent } from "@/components/ui/back-button";
+import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
@@ -68,62 +68,50 @@ export default async function CharacterLearnPage({
      rather than wearing Pinki's pink. */
   return (
     <main
-      className="relative flex flex-1 flex-col pb-20 pt-5 sm:pb-28"
+      className="relative flex flex-1 flex-col pb-20 sm:pb-28"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* Back on the left, the character chip on the right. **The white
-            achievements crown that used to close this row is DELETED**, on
-            direct request and for the reason the numbers pages' own crowns
-            were cut before it: nothing is awarded yet, so it was chrome
-            pointing at a screen that does not exist. Unlike those two rows,
-            this one needed no spacer in its place — the chip simply moved
-            into the corner it left, which is what `justify-between` gives
-            for free. No heading text below them either; the hero scene and
-            the lesson list carry the page on their own. */}
-        <div
-          className="anim-drop-in flex items-center justify-between gap-3"
-          style={{ animationDelay: "0.1s" }}
-        >
-          {/* This character's own accent, handed down by the `<main>`
-              above — Pinki's is pink, Nova's lavender, Bloo's blue. */}
-          <BackButton href="/learn" label={dict.characterHub.backToLearn} />
-
-          {/* Whose world this is. The hero banner is phone-only now, so
-              without this the desktop page would carry no trace of the
-              character at all. **It sits at the RIGHT end of the row**, in
-              the corner the achievements crown used to hold — it was centred
-              between the two buttons, and with one of them gone a centred
-              chip would have floated in the middle of an otherwise empty
-              row. */}
-          <div className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6">
-            <div
-              className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
-              style={
-                {
-                  "--tile-tint": `color-mix(in srgb, ${character.accent} 20%, #ffffff)`,
-                } as CSSProperties
-              }
-            >
-              <Image
-                src={character.image}
-                alt=""
-                width={64}
-                height={73}
-                preload
-                /* Scaled up and offset inside the circle so the crop lands on
-                   the face — the source render is a full body, and the head
-                   sits left of and above its center. Re-check this framing
-                   if the character renders are ever replaced. */
-                className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
-              />
-            </div>
-            <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-              {character.name}
-            </span>
+      {/* Back on the left, the character chip on the right — in `BackRow`,
+          the one row that puts the back button where every page has it.
+          **The white achievements crown that used to close this row is
+          DELETED**: nothing is awarded yet. */}
+      <BackRow href="/learn" label={dict.characterHub.backToLearn}>
+        {/* Whose world this is. The hero banner is phone-only now, so
+            without this the desktop page would carry no trace of the
+            character at all. **It sits at the RIGHT end of the row**, in
+            the corner the achievements crown used to hold — it was centred
+            between the two buttons, and with one of them gone a centred
+            chip would have floated in the middle of an otherwise empty
+            row. */}
+        <div className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6">
+          <div
+            className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
+            style={
+              {
+                "--tile-tint": `color-mix(in srgb, ${character.accent} 20%, #ffffff)`,
+              } as CSSProperties
+            }
+          >
+            <Image
+              src={character.image}
+              alt=""
+              width={64}
+              height={73}
+              preload
+              /* Scaled up and offset inside the circle so the crop lands on
+                 the face — the source render is a full body, and the head
+                 sits left of and above its center. Re-check this framing
+                 if the character renders are ever replaced. */
+              className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
+            />
           </div>
+          <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
+            {character.name}
+          </span>
         </div>
+      </BackRow>
 
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
         {/* Phone only (`sm:hidden`). On a narrow screen the scene is what
             gives the page its warmth before the lesson list starts; from
             tablet up there is room for the lessons themselves to be the
