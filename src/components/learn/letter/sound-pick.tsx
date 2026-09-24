@@ -6,7 +6,7 @@ import type { OwnedWord } from "@/lib/letter-session";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { cueFor, playCue } from "@/lib/cue";
 import { Celebration } from "@/components/ui/celebration";
-import { CueButton } from "./cue-button";
+import { QuestionPanel } from "./question-panel";
 import { LetterGlyph } from "./letter-glyph";
 import { WordPicture } from "./word-picture";
 
@@ -49,11 +49,13 @@ export function SoundPick({ letter, choices, dict, onSolved, onMiss }: SoundPick
 
   return (
     <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
-      <CueButton cue={cueFor.letterSound(letter)} label={dict.letters.hearSound} invite>
-        <LetterGlyph letter={letter} capital={false} sizeClass="h-8 sm:h-9" sizes="36px" />
-      </CueButton>
+      <QuestionPanel cue={cueFor.letterSound(letter)} cueLabel={dict.letters.hearSound}>
+        <LetterGlyph letter={letter} capital={false} sizeClass="h-10 sm:h-12" sizes="48px" />
+      </QuestionPanel>
 
-      <ul className="grid w-full max-w-lg grid-cols-3 gap-3 sm:gap-5">
+      {/* Four answers, two by two, as large as the screen allows — capped
+          by its height too, so the grid fills the band without overflowing. */}
+      <ul className="grid w-full max-w-[min(26rem,36svh)] sm:max-w-[min(26rem,32svh)] grid-cols-2 gap-4 sm:gap-5">
         {choices.map((choice) => {
           const isAnswer = choice.letter === letter;
           const glow = !solved && isAnswer && misses >= HELP_AFTER;
@@ -76,9 +78,9 @@ export function SoundPick({ letter, choices, dict, onSolved, onMiss }: SoundPick
               >
                 <WordPicture
                   word={choice}
-                  sizeClass="h-16 w-16 sm:h-24 sm:w-24"
-                  sizes="(min-width: 640px) 96px, 64px"
-                  emojiClass="text-6xl sm:text-7xl"
+                  sizeClass="h-[62%] w-[62%]"
+                  sizes="(min-width: 640px) 160px, 110px"
+                  emojiClass="text-7xl sm:text-8xl"
                 />
               </button>
               {picked === choice.word && <Celebration />}

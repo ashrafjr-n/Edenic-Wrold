@@ -6,7 +6,7 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 import { cueFor } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
-import { CueButton } from "./cue-button";
+import { QuestionPanel } from "./question-panel";
 import { LetterGlyph } from "./letter-glyph";
 
 const HELP_AFTER = 2;
@@ -39,9 +39,9 @@ export function LetterFind({ letter, choices, dict, onSolved, onMiss }: LetterFi
 
   return (
     <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
-      <CueButton cue={cueFor.letterName(letter)} label={dict.letters.hearName} invite />
+      <QuestionPanel cue={cueFor.letterName(letter)} cueLabel={dict.letters.hearName} />
 
-      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5">
+      <ul className="grid w-full max-w-[min(26rem,36svh)] sm:max-w-[min(26rem,32svh)] grid-cols-2 gap-4 sm:gap-5">
         {choices.map((choice) => {
           const glow = !solved && choice === letter && misses >= HELP_AFTER;
           return (
@@ -51,7 +51,11 @@ export function LetterFind({ letter, choices, dict, onSolved, onMiss }: LetterFi
                 onClick={() => pick(choice)}
                 onAnimationEnd={() => setWrong(null)}
                 aria-label={format(dict.letters.tileAria, { letter: choice.toUpperCase() })}
-                className={`card card-clay-white flex h-24 w-24 items-center justify-center transition-transform duration-200 active:scale-95 sm:h-28 sm:w-28 ${
+                className={`card card-clay-white flex w-full items-center justify-center transition-transform duration-200 active:scale-95 ${
+                  /* Two choices sit in one row — taller cards keep the pair
+                     from being a thin strip across an empty band. */
+                  choices.length <= 2 ? "aspect-[3/4]" : "aspect-square"
+                } ${
                   wrong === choice ? "anim-wiggle" : ""
                 } ${solved && choice !== letter ? "opacity-40" : ""}`}
                 style={
@@ -60,7 +64,7 @@ export function LetterFind({ letter, choices, dict, onSolved, onMiss }: LetterFi
                     : undefined
                 }
               >
-                <LetterGlyph letter={choice} capital sizeClass="h-14 sm:h-16" sizes="64px" />
+                <LetterGlyph letter={choice} capital sizeClass="h-[52%]" sizes="(min-width: 640px) 110px, 80px" />
               </button>
               {solved && choice === letter && <Celebration />}
             </li>
