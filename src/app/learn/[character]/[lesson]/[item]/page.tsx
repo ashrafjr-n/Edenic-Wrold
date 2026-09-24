@@ -4,7 +4,7 @@ import { lessonsByCharacter } from "@/data/lessons";
 import { findNumberItem, numberItems } from "@/data/number-items";
 import { findLetterNode, letterNodes } from "@/data/letter-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
-import { BackButton, pageAccent } from "@/components/ui/back-button";
+import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { JourneyProgress } from "@/components/learn/number/journey-progress";
 import { NumberJourney } from "@/components/learn/number/number-journey";
 import { LetterSession } from "@/components/learn/letter/letter-session";
@@ -52,19 +52,17 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
 
     return (
       <main
-        className="relative flex flex-1 flex-col overflow-x-hidden pb-6 pt-3 sm:pb-8 sm:pt-5"
+        className="relative flex flex-1 flex-col overflow-x-clip pb-4"
         style={pageAccent(character.accent, character.accentDark)}
       >
-        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 sm:px-8">
-          <LetterSession
-            node={node}
-            characterId={character.id}
-            lessonId={lesson.id}
-            theme={lesson.theme}
-            dict={dict}
-            locale={locale}
-          />
-        </div>
+        <LetterSession
+          node={node}
+          characterId={character.id}
+          lessonId={lesson.id}
+          tone={{ face: character.accent, edge: character.accentDark }}
+          dict={dict}
+          locale={locale}
+        />
       </main>
     );
   }
@@ -105,45 +103,36 @@ export default async function NumberItemPage({ params }: NumberItemPageProps) {
          piece of that and was already redundant — `body` reserves its own
          `pb-[calc(4rem+env(safe-area-inset-bottom))]` for the bottom nav, so
          this was a second clearance stacked on top of the first. Tablet and
-         desktop keep the roomier spacing; they were never short of height. */
-      /* `overflow-x-hidden` is for the journey's life-size Pinki, exactly as
-         it is on the number picker: she is sized to break out past the
-         column's right edge, and on a phone that edge is close enough to the
-         viewport that she would otherwise widen the document — which on a
-         phone does not merely add a scrollbar, it widens the LAYOUT VIEWPORT
-         and zooms the whole page out. */
-      className="relative flex flex-1 flex-col overflow-x-hidden pb-4 pt-3 sm:pb-20 sm:pt-5"
+         desktop keep the roomier spacing; they were never short of height.
+         (The top padding is `BackRow`'s own 20px now, the site-wide spot —
+         it was a tighter 12px here, which put this back button 8px higher
+         than on every other page.) */
+      /* `overflow-x-clip` is for the journey's life-size Pinki: she is sized
+         to break out past the column's right edge, and on a phone that edge
+         is close enough to the viewport that she would otherwise widen the
+         document and zoom the whole page out. **`clip`, never `hidden`** —
+         `hidden` makes `<main>` a scroll container, which breaks the back
+         row's `sticky` (see `BackRow`). */
+      className="relative flex flex-1 flex-col overflow-x-clip pb-4 sm:pb-20"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        <div
-          className="anim-drop-in flex items-center justify-between gap-3"
-          style={{ animationDelay: "0.1s" }}
-        >
-          {/* Out of the journey and back to the lesson list, not to the
-              previous number — leaving is leaving. */}
-          <BackButton
-            href={lessonPath}
-            label={format(dict.journey.backTo, { lessonName })}
-          />
+      {/* Out of the journey and back to the lesson list, not to the
+          previous number — leaving is leaving. `BackRow` puts it where every
+          page has it. */}
+      <BackRow href={lessonPath} label={format(dict.journey.backTo, { lessonName })}>
+        <JourneyProgress
+          position={index + 1}
+          total={numberItems.length}
+          accent={character.accent}
+          dict={dict.journey}
+          dir={dirFor(locale)}
+        />
 
-          <JourneyProgress
-            position={index + 1}
-            total={numberItems.length}
-            accent={character.accent}
-            dict={dict.journey}
-            dir={dirFor(locale)}
-          />
-
-          {/* An inert spacer, the size of the back button facing it. The
-              achievements crown that stood here was cut on direct request —
-              there is nothing to award yet — and it cannot simply be
-              deleted: the row is `justify-between`, so without something of
-              the back button's width on this side the progress bar stops being
-              centred on the page and slides right. */}
-          <div aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
-        </div>
-      </div>
+        {/* An inert spacer, the size of the back button facing it — the row
+            is `justify-between`, so without it the progress bar stops being
+            centred on the page. */}
+        <div aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+      </BackRow>
 
       <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-6 py-4 sm:px-8 sm:py-10">
         <NumberJourney
