@@ -51,33 +51,42 @@ export function WordBuild({ word, tiles, dict, onSolved, onMiss }: WordBuildProp
       <div className="card card-clay-white flex items-center gap-4 px-6 py-4 sm:gap-5 sm:px-8">
         <WordPicture
           word={word}
-          sizeClass="h-20 w-20 sm:h-24 sm:w-24"
-          sizes="96px"
-          emojiClass="text-7xl"
+          sizeClass="h-24 w-24 sm:h-28 sm:w-28"
+          sizes="112px"
+          emojiClass="text-8xl"
         />
         <CueButton cue={cueFor.word(word.word)} label={format(dict.letters.hearWord, { word: word.word })} />
       </div>
 
-      <ol className="flex gap-2 sm:gap-3" aria-label={word.word}>
+      <ol className="flex gap-3 sm:gap-4" aria-label={word.word}>
         {[...word.word].map((letter, index) => (
           <li
             key={index}
             aria-label={format(dict.letters.slotAria, { n: index + 1, total: word.word.length })}
-            className="tile flex h-16 w-14 items-center justify-center sm:h-20 sm:w-16"
+            /* Clay both ways: an empty spot is PRESSED INTO the surface (the
+               inset shading the progress track uses), a filled one is a raised
+               white clay tile. */
+            className={`flex h-24 w-[4.5rem] items-center justify-center sm:h-28 sm:w-20 ${
+              index < placed ? "card card-clay-white" : "tile"
+            }`}
             style={
-              {
-                "--tile-tint": index < placed ? "var(--surface)" : "var(--color-locked)",
-                outline: index === placed && !done ? "3px dashed var(--color-locked-dark)" : undefined,
-                outlineOffset: "2px",
-              } as React.CSSProperties
+              index < placed
+                ? undefined
+                : ({
+                    "--tile-tint": "var(--color-locked)",
+                    boxShadow:
+                      "inset 0 4px 8px -2px color-mix(in srgb, var(--color-locked-dark) 95%, transparent), inset 0 -2px 3px -1px rgb(255 255 255 / 70%)",
+                    outline: index === placed && !done ? "3px dashed var(--page-accent-color)" : undefined,
+                    outlineOffset: "3px",
+                  } as React.CSSProperties)
             }
           >
             {index < placed && (
               <LetterGlyph
                 letter={letter as LetterId}
                 capital={false}
-                sizeClass="h-10 sm:h-12 anim-pop-in"
-                sizes="48px"
+                sizeClass="h-14 sm:h-16 anim-pop-in"
+                sizes="64px"
               />
             )}
           </li>
@@ -95,11 +104,11 @@ export function WordBuild({ word, tiles, dict, onSolved, onMiss }: WordBuildProp
                 onAnimationEnd={() => setWrong(null)}
                 disabled={gone}
                 aria-label={format(dict.letters.tileAria, { letter: tile })}
-                className={`card card-clay-white flex h-16 w-16 items-center justify-center transition-[scale,opacity] duration-200 active:scale-95 sm:h-20 sm:w-20 ${
+                className={`card card-clay-white flex h-20 w-20 items-center justify-center transition-[scale,opacity] duration-200 active:scale-95 sm:h-24 sm:w-24 ${
                   gone ? "opacity-0" : ""
                 } ${wrong === index ? "anim-wiggle" : ""}`}
               >
-                <LetterGlyph letter={tile as LetterId} capital={false} sizeClass="h-10 sm:h-12" sizes="48px" />
+                <LetterGlyph letter={tile as LetterId} capital={false} sizeClass="h-12 sm:h-14" sizes="56px" />
               </button>
             </li>
           );
