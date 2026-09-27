@@ -16,16 +16,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
       locked: false,
     },
     {
-      id: "letters",
-      image: "/assets/learn-with-pinki/pinki-letters.png",
-      theme: {
-        accent: "var(--color-subject-letters)",
-        accentDark: "var(--color-subject-letters-dark)",
-      },
-      totalItems: 26,
-      locked: false,
-    },
-    {
       id: "colors",
       image: "/assets/learn-with-pinki/pinki-colors.png",
       theme: {

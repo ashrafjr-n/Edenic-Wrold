@@ -2,10 +2,10 @@ import type { CSSProperties, ReactNode } from "react";
 import { CueButton } from "./cue-button";
 
 interface QuestionPanelProps {
-  /** What the question is played from — see `cueFor`. */
+  /** What the question is played from — see `playCue`. */
   cue: string;
   cueLabel: string;
-  /** What the question is ABOUT, shown on a white clay face (a letter);
+  /** What the question is ABOUT, shown on a white clay face;
       nothing when showing it would give the answer away. */
   children?: ReactNode;
 }

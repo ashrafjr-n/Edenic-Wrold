@@ -1,4 +1,4 @@
-export type LessonId = "numbers" | "letters" | "colors" | "shapes";
+export type LessonId = "numbers" | "colors" | "shapes";
 
 /** A lesson's own color world, worn from `sm` up (see `.lesson-theme`).
     Deliberately independent of the character's accent: the hue says what

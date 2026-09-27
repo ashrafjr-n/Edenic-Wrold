@@ -7,7 +7,7 @@ import { playCue } from "@/lib/cue";
 import { Button3D } from "@/components/ui/button-3d";
 
 interface CueButtonProps {
-  /** The sound to play — see `cueFor` in `lib/cue.ts`. */
+  /** The sound to play, by id — see `playCue` in `lib/cue.ts`. */
   cue: string;
   /** Names the button for a screen reader; the face is often a picture. */
   label: string;
@@ -26,7 +26,7 @@ const GOLD = {
 };
 
 /**
- * A button that plays a sound: a letter's name or sound, a word, Pinki's
+ * A button that plays a sound: a word, a question, Pinki's
  * line. The ring and the jump are the "it is speaking" state, so the button
  * already reads as sound with the audio still to come.
  */

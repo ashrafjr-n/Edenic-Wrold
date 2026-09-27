@@ -4,7 +4,6 @@ import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { numberItems } from "@/data/number-items";
-import { letterItems } from "@/data/letter-items";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
@@ -42,14 +41,8 @@ export default async function CharacterLearnPage({
     index,
     featured: index === featuredIndex,
     /* What `LessonProgress` counts as done. Colors has no items yet, so its
-       empty list reads as "0 done" until it exists for real. The Letters
-       checkpoints are not in here — the card counts letters, 0 / 26. */
-    items:
-      lesson.id === "numbers"
-        ? numberItems.map((item) => item.value)
-        : lesson.id === "letters"
-          ? letterItems.map((item) => item.id)
-          : [],
+       empty list reads as "0 done" until it exists for real. */
+    items: lesson.id === "numbers" ? numberItems.map((item) => item.value) : [],
     previousName: lesson.locked
       ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
       : undefined,
