@@ -1,12 +1,15 @@
 # Edenic World
 
-An educational web app for children under 10. Three brand mascots — **Pinki**,
-**Nova**, and **Bloo** — each guide a set of lessons, and children work through
-them one item at a time.
+An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
+**Nova**, and **Bloo** — each teach one subject: Pinki maths and shapes, Nova
+English words, Bloo animals and the world. Each friend has a few courses, and a
+course is a short run of lessons the child opens one after another.
 
 The interface reads in **English, Arabic and Badini Kurdish**. What is being
-*taught* stays English in every language — the numerals, the letters, the colour
-names and the friends' own names — since that is the subject, not the chrome.
+*taught* stays English in every language — the shape names, the words, and the
+friends' own names — since that is the subject, not the chrome.
+
+The plan for Learn lives in `edenic-plan.md`.
 
 ## Pages
 
@@ -14,9 +17,9 @@ names and the friends' own names — since that is the subject, not the chrome.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's lesson hub |
-| `/learn/[character]/[lesson]` | Numbers: the number picker — 1 to 9, unlocked one at a time, with a Continue button to the next one. Letters: the Letters map — A to Z as a winding path in five units, each closed by a challenge, plus My Alphabet Book |
-| `/learn/[character]/[lesson]/[item]` | Numbers: one number's journey — seven stages, guided by Pinki. Letters: one letter's session (`/a` … `/z`) or a unit challenge (`/unit-1` … `/unit-5`) |
+| `/learn/[character]` | That friend's courses (Pinki: Shapes and Adding) |
+| `/learn/[character]/[lesson]` | A course: its lessons as rows, unlocked one at a time, with a Continue button to the next one |
+| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`) — for now a "Pinki is getting this lesson ready" card; the lesson player comes next |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
@@ -103,10 +106,11 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   override them — use the `.card-pill` / `.tile-round` modifiers instead.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
-- Lesson subjects own a second, parallel palette (`--color-subject-*`): numbers
-  pink, letters violet, colors blue. It is used on the lesson hub from tablet
-  width up, so the three lessons read apart at a glance, and it is kept separate
-  from the mascot colors — a subject means the same thing on every hub.
+- Course subjects own a second, parallel palette (`--color-subject-*`): Shapes
+  orange, Adding pink (the `numbers` token). It is used on the lesson hub from
+  tablet width up, so the courses read apart at a glance, and it is kept separate
+  from the mascot colors — a subject means the same thing on every hub. (The
+  violet and blue subject tokens now only colour puzzle stages.)
 - Every page sits on the same flat, pale ground. The lesson hub used to take the
   character's colour edge to edge; that was removed, and the colour now lives on
   the lesson cards themselves — the open one is the saturated card, the locked
@@ -136,7 +140,7 @@ src/
     opengraph-image.jpg           The link-preview card, with its .alt.txt
     learn/page.tsx                Friend picker
     learn/[character]/page.tsx    Character lesson hub
-    learn/[character]/[lesson]/   Number picker / Letters map, and the per-item pages
+    learn/[character]/[lesson]/   A course's lesson list, and the per-lesson pages
     play/page.tsx                 Play
     play/puzzle/                  The stage grid, and one puzzle per stage
     play/memory-match/            The level grid, and one memory level per level
@@ -144,24 +148,23 @@ src/
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Play panels
-    learn/            Friend picker, character cards, lesson cards
-    learn/number/     The number list, numerals, the seven journey stages
-    learn/letter/     The Letters map, the Alphabet Book, the session and
-                      its exercises (meet, trace, sound, match, bubbles,
-                      spell, find)
+    learn/            Friend picker, character cards, course cards, the
+                      lesson list and its Continue button
+    learn/lesson/     Pieces the lesson player will be built from: the reel
+                      video, the tracing board and its demo, the count-into-
+                      a-basket board, the question panel, the speaker
+                      button, the step bar, Pinki's speech bubble
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
     layout/           Header, nav, language switcher, footer
     ui/               Shared primitives (Button3D, BackButton, Cloud, Logo,
                       confetti, the progress bar, the page transition)
-  data/               Characters, lessons, numbers, letters (with their
-                      handwriting paths and spelling words), puzzles, memory
-                      levels, navigation, socials, home panels
-  lib/                Dictionaries and locale, trace scoring, quiz decoys,
-                      jigsaw piece and outline maths, the memory deal,
-                      the Letters session builder and unlock rule, the
-                      audio cue names, the shared /learn route resolver
+  data/               Characters, courses, puzzles, memory levels,
+                      navigation, socials, home panels
+  lib/                Dictionaries and locale, trace scoring, jigsaw piece
+                      and outline maths, the memory deal, the audio cue
+                      player, the shared /learn route resolver
   store/              Progress, theme and page-transition state (zustand)
   types/              Shared TypeScript types
 public/
@@ -171,85 +174,30 @@ public/
   assets/friends/     Mascot artwork
   assets/icons/       3D icons — Memory Match's card faces, the Play panel art
   assets/nav-icons/   The phone bottom bar's four masked icons
-  assets/learn-with-pinki/  Pinki's teaching poses, the clay numerals 1-9,
-                            the number videos, the 52 clay letters
-                            (learn-letters/letters/capital, /small), props
+  assets/learn-with-pinki/  Pinki's teaching poses and her hub banner
+  assets/learn/pinki/       Course card art (placeholders until the course
+                            art arrives), then each course's pictures and reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
 
 ## Current status
 
-The home page, the friend picker, Pinki's lesson hub, the Numbers and Letters
-lessons and the puzzles are built, and all are still being iterated on
-visually. Only Pinki has lesson content; Nova and Bloo are locked, and Colors
-has no items yet.
+The home page, the friend picker, Pinki's lesson hub and the puzzles are built,
+and all are still being iterated on visually.
 
-Each number is one journey of seven stages: meet the number in a short video,
-see it standing still and say it aloud, watch Pinki write it, trace it, pick
-apples and say how many were picked, play one last game, and finish on a
-celebration screen. The last game is usually catching the right balloon before
-it floats away; some numbers get a different one — number 2 drags a missing
-piece back into the numeral instead. Pinki guides four of the seven — the
-video, the tracing board and the balloon game are left to the child alone, and
-she only steps back onto the balloons if the round is lost, to offer another
-go.
-Finishing a number unlocks the next.
-
-The picker that leads into them is two layouts. On a phone and tablet, Pinki
-stays pinned at the top while a white sheet carrying the nine numbers scrolls
-up over her — rows on a phone, a two-column card grid on a tablet — with a
-Continue button fixed at the bottom. On a desktop it becomes a sticky sidebar
-beside a three-column grid of number cards. Each number shows a tick when
-finished, a play mark when it is next, and a padlock while locked; the button
-reads Start, Continue or Next Lesson depending on how far the child has got.
-
-Tracing is a custom SVG and Pointer Events board, scored on how much of the
-numeral the child covered and how much of their drawing stayed on it — no
-drawing library. The bar drops with every attempt, so a child always gets
-through; a missed stroke shakes and fades in a soft coral, the one place a
-miss is shown. Everywhere else a wrong answer only wiggles. Each number's video
-is a local, compressed `mp4` that plays on arrival, with the numeral behind it
-as a placeholder — nothing on the page offers a way off the site.
-
-**Number 1 is the designed one.** Numbers 2–9 run on the same pipeline, and all
-nine have their own video; none of the handwriting paths for 2–9 has been
-trace-tested yet.
-
-Audio is planned and designed for — the "say the word" button, its states and
-its timing are already built — but no clips exist yet.
-
-**Letters** is built the way the big learning apps lay out a course, not as a
-copy of Numbers. The map is one winding path from A to Z in five units (A–E,
-F–J, K–O, P–T, U–Z), each closed by a challenge node; the next node is ringed
-and pulsing with Pinki beside it, finished ones carry a green tick, and the
-rest are locked. Each letter is a short session dealt from a library of
-exercises: meet the letter (its clay capital and small form, its name, its
-sound and three words that start with it), watch Pinki write the capital and
-trace it on writing lines, hear the sound and pick the picture that has it,
-write the small letter, match capitals to small letters, pop every bubble
-holding the letter, and — once the child has every letter a word needs — spell
-a short word one sound at a time (`cab` after C, `bed` after E). Only letters
-the child has already learned ever appear beside the new one (on A, the bubble
-game is "pop every big A" among small a's). A letter that went badly comes back
-as a review exercise in later sessions. Challenges mix the whole unit with no
-new teaching, and are where matching capitals to small letters lives.
-Questions look different from teaching: a pink clay panel with a "?" and the
-sound to answer from, over four large picture answers. Letter tracing is
-stricter than the numerals': every stroke has to be traced (numbered start
-dots show the order) and the drawing has to stay on the letter, so a scribble
-never passes. Every screen of a session is three fixed bands — Pinki's line,
-the exercise filling the space, the button — sized to fit phone, tablet and
-desktop without scrolling. The whole lesson wears Pinki's pink. Pinki gives every instruction from the
-top of the screen, with a speaker beside her line, so a child who cannot read
-can still follow. Finished letters fill **My Alphabet Book**, a page per
-letter in A–Z order. Sessions are dealt from a seed, never `Math.random()`.
-
-Every sound Letters will play already has a name (`lib/cue.ts`) and every
-button that plays one already calls it, so recording the clips needs no layout
-change. Each letter's reel slot is ready too: a letter whose video has been
-delivered simply starts with it. No reels and no clips exist yet, and the
-pictures for most words are emoji until their clay renders are made.
+**Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
+Letters (A–Z) lessons were removed: children this age already know them. Pinki
+now has two courses, **Shapes** and **Adding**, five lessons each, both open.
+Their pages are real — the hub's course cards, and each course's lesson list,
+which keeps the old number picker's layout (a pinned Pinki with a white sheet of
+rows over her on a phone, a sidebar beside a card grid on a desktop) and its
+Start / Continue / Next Lesson button. A lesson itself is not built yet: opening
+one shows Pinki saying it is on its way. Every lesson will be the same three
+steps — watch a short reel, answer five questions (pick one, count, or trace),
+done. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
+for but not recorded: every button that will play a sound already calls
+`lib/cue.ts`.
 
 All fifteen puzzles are playable, and the stage grid shows the child where
 they are: every stage is a clay card in its own colour showing its picture and
@@ -279,8 +227,8 @@ next.
 
 The header's language switcher and dark-mode toggle both work. The site reads in
 English, Arabic and Badini Kurdish — the choice is a cookie, so every page keeps
-the URL it already had, and the taught content itself (numbers, letters, colours
-and the friends' names) stays English in all three, since that is what is being
+the URL it already had, and the taught content itself (shape names, words and
+the friends' names) stays English in all three, since that is what is being
 taught. "Join Edenic World" is still presentation only, and it doubles as the
 profile entry point, as does the Profile tab on the phone's bottom bar — so no
 progress, streaks or points appear anywhere before sign-in.
@@ -292,13 +240,11 @@ eventual plan.
 
 Planned, in order:
 
-1. The trail itself — the path, the stage pages, and progress along it
-2. Voice for Pinki, each number word, and every letter name, letter sound and
-   word in Letters; the 26 letter reels; clay renders for the letter words
-3. Trace-testing every number's handwriting path
-4. Colours, then Nova's and Bloo's lessons
-5. Progressive unlocking across characters and lessons (it works within a lesson)
-6. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
+1. Pinki's lesson player, then the Shapes and Adding content (`edenic-plan.md`)
+2. Nova's and Bloo's courses, on the same pattern
+3. Voice for every line a child should hear, recorded once the content is done
+4. The trail itself — the path, the stage pages, and progress along it
+5. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
 
 Audio narration is deliberately out of scope for the MVP, but the experience is
 built around where it will go.
