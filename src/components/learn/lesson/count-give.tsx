@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
@@ -11,8 +11,8 @@ type ItemVars = CSSProperties & { "--item-nudge-delay"?: string };
 interface CountGiveProps {
   /** How many items Pinki is asking for. */
   target: number;
-  /** The item's icon — same clay-render style as the rest of `assets/icons`. */
-  icon: string;
+  /** The item's clay picture. */
+  icon: StaticImageData;
   /** Singular word for the item (e.g. "apple", "star"), already in the
       active locale. */
   itemLabel: string;
@@ -22,14 +22,16 @@ interface CountGiveProps {
   dir: "rtl" | "ltr";
   /** Mark the basket as the thing to aim for, while it is still empty.
       Presentation only — it changes nothing about how giving works. The
-      journey passes this exactly when Pinki is holding the stick, so the halo
-      and the gesture arrive together or not at all. */
+      lesson passes it on its first question, when Pinki is pointing with
+      her stick, so the halo and the gesture arrive together. */
   highlightTarget?: boolean;
   onGiven: () => void;
 }
 
-/** More items than she asks for, or "pick one" is just "tap the item". */
-const ITEM_COUNT = 3;
+/** More items than she asks for, or "put in 3" is just "tap every item". */
+const SPARE_ITEMS = 2;
+/** Past this many items they shrink, so a row of seven still fits a phone. */
+const MANY = 5;
 /** Below this the pointer never really moved — treat it as a tap, not a drag,
     so a wobbly finger still counts as a press. */
 const DRAG_THRESHOLD = 8;
@@ -56,8 +58,8 @@ interface FlyState {
 }
 
 /**
- * "Pick ONE apple" (or star, or whatever `icon`/`itemLabel` says) — the
- * step that connects the numeral to a quantity.
+ * "Put 3 apples in the basket" (or whatever `icon`/`itemLabel` says) — the
+ * Count question, which connects a number to a quantity.
  *
  * Both interactions work at once, on purpose: a child can **tap** an item to
  * send it over, or **drag** it into Pinki's basket. Tapping is what a four-
@@ -92,8 +94,11 @@ export function CountGive({
      straight to `give`. */
   const [flying, setFlying] = useState<FlyState | null>(null);
 
+  const itemCount = target + SPARE_ITEMS;
+  const many = itemCount > MANY;
+
   const give = (id: number) => {
-    if (given.includes(id)) return;
+    if (given.includes(id) || given.length >= target) return;
 
     const next = [...given, id];
     setGiven(next);
@@ -101,7 +106,7 @@ export function CountGive({
   };
 
   const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>, id: number) => {
-    if (given.includes(id) || flying) return;
+    if (given.includes(id) || flying || given.length >= target) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({ id, startX: event.clientX, startY: event.clientY, dx: 0, dy: 0, moved: false });
   };
@@ -186,7 +191,7 @@ export function CountGive({
              "something belongs here" — so the drop zone reads as one before
              Pinki has said a word. It goes the moment there is something in
              the basket. */
-          className={`card card-clay-white flex h-32 min-w-[11rem] items-center justify-center gap-2 px-6 sm:h-36 sm:min-w-[14rem] ${
+          className={`card card-clay-white flex min-h-32 min-w-[11rem] max-w-full flex-wrap items-center justify-center gap-2 px-6 py-3 sm:min-h-36 sm:min-w-[14rem] ${
             given.length === 0
               ? "border-2 border-dashed border-[var(--page-accent-color)]"
               : ""
@@ -202,9 +207,11 @@ export function CountGive({
                 key={id}
                 src={icon}
                 alt=""
-                width={140}
-                height={140}
-                className="anim-pop-in h-16 w-16 object-contain sm:h-20 sm:w-20"
+                width={80}
+                height={80}
+                className={`anim-pop-in object-contain ${
+                  target > 4 ? "h-10 w-10 sm:h-14 sm:w-14" : "h-16 w-16 sm:h-20 sm:w-20"
+                }`}
               />
             ))
           )}
@@ -216,8 +223,8 @@ export function CountGive({
           is. Once the first one is on its way the child has worked out what
           the tray is for, and a nudge still running would be asking for
           attention the stage no longer needs. */}
-      <div className="flex items-center gap-4 sm:gap-8">
-        {Array.from({ length: ITEM_COUNT }, (_, id) => {
+      <div className={`flex flex-wrap items-center justify-center ${many ? "gap-3 sm:gap-5" : "gap-4 sm:gap-8"}`}>
+        {Array.from({ length: itemCount }, (_, id) => {
           const isGone = given.includes(id);
           const dragging = drag?.id === id && drag.moved;
           const isFlying = flying?.id === id;
@@ -258,10 +265,12 @@ export function CountGive({
               <Image
                 src={icon}
                 alt=""
-                width={140}
-                height={140}
+                width={112}
+                height={112}
                 draggable={false}
-                className="h-24 w-24 select-none object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] sm:h-28 sm:w-28"
+                className={`select-none object-contain drop-shadow-[0_12px_16px_rgba(92,78,190,0.3)] ${
+                  many ? "h-16 w-16 sm:h-20 sm:w-20" : "h-20 w-20 sm:h-28 sm:w-28"
+                }`}
               />
             </button>
           );
