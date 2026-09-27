@@ -1,9 +1,9 @@
 import type { CSSProperties } from "react";
-import type { NumberStroke } from "@/types/number-item";
+import type { Stroke } from "@/types/stroke";
 import { strokeLength, strokeToPath } from "@/lib/trace-score";
 
 interface StrokeDemoProps {
-  strokes: readonly NumberStroke[];
+  strokes: readonly Stroke[];
   accent: string;
 }
 

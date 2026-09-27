@@ -1,4 +1,4 @@
-import type { NumberStroke, StrokePoint } from "@/types/number-item";
+import type { Stroke, StrokePoint } from "@/types/stroke";
 
 /** Everything below works in the strokes' own 0–100 square. */
 const GUIDE_STEP = 1.6;
@@ -32,7 +32,7 @@ function distanceSquared(a: StrokePoint, b: StrokePoint): number {
     otherwise a long straight segment would count for as little as a tight
     curve. Also what the dotted guide is drawn from, so the two can never
     disagree about where the line is. */
-export function sampleStroke(stroke: NumberStroke): StrokePoint[] {
+export function sampleStroke(stroke: Stroke): StrokePoint[] {
   const sampled: StrokePoint[] = [];
 
   for (let i = 0; i < stroke.length - 1; i += 1) {
@@ -73,7 +73,7 @@ function isNear(point: StrokePoint, candidates: StrokePoint[]): boolean {
  * shape but wanders should still be praised.
  */
 export function scoreTrace(
-  guideStrokes: readonly NumberStroke[],
+  guideStrokes: readonly Stroke[],
   drawn: readonly StrokePoint[][],
 ): TraceResult {
   const guidePoints = guideStrokes.flatMap(sampleStroke);
@@ -122,7 +122,7 @@ export interface StrokeScore {
  * each stroke is covered on its own, and the weakest one decides.
  */
 export function scoreStrokes(
-  guideStrokes: readonly NumberStroke[],
+  guideStrokes: readonly Stroke[],
   drawn: readonly StrokePoint[][],
 ): StrokeScore {
   const drawnPoints = drawn.flat();
@@ -143,7 +143,7 @@ export function scoreStrokes(
 
 /** How long a stroke is, in the strokes' own 0–100 units. Used to set the
     dash length that makes the numeral draw itself in `StrokeDemo`. */
-export function strokeLength(stroke: NumberStroke): number {
+export function strokeLength(stroke: Stroke): number {
   let total = 0;
   for (let i = 0; i < stroke.length - 1; i += 1) {
     total += Math.sqrt(distanceSquared(stroke[i], stroke[i + 1]));
@@ -152,7 +152,7 @@ export function strokeLength(stroke: NumberStroke): number {
 }
 
 /** The `d` of an SVG path following a stroke's corners. */
-export function strokeToPath(stroke: NumberStroke): string {
+export function strokeToPath(stroke: Stroke): string {
   return stroke
     .map(([x, y], index) => `${index === 0 ? "M" : "L"}${x} ${y}`)
     .join(" ");

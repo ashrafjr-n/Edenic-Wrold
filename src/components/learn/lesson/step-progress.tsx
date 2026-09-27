@@ -1,12 +1,12 @@
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
-interface JourneyProgressProps {
+interface StepProgressProps {
   /** 1-based, so it reads the way the label does. */
   position: number;
   total: number;
   accent: string;
-  dict: Dictionary["journey"];
+  dict: Dictionary["lessonPlayer"];
   /** The template mixes this locale's words with the two numbers via
       `format()` — needed on the element itself so the browser doesn't fall
       back to its default `ltr` (see `lib/format-dict.ts`'s `dirFor`). */
@@ -14,25 +14,25 @@ interface JourneyProgressProps {
 }
 
 /**
- * "Number 3 of 9" plus the bar underneath it.
+ * "Step 3 of 5" plus the bar underneath it.
  *
- * The bar counts the number being worked on as done, so arriving at the first
+ * The bar counts the step being worked on as done, so arriving at the first
  * one already shows movement — an empty bar on arrival reads to a child as
  * "nothing is happening" rather than as "you are at the start".
  */
-export function JourneyProgress({
+export function StepProgress({
   position,
   total,
   accent,
   dict,
   dir,
-}: JourneyProgressProps) {
+}: StepProgressProps) {
   const percent = Math.round((position / total) * 100);
 
   return (
     <div className="card card-clay-white card-pill flex min-w-0 flex-col gap-1.5 px-5 py-2.5 sm:px-6 sm:py-3">
       <span dir={dir} className="whitespace-nowrap text-center text-xs font-bold text-[var(--color-ink)] sm:text-sm">
-        {format(dict.numberOf, { position, total })}
+        {format(dict.stepOf, { current: position, total })}
       </span>
 
       {/* **Deliberately NOT `.puzzle-progress-track`/`-fill`**, the chunky

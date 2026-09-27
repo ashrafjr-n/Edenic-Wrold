@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import type { NumberStroke, StrokePoint } from "@/types/number-item";
+import type { Stroke, StrokePoint } from "@/types/stroke";
 import { STRICT_ACCURACY, scoreStrokes, scoreTrace, strokeToPath } from "@/lib/trace-score";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface TraceBoardProps {
-  dict: Dictionary["journey"];
-  strokes: readonly NumberStroke[];
+  dict: Dictionary["lessonPlayer"];
+  strokes: readonly Stroke[];
   accent: string;
   /** How much of the numeral counts as finished this attempt. It drops with
       every miss, which is what guarantees a child gets through eventually. */

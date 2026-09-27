@@ -8,7 +8,7 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 
 type ItemVars = CSSProperties & { "--item-nudge-delay"?: string };
 
-interface AppleGiveProps {
+interface CountGiveProps {
   /** How many items Pinki is asking for. */
   target: number;
   /** The item's icon — same clay-render style as the rest of `assets/icons`. */
@@ -16,7 +16,7 @@ interface AppleGiveProps {
   /** Singular word for the item (e.g. "apple", "star"), already in the
       active locale. */
   itemLabel: string;
-  dict: Dictionary["journey"];
+  dict: Dictionary["lessonPlayer"];
   /** The invite text mixes this locale's words with the English item word
       via `format()` — see `lib/format-dict.ts`'s `dirFor`. */
   dir: "rtl" | "ltr";
@@ -71,7 +71,7 @@ interface FlyState {
  * over to the basket before it's counted, so tapping and dragging both end
  * the same way: watching it actually arrive.
  */
-export function AppleGive({
+export function CountGive({
   target,
   icon,
   itemLabel,
@@ -79,7 +79,7 @@ export function AppleGive({
   dir,
   highlightTarget,
   onGiven,
-}: AppleGiveProps) {
+}: CountGiveProps) {
   /* English only — Arabic has no indefinite article, and `dict.dropItem`
      /`dict.pickItemAria` simply don't reference `{article}` there. */
   const article = /^[aeiou]/i.test(itemLabel) ? "an" : "a";

@@ -1,16 +1,8 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import type { GuidePresence, PinkiPose } from "@/types/number-journey";
+import type { GuidePresence, PinkiPose } from "@/types/pinki";
 
-/* Re-exported so the existing `from "./pinki-guide"` imports keep resolving
-   now that the union itself lives in `types/` — `data/number-guide.ts` names a
-   pose for every stage, and a data module must not import from a component.
-   Same call `store/progress.ts` makes for the key builders it keeps in `lib/`. */
-export type { PinkiPose } from "@/types/number-journey";
-
-/* Exported so the other layouts can reuse the map rather than restating it —
-   `PinkiLean` needs the same paths at life size. */
-export const POSE_IMAGE: Record<PinkiPose, string> = {
+const POSE_IMAGE: Record<PinkiPose, string> = {
   speak: "/assets/learn-with-pinki/pinki/pinki-speak.png",
   pen: "/assets/learn-with-pinki/pinki/pinki-with-pen.png",
   celebrate: "/assets/learn-with-pinki/pinki/pinki-celebrate.png",
@@ -21,9 +13,9 @@ export const POSE_IMAGE: Record<PinkiPose, string> = {
 /**
  * The two IN-FLOW sizes, and the size each box actually paints her at.
  *
- * `lead` is not here: it is life size and out of the flow, so it comes from
- * `PinkiLean` instead — the same component and the same scale the number
- * picker's own Pinki uses.
+ * `lead` is not here: it is life size and out of the flow, so the PAGE
+ * renders her (the old number journey used `PinkiLean` for it, deleted with
+ * the journey — a new page using `lead` has to render her itself).
  */
 const PRESENCE = {
   /* The last and biggest thing on the celebration screen. **The desktop box
@@ -94,8 +86,8 @@ interface PinkiGuideProps {
  * takes a `presence` and not a `size`. The three modes are genuinely three
  * different layouts, not one layout at three scales:
  *
- * - **`lead` is life size** — the same `PinkiLean` the number picker uses, at
- *   the same scale, leaning in from the right edge and cropped by it. The
+ * - **`lead` is life size** — rendered by the page (see `PRESENCE` above), at
+ *   the same scale the old journey used, leaning in from the right edge and cropped by it. The
  *   activity sits ABOVE her and she overlaps its lower edge; her bubble and
  *   the stage's buttons stack in the column her crop leaves on the left. She
  *   is out of the flow, so all of that costs the stage no height.
@@ -136,7 +128,7 @@ export function PinkiGuide({
          share is wider from `sm` because the column grows much faster than
          she does there — at the phone value the bubble's tail ended up
          pointing across 150px of empty ground instead of at her. */
-      /* `relative z-20` puts this column ABOVE `PinkiLean` (z-10). She is
+      /* `relative z-20` puts this column ABOVE the life-size Pinki (z-10). She is
          anchored to the bottom-right and wide enough to reach across this
          column on a narrow screen, and she used to be painted over the top of
          it — a button half-covered by her arm. She is `pointer-events-none`,
@@ -222,7 +214,7 @@ export function PinkiGuide({
   if (presence === "aside") {
     return (
       /* Absolutely positioned, so she costs this stage NO height — the same
-         reason `PinkiLean` is. These are the two stages whose content is the
+         reason the life-size Pinki is. These are the two stages whose content is the
          lesson (the reel, the balloon game), and a guide that pushed either
          one further down the page would be taking space from the thing she is
          there to introduce.
