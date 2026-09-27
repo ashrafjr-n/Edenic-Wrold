@@ -4,6 +4,8 @@
 > Shorter on theory, heavier on what we actually build, in what order, with what
 > assets. Where the two files disagree, **this one wins**.
 > Date: 2026-09-27
+>
+> **Note:** `improve-3.md` is the simpler plan we are building. It wins over this file.
 
 ---
 
