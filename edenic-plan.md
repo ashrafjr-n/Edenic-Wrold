@@ -113,19 +113,25 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] Pinki's hub shows two course cards: **Shapes** (open) and **Adding** (open).
 
 ### Phase 2 — Data model
-- [ ] Types: `Course`, `LessonDef`, `Question` (`pick | count | trace`), each with
-      `say` fields.
-- [ ] `data/courses/pinki-shapes.ts` and `pinki-adding.ts` (titles + reels first,
-      questions filled in Phase 4–5).
-- [ ] Seeded shuffle moved to `lib/seeded.ts` (no `Math.random()`).
-- [ ] Progress: reuse the store; key `pinki.shapes.1`, star on finish.
+- [x] Types: `LessonDef`, `Question` (`pick | count | trace`), `Face`
+      (`types/course.ts`). A course is the existing `Lesson` type. The audio id
+      of each line is derived from where it sits (`lessonCue` in `lib/cue.ts`)
+      instead of a stored `say` field — one source, nothing to drift.
+- [x] `data/courses/pinki-shapes.ts` and `pinki-adding.ts`. Lesson 1 of each is
+      written (to prove all three question types); lessons 2–5 are empty and
+      show the "on its way" card until Phase 4–5.
+- [x] Seeded shuffle moved to `lib/seeded.ts` (no `Math.random()`).
+- [x] Progress: reuse the store; key `pinki.shapes.1`, star on finish.
 
 ### Phase 3 — Lesson player
-- [ ] One client component: **Watch → Play (5) → Done**.
-- [ ] **Pick**, **Count**, **Trace** as three components fed only by data.
-- [ ] Wrong/right/wrong-twice behaviour (§3), Pinki's "show once" on question 1.
-- [ ] Dictionary strings in en / ar / ku.
-- [ ] Measured at 390 / 820 / 1440; back button in its one spot.
+- [x] One client component: **Watch → Play (5) → Done** (`LessonPlayer`). Watch
+      is skipped while a lesson has no reel.
+- [x] **Pick**, **Count**, **Trace** as three components fed only by data.
+- [x] Wrong/right/wrong-twice behaviour (§3), Pinki's "show once" on question 1.
+- [x] Dictionary strings in en / ar / ku (Kurdish needs a native check).
+- [x] Measured at 390 / 820 / 1440 in a headless browser: both written lessons
+      play through with no page scroll, no overflow, no console errors; back
+      button in its one spot.
 
 ### Phase 4 — Shapes course
 - [ ] 5 reels + ~14 pictures in place (§10).
