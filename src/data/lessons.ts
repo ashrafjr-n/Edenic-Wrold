@@ -1,5 +1,6 @@
 import type { CharacterId } from "@/types/character";
 import type { Lesson } from "@/types/lesson";
+import { courseLessons } from "./courses";
 
 /** Each character's courses. `name`/`description` and the lesson titles are
     translated content — see `dict.lessons` in the dictionaries, not this file.
@@ -14,7 +15,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-shapes)",
         accentDark: "var(--color-subject-shapes-dark)",
       },
-      totalItems: 5,
+      totalItems: courseLessons.shapes.length,
       locked: false,
     },
     {
@@ -24,7 +25,7 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
         accent: "var(--color-subject-numbers)",
         accentDark: "var(--color-subject-numbers-dark)",
       },
-      totalItems: 5,
+      totalItems: courseLessons.adding.length,
       locked: false,
     },
   ],

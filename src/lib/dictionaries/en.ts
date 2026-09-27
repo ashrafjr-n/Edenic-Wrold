@@ -118,7 +118,8 @@ export const en = {
     ctaStart: "Start",
     ctaNextLesson: "Next Lesson",
   },
-  /** The lesson player's own chrome — buttons and screen-reader labels. */
+  /** The lesson player's own chrome and Pinki's lines in a lesson. Taught
+      words arrive in `{…}` and stay English. */
   lessonPlayer: {
     backTo: "Back to {lessonName}",
     stepOf: "Step {current} of {total}",
@@ -127,6 +128,31 @@ export const en = {
     pickItemAria: "Pick {article} {itemLabel}",
     reelAbout: "A short video: {title}",
     comingSoon: "Pinki is still getting this lesson ready!",
+    listen: "Listen again",
+    next: "Next",
+    yourTurn: "Your turn!",
+    tryAgain: "Try again",
+    playAgain: "Play again",
+    nextLesson: "Next lesson",
+    finish: "Finish",
+    watch: "Let's watch and sing!",
+    watchMe: "Watch me first!",
+    great: "Great job!",
+    lookAgain: "Hmm... let's look again!",
+    traceWatch: "Watch me draw it!",
+    traceGo: "Your turn — trace it!",
+    traceMiss: "So close! Let's go again.",
+    done: "Hooray! You did it!",
+    lessonDone: "Lesson complete!",
+    unlocked: "{title} is open!",
+  },
+  /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
+  asks: {
+    whichShape: "Which one is the {shape}?",
+    shapeOf: "Which shape is the {thing}?",
+    howMany: "How many altogether?",
+    putIn: "Put {n} {item} in the basket!",
+    draw: "Draw a {shape}!",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
