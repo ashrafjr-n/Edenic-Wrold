@@ -99,16 +99,18 @@ Each phase ends with typecheck + lint passing, the dev server clean, and the
 docs (README, CLAUDE.md, `claude-docs/`) updated.
 
 ### Phase 1 — Clean-up
-- [ ] Delete Letters completely: components, data, lib, types, assets, dictionary
+- [x] Delete Letters completely: components, data, lib, types, assets, dictionary
       namespaces, CSS, routes' letter branches.
-- [ ] Delete Numbers' **content**, but keep its **layout**: the course page
+- [x] Delete Numbers' **content**, but keep its **layout**: the course page
       (sticky hero + white sheet + rows + Continue, phone and desktop trees)
       becomes a generic **course page**, and `NumberList` becomes **`LessonList`**.
-- [ ] Keep the pieces the new lessons reuse and move them to
+- [x] Keep the pieces the new lessons reuse and move them to
       `components/learn/lesson/`: trace board + scoring, the video player, the
       question panel, the count-into-a-container interaction, the speaker slot,
       the progress bar, Pinki's speech bubble.
-- [ ] Pinki's hub shows two course cards: **Shapes** (open) and **Adding** (open).
+- [x] Lesson pages show a "Pinki is getting this lesson ready" card until
+      Phase 3.
+- [x] Pinki's hub shows two course cards: **Shapes** (open) and **Adding** (open).
 
 ### Phase 2 — Data model
 - [ ] Types: `Course`, `LessonDef`, `Question` (`pick | count | trace`), each with
