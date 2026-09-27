@@ -2431,6 +2431,47 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   Moving between two steps of a lesson.
+
+   ONE transition owns the whole swap: the step on screen fades and lifts out
+   (`.stage-swap--out`, 0.2s — `STEP_LEAVE_MS` in `lesson-player.tsx` waits
+   for it), then the next one mounts and fades in. A `key` on the group
+   remounts it, which is what replays the IN half. `opacity` and `translate`
+   only — both compositor properties.
+   --------------------------------------------------------------- */
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes stage-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+
+.stage-swap {
+  animation: stage-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Declared after `.stage-swap` so it wins on source order — both land on the
+   same element while a stage is on its way out. */
+.stage-swap--out {
+  animation: stage-out 0.2s ease-in forwards;
+}
+
+/* ---------------------------------------------------------------
    Celebration confetti.
 
    CSS rather than canvas-confetti: the whole site's animation is keyframes,
@@ -2945,6 +2986,8 @@ button:disabled,
   .anim-pop-in,
   .anim-fade-up,
   .anim-rise-in,
+  .stage-swap,
+  .stage-swap--out,
   .anim-wiggle,
   .anim-jump,
   .stroke-draw,
