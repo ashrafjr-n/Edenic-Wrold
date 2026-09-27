@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses (Pinki: Shapes and Adding) |
 | `/learn/[character]/[lesson]` | A course: its lessons as rows, unlocked one at a time, with a Continue button to the next one |
-| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`) — for now a "Pinki is getting this lesson ready" card; the lesson player comes next |
+| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): the reel, five questions, then "Lesson complete!". A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
@@ -150,17 +150,17 @@ src/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, course cards, the
                       lesson list and its Continue button
-    learn/lesson/     Pieces the lesson player will be built from: the reel
-                      video, the tracing board and its demo, the count-into-
-                      a-basket board, the question panel, the speaker
-                      button, the step bar, Pinki's speech bubble
+    learn/lesson/     The lesson player: Pinki's coach line, the reel, the
+                      three question types (pick, count, trace), the done
+                      card, and the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
     layout/           Header, nav, language switcher, footer
     ui/               Shared primitives (Button3D, BackButton, Cloud, Logo,
                       confetti, the progress bar, the page transition)
-  data/               Characters, courses, puzzles, memory levels,
+  data/               Characters, courses and their lessons (data/courses),
+                      the taught shapes, puzzles, memory levels,
                       navigation, socials, home panels
   lib/                Dictionaries and locale, trace scoring, jigsaw piece
                       and outline maths, the memory deal, the audio cue
@@ -192,10 +192,15 @@ now has two courses, **Shapes** and **Adding**, five lessons each, both open.
 Their pages are real — the hub's course cards, and each course's lesson list,
 which keeps the old number picker's layout (a pinned Pinki with a white sheet of
 rows over her on a phone, a sidebar beside a card grid on a desktop) and its
-Start / Continue / Next Lesson button. A lesson itself is not built yet: opening
-one shows Pinki saying it is on its way. Every lesson will be the same three
-steps — watch a short reel, answer five questions (pick one, count, or trace),
-done. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
+Start / Continue / Next Lesson button. Every lesson is the same three steps:
+watch a short reel (skipped until the reel is delivered), answer five questions,
+done. There are three kinds of question — pick the right tile, count things into
+a basket, or trace a shape — and on the first one Pinki shows how. A wrong answer
+only wiggles; after two, the right one glows, so nobody gets stuck. Finishing a
+lesson opens the next. Lesson 1 of each course is written (Circle & Square;
+Putting together); the other eight show Pinki saying they are on their way. The
+shapes are drawn from their own tracing outlines until their clay pictures
+arrive. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
 for but not recorded: every button that will play a sound already calls
 `lib/cue.ts`.
 
