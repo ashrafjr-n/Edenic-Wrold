@@ -90,12 +90,16 @@ export const en = {
     bloo: { tagline: "Wonders about colours, seasons and everything in the sky." },
   },
   lessons: {
-    numbers: { name: "Learn Numbers", description: "Learn numbers 1 to 9" },
-    colors: { name: "Learn Colors", description: "Discover colors all around us" },
-    /* No character currently has a "shapes" lesson (dropped on direct
-       request — see CLAUDE.md), but `LessonId` still carries it, so this
-       entry exists purely so `dict.lessons[lesson.id]` type-checks. */
-    shapes: { name: "Learn Shapes", description: "Discover shapes all around us" },
+    shapes: {
+      name: "Learn Shapes",
+      description: "Circles, squares, triangles and more",
+      items: ["Circle & Square", "Triangle", "Rectangle", "Shapes around us", "Shape review"],
+    },
+    adding: {
+      name: "Learn to Add",
+      description: "Put numbers together, up to 10",
+      items: ["Putting together", "Up to 5", "Up to 10", "Doubles", "Quick sums"],
+    },
   },
   characterHub: {
     backToLearn: "Back to Learn",
@@ -107,38 +111,22 @@ export const en = {
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
-    numbersLabel: "Numbers",
     next: "Next",
-    lockedNumberAria: "The number {value}, locked",
-    startNumberAria: "Start the number {value}, {stars} of 3 stars",
+    lessonsCount: "{n} lessons",
+    lockedLessonAria: "Lesson {n}: {title}, locked",
+    startLessonAria: "Start lesson {n}: {title}",
     ctaStart: "Start",
     ctaNextLesson: "Next Lesson",
   },
-  journey: {
+  /** The lesson player's own chrome — buttons and screen-reader labels. */
+  lessonPlayer: {
     backTo: "Back to {lessonName}",
-    numberOf: "Number {position} of {total}",
     stepOf: "Step {current} of {total}",
-    tryAgain: "Try Again",
-    next: "Next",
-    canYouSayIt: "Can you say it?",
-    sayWord: "Say {word}",
-    again: "Again",
-    numberButton: "Number {value}",
-    traceInstruction: "Trace the number with your finger",
-    dragMissingPiece: "Drag the missing piece back into the number",
-    numberValue: "The number {value}",
-    whichOneIsThis: "Which one is this?",
+    traceInstruction: "Trace the shape with your finger",
     dropItem: "Drop {article} {itemLabel} here",
     pickItemAria: "Pick {article} {itemLabel}",
-    popBalloon: "Pop the balloon with number {value}",
-    colorNumber: "Color in the number {value}",
-    dragPinkiToward: "Drag Pinki toward number {value}",
-    videoAbout: "A short video about the number {value}",
-    myTurn: "My turn!",
-    finishExclaim: "Finish!",
-    finish: "Finish",
-    numberComplete: "Number {value} complete!",
-    numberUnlocked: "Number {value} unlocked!",
+    reelAbout: "A short video: {title}",
+    comingSoon: "Pinki is still getting this lesson ready!",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
@@ -199,33 +187,6 @@ export const en = {
   },
   ui: {
     completedAria: "{label} completed",
-  },
-  /** Pinki's spoken-line TEMPLATES for one number's journey — distinct from
-      `journey` above, which holds ordinary button/aria copy.
-      `data/number-script.ts` composes the final line per locale; the
-      English branch there reproduces the site's original hand-written
-      composition exactly (word.toUpperCase(), English pluralization) rather
-      than reading these templates, so these English entries exist only for
-      `Dictionary` shape parity with `ar.ts` — not read at runtime. `{value}`
-      is the bare numeral; `{word}`/`{itemLabel}` arrive pre-cased/pluralized
-      by the caller for whichever locale is active. */
-  pinki: {
-    discover: "Look what I found — Number {value}!",
-    reveal: "This is Number {value}!",
-    strokeHintDefault: "Watch me draw it!",
-    strokeHint1: "A little flag... then straight down!",
-    traceInvite: "Trace it with me!",
-    traceMiss: "So close! Let's go again.",
-    findMiss: "Hmm... let's look again!",
-    countGive: "Pick {word} {itemLabel}!",
-    countComplete: "Complete Number {value}!",
-    countPath: "Walk me to Number {value}!",
-    countColor: "Color Number {value}!",
-    countHow: "How many {itemLabel} did we pick?",
-    countDone: "Well done!",
-    game: "Pop Number {value}!",
-    gameRetry: "Try again — pop the Number {value} balloon!",
-    celebrate: "Hooray! You did it!",
   },
 };
 
