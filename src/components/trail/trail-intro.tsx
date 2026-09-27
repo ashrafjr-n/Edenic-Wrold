@@ -29,8 +29,8 @@ type Beat = "hello" | "start";
  * rather than skipping her altogether: the pointing IS the guidance, and a
  * child who taps Skip still needs to be told where to go.
  *
- * **She is sized and cropped the way `PinkiLean` is** — the numbers lesson's
- * own life-size guide — because that composition is already paid for, and
+ * **She is sized and cropped the way `PinkiLean` was** — the old numbers
+ * lesson's life-size guide, deleted with it — because that composition is already paid for, and
  * every line of it is load-bearing here too:
  *
  * - **An absolutely positioned layer that costs the page no height.** In

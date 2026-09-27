@@ -47,8 +47,8 @@ interface CloudProps {
  *
  * **Two elements, deliberately.** `filter` applies before `mask` on the same
  * element, so the outer drop shadow has to come from the wrapper or it would
- * be clipped away with everything outside the cloud — the trap
- * `.numeral-mask` already documents. `.cloud` carries the shadow and the
+ * be clipped away with everything outside the cloud (the `filter`-before-
+ * `mask` rule in CLAUDE.md). `.cloud` carries the shadow and the
  * size; `.cloud-body` carries the mask and the fill.
  *
  * **Sizing is `--cloud-w`, not a `w-*` utility.** Two competing Tailwind
@@ -60,7 +60,7 @@ interface CloudProps {
  * the WRAPPER as a `translate` animation (its own property in Tailwind v4,
  * composited, so it fights neither the mask nor the filter) with a
  * per-cloud `animationDelay` passed through `style` — the same way
- * `AppleGive` staggers its three items. Nothing here has to be restructured
+ * `CountGive` staggers its items. Nothing here has to be restructured
  * for it. Note the project animates with plain CSS keyframes, not
  * framer-motion (see CLAUDE.md "Libraries").
  */

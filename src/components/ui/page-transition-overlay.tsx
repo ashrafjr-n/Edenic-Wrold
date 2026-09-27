@@ -31,7 +31,7 @@ interface VeilBank {
  * the viewport can ever be; sized in `dvh` it would shrink to the currently
  * visible height and re-measure mid-flight as the phone's chrome slides,
  * which is exactly where a seam of page would show through. That is the
- * opposite call from a LAYOUT box (`NumberVideo`, `.puzzle-upright`), which
+ * opposite call from a LAYOUT box (`ReelVideo`, `.puzzle-upright`), which
  * takes `svh` so it never overflows. `lvh` rather than plain `vh` only so
  * the intent is stated: the two are the same height, but only one of them
  * says which viewport it meant.

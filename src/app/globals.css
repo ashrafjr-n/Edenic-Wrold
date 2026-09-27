@@ -437,7 +437,7 @@ bdi {
    `--shadow-hue: 0 0 0` is the one line doing the most work here: every
    neutral shadow on the site is written as `rgb(var(--shadow-hue) / X%)`
    (`.card`, `.card-lift:hover`, `.card-clay-white`, `.tile-clay`,
-   `.btn3d--calm` and its hover/active states, `.numeral-shadow`, the memory
+   `.btn3d--calm` and its hover/active states, the memory
    clock, the level badge, and more) — flipping the token from its
    purple-leaning triple to black recolors all of them from "a tinted shadow
    tuned for a pale ground" (reads as almost nothing against a dark one) to
@@ -706,16 +706,6 @@ bdi {
 [data-theme="dark"] header .btn3d,
 [data-theme="dark"] header a.clay {
   color: var(--color-ink-fixed);
-}
-
-/* The bloom exists to keep a pink numeral legible standing on the site's
-   PALE ground with no card behind it — against a dark ground a numeral is
-   already high-contrast with no help needed, and the same bright white
-   radial glow reads as a stray, unmotivated blob instead. Dimmed rather
-   than removed outright: a faint version still reads as a soft glow, which
-   fits a numeral that's meant to look like an object sitting on the page. */
-[data-theme="dark"] .numeral-bloom {
-  opacity: 0.16;
 }
 
 /* Two more literal-white-highlight cases, same reasoning as `.card-clay-white`
@@ -1144,50 +1134,6 @@ bdi {
 
 .nav-tab--current .icon-mask-grain {
   background-image: var(--noise-soft);
-}
-
-/* ---------------------------------------------------------------
-   A numeral standing on the page with no container.
-
-   The clay numerals are objects, not illustrations inside a panel, so they
-   get a soft white bloom behind them and their own drop shadow instead of a
-   `.card`. A card around each one turned the number grid into a sheet of
-   boxes and buried the thing the child is actually looking at.
-
-   The bloom is what keeps a pink numeral legible on the site's own pale
-   ground; the shadow is `filter`, not `box-shadow`, so it follows the
-   numeral's own silhouette rather than a rectangle around it.
-   --------------------------------------------------------------- */
-.numeral-bloom {
-  background: radial-gradient(
-    closest-side,
-    rgb(255 255 255 / 96%),
-    rgb(255 255 255 / 66%) 40%,
-    rgb(255 255 255 / 22%) 62%,
-    rgb(255 255 255 / 0%) 78%
-  );
-}
-
-.numeral-shadow {
-  filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 34%));
-}
-
-/* A locked numeral is still clay — just clay in a dormant colour. It used to
-   be flat silver (`grayscale(1) brightness(1.14)`), the one grey object on a
-   site with no grey in it; the `sepia` + `hue-rotate` + `saturate` run after
-   the desaturation puts the lavender of `--color-locked` back into it, so it
-   reads as the same material as the numeral beside it and not as a
-   photograph someone drained.
-
-   The tint and the shadow have to be ONE `filter` declared here, not a
-   Tailwind `grayscale` utility beside it: `.numeral-shadow` is unlayered and
-   utilities are layered, so a `grayscale` class on the same element is
-   silently thrown away and the numeral stays pink. Declared after
-   `.numeral-shadow` so it wins on source order. */
-.numeral-shadow--locked {
-  filter: grayscale(1) brightness(1.06) contrast(0.94) sepia(0.35)
-    hue-rotate(206deg) saturate(1.45)
-    drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 28%));
 }
 
 /* ---------------------------------------------------------------
@@ -2354,107 +2300,6 @@ button:disabled,
   }
 }
 
-/* ---------------------------------------------------------------
-   Balloons.
-
-   One pink balloon asset, recoloured per balloon with `hue-rotate` — nine
-   numbers' worth of balloon art for one file. The drift is per-balloon so a
-   row of them never moves as a block.
-   --------------------------------------------------------------- */
-@keyframes balloon-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-2deg);
-  }
-  50% {
-    transform: translate3d(0, -12px, 0) rotate(2deg);
-  }
-}
-
-.balloon-drift {
-  animation: balloon-drift var(--drift-duration, 3.4s) ease-in-out
-    var(--drift-delay, 0s) infinite;
-}
-
-@keyframes balloon-pop {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  35% {
-    opacity: 1;
-    transform: scale(1.35);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.6);
-  }
-}
-
-.balloon-pop {
-  animation: balloon-pop 0.4s ease-out both;
-}
-
-/* The sky the balloons rise through.
-
-   **Its height is a custom property, not a Tailwind utility**, because the
-   rise keyframe below has to travel exactly one box plus one balloon and can
-   only read a variable. For the same reason it carries NO `min-height` or
-   `max-height`: a clamped box and an unclamped keyframe disagree, and the
-   balloon then either freezes short of the top edge or leaves the screen long
-   before its animation — and its `animationend` — has fired.
-
-   `svh`, never `vh`: `vh` is measured against the LARGE viewport, so a box
-   sized against it is taller than a phone actually has whenever the browser
-   chrome is showing. Same call `NumberVideo` and `TrailSky` make. */
-.balloon-sky {
-  --sky-h: 60svh;
-  height: var(--sky-h);
-}
-
-/* The two numbers are the most the stage can hold with its own "Finish!"
-   button under it, measured rather than picked: at 390x844 the column has
-   581px for the sky unsolved, and the button costs about 68 of them — so
-   60svh is the most a phone can give it, and 52svh the most 1440x900 can.
-   Both are AT that ceiling now, on direct request: there is no more height to
-   take on this stage without the "Finish!" button going below the fold. The two viewports it
-   does NOT clear are 320x568 and 1440x700, which scroll a little on this
-   stage — an accepted trade for a sky a child can actually play in, on
-   direct request. */
-@media (width >= 40rem) {
-  .balloon-sky {
-    --sky-h: 52svh;
-  }
-}
-
-/* One balloon's whole flight, bottom to top. It is placed at `top: 100%`, so
-   `0` is fully below the sky and `-(sky + its own height)` is fully above it —
-   which is why the box's height has to be a variable this can read.
-
-   **The x-centring lives INSIDE the keyframes.** Tailwind v4's
-   `-translate-x-1/2` sets the same standalone `translate` property this
-   animates, and an animation overrides a normal declaration outright, so a
-   class-based centring would be silently dropped for the whole flight — the
-   trap `.page-veil-cloud` already documents.
-
-   `linear`, not `ease`: an eased rise slows to a stop at the top, which reads
-   as the balloon hesitating rather than drifting away. The gentle bob and tilt
-   ride a child element on `transform` (`.balloon-drift`), so the two compose
-   instead of fighting over one property. */
-@keyframes balloon-rise {
-  from {
-    translate: -50% 0;
-  }
-  to {
-    translate: -50% calc(-1 * var(--sky-h) - 100%);
-  }
-}
-
-.balloon-rise {
-  animation: balloon-rise var(--rise-duration, 10s) linear var(--rise-delay, 0s)
-    both;
-}
-
 /* A right answer jumps rather than flashing a tick — the motion says "yes"
    without a word, which is the whole approach on these pages. */
 @keyframes jump {
@@ -2583,59 +2428,6 @@ button:disabled,
 
 .anim-rise-in {
   animation: rise-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* ---------------------------------------------------------------
-   Moving between two activities in one number's journey.
-
-   ONE transition owns the whole swap, rather than each stage animating its
-   own card in: the child is being carried from one exercise to the next, and
-   four different entrances (a scale-up here, a pop there, nothing at all on a
-   third) read as four unrelated screens. Every `anim-rise-in` inside the
-   journey's stages was removed when this landed — put one back and the stage
-   plays two entrances at once.
-
-   The OUT half is what makes it a transition rather than an entrance:
-   `NumberJourney` sets the leaving class, waits `STAGE_LEAVE_MS` (kept in
-   step with the duration below by comment, the same way the cloud veil's
-   timings are), and only then changes the stage. A `key` on the group
-   remounts it, which is what replays the IN half.
-
-   `opacity` and `translate` only — both compositor properties, so a stage
-   carrying a video, a canvas or four drifting balloons still swaps cheaply.
-   `translate` rather than `transform`, since Tailwind utilities inside the
-   group own `transform` (see the type-and-buttons rules).
-   --------------------------------------------------------------- */
-@keyframes stage-in {
-  from {
-    opacity: 0;
-    translate: 0 16px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes stage-out {
-  from {
-    opacity: 1;
-    translate: 0 0;
-  }
-  to {
-    opacity: 0;
-    translate: 0 -12px;
-  }
-}
-
-.stage-swap {
-  animation: stage-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Declared after `.stage-swap` so it wins on source order — both land on the
-   same element while a stage is on its way out. */
-.stage-swap--out {
-  animation: stage-out 0.2s ease-in forwards;
 }
 
 /* ---------------------------------------------------------------
@@ -2952,112 +2744,6 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   The count-stage activities that need a shared, breakpoint-aware size.
-
-   `NumberComplete` draws the numeral, the hole cut out of it and the loose
-   piece from ONE pair of variables, so the piece is exactly the size of the
-   hole it came from — a piece even slightly bigger reads as the wrong piece
-   and never looks assembled when it lands. `NumberColor` uses the same box
-   so its paint layer lines up with the numeral it is masked to.
-   --------------------------------------------------------------- */
-/* ---------------------------------------------------------------
-   The colouring stage's own demonstration.
-
-   A crayon sitting still in the middle of an outline says "press me", and
-   pressing does nothing here — this activity is the one on the site that
-   needs a MOVEMENT explained, not a target pointed at. So the crayon scrubs
-   side to side and a band of colour is painted under it on the same beat,
-   which between them show the whole mechanic without a word of text. Both
-   stop for good the moment the child's own finger lands (`hasPainted`).
-
-   The crayon animates `translate` INCLUDING its own centring: the chip is
-   placed with Tailwind's `-translate-x-1/2 -translate-y-1/2`, which sets the
-   same standalone `translate` property, so a keyframe that only moved it
-   sideways would drop the centring for the whole animation — the trap
-   `NumberPath`'s token already documents. `rotate` and `scale` are separate
-   properties in v4 and compose with it for free.
-   --------------------------------------------------------------- */
-@keyframes brush-scrub {
-  0%,
-  100% {
-    translate: calc(-50% - 2.1rem) -50%;
-    rotate: -10deg;
-  }
-  50% {
-    translate: calc(-50% + 2.1rem) -50%;
-    rotate: 10deg;
-  }
-}
-
-.anim-brush-scrub {
-  animation: brush-scrub 1.8s ease-in-out infinite;
-}
-
-/* The band the crayon leaves behind it. `stroke-dasharray` is set to the
-   line's own length so one dash covers it exactly; the offset runs it on
-   with the crayon and the opacity takes it away again before the loop
-   repeats, so the numeral is never left half-coloured by the hint itself. */
-@keyframes color-hint {
-  0% {
-    stroke-dashoffset: 100;
-    opacity: 0.9;
-  }
-  45% {
-    stroke-dashoffset: 0;
-    opacity: 0.9;
-  }
-  70% {
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
-  100% {
-    stroke-dashoffset: 100;
-    opacity: 0;
-  }
-}
-
-.color-hint {
-  stroke-dasharray: 100;
-  animation: color-hint 1.8s ease-in-out infinite;
-}
-
-.numeral-stage {
-  /* A size up, in step with the trace board: the field the child works on is
-     the subject of its stage, and these two (`complete` and `color`) were the
-     smallest of them. Not as large as the trace board's, because Pinki still
-     leads the `count` stage and the piece tray sits under the board here —
-     `path` is already the tallest of the four and was left alone. */
-  --board-h: 13.5rem;
-  --board-w: calc(var(--board-h) * 426 / 585);
-}
-
-@media (width >= 40rem) {
-  .numeral-stage {
-    --board-h: 18rem;
-  }
-}
-
-/* **The `complete` board is SHORTER than the `color` board beside it, because
-   its tray now holds half a numeral.** The loose piece is rendered at exactly
-   the hole's size and the hole is the numeral's whole bottom half, so this
-   stage is one and a half boards tall before its padding — where `color` is
-   one. At the shared `18rem` that ran 72px past a 1440x900 viewport (measured,
-   with the piece still in the tray), which is the one desktop size the number
-   journey is held to. `14.5rem` takes 84px back off it. The phone value is
-   untouched: it measured zero overflow at 360x740, 390x844 and 430x932 as it
-   stands. `--board-w` follows on its own — `NumberComplete` derives it from
-   this and the numeral's own aspect. */
-.numeral-stage--half {
-  --board-h: 13.5rem;
-}
-
-@media (width >= 40rem) {
-  .numeral-stage--half {
-    --board-h: 14.5rem;
-  }
-}
-
-/* ---------------------------------------------------------------
    One puzzle's board and heap, when the picture is UPRIGHT — square or
    taller. (Stages 1–3 are landscape and use none of this.)
 
@@ -3254,106 +2940,13 @@ button:disabled,
   transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Paint only ever shows up ON the numeral: the layer carrying the child's
-   strokes is masked by the numeral's own alpha, so colouring outside the
-   lines simply has nowhere to land. Lightning CSS adds the `-webkit-`
-   prefixes — don't write them by hand. */
-.numeral-mask {
-  mask-image: var(--numeral-mask);
-  mask-size: contain;
-  mask-position: center;
-  mask-repeat: no-repeat;
-}
-
-/* The "how to solve it" ghost on the path activity: Pinki's token travelling
-   start -> middle -> target, on a loop, until the child takes over. Waypoints
-   arrive as variables so one keyframe serves any path. */
-@keyframes path-hint-travel {
-  0% {
-    left: var(--hint-x0);
-    top: var(--hint-y0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.85;
-  }
-  45% {
-    left: var(--hint-x1);
-    top: var(--hint-y1);
-    opacity: 0.85;
-  }
-  75% {
-    left: var(--hint-x2);
-    top: var(--hint-y2);
-    opacity: 0.85;
-  }
-  88% {
-    left: var(--hint-x2);
-    top: var(--hint-y2);
-    opacity: 0;
-  }
-  100% {
-    left: var(--hint-x0);
-    top: var(--hint-y0);
-    opacity: 0;
-  }
-}
-
-.path-hint {
-  animation: path-hint-travel 3.4s ease-in-out infinite;
-}
-
-/* The "how to solve it" ghost on the complete-the-numeral drag: the loose
-   piece lifts itself into the gap, holds, comes back down, then wiggles in
-   place — where it belongs, demonstrated rather than pointed at, now that
-   `complete` gets no Pinki at all (see `NumberComplete`/`data/number-guide.ts`).
-   `--hint-dx`/`--hint-dy` arrive as measured pixel offsets (the piece's own
-   centre -> the hole's), the same arithmetic the real drop already uses. */
-@keyframes complete-hint {
-  0%,
-  8% {
-    translate: 0 0;
-    scale: 1;
-  }
-  30%,
-  48% {
-    translate: var(--hint-dx) var(--hint-dy);
-    scale: 1.05;
-  }
-  64% {
-    translate: 0 0;
-    scale: 1;
-  }
-  70% {
-    translate: -0.35rem 0;
-  }
-  76% {
-    translate: 0.35rem 0;
-  }
-  82% {
-    translate: -0.2rem 0;
-  }
-  88%,
-  100% {
-    translate: 0 0;
-  }
-}
-
-.complete-hint {
-  animation: complete-hint 4.6s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .anim-drop-in,
   .anim-pop-in,
   .anim-fade-up,
   .anim-rise-in,
-  .stage-swap,
-  .stage-swap--out,
   .anim-wiggle,
   .anim-jump,
-  .balloon-drift,
-  .balloon-rise,
   .stroke-draw,
   .pen-tip,
   .say-pulse,
@@ -3362,27 +2955,14 @@ button:disabled,
   .anim-item-nudge,
   .anim-pinki-lean-in,
   .anim-pulse-invite,
-  .anim-brush-scrub,
-  .color-hint,
   .guide-target::after,
   .trace-guide-glow,
   .anim-reveal,
-  .path-hint,
-  .complete-hint,
   .anim-hero-parallax,
   .lang-orb,
   .page-veil--in .page-veil-cloud,
   .page-veil--out .page-veil-cloud {
     animation: none;
-  }
-
-  /* A balloon is placed BELOW its sky and the rise keyframe is what brings it
-     into view, so losing that animation alone would leave the game with an
-     empty box. It parks mid-sky instead — every balloon reachable, nothing
-     ever escaping, so the round simply cannot time out. That is the right
-     trade here: the child pops at their own pace. */
-  .balloon-rise {
-    translate: -50% calc(-0.5 * var(--sky-h) - 50%);
   }
 
   .confetti-piece {

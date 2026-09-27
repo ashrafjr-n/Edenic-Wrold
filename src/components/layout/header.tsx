@@ -15,8 +15,8 @@ import type { Locale } from "@/types/locale";
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
     /* **`z-30`, above every page. It was `z-20` and that was not enough.**
-       The numbers journey's stage group carries `relative z-20` of its own
-       (it has to out-rank `PinkiLean`), and a later sibling at the SAME rank
+       The (since deleted) numbers journey's stage group carried
+       `relative z-20` of its own, and a later sibling at the SAME rank
        wins — so on the balloon game the sky card painted over the header, and
        the language fan, which drops out of the header onto the page below it,
        opened BEHIND that card. Site chrome has to out-rank page content
