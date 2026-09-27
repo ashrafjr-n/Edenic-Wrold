@@ -56,3 +56,4 @@
 2026-09-17 document tracing board
 2026-09-23 simplify image sizes
 2026-09-27 simplify course backdrop
+2026-09-27 adjust word card
