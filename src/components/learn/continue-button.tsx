@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { Button3D } from "@/components/ui/button-3d";
 import { lessonsByCharacter } from "@/data/lessons";
@@ -9,7 +8,8 @@ import type { CharacterId } from "@/types/character";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface ContinueButtonProps {
-  items: NumberItem[];
+  /** How many lessons the course has; lessons are numbered 1…count. */
+  count: number;
   characterId: CharacterId;
   lessonId: string;
   basePath: string;
@@ -19,18 +19,16 @@ interface ContinueButtonProps {
 }
 
 /**
- * The CTA to the first open-and-unfinished number, looping back to the last
- * one once all nine are done.
+ * The CTA to the first open-and-unfinished lesson, looping back to the last
+ * one once all of them are done.
  *
  * **The label carries three states, not just "Continue"**: before the first
- * number has ever been finished (nothing to continue yet) it reads "Start";
- * once every number has stars it reads "Next Lesson" (there is nowhere to
- * send that click yet — Letters/Colors are still statically locked in
- * `data/lessons.ts` — so it keeps pointing at `continueValue`, the same
- * replay-number-9 link "Continue" already used); anywhere in between it is
- * the ordinary "Continue".
+ * lesson has ever been finished (nothing to continue yet) it reads "Start";
+ * once every lesson is done it reads "Next Lesson" and goes to the next open
+ * course in the character's list (or replays the last lesson if there is
+ * none); anywhere in between it is the ordinary "Continue".
  *
- * Its own tiny Client Component, deliberately NOT part of `NumberList` —
+ * Its own tiny Client Component, deliberately NOT part of `LessonList` —
  * the desktop layout places it inline in a sticky sidebar while phone and
  * tablet place it in a fixed bottom bar, two unrelated parents in two
  * different JSX trees (see the numbers-lesson conventions in CLAUDE.md for
@@ -39,7 +37,7 @@ interface ContinueButtonProps {
  * through both trees from one shared source.
  */
 export function ContinueButton({
-  items,
+  count,
   characterId,
   lessonId,
   basePath,
@@ -50,30 +48,27 @@ export function ContinueButton({
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
-  const starsFor = (value: number) =>
-    hydrated
-      ? (progress[itemKey(characterId, lessonId, value)]?.stars ?? 0)
-      : 0;
+  const starsFor = (n: number) =>
+    hydrated ? (progress[itemKey(characterId, lessonId, n)]?.stars ?? 0) : 0;
 
-  const nextValue = items.find((item, index) => {
-    const previous = items[index - 1];
-    const locked = previous ? starsFor(previous.value) === 0 : false;
-    return !locked && starsFor(item.value) === 0;
-  })?.value;
+  /* Lessons open one path in order, so the first unfinished lesson is also
+     the first open-and-unfinished one. */
+  const nextValue = Array.from({ length: count }, (_, i) => i + 1).find(
+    (n) => starsFor(n) === 0,
+  );
 
-  const continueValue = nextValue ?? items[items.length - 1].value;
+  const continueValue = nextValue ?? count;
 
-  /* Nothing is open past number 1 until number 1 itself has stars — the
-     same condition the unlock check above already uses — so this is exactly
-     "the only open number is number 1", the first-ever-play state. */
+  /* Nothing is open past lesson 1 until lesson 1 itself is done, so this is
+     exactly the first-ever-play state. */
   const label =
-    starsFor(items[0].value) === 0
+    starsFor(1) === 0
       ? dict.lessonPicker.ctaStart
       : nextValue === undefined
         ? dict.lessonPicker.ctaNextLesson
         : dict.trail.ctaContinue;
 
-  /* Once every number is done, "Next Lesson" really goes to the next lesson
+  /* Once every lesson is done, "Next Lesson" really goes to the next lesson
      — the first open one after this in the character's list. */
   const lessons = lessonsByCharacter[characterId];
   const nextLesson = lessons

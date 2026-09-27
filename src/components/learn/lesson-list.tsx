@@ -3,20 +3,20 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Check, Lock, Play } from "lucide-react";
-import type { NumberItem } from "@/types/number-item";
 import { itemKey, useProgress } from "@/store/progress";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import { Numeral } from "./numeral";
 
-interface NumberListProps {
-  items: NumberItem[];
+interface LessonListProps {
+  /** One title per lesson, in order, already in the active locale. Lesson
+      `n` is `titles[n - 1]` and lives at `${basePath}/${n}`. */
+  titles: readonly string[];
   characterId: string;
+  /** The course's id — `shapes` in `/learn/pinki/shapes`. */
   lessonId: string;
-  /** `/learn/pinki/numbers` — each numeral appends its own value. */
+  /** `/learn/pinki/shapes` — each row appends its own lesson number. */
   basePath: string;
-  /** The lesson's own subject colour pair — never a character colour, so
-      every character's numbers page reads the same. */
+  /** The course's own subject colour pair — never a character colour. */
   tone: { face: string; edge: string };
   /** The whole dictionary — safe to pass wholesale since every leaf is a
       plain string (see `lib/dictionaries/en.ts`'s doc comment). */
@@ -32,19 +32,19 @@ const ROW_DELAY = 0.15;
 const ROW_STAGGER = 0.06;
 
 /**
- * The nine numbers — TWO renderings of the same data, swapped by CSS
+ * A course's lessons — TWO renderings of the same data, swapped by CSS
  * breakpoint, never both visible at once:
  *
  * **Below `sm` (phone, frozen — do not touch): a stacked row list**, one
- * `.card card-clay-white` per number. This is the only thing a phone ever
+ * `.card card-clay-white` per lesson. This is the only thing a phone ever
  * sees; it replaced the old 3x3 tile grid on direct request.
  *
  * **`sm` and up (tablet + desktop): a grid of upright cards** — the site's
  * own lesson-hub card language (`/learn/[character]`) reused here rather
- * than invented: `.card clay` (coloured, grained) for an open number,
+ * than invented: `.card clay` (coloured, grained) for an open lesson,
  * `.card card-clay-white` for a locked one, a white "Next" pill on the one
- * to play next, a numeral standing on its own white badge for contrast
- * against the coloured fill. 2 columns from `sm`, 3 from `lg` — a genuinely
+ * to play next, the lesson number standing on its own white badge for
+ * contrast against the coloured fill. 2 columns from `sm`, 3 from `lg` — a genuinely
  * different composition for wider screens, not the phone list stretched
  * out; the page itself forks around it too (see `page.tsx`'s doc comment).
  *
@@ -56,42 +56,41 @@ const ROW_STAGGER = 0.06;
  * view, which is exactly what the server rendered — anything else is a
  * hydration mismatch.
  */
-export function NumberList({
-  items,
+export function LessonList({
+  titles,
   characterId,
   lessonId,
   basePath,
   tone,
   dict,
-}: NumberListProps) {
+}: LessonListProps) {
   const progress = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
 
-  const starsFor = (value: number) =>
-    hydrated
-      ? (progress[itemKey(characterId, lessonId, value)]?.stars ?? 0)
-      : 0;
+  const starsFor = (n: number) =>
+    hydrated ? (progress[itemKey(characterId, lessonId, n)]?.stars ?? 0) : 0;
 
-  const cast = items.map((item, index) => {
-    const previous = items[index - 1];
-
+  /* A lesson opens once the one before it is done — the same one-path rule
+     the old number list used. */
+  const cast = titles.map((title, index) => {
+    const n = index + 1;
     return {
-      item,
+      n,
+      title,
       index,
-      locked: previous ? starsFor(previous.value) === 0 : false,
-      stars: starsFor(item.value),
+      locked: index > 0 && starsFor(n - 1) === 0,
+      stars: starsFor(n),
     };
   });
 
-  const nextValue = cast.find(({ locked, stars }) => !locked && stars === 0)
-    ?.item.value;
+  const nextValue = cast.find(({ locked, stars }) => !locked && stars === 0)?.n;
 
   return (
     <>
       {/* ---------- Phone: stacked rows (`sm:hidden`) ---------- */}
       <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
-        {cast.map(({ item, index, locked, stars }) => {
-          const isNext = item.value === nextValue;
+        {cast.map(({ n, title, index, locked, stars }) => {
+          const isNext = n === nextValue;
           const rowStyle: RowVars = {
             animationDelay: `${ROW_DELAY + index * ROW_STAGGER}s`,
             borderColor: isNext ? tone.face : "transparent",
@@ -105,20 +104,16 @@ export function NumberList({
                 className="tile tile-clay relative flex h-11 w-11 shrink-0 items-center justify-center sm:h-13 sm:w-13"
                 style={{ "--tile-tint": "#ffffff" } as RowVars}
               >
-                <Numeral
-                  value={item.value}
-                  image={item.image}
-                  sizeClass="h-8 w-8 sm:h-9 sm:w-9"
-                  sizes="36px"
-                  locked={locked}
-                  decorative
-                  bloom={false}
-                  badge={false}
-                />
+                <span
+                  className="text-xl font-bold"
+                  style={{ color: locked ? "var(--color-ink-soft)" : tone.face }}
+                >
+                  {n}
+                </span>
               </span>
 
               <span className="min-w-0 flex-1 truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-                {format(dict.journey.numberButton, { value: item.value })}
+                {title}
               </span>
 
               {locked ? (
@@ -159,21 +154,21 @@ export function NumberList({
           );
 
           return (
-            <li key={item.value}>
+            <li key={n}>
               {locked ? (
                 <span
                   className={rowClass}
                   style={rowStyle}
-                  aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
+                  aria-label={format(dict.lessonPicker.lockedLessonAria, { n, title })}
                 >
                   {row}
                 </span>
               ) : (
                 <Link
-                  href={`${basePath}/${item.value}`}
+                  href={`${basePath}/${n}`}
                   className={`${rowClass} transition-transform duration-300 hover:scale-[1.015]`}
                   style={rowStyle}
-                  aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
+                  aria-label={format(dict.lessonPicker.startLessonAria, { n, title })}
                 >
                   {row}
                 </Link>
@@ -185,8 +180,8 @@ export function NumberList({
 
       {/* ---------- Tablet + desktop: a grid of cards (`hidden sm:grid`) ---------- */}
       <ul className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-        {cast.map(({ item, index, locked, stars }) => {
-          const isNext = item.value === nextValue;
+        {cast.map(({ n, title, index, locked, stars }) => {
+          const isNext = n === nextValue;
           const unlocked = !locked;
           const cardStyle: RowVars = {
             animationDelay: `${ROW_DELAY + index * ROW_STAGGER}s`,
@@ -205,16 +200,12 @@ export function NumberList({
                   className="tile tile-round flex h-24 w-24 items-center justify-center lg:h-28 lg:w-28"
                   style={{ "--tile-tint": "#ffffff" } as RowVars}
                 >
-                  <Numeral
-                    value={item.value}
-                    image={item.image}
-                    sizeClass="h-16 w-16 lg:h-20 lg:w-20"
-                    sizes="(min-width: 1024px) 80px, 64px"
-                    locked={locked}
-                    decorative
-                    bloom={false}
-                    badge={false}
-                  />
+                  <span
+                    className="text-5xl font-bold lg:text-6xl"
+                    style={{ color: locked ? "var(--color-ink-soft)" : tone.face }}
+                  >
+                    {n}
+                  </span>
                 </span>
               </div>
 
@@ -233,7 +224,7 @@ export function NumberList({
                       unlocked ? "text-white" : "text-[var(--color-ink)]"
                     }`}
                   >
-                    {format(dict.journey.numberButton, { value: item.value })}
+                    {title}
                   </div>
                 </div>
 
@@ -271,21 +262,21 @@ export function NumberList({
           );
 
           return (
-            <li key={item.value}>
+            <li key={n}>
               {locked ? (
                 <span
                   className={cardClass}
                   style={cardStyle}
-                  aria-label={format(dict.lessonPicker.lockedNumberAria, { value: item.value })}
+                  aria-label={format(dict.lessonPicker.lockedLessonAria, { n, title })}
                 >
                   {card}
                 </span>
               ) : (
                 <Link
-                  href={`${basePath}/${item.value}`}
+                  href={`${basePath}/${n}`}
                   className={cardClass}
                   style={cardStyle}
-                  aria-label={format(dict.lessonPicker.startNumberAria, { value: item.value, stars })}
+                  aria-label={format(dict.lessonPicker.startLessonAria, { n, title })}
                 >
                   {card}
                 </Link>

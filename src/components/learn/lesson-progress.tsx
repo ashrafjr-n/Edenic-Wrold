@@ -5,9 +5,9 @@ import { itemKey, useProgress } from "@/store/progress";
 interface LessonProgressProps {
   characterId: string;
   lessonId: string;
-  /** Every item this lesson is made of, in the store's own key shape —
-      `numberItems.map((item) => item.value)` for Numbers. Empty for a lesson
-      with no items yet (Letters, Colors), which reads as untouched. */
+  /** Every lesson this course is made of, in the store's own key shape —
+      `1…n`. Empty for a course with no lessons yet, which reads as
+      untouched. */
   items: readonly (number | string)[];
   totalItems: number;
 }

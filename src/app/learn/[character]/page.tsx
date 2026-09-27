@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
-import { numberItems } from "@/data/number-items";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
 import { getDictionary } from "@/lib/locale";
@@ -40,9 +39,8 @@ export default async function CharacterLearnPage({
     lesson,
     index,
     featured: index === featuredIndex,
-    /* What `LessonProgress` counts as done. Colors has no items yet, so its
-       empty list reads as "0 done" until it exists for real. */
-    items: lesson.id === "numbers" ? numberItems.map((item) => item.value) : [],
+    /* What `LessonProgress` counts as done: the course's lessons, 1…n. */
+    items: Array.from({ length: lesson.totalItems }, (_, i) => i + 1),
     previousName: lesson.locked
       ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
       : undefined,

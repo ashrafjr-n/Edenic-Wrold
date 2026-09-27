@@ -2,11 +2,10 @@ import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { Hash } from "lucide-react";
-import { numberItems } from "@/data/number-items";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
-import { NumberList } from "@/components/learn/number/number-list";
-import { ContinueButton } from "@/components/learn/number/continue-button";
+import { LessonList } from "@/components/learn/lesson-list";
+import { ContinueButton } from "@/components/learn/continue-button";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -17,7 +16,8 @@ interface LessonPageProps {
 type AvatarVars = CSSProperties & { "--tile-tint"?: string };
 
 /**
- * The lesson's own page: pick a number.
+ * A course's own page: pick a lesson. (It was the Numbers picker; the layout
+ * below is kept as it was, with the course's data in place of the numbers.)
  *
  * **Reworked to a hero-then-list layout on direct request** — the old
  * design (a plain "Learn Numbers" chip in the header row, then one big
@@ -25,8 +25,8 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * unfinished and out of step with the rest of the site. This follows the
  * order and rhythm of a reference lesson-list screen instead: a hero
  * (Pinki, the back button), an overlapping white sheet carrying the
- * character/subject identity and a short description, then the nine
- * numbers as list rows (`NumberList`) — not the reference's own colours,
+ * character/subject identity and a short description, then the course's
+ * lessons as list rows (`LessonList`) — not the reference's own colours,
  * just its arrangement, kept in this site's own clay language.
  *
  * **Pinki is `sticky`, not a boxed panel** — a direct correction after the
@@ -34,17 +34,17 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * pinned under the header while the white sheet (and the list inside it)
  * scrolls up and over her, exactly the effect the reference's photo-under-
  * sheet composition has. `top` is the header's own rendered height so she
- * sticks flush beneath it rather than under it. `NumberList` renders its
+ * sticks flush beneath it rather than under it. `LessonList` renders its
  * own `Button3D` as a SEPARATE `fixed` bar pinned to the viewport bottom
  * (above the phone's `BottomNav`), so it never scrolls out of reach.
  *
  * **The back button is back in the standard header row, above the hero —
  * it was floating over Pinki and that was flagged as the wrong spot.**
  * Every other route puts it in its own row at the very top (see "Locked,
- * and back buttons" in CLAUDE.md); this page now matches. The "9 Numbers"
- * count moved out of `NumberList` and into the white sheet's own eyebrow
+ * and back buttons" in CLAUDE.md); this page now matches. The "5 lessons"
+ * count moved out of `LessonList` and into the white sheet's own eyebrow
  * row, opposite the character chip — it needs no progress-store read
- * (`numberItems.length` is static), so it belongs here, server-rendered,
+ * (`lesson.totalItems` is static), so it belongs here, server-rendered,
  * not in the client list.
  *
  * **The white sheet runs edge-to-edge on a phone** (`px-0` on the column,
@@ -58,13 +58,13 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * design for desktop, not just enlarge it).** Everything above this
  * point renders ONLY below `lg` (the whole column carries `lg:hidden`) —
  * phone is untouched pixel-for-pixel, and it is also what a tablet gets,
- * except `NumberList`'s own grid (not rows) shows there from `sm` up.
+ * except `LessonList`'s own grid (not rows) shows there from `sm` up.
  * From `lg` a SEPARATE block takes over: a sticky left sidebar (Pinki,
  * title, description, the stat chip, `ContinueButton` inline) beside a
  * 3-column grid of number cards — the same card language
  * `/learn/[character]`'s lesson hub already uses (`.card clay` open,
  * `.card card-clay-white` locked, a white "Next" pill), not invented for
- * this page. `ContinueButton` was pulled out of `NumberList` for exactly
+ * this page. `ContinueButton` was pulled out of `LessonList` for exactly
  * this: two unrelated JSX trees (a fixed bottom bar below `lg`, inline in
  * the sidebar at `lg`) both need it, and neither should reach into the
  * list's internals to get it.
@@ -77,12 +77,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (route.status === "locked") redirect(route.backHref);
 
   const { character, lesson } = route;
-  /* Colors has no items yet and is locked, so this is a belt-and-braces
-     guard rather than a live path. */
-  if (lesson.id !== "numbers") notFound();
-
   const dict = await getDictionary();
   const dir = dirFor(dict.locale);
+  const course = dict.lessons[lesson.id];
+  const basePath = `/learn/${character.id}/${lesson.id}`;
+  const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark };
+  const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
 
   return (
     <main
@@ -138,7 +138,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
 
         {/* The overlapping white sheet: who this is (Pinki), what it is
-            (Numbers), and why (the lesson's own description) — the
+            (the course), and why (its own description) — the
             reference's "Science" / "Dinosaur World" pairing, mapped onto
             content this page actually has instead of two copies of the
             same word. Opaque and `z-10`, above the sticky hero, so it
@@ -166,10 +166,10 @@ export default async function LessonPage({ params }: LessonPageProps) {
               </span>
             </div>
 
-            {/* The numbers count, moved here from `NumberList` — a real
-                clay pill (grain + inset shading, not a flat tinted tile),
-                opposite the character chip. Static data (`numberItems.
-                length`), so it costs no client read. */}
+            {/* The lesson count — a real clay pill (grain + inset shading,
+                not a flat tinted tile), opposite the character chip.
+                Static data (`lesson.totalItems`), so it costs no client
+                read. */}
             <span
               className="clay inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white sm:px-3.5 sm:py-2 sm:text-sm"
               style={
@@ -180,30 +180,30 @@ export default async function LessonPage({ params }: LessonPageProps) {
               }
             >
               <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
-              {numberItems.length} {dict.lessonPicker.numbersLabel}
+              {lessonsCount}
             </span>
           </div>
 
           <h1 className="mt-2 text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
-            {dict.lessonPicker.numbersLabel}
+            {course.name}
           </h1>
           <p dir={dir} className="mt-1.5 text-sm text-[var(--color-ink)]/60 sm:text-base">
-            {dict.lessons.numbers.description}
+            {course.description}
           </p>
 
-          <NumberList
-            items={numberItems}
+          <LessonList
+            titles={course.items}
             characterId={character.id}
             lessonId={lesson.id}
-            basePath={`/learn/${character.id}/${lesson.id}`}
-            tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+            basePath={basePath}
+            tone={tone}
             dict={dict}
           />
         </div>
       </div>
 
       {/* Continue — a fixed bar above the phone's `BottomNav`, exactly as
-          before (this used to live inside `NumberList`). `lg:hidden`
+          before (this used to live inside `LessonList`). `lg:hidden`
           because the desktop layout below renders its own inline one. */}
       <div
         className="pointer-events-none fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 pb-4 pt-10 sm:bottom-0 sm:pb-6 lg:hidden"
@@ -211,11 +211,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
       >
         <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
           <ContinueButton
-            items={numberItems}
+            count={lesson.totalItems}
             characterId={character.id}
             lessonId={lesson.id}
-            basePath={`/learn/${character.id}/${lesson.id}`}
-            tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+            basePath={basePath}
+            tone={tone}
             dict={dict}
             className="w-full py-3.5 text-base sm:py-4 sm:text-lg"
           />
@@ -253,37 +253,37 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 }
               >
                 <Hash className="h-4 w-4" strokeWidth={2.75} />
-                {numberItems.length} {dict.lessonPicker.numbersLabel}
+                {lessonsCount}
               </span>
 
               <h1 className="mt-4 text-4xl font-bold text-[var(--color-ink)] xl:text-5xl">
-                {dict.lessonPicker.numbersLabel}
+                {course.name}
               </h1>
               <p dir={dir} className="mt-3 text-base text-[var(--color-ink)]/60">
-                {dict.lessons.numbers.description}
+                {course.description}
               </p>
 
               <ContinueButton
-                items={numberItems}
+                count={lesson.totalItems}
                 characterId={character.id}
                 lessonId={lesson.id}
-                basePath={`/learn/${character.id}/${lesson.id}`}
-                tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+                basePath={basePath}
+                tone={tone}
                 dict={dict}
                 className="mt-6 w-full py-3.5 text-base"
               />
             </div>
 
-            {/* The numbers, as a grid — `NumberList`'s own `lg:grid-cols-3`
+            {/* The lessons, as a grid — `LessonList`'s own `lg:grid-cols-3`
                 output; the row markup inside it stays `sm:hidden` and
                 never shows here. */}
             <div className="flex-1">
-              <NumberList
-                items={numberItems}
+              <LessonList
+                titles={course.items}
                 characterId={character.id}
                 lessonId={lesson.id}
-                basePath={`/learn/${character.id}/${lesson.id}`}
-                tone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+                basePath={basePath}
+                tone={tone}
                 dict={dict}
               />
             </div>
