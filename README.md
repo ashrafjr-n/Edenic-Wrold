@@ -239,8 +239,15 @@ in three.js so every shape is true and everything shares one light and style.
 
 The lesson-complete screen celebrates in three beats: a big Pinki cheering with
 confetti, then the shape beside the child's own drawing of it and the word,
-then a green pill whose padlock springs open on the next lesson. The review
-lesson is four "which one is the …?" picks. The reels are placeholders until
+then a green pill whose padlock springs open on the next lesson.
+
+The **Shape review** brings the four shapes together. First a sorting game:
+eight things from the picnics (a donut, a present, a slice of pizza, a
+chocolate bar…) arrive one at a time and the child taps — or drags them into —
+the box of their shape; the boxes fill up as they go. Then two picks where the
+word ("square", "rectangle") is shown in clay letters above four shapes, and
+finally one more drawing, a triangle. The done screen shows all four shapes
+beside the child's drawing. The reels are placeholders until
 the real clips arrive.
 
 Other lessons use pick the right tile or count things into a basket, and on
