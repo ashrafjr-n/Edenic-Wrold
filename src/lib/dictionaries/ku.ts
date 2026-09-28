@@ -121,7 +121,6 @@ export const ku: Dictionary = {
   },
   lessonPlayer: {
     backTo: "ڤەگەڕان بۆ {lessonName}",
-    stepOf: "پێنگاڤا {current} ژ {total}",
     traceInstruction: "شێوەی ب تلییا خۆ بشوپینە",
     dropItem: "{itemLabel} ل ڤێرێ دانە",
     pickItemAria: "{itemLabel} هەلبژێرە",

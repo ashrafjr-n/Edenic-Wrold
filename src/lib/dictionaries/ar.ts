@@ -12,7 +12,7 @@ import type { Dictionary } from "./en";
  * the rest of the site keeps them as identity, not content.
  *
  * Simplified corner, called out on purpose: Arabic dual/plural agreement is
- * not modelled (e.g. `stepOf`/`numberOf` always use the singular counter
+ * not modelled (e.g. `numberOf` always use the singular counter
  * form) — correct enough for a children's site, not grammatically complete.
  */
 export const ar: Dictionary = {
@@ -117,7 +117,6 @@ export const ar: Dictionary = {
   },
   lessonPlayer: {
     backTo: "العودة إلى {lessonName}",
-    stepOf: "الخطوة {current} من {total}",
     traceInstruction: "تتبّع الشكل بإصبعك",
     dropItem: "ضع {itemLabel} هنا",
     pickItemAria: "التقط {itemLabel}",

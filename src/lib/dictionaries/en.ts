@@ -122,7 +122,6 @@ export const en = {
       words arrive in `{…}` and stay English. */
   lessonPlayer: {
     backTo: "Back to {lessonName}",
-    stepOf: "Step {current} of {total}",
     traceInstruction: "Trace the shape with your finger",
     dropItem: "Drop {article} {itemLabel} here",
     pickItemAria: "Pick {article} {itemLabel}",
