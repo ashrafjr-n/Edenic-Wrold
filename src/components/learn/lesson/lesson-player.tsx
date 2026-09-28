@@ -9,13 +9,16 @@ import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import type { LessonDef, Question } from "@/types/course";
+import type { LessonDef, Question, ShapeId } from "@/types/course";
+import type { StrokePoint } from "@/types/stroke";
 import type { Locale } from "@/types/locale";
 import type { PinkiPose } from "@/types/pinki";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Button3D } from "@/components/ui/button-3d";
-import { LessonCoach } from "./lesson-coach";
+import { TaskChip, type TaskKind } from "./task-chip";
+import { PinkiPeek } from "./pinki-peek";
+import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { PickQuestion } from "./pick-question";
 import { CountGive } from "./count-give";
@@ -48,6 +51,42 @@ function starsFor(mistakes: number): number {
 }
 
 type Step = { kind: "watch" } | { kind: "question"; question: Question; index: number };
+
+/** What the task chip shows for a step: its kind (icon + colour) and the
+    English word the step is about. */
+function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: string } {
+  if (showing) return { kind: "watch" };
+  switch (q.type) {
+    case "word":
+      return { kind: "listen" };
+    case "trace":
+      return { kind: "draw", target: q.shape };
+    case "spell":
+      return { kind: "build" };
+    case "find":
+      return { kind: "find", target: `${q.shape}s` };
+    case "count":
+      return { kind: "count", target: q.item.word };
+    case "pick": {
+      const shape = q.ask.vars?.shape;
+      return { kind: "pick", target: shape === undefined ? undefined : String(shape) };
+    }
+  }
+}
+
+/** The shapes a lesson is about, for the done screen: what it traces and
+    finds, and the right answers of its picks. */
+function lessonShapes(lesson: LessonDef): ShapeId[] {
+  const shapes = lesson.questions.flatMap((q): ShapeId[] => {
+    if (q.type === "trace" || q.type === "find") return [q.shape];
+    if (q.type === "pick") {
+      const answer = q.options[q.answer];
+      return answer.kind === "shape" ? [answer.shape] : [];
+    }
+    return [];
+  });
+  return [...new Set(shapes)];
+}
 
 interface LessonPlayerProps {
   lesson: LessonDef;
@@ -109,7 +148,6 @@ export function LessonPlayer({
   const [round, setRound] = useState(0);
   const [at, setAt] = useState(0);
   const [solved, setSolved] = useState(false);
-  const [missed, setMissed] = useState(false);
   /* Misses on THIS step — Help on the spelling board waits for the second. */
   const [stepMisses, setStepMisses] = useState(0);
   const [board, setBoard] = useState(false);
@@ -118,6 +156,10 @@ export function LessonPlayer({
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
   const spell = useRef<SpellWordHandle>(null);
+  /* The child's passing trace, kept for the done screen. */
+  const [drawing, setDrawing] = useState<StrokePoint[] | undefined>(undefined);
+  /* Pinki's reactions: each new beat is one peek in from the edge. */
+  const [peek, setPeek] = useState<{ pose: PinkiPose; beat: number }>({ pose: "celebrate", beat: 0 });
 
   useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -143,7 +185,6 @@ export function LessonPlayer({
     leaveTimer.current = window.setTimeout(() => {
       change();
       setSolved(false);
-      setMissed(false);
       setStepMisses(0);
       setBoard(false);
       setLeaving(false);
@@ -155,48 +196,40 @@ export function LessonPlayer({
     go(() => {
       setAt(0);
       setMistakes(0);
+      setDrawing(undefined);
       setDemo(true);
       setRound((value) => value + 1);
     });
   const endDemo = () => go(() => setDemo(false));
 
+  const react = (pose: PinkiPose) => setPeek((last) => ({ pose, beat: last.beat + 1 }));
   const onSolved = () => {
     setSolved(true);
-    setMissed(false);
+    react("celebrate");
   };
   const onMiss = () => {
-    setMissed(true);
     setStepMisses((count) => count + 1);
     setMistakes((count) => count + 1);
+    react("think");
   };
 
-  /* ---- Pinki's line and pose ---- */
-  const say = (key: keyof Dictionary["lessonPlayer"], pose: PinkiPose) => ({
-    pose,
-    line: lines[key],
-    cue: lessonCue.line(locale, characterId, key),
-  });
-  const ask = (q: Question, index: number, pose: PinkiPose) => ({
-    pose,
-    line: format(dict.asks[q.ask.key], q.ask.vars ?? {}),
-    cue: lessonCue.ask(locale, characterId, courseId, n, index),
-  });
-
-  let coach: { pose: PinkiPose; line: string; cue: string };
-  if (finished) coach = say("done", "celebrate");
-  else if (step.kind === "watch") coach = say("watch", "speak");
-  else if (step.question.type === "word") coach = ask(step.question, step.index, "speak");
-  else if (solved) coach = say("great", "celebrate");
-  else if (step.question.type === "trace") {
-    coach = !board
-      ? say("traceWatch", "pen")
-      : missed
-        ? say("traceMiss", "pen")
-        : ask(step.question, step.index, "pen");
-  } else if (showing) coach = say("watchMe", "stick");
-  else if (missed && step.question.type === "spell") coach = say("spellMiss", "think");
-  else if (missed) coach = say("lookAgain", "think");
-  else coach = ask(step.question, step.index, step.question.type === "count" ? "stick" : "think");
+  /* ---- The task chip: what to do on this step ---- */
+  let task: ReactNode = null;
+  if (!finished && step.kind === "question") {
+    const q = step.question;
+    const { kind, target } = taskFor(q, showing);
+    task = (
+      <TaskChip
+        key={`${step.index}-${kind}`}
+        kind={kind}
+        verb={dict.tasks[kind]}
+        target={target}
+        label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
+        cue={lessonCue.ask(locale, characterId, courseId, n, step.index)}
+        dir={dir}
+      />
+    );
+  }
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
@@ -207,6 +240,10 @@ export function LessonPlayer({
     body = (
       <LessonDone
         title={lines.lessonDone}
+        word={lesson.questions.find((q) => q.type === "word")?.word}
+        shapes={lessonShapes(lesson)}
+        drawing={drawing}
+        accent={tone.face}
         unlocked={nextTitle ? format(lines.unlocked, { title: nextTitle }) : undefined}
         dir={dir}
       />
@@ -229,6 +266,7 @@ export function LessonPlayer({
         image={image}
         label={format(lines.reelAbout, { title })}
         skipLabel={lines.skip}
+        playLabel={lines.playReel}
         onDone={advance}
       />
     );
@@ -269,6 +307,7 @@ export function LessonPlayer({
       body = (
         <WordCard
           word={q.word}
+          shape={q.shape}
           cue={lessonCue.word(q.word)}
           label={format(lines.hearWord, { word: q.word })}
         />
@@ -302,16 +341,31 @@ export function LessonPlayer({
           </Button3D>
         );
       }
+    } else if (q.type === "find") {
+      body = (
+        <FindShapes
+          key={seed}
+          scene={q.scene}
+          shape={q.shape}
+          itemAria={lines.findItemAria}
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
+      );
     } else {
       body = (
         <TraceQuestion
           key={seed}
           strokes={SHAPES[q.shape].strokes}
           accent={tone.face}
+          reward={SHAPES[q.shape].thing}
           dict={lines}
           dir={dir}
           onBoard={() => setBoard(true)}
-          onSolved={onSolved}
+          onSolved={(stroke) => {
+            setDrawing(stroke);
+            onSolved();
+          }}
           onMiss={onMiss}
         />
       );
@@ -356,7 +410,9 @@ export function LessonPlayer({
         <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
       </BackRow>
 
-      {/* Three bands, always in the same places: Pinki's line at the top, the
+      <PinkiPeek pose={peek.pose} beat={peek.beat} />
+
+      {/* Three bands, always in the same places: the task chip at the top, the
           step filling — and centred in — whatever height is left, and the
           way onward in a fixed-height slot at the bottom, so nothing jumps
           when the button appears. */}
@@ -374,14 +430,8 @@ export function LessonPlayer({
             leaving ? "stage-swap--out" : ""
           }`}
         >
-          <LessonCoach
-            pose={coach.pose}
-            line={coach.line}
-            cue={coach.cue}
-            listenLabel={lines.listen}
-            dir={dir}
-          />
-          <div className="flex w-full flex-1 flex-col items-center justify-center py-5 sm:py-6">
+          {task}
+          <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6">
             {body}
           </div>
           <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>

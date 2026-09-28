@@ -6,14 +6,12 @@
  * `public/audio/<id>.mp3` and only `playCue` changes.
  */
 
-/** Audio ids for a lesson's lines. A question's line is its own clip (it
-    names the taught word); the praise and help lines are shared by every
-    lesson. The locale is in the id because Pinki speaks the child's
-    language — the English taught word sits inside the sentence. */
+/** Audio ids for a lesson. A step's instruction is its own clip (it names
+    the taught word) — the task chip plays it. The locale is in the id because
+    Pinki speaks the child's language, the English taught word inside it. */
 export const lessonCue = {
   ask: (locale: string, character: string, course: string, lesson: number, question: number) =>
     `${locale}/${character}/${course}/${lesson}/q${question + 1}`,
-  line: (locale: string, character: string, key: string) => `${locale}/${character}/lines/${key}`,
   /** A taught English word on its own — the same clip in every locale. */
   word: (word: string) => `words/${word}`,
 };
