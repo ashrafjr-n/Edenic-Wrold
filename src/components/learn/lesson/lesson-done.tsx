@@ -37,10 +37,14 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
  *
  * The beats arrive one after another (`animation-delay`); Again / Next are the
  * player's, in the action band as on every step.
+ *
+ * The done screen has no task button, so the middle of the back row is free:
+ * the screen is pinned to the top (`mb-auto`) and Pinki rises into that gap
+ * (the negative top margin), which is what lets her be this big on a phone.
  */
 export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
   return (
-    <div className="relative flex w-full max-w-sm flex-col items-center gap-3 text-center sm:max-w-md [@media(max-height:700px)]:gap-2">
+    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center">
         <span
           aria-hidden
@@ -50,9 +54,9 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
         <Image
           src={celebrate}
           alt=""
-          sizes="140px"
+          sizes="180px"
           preload
-          className="anim-pop-in relative h-[min(8rem,13svh)] w-auto object-contain"
+          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)]"
         />
         <Celebration />
       </div>
