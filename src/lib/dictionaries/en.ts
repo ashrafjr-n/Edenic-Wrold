@@ -136,6 +136,7 @@ export const en = {
     unlocked: "{title} is open!",
     skip: "Skip",
     help: "Help",
+    startOver: "Start over",
     hearWord: "Hear {word}",
     letterAria: "Letter {letter}",
     playReel: "Play the video",

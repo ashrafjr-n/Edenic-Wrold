@@ -131,6 +131,7 @@ export const ar: Dictionary = {
     unlocked: "{title} مفتوح الآن!",
     skip: "تخطٍّ",
     help: "مساعدة",
+    startOver: "من جديد",
     hearWord: "استمع إلى {word}",
     letterAria: "الحرف {letter}",
     playReel: "شغّل الفيديو",

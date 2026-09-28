@@ -148,6 +148,8 @@ export function LessonPlayer({
   const [solved, setSolved] = useState(false);
   /* Misses on THIS step — Help on the spelling board waits for the second. */
   const [stepMisses, setStepMisses] = useState(0);
+  /* Letters in the spelling board's spaces — "Start over" shows then. */
+  const [spelling, setSpelling] = useState(false);
   const [board, setBoard] = useState(false);
   const [demo, setDemo] = useState(true);
   const [mistakes, setMistakes] = useState(0);
@@ -182,6 +184,7 @@ export function LessonPlayer({
       change();
       setSolved(false);
       setStepMisses(0);
+      setSpelling(false);
       setBoard(false);
       setLeaving(false);
     }, STEP_LEAVE_MS);
@@ -315,21 +318,32 @@ export function LessonPlayer({
           hint
           onSolved={onSolved}
           onMiss={onMiss}
+          onStarted={setSpelling}
         />
       );
+      /* "Start over" whenever a letter is in, so one wrong first tap never
+         has to be undone letter by letter. */
+      const startOver =
+        spelling && !solved ? (
+          <AgainButton label={lines.startOver} onPress={() => spell.current?.reset()} dir={dir} />
+        ) : null;
+      action = startOver;
       /* Offered from the SECOND full-but-wrong word (the first just sends the
          misplaced letters home), in the Next button's place, and it stays —
          the child can keep trying without ever pressing it. */
       if (stepMisses >= 2 && !solved) {
         action = (
-          <Button3D
-            tone={BRAND_TONE}
-            onClick={() => spell.current?.help()}
-            className="anim-pop-in h-12 gap-2 px-6 text-base font-bold"
-          >
-            <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
-            <span dir={dir}>{lines.help}</span>
-          </Button3D>
+          <div className="flex items-center gap-3">
+            {startOver}
+            <Button3D
+              tone={BRAND_TONE}
+              onClick={() => spell.current?.help()}
+              className="anim-pop-in h-12 gap-2 px-6 text-base font-bold"
+            >
+              <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
+              <span dir={dir}>{lines.help}</span>
+            </Button3D>
+          </div>
         );
       }
     } else if (q.type === "find") {

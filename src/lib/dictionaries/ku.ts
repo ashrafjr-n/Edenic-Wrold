@@ -135,6 +135,7 @@ export const ku: Dictionary = {
     unlocked: "{title} ڤەبوو!",
     skip: "دەرباز ببە",
     help: "هاریکاری",
+    startOver: "ژ نوی",
     hearWord: "گوهداری {word} بکە",
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",

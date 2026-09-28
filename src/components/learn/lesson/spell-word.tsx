@@ -20,6 +20,8 @@ const WIGGLE_MS = 650;
 export interface SpellWordHandle {
   /** Send every misplaced letter back, then put the word together in order. */
   help: () => void;
+  /** Send every placed letter home — a clean board to start again from. */
+  reset: () => void;
 }
 
 interface SpellWordProps {
@@ -34,6 +36,8 @@ interface SpellWordProps {
   /** Every space is full and the word is not right yet. The misplaced
       letters then fly home by themselves, and the child tries again. */
   onMiss: () => void;
+  /** Whether any letter is in a space — the lesson offers "Start over" then. */
+  onStarted: (started: boolean) => void;
   ref?: Ref<SpellWordHandle>;
 }
 
@@ -77,7 +81,7 @@ function deal(word: string, seed: string): string[] {
  * one with the Web Animations API on `translate`, so tiles in the tray and
  * tiles in a space are just rendered where they are.
  */
-export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref }: SpellWordProps) {
+export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
   const [dealt] = useState(() => deal(word, seed));
   const [slots, setSlots] = useState<Slots>(() => Array(word.length).fill(null));
   const [drag, setDrag] = useState<Drag | null>(null);
@@ -125,9 +129,15 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
   }, [slots, drag]);
 
   /* ---- Moves ---- */
-  const place = (next: Slots) => {
+  /** Every change of the spaces goes through here, animated. */
+  const fill = (next: Slots) => {
     snapshot();
     setSlots(next);
+    onStarted(next.some((id) => id !== null));
+  };
+
+  const place = (next: Slots) => {
+    fill(next);
     if (next.some((id) => id === null)) {
       setWrong([]);
       return;
@@ -144,8 +154,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
       onMiss();
       timers.current.push(
         window.setTimeout(() => {
-          snapshot();
-          setSlots(next.map((id, i) => (misplaced.includes(i) ? null : id)));
+          fill(next.map((id, i) => (misplaced.includes(i) ? null : id)));
           setWrong([]);
           setReturning(false);
         }, WIGGLE_MS),
@@ -238,6 +247,9 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
 
   /* ---- Help ---- */
   useImperativeHandle(ref, () => ({
+    reset: () => {
+      if (!locked) fill(Array(word.length).fill(null));
+    },
     help: () => {
       if (locked) return;
       setHelping(true);
