@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { format } from "@/lib/format-dict";
 import { lessonCue } from "@/lib/cue";
@@ -13,16 +14,27 @@ import type { Locale } from "@/types/locale";
 import type { PinkiPose } from "@/types/pinki";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
+import { Button3D } from "@/components/ui/button-3d";
 import { LessonCoach } from "./lesson-coach";
 import { ReelVideo } from "./reel-video";
 import { PickQuestion } from "./pick-question";
 import { CountGive } from "./count-give";
 import { TraceQuestion } from "./trace-question";
+import { WordCard } from "./word-card";
+import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { LessonDone } from "./lesson-done";
 
 /* Green is "you passed this, carry on"; blue is the ordinary way onward. */
-const GO_TONE = { face: "var(--color-go)", edge: "var(--color-go-dark)", text: "#fff" };
-const BRAND_TONE = { face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" };
+const GO_TONE = {
+  face: "var(--color-go)",
+  edge: "var(--color-go-dark)",
+  text: "#fff",
+};
+const BRAND_TONE = {
+  face: "var(--brand)",
+  edge: "var(--brand-dark)",
+  text: "#fff",
+};
 
 /** Kept in step with `.stage-swap--out`'s 0.2s in `globals.css`. */
 const STEP_LEAVE_MS = 200;
@@ -58,9 +70,11 @@ interface LessonPlayerProps {
 }
 
 /**
- * One lesson: the reel (when there is one), five questions, then "done". Each
- * question only reports `onSolved` / `onMiss`; Pinki's line, the progress bar
- * and the way onward live here, in three fixed bands (see the return).
+ * One lesson: the reel (when there is one), its steps, then "done". A Shapes
+ * lesson is reel → word → trace → spell (`edenic-plan.md` §5). Each step only
+ * reports `onSolved` / `onMiss`; Pinki's line, the progress bar and the way
+ * onward live here, in three fixed bands (see the return). The reel is the
+ * exception: it fills the whole stage and has no bands at all.
  *
  * The first question is Pinki's to show: a Pick's answer glows while she
  * points, a Count's basket glows, and a Trace always starts with her drawing
@@ -85,7 +99,11 @@ export function LessonPlayer({
 
   const steps: Step[] = [
     ...(lesson.reel ? [{ kind: "watch" as const }] : []),
-    ...lesson.questions.map((question, index) => ({ kind: "question" as const, question, index })),
+    ...lesson.questions.map((question, index) => ({
+      kind: "question" as const,
+      question,
+      index,
+    })),
   ];
 
   const [round, setRound] = useState(0);
@@ -97,6 +115,7 @@ export function LessonPlayer({
   const [mistakes, setMistakes] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
+  const spell = useRef<SpellWordHandle>(null);
 
   useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -162,6 +181,7 @@ export function LessonPlayer({
   let coach: { pose: PinkiPose; line: string; cue: string };
   if (finished) coach = say("done", "celebrate");
   else if (step.kind === "watch") coach = say("watch", "speak");
+  else if (step.question.type === "word") coach = ask(step.question, step.index, "speak");
   else if (solved) coach = say("great", "celebrate");
   else if (step.question.type === "trace") {
     coach = !board
@@ -170,6 +190,7 @@ export function LessonPlayer({
         ? say("traceMiss", "pen")
         : ask(step.question, step.index, "pen");
   } else if (showing) coach = say("watchMe", "stick");
+  else if (missed && step.question.type === "spell") coach = say("spellMiss", "think");
   else if (missed) coach = say("lookAgain", "think");
   else coach = ask(step.question, step.index, step.question.type === "count" ? "stick" : "think");
 
@@ -198,8 +219,15 @@ export function LessonPlayer({
       </div>
     );
   } else if (step.kind === "watch" && lesson.reel) {
-    body = <ReelVideo src={lesson.reel} image={image} label={format(lines.reelAbout, { title })} />;
-    action = <NextButton label={lines.next} tone={BRAND_TONE} onPress={advance} dir={dir} />;
+    body = (
+      <ReelVideo
+        src={lesson.reel}
+        image={image}
+        label={format(lines.reelAbout, { title })}
+        skipLabel={lines.skip}
+        onDone={advance}
+      />
+    );
   } else if (step.kind === "question") {
     const q = step.question;
     const seed = `${characterId}.${courseId}.${n}.${step.index}.${round}.${showing ? "demo" : "play"}`;
@@ -233,6 +261,42 @@ export function LessonPlayer({
           onGiven={onSolved}
         />
       );
+    } else if (q.type === "word") {
+      body = (
+        <WordCard
+          word={q.word}
+          cue={lessonCue.word(q.word)}
+          label={format(lines.hearWord, { word: q.word })}
+        />
+      );
+      action = <NextButton label={lines.next} tone={BRAND_TONE} onPress={advance} dir={dir} />;
+    } else if (q.type === "spell") {
+      body = (
+        <SpellWord
+          key={seed}
+          ref={spell}
+          word={q.word}
+          seed={seed}
+          letterAria={lines.letterAria}
+          hint
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
+      );
+      /* Offered only once every space is full and the word is not right —
+         in the Next button's place, so help is where onward will be. */
+      if (missed && !solved) {
+        action = (
+          <Button3D
+            tone={BRAND_TONE}
+            onClick={() => spell.current?.help()}
+            className="anim-pop-in h-12 gap-2 px-6 text-base font-bold"
+          >
+            <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
+            <span dir={dir}>{lines.help}</span>
+          </Button3D>
+        );
+      }
     } else {
       body = (
         <TraceQuestion
@@ -259,14 +323,17 @@ export function LessonPlayer({
           spacer of its own width. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex flex-1 justify-center">
-          {!finished && (
+          {!finished && step.kind !== "watch" && (
             <div
               className="puzzle-progress-track w-full max-w-2xl"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(progressShare * 100)}
-              aria-label={format(lines.stepOf, { current: at + 1, total: steps.length })}
+              aria-label={format(lines.stepOf, {
+                current: at + 1,
+                total: steps.length,
+              })}
             >
               <span
                 className="puzzle-progress-fill transition-[width] duration-500 ease-out"
@@ -288,24 +355,33 @@ export function LessonPlayer({
           step filling — and centred in — whatever height is left, and the
           way onward in a fixed-height slot at the bottom, so nothing jumps
           when the button appears. */}
-      <div
-        key={`${round}-${at}-${demo}`}
-        className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pt-5 sm:px-8 sm:pt-7 ${
-          leaving ? "stage-swap--out" : ""
-        }`}
-      >
-        <LessonCoach
-          pose={coach.pose}
-          line={coach.line}
-          cue={coach.cue}
-          listenLabel={lines.listen}
-          dir={dir}
-        />
-        <div className="flex w-full flex-1 flex-col items-center justify-center py-5 sm:py-6">
+      {step?.kind === "watch" ? (
+        <div
+          key={`${round}-${at}`}
+          className={`stage-swap absolute inset-0 ${leaving ? "stage-swap--out" : ""}`}
+        >
           {body}
         </div>
-        <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
-      </div>
+      ) : (
+        <div
+          key={`${round}-${at}-${demo}`}
+          className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pt-5 sm:px-8 sm:pt-7 ${
+            leaving ? "stage-swap--out" : ""
+          }`}
+        >
+          <LessonCoach
+            pose={coach.pose}
+            line={coach.line}
+            cue={coach.cue}
+            listenLabel={lines.listen}
+            dir={dir}
+          />
+          <div className="flex w-full flex-1 flex-col items-center justify-center py-5 sm:py-6">
+            {body}
+          </div>
+          <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
+        </div>
+      )}
     </>
   );
 }
