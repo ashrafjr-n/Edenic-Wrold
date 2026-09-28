@@ -38,13 +38,27 @@ Lessons open one after another.
 
 **The Shapes lesson (approved flow, 2026-09-28 — later courses follow it):**
 
+**On every step:** a **task chip** at the top — a clay pill with an icon, one
+verb in the child's language ("Draw") and the English word it is about;
+tapping it says the instruction. No Pinki picture, speech bubble or separate
+speaker up there, and no step list: Pinki **peeks in from the screen edge** to
+cheer a right answer or think along after a miss, then slides away.
+
 1. **Watch 🎬**: the reel fills the whole screen on a phone (header above,
    bottom bar below; a tall 9:16 frame on tablet/desktop). A round **Skip**
    button sits in the bottom-right corner: it spins, then moves on. When the
-   reel ends the lesson moves on by itself.
-2. **Word 🔊**: one big speaker button (the word's sound, when audio lands) and
-   the English word under it, every letter its own clay colour. **Next**.
-3. **Trace ✏️**: the existing trace board — Pinki draws it, then the child.
+   reel ends the lesson moves on by itself. If the browser refuses to start
+   it, a big **Play** button sits in the middle.
+2. **Word 🔊**: one big speaker button (the word's sound, when audio lands),
+   the shape itself, and the English word under it, every letter its own clay
+   colour. **Next**.
+3. **Trace ✏️**: Pinki draws it, then the child — in **one stroke**, from a
+   clay start disc whose arrow shows the way, with chevrons round the dots.
+   Lifting the finger ends the attempt: it passes only if the stroke went
+   round the whole shape (90%, easing to 80% after misses) AND stayed on the
+   line (85%); otherwise it flashes red and clears. A pass fills the shape
+   with colour, then it turns into a real thing (circle → ball, square →
+   toast, triangle → cheese, rectangle → book).
 4. **Spell 🔤**: the word on top, empty spaces under it, and its letters as
    shuffled clay tiles under those. **Tap** a tile → it flies to the first
    empty space; **drag** a tile → any space (a taken space swaps). Tap a placed
@@ -53,7 +67,13 @@ Lessons open one after another.
    (the right ones stay) and the child tries again, as often as they like.
    From the **second** miss **Help** also appears where Next goes (optional);
    Help puts the word together in order, then Next.
-5. **Done ⭐**.
+5. **Find 🔍** (when a scene has enough of the shape — the circle lesson for
+   now): a 3D picnic scene; tap every thing that is the shape. Each find gets
+   a ring and flies into a tray of sockets; wrong taps wiggle; after two
+   misses the next one glows. All found → they all jump → **Next**.
+6. **Done ⭐**: Pinki cheering with confetti; the shape beside the child's own
+   drawing and the word; a green pill whose padlock springs open on the next
+   lesson. *Play again* / *Next lesson*.
 
 **Other lessons (Adding, the review):**
 
@@ -81,7 +101,7 @@ understand every question.
 ### Shapes — one shape per lesson
 | # | Lesson | Steps |
 | --- | --- | --- |
-| 1 | Circle | Reel, Word, Trace, Spell `circle` |
+| 1 | Circle | Reel, Word, Trace, Spell `circle`, Find the circles (picnic) |
 | 2 | Square | Reel, Word, Trace, Spell `square` |
 | 3 | Triangle | Reel, Word, Trace, Spell `triangle` |
 | 4 | Rectangle | Reel, Word, Trace, Spell `rectangle` |
@@ -159,6 +179,12 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] New flow (§3): full-screen reel + Skip, word card, spelling board with
       tap/drag and Help. Measured at 375/390/820/1440, en/ar/ku, dark mode.
 - [x] 5 lessons of data (one shape each + review).
+- [x] Task chip + Pinki peek replace the coach; one-stroke accurate tracing
+      with start/arrows and fill → thing; Find the circles (3D picnic scene);
+      new done screen; Play fallback for a blocked reel. Phone measured at
+      375x667 and 390x844.
+- [ ] A Find scene for squares, triangles and rectangles (lessons 2–4) —
+      same pipeline, `tools/picnic-scene`.
 - [ ] The 4 real reels replace the placeholders (same file names).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
@@ -188,6 +214,12 @@ pastel colours, soft light, centred, plain white background, no text, no shadow.
 | `public/assets/learn/pinki/shapes/` | `circle.png` `square.png` `triangle.png` `rectangle.png` · `pizza.png` `clock.png` `window.png` `door.png` `book.png` `cake-slice.png` `kite.png` `plate.png` `phone.png` `ball.png` |
 | `public/assets/learn/pinki/adding/` | `apple.png` `cupcake.png` `basket.png` `box.png` `star.png` `ball.png` |
 | `public/assets/learn/pinki/` | `course-shapes.png` `course-adding.png` (card icons) |
+
+**Find scene** (in place): `public/assets/learn/pinki/shapes/find/` —
+`picnic.jpg` (the empty scene) and one PNG per thing (plate, donut, cookie,
+ball, toast, cheese, book, kite), rendered by `tools/picnic-scene` (three.js,
+pastel clay materials, one camera and light). Low-poly downloaded models
+(Kenney CC0) were tried and rejected: their "circles" are hexagons.
 
 **Reels** (from the company, vertical mp4, ~25 s):
 
