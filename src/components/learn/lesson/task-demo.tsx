@@ -3,12 +3,13 @@ import Image from "next/image";
 import { Check, Pointer, Volume2 } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { strokeToPath } from "@/lib/trace-score";
-import type { Scene, ShapeId } from "@/types/course";
+import type { Scene, SceneItem, ShapeId } from "@/types/course";
 import { FaceView } from "./face";
-import { letterTones } from "./clay-word";
+import { ClayWord, letterTones } from "./clay-word";
 import { deal } from "./spell-word";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
+import { BINS } from "./sort-shapes";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -18,7 +19,9 @@ export type TaskDemoDef =
   | { kind: "listen"; shape?: ShapeId }
   | { kind: "draw"; shape: ShapeId; accent: string }
   | { kind: "build"; word: string; seed: string }
-  | { kind: "find"; scene: Scene; shape: ShapeId };
+  | { kind: "find"; scene: Scene; shape: ShapeId }
+  | { kind: "pick"; word: string; options: ShapeId[]; answer: ShapeId }
+  | { kind: "sort"; item: SceneItem };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -155,6 +158,88 @@ function FindDemo({ scene, shape }: { scene: Scene; shape: ShapeId }) {
   );
 }
 
+/** Pick: under the word, the finger taps the shape it names and a tick
+    pops on it. */
+function PickDemo({ word, options, answer }: { word: string; options: ShapeId[]; answer: ShapeId }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4">
+      <ClayWord word={word} size="sm" />
+      <div className="grid w-[62%] grid-cols-2 gap-3">
+        {options.map((shape) => (
+          <span
+            key={shape}
+            className={`card card-clay-white relative flex aspect-square items-center justify-center ${shape === answer ? "demo-press" : ""}`}
+          >
+            <FaceView face={{ kind: "shape", shape }} size="tile" />
+            {shape === answer && (
+              <>
+                <span
+                  className="demo-tick clay absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-white"
+                  style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
+                >
+                  <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+                </span>
+                <span className="absolute left-1/2 top-1/2">
+                  <Finger />
+                </span>
+              </>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Sort: the finger taps the right box and the thing flies into it. Laid
+    out in % of the square stage so the flight can be worked out: the thing
+    is 30% wide, centred at (50, 17); box i sits in a 2x2 grid below. */
+function SortDemo({ item }: { item: SceneItem }) {
+  const i = BINS.findIndex((bin) => bin.shape === item.shape);
+  const centre = { x: i % 2 === 0 ? 26 : 74, y: i < 2 ? 53.5 : 83.5 };
+  const fly = {
+    "--fly-x": `${((centre.x - 50) / 30) * 100}%`,
+    "--fly-y": `${((centre.y - 17) / 30) * 100}%`,
+  } as CSSProperties;
+  return (
+    <div className="relative h-full w-full">
+      <span className="card card-clay-white absolute left-[35%] top-[2%] h-[30%] w-[30%]" />
+      <span className="demo-fly absolute left-[35%] top-[2%] z-[1] h-[30%] w-[30%] p-[4%]" style={fly}>
+        <span className="relative block h-full w-full">
+          <Image src={item.src} alt="" fill sizes="6rem" className="object-contain" />
+        </span>
+      </span>
+      {BINS.map(({ shape, face, edge, text }, b) => (
+        <span
+          key={shape}
+          className={`clay absolute flex h-[27%] w-[44%] flex-col items-center justify-center gap-1 rounded-[1.2rem] ${b === i ? "demo-press" : ""}`}
+          style={
+            {
+              left: b % 2 === 0 ? "4%" : "52%",
+              top: b < 2 ? "40%" : "70%",
+              backgroundColor: face,
+              color: text,
+              "--clay-edge": edge,
+            } as CSSProperties
+          }
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
+            <FaceView face={{ kind: "shape", shape }} size="tile" />
+          </span>
+          <span dir="ltr" className="text-sm font-bold">
+            {shape}
+          </span>
+          {b === i && (
+            <span className="absolute left-1/2 top-1/2">
+              <Finger />
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -166,5 +251,9 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <BuildDemo word={demo.word} seed={demo.seed} />;
     case "find":
       return <FindDemo scene={demo.scene} shape={demo.shape} />;
+    case "pick":
+      return <PickDemo word={demo.word} options={demo.options} answer={demo.answer} />;
+    case "sort":
+      return <SortDemo item={demo.item} />;
   }
 }
