@@ -150,8 +150,8 @@ src/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, course cards, the
                       lesson list and its Continue button
-    learn/lesson/     The lesson player: the task chip, Pinki's peek, the
-                      full-screen reel, the word card, the tracing board, the
+    learn/lesson/     The lesson player: the task button and its how-to
+                      demos, the full-screen reel, the word card, the tracing board, the
                       spelling board, Find-the-shapes, pick and count, the
                       done screen, and the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
@@ -169,8 +169,9 @@ src/
   store/              Progress, theme and page-transition state (zustand)
   types/              Shared TypeScript types
 tools/
-  picnic-scene/       Renders the Find scene in three.js (headless Chromium)
-                      and crops it into layers — not part of the site build
+  picnic-scene/       Renders the Find scenes (one per shape) in three.js
+                      (headless Chromium) and crops them into layers — not
+                      part of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -184,8 +185,9 @@ public/
                             reels (shapes/reels/1–4.mp4 are placeholders cut
                             from Big Buck Bunny, CC BY 3.0 Blender Foundation,
                             until the real reels replace them by name;
-                            shapes/find/ is the rendered picnic scene and its
-                            eight things)
+                            shapes/find/ holds the rendered Find scenes:
+                            the circles' picnic, then squares/, triangles/
+                            and rectangles/)
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -204,11 +206,12 @@ rows over her on a phone, a sidebar beside a card grid on a desktop) and its
 Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
-Rectangle, then a Shape review. Every step opens with a **task chip** beside the
-back button (there is no progress bar): a clay pill with an icon, one verb ("Draw") and the English word it is
-about; tapping it says the instruction. Pinki is no longer a fixed picture up
-there — she leans in from the edge of the screen to cheer a right answer or
-think along after a miss.
+Rectangle, then a Shape review. Every step has a round **task button** beside
+the back button (there is no progress bar): a clay circle with the step's icon.
+It is silent; tapping it opens a popup with a close button that plays a short
+loop of how the step is done — only the first move, never the whole answer.
+Every button of a step (Next, Your turn, Start over, Help, Play again) sits in
+one spot, a little above the bottom bar.
 
 A shape lesson plays its reel full-screen (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
@@ -216,21 +219,25 @@ appears if the browser refuses to start it). Then the word card: a big speaker,
 the shape itself (large, on no tile), and the word with each letter in its own clay colour. Then the
 child traces the shape **in one stroke** from a marked start, following
 direction arrows; lifting the finger ends the attempt, and it only passes if the
-stroke went round the whole shape and stayed on the line. A passed shape fills
-with colour and turns into a real thing (a circle becomes a ball). Then the
+stroke went round the whole shape and stayed on the line. The line is drawn in
+grained pink clay, like the start marker; a passed shape fills in the same clay
+and turns into a real thing (a circle becomes a ball). Then the
 child builds the word from shuffled letter tiles — tap a tile to send it to the
 first empty space, or drag it into any space. Only once every space is full is
 the word checked: misplaced letters wiggle and fly back (the right ones stay),
-and from the second miss an optional Help button puts the word together.
+and from the second miss an optional Help button puts the word together. A
+Start over button sends every placed letter back.
 
-The circle lesson ends with **Find the circles**: a 3D picnic scene (a blanket
-on the grass with a plate, a donut, a cookie, a beach ball, a toast, a cheese
-wedge, a book and a kite), where the child taps every round thing. Each find
-gets a ring and flies into a tray of sockets; wrong taps wiggle, and after two
-the next circle glows. The scene was modelled and rendered in three.js so every
-circle is a true circle and everything shares one light and style.
+Every shape lesson ends with **Find the shapes**: a 3D picnic scene where the
+child taps every thing of that shape — four of them among clearly different
+things, on a different blanket each time (circles: a plate, a donut, a cookie,
+a beach ball; squares: toast, a present, a cracker, a die; triangles: cheese,
+pizza, a sandwich, a flag; rectangles: a book, a chocolate bar, a juice box, a
+ruler). Each find gets a ring and flies into a tray of sockets; wrong taps
+wiggle, and after two the next one glows. The scenes are modelled and rendered
+in three.js so every shape is true and everything shares one light and style.
 
-The lesson-complete screen celebrates in three beats: Pinki cheering with
+The lesson-complete screen celebrates in three beats: a big Pinki cheering with
 confetti, then the shape beside the child's own drawing of it and the word,
 then a green pill whose padlock springs open on the next lesson. The review
 lesson is four "which one is the …?" picks. The reels are placeholders until
