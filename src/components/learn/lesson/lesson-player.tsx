@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
@@ -111,8 +111,8 @@ interface LessonPlayerProps {
 /**
  * One lesson: the reel (when there is one), its steps, then "done". A Shapes
  * lesson is reel → word → trace → spell (`edenic-plan.md` §5). Each step only
- * reports `onSolved` / `onMiss`; Pinki's line, the progress bar and the way
- * onward live here, in three fixed bands (see the return). The reel is the
+ * reports `onSolved` / `onMiss`; the task chip (in the back row) and the way
+ * onward live here (see the return). The reel is the
  * exception: it fills the whole stage and has no bands at all.
  *
  * The first question is Pinki's to show: a Pick's answer glows while she
@@ -373,47 +373,20 @@ export function LessonPlayer({
     if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;
   }
 
-  const progressShare = Math.min(1, (at + (solved ? 1 : 0)) / steps.length);
-
   return (
     <>
-      {/* The chrome row: out to the course, and how far through the lesson
-          the child is — a filling bar, centred between the back button and a
-          spacer of its own width. */}
+      {/* The chrome row: out to the course, and what to do on this step —
+          the task chip, centred between the back button and a spacer of its
+          own width (the spacer yields its room on a phone, where the longest
+          chips — "هەلبژێرە rectangle" — need it). */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
-        <div className="flex flex-1 justify-center">
-          {!finished && step.kind !== "watch" && (
-            <div
-              className="puzzle-progress-track w-full max-w-2xl"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(progressShare * 100)}
-              aria-label={format(lines.stepOf, {
-                current: at + 1,
-                total: steps.length,
-              })}
-            >
-              <span
-                className="puzzle-progress-fill transition-[width] duration-500 ease-out"
-                style={
-                  {
-                    width: `${progressShare * 100}%`,
-                    "--bar-face": tone.face,
-                    "--bar-edge": tone.edge,
-                  } as CSSProperties
-                }
-              />
-            </div>
-          )}
-        </div>
-        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+        <div className="flex min-w-0 flex-1 justify-center">{task}</div>
+        <span aria-hidden className="hidden h-14 w-14 shrink-0 sm:block" />
       </BackRow>
 
       <PinkiPeek pose={peek.pose} beat={peek.beat} />
 
-      {/* Three bands, always in the same places: the task chip at the top, the
-          step filling — and centred in — whatever height is left, and the
+      {/* Two bands, always in the same places: the step filling — and centred in — whatever height is left, and the
           way onward in a fixed-height slot at the bottom, so nothing jumps
           when the button appears. */}
       {step?.kind === "watch" ? (
@@ -430,7 +403,6 @@ export function LessonPlayer({
             leaving ? "stage-swap--out" : ""
           }`}
         >
-          {task}
           <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6">
             {body}
           </div>
