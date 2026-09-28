@@ -51,9 +51,10 @@ export interface Ask {
  */
 export type Question =
   /** Tap the right tile. `show` is what the question is about, drawn above
-      the tiles (an equation made of pictures). `answer` indexes `options`
-      before they are shuffled. */
-  | { type: "pick"; ask: Ask; show?: Face[]; options: Face[]; answer: number }
+      the tiles (an equation made of pictures); `word` is a taught word in
+      clay letters above them instead. `answer` indexes `options` before they
+      are shuffled. */
+  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; options: Face[]; answer: number }
   /** Put `target` things in the basket, by tap or drag. */
   | { type: "count"; ask: Ask; item: { src: StaticImageData; word: string }; target: number }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
@@ -64,7 +65,9 @@ export type Question =
   /** Build the word from its shuffled letters, by tap or drag. */
   | { type: "spell"; ask: Ask; word: string }
   /** Find every thing in the scene that is this shape. */
-  | { type: "find"; ask: Ask; shape: ShapeId; scene: Scene };
+  | { type: "find"; ask: Ask; shape: ShapeId; scene: Scene }
+  /** Put each thing, one at a time, in the box of its shape. */
+  | { type: "sort"; ask: Ask; items: SceneItem[] };
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {

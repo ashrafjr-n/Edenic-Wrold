@@ -138,6 +138,7 @@ export const en = {
     help: "Help",
     startOver: "Start over",
     close: "Close",
+    sortBin: "The {shape} box",
     hearWord: "Hear {word}",
     letterAria: "Letter {letter}",
     playReel: "Play the video",
@@ -153,6 +154,7 @@ export const en = {
     thisIs: "This is a {shape}!",
     spell: "Build the word {word}!",
     findAll: "Find all the {shape}s!",
+    sortAll: "Put each thing in its shape's box!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -163,6 +165,7 @@ export const en = {
     find: "Find",
     pick: "Pick",
     count: "Count",
+    sort: "Sort",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

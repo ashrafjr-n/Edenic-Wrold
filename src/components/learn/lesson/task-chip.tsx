@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Blocks, Ear, Eye, Hand, Pencil, Pointer, Search, X, type LucideIcon } from "lucide-react";
+import { Blocks, Ear, Eye, Hand, Pencil, Pointer, Search, Shapes, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
@@ -19,6 +19,7 @@ const KINDS: Record<TaskKind, { icon: LucideIcon; face: string; edge: string; te
   find: { icon: Search, face: "var(--color-go)", edge: "var(--color-go-dark)", text: "#fff" },
   pick: { icon: Pointer, face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" },
   count: { icon: Hand, face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" },
+  sort: { icon: Shapes, face: "var(--color-bloo)", edge: "var(--color-bloo-dark)", text: "#fff" },
 };
 
 interface TaskChipProps {
@@ -30,7 +31,7 @@ interface TaskChipProps {
   /** The full instruction — the button's name for a screen reader. */
   label: string;
   /** How the step is played, shown in a popup on press. Steps without one
-      (Pick, Count) get the round badge alone. */
+      (a Pick of pictures, Count) get the round badge alone. */
   demo?: TaskDemoDef;
   closeLabel: string;
   dir: "rtl" | "ltr";

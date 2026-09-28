@@ -137,6 +137,7 @@ export const ku: Dictionary = {
     help: "هاریکاری",
     startOver: "ژ نوی",
     close: "دابخە",
+    sortBin: "سندوقا {shape}",
     hearWord: "گوهداری {word} بکە",
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",
@@ -151,6 +152,7 @@ export const ku: Dictionary = {
     thisIs: "ئەڤە {shape}!",
     spell: "پەیڤا {word} چێ بکە!",
     findAll: "هەمی {shape} بدۆزە!",
+    sortAll: "هەر تشتەکی بکە د سندوقا شێوێ وی دا!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -160,6 +162,7 @@ export const ku: Dictionary = {
     find: "بدۆزە",
     pick: "هەلبژێرە",
     count: "بژمێرە",
+    sort: "ڕێک بێخە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

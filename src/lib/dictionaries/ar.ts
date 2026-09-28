@@ -133,6 +133,7 @@ export const ar: Dictionary = {
     help: "مساعدة",
     startOver: "من جديد",
     close: "إغلاق",
+    sortBin: "صندوق {shape}",
     hearWord: "استمع إلى {word}",
     letterAria: "الحرف {letter}",
     playReel: "شغّل الفيديو",
@@ -147,6 +148,7 @@ export const ar: Dictionary = {
     thisIs: "هذا {shape}!",
     spell: "كوّن كلمة {word}!",
     findAll: "ابحث عن كل شكل {shape}!",
+    sortAll: "ضع كل شيء في صندوق شكله!",
   },
   tasks: {
     listen: "استمع",
@@ -156,6 +158,7 @@ export const ar: Dictionary = {
     find: "ابحث",
     pick: "اختر",
     count: "عُدّ",
+    sort: "رتّب",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

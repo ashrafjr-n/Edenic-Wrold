@@ -23,6 +23,7 @@ import { CountGive } from "./count-give";
 import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
+import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
 
 /* Green is "you passed this, carry on"; blue is the ordinary way onward. */
@@ -63,6 +64,8 @@ function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: stri
       return { kind: "build" };
     case "find":
       return { kind: "find", target: `${q.shape}s` };
+    case "sort":
+      return { kind: "sort" };
     case "count":
       return { kind: "count", target: q.item.word };
     case "pick": {
@@ -85,6 +88,15 @@ function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undef
       return { kind: "build", word: q.word, seed };
     case "find":
       return { kind: "find", scene: q.scene, shape: q.shape };
+    case "sort":
+      return { kind: "sort", item: q.items[0] };
+    case "pick": {
+      const answer = q.options[q.answer];
+      const shapes = q.options.flatMap((face) => (face.kind === "shape" ? [face.shape] : []));
+      return q.word && answer.kind === "shape" && shapes.length === q.options.length
+        ? { kind: "pick", word: q.word, options: shapes, answer: answer.shape }
+        : undefined;
+    }
     default:
       return undefined;
   }
@@ -95,6 +107,7 @@ function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undef
 function lessonShapes(lesson: LessonDef): ShapeId[] {
   const shapes = lesson.questions.flatMap((q): ShapeId[] => {
     if (q.type === "trace" || q.type === "find") return [q.shape];
+    if (q.type === "sort") return q.items.flatMap((item) => (item.shape ? [item.shape] : []));
     if (q.type === "pick") {
       const answer = q.options[q.answer];
       return answer.kind === "shape" ? [answer.shape] : [];
@@ -294,6 +307,7 @@ export function LessonPlayer({
         <PickQuestion
           key={seed}
           show={q.show}
+          word={q.word}
           options={q.options}
           answer={q.answer}
           seed={seed}
@@ -367,6 +381,10 @@ export function LessonPlayer({
           </div>
         );
       }
+    } else if (q.type === "sort") {
+      body = (
+        <SortShapes key={seed} items={q.items} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
+      );
     } else if (q.type === "find") {
       body = (
         <FindShapes
