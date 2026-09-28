@@ -13,6 +13,9 @@ const DRAG_THRESHOLD = 8;
 const FLY_MS = 340;
 /** The gap between letters Help puts in, one after another. */
 const HELP_STEP_MS = 420;
+/** How long misplaced letters shake before they fly home — `.anim-wiggle`'s
+    0.5s plus a beat. */
+const WIGGLE_MS = 650;
 
 export interface SpellWordHandle {
   /** Send every misplaced letter back, then put the word together in order. */
@@ -28,7 +31,8 @@ interface SpellWordProps {
   /** Glow the first letter until one is placed — Pinki showing how. */
   hint: boolean;
   onSolved: () => void;
-  /** Every space is full and the word is not right yet. */
+  /** Every space is full and the word is not right yet. The misplaced
+      letters then fly home by themselves, and the child tries again. */
   onMiss: () => void;
   ref?: Ref<SpellWordHandle>;
 }
@@ -62,8 +66,10 @@ function deal(word: string, seed: string): string[] {
  *   anywhere else springs back.
  *
  * Nothing is judged until every space is full: then a right word jumps, and a
- * wrong one shakes the misplaced letters (never a word like "wrong") and the
- * lesson offers Help, which comes in through the ref.
+ * wrong one shakes the misplaced letters (never a word like "wrong") and sends
+ * them home — the right ones stay — so the child can try again as often as
+ * they like. From the second miss the lesson also offers Help, which comes in
+ * through the ref; it is never required.
  *
  * Every move — tap, drop, spring-back, Help — animates the same way: a FLIP.
  * The rects of all tiles are snapshotted before the state changes, and after
@@ -79,6 +85,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
   const [shake, setShake] = useState(0);
   const [solved, setSolved] = useState(false);
   const [helping, setHelping] = useState(false);
+  const [returning, setReturning] = useState(false);
 
   const tileEls = useRef(new Map<number, HTMLButtonElement>());
   const slotEls = useRef<(HTMLDivElement | null)[]>([]);
@@ -90,7 +97,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
 
   const tones = letterTones(word);
   const toneOf = (letter: string) => tones[word.indexOf(letter)];
-  const locked = solved || helping;
+  const locked = solved || helping || returning;
 
   /* ---- The FLIP ---- */
   const snapshot = () => {
@@ -133,7 +140,16 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
     } else {
       setWrong(misplaced);
       setShake((value) => value + 1);
+      setReturning(true);
       onMiss();
+      timers.current.push(
+        window.setTimeout(() => {
+          snapshot();
+          setSlots(next.map((id, i) => (misplaced.includes(i) ? null : id)));
+          setWrong([]);
+          setReturning(false);
+        }, WIGGLE_MS),
+      );
     }
   };
 
@@ -305,7 +321,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
   const showHint = hint && slots.every((id) => id === null) && !drag;
 
   return (
-    <div dir="ltr" className="flex w-full flex-col items-center gap-4 sm:gap-7">
+    <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7">
       <ClayWord word={word} size="md" />
 
       <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6">
