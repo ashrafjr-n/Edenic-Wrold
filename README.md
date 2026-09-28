@@ -204,8 +204,8 @@ rows over her on a phone, a sidebar beside a card grid on a desktop) and its
 Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
-Rectangle, then a Shape review. Every step opens with a **task chip** at the
-top: a clay pill with an icon, one verb ("Draw") and the English word it is
+Rectangle, then a Shape review. Every step opens with a **task chip** beside the
+back button (there is no progress bar): a clay pill with an icon, one verb ("Draw") and the English word it is
 about; tapping it says the instruction. Pinki is no longer a fixed picture up
 there — she leans in from the edge of the screen to cheer a right answer or
 think along after a miss.
@@ -213,7 +213,7 @@ think along after a miss.
 A shape lesson plays its reel full-screen (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
 appears if the browser refuses to start it). Then the word card: a big speaker,
-the shape itself, and the word with each letter in its own clay colour. Then the
+the shape itself (large, on no tile), and the word with each letter in its own clay colour. Then the
 child traces the shape **in one stroke** from a marked start, following
 direction arrows; lifting the finger ends the attempt, and it only passes if the
 stroke went round the whole shape and stayed on the line. A passed shape fills
