@@ -1,53 +1,108 @@
 import type { CSSProperties } from "react";
-import { Trophy, Unlock } from "lucide-react";
+import Image from "next/image";
+import { Lock, LockOpen } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
+import type { ShapeId } from "@/types/course";
+import type { StrokePoint } from "@/types/stroke";
+import { FaceView } from "./face";
+import { ClayWord } from "./clay-word";
+import { PINKI_POSES } from "./pinki-peek";
 
 interface LessonDoneProps {
+  /** "Lesson complete!" */
   title: string;
-  /** "Triangle is open!" — absent after a course's last lesson. */
+  /** The taught word ("circle"), for a one-shape lesson. */
+  word?: string;
+  /** The shapes the lesson was about — one, or all four in a review. */
+  shapes: ShapeId[];
+  /** The child's own passing trace, drawn back beside the shape. */
+  drawing?: readonly StrokePoint[];
+  accent: string;
+  /** "Square is open!" — absent after a course's last lesson. */
   unlocked?: string;
   dir: "rtl" | "ltr";
 }
 
+const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties;
+
 /**
- * The end of a lesson, as a card: a clay trophy, "Lesson complete!", and what
- * it opened. Nothing is scored here — the star lands on the lesson's row.
- * Pinki's line and the Again/Next buttons are the player's, in the same
- * places as on every step.
+ * The end of a lesson, as one celebration in three beats, top to bottom:
+ *
+ * 1. Pinki cheering on a glowing clay disc, confetti bursting round her.
+ * 2. What was learned: the shape, the child's OWN drawing of it (the most
+ *    personal reward there is — no stars or points before sign-in), and the
+ *    word in clay letters.
+ * 3. What is next: a green pill whose padlock springs open, naming the lesson
+ *    it just unlocked.
+ *
+ * The beats arrive one after another (`animation-delay`); Again / Next are the
+ * player's, in the action band as on every step.
  */
-export function LessonDone({ title, unlocked, dir }: LessonDoneProps) {
+export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
   return (
-    <div className="card card-clay-white anim-pop-in relative flex w-full max-w-sm flex-col items-center gap-4 px-6 py-6 text-center sm:max-w-md sm:px-10 sm:py-8">
-      <Celebration />
+    <div className="relative flex w-full max-w-sm flex-col items-center gap-3 text-center sm:max-w-md [@media(max-height:700px)]:gap-2">
+      <div className="relative flex items-end justify-center">
+        <span
+          aria-hidden
+          className="done-glow absolute bottom-0 left-1/2 aspect-square h-[88%] -translate-x-1/2 rounded-full"
+          style={{ backgroundColor: accent }}
+        />
+        <Image
+          src={PINKI_POSES.celebrate}
+          alt=""
+          sizes="140px"
+          preload
+          className="anim-pop-in relative h-[min(8rem,13svh)] w-auto object-contain"
+        />
+        <Celebration />
+      </div>
 
-      <span
-        className="clay flex h-24 w-24 items-center justify-center rounded-full text-white"
-        style={
-          {
-            backgroundColor: "var(--page-accent-color)",
-            "--clay-edge": "var(--page-accent-edge)",
-          } as CSSProperties
-        }
-      >
-        <Trophy className="h-12 w-12" strokeWidth={2} />
-      </span>
-
-      <p dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
+      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl" style={{ animationDelay: "0.2s" }}>
         {title}
       </p>
 
+      <div
+        className="card card-clay-white anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
+        style={{ animationDelay: "0.35s" }}
+      >
+        <div className="flex items-center justify-center gap-3">
+          {shapes.map((shape) => (
+            <span
+              key={shape}
+              className="tile flex h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] items-center justify-center"
+              style={{ "--tile-tint": "var(--background)" } as CSSProperties}
+            >
+              <FaceView face={{ kind: "shape", shape }} size="tile" />
+            </span>
+          ))}
+          {drawing && drawing.length > 1 && (
+            <span
+              className="tile flex h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] items-center justify-center p-2"
+              style={{ "--tile-tint": "var(--background)" } as CSSProperties}
+            >
+              <svg viewBox="0 0 100 100" className="done-drawing h-full w-full" aria-hidden>
+                <polyline
+                  points={drawing.map(([x, y]) => `${x},${y}`).join(" ")}
+                  fill="none"
+                  stroke={accent}
+                  strokeWidth={9}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength={100}
+                />
+              </svg>
+            </span>
+          )}
+        </div>
+        {word && <ClayWord word={word} size="sm" />}
+      </div>
+
       {unlocked && (
-        <div
-          className="clay anim-pop-in flex items-center gap-2 rounded-full px-5 py-2.5"
-          style={
-            {
-              backgroundColor: "var(--color-go)",
-              "--clay-edge": "var(--color-go-dark)",
-              animationDelay: "0.6s",
-            } as CSSProperties
-          }
-        >
-          <Unlock className="h-5 w-5 text-white" strokeWidth={2.75} />
+        <div className="clay anim-pop-in flex items-center gap-2 rounded-full py-2 pe-5 ps-2" style={{ ...GO, animationDelay: "0.8s" }}>
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white text-[var(--color-go-dark)]">
+            <Lock className="done-lock absolute h-5 w-5" strokeWidth={2.75} />
+            <LockOpen className="done-unlock absolute h-5 w-5" strokeWidth={2.75} />
+          </span>
           <span dir={dir} className="text-base font-bold text-white sm:text-lg">
             {unlocked}
           </span>

@@ -28,8 +28,9 @@ type LetterVars = CSSProperties & { "--letter-face": string; "--letter-edge": st
 
 interface ClayWordProps {
   word: string;
-  /** `lg` is the word on its own card; `md` sits above the spelling board. */
-  size?: "lg" | "md";
+  /** `lg` is the word on its own card; `md` sits above the spelling board;
+      `sm` is the word on the done screen. */
+  size?: "lg" | "md" | "sm";
 }
 
 /**
@@ -41,7 +42,9 @@ export function ClayWord({ word, size = "lg" }: ClayWordProps) {
   const tones = letterTones(word);
   const long = word.length > 6;
   const type =
-    size === "lg"
+    size === "sm"
+      ? "text-5xl sm:text-6xl"
+      : size === "lg"
       ? long
         ? "text-6xl sm:text-8xl"
         : "text-7xl sm:text-9xl"
