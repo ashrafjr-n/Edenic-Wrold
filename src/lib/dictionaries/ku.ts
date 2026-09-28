@@ -136,6 +136,7 @@ export const ku: Dictionary = {
     skip: "دەرباز ببە",
     help: "هاریکاری",
     startOver: "ژ نوی",
+    close: "دابخە",
     hearWord: "گوهداری {word} بکە",
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",

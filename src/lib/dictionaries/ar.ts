@@ -132,6 +132,7 @@ export const ar: Dictionary = {
     skip: "تخطٍّ",
     help: "مساعدة",
     startOver: "من جديد",
+    close: "إغلاق",
     hearWord: "استمع إلى {word}",
     letterAria: "الحرف {letter}",
     playReel: "شغّل الفيديو",

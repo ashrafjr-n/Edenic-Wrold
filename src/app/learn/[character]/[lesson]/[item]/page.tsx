@@ -69,7 +69,6 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}
           dict={dict}
-          locale={locale}
           dir={dir}
         />
       </main>

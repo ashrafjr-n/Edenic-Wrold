@@ -11,11 +11,11 @@ import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { LessonDef, Question, ShapeId } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
-import type { Locale } from "@/types/locale";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Button3D } from "@/components/ui/button-3d";
 import { TaskChip, type TaskKind } from "./task-chip";
+import type { TaskDemoDef } from "./task-demo";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { PickQuestion } from "./pick-question";
@@ -72,6 +72,24 @@ function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: stri
   }
 }
 
+/** How a step is played, for the task button's popup — only the steps a
+    shape lesson is made of have one. The spelling demo deals with the
+    board's own seed, so it shows the very letters the child sees. */
+function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undefined {
+  switch (q.type) {
+    case "word":
+      return { kind: "listen", shape: q.shape };
+    case "trace":
+      return { kind: "draw", shape: q.shape, accent };
+    case "spell":
+      return { kind: "build", word: q.word, seed };
+    case "find":
+      return { kind: "find", scene: q.scene, shape: q.shape };
+    default:
+      return undefined;
+  }
+}
+
 /** The shapes a lesson is about, for the done screen: what it traces and
     finds, and the right answers of its picks. */
 function lessonShapes(lesson: LessonDef): ShapeId[] {
@@ -102,7 +120,6 @@ interface LessonPlayerProps {
   /** The character's colour — the lesson wears it. */
   tone: { face: string; edge: string };
   dict: Dictionary;
-  locale: Locale;
   dir: "rtl" | "ltr";
 }
 
@@ -128,7 +145,6 @@ export function LessonPlayer({
   image,
   tone,
   dict,
-  locale,
   dir,
 }: LessonPlayerProps) {
   const complete = useProgress((state) => state.complete);
@@ -209,6 +225,11 @@ export function LessonPlayer({
 
   /* ---- The task chip: what to do on this step ---- */
   let task: ReactNode = null;
+  /* Deals the step's board — and the build demo, so both show one order. */
+  const seed =
+    step?.kind === "question"
+      ? `${characterId}.${courseId}.${n}.${step.index}.${round}.${showing ? "demo" : "play"}`
+      : "";
   if (!finished && step.kind === "question") {
     const q = step.question;
     const { kind, target } = taskFor(q, showing);
@@ -219,7 +240,8 @@ export function LessonPlayer({
         verb={dict.tasks[kind]}
         target={target}
         label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
-        cue={lessonCue.ask(locale, characterId, courseId, n, step.index)}
+        demo={showing ? undefined : demoFor(q, tone.face, seed)}
+        closeLabel={lines.close}
         dir={dir}
       />
     );
@@ -266,7 +288,6 @@ export function LessonPlayer({
     );
   } else if (step.kind === "question") {
     const q = step.question;
-    const seed = `${characterId}.${courseId}.${n}.${step.index}.${round}.${showing ? "demo" : "play"}`;
 
     if (q.type === "pick") {
       body = (
@@ -383,12 +404,11 @@ export function LessonPlayer({
   return (
     <>
       {/* The chrome row: out to the course, and what to do on this step —
-          the task chip, centred between the back button and a spacer of its
-          own width (the spacer yields its room on a phone, where the longest
-          chips — "هەلبژێرە rectangle" — need it). */}
+          the round task button, centred between the back button and a
+          spacer of its own width. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center">{task}</div>
-        <span aria-hidden className="hidden h-14 w-14 shrink-0 sm:block" />
+        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
       </BackRow>
 
       {/* Two bands, always in the same places: the step filling — and centred

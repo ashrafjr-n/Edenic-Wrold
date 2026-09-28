@@ -137,6 +137,7 @@ export const en = {
     skip: "Skip",
     help: "Help",
     startOver: "Start over",
+    close: "Close",
     hearWord: "Hear {word}",
     letterAria: "Letter {letter}",
     playReel: "Play the video",
