@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import type { Stroke, StrokePoint } from "@/types/stroke";
@@ -55,6 +55,49 @@ function along(stroke: Stroke, at: number): { x: number; y: number; angle: numbe
   return { x, y, angle: (Math.atan2(ny - y, nx - x) * 180) / Math.PI };
 }
 
+/** `.clay` as an SVG filter, in board units (the board is ~290px across, so
+    one unit is ~2.9px): the grain's frequency is `--noise`'s 0.85/px scaled
+    to units, at `--noise`'s 0.62 opacity, blended `overlay`. Two octaves, not
+    four — it re-renders on every point of a live stroke, and at this size the
+    extra octaves are invisible. The edge colour is the page's accent edge,
+    as on the start disc. */
+function ClayFilter({ id }: { id: string }) {
+  const edge = { floodColor: "var(--page-accent-edge)" };
+  return (
+    <filter id={id} x="-15%" y="-15%" width="130%" height="130%" colorInterpolationFilters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="2.5" numOctaves={2} stitchTiles="stitch" result="noise" />
+      <feColorMatrix in="noise" type="saturate" values="0" result="grey" />
+      <feComponentTransfer in="grey" result="grain">
+        <feFuncA type="linear" slope="0" intercept="0.62" />
+      </feComponentTransfer>
+      <feBlend in="grain" in2="SourceGraphic" mode="overlay" result="grained" />
+      <feComposite in="grained" in2="SourceAlpha" operator="in" result="body" />
+
+      {/* The insets: the shape's outside, blurred and nudged in from one side. */}
+      <feComponentTransfer in="SourceAlpha" result="outside">
+        <feFuncA type="table" tableValues="1 0" />
+      </feComponentTransfer>
+      <feGaussianBlur in="outside" stdDeviation="1.6" result="outsideBlur" />
+      <feOffset in="outsideBlur" dy="2.2" result="fromTop" />
+      <feFlood floodColor="#fff" floodOpacity="0.45" />
+      <feComposite in2="fromTop" operator="in" />
+      <feComposite in2="SourceAlpha" operator="in" result="highlight" />
+      <feOffset in="outsideBlur" dy="-2.4" result="fromBottom" />
+      <feFlood style={edge} floodOpacity="0.5" />
+      <feComposite in2="fromBottom" operator="in" />
+      <feComposite in2="SourceAlpha" operator="in" result="shade" />
+
+      <feDropShadow in="SourceAlpha" dx="0" dy="3" stdDeviation="2.4" style={edge} floodOpacity="0.45" result="shadow" />
+      <feMerge>
+        <feMergeNode in="shadow" />
+        <feMergeNode in="body" />
+        <feMergeNode in="highlight" />
+        <feMergeNode in="shade" />
+      </feMerge>
+    </filter>
+  );
+}
+
 /**
  * The tracing board: a dotted shape to go round in ONE stroke.
  *
@@ -66,9 +109,16 @@ function along(stroke: Stroke, at: number): { x: number; y: number; angle: numbe
  * - Once passed, the shape fills with colour (`.trace-fill`).
  *
  * The markers are lucide icons laid over the SVG, never drawn in it.
+ *
+ * The child's line and the fill are CLAY, the same as the start disc: the
+ * `.clay` recipe (grain blended `overlay`, a white inset from the top, an
+ * edge-colour inset from the bottom, a tinted drop shadow) rebuilt as one SVG
+ * filter, because a stroke cannot take `background-image` or `box-shadow`.
  */
 export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
+  /* `useId`'s punctuation is not safe inside `url(#…)`. */
+  const clayId = `clay${useId().replace(/[^\w-]/g, "")}`;
   const [active, setActive] = useState<StrokePoint[]>([]);
   const [drawing, setDrawing] = useState(false);
   const [missed, setMissed] = useState(false);
@@ -164,10 +214,9 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         onPointerUp={handleUp}
         onPointerCancel={handleUp}
       >
-        {locked &&
-          guidePaths.map((path, index) => (
-            <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={accent} />
-          ))}
+        <defs>
+          <ClayFilter id={clayId} />
+        </defs>
 
         {inviting &&
           guidePaths.map((path, index) => (
@@ -197,17 +246,23 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             />
           ))}
 
-        {active.length >= MIN_STROKE_POINTS && (
-          <polyline
-            points={active.map(([x, y]) => `${x},${y}`).join(" ")}
-            fill="none"
-            stroke={missed ? "var(--color-miss)" : locked ? "#fff" : accent}
-            strokeOpacity={locked ? 0.55 : 1}
-            strokeWidth={9}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        )}
+        {/* A missed line stays flat: the red flash is a signal, not clay. */}
+        <g filter={missed ? undefined : `url(#${clayId})`}>
+          {locked &&
+            guidePaths.map((path, index) => (
+              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={accent} />
+            ))}
+          {active.length >= MIN_STROKE_POINTS && (
+            <polyline
+              points={active.map(([x, y]) => `${x},${y}`).join(" ")}
+              fill="none"
+              stroke={missed ? "var(--color-miss)" : accent}
+              strokeWidth={9}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
+        </g>
       </svg>
 
       {showMarks &&
