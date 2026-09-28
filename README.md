@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses (Pinki: Shapes and Adding) |
 | `/learn/[character]/[lesson]` | A course: its lessons as rows, unlocked one at a time, with a Continue button to the next one |
-| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): the reel, five questions, then "Lesson complete!". A lesson not written yet shows a "Pinki is getting this lesson ready" card |
+| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word), then "Lesson complete!". A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
@@ -150,9 +150,10 @@ src/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, course cards, the
                       lesson list and its Continue button
-    learn/lesson/     The lesson player: Pinki's coach line, the reel, the
-                      three question types (pick, count, trace), the done
-                      card, and the pieces they are built from
+    learn/lesson/     The lesson player: Pinki's coach line, the full-screen
+                      reel, the word card, the spelling board, the three
+                      question types (pick, count, trace), the done card, and
+                      the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
@@ -176,7 +177,10 @@ public/
   assets/nav-icons/   The phone bottom bar's four masked icons
   assets/learn-with-pinki/  Pinki's teaching poses and her hub banner
   assets/learn/pinki/       Course card art (placeholders until the course
-                            art arrives), then each course's pictures and reels
+                            art arrives), then each course's pictures and
+                            reels (shapes/reels/1–4.mp4 are placeholders cut
+                            from Big Buck Bunny, CC BY 3.0 Blender Foundation,
+                            until the real reels replace them by name)
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -192,15 +196,25 @@ now has two courses, **Shapes** and **Adding**, five lessons each, both open.
 Their pages are real — the hub's course cards, and each course's lesson list,
 which keeps the old number picker's layout (a pinned Pinki with a white sheet of
 rows over her on a phone, a sidebar beside a card grid on a desktop) and its
-Start / Continue / Next Lesson button. Every lesson is the same three steps:
-watch a short reel (skipped until the reel is delivered), answer five questions,
-done. There are three kinds of question — pick the right tile, count things into
-a basket, or trace a shape — and on the first one Pinki shows how. A wrong answer
-only wiggles; after two, the right one glows, so nobody gets stuck. Finishing a
-lesson opens the next. Lesson 1 of each course is written (Circle & Square;
-Putting together); the other eight show Pinki saying they are on their way. The
-shapes are drawn from their own tracing outlines until their clay pictures
-arrive. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
+Start / Continue / Next Lesson button.
+
+**Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
+Rectangle, then a Shape review. A shape lesson plays its reel full-screen (a
+round Skip button spins and moves on; the lesson also moves on by itself when
+the reel ends), then shows the word with a big speaker button and each letter in
+its own clay colour, then the child traces the shape, then builds the word from
+its shuffled letter tiles — tap a tile to send it to the first empty space, or
+drag it into any space. Only once every space is full is the word checked: the
+misplaced letters wiggle and a Help button appears where Next would be, which
+puts the word together in order. The review lesson is four "which one is the …?"
+picks. The reels are placeholders until the real clips arrive.
+
+Other lessons use three kinds of question — pick the right tile, count things
+into a basket, or trace a shape — and on the first one Pinki shows how. A wrong
+answer only wiggles; after two, the right one glows, so nobody gets stuck.
+Finishing a lesson opens the next. Adding has lesson 1 written (Putting
+together); the other four show Pinki saying they are on their way. The shapes
+are drawn from their own tracing outlines until their clay pictures arrive. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
 for but not recorded: every button that will play a sound already calls
 `lib/cue.ts`.
 
@@ -245,7 +259,7 @@ eventual plan.
 
 Planned, in order:
 
-1. Pinki's lesson player, then the Shapes and Adding content (`edenic-plan.md`)
+1. The real Shapes reels and pictures, then the Adding content (`edenic-plan.md`)
 2. Nova's and Bloo's courses, on the same pattern
 3. Voice for every line a child should hear, recorded once the content is done
 4. The trail itself — the path, the stage pages, and progress along it
