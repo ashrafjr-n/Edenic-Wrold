@@ -11,6 +11,30 @@ export type Face =
   | { kind: "shape"; shape: ShapeId }
   | { kind: "text"; text: string };
 
+/** A box in a scene, as percentages of the scene: left, top, width, height. */
+export type SceneRect = readonly [number, number, number, number];
+
+/** One thing lying in a scene. `shape` is what it IS (a plate is a circle);
+    `null` for things that are no taught shape (a kite). */
+export interface SceneItem {
+  id: string;
+  src: StaticImageData;
+  /** English, and the tap target's name. */
+  word: string;
+  shape: ShapeId | null;
+  /** Where its picture (shadow included) sits. */
+  box: SceneRect;
+  /** The thing itself, without its shadow — what a tap has to land on. */
+  hit: SceneRect;
+}
+
+/** A pre-rendered world to find things in: an empty background and the
+    items laid over it, all from one render (`tools/picnic-scene`). */
+export interface Scene {
+  background: StaticImageData;
+  items: SceneItem[];
+}
+
 /** Pinki's question, as a key into `dict.asks` plus its values. The taught
     words in `vars` stay English in every locale. */
 export interface Ask {
@@ -34,10 +58,13 @@ export type Question =
   | { type: "count"; ask: Ask; item: { src: StaticImageData; word: string }; target: number }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
-  /** Meet the word: a big speaker and the English word in clay letters. */
-  | { type: "word"; ask: Ask; word: string }
+  /** Meet the word: a big speaker, the shape it names, and the English word
+      in clay letters. */
+  | { type: "word"; ask: Ask; word: string; shape?: ShapeId }
   /** Build the word from its shuffled letters, by tap or drag. */
-  | { type: "spell"; ask: Ask; word: string };
+  | { type: "spell"; ask: Ask; word: string }
+  /** Find every thing in the scene that is this shape. */
+  | { type: "find"; ask: Ask; shape: ShapeId; scene: Scene };
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
