@@ -54,7 +54,7 @@ interface Drag {
 }
 
 /** The letters in a seeded order that never already spells the word. */
-function deal(word: string, seed: string): string[] {
+export function deal(word: string, seed: string): string[] {
   const letters = shuffle([...word], seed);
   return letters.join("") === word ? [...letters.slice(1), letters[0]] : letters;
 }

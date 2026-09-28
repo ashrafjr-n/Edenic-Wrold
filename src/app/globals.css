@@ -2890,6 +2890,224 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   The task button's demos (`TaskDemo`): one 3.6s loop each, all on the
+   same beat — the finger comes in, taps at ~36%, the thing it tapped
+   answers (a press, rings of sound, a letter flying, a ring drawing, the
+   first part of a stroke), holds, and everything fades for the next loop.
+   Only standalone `translate`/`scale`, so nothing fights a utility.
+   --------------------------------------------------------------- */
+.demo-finger {
+  animation: demo-finger 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-finger {
+  0% {
+    translate: 2.5rem 3rem;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    translate: 0 0;
+    scale: 1;
+  }
+  36% {
+    translate: 0 0;
+    scale: 0.82;
+  }
+  42%,
+  70% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  84%,
+  100% {
+    translate: 2.5rem 3rem;
+    opacity: 0;
+  }
+}
+
+.demo-press {
+  animation: demo-press 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-press {
+  0%,
+  32%,
+  44%,
+  100% {
+    scale: 1;
+  }
+  37% {
+    scale: 0.88;
+  }
+}
+
+.demo-wave {
+  opacity: 0;
+  animation: demo-wave 3.6s ease-out infinite;
+}
+
+.demo-wave--late {
+  animation-delay: 0.35s;
+}
+
+@keyframes demo-wave {
+  0%,
+  37% {
+    opacity: 0;
+    scale: 1;
+  }
+  40% {
+    opacity: 0.6;
+    scale: 1;
+  }
+  72%,
+  100% {
+    opacity: 0;
+    scale: 1.9;
+  }
+}
+
+.demo-fly {
+  animation: demo-fly 3.6s cubic-bezier(0.34, 1.25, 0.5, 1) infinite;
+}
+
+@keyframes demo-fly {
+  0%,
+  38% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  54%,
+  84% {
+    translate: var(--fly-x) var(--fly-y);
+    opacity: 1;
+  }
+  94% {
+    translate: var(--fly-x) var(--fly-y);
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+/* The drawing demo: a dash of 40 (of `pathLength` 100) drawn in from the
+   start, the finger (`.demo-pen`) riding its tip along the same path. */
+.demo-draw {
+  stroke-dasharray: 40 100;
+  animation: demo-draw 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-draw {
+  0%,
+  12% {
+    stroke-dashoffset: 40;
+    opacity: 1;
+  }
+  62%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.demo-pen {
+  offset-path: var(--pen-path);
+  offset-rotate: 0deg;
+  animation: demo-pen 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-pen {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8%,
+  12% {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+  62%,
+  72% {
+    offset-distance: 40%;
+    opacity: 1;
+  }
+  84%,
+  100% {
+    offset-distance: 40%;
+    opacity: 0;
+  }
+}
+
+.demo-ring {
+  fill: none;
+  stroke: var(--color-go);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  vector-effect: non-scaling-stroke;
+  animation: demo-ring 3.6s ease-out infinite;
+}
+
+.demo-ring.find-ring--under {
+  stroke: #fff;
+  stroke-width: 7;
+}
+
+@keyframes demo-ring {
+  0%,
+  38% {
+    stroke-dashoffset: 100;
+    opacity: 1;
+  }
+  52%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.demo-tick {
+  animation: demo-tick 3.6s cubic-bezier(0.34, 1.3, 0.5, 1) infinite;
+}
+
+@keyframes demo-tick {
+  0%,
+  46% {
+    scale: 0;
+  }
+  54%,
+  84% {
+    scale: 1;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    scale: 1;
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------
    The done screen (`LessonDone`): a soft disc of the lesson's colour
    breathing behind Pinki, the child's drawing redrawing itself, and the
    padlock springing open on the "X is open!" pill.
@@ -3244,6 +3462,23 @@ button:disabled,
   .confetti-piece,
   .done-lock {
     display: none;
+  }
+
+  /* The demos hold their "tapped" frame: the finger on the target, the
+     first part drawn, the ring round the thing found. */
+  .demo-finger,
+  .demo-press,
+  .demo-wave,
+  .demo-fly,
+  .demo-draw,
+  .demo-pen,
+  .demo-ring,
+  .demo-tick {
+    animation: none;
+  }
+
+  .demo-pen {
+    offset-distance: 40%;
   }
 
   /* The Again/Next buttons are a TRANSITION, not a keyframe animation, so the

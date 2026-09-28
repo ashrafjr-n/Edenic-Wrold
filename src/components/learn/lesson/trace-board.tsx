@@ -61,7 +61,7 @@ function along(stroke: Stroke, at: number): { x: number; y: number; angle: numbe
     four — it re-renders on every point of a live stroke, and at this size the
     extra octaves are invisible. The edge colour is the page's accent edge,
     as on the start disc. */
-function ClayFilter({ id }: { id: string }) {
+export function ClayFilter({ id }: { id: string }) {
   const edge = { floodColor: "var(--page-accent-edge)" };
   return (
     <filter id={id} x="-15%" y="-15%" width="130%" height="130%" colorInterpolationFilters="sRGB">

@@ -20,7 +20,7 @@ interface FindShapesProps {
   onMiss: () => void;
 }
 
-const place = ([left, top, width, height]: SceneRect): CSSProperties => ({
+export const place = ([left, top, width, height]: SceneRect): CSSProperties => ({
   left: `${left}%`,
   top: `${top}%`,
   width: `${width}%`,
