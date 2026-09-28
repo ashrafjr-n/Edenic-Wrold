@@ -1,4 +1,9 @@
+import type { StaticImageData } from "next/image";
 import type { ShapeId } from "@/types/course";
+import ball from "../../public/assets/learn/pinki/shapes/find/ball.png";
+import toast from "../../public/assets/learn/pinki/shapes/find/toast.png";
+import cheese from "../../public/assets/learn/pinki/shapes/find/cheese.png";
+import book from "../../public/assets/learn/pinki/shapes/find/book.png";
 import type { Stroke } from "@/types/stroke";
 
 /** A closed ring of points around (50, 50) — the circle's centreline. */
@@ -20,20 +25,26 @@ interface ShapeDef {
   strokes: readonly Stroke[];
   /** Its clay colour on a tile. */
   color: string;
+  /** A real thing that is this shape — what a traced shape turns into. From
+      the picnic scene, so it is the same world as the Find activity. */
+  thing: { src: StaticImageData; word: string };
 }
 
 export const SHAPES: Record<ShapeId, ShapeDef> = {
-  circle: { strokes: [ring(36, 32)], color: "var(--brand)" },
+  circle: { strokes: [ring(36, 32)], color: "var(--brand)", thing: { src: ball, word: "ball" } },
   square: {
     strokes: [[[16, 16], [84, 16], [84, 84], [16, 84], [16, 16]]],
     color: "var(--color-go)",
+    thing: { src: toast, word: "toast" },
   },
   triangle: {
     strokes: [[[50, 14], [86, 82], [14, 82], [50, 14]]],
     color: "var(--color-gold)",
+    thing: { src: cheese, word: "cheese" },
   },
   rectangle: {
     strokes: [[[8, 26], [92, 26], [92, 74], [8, 74], [8, 26]]],
     color: "var(--accent)",
+    thing: { src: book, word: "book" },
   },
 };
