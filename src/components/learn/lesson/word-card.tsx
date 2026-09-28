@@ -16,7 +16,7 @@ interface WordCardProps {
  */
 export function WordCard({ word, cue, label }: WordCardProps) {
   return (
-    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-7 px-6 py-9 sm:gap-9 sm:py-12">
+    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-6 px-6 py-7 sm:gap-9 sm:py-12">
       <CueButton cue={cue} label={label} size="xl" invite />
       <ClayWord word={word} />
     </div>

@@ -305,10 +305,10 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
   const showHint = hint && slots.every((id) => id === null) && !drag;
 
   return (
-    <div dir="ltr" className="flex w-full flex-col items-center gap-5 sm:gap-7">
+    <div dir="ltr" className="flex w-full flex-col items-center gap-4 sm:gap-7">
       <ClayWord word={word} size="md" />
 
-      <div className="card card-clay-white relative w-full max-w-xl px-3 py-4 sm:px-6 sm:py-6">
+      <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6">
         <div
           className="grid justify-center gap-1.5 sm:gap-2.5"
           style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}
@@ -332,7 +332,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, ref 
         {dealt.map((_, id) => (
           <span
             key={id}
-            className={`@container relative block h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem] ${
+            className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] ${
               showHint && id === firstLetterTile ? "guide-target" : ""
             }`}
           >
