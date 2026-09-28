@@ -12,12 +12,10 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 import type { LessonDef, Question, ShapeId } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import type { Locale } from "@/types/locale";
-import type { PinkiPose } from "@/types/pinki";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Button3D } from "@/components/ui/button-3d";
 import { TaskChip, type TaskKind } from "./task-chip";
-import { PinkiPeek } from "./pinki-peek";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { PickQuestion } from "./pick-question";
@@ -158,8 +156,6 @@ export function LessonPlayer({
   const spell = useRef<SpellWordHandle>(null);
   /* The child's passing trace, kept for the done screen. */
   const [drawing, setDrawing] = useState<StrokePoint[] | undefined>(undefined);
-  /* Pinki's reactions: each new beat is one peek in from the edge. */
-  const [peek, setPeek] = useState<{ pose: PinkiPose; beat: number }>({ pose: "celebrate", beat: 0 });
 
   useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -202,15 +198,10 @@ export function LessonPlayer({
     });
   const endDemo = () => go(() => setDemo(false));
 
-  const react = (pose: PinkiPose) => setPeek((last) => ({ pose, beat: last.beat + 1 }));
-  const onSolved = () => {
-    setSolved(true);
-    react("celebrate");
-  };
+  const onSolved = () => setSolved(true);
   const onMiss = () => {
     setStepMisses((count) => count + 1);
     setMistakes((count) => count + 1);
-    react("think");
   };
 
   /* ---- The task chip: what to do on this step ---- */
@@ -383,8 +374,6 @@ export function LessonPlayer({
         <div className="flex min-w-0 flex-1 justify-center">{task}</div>
         <span aria-hidden className="hidden h-14 w-14 shrink-0 sm:block" />
       </BackRow>
-
-      <PinkiPeek pose={peek.pose} beat={peek.beat} />
 
       {/* Two bands, always in the same places: the step filling — and centred in — whatever height is left, and the
           way onward in a fixed-height slot at the bottom, so nothing jumps

@@ -6,7 +6,7 @@ import type { ShapeId } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { FaceView } from "./face";
 import { ClayWord } from "./clay-word";
-import { PINKI_POSES } from "./pinki-peek";
+import celebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 
 interface LessonDoneProps {
   /** "Lesson complete!" */
@@ -48,7 +48,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
           style={{ backgroundColor: accent }}
         />
         <Image
-          src={PINKI_POSES.celebrate}
+          src={celebrate}
           alt=""
           sizes="140px"
           preload
