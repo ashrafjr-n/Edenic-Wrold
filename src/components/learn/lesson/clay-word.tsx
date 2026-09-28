@@ -46,8 +46,8 @@ export function ClayWord({ word, size = "lg" }: ClayWordProps) {
         ? "text-6xl sm:text-8xl"
         : "text-7xl sm:text-9xl"
       : long
-        ? "text-5xl sm:text-6xl"
-        : "text-6xl sm:text-7xl";
+        ? "text-6xl"
+        : "text-[5rem] sm:text-7xl";
 
   return (
     <span dir="ltr" aria-label={word} role="img" className={`flex font-bold tracking-wide ${type}`}>
