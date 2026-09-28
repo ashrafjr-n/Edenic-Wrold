@@ -43,6 +43,9 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
  * (the negative top margin), which is what lets her be this big on a phone.
  */
 export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
+  /* One shape and a drawing get big tiles; the review's four shapes and a
+     drawing (five in a row) share the card's width. */
+  const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)]";
   return (
     <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center">
@@ -69,11 +72,11 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
         className="card card-clay-white anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
         style={{ animationDelay: "0.35s" }}
       >
-        <div className="flex items-center justify-center gap-3">
+        <div className={`flex items-center justify-center ${shapes.length > 1 ? "gap-2" : "gap-3"}`}>
           {shapes.map((shape) => (
             <span
               key={shape}
-              className="tile flex h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] items-center justify-center"
+              className={`tile flex items-center justify-center ${tile}`}
               style={{ "--tile-tint": "var(--background)" } as CSSProperties}
             >
               <FaceView face={{ kind: "shape", shape }} size="tile" />
@@ -81,7 +84,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
           ))}
           {drawing && drawing.length > 1 && (
             <span
-              className="tile flex h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] items-center justify-center p-2"
+              className={`tile flex items-center justify-center p-2 ${tile}`}
               style={{ "--tile-tint": "var(--background)" } as CSSProperties}
             >
               <svg viewBox="0 0 100 100" className="done-drawing h-full w-full" aria-hidden>
