@@ -38,12 +38,15 @@ Lessons open one after another.
 
 **The Shapes lesson (approved flow, 2026-09-28 — later courses follow it):**
 
-**On every step:** a **task chip** at the top, beside the back button, where
-the progress bar used to be (no bar any more) — a clay pill with an icon, one
-verb in the child's language ("Draw") and the English word it is about;
-tapping it says the instruction. No Pinki picture, speech bubble or separate
-speaker up there, and no step list: Pinki **peeks in from the screen edge** to
-cheer a right answer or think along after a miss, then slides away.
+**On every step:** a round **task button** at the top, beside the back
+button (no progress bar, no step list): a clay circle with the step's icon.
+It makes no sound. Tapping it opens a popup in the middle of the screen with
+an X, playing a short loop of how the step is done — only the first move,
+never the whole answer (the first letter, the first part of the line, one
+thing found). No Pinki picture or speech bubble anywhere on the steps, and
+no Pinki popping in on a right or wrong answer. Every button (Next, Your
+turn, Start over, Help, Play again) sits in the same spot, a little above
+the bottom bar.
 
 1. **Watch 🎬**: the reel fills the whole screen on a phone (header above,
    bottom bar below; a tall 9:16 frame on tablet/desktop). A round **Skip**
@@ -51,14 +54,15 @@ cheer a right answer or think along after a miss, then slides away.
    reel ends the lesson moves on by itself. If the browser refuses to start
    it, a big **Play** button sits in the middle.
 2. **Word 🔊**: one big speaker button (the word's sound, when audio lands),
-   the shape itself (big, no tile behind it), and the English word under it, every letter its own clay
-   colour. **Next**.
+   the shape itself (big, no tile behind it), and the English word under it,
+   every letter its own clay colour. **Next**.
 3. **Trace ✏️**: Pinki draws it, then the child — in **one stroke**, from a
    clay start disc whose arrow shows the way, with chevrons round the dots.
    Lifting the finger ends the attempt: it passes only if the stroke went
    round the whole shape (90%, easing to 80% after misses) AND stayed on the
-   line (85%); otherwise it flashes red and clears. A pass fills the shape
-   with colour, then it turns into a real thing (circle → ball, square →
+   line (85%); otherwise it flashes red and clears. The line is pink clay
+   with grain, like the start disc; a pass fills the shape in the same clay,
+   then it turns into a real thing (circle → ball, square →
    toast, triangle → cheese, rectangle → book).
 4. **Spell 🔤**: the word on top, empty spaces under it, and its letters as
    shuffled clay tiles under those. **Tap** a tile → it flies to the first
@@ -67,19 +71,21 @@ cheer a right answer or think along after a miss, then slides away.
    celebrate + **Next**; wrong → the misplaced tiles wiggle and fly back
    (the right ones stay) and the child tries again, as often as they like.
    From the **second** miss **Help** also appears where Next goes (optional);
-   Help puts the word together in order, then Next.
-5. **Find 🔍** (when a scene has enough of the shape — the circle lesson for
-   now): a 3D picnic scene; tap every thing that is the shape. Each find gets
+   Help puts the word together in order, then Next. **Start over** shows as
+   soon as a letter is in, and sends every letter back.
+5. **Find 🔍**: a 3D picnic scene, a different blanket per shape, four
+   things of the shape among clearly different ones; tap every thing that
+   is the shape. Each find gets
    a ring and flies into a tray of sockets; wrong taps wiggle; after two
    misses the next one glows. All found → they all jump → **Next**.
-6. **Done ⭐**: Pinki cheering with confetti; the shape beside the child's own
+6. **Done ⭐**: a big Pinki cheering with confetti, high on the screen; the shape beside the child's own
    drawing and the word; a green pill whose padlock springs open on the next
    lesson. *Play again* / *Next lesson*.
 
 **Other lessons (Adding, the review):**
 
 1. **Watch 🎬**: as above.
-2. **Play 🎮**: questions with a progress bar on top.
+2. **Play 🎮**: questions, the round task button on top.
    - Right: bounce + Next.
    - Wrong: soft shake, try again. Never the word "wrong".
    - Wrong twice: the right answer glows. Nobody gets stuck.
@@ -103,9 +109,9 @@ understand every question.
 | # | Lesson | Steps |
 | --- | --- | --- |
 | 1 | Circle | Reel, Word, Trace, Spell `circle`, Find the circles (picnic) |
-| 2 | Square | Reel, Word, Trace, Spell `square` |
-| 3 | Triangle | Reel, Word, Trace, Spell `triangle` |
-| 4 | Rectangle | Reel, Word, Trace, Spell `rectangle` |
+| 2 | Square | Reel, Word, Trace, Spell `square`, Find the squares (mint picnic) |
+| 3 | Triangle | Reel, Word, Trace, Spell `triangle`, Find the triangles (blue picnic) |
+| 4 | Rectangle | Reel, Word, Trace, Spell `rectangle`, Find the rectangles (round yellow picnic) |
 | 5 | Shape review | Pick ×4 (all four shapes) |
 
 ### Adding (up to 10)
@@ -126,8 +132,9 @@ Same lesson steps, same three question types. Only the pictures change.
 - **Bloo:** animals: names, homes, babies, food. Later: weather, my body.
 
 ## 7. Sound
-None yet. Every line a child should hear gets a `say` field and a silent speaker
-button. When all content is done, we list every `say` line and record them in one go.
+None yet. Only the taught English words will be recorded (the word card's big
+speaker). Step instructions are not spoken: the round task button SHOWS how
+instead (decided 2026-09-28).
 
 ## 8. Not now (on purpose)
 Collections, "Is Pinki right?", hint friends, translate button, questions inside
@@ -184,8 +191,14 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       with start/arrows and fill → thing; Find the circles (3D picnic scene);
       new done screen; Play fallback for a blocked reel. Phone measured at
       375x667 and 390x844.
-- [ ] A Find scene for squares, triangles and rectangles (lessons 2–4) —
-      same pipeline, `tools/picnic-scene`.
+- [x] A Find scene for squares, triangles and rectangles (lessons 2–4) —
+      same pipeline, `tools/picnic-scene`, each on its own blanket.
+- [x] Polish round (phone): round silent task button with a how-to popup,
+      no Pinki peek, clay trace line and fill, Start over on Spell, every
+      button in one raised spot, bigger raised Pinki on Done.
+- [ ] Shape review (lesson 5): decide its format — suggestion on the table:
+      a light review game (pick by name, "what shape is the pizza?", a mixed
+      Find, one trace), not an exam.
 - [ ] The 4 real reels replace the placeholders (same file names).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
@@ -216,10 +229,11 @@ pastel colours, soft light, centred, plain white background, no text, no shadow.
 | `public/assets/learn/pinki/adding/` | `apple.png` `cupcake.png` `basket.png` `box.png` `star.png` `ball.png` |
 | `public/assets/learn/pinki/` | `course-shapes.png` `course-adding.png` (card icons) |
 
-**Find scene** (in place): `public/assets/learn/pinki/shapes/find/` —
-`picnic.jpg` (the empty scene) and one PNG per thing (plate, donut, cookie,
-ball, toast, cheese, book, kite), rendered by `tools/picnic-scene` (three.js,
-pastel clay materials, one camera and light). Low-poly downloaded models
+**Find scenes** (in place): `public/assets/learn/pinki/shapes/find/` —
+`picnic.jpg` (the circles' empty scene) and one PNG per thing (plate, donut,
+cookie, ball, toast, cheese, book, kite); `squares/`, `triangles/`,
+`rectangles/` each hold a `ground.jpg` and their things. All rendered by
+`tools/picnic-scene` (three.js, pastel clay materials, one camera and light). Low-poly downloaded models
 (Kenney CC0) were tried and rejected: their "circles" are hexagons.
 
 **Reels** (from the company, vertical mp4, ~25 s):
