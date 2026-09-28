@@ -49,8 +49,10 @@ Lessons open one after another.
    shuffled clay tiles under those. **Tap** a tile → it flies to the first
    empty space; **drag** a tile → any space (a taken space swaps). Tap a placed
    tile to send it back. Nothing is judged until every space is full: right →
-   celebrate + **Next**; wrong → the misplaced tiles wiggle and **Help**
-   appears where Next goes; Help puts the word together in order, then Next.
+   celebrate + **Next**; wrong → the misplaced tiles wiggle and fly back
+   (the right ones stay) and the child tries again, as often as they like.
+   From the **second** miss **Help** also appears where Next goes (optional);
+   Help puts the word together in order, then Next.
 5. **Done ⭐**.
 
 **Other lessons (Adding, the review):**
