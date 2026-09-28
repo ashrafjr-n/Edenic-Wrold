@@ -82,7 +82,22 @@ the bottom bar.
    drawing and the word; a green pill whose padlock springs open on the next
    lesson. *Play again* / *Next lesson*.
 
-**Other lessons (Adding, the review):**
+**The Shape review (lesson 5, approved design 2026-09-28):** no reel; every
+step SHOWS what it is about, so nothing depends on hearing the question.
+
+1. **Sort 🧺**: eight things from the four picnics (donut, ball, present,
+   die, pizza, sandwich, chocolate bar, juice box) come one at a time; the
+   child taps the box of its shape — or drags the thing onto it. Four clay
+   boxes, each with its shape and word; a right box swallows the thing and
+   keeps it as a little picture (the boxes filling up are the progress); a
+   wrong box only wiggles the thing; after two misses the right box glows.
+   All in → the boxes jump → **Next**.
+2. **Pick the word 🔤** ×2: the word in clay letters ("square", then
+   "rectangle" — the pair children mix up) above four shape tiles.
+3. **Trace ✏️**: a triangle, as in the lessons.
+4. **Done ⭐**: all four shapes and the child's triangle; *Finish*.
+
+**Other lessons (Adding):**
 
 1. **Watch 🎬**: as above.
 2. **Play 🎮**: questions, the round task button on top.
@@ -91,13 +106,16 @@ the bottom bar.
    - Wrong twice: the right answer glows. Nobody gets stuck.
 3. **Done ⭐**: a star on the lesson row, then *Next lesson* / *Watch again*.
 
-## 4. Three question types only
+## 4. Question types
 
 | Type | The child | Example |
 | --- | --- | --- |
 | **Pick** | taps 1 of 3–4 big tiles | "Which is the triangle?" · "3 + 2 = ?" |
 | **Count** | taps objects in until there are enough | "Put 4 cupcakes in the box" |
 | **Trace** | draws over a dotted outline | "Draw a circle" |
+| **Sort** | puts each thing in its shape's box (review) | "Put each thing in its shape's box" |
+
+(Shapes also use its own Word, Spell and Find steps — §3.)
 
 **Rule:** each question is one short line + big pictures. In the first question
 of each lesson, Pinki shows how once. A child who can't read yet must still
@@ -112,7 +130,7 @@ understand every question.
 | 2 | Square | Reel, Word, Trace, Spell `square`, Find the squares (mint picnic) |
 | 3 | Triangle | Reel, Word, Trace, Spell `triangle`, Find the triangles (blue picnic) |
 | 4 | Rectangle | Reel, Word, Trace, Spell `rectangle`, Find the rectangles (round yellow picnic) |
-| 5 | Shape review | Pick ×4 (all four shapes) |
+| 5 | Shape review | Sort ×8 things, Pick the word ×2 (square, rectangle), Trace a triangle |
 
 ### Adding (up to 10)
 | # | Lesson | Questions |
@@ -138,7 +156,7 @@ instead (decided 2026-09-28).
 
 ## 8. Not now (on purpose)
 Collections, "Is Pinki right?", hint friends, translate button, questions inside
-the reel, review rounds, more question types. Add one only if testing with
+the reel, review rounds, more question types (Sort is the one exception, added for the Shape review on request). Add one only if testing with
 children shows it's needed.
 
 ---
@@ -196,9 +214,8 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] Polish round (phone): round silent task button with a how-to popup,
       no Pinki peek, clay trace line and fill, Start over on Spell, every
       button in one raised spot, bigger raised Pinki on Done.
-- [ ] Shape review (lesson 5): decide its format — suggestion on the table:
-      a light review game (pick by name, "what shape is the pizza?", a mixed
-      Find, one trace), not an exam.
+- [x] Shape review (lesson 5) rebuilt: Sort (new), two word picks, a
+      trace — measured at 375x667 and 390x844.
 - [ ] The 4 real reels replace the placeholders (same file names).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
