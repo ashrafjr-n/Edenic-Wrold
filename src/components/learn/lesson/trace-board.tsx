@@ -1,46 +1,44 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import type { Stroke, StrokePoint } from "@/types/stroke";
-import { STRICT_ACCURACY, scoreStrokes, scoreTrace, strokeToPath } from "@/lib/trace-score";
+import { sampleStroke, scoreStroke, strokeToPath } from "@/lib/trace-score";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface TraceBoardProps {
   dict: Dictionary["lessonPlayer"];
+  /** The shape's centreline — one closed stroke. */
   strokes: readonly Stroke[];
   accent: string;
-  /** How much of the numeral counts as finished this attempt. It drops with
-      every miss, which is what guarantees a child gets through eventually. */
+  /** How much of the shape one stroke has to go round. It eases a little
+      with every miss, so a child always gets there. */
   minCoverage: number;
-  /** Fired once the child has covered enough of the numeral to be finished. */
-  onFinish: (coverage: number) => void;
-  /** Fired when a real, committed attempt did not land — a scribble, not a
-      child still part-way through drawing. */
+  /** Passed: the stroke the child drew, for the done screen. */
+  onFinish: (stroke: StrokePoint[]) => void;
+  /** A finished stroke that did not pass. */
   onMiss: () => void;
-  /** Frozen once the reward is showing, so the drawing stays on screen. */
+  /** Frozen once passed: the drawing stays, and the shape fills with colour. */
   locked: boolean;
-  /** Letters: EVERY stroke must reach `minCoverage` on its own and the
-      drawing must stay on the shape (`scoreStrokes`). Numerals keep the
-      gentler whole-shape measure. */
-  strict?: boolean;
 }
 
-/** Nothing is committed until the finger has actually travelled — a tap
-    should not leave a dot on the board. */
+/** How much of the stroke must stay on the line. Fixed — this is what keeps
+    a scribble from passing. */
+const MIN_ACCURACY = 0.85;
+
+/** Nothing counts until the finger has actually travelled. */
 const MIN_STROKE_POINTS = 3;
 
-/** A new point is only kept if it's at least this far (board units, out of
-    100) from the last one. `pointermove` can fire dozens of times a second
-    even while a finger barely moves, and every one of those was landing in
-    `active` unfiltered — a slow or hesitant trace (exactly the numerals with
-    longer strokes, like 3 or 8) could pile up thousands of near-duplicate
-    points. Since scoring and re-rendering both cost roughly O(point count),
-    and every `setActive` call was already re-copying the whole array, that
-    is real O(n²) work piling up mid-stroke — the actual cause of the
-    reported freezing/lag while drawing, not a one-off glitch. */
-const MIN_POINT_DISTANCE = 0.8;
-const MIN_POINT_DISTANCE_SQUARED = MIN_POINT_DISTANCE * MIN_POINT_DISTANCE;
+/** A point is only kept if it is this far (board units) from the last one —
+    `pointermove` fires far more often than a finger moves. */
+const MIN_POINT_DISTANCE_SQUARED = 0.8 * 0.8;
+
+/** How long a missed stroke stays, red and shaking, before it clears. */
+const MISS_FLASH_MS = 550;
+
+/** Where the little direction chevrons sit along the shape. */
+const CHEVRONS = [0.25, 0.5, 0.75];
 
 function distanceSquared(a: StrokePoint, b: StrokePoint): number {
   const dx = a[0] - b[0];
@@ -48,242 +46,199 @@ function distanceSquared(a: StrokePoint, b: StrokePoint): number {
   return dx * dx + dy * dy;
 }
 
-/** After the pen lifts on an attempt that did NOT pass, the child gets this
-    long to carry on before it is judged — a 4 is three strokes and a small
-    child pauses between them, so a numeral must never be failed mid-way.
-    Starting another stroke cancels the pending judgement outright.
+/** The point `at` (0–1) of the way along a stroke, and the way it is heading. */
+function along(stroke: Stroke, at: number): { x: number; y: number; angle: number } {
+  const points = sampleStroke(stroke);
+  const i = Math.min(points.length - 2, Math.max(0, Math.round(at * (points.length - 1))));
+  const [x, y] = points[i];
+  const [nx, ny] = points[i + 1];
+  return { x, y, angle: (Math.atan2(ny - y, nx - x) * 180) / Math.PI };
+}
 
-    This replaced a raw "has drawn at least N points" threshold, which was
-    the wrong measure twice over: it never fired at all for a small wrong
-    scribble (so a failed attempt just sat there, with no red, no clearing
-    and no way on except pressing "Try Again"), and its calibration silently
-    depended on how many `pointermove` events the device happened to fire. */
-const JUDGE_DELAY_MS = 1400;
-
-/** Strict boards wait longer: a letter can be four strokes (E), and every
-    one of them now has to be there, so a pause between two must not be
-    judged as the child being done. */
-const STRICT_JUDGE_DELAY_MS = 2600;
-
-/** How long the wrong stroke stays on screen, shaking and red, before it
-    clears itself for another try — long enough to register as feedback,
-    short enough that a child isn't left waiting to draw again. */
-const MISS_FLASH_MS = 550;
-
-export function TraceBoard({
-  strokes,
-  accent,
-  minCoverage,
-  onFinish,
-  onMiss,
-  locked,
-  dict,
-  strict = false,
-}: TraceBoardProps) {
+/**
+ * The tracing board: a dotted shape to go round in ONE stroke.
+ *
+ * - A clay disc marks where to start, its arrow pointing the way; small
+ *   chevrons along the dots show the way round.
+ * - Lifting the finger ends the attempt. It passes only if the stroke went
+ *   round (almost) all of the shape AND stayed on the line; anything else
+ *   flashes red, shakes, and clears itself — there is no second stroke.
+ * - Once passed, the shape fills with colour (`.trace-fill`).
+ *
+ * The markers are lucide icons laid over the SVG, never drawn in it.
+ */
+export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
-  const [drawn, setDrawn] = useState<StrokePoint[][]>([]);
   const [active, setActive] = useState<StrokePoint[]>([]);
-  /* True for the brief shake-and-red window right after a committed miss,
-     before the board clears itself and the child can draw again. */
+  const [drawing, setDrawing] = useState(false);
   const [missed, setMissed] = useState(false);
-  const missTimeoutRef = useRef<number | null>(null);
-  /* The pending "has the child stopped drawing yet?" judgement. */
-  const judgeTimeoutRef = useRef<number | null>(null);
+  const missTimer = useRef<number | null>(null);
 
-  const cancelJudge = useCallback(() => {
-    if (judgeTimeoutRef.current !== null) {
-      window.clearTimeout(judgeTimeoutRef.current);
-      judgeTimeoutRef.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (missTimeoutRef.current !== null) {
-        window.clearTimeout(missTimeoutRef.current);
-      }
-      if (judgeTimeoutRef.current !== null) {
-        window.clearTimeout(judgeTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  /* Client pixels → the strokes' own 0–100 square, so the score means the
-     same thing whatever the board is sized to. */
-  const toBoardPoint = useCallback(
-    (event: ReactPointerEvent<SVGSVGElement>): StrokePoint | null => {
-      const bounds = surfaceRef.current?.getBoundingClientRect();
-      if (!bounds || bounds.width === 0) return null;
-
-      return [
-        ((event.clientX - bounds.left) / bounds.width) * 100,
-        ((event.clientY - bounds.top) / bounds.height) * 100,
-      ];
+  useEffect(
+    () => () => {
+      if (missTimer.current !== null) window.clearTimeout(missTimer.current);
     },
     [],
   );
+
+  const toBoardPoint = (event: ReactPointerEvent<SVGSVGElement>): StrokePoint | null => {
+    const bounds = surfaceRef.current?.getBoundingClientRect();
+    if (!bounds || bounds.width === 0) return null;
+    return [
+      ((event.clientX - bounds.left) / bounds.width) * 100,
+      ((event.clientY - bounds.top) / bounds.height) * 100,
+    ];
+  };
 
   const handleDown = (event: ReactPointerEvent<SVGSVGElement>) => {
     if (locked) return;
     const point = toBoardPoint(event);
     if (!point) return;
-
-    /* Still working — whatever is drawn so far must not be judged yet. */
-    cancelJudge();
-
-    /* Touching during the red miss flash skips the rest of it and starts a
-       clean board immediately, rather than making the child wait it out. */
-    if (missed) {
-      if (missTimeoutRef.current !== null) {
-        window.clearTimeout(missTimeoutRef.current);
-        missTimeoutRef.current = null;
-      }
-      setMissed(false);
-      setDrawn([]);
+    /* Touching during the red flash starts a clean board straight away. */
+    if (missTimer.current !== null) {
+      window.clearTimeout(missTimer.current);
+      missTimer.current = null;
     }
-
-    /* Capture, so a finger that slides off the board keeps drawing instead of
-       silently ending the stroke mid-numeral. */
+    setMissed(false);
     event.currentTarget.setPointerCapture(event.pointerId);
+    setDrawing(true);
     setActive([point]);
   };
 
   const handleMove = (event: ReactPointerEvent<SVGSVGElement>) => {
-    if (locked || active.length === 0) return;
+    if (locked || !drawing) return;
     const point = toBoardPoint(event);
     if (!point) return;
-
     setActive((points) => {
       const last = points[points.length - 1];
-      /* Returning the SAME array (not a copy) when the point is too close
-         also lets React skip the re-render entirely for that event. */
-      if (last && distanceSquared(last, point) < MIN_POINT_DISTANCE_SQUARED) {
-        return points;
-      }
+      if (last && distanceSquared(last, point) < MIN_POINT_DISTANCE_SQUARED) return points;
       return [...points, point];
     });
   };
 
   const handleUp = (event: ReactPointerEvent<SVGSVGElement>) => {
-    if (locked || active.length === 0) return;
-    /* Guarded: on `pointercancel` the browser has ALREADY released the
-       capture, and releasing it again throws `NotFoundError` — which used to
-       abort this handler before it could clear `active`, leaving the board in
-       a state where moving the pointer kept drawing with nothing pressed. */
+    if (locked || !drawing) return;
+    /* On `pointercancel` the browser has already released the capture. */
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
+    setDrawing(false);
 
-    const finished = active.length >= MIN_STROKE_POINTS ? [...drawn, active] : drawn;
-    setDrawn(finished);
-    setActive([]);
-
-    /* Nothing real on the board yet — a stray tap is not an attempt. */
-    if (finished.length === 0) return;
-
-    /* Scored on every pen-up rather than behind a "Done" button: a numeral
-       like 4 takes two strokes, so passing is checked immediately but FAILING
-       waits — the child gets `JUDGE_DELAY_MS` to carry on before the attempt
-       is called a miss, and any new stroke cancels that judgement. */
-    if (strict) {
-      const { weakest, accuracy } = scoreStrokes(strokes, finished);
-      if (weakest >= minCoverage && accuracy >= STRICT_ACCURACY) {
-        onFinish(weakest);
-        return;
-      }
-    } else {
-      const result = scoreTrace(strokes, finished);
-      if (result.coverage >= minCoverage) {
-        onFinish(result.coverage);
-        return;
-      }
+    /* A tap is not an attempt. */
+    if (active.length < MIN_STROKE_POINTS) {
+      setActive([]);
+      return;
     }
 
-    cancelJudge();
-    judgeTimeoutRef.current = window.setTimeout(() => {
-      judgeTimeoutRef.current = null;
-      /* The wrong stroke shakes and turns red right where it is, then clears
-         itself — the child never has to press anything to go again. */
-      setMissed(true);
-      onMiss();
-      missTimeoutRef.current = window.setTimeout(() => {
-        setDrawn([]);
-        setMissed(false);
-        missTimeoutRef.current = null;
-      }, MISS_FLASH_MS);
-    }, strict ? STRICT_JUDGE_DELAY_MS : JUDGE_DELAY_MS);
+    const { coverage, accuracy } = scoreStroke(strokes, active);
+    if (coverage >= minCoverage && accuracy >= MIN_ACCURACY) {
+      onFinish(active);
+      return;
+    }
+
+    setMissed(true);
+    onMiss();
+    missTimer.current = window.setTimeout(() => {
+      missTimer.current = null;
+      setMissed(false);
+      setActive([]);
+    }, MISS_FLASH_MS);
   };
 
   const guidePaths = strokes.map(strokeToPath);
-  const livePaths = [...drawn, active].filter(
-    (stroke) => stroke.length >= MIN_STROKE_POINTS,
-  );
-
-  /* The invitation to start, and only that: a halo under the dots while the
-     board is still blank. The moment the child puts a finger down the thing
-     worth looking at is their own line, so it goes — a glow under a stroke
-     being drawn competes with it instead of guiding it. It stays away once
-     the trace is passed, too. */
-  const inviting = !locked && drawn.length === 0 && active.length === 0;
+  const start = along(strokes[0], 0);
+  const showMarks = !locked && !drawing && !missed;
+  const inviting = showMarks && active.length === 0;
 
   return (
-    <svg
-      ref={surfaceRef}
-      viewBox="0 0 100 100"
-      role="img"
-      aria-label={dict.traceInstruction}
-      /* `touch-action: none` is what stops a drag from scrolling the page
-         instead of drawing — the whole activity depends on it. */
-      className={`h-full w-full touch-none select-none ${missed ? "anim-wiggle" : ""}`}
-      onPointerDown={handleDown}
-      onPointerMove={handleMove}
-      onPointerUp={handleUp}
-      onPointerCancel={handleUp}
-    >
-      {/* Under the dots, never over them: a much wider copy of the very same
-          path, breathing in the character's accent. Drawn from `guidePaths`
-          rather than a second definition so the halo can never sit anywhere
-          but exactly on the line the child is being asked to follow. */}
-      {inviting &&
-        guidePaths.map((path, index) => (
-          <path
-            key={`guide-glow-${index}`}
-            className="trace-guide-glow"
-            d={path}
+    <div className="relative h-full w-full">
+      <svg
+        ref={surfaceRef}
+        viewBox="0 0 100 100"
+        role="img"
+        aria-label={dict.traceInstruction}
+        /* `touch-action: none`, or the finger scrolls the page instead. */
+        className={`h-full w-full touch-none select-none ${missed ? "anim-wiggle" : ""}`}
+        onPointerDown={handleDown}
+        onPointerMove={handleMove}
+        onPointerUp={handleUp}
+        onPointerCancel={handleUp}
+      >
+        {locked &&
+          guidePaths.map((path, index) => (
+            <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={accent} />
+          ))}
+
+        {inviting &&
+          guidePaths.map((path, index) => (
+            <path
+              key={`glow-${index}`}
+              className="trace-guide-glow"
+              d={path}
+              fill="none"
+              stroke={accent}
+              strokeWidth={20}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          ))}
+
+        {!locked &&
+          guidePaths.map((path, index) => (
+            <path
+              key={`guide-${index}`}
+              d={path}
+              fill="none"
+              stroke="var(--color-locked-dark)"
+              strokeWidth={9}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray="0 11.5"
+            />
+          ))}
+
+        {active.length >= MIN_STROKE_POINTS && (
+          <polyline
+            points={active.map(([x, y]) => `${x},${y}`).join(" ")}
             fill="none"
-            stroke={accent}
-            strokeWidth={20}
+            stroke={missed ? "var(--color-miss)" : locked ? "#fff" : accent}
+            strokeOpacity={locked ? 0.55 : 1}
+            strokeWidth={9}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        ))}
+        )}
+      </svg>
 
-      {guidePaths.map((path, index) => (
-        <path
-          key={`guide-${index}`}
-          d={path}
-          fill="none"
-          stroke="var(--color-locked-dark)"
-          strokeWidth={9}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          /* Round caps on a zero-length dash: the guide reads as a row of
-             dots, not as a chopped-up line. */
-          strokeDasharray="0 11.5"
-        />
-      ))}
+      {showMarks &&
+        CHEVRONS.map((at) => {
+          const mark = along(strokes[0], at);
+          return (
+            <span
+              key={at}
+              aria-hidden
+              className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[var(--color-ink-soft)]"
+              style={{ left: `${mark.x}%`, top: `${mark.y}%`, rotate: `${mark.angle}deg` }}
+            >
+              <ChevronRight className="h-5 w-5" strokeWidth={3.25} />
+            </span>
+          );
+        })}
 
-      {livePaths.map((stroke, index) => (
-        <polyline
-          key={`drawn-${index}`}
-          points={stroke.map(([x, y]) => `${x},${y}`).join(" ")}
-          fill="none"
-          stroke={missed ? "var(--color-miss)" : accent}
-          strokeWidth={9}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      ))}
-    </svg>
+      {showMarks && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${start.x}%`, top: `${start.y}%` }}
+        >
+          <span
+            className="trace-start clay flex h-11 w-11 items-center justify-center rounded-full text-white sm:h-12 sm:w-12"
+            style={{ backgroundColor: accent, "--clay-edge": "var(--page-accent-edge)" } as CSSProperties}
+          >
+            <ArrowRight className="h-6 w-6" strokeWidth={3} style={{ rotate: `${start.angle}deg` }} />
+          </span>
+        </span>
+      )}
+    </div>
   );
 }

@@ -2,23 +2,15 @@ import type { Stroke, StrokePoint } from "@/types/stroke";
 
 /** Everything below works in the strokes' own 0–100 square. */
 const GUIDE_STEP = 1.6;
-/** How far off the line a child may be and still count as "on it". Generous
-    on purpose: this is a four-year-old with a fingertip, and the reward is
-    encouragement, not assessment. */
-const TOLERANCE = 10;
+/** How far off the line a point may be and still count as ON it. The dotted
+    guide is 9 wide, so this is about a finger's width either side of it. */
+const TOLERANCE = 8;
 
-/** Below this, the child clearly has not finished yet — keep the pen down and
-    say nothing rather than scoring a half-drawn numeral. */
-export const MIN_COVERAGE = 0.55;
-
-const THREE_STAR_SCORE = 0.82;
-const TWO_STAR_SCORE = 0.6;
-
-export interface TraceResult {
-  /** How much of the guide the child actually went over, 0–1. */
+export interface TraceScore {
+  /** How much of the shape the stroke went round, 0–1. */
   coverage: number;
-  /** 1–3. Never 0: finishing at all is the achievement here. */
-  stars: number;
+  /** How much of the stroke stayed on the shape, 0–1. */
+  accuracy: number;
 }
 
 function distanceSquared(a: StrokePoint, b: StrokePoint): number {
@@ -58,91 +50,29 @@ export function sampleStroke(stroke: Stroke): StrokePoint[] {
 
 function isNear(point: StrokePoint, candidates: StrokePoint[]): boolean {
   const limit = TOLERANCE * TOLERANCE;
-  return candidates.some(
-    (candidate) => distanceSquared(point, candidate) <= limit,
-  );
+  return candidates.some((candidate) => distanceSquared(point, candidate) <= limit);
 }
 
 /**
- * Compares what the child drew against the numeral's guide.
- *
- * Two halves, because either one alone is easy to cheat: COVERAGE asks how
- * much of the numeral was travelled (scribbling in one corner scores badly),
- * ACCURACY asks how much of the drawing stayed on it (scribbling over the
- * whole box scores badly). Coverage weighs more — a child who follows the
- * shape but wanders should still be praised.
+ * Scores ONE stroke against the shape. Two halves, because either alone is
+ * easy to cheat: COVERAGE asks how much of the shape was travelled (half a
+ * circle scores half), ACCURACY asks how much of the stroke stayed on it (a
+ * scribble over the whole board covers everything but is mostly off the
+ * line). The board asks for both to be high.
  */
-export function scoreTrace(
-  guideStrokes: readonly Stroke[],
-  drawn: readonly StrokePoint[][],
-): TraceResult {
+export function scoreStroke(guideStrokes: readonly Stroke[], drawn: readonly StrokePoint[]): TraceScore {
   const guidePoints = guideStrokes.flatMap(sampleStroke);
-  const drawnPoints = drawn.flat();
+  const drawnPoints = sampleStroke(drawn);
+  if (guidePoints.length === 0 || drawnPoints.length < 2) return { coverage: 0, accuracy: 0 };
 
-  if (guidePoints.length === 0 || drawnPoints.length === 0) {
-    return { coverage: 0, stars: 1 };
-  }
-
-  const covered = guidePoints.filter((point) =>
-    isNear(point, drawnPoints),
-  ).length;
-  const onGuide = drawnPoints.filter((point) =>
-    isNear(point, guidePoints),
-  ).length;
-
-  const coverage = covered / guidePoints.length;
-  const accuracy = onGuide / drawnPoints.length;
-  const score = coverage * 0.65 + accuracy * 0.35;
-
-  const stars =
-    score >= THREE_STAR_SCORE ? 3 : score >= TWO_STAR_SCORE ? 2 : 1;
-
-  return { coverage, stars };
-}
-
-/** A guide stroke shorter than this is a DOT (i, j). It is drawn, but a child
-    who skips it is not held to it — a tap is not a stroke. */
-const DOT_LENGTH = 6;
-
-/** Strict tracing (the letters): how much of the drawing must stay ON the
-    letter. Without it a scribble over the whole board covers every stroke. */
-export const STRICT_ACCURACY = 0.6;
-
-export interface StrokeScore {
-  /** Coverage of the LEAST-covered stroke, 0–1 — so every stroke counts. */
-  weakest: number;
-  /** How much of the drawing stayed on the letter, 0–1. */
-  accuracy: number;
-}
-
-/**
- * Stroke by stroke, for letters. `scoreTrace` measures coverage of the
- * whole shape, which lets one long stroke carry a letter: B's two bumps are
- * most of its length, so a child could skip the stem and still pass. Here
- * each stroke is covered on its own, and the weakest one decides.
- */
-export function scoreStrokes(
-  guideStrokes: readonly Stroke[],
-  drawn: readonly StrokePoint[][],
-): StrokeScore {
-  const drawnPoints = drawn.flat();
-  const allGuide = guideStrokes.flatMap(sampleStroke);
-  if (drawnPoints.length === 0 || allGuide.length === 0) return { weakest: 0, accuracy: 0 };
-
-  const coverages = guideStrokes
-    .filter((stroke) => strokeLength(stroke) >= DOT_LENGTH)
-    .map((stroke) => {
-      const points = sampleStroke(stroke);
-      return points.filter((point) => isNear(point, drawnPoints)).length / points.length;
-    });
-  const accuracy =
-    drawnPoints.filter((point) => isNear(point, allGuide)).length / drawnPoints.length;
-
-  return { weakest: Math.min(...coverages), accuracy };
+  return {
+    coverage: guidePoints.filter((point) => isNear(point, drawnPoints)).length / guidePoints.length,
+    accuracy: drawnPoints.filter((point) => isNear(point, guidePoints)).length / drawnPoints.length,
+  };
 }
 
 /** How long a stroke is, in the strokes' own 0–100 units. Used to set the
-    dash length that makes the numeral draw itself in `StrokeDemo`. */
+    dash length that makes the shape draw itself in `StrokeDemo`. */
 export function strokeLength(stroke: Stroke): number {
   let total = 0;
   for (let i = 0; i < stroke.length - 1; i += 1) {
