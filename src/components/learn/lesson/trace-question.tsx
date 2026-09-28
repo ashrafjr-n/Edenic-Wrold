@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import type { Stroke, StrokePoint } from "@/types/stroke";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import { NextButton } from "@/components/ui/morph-button";
 import { Celebration } from "@/components/ui/celebration";
 import { StrokeDemo } from "./stroke-demo";
 import { TraceBoard } from "./trace-board";
@@ -14,17 +13,15 @@ import { TraceBoard } from "./trace-board";
     but never so far that half a shape passes. */
 const TRACE_COVERAGE = [0.9, 0.85, 0.8];
 
-const BRAND_TONE = { face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" };
-
 interface TraceQuestionProps {
   strokes: readonly Stroke[];
   accent: string;
   /** What the finished shape becomes — a circle turns into a ball. */
   reward: { src: StaticImageData; word: string };
   dict: Dictionary["lessonPlayer"];
-  dir: "rtl" | "ltr";
-  /** The demo ended and the board is up. */
-  onBoard: () => void;
+  /** The demo is over and the board is up — the player's "Your turn!"
+      button, in the action band like every other button. */
+  board: boolean;
   /** Passed, with the stroke the child drew (the done screen shows it). */
   onSolved: (stroke: StrokePoint[]) => void;
   onMiss: () => void;
@@ -36,8 +33,7 @@ interface TraceQuestionProps {
  * A pass fills the shape with colour, and then it turns into a real thing
  * (`reward`), so the shape is something from the child's world.
  */
-export function TraceQuestion({ strokes, accent, reward, dict, dir, onBoard, onSolved, onMiss }: TraceQuestionProps) {
-  const [board, setBoard] = useState(false);
+export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, onMiss }: TraceQuestionProps) {
   const [misses, setMisses] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -81,18 +77,6 @@ export function TraceQuestion({ strokes, accent, reward, dict, dir, onBoard, onS
         </div>
         {finished && <Celebration />}
       </div>
-
-      {!board && (
-        <NextButton
-          label={dict.yourTurn}
-          tone={BRAND_TONE}
-          onPress={() => {
-            setBoard(true);
-            onBoard();
-          }}
-          dir={dir}
-        />
-      )}
     </div>
   );
 }

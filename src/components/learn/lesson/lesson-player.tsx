@@ -351,14 +351,16 @@ export function LessonPlayer({
           accent={tone.face}
           reward={SHAPES[q.shape].thing}
           dict={lines}
-          dir={dir}
-          onBoard={() => setBoard(true)}
+          board={board}
           onSolved={(stroke) => {
             setDrawing(stroke);
             onSolved();
           }}
           onMiss={onMiss}
         />
+      );
+      action = board ? null : (
+        <NextButton label={lines.yourTurn} tone={BRAND_TONE} onPress={() => setBoard(true)} dir={dir} />
       );
     }
     if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;
@@ -375,9 +377,11 @@ export function LessonPlayer({
         <span aria-hidden className="hidden h-14 w-14 shrink-0 sm:block" />
       </BackRow>
 
-      {/* Two bands, always in the same places: the step filling — and centred in — whatever height is left, and the
-          way onward in a fixed-height slot at the bottom, so nothing jumps
-          when the button appears. */}
+      {/* Two bands, always in the same places: the step filling — and centred
+          in — whatever height is left, and the way onward in a fixed-height
+          slot at the bottom, so nothing jumps when the button appears. On a
+          phone the slot stands a little clear of the tab bar (`pb`) — the
+          same lift on every step, so every button sits in one spot. */}
       {step?.kind === "watch" ? (
         <div
           key={`${round}-${at}`}
@@ -388,11 +392,11 @@ export function LessonPlayer({
       ) : (
         <div
           key={`${round}-${at}-${demo}`}
-          className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pt-5 sm:px-8 sm:pt-7 ${
+          className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:px-8 sm:pb-0 sm:pt-7 ${
             leaving ? "stage-swap--out" : ""
           }`}
         >
-          <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6">
+          <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
             {body}
           </div>
           <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
