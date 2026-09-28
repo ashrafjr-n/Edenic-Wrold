@@ -12,9 +12,19 @@
 </head>
 <body>
 <script type="module">
+/*
+ * The Find scenes, one per shape lesson: `scene.html?scene=picnic` (circles),
+ * `squares`, `triangles`, `rectangles`. Same grass, light, camera and clay in
+ * all of them; each has its own blanket and its own things — four of the
+ * lesson's shape and a few clearly different ones (never a square in the
+ * rectangle scene or the other way round, and no blanket pattern in the
+ * shape being looked for).
+ */
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+
+const SCENE = new URLSearchParams(location.search).get("scene") || "picnic";
 
 const W = 1000, H = 1250;              // 4:5 — the phone's stage
 const VIEW_W = 6.4;                      // world units across
@@ -74,6 +84,438 @@ function roundedShapeExtrude(shape, depth, bevel) {
   return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 8, curveSegments: 64 });
 }
 
+/* A flat 2D shape lying on the ground, `height` thick. */
+function flat(shape, height, bevel, material) {
+  const geo = roundedShapeExtrude(shape, height, bevel);
+  geo.center();
+  const m = mesh(geo, material);
+  m.rotation.x = -Math.PI / 2;
+  m.position.y = height / 2 + bevel;
+  return m;
+}
+
+const BH = 0.12;
+const ON_BLANKET = BH + 0.01;
+
+/* ---------- The blankets ---------- */
+const BLANKETS = {
+  // pink with cream stripes — the circles' picnic
+  pinkStripes() {
+    const g = new THREE.Group();
+    const BW = 5.7, BD = 4.7;
+    g.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0xf58fb8, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    for (let i = -2; i <= 2; i++) {
+      const stripe = mesh(new RoundedBoxGeometry(0.5, 0.02, BD - 0.02, 2, 0.01), clay(0xffe3ee, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 }));
+      stripe.position.set(i * 1.1, BH / 2, 0);
+      g.add(stripe);
+    }
+    g.position.set(0, BH / 2, 0.05);
+    g.rotation.y = -0.06;
+    return g;
+  },
+  // mint with three wide cream bands across — the squares' picnic
+  mintBands() {
+    const g = new THREE.Group();
+    const BW = 5.7, BD = 4.8;
+    g.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0x8fdcc0, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    for (const z of [-1.5, 0, 1.5]) {
+      const band = mesh(new RoundedBoxGeometry(BW - 0.02, 0.02, 0.34, 2, 0.01), clay(0xf2fff8, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 }));
+      band.position.set(0, BH / 2, z);
+      g.add(band);
+    }
+    g.position.set(0, BH / 2, 0.05);
+    g.rotation.y = 0.05;
+    return g;
+  },
+  // sky blue with thin cream stripes down it — the triangles' picnic
+  blueStripes() {
+    const g = new THREE.Group();
+    const BW = 5.7, BD = 4.8;
+    g.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0x8cc4f2, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    for (let i = -3; i <= 3; i++) {
+      const stripe = mesh(new RoundedBoxGeometry(0.16, 0.02, BD - 0.02, 2, 0.01), clay(0xeef7ff, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 }));
+      stripe.position.set(i * 0.8, BH / 2, 0);
+      g.add(stripe);
+    }
+    g.position.set(0, BH / 2, 0.05);
+    g.rotation.y = -0.04;
+    return g;
+  },
+  // a round sunny-yellow blanket with a cream ring — the rectangles' picnic
+  yellowRound() {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.CylinderGeometry(2.75, 2.75, BH, 160), clay(0xffd873, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    const ring = mesh(new THREE.TorusGeometry(2.45, 0.09, 12, 160), clay(0xfff6dc, { clearcoat: 0.05, roughness: 0.9 }));
+    ring.rotation.x = Math.PI / 2;
+    ring.scale.z = 0.25;
+    ring.position.y = BH / 2;
+    g.add(ring);
+    g.position.set(0, BH / 2, 0.1);
+    return g;
+  },
+};
+
+/* ---------- The things ---------- */
+const ITEMS = {
+  plate() {
+    const g = new THREE.Group();
+    g.add(mesh(lathe([[0, 0.0], [0.62, 0.0], [0.7, 0.04], [0.74, 0.1], [0.98, 0.16], [1.02, 0.2], [0.99, 0.23], [0.72, 0.15], [0.6, 0.07], [0, 0.07]]), clay(0xfffaf0, { clearcoat: 0.8, clearcoatRoughness: 0.15, roughness: 0.35 })));
+    const rim = mesh(new THREE.TorusGeometry(0.97, 0.035, 24, 160), clay(0x8cc8f5));
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.215;
+    g.add(rim);
+    return g;
+  },
+  donut() {
+    const g = new THREE.Group();
+    const dough = mesh(new THREE.TorusGeometry(0.5, 0.26, 48, 160), clay(0xe9b574));
+    dough.rotation.x = Math.PI / 2;
+    dough.scale.set(1, 1, 0.8);
+    dough.position.y = 0.21;
+    g.add(dough);
+    const icing = mesh(new THREE.TorusGeometry(0.5, 0.235, 48, 160), clay(0xf9a3c7, { clearcoat: 0.9, clearcoatRoughness: 0.1, roughness: 0.3 }));
+    icing.rotation.x = Math.PI / 2;
+    icing.scale.set(1, 1, 0.55);
+    icing.position.y = 0.3;
+    g.add(icing);
+    const colors = [0xffffff, 0x8cc8f5, 0xffe07a, 0x9be38f, 0xc9a8f5];
+    for (let i = 0; i < 26; i++) {
+      const a = rand() * Math.PI * 2, r = 0.5 + (rand() - 0.5) * 0.28;
+      const s = mesh(new THREE.CapsuleGeometry(0.022, 0.07, 4, 8), clay(colors[i % colors.length], { clearcoat: 0.9 }));
+      s.position.set(Math.cos(a) * r, 0.43, Math.sin(a) * r);
+      s.rotation.set(Math.PI / 2, 0, rand() * Math.PI);
+      g.add(s);
+    }
+    return g;
+  },
+  cookie() {
+    const g = new THREE.Group();
+    g.add(mesh(lathe([[0, 0], [0.62, 0], [0.7, 0.04], [0.72, 0.1], [0.7, 0.16], [0.62, 0.2], [0, 0.21]]), clay(0xe7b57a, { clearcoat: 0.2, roughness: 0.75 })));
+    const spots = [[0.2, 0.15], [-0.25, 0.2], [0.05, -0.3], [-0.35, -0.2], [0.38, -0.12], [-0.05, 0.42], [0.3, 0.38], [-0.45, 0.12]];
+    for (const [x, z] of spots) {
+      const chip = mesh(new THREE.SphereGeometry(0.075, 24, 16), clay(0x7a4a2c, { clearcoat: 0.6 }));
+      chip.scale.y = 0.55;
+      chip.position.set(x, 0.21, z);
+      g.add(chip);
+    }
+    return g;
+  },
+  // a beach ball, segments round the pole so from above it is a pinwheel circle
+  ball() {
+    const geo = new THREE.SphereGeometry(0.72, 128, 96);
+    const cv = document.createElement("canvas");
+    cv.width = 1024; cv.height = 512;
+    const ctx = cv.getContext("2d");
+    ["#ffffff", "#f9a3c7", "#ffffff", "#8cc8f5", "#ffffff", "#ffd95e"].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect((i * 1024) / 6, 0, 1024 / 6 + 1, 512); });
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    const g = new THREE.Group();
+    const ball = mesh(geo, clay(0xffffff, { map: tex, clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.35 }));
+    ball.position.y = 0.72;
+    ball.rotation.x = Math.PI / 2 - 0.35;
+    ball.rotation.z = 0.3;
+    g.add(ball);
+    return g;
+  },
+  // an orange: a sphere with a leaf
+  orange() {
+    const g = new THREE.Group();
+    const fruit = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(0xffa53d, { clearcoat: 0.6, roughness: 0.5 }));
+    fruit.position.y = 0.5;
+    g.add(fruit);
+    const leaf = mesh(new THREE.SphereGeometry(0.16, 32, 16), clay(0x7cc860, { clearcoat: 0.6 }));
+    leaf.scale.set(1.5, 0.3, 0.7);
+    leaf.position.set(0.12, 0.98, -0.05);
+    leaf.rotation.y = 0.5;
+    g.add(leaf);
+    return g;
+  },
+  toast() {
+    const g = new THREE.Group();
+    g.add(mesh(new RoundedBoxGeometry(1.25, 0.26, 1.25, 6, 0.12), clay(0xe0994e, { clearcoat: 0.2, roughness: 0.7 })));
+    const soft = mesh(new RoundedBoxGeometry(1.02, 0.06, 1.02, 4, 0.03), clay(0xfbe3b5, { clearcoat: 0.1, roughness: 0.85 }));
+    soft.position.y = 0.12;
+    g.add(soft);
+    const butter = mesh(new RoundedBoxGeometry(0.34, 0.08, 0.34, 4, 0.04), clay(0xffe58a, { clearcoat: 0.9, clearcoatRoughness: 0.1 }));
+    butter.position.set(0.05, 0.17, -0.03);
+    butter.rotation.y = 0.5;
+    g.add(butter);
+    g.children.forEach((c) => (c.position.y += 0.13));
+    return g;
+  },
+  // a square cracker: golden, with a grid of little docking holes
+  cracker() {
+    const g = new THREE.Group();
+    const body = mesh(new RoundedBoxGeometry(1.05, 0.14, 1.05, 5, 0.06), clay(0xf0c070, { clearcoat: 0.25, roughness: 0.7 }));
+    body.position.y = 0.07;
+    g.add(body);
+    for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+      const hole = mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.02, 20), clay(0xc98f45, { roughness: 0.8 }));
+      hole.position.set(i * 0.3, 0.14, j * 0.3);
+      g.add(hole);
+    }
+    return g;
+  },
+  // a present: a square box, ribbon both ways, a bow on top
+  gift() {
+    const g = new THREE.Group();
+    const box = mesh(new RoundedBoxGeometry(1.1, 0.7, 1.1, 6, 0.08), clay(0xb89cf0, { clearcoat: 0.5 }));
+    box.position.y = 0.35;
+    g.add(box);
+    for (const rot of [0, Math.PI / 2]) {
+      const band = mesh(new RoundedBoxGeometry(0.2, 0.72, 1.13, 3, 0.03), clay(0xffd45e, { clearcoat: 0.8 }));
+      band.position.y = 0.35;
+      band.rotation.y = rot;
+      g.add(band);
+    }
+    for (const side of [-1, 1]) {
+      const loop = mesh(new THREE.TorusGeometry(0.16, 0.06, 16, 48), clay(0xffd45e, { clearcoat: 0.8 }));
+      loop.position.set(side * 0.15, 0.78, 0);
+      loop.rotation.set(Math.PI / 2 - 0.5, side * 0.4, 0);
+      g.add(loop);
+    }
+    return g;
+  },
+  // a die: a white cube with navy pips (five on top)
+  dice() {
+    const g = new THREE.Group();
+    const cube = mesh(new RoundedBoxGeometry(0.8, 0.8, 0.8, 6, 0.14), clay(0xffffff, { clearcoat: 0.8, clearcoatRoughness: 0.2, roughness: 0.35 }));
+    cube.position.y = 0.4;
+    g.add(cube);
+    for (const [x, z] of [[0, 0], [-0.2, -0.2], [0.2, 0.2], [-0.2, 0.2], [0.2, -0.2]]) {
+      const pip = mesh(new THREE.SphereGeometry(0.07, 24, 16), clay(0x35407a, { clearcoat: 0.6 }));
+      pip.scale.y = 0.35;
+      pip.position.set(x, 0.8, z);
+      g.add(pip);
+    }
+    return g;
+  },
+  cheese() {
+    const s = new THREE.Shape();
+    s.moveTo(-0.7, -0.55); s.lineTo(0.75, -0.55); s.lineTo(-0.7, 0.75); s.closePath();
+    const geo = roundedShapeExtrude(s, 0.22, 0.07);
+    geo.center();
+    const g = new THREE.Group();
+    const cheese = mesh(geo, clay(0xffcc3d, { clearcoat: 0.5 }));
+    cheese.rotation.x = -Math.PI / 2;
+    cheese.position.y = 0.18;
+    g.add(cheese);
+    return g;
+  },
+  // a pizza slice: a triangle of dough, cheese, pepperoni, a crust along the wide end
+  pizza() {
+    const g = new THREE.Group();
+    const tri = (k) => { const s = new THREE.Shape(); s.moveTo(0, 0.8 * k); s.lineTo(0.7 * k, -0.7 * k); s.lineTo(-0.7 * k, -0.7 * k); s.closePath(); return s; };
+    g.add(flat(tri(1), 0.1, 0.05, clay(0xf1c27d, { roughness: 0.75 })));
+    const top = flat(tri(0.84), 0.04, 0.03, clay(0xffd66b, { clearcoat: 0.6 }));
+    top.position.set(0, 0.2, 0.06);
+    g.add(top);
+    const crust = mesh(new RoundedBoxGeometry(1.5, 0.2, 0.24, 4, 0.1), clay(0xdc9a52, { roughness: 0.7 }));
+    crust.position.set(0, 0.13, 0.7);
+    g.add(crust);
+    for (const [x, z] of [[0, -0.2], [-0.22, 0.28], [0.24, 0.3]]) {
+      const pep = mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.05, 32), clay(0xe0584a, { clearcoat: 0.6 }));
+      pep.position.set(x, 0.25, z);
+      g.add(pep);
+    }
+    return g;
+  },
+  // half a sandwich, cut corner to corner
+  sandwich() {
+    const g = new THREE.Group();
+    const tri = () => { const s = new THREE.Shape(); s.moveTo(-0.7, -0.7); s.lineTo(0.7, -0.7); s.lineTo(-0.7, 0.7); s.closePath(); return s; };
+    g.add(flat(tri(), 0.14, 0.06, clay(0xf6dcaa, { roughness: 0.8 })));
+    const lettuce = flat(tri(), 0.04, 0.05, clay(0x8fd16e, { clearcoat: 0.5 }));
+    lettuce.position.y = 0.29;
+    lettuce.scale.set(1.06, 1.06, 1);
+    g.add(lettuce);
+    const tomato = flat(tri(), 0.04, 0.03, clay(0xef6a5a, { clearcoat: 0.6 }));
+    tomato.position.y = 0.37;
+    tomato.scale.set(0.96, 0.96, 1);
+    g.add(tomato);
+    const top = flat(tri(), 0.14, 0.06, clay(0xf6dcaa, { roughness: 0.8 }));
+    top.position.y = 0.52;
+    g.add(top);
+    return g;
+  },
+  // a pennant flag lying on the grass: a triangle on a stick
+  flag() {
+    const g = new THREE.Group();
+    const s = new THREE.Shape(); s.moveTo(0, 0.55); s.lineTo(1.3, 0); s.lineTo(0, -0.55); s.closePath();
+    const cloth = flat(s, 0.05, 0.03, clay(0xf58fb8, { clearcoat: 0.4 }));
+    cloth.position.x = 0.7;
+    g.add(cloth);
+    const stick = mesh(new THREE.CapsuleGeometry(0.05, 1.7, 8, 16), clay(0xc98f55));
+    stick.rotation.x = Math.PI / 2;
+    stick.position.set(0, 0.07, 0.25);
+    g.add(stick);
+    return g;
+  },
+  book() {
+    const g = new THREE.Group();
+    const cover = mesh(new RoundedBoxGeometry(1.15, 0.28, 1.6, 6, 0.06), clay(0x8d74e2, { clearcoat: 0.5 }));
+    cover.position.y = 0.14;
+    g.add(cover);
+    const pages = mesh(new RoundedBoxGeometry(1.08, 0.2, 1.5, 4, 0.03), clay(0xfffaf0, { roughness: 0.8, clearcoat: 0.1 }));
+    pages.position.set(0.05, 0.14, 0);
+    g.add(pages);
+    const top = mesh(new RoundedBoxGeometry(1.15, 0.05, 1.6, 4, 0.025), clay(0x8d74e2, { clearcoat: 0.5 }));
+    top.position.y = 0.27;
+    g.add(top);
+    const label = mesh(new RoundedBoxGeometry(0.6, 0.02, 0.28, 2, 0.01), clay(0xffe07a));
+    label.position.set(0, 0.3, -0.35);
+    g.add(label);
+    return g;
+  },
+  // a chocolate bar, half out of its wrapper, the pieces in a 2 x 3 grid
+  chocolate() {
+    const g = new THREE.Group();
+    const bar = mesh(new RoundedBoxGeometry(0.9, 0.16, 1.6, 4, 0.05), clay(0x8a5433, { clearcoat: 0.7, clearcoatRoughness: 0.25 }));
+    bar.position.y = 0.08;
+    g.add(bar);
+    for (let i = 0; i < 2; i++) for (let j = 0; j < 3; j++) {
+      const piece = mesh(new RoundedBoxGeometry(0.36, 0.08, 0.4, 3, 0.04), clay(0x9a613c, { clearcoat: 0.7, clearcoatRoughness: 0.25 }));
+      piece.position.set(-0.2 + i * 0.4, 0.18, -0.52 + j * 0.46);
+      g.add(piece);
+    }
+    const wrapper = mesh(new RoundedBoxGeometry(0.98, 0.28, 0.7, 4, 0.08), clay(0xe0584a, { clearcoat: 0.6 }));
+    wrapper.position.set(0, 0.12, 0.5);
+    g.add(wrapper);
+    const stripe = mesh(new RoundedBoxGeometry(0.99, 0.29, 0.14, 2, 0.05), clay(0xffe07a, { clearcoat: 0.6 }));
+    stripe.position.set(0, 0.12, 0.5);
+    g.add(stripe);
+    return g;
+  },
+  // a juice box: a standing carton with a straw, seen from above a rectangle
+  juice() {
+    const g = new THREE.Group();
+    const box = mesh(new RoundedBoxGeometry(0.75, 0.9, 1.15, 6, 0.08), clay(0x7cc860, { clearcoat: 0.4 }));
+    box.position.y = 0.45;
+    g.add(box);
+    const label = mesh(new RoundedBoxGeometry(0.55, 0.02, 0.7, 3, 0.01), clay(0xfff6dc));
+    label.position.set(0, 0.9, 0.12);
+    g.add(label);
+    const fruit = mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.02, 32), clay(0xffa53d));
+    fruit.position.set(0, 0.915, 0.12);
+    g.add(fruit);
+    const straw = mesh(new THREE.CapsuleGeometry(0.035, 0.5, 8, 16), clay(0xf58fb8, { clearcoat: 0.7 }));
+    straw.position.set(0.18, 1.1, -0.38);
+    straw.rotation.z = 0.35;
+    g.add(straw);
+    return g;
+  },
+  // a ruler: a long thin yellow strip with ticks
+  ruler() {
+    const g = new THREE.Group();
+    const body = mesh(new RoundedBoxGeometry(0.45, 0.08, 2.0, 3, 0.03), clay(0xffd45e, { clearcoat: 0.6 }));
+    body.position.y = 0.04;
+    g.add(body);
+    for (let i = 0; i < 9; i++) {
+      const tick = mesh(new RoundedBoxGeometry(i % 2 ? 0.1 : 0.18, 0.02, 0.03, 1, 0.005), clay(0x7a5a2c));
+      tick.position.set(-0.16 + (i % 2 ? -0.04 : 0), 0.085, -0.8 + i * 0.2);
+      g.add(tick);
+    }
+    return g;
+  },
+  // a kite: a diamond with a bowed tail (no taught shape)
+  kite() {
+    const g = new THREE.Group();
+    const P = [[0, 1.0], [0.62, 0.1], [0, -1.0], [-0.62, 0.1]];
+    const C = [0.0, 0.1];
+    const kiteColors = [0x6bb8f0, 0xffd45e, 0x6bb8f0, 0xffd45e];
+    P.forEach((pt, i) => {
+      const nx = P[(i + 1) % 4];
+      const tri = new THREE.Shape();
+      tri.moveTo(C[0], C[1]); tri.lineTo(pt[0], pt[1]); tri.lineTo(nx[0], nx[1]); tri.closePath();
+      const geo = roundedShapeExtrude(tri, 0.05, 0.025);
+      const m = mesh(geo, clay(kiteColors[i], { clearcoat: 0.6 }));
+      m.rotation.x = -Math.PI / 2;
+      m.position.y = 0.06;
+      g.add(m);
+    });
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.05, 1.0), new THREE.Vector3(0.35, 0.05, 1.5), new THREE.Vector3(-0.1, 0.05, 1.95), new THREE.Vector3(0.3, 0.05, 2.35)]);
+    g.add(mesh(new THREE.TubeGeometry(curve, 64, 0.025, 8), clay(0xffffff)));
+    for (const t of [0.35, 0.7]) {
+      const p = curve.getPoint(t);
+      for (const side of [-1, 1]) {
+        const bow = mesh(new THREE.ConeGeometry(0.1, 0.22, 16), clay(0xf9a3c7));
+        bow.rotation.z = side * Math.PI / 2;
+        bow.position.set(p.x + side * 0.1, 0.07, p.z);
+        g.add(bow);
+      }
+    }
+    return g;
+  },
+};
+
+/* ---------- The scenes: a blanket, and where each thing lies ----------
+   `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
+   below the blanket, out at the sides — the tray of sockets floats
+   bottom-centre — and things at z ≈ -3.3 on the grass above it. */
+const SCENES = {
+  picnic: {
+    blanket: "pinkStripes",
+    items: {
+      plate: { at: [-1.4, ON_BLANKET, -1.15] },
+      donut: { at: [1.45, ON_BLANKET, -1.2] },
+      cookie: { at: [1.45, ON_BLANKET, 1.3] },
+      ball: { at: [2.0, 0, 3.15] },
+      toast: { at: [-1.45, ON_BLANKET, 1.3], rotY: 0.25 },
+      cheese: { at: [0.0, ON_BLANKET, 0.1], rotY: -0.35, scale: 0.8 },
+      book: { at: [-2.0, 0, 3.15], rotY: 0.35 },
+      kite: { at: [-0.6, 0, -3.3], rotY: 1.35, scale: 0.72 },
+    },
+  },
+  squares: {
+    blanket: "mintBands",
+    items: {
+      toast: { at: [-1.5, ON_BLANKET, -1.15], rotY: -0.2 },
+      gift: { at: [1.5, ON_BLANKET, -1.2], rotY: 0.3, scale: 0.95 },
+      cracker: { at: [1.45, ON_BLANKET, 1.25], rotY: -0.35 },
+      dice: { at: [-2.25, 0, 3.2], rotY: 0.4 },
+      donut: { at: [-1.4, ON_BLANKET, 1.3] },
+      cheese: { at: [0.05, ON_BLANKET, 0.05], rotY: 0.6, scale: 0.8 },
+      orange: { at: [2.25, 0, 3.2] },
+    },
+  },
+  triangles: {
+    blanket: "blueStripes",
+    items: {
+      cheese: { at: [-1.45, ON_BLANKET, -1.15], rotY: 0.2, scale: 0.85 },
+      pizza: { at: [1.45, ON_BLANKET, -1.1], rotY: 3.3, scale: 0.95 },
+      sandwich: { at: [-1.4, ON_BLANKET, 1.3], rotY: -0.5, scale: 0.9 },
+      flag: { at: [0.9, 0, -3.35], rotY: 0.2, scale: 0.8 },
+      cookie: { at: [1.45, ON_BLANKET, 1.3] },
+      toast: { at: [0.0, ON_BLANKET, 0.1], rotY: 0.35, scale: 0.85 },
+      book: { at: [-2.25, 0, 3.15], rotY: 0.35, scale: 0.9 },
+    },
+  },
+  rectangles: {
+    blanket: "yellowRound",
+    items: {
+      book: { at: [-1.2, ON_BLANKET, -1.1], rotY: -0.3 },
+      chocolate: { at: [1.2, ON_BLANKET, -1.05], rotY: 0.35, scale: 0.95 },
+      juice: { at: [1.3, ON_BLANKET, 1.25], rotY: -0.2, scale: 0.95 },
+      ruler: { at: [-1.3, 0, -3.35], rotY: 1.45, scale: 0.9 },
+      plate: { at: [-1.35, ON_BLANKET, 1.3], scale: 0.85 },
+      cheese: { at: [0.05, ON_BLANKET, 0.15], rotY: 2.4, scale: 0.8 },
+      donut: { at: [2.25, 0, 3.15] },
+    },
+  },
+};
+
+/* What each thing IS — `null` for things that are no taught shape. */
+const SHAPE_OF = {
+  plate: "circle", donut: "circle", cookie: "circle", ball: "circle", orange: "circle",
+  toast: "square", cracker: "square", gift: "square", dice: "square",
+  cheese: "triangle", pizza: "triangle", sandwich: "triangle", flag: "triangle",
+  book: "rectangle", chocolate: "rectangle", juice: "rectangle", ruler: "rectangle",
+  kite: null,
+};
+
+const def = SCENES[SCENE];
+
 /* ---------- The world ---------- */
 const world = new THREE.Group();
 scene.add(world);
@@ -84,11 +526,12 @@ grass.rotation.x = -Math.PI / 2;
 grass.castShadow = false;
 world.add(grass);
 
-// tufts of grass — little clay blades, never round
+// tufts of grass — little clay blades, never round, never under a thing
+const onGrass = Object.values(def.items).filter((it) => it.at[1] === 0).map((it) => [it.at[0], it.at[2]]);
 for (let i = 0; i < 70; i++) {
   const x = (rand() - 0.5) * 7.5, z = (rand() - 0.5) * 9.5;
   if (Math.abs(x) < 3.0 && Math.abs(z - 0.05) < 2.5) continue;
-  if ([[-2.05, 3.4], [2.05, 3.45], [-0.6, -3.3], [0.4, -3.4], [-1.6, -3.3]].some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue; // not under the blanket
+  if (onGrass.some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue;
   const tuft = new THREE.Group();
   const n = 3 + Math.floor(rand() * 3);
   for (let j = 0; j < n; j++) {
@@ -102,179 +545,16 @@ for (let i = 0; i < 70; i++) {
   world.add(tuft);
 }
 
-// the blanket — pink with cream stripes
-const blanket = new THREE.Group();
-const BW = 5.7, BD = 4.7, BH = 0.12;
-blanket.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0xf58fb8, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
-for (let i = -2; i <= 2; i++) {
-  if (false) continue;
-  const stripe = mesh(new RoundedBoxGeometry(0.5, 0.02, BD - 0.02, 2, 0.01), clay(0xffe3ee, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 }));
-  stripe.position.set(i * 1.1, BH / 2, 0);
-  blanket.add(stripe);
-}
-blanket.position.set(0, BH / 2, 0.05);
-blanket.rotation.y = -0.06;
-world.add(blanket);
-const ON_BLANKET = BH + 0.01;
+world.add(BLANKETS[def.blanket]());
 
-/* ---------- The things to find ---------- */
 const items = {};
-
-// plate — cream with a sky-blue rim
-{
-  const g = new THREE.Group();
-  g.add(mesh(lathe([[0, 0.0], [0.62, 0.0], [0.7, 0.04], [0.74, 0.1], [0.98, 0.16], [1.02, 0.2], [0.99, 0.23], [0.72, 0.15], [0.6, 0.07], [0, 0.07]]), clay(0xfffaf0, { clearcoat: 0.8, clearcoatRoughness: 0.15, roughness: 0.35 })));
-  const rim = mesh(new THREE.TorusGeometry(0.97, 0.035, 24, 160), clay(0x8cc8f5));
-  rim.rotation.x = Math.PI / 2;
-  rim.position.y = 0.215;
-  g.add(rim);
-  items.plate = { group: g, at: [-1.4, ON_BLANKET, -1.15], circle: true };
-}
-
-// donut — golden dough, pink icing, sprinkles
-{
-  const g = new THREE.Group();
-  const dough = mesh(new THREE.TorusGeometry(0.5, 0.26, 48, 160), clay(0xe9b574));
-  dough.rotation.x = Math.PI / 2;
-  dough.scale.set(1, 1, 0.8);
-  dough.position.y = 0.21;
-  g.add(dough);
-  const icing = mesh(new THREE.TorusGeometry(0.5, 0.235, 48, 160), clay(0xf9a3c7, { clearcoat: 0.9, clearcoatRoughness: 0.1, roughness: 0.3 }));
-  icing.rotation.x = Math.PI / 2;
-  icing.scale.set(1, 1, 0.55);
-  icing.position.y = 0.3;
-  g.add(icing);
-  const colors = [0xffffff, 0x8cc8f5, 0xffe07a, 0x9be38f, 0xc9a8f5];
-  for (let i = 0; i < 26; i++) {
-    const a = rand() * Math.PI * 2, r = 0.5 + (rand() - 0.5) * 0.28;
-    const s = mesh(new THREE.CapsuleGeometry(0.022, 0.07, 4, 8), clay(colors[i % colors.length], { clearcoat: 0.9 }));
-    s.position.set(Math.cos(a) * r, 0.43, Math.sin(a) * r);
-    s.rotation.set(Math.PI / 2, 0, rand() * Math.PI);
-    g.add(s);
-  }
-  items.donut = { group: g, at: [1.45, ON_BLANKET, -1.2], circle: true };
-}
-
-// cookie — rounded disc with chocolate chips
-{
-  const g = new THREE.Group();
-  g.add(mesh(lathe([[0, 0], [0.62, 0], [0.7, 0.04], [0.72, 0.1], [0.7, 0.16], [0.62, 0.2], [0, 0.21]]), clay(0xe7b57a, { clearcoat: 0.2, roughness: 0.75 })));
-  const spots = [[0.2, 0.15], [-0.25, 0.2], [0.05, -0.3], [-0.35, -0.2], [0.38, -0.12], [-0.05, 0.42], [0.3, 0.38], [-0.45, 0.12]];
-  for (const [x, z] of spots) {
-    const chip = mesh(new THREE.SphereGeometry(0.075, 24, 16), clay(0x7a4a2c, { clearcoat: 0.6 }));
-    chip.scale.y = 0.55;
-    chip.position.set(x, 0.21, z);
-    g.add(chip);
-  }
-  items.cookie = { group: g, at: [1.45, ON_BLANKET, 1.3], circle: true };
-}
-
-// ball — a beach ball, segments round the pole so from above it is a pinwheel circle
-{
-  const geo = new THREE.SphereGeometry(0.72, 128, 96);
-  const cv = document.createElement("canvas");
-  cv.width = 1024; cv.height = 512;
-  const ctx = cv.getContext("2d");
-  ["#ffffff", "#f9a3c7", "#ffffff", "#8cc8f5", "#ffffff", "#ffd95e"].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect((i * 1024) / 6, 0, 1024 / 6 + 1, 512); });
-  const tex = new THREE.CanvasTexture(cv);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  const g = new THREE.Group();
-  const ball = mesh(geo, clay(0xffffff, { map: tex, clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.35 }));
-  ball.position.y = 0.72;
-  ball.rotation.x = Math.PI / 2 - 0.35;
-  ball.rotation.z = 0.3;
-  g.add(ball);
-  const cap = mesh(new THREE.SphereGeometry(0.12, 32, 16), clay(0xffe07a, { clearcoat: 0.9 }));
-  cap.position.set(0, 1.42, 0);
-  cap.visible = false;
-  cap.scale.y = 0.4;
-  g.add(cap);
-  items.ball = { group: g, at: [2.0, 0, 3.15], circle: true };
-}
-
-// toast — a square slice
-{
-  const g = new THREE.Group();
-  g.add(mesh(new RoundedBoxGeometry(1.25, 0.26, 1.25, 6, 0.12), clay(0xe0994e, { clearcoat: 0.2, roughness: 0.7 })));
-  const soft = mesh(new RoundedBoxGeometry(1.02, 0.06, 1.02, 4, 0.03), clay(0xfbe3b5, { clearcoat: 0.1, roughness: 0.85 }));
-  soft.position.y = 0.12;
-  g.add(soft);
-  const butter = mesh(new RoundedBoxGeometry(0.34, 0.08, 0.34, 4, 0.04), clay(0xffe58a, { clearcoat: 0.9, clearcoatRoughness: 0.1 }));
-  butter.position.set(0.05, 0.17, -0.03);
-  butter.rotation.y = 0.5;
-  g.add(butter);
-  g.children.forEach((c) => (c.position.y += 0.13));
-  items.toast = { group: g, at: [-1.45, ON_BLANKET, 1.3], rotY: 0.25, circle: false };
-}
-
-// cheese — a triangle wedge
-{
-  const s = new THREE.Shape();
-  s.moveTo(-0.7, -0.55); s.lineTo(0.75, -0.55); s.lineTo(-0.7, 0.75); s.closePath();
-  const geo = roundedShapeExtrude(s, 0.22, 0.07);
-  geo.center();
-  const g = new THREE.Group();
-  const cheese = mesh(geo, clay(0xffcc3d, { clearcoat: 0.5 }));
-  cheese.rotation.x = -Math.PI / 2;
-  cheese.position.y = 0.18;
-  g.add(cheese);
-  items.cheese = { group: g, at: [0.0, ON_BLANKET, 0.1], rotY: -0.35, scale: 0.8, circle: false };
-}
-
-// book — a rectangle
-{
-  const g = new THREE.Group();
-  const cover = mesh(new RoundedBoxGeometry(1.15, 0.28, 1.6, 6, 0.06), clay(0x8d74e2, { clearcoat: 0.5 }));
-  cover.position.y = 0.14;
-  g.add(cover);
-  const pages = mesh(new RoundedBoxGeometry(1.08, 0.2, 1.5, 4, 0.03), clay(0xfffaf0, { roughness: 0.8, clearcoat: 0.1 }));
-  pages.position.set(0.05, 0.14, 0);
-  g.add(pages);
-  const top = mesh(new RoundedBoxGeometry(1.15, 0.05, 1.6, 4, 0.025), clay(0x8d74e2, { clearcoat: 0.5 }));
-  top.position.y = 0.27;
-  g.add(top);
-  const label = mesh(new RoundedBoxGeometry(0.6, 0.02, 0.28, 2, 0.01), clay(0xffe07a));
-  label.position.set(0, 0.3, -0.35);
-  g.add(label);
-  items.book = { group: g, at: [-2.0, 0, 3.15], rotY: 0.35, circle: false };
-}
-
-// kite — a diamond with a bowed tail
-{
-  const g = new THREE.Group();
-  const P = [[0, 1.0], [0.62, 0.1], [0, -1.0], [-0.62, 0.1]];
-  const C = [0.0, 0.1];
-  const kiteColors = [0x6bb8f0, 0xffd45e, 0x6bb8f0, 0xffd45e];
-  P.forEach((pt, i) => {
-    const nx = P[(i + 1) % 4];
-    const tri = new THREE.Shape();
-    tri.moveTo(C[0], C[1]); tri.lineTo(pt[0], pt[1]); tri.lineTo(nx[0], nx[1]); tri.closePath();
-    const geo = roundedShapeExtrude(tri, 0.05, 0.025);
-    const m = mesh(geo, clay(kiteColors[i], { clearcoat: 0.6 }));
-    m.rotation.x = -Math.PI / 2;
-    m.position.y = 0.06;
-    g.add(m);
-  });
-  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.05, 1.0), new THREE.Vector3(0.35, 0.05, 1.5), new THREE.Vector3(-0.1, 0.05, 1.95), new THREE.Vector3(0.3, 0.05, 2.35)]);
-  g.add(mesh(new THREE.TubeGeometry(curve, 64, 0.025, 8), clay(0xffffff)));
-  for (const t of [0.35, 0.7]) {
-    const p = curve.getPoint(t);
-    for (const side of [-1, 1]) {
-      const bow = mesh(new THREE.ConeGeometry(0.1, 0.22, 16), clay(0xf9a3c7));
-      bow.rotation.z = side * Math.PI / 2;
-      bow.position.set(p.x + side * 0.1, 0.07, p.z);
-      g.add(bow);
-    }
-  }
-  items.kite = { group: g, at: [-0.6, 0, -3.3], rotY: 1.35, scale: 0.72, circle: false };
-}
-
-for (const [name, it] of Object.entries(items)) {
-  it.group.position.set(...it.at);
-  if (it.rotY) it.group.rotation.y = it.rotY;
-  if (it.scale) it.group.scale.setScalar(it.scale);
-  scene.add(it.group);
+for (const [name, it] of Object.entries(def.items)) {
+  const group = ITEMS[name]();
+  group.position.set(...it.at);
+  if (it.rotY) group.rotation.y = it.rotY;
+  if (it.scale) group.scale.setScalar(it.scale);
+  scene.add(group);
+  items[name] = { group, at: it.at };
 }
 
 /* A see-through floor that only shows shadows, for the item layers. */
@@ -307,7 +587,7 @@ window.renderLayers = () => {
   }
   return out;
 };
-window.itemsMeta = () => Object.fromEntries(Object.entries(items).map(([k, v]) => [k, { circle: v.circle }]));
+window.itemsMeta = () => Object.fromEntries(Object.keys(items).map((k) => [k, { shape: SHAPE_OF[k] }]));
 window.ready = true;
 </script>
 </body>
