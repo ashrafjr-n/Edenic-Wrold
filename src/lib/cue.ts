@@ -14,6 +14,8 @@ export const lessonCue = {
   ask: (locale: string, character: string, course: string, lesson: number, question: number) =>
     `${locale}/${character}/${course}/${lesson}/q${question + 1}`,
   line: (locale: string, character: string, key: string) => `${locale}/${character}/lines/${key}`,
+  /** A taught English word on its own — the same clip in every locale. */
+  word: (word: string) => `words/${word}`,
 };
 
 /** How long the "speaking" state lasts without a clip. Once audio lands this

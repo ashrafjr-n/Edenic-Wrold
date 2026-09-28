@@ -2743,6 +2743,61 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   Clay letters — the taught word (`ClayWord`) and the spelling board
+   (`SpellWord`).
+
+   A letter is its own colour, glossy on top and extruded underneath: the
+   face is a gradient clipped to the glyph, and the extrusion is a hard
+   `drop-shadow` in the letter's edge colour under a soft tinted one. Both
+   shadows are `filter`, not `text-shadow` — with a transparent fill a
+   text-shadow would show THROUGH the letter instead of under it.
+   --------------------------------------------------------------- */
+.clay-letter {
+  display: inline-block;
+  line-height: 1;
+  color: transparent;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--letter-face) 50%, #fff) 0%,
+    var(--letter-face) 38%,
+    var(--letter-face) 72%,
+    color-mix(in srgb, var(--letter-face) 78%, var(--letter-edge)) 100%
+  );
+  background-clip: text;
+  filter: drop-shadow(0 0.05em 0 var(--letter-edge))
+    drop-shadow(0 0.12em 0.1em rgb(var(--shadow-hue) / 30%));
+}
+
+/* An empty space on the spelling board: a pressed-in well in the page ground,
+   with a short dash where the letter goes. Filled, it holds a letter tile and
+   the dash goes (`:empty`). */
+.letter-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.1rem;
+  background: var(--background);
+  box-shadow:
+    inset 0 5px 9px -3px rgb(var(--shadow-hue) / 24%),
+    inset 0 -3px 5px -3px rgb(255 255 255 / 90%);
+}
+
+.letter-slot:empty::after {
+  content: "";
+  position: absolute;
+  inset-inline: 26%;
+  bottom: 22%;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--page-accent-color) 45%, transparent);
+}
+
+[data-theme="dark"] .letter-slot {
+  box-shadow: inset 0 5px 9px -3px rgb(0 0 0 / 50%);
+}
+
+/* ---------------------------------------------------------------
    The tray of items in the `give` count activity — "Pick ONE apple!"
 
    Each item leans on its own, out of sync with its neighbours — a direct
