@@ -5,12 +5,15 @@ import { Celebration } from "@/components/ui/celebration";
 import { shuffle } from "@/lib/seeded";
 import type { Face } from "@/types/course";
 import { FaceView } from "./face";
+import { ClayWord } from "./clay-word";
 
 /** After this many misses the answer glows. Nothing is ever removed. */
 const HELP_AFTER = 2;
 
 interface PickQuestionProps {
   show?: Face[];
+  /** A taught word in clay letters above the tiles — "which one is this?". */
+  word?: string;
   options: Face[];
   /** Index into `options`, before shuffling. */
   answer: number;
@@ -27,7 +30,7 @@ interface PickQuestionProps {
  * ?") sits on a clay card above big answer tiles. A wrong tap wiggles; after
  * two, the answer glows; a right one is ringed in green with confetti.
  */
-export function PickQuestion({ show, options, answer, seed, demo, onSolved, onMiss }: PickQuestionProps) {
+export function PickQuestion({ show, word, options, answer, seed, demo, onSolved, onMiss }: PickQuestionProps) {
   const order = useMemo(() => shuffle(options.map((_, index) => index), seed), [options, seed]);
   const [solved, setSolved] = useState(false);
   const [wrong, setWrong] = useState<number | null>(null);
@@ -54,7 +57,8 @@ export function PickQuestion({ show, options, answer, seed, demo, onSolved, onMi
         : "grid-cols-2 max-w-[min(22rem,44svh)]";
 
   return (
-    <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
+    <div className="flex w-full flex-col items-center gap-6 sm:gap-8 [@media(max-height:700px)]:gap-4">
+      {word && <ClayWord word={word} size="sm" />}
       {show && (
         <div className="card card-clay-white flex max-w-full flex-wrap items-center justify-center gap-2 px-5 py-4 sm:gap-3 sm:px-7">
           {show.map((face, index) => (
