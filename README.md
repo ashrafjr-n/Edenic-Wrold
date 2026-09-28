@@ -205,8 +205,9 @@ the reel ends), then shows the word with a big speaker button and each letter in
 its own clay colour, then the child traces the shape, then builds the word from
 its shuffled letter tiles — tap a tile to send it to the first empty space, or
 drag it into any space. Only once every space is full is the word checked: the
-misplaced letters wiggle and a Help button appears where Next would be, which
-puts the word together in order. The review lesson is four "which one is the …?"
+misplaced letters wiggle and fly back to the tray (the right ones stay), and the
+child can try again as often as they like. From the second miss a Help button
+also appears where Next would be; it puts the word together in order. The review lesson is four "which one is the …?"
 picks. The reels are placeholders until the real clips arrive.
 
 Other lessons use three kinds of question — pick the right tile, count things
