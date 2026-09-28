@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { SkipForward } from "lucide-react";
+import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 
 /** Kept in step with `.morph-btn__icon`'s 0.55s turn in `globals.css`: the
@@ -18,6 +18,8 @@ interface ReelVideoProps {
   /** Art shown behind the clip while it loads. */
   image: string;
   skipLabel: string;
+  /** Names the big Play button shown when the browser refuses autoplay. */
+  playLabel: string;
   /** The reel ended, or the child skipped it. Called once. */
   onDone: () => void;
 }
@@ -32,24 +34,35 @@ interface ReelVideoProps {
  * Positioned against `<main>` (`absolute inset-0`), so it covers exactly the
  * space between the chrome whatever the viewport.
  */
-export function ReelVideo({ src, label, image, skipLabel, onDone }: ReelVideoProps) {
+export function ReelVideo({ src, label, image, skipLabel, playLabel, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
   const done = useRef(false);
   const timer = useRef<number | undefined>(undefined);
   const [spinning, setSpinning] = useState(false);
+  /* The browser refused to start the reel even muted (Low Power Mode, data
+     saver, an autoplay policy): a big Play button asks for the one tap. */
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   /* A browser may refuse autoplay WITH sound; play it muted then rather than
-     leave a still frame. If even that is refused, Skip is still there. */
+     leave a still frame. If even that is refused, show the Play button. */
   useEffect(() => {
     const el = video.current;
     if (!el) return;
     el.play().catch(() => {
       el.muted = true;
-      return el.play().catch(() => undefined);
+      return el.play().catch(() => setBlocked(true));
     });
   }, []);
+
+  const play = () => {
+    const el = video.current;
+    if (!el) return;
+    el.muted = false;
+    setBlocked(false);
+    el.play().catch(() => setBlocked(true));
+  };
 
   const finish = () => {
     if (done.current) return;
@@ -85,6 +98,19 @@ export function ReelVideo({ src, label, image, skipLabel, onDone }: ReelVideoPro
           onEnded={finish}
           className="absolute inset-0 h-full w-full object-cover"
         />
+
+        {blocked && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <Button3D
+              tone={BRAND_TONE}
+              onClick={play}
+              aria-label={playLabel}
+              className="anim-pop-in h-24 w-24 sm:h-28 sm:w-28"
+            >
+              <Play className="ms-1.5 h-11 w-11 fill-current" strokeWidth={2.5} />
+            </Button3D>
+          </span>
+        )}
 
         {/* The wrapper places it: `.btn3d` is unlayered and sets
             `position: relative`, which would beat an `absolute` utility. */}
