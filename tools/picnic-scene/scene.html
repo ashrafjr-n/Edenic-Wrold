@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>html,body{margin:0;background:transparent}</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+
+const W = 1000, H = 1250;              // 4:5 — the phone's stage
+const VIEW_W = 6.4;                      // world units across
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.35;
+
+/* Orthographic, tipped 18° off straight-down: a circle stays a circle. */
+const viewH = VIEW_W * H / W;
+const camera = new THREE.OrthographicCamera(-VIEW_W / 2, VIEW_W / 2, viewH / 2, -viewH / 2, 0.1, 100);
+const tilt = THREE.MathUtils.degToRad(72);
+camera.position.set(0, Math.sin(tilt) * 30, Math.cos(tilt) * 30);
+camera.lookAt(0, 0, 0);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xb9d4f5, 0.75));
+const sun = new THREE.DirectionalLight(0xfff1dd, 2.6);
+sun.position.set(-5, 12, 6);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.radius = 6;
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.02;
+Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 });
+scene.add(sun);
+
+/* The clay: pastel, soft sheen, a light glossy coat. */
+const clay = (color, extra = {}) =>
+  new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, clearcoat: 0.45, clearcoatRoughness: 0.35, sheen: 0.4, sheenRoughness: 0.6, sheenColor: 0xffffff, ...extra });
+
+/* Seeded — the same scene every render. */
+let seed = 7;
+const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+const mesh = (geometry, material) => {
+  const m = new THREE.Mesh(geometry, material);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
+};
+
+/* A lathe from a 2D profile (x = radius, y = height). */
+const lathe = (points, segments = 160) =>
+  new THREE.LatheGeometry(points.map(([x, y]) => new THREE.Vector2(x, y)), segments);
+
+function roundedShapeExtrude(shape, depth, bevel) {
+  return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 8, curveSegments: 64 });
+}
+
+/* ---------- The world ---------- */
+const world = new THREE.Group();
+scene.add(world);
+
+// grass
+const grass = mesh(new THREE.PlaneGeometry(30, 30), clay(0x8fd16e, { clearcoat: 0.05, roughness: 0.9, sheen: 0 }));
+grass.rotation.x = -Math.PI / 2;
+grass.castShadow = false;
+world.add(grass);
+
+// tufts of grass — little clay blades, never round
+for (let i = 0; i < 70; i++) {
+  const x = (rand() - 0.5) * 7.5, z = (rand() - 0.5) * 9.5;
+  if (Math.abs(x) < 3.0 && Math.abs(z - 0.05) < 2.5) continue;
+  if ([[-2.05, 3.4], [2.05, 3.45], [-0.6, -3.3], [0.4, -3.4], [-1.6, -3.3]].some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue; // not under the blanket
+  const tuft = new THREE.Group();
+  const n = 3 + Math.floor(rand() * 3);
+  for (let j = 0; j < n; j++) {
+    const blade = mesh(new THREE.ConeGeometry(0.05, 0.32 + rand() * 0.18, 12), clay(rand() > 0.5 ? 0x86c96b : 0x94d27a));
+    blade.position.set((rand() - 0.5) * 0.18, 0.16, (rand() - 0.5) * 0.18);
+    blade.rotation.z = (rand() - 0.5) * 0.7;
+    blade.rotation.x = (rand() - 0.5) * 0.7;
+    tuft.add(blade);
+  }
+  tuft.position.set(x, 0, z);
+  world.add(tuft);
+}
+
+// the blanket — pink with cream stripes
+const blanket = new THREE.Group();
+const BW = 5.7, BD = 4.7, BH = 0.12;
+blanket.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0xf58fb8, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+for (let i = -2; i <= 2; i++) {
+  if (false) continue;
+  const stripe = mesh(new RoundedBoxGeometry(0.5, 0.02, BD - 0.02, 2, 0.01), clay(0xffe3ee, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 }));
+  stripe.position.set(i * 1.1, BH / 2, 0);
+  blanket.add(stripe);
+}
+blanket.position.set(0, BH / 2, 0.05);
+blanket.rotation.y = -0.06;
+world.add(blanket);
+const ON_BLANKET = BH + 0.01;
+
+/* ---------- The things to find ---------- */
+const items = {};
+
+// plate — cream with a sky-blue rim
+{
+  const g = new THREE.Group();
+  g.add(mesh(lathe([[0, 0.0], [0.62, 0.0], [0.7, 0.04], [0.74, 0.1], [0.98, 0.16], [1.02, 0.2], [0.99, 0.23], [0.72, 0.15], [0.6, 0.07], [0, 0.07]]), clay(0xfffaf0, { clearcoat: 0.8, clearcoatRoughness: 0.15, roughness: 0.35 })));
+  const rim = mesh(new THREE.TorusGeometry(0.97, 0.035, 24, 160), clay(0x8cc8f5));
+  rim.rotation.x = Math.PI / 2;
+  rim.position.y = 0.215;
+  g.add(rim);
+  items.plate = { group: g, at: [-1.4, ON_BLANKET, -1.15], circle: true };
+}
+
+// donut — golden dough, pink icing, sprinkles
+{
+  const g = new THREE.Group();
+  const dough = mesh(new THREE.TorusGeometry(0.5, 0.26, 48, 160), clay(0xe9b574));
+  dough.rotation.x = Math.PI / 2;
+  dough.scale.set(1, 1, 0.8);
+  dough.position.y = 0.21;
+  g.add(dough);
+  const icing = mesh(new THREE.TorusGeometry(0.5, 0.235, 48, 160), clay(0xf9a3c7, { clearcoat: 0.9, clearcoatRoughness: 0.1, roughness: 0.3 }));
+  icing.rotation.x = Math.PI / 2;
+  icing.scale.set(1, 1, 0.55);
+  icing.position.y = 0.3;
+  g.add(icing);
+  const colors = [0xffffff, 0x8cc8f5, 0xffe07a, 0x9be38f, 0xc9a8f5];
+  for (let i = 0; i < 26; i++) {
+    const a = rand() * Math.PI * 2, r = 0.5 + (rand() - 0.5) * 0.28;
+    const s = mesh(new THREE.CapsuleGeometry(0.022, 0.07, 4, 8), clay(colors[i % colors.length], { clearcoat: 0.9 }));
+    s.position.set(Math.cos(a) * r, 0.43, Math.sin(a) * r);
+    s.rotation.set(Math.PI / 2, 0, rand() * Math.PI);
+    g.add(s);
+  }
+  items.donut = { group: g, at: [1.45, ON_BLANKET, -1.2], circle: true };
+}
+
+// cookie — rounded disc with chocolate chips
+{
+  const g = new THREE.Group();
+  g.add(mesh(lathe([[0, 0], [0.62, 0], [0.7, 0.04], [0.72, 0.1], [0.7, 0.16], [0.62, 0.2], [0, 0.21]]), clay(0xe7b57a, { clearcoat: 0.2, roughness: 0.75 })));
+  const spots = [[0.2, 0.15], [-0.25, 0.2], [0.05, -0.3], [-0.35, -0.2], [0.38, -0.12], [-0.05, 0.42], [0.3, 0.38], [-0.45, 0.12]];
+  for (const [x, z] of spots) {
+    const chip = mesh(new THREE.SphereGeometry(0.075, 24, 16), clay(0x7a4a2c, { clearcoat: 0.6 }));
+    chip.scale.y = 0.55;
+    chip.position.set(x, 0.21, z);
+    g.add(chip);
+  }
+  items.cookie = { group: g, at: [1.45, ON_BLANKET, 1.3], circle: true };
+}
+
+// ball — a beach ball, segments round the pole so from above it is a pinwheel circle
+{
+  const geo = new THREE.SphereGeometry(0.72, 128, 96);
+  const cv = document.createElement("canvas");
+  cv.width = 1024; cv.height = 512;
+  const ctx = cv.getContext("2d");
+  ["#ffffff", "#f9a3c7", "#ffffff", "#8cc8f5", "#ffffff", "#ffd95e"].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect((i * 1024) / 6, 0, 1024 / 6 + 1, 512); });
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  const g = new THREE.Group();
+  const ball = mesh(geo, clay(0xffffff, { map: tex, clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.35 }));
+  ball.position.y = 0.72;
+  ball.rotation.x = Math.PI / 2 - 0.35;
+  ball.rotation.z = 0.3;
+  g.add(ball);
+  const cap = mesh(new THREE.SphereGeometry(0.12, 32, 16), clay(0xffe07a, { clearcoat: 0.9 }));
+  cap.position.set(0, 1.42, 0);
+  cap.visible = false;
+  cap.scale.y = 0.4;
+  g.add(cap);
+  items.ball = { group: g, at: [2.0, 0, 3.15], circle: true };
+}
+
+// toast — a square slice
+{
+  const g = new THREE.Group();
+  g.add(mesh(new RoundedBoxGeometry(1.25, 0.26, 1.25, 6, 0.12), clay(0xe0994e, { clearcoat: 0.2, roughness: 0.7 })));
+  const soft = mesh(new RoundedBoxGeometry(1.02, 0.06, 1.02, 4, 0.03), clay(0xfbe3b5, { clearcoat: 0.1, roughness: 0.85 }));
+  soft.position.y = 0.12;
+  g.add(soft);
+  const butter = mesh(new RoundedBoxGeometry(0.34, 0.08, 0.34, 4, 0.04), clay(0xffe58a, { clearcoat: 0.9, clearcoatRoughness: 0.1 }));
+  butter.position.set(0.05, 0.17, -0.03);
+  butter.rotation.y = 0.5;
+  g.add(butter);
+  g.children.forEach((c) => (c.position.y += 0.13));
+  items.toast = { group: g, at: [-1.45, ON_BLANKET, 1.3], rotY: 0.25, circle: false };
+}
+
+// cheese — a triangle wedge
+{
+  const s = new THREE.Shape();
+  s.moveTo(-0.7, -0.55); s.lineTo(0.75, -0.55); s.lineTo(-0.7, 0.75); s.closePath();
+  const geo = roundedShapeExtrude(s, 0.22, 0.07);
+  geo.center();
+  const g = new THREE.Group();
+  const cheese = mesh(geo, clay(0xffcc3d, { clearcoat: 0.5 }));
+  cheese.rotation.x = -Math.PI / 2;
+  cheese.position.y = 0.18;
+  g.add(cheese);
+  items.cheese = { group: g, at: [0.0, ON_BLANKET, 0.1], rotY: -0.35, scale: 0.8, circle: false };
+}
+
+// book — a rectangle
+{
+  const g = new THREE.Group();
+  const cover = mesh(new RoundedBoxGeometry(1.15, 0.28, 1.6, 6, 0.06), clay(0x8d74e2, { clearcoat: 0.5 }));
+  cover.position.y = 0.14;
+  g.add(cover);
+  const pages = mesh(new RoundedBoxGeometry(1.08, 0.2, 1.5, 4, 0.03), clay(0xfffaf0, { roughness: 0.8, clearcoat: 0.1 }));
+  pages.position.set(0.05, 0.14, 0);
+  g.add(pages);
+  const top = mesh(new RoundedBoxGeometry(1.15, 0.05, 1.6, 4, 0.025), clay(0x8d74e2, { clearcoat: 0.5 }));
+  top.position.y = 0.27;
+  g.add(top);
+  const label = mesh(new RoundedBoxGeometry(0.6, 0.02, 0.28, 2, 0.01), clay(0xffe07a));
+  label.position.set(0, 0.3, -0.35);
+  g.add(label);
+  items.book = { group: g, at: [-2.0, 0, 3.15], rotY: 0.35, circle: false };
+}
+
+// kite — a diamond with a bowed tail
+{
+  const g = new THREE.Group();
+  const P = [[0, 1.0], [0.62, 0.1], [0, -1.0], [-0.62, 0.1]];
+  const C = [0.0, 0.1];
+  const kiteColors = [0x6bb8f0, 0xffd45e, 0x6bb8f0, 0xffd45e];
+  P.forEach((pt, i) => {
+    const nx = P[(i + 1) % 4];
+    const tri = new THREE.Shape();
+    tri.moveTo(C[0], C[1]); tri.lineTo(pt[0], pt[1]); tri.lineTo(nx[0], nx[1]); tri.closePath();
+    const geo = roundedShapeExtrude(tri, 0.05, 0.025);
+    const m = mesh(geo, clay(kiteColors[i], { clearcoat: 0.6 }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.y = 0.06;
+    g.add(m);
+  });
+  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.05, 1.0), new THREE.Vector3(0.35, 0.05, 1.5), new THREE.Vector3(-0.1, 0.05, 1.95), new THREE.Vector3(0.3, 0.05, 2.35)]);
+  g.add(mesh(new THREE.TubeGeometry(curve, 64, 0.025, 8), clay(0xffffff)));
+  for (const t of [0.35, 0.7]) {
+    const p = curve.getPoint(t);
+    for (const side of [-1, 1]) {
+      const bow = mesh(new THREE.ConeGeometry(0.1, 0.22, 16), clay(0xf9a3c7));
+      bow.rotation.z = side * Math.PI / 2;
+      bow.position.set(p.x + side * 0.1, 0.07, p.z);
+      g.add(bow);
+    }
+  }
+  items.kite = { group: g, at: [-0.6, 0, -3.3], rotY: 1.35, scale: 0.72, circle: false };
+}
+
+for (const [name, it] of Object.entries(items)) {
+  it.group.position.set(...it.at);
+  if (it.rotY) it.group.rotation.y = it.rotY;
+  if (it.scale) it.group.scale.setScalar(it.scale);
+  scene.add(it.group);
+}
+
+/* A see-through floor that only shows shadows, for the item layers. */
+const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
+catcher.rotation.x = -Math.PI / 2;
+catcher.receiveShadow = true;
+scene.add(catcher);
+
+function frame() { renderer.render(scene, camera); return renderer.domElement.toDataURL("image/png"); }
+
+window.renderLayers = () => {
+  const out = {};
+  // everything, for a preview
+  catcher.visible = false;
+  out.all = frame();
+  // the world alone
+  Object.values(items).forEach((it) => (it.group.visible = false));
+  out.background = frame();
+  // each item alone, on a shadow catcher at its own surface height
+  world.visible = false;
+  catcher.visible = true;
+  renderer.setClearColor(0x000000, 0);
+  for (const [name, it] of Object.entries(items)) {
+    Object.values(items).forEach((o) => (o.group.visible = o === it));
+    catcher.position.y = it.at[1] + 0.001;
+    out[name] = frame();
+    catcher.visible = false;
+    out[name + "__hit"] = frame();
+    catcher.visible = true;
+  }
+  return out;
+};
+window.itemsMeta = () => Object.fromEntries(Object.entries(items).map(([k, v]) => [k, { circle: v.circle }]));
+window.ready = true;
+</script>
+</body>
+</html>
