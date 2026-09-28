@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { ShapeId } from "@/types/course";
 import { CueButton } from "./cue-button";
 import { ClayWord } from "./clay-word";
@@ -26,8 +25,8 @@ export function WordCard({ word, shape, cue, label }: WordCardProps) {
       <CueButton cue={cue} label={label} size="xl" invite />
       {shape && (
         <span
-          className="tile anim-pop-in flex h-[min(8rem,12svh)] w-[min(8rem,12svh)] items-center justify-center"
-          style={{ "--tile-tint": "var(--background)", animationDelay: "0.05s" } as CSSProperties}
+          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center"
+          style={{ animationDelay: "0.05s" }}
         >
           <FaceView face={{ kind: "shape", shape }} size="tile" />
         </span>
