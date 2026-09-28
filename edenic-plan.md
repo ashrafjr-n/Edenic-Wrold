@@ -38,7 +38,8 @@ Lessons open one after another.
 
 **The Shapes lesson (approved flow, 2026-09-28 — later courses follow it):**
 
-**On every step:** a **task chip** at the top — a clay pill with an icon, one
+**On every step:** a **task chip** at the top, beside the back button, where
+the progress bar used to be (no bar any more) — a clay pill with an icon, one
 verb in the child's language ("Draw") and the English word it is about;
 tapping it says the instruction. No Pinki picture, speech bubble or separate
 speaker up there, and no step list: Pinki **peeks in from the screen edge** to
@@ -50,7 +51,7 @@ cheer a right answer or think along after a miss, then slides away.
    reel ends the lesson moves on by itself. If the browser refuses to start
    it, a big **Play** button sits in the middle.
 2. **Word 🔊**: one big speaker button (the word's sound, when audio lands),
-   the shape itself, and the English word under it, every letter its own clay
+   the shape itself (big, no tile behind it), and the English word under it, every letter its own clay
    colour. **Next**.
 3. **Trace ✏️**: Pinki draws it, then the child — in **one stroke**, from a
    clay start disc whose arrow shows the way, with chevrons round the dots.
