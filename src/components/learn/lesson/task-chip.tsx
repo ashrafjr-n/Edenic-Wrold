@@ -70,14 +70,14 @@ export function TaskChip({ kind, verb, target, label, cue, dir }: TaskChipProps)
         tone={{ face, edge, text }}
         onClick={say}
         aria-label={label}
-        className={`relative h-12 gap-2.5 pe-4 ps-1.5 text-lg font-bold sm:h-14 sm:text-xl ${speaking ? "anim-jump" : ""}`}
+        className={`relative h-12 gap-2 pe-3 ps-1.5 text-base font-bold sm:h-14 sm:gap-2.5 sm:pe-4 sm:text-xl ${speaking ? "anim-jump" : ""}`}
       >
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white sm:h-11 sm:w-11" style={{ color: edge }}>
           <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.75} />
         </span>
         <span dir={dir}>{verb}</span>
         {target && (
-          <span dir="ltr" className="rounded-full bg-white/30 px-3 py-0.5">
+          <span dir="ltr" className="rounded-full bg-white/30 px-2.5 py-0.5 sm:px-3">
             {target}
           </span>
         )}
