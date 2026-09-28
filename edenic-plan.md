@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-09-27
+> Last updated: 2026-09-28
 
 ---
 
@@ -14,14 +14,15 @@ children this age already know them.
 - **Nova** teaches English words
 - **Bloo** teaches animals & the world
 
-Every lesson is the same: **watch a reel → answer 5 questions → done ⭐**.
+Every lesson is the same: **watch a reel → a few steps → done ⭐**. A Shapes
+lesson teaches ONE shape: reel → word → trace → spell (§3).
 All three friends are open from the start.
 
 ## 2. How it's organised
 
 ```
 Friend → Course → Lesson (≈3 min) → 5 questions
-Pinki    Shapes   1. Circle & Square
+Pinki    Shapes   1. Circle
 ```
 
 | Page | Shows |
@@ -35,8 +36,27 @@ Lessons open one after another.
 
 ## 3. A lesson
 
-1. **Watch 🎬**: the reel plays (~25 s, vertical). The child can skip it.
-2. **Play 🎮**: 5 questions with a progress bar on top.
+**The Shapes lesson (approved flow, 2026-09-28 — later courses follow it):**
+
+1. **Watch 🎬**: the reel fills the whole screen on a phone (header above,
+   bottom bar below; a tall 9:16 frame on tablet/desktop). A round **Skip**
+   button sits in the bottom-right corner: it spins, then moves on. When the
+   reel ends the lesson moves on by itself.
+2. **Word 🔊**: one big speaker button (the word's sound, when audio lands) and
+   the English word under it, every letter its own clay colour. **Next**.
+3. **Trace ✏️**: the existing trace board — Pinki draws it, then the child.
+4. **Spell 🔤**: the word on top, empty spaces under it, and its letters as
+   shuffled clay tiles under those. **Tap** a tile → it flies to the first
+   empty space; **drag** a tile → any space (a taken space swaps). Tap a placed
+   tile to send it back. Nothing is judged until every space is full: right →
+   celebrate + **Next**; wrong → the misplaced tiles wiggle and **Help**
+   appears where Next goes; Help puts the word together in order, then Next.
+5. **Done ⭐**.
+
+**Other lessons (Adding, the review):**
+
+1. **Watch 🎬**: as above.
+2. **Play 🎮**: questions with a progress bar on top.
    - Right: bounce + Next.
    - Wrong: soft shake, try again. Never the word "wrong".
    - Wrong twice: the right answer glows. Nobody gets stuck.
@@ -56,14 +76,14 @@ understand every question.
 
 ## 5. Pinki's content (release 1: 2 courses, 10 lessons)
 
-### Shapes
-| # | Lesson | Questions |
+### Shapes — one shape per lesson
+| # | Lesson | Steps |
 | --- | --- | --- |
-| 1 | Circle & Square | Pick ×3, Trace circle, Trace square |
-| 2 | Triangle | Pick ×3, Trace triangle, Pick "3 corners?" |
-| 3 | Rectangle | Pick ×4 (all shapes so far), Trace rectangle |
-| 4 | Shapes around us | Pick ×5 ("Which shape is this pizza?") |
-| 5 | Shape review | Pick ×4, Count "Tap all 3 triangles" |
+| 1 | Circle | Reel, Word, Trace, Spell `circle` |
+| 2 | Square | Reel, Word, Trace, Spell `square` |
+| 3 | Triangle | Reel, Word, Trace, Spell `triangle` |
+| 4 | Rectangle | Reel, Word, Trace, Spell `rectangle` |
+| 5 | Shape review | Pick ×4 (all four shapes) |
 
 ### Adding (up to 10)
 | # | Lesson | Questions |
@@ -134,8 +154,11 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       button in its one spot.
 
 ### Phase 4 — Shapes course
-- [ ] 5 reels + ~14 pictures in place (§10).
-- [ ] 5 lessons of data.
+- [x] New flow (§3): full-screen reel + Skip, word card, spelling board with
+      tap/drag and Help. Measured at 375/390/820/1440, en/ar/ku, dark mode.
+- [x] 5 lessons of data (one shape each + review).
+- [ ] The 4 real reels replace the placeholders (same file names).
+- [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
 
 ### Phase 5 — Adding course
@@ -168,7 +191,7 @@ pastel colours, soft light, centred, plain white background, no text, no shadow.
 
 | Folder | Files |
 | --- | --- |
-| `public/assets/learn/pinki/shapes/reels/` | `1.mp4` … `5.mp4` |
+| `public/assets/learn/pinki/shapes/reels/` | `1.mp4` … `4.mp4` (circle, square, triangle, rectangle; placeholders in place now) |
 | `public/assets/learn/pinki/adding/reels/` | `1.mp4` … `5.mp4` |
 
 PNG with or without background is fine: background removal and un-matting are
