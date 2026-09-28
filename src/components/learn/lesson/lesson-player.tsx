@@ -110,6 +110,8 @@ export function LessonPlayer({
   const [at, setAt] = useState(0);
   const [solved, setSolved] = useState(false);
   const [missed, setMissed] = useState(false);
+  /* Misses on THIS step — Help on the spelling board waits for the second. */
+  const [stepMisses, setStepMisses] = useState(0);
   const [board, setBoard] = useState(false);
   const [demo, setDemo] = useState(true);
   const [mistakes, setMistakes] = useState(0);
@@ -142,6 +144,7 @@ export function LessonPlayer({
       change();
       setSolved(false);
       setMissed(false);
+      setStepMisses(0);
       setBoard(false);
       setLeaving(false);
     }, STEP_LEAVE_MS);
@@ -163,6 +166,7 @@ export function LessonPlayer({
   };
   const onMiss = () => {
     setMissed(true);
+    setStepMisses((count) => count + 1);
     setMistakes((count) => count + 1);
   };
 
@@ -283,9 +287,10 @@ export function LessonPlayer({
           onMiss={onMiss}
         />
       );
-      /* Offered only once every space is full and the word is not right —
-         in the Next button's place, so help is where onward will be. */
-      if (missed && !solved) {
+      /* Offered from the SECOND full-but-wrong word (the first just sends the
+         misplaced letters home), in the Next button's place, and it stays —
+         the child can keep trying without ever pressing it. */
+      if (stepMisses >= 2 && !solved) {
         action = (
           <Button3D
             tone={BRAND_TONE}
