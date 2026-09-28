@@ -93,7 +93,7 @@ export const en = {
     shapes: {
       name: "Learn Shapes",
       description: "Circles, squares, triangles and more",
-      items: ["Circle & Square", "Triangle", "Rectangle", "Shapes around us", "Shape review"],
+      items: ["Circle", "Square", "Triangle", "Rectangle", "Shape review"],
     },
     adding: {
       name: "Learn to Add",
@@ -145,6 +145,11 @@ export const en = {
     done: "Hooray! You did it!",
     lessonDone: "Lesson complete!",
     unlocked: "{title} is open!",
+    skip: "Skip",
+    help: "Help",
+    hearWord: "Hear {word}",
+    letterAria: "Letter {letter}",
+    spellMiss: "Almost! Let's fix the letters.",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -153,6 +158,8 @@ export const en = {
     howMany: "How many altogether?",
     putIn: "Put {n} {item} in the basket!",
     draw: "Draw a {shape}!",
+    thisIs: "This is a {shape}!",
+    spell: "Build the word {word}!",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

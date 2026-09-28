@@ -94,7 +94,7 @@ export const ku: Dictionary = {
     shapes: {
       name: "فێربوونا شێوەیان",
       description: "بازنە، چوارگۆشە، سێگۆشە و پتر",
-      items: ["بازنە و چوارگۆشە", "سێگۆشە", "لاکێشە", "شێوە ل دۆر مە", "دووبارەکرنا شێوەیان"],
+      items: ["بازنە", "چوارگۆشە", "سێگۆشە", "لاکێشە", "دووبارەکرنا شێوەیان"],
     },
     adding: {
       name: "فێربوونا کۆکرنێ",
@@ -144,6 +144,11 @@ export const ku: Dictionary = {
     done: "هۆرا! تە ب سەرکەفتن کر!",
     lessonDone: "وانە ب دووماهی هات!",
     unlocked: "{title} ڤەبوو!",
+    skip: "دەرباز ببە",
+    help: "هاریکاری",
+    hearWord: "گوهداری {word} بکە",
+    letterAria: "تیپا {letter}",
+    spellMiss: "نێزیک بوو! دا تیپان ڕێک بێخین.",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -151,6 +156,8 @@ export const ku: Dictionary = {
     howMany: "هەمی پێکڤە چەندن؟",
     putIn: "{n} {item} بکە د سەلکێ دا!",
     draw: "{shape} بکێشە!",
+    thisIs: "ئەڤە {shape}!",
+    spell: "پەیڤا {word} چێ بکە!",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

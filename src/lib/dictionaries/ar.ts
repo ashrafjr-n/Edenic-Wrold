@@ -90,7 +90,7 @@ export const ar: Dictionary = {
     shapes: {
       name: "تعلّم الأشكال",
       description: "دوائر ومربعات ومثلثات والمزيد",
-      items: ["الدائرة والمربع", "المثلث", "المستطيل", "أشكال من حولنا", "مراجعة الأشكال"],
+      items: ["الدائرة", "المربع", "المثلث", "المستطيل", "مراجعة الأشكال"],
     },
     adding: {
       name: "تعلّم الجمع",
@@ -140,6 +140,11 @@ export const ar: Dictionary = {
     done: "مرحى! لقد نجحت!",
     lessonDone: "اكتمل الدرس!",
     unlocked: "{title} مفتوح الآن!",
+    skip: "تخطٍّ",
+    help: "مساعدة",
+    hearWord: "استمع إلى {word}",
+    letterAria: "الحرف {letter}",
+    spellMiss: "اقتربت! لنرتّب الحروف.",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -147,6 +152,8 @@ export const ar: Dictionary = {
     howMany: "كم المجموع؟",
     putIn: "ضع {n} {item} في السلة!",
     draw: "ارسم {shape}!",
+    thisIs: "هذا {shape}!",
+    spell: "كوّن كلمة {word}!",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",
