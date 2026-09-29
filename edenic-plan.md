@@ -80,7 +80,10 @@ the bottom bar.
    misses the next one glows. All found → they all jump → **Next**.
 6. **Done ⭐**: a big Pinki cheering with confetti, high on the screen; the shape beside the child's own
    drawing and the word; a green pill whose padlock springs open on the next
-   lesson. *Play again* / *Next lesson*.
+   lesson. *Play again* / *Next shape* (*Next lesson* before the review).
+   Next goes back to the course path, which walks on to the next stop
+   (tick, track draws on, Pinki hops across, padlock springs off) and then
+   opens that lesson by itself.
 
 **The Shape review (lesson 5, approved design 2026-09-28):** no reel; every
 step SHOWS what it is about, so nothing depends on hearing the question.
