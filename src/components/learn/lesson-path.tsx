@@ -9,8 +9,6 @@ import { useCourseStars, useProgress } from "@/store/progress";
 import { format } from "@/lib/format-dict";
 import { CourseArt } from "@/components/learn/course-art";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import pinkiWave from "../../../public/assets/friends/pinki.png";
-import pinkiCheer from "../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 
 interface LessonPathProps {
   /** One title per lesson, in order, already in the active locale. */
@@ -53,8 +51,8 @@ function trackPath(from: number, to: number) {
 }
 
 /* The walk from a finished stop to the next one, in ms from arrival: the
-   finished stop takes its tick and the track draws on while Pinki hops
-   across, then the next stop's padlock springs off, then its lesson opens. */
+   finished stop takes its tick and the track draws on to the next stop,
+   then the next stop's padlock springs off, then its lesson opens. */
 const WALK_AT = 1300;
 const OPEN_AT = 2400;
 const GO_AT = 3800;
@@ -76,8 +74,8 @@ type Vars = CSSProperties & Record<`--${string}`, string>;
 /**
  * A course's lessons as a winding clay path (phone). Every stop is a clay
  * disc wearing its lesson's thing: finished ones are white with a green
- * tick, the next one is the course colour, bigger, with a "Start" bubble
- * and Pinki beside it; locked ones are pale with a padlock. The track is
+ * tick, the next one is the course colour, bigger, with a "Start" bubble;
+ * locked ones are pale with a padlock. The track is
  * lit in the course colour up to the next stop.
  */
 export function LessonPath({ titles, covers, characterId, lessonId, basePath, tone, dict, advanceFrom }: LessonPathProps) {
@@ -108,7 +106,6 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
 
   /* How far the lit track reaches: to the next stop, or the whole way. */
   const reach = allDone ? count - 1 : advancing ? from : nextIndex;
-  const pinkiAt = allDone ? count - 1 : walked === "at" ? from : nextIndex;
 
   const nextRef = useRef<HTMLAnchorElement>(null);
   const [unlocking, setUnlocking] = useState(-1);
@@ -149,7 +146,6 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
   }, [hydrated, allDone, advancing, nextIndex, characterId, lessonId]);
 
   const height = yAt(count - 1) + NEXT_DISC / 2 + BOTTOM;
-  const pinkiLeft = xAt(pinkiAt) > 50;
 
   return (
     <div className="relative mx-auto w-full max-w-sm" style={{ height }}>
@@ -189,7 +185,7 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
         const cover = covers[i] ?? [];
         const springing = i === unlocking;
         /* On a return visit the lock waits for the page to settle; on the
-           walk it springs the moment Pinki arrives. */
+           walk it springs as soon as the track arrives. */
         const springDelay = advancing ? 0.05 : 0.9;
 
         const art =
@@ -290,18 +286,6 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
         );
       })}
 
-      <Image
-        src={allDone ? pinkiCheer : pinkiWave}
-        alt=""
-        sizes="80px"
-        className={`path-pinki pointer-events-none absolute w-20 ${walked === "walk" ? "path-hop" : "anim-pop-in"}`}
-        style={{
-          left: `${pinkiLeft ? xAt(pinkiAt) - 38 : xAt(pinkiAt) + 38}%`,
-          top: yAt(pinkiAt) - 28,
-          translate: "-50% -50%",
-          animationDelay: "0.7s",
-        }}
-      />
     </div>
   );
 }
