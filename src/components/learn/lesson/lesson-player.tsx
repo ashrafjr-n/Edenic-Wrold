@@ -26,8 +26,8 @@ import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
 
-/* Green is "you passed this, carry on"; the course's own colour (Shapes'
-   yellow) is the ordinary way onward — a lesson wears two heroes only, the
+/* Green is every "Next" (direct request); the course's own colour (Shapes'
+   yellow) is every other way onward (Your turn, Help, the reel's buttons) — a lesson wears two heroes only, the
    character's pink and the course colour, so no blue button here. */
 const GO_TONE = {
   face: "var(--color-go)",
@@ -350,7 +350,7 @@ export function LessonPlayer({
           label={format(lines.hearWord, { word: q.word })}
         />
       );
-      action = <NextButton label={lines.next} tone={onward} onPress={advance} dir={dir} />;
+      action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;
     } else if (q.type === "spell") {
       body = (
         <SpellWord
