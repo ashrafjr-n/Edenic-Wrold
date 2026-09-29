@@ -9,8 +9,6 @@ import { Button3D } from "@/components/ui/button-3d";
     Skip button finishes its spin before the lesson moves on. */
 const SKIP_SPIN_MS = 520;
 
-const BRAND_TONE = { face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" };
-
 interface ReelVideoProps {
   src: string;
   /** Names the clip for a screen reader. */
@@ -20,6 +18,8 @@ interface ReelVideoProps {
   skipLabel: string;
   /** Names the big Play button shown when the browser refuses autoplay. */
   playLabel: string;
+  /** Skip and Play wear the course's colour. */
+  tone: { face: string; edge: string; text: string };
   /** The reel ended, or the child skipped it. Called once. */
   onDone: () => void;
 }
@@ -34,7 +34,7 @@ interface ReelVideoProps {
  * Positioned against `<main>` (`absolute inset-0`), so it covers exactly the
  * space between the chrome whatever the viewport.
  */
-export function ReelVideo({ src, label, image, skipLabel, playLabel, onDone }: ReelVideoProps) {
+export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
   const done = useRef(false);
   const timer = useRef<number | undefined>(undefined);
@@ -102,7 +102,7 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, onDone }: R
         {blocked && (
           <span className="absolute inset-0 flex items-center justify-center">
             <Button3D
-              tone={BRAND_TONE}
+              tone={tone}
               onClick={play}
               aria-label={playLabel}
               className="anim-pop-in h-24 w-24 sm:h-28 sm:w-28"
@@ -116,7 +116,7 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, onDone }: R
             `position: relative`, which would beat an `absolute` utility. */}
         <span className="absolute bottom-5 right-5 sm:bottom-6 sm:right-6">
           <Button3D
-            tone={BRAND_TONE}
+            tone={tone}
             onClick={skip}
             aria-label={skipLabel}
             className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"

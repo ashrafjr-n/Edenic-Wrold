@@ -9,17 +9,18 @@ import { TaskDemo, type TaskDemoDef } from "./task-demo";
 
 export type TaskKind = keyof Dictionary["tasks"];
 
-/** Each kind of step has its own icon and clay colour, so a child who cannot
-    read yet still knows what kind of thing to do. */
-const KINDS: Record<TaskKind, { icon: LucideIcon; face: string; edge: string; text: string }> = {
-  listen: { icon: Ear, face: "var(--color-gold)", edge: "var(--color-gold-dark)", text: "var(--color-ink-fixed)" },
-  watch: { icon: Eye, face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" },
-  draw: { icon: Pencil, face: "var(--color-subject-shapes)", edge: "var(--color-subject-shapes-dark)", text: "#fff" },
-  build: { icon: Blocks, face: "var(--color-nova)", edge: "var(--color-nova-dark)", text: "#fff" },
-  find: { icon: Search, face: "var(--color-go)", edge: "var(--color-go-dark)", text: "#fff" },
-  pick: { icon: Pointer, face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" },
-  count: { icon: Hand, face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" },
-  sort: { icon: Shapes, face: "var(--color-bloo)", edge: "var(--color-bloo-dark)", text: "#fff" },
+/** Each kind of step has its own icon, so a child who cannot read yet
+    still knows what kind of thing to do. The colour is the course's (one
+    hero colour per course, direct request), not the kind's. */
+const ICONS: Record<TaskKind, LucideIcon> = {
+  listen: Ear,
+  watch: Eye,
+  draw: Pencil,
+  build: Blocks,
+  find: Search,
+  pick: Pointer,
+  count: Hand,
+  sort: Shapes,
 };
 
 interface TaskChipProps {
@@ -34,6 +35,8 @@ interface TaskChipProps {
       (a Pick of pictures, Count) get the round badge alone. */
   demo?: TaskDemoDef;
   closeLabel: string;
+  /** The course's colour. */
+  tone: { face: string; edge: string };
   dir: "rtl" | "ltr";
 }
 
@@ -48,10 +51,12 @@ interface TaskChipProps {
  * the top layer above the sticky row it is declared in. Its content only
  * mounts while it is open, so the demo starts from the top every time.
  */
-export function TaskChip({ kind, verb, target, label, demo, closeLabel, dir }: TaskChipProps) {
+export function TaskChip({ kind, verb, target, label, demo, closeLabel, tone, dir }: TaskChipProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
-  const { icon: Icon, face, edge, text } = KINDS[kind];
+  const Icon = ICONS[kind];
+  const { face, edge } = tone;
+  const text = "#fff";
 
   if (!demo) {
     return (
@@ -105,7 +110,7 @@ export function TaskChip({ kind, verb, target, label, demo, closeLabel, dir }: T
             </div>
             <span className="absolute end-3 top-3">
               <Button3D
-                tone={{ face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" }}
+                tone={{ face: "var(--page-accent-color)", edge: "var(--page-accent-edge)", text: "var(--page-accent-ink)" }}
                 onClick={() => dialog.current?.close()}
                 aria-label={closeLabel}
                 className="h-11 w-11"

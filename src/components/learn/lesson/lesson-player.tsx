@@ -26,15 +26,12 @@ import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
 
-/* Green is "you passed this, carry on"; blue is the ordinary way onward. */
+/* Green is "you passed this, carry on"; the course's own colour (Shapes'
+   yellow) is the ordinary way onward — a lesson wears two heroes only, the
+   character's pink and the course colour, so no blue button here. */
 const GO_TONE = {
   face: "var(--color-go)",
   edge: "var(--color-go-dark)",
-  text: "#fff",
-};
-const BRAND_TONE = {
-  face: "var(--brand)",
-  edge: "var(--brand-dark)",
   text: "#fff",
 };
 
@@ -134,6 +131,8 @@ interface LessonPlayerProps {
   image: string;
   /** The character's colour — the lesson wears it. */
   tone: { face: string; edge: string };
+  /** The course's colour: every "onward" button that is not green. */
+  courseTone: { face: string; edge: string };
   dict: Dictionary;
   dir: "rtl" | "ltr";
 }
@@ -160,9 +159,11 @@ export function LessonPlayer({
   nextIsShape = false,
   image,
   tone,
+  courseTone,
   dict,
   dir,
 }: LessonPlayerProps) {
+  const onward = { ...courseTone, text: "#fff" };
   const complete = useProgress((state) => state.complete);
   const lines = dict.lessonPlayer;
 
@@ -258,6 +259,7 @@ export function LessonPlayer({
         label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
         demo={showing ? undefined : demoFor(q, tone.face, seed)}
         closeLabel={lines.close}
+        tone={courseTone}
         dir={dir}
       />
     );
@@ -302,6 +304,7 @@ export function LessonPlayer({
         label={format(lines.reelAbout, { title })}
         skipLabel={lines.skip}
         playLabel={lines.playReel}
+        tone={onward}
         onDone={advance}
       />
     );
@@ -323,7 +326,7 @@ export function LessonPlayer({
         />
       );
       action = showing ? (
-        <NextButton label={lines.yourTurn} tone={BRAND_TONE} onPress={endDemo} dir={dir} />
+        <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} />
       ) : null;
     } else if (q.type === "count") {
       body = (
@@ -347,7 +350,7 @@ export function LessonPlayer({
           label={format(lines.hearWord, { word: q.word })}
         />
       );
-      action = <NextButton label={lines.next} tone={BRAND_TONE} onPress={advance} dir={dir} />;
+      action = <NextButton label={lines.next} tone={onward} onPress={advance} dir={dir} />;
     } else if (q.type === "spell") {
       body = (
         <SpellWord
@@ -377,7 +380,7 @@ export function LessonPlayer({
           <div className="flex items-center gap-3">
             {startOver}
             <Button3D
-              tone={BRAND_TONE}
+              tone={onward}
               onClick={() => spell.current?.help()}
               className="anim-pop-in h-12 gap-2 px-6 text-base font-bold"
             >
@@ -419,7 +422,7 @@ export function LessonPlayer({
         />
       );
       action = board ? null : (
-        <NextButton label={lines.yourTurn} tone={BRAND_TONE} onPress={() => setBoard(true)} dir={dir} />
+        <NextButton label={lines.yourTurn} tone={onward} onPress={() => setBoard(true)} dir={dir} />
       );
     }
     if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;

@@ -69,6 +69,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           nextIsShape={courseLessons[lesson.id][n]?.questions.some((q) => q.type === "word" && q.shape !== undefined)}
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}
+          courseTone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
           dict={dict}
           dir={dir}
         />
