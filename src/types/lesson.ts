@@ -1,7 +1,7 @@
 /** A course. The route segment too: `/learn/pinki/shapes`. */
 export type LessonId = "shapes" | "adding";
 
-/** A lesson's own color world, worn from `sm` up (see `.lesson-theme`).
+/** A course's own colour world (its cards, banner, path and buttons).
     Deliberately independent of the character's accent: the hue says what
     the subject is, so a subject reads the same way on every hub. */
 export interface LessonTheme {

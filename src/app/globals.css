@@ -867,39 +867,6 @@ bdi {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
-/* The pink item-count chip every lesson card carries now (paired with
-   `.card-grain` for the noise) — the card body reads white, so this is
-   where the character's own color still shows on the row. Fully
-   self-contained (padding, radius, size all live here, not as Tailwind
-   utilities) because it sits beside `.card`/`.tile`, and those are unlayered
-   — a layered Tailwind utility for the same property would silently lose. */
-.counter-chip {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-  background-color: var(--character-accent);
-}
-
-@media (width >= 40rem) {
-  .counter-chip {
-    padding: 0.3125rem 0.75rem;
-    font-size: 0.8125rem;
-  }
-}
-
-/* A white chip for the same job, for when the thing behind it is already the
-   character's colour: a locked lesson card's body is the accent now, and a
-   pink chip on a pink card is invisible. White face, accent type. */
-.counter-chip--quiet {
-  color: var(--character-accent);
-  background-color: var(--surface);
-}
-
 /* ---------------------------------------------------------------
    Locked, in clay.
 
@@ -969,15 +936,6 @@ bdi {
    --------------------------------------------------------------- */
 .speech-clay {
   background: color-mix(in srgb, var(--bubble-ink, var(--color-pinki)) 8%, var(--surface));
-}
-
-/* A scoped exception: white cards are normally grain-free (the tooth is for
-   colored surfaces only), but a card sitting on a saturated, noisy page
-   background — the `/learn/[character]` hub — reads too flat without it. */
-.card-grain {
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
 }
 
 /* ---------------------------------------------------------------
@@ -1134,61 +1092,6 @@ bdi {
 
 .nav-tab--current .icon-mask-grain {
   background-image: var(--noise-soft);
-}
-
-/* ---------------------------------------------------------------
-   Lesson colors.
-
-   From `sm` up every lesson wears its subject's hue instead of the
-   character's accent, so the hub reads as four places to go rather than
-   four copies of the same pink. A locked lesson keeps its hue and simply
-   fades — greying it out would hide the exact thing the color is there to
-   show, which is what the world ahead looks like.
-
-   The hue rides the step badge, the "Next up" pill, the chevron/lock chip
-   and the progress bar only. The icon tile stays WHITE: a pale per-lesson
-   tint on it was tried and cut — the icons read better against white, and
-   the card keeps its "separation from light, not from color" reading.
-
-   Below `sm` this is deliberately off. The phone stack already draws the
-   sequence in the character's accent (`LessonRail`), and four more colors
-   beside it is two color systems arguing; there the old rule stands —
-   character accent when open, the neutral locked tone when not.
-
-   `--lesson-hue*` arrives inline per card from `data/lessons.ts`;
-   `--character-accent*` is set once on the grid.
-   --------------------------------------------------------------- */
-.lesson-theme {
-  --lesson-accent: var(--lesson-hue);
-  --lesson-title: var(--color-ink);
-  --lesson-muted: var(--color-ink-soft);
-}
-
-@media (width < 40rem) {
-  .lesson-theme {
-    --lesson-accent: var(--character-accent);
-  }
-
-  .lesson-theme.is-locked {
-    --lesson-accent: var(--color-locked);
-  }
-}
-
-/* **The OPEN card's body is the character's own accent, grained; a LOCKED
-   one is white.** That is the reverse of what it was, on direct request, and
-   the type has to follow the fill or half the hub is unreadable — so the
-   white type now rides `:not(.is-locked)` and a locked card falls back to
-   `.lesson-theme`'s ordinary ink, which is also what makes it correct in
-   dark mode for free (`--color-ink` flips light there, and the locked card's
-   `--surface` fill flips dark with it; the open card is a saturated pink in
-   both themes and keeps white type in both).
-
-   Declared after the phone block on purpose: that block still swaps the
-   accent tokens, this overrides only the type. `:not()` is what buys the
-   specificity to beat plain `.lesson-theme` above. */
-.lesson-theme:not(.is-locked) {
-  --lesson-title: #fff;
-  --lesson-muted: rgb(255 255 255 / 88%);
 }
 
 /* ---------------------------------------------------------------
@@ -1871,30 +1774,6 @@ button:disabled,
     inset 0 8px 12px -5px rgb(var(--shadow-hue) / 26%),
     inset 0 -6px 10px -5px rgb(255 255 255 / 70%),
     0 6px 14px -8px rgb(var(--shadow-hue) / 38%);
-}
-
-/* Pink and grained, like `.btn3d--icon-accent`, but keyed to THIS character's
-   own `--character-accent`/`--character-accent-dark` instead of the site's
-   fixed `--accent` — so Nova's and Bloo's hubs get their own color instead
-   of Pinki's pink. Used on the lesson hub's chevron/lock indicator, now that
-   the card body around it is plain white and the color has to live here
-   instead. */
-.btn3d--clay-accent {
-  background-color: var(--character-accent);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  box-shadow:
-    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
-    inset 0 -7px 11px -4px
-      color-mix(in srgb, var(--character-accent-dark) 60%, transparent),
-    0 14px 26px -10px
-      color-mix(in srgb, var(--character-accent-dark) 55%, transparent);
-  transition: background-color 0.2s ease;
-}
-
-.btn3d--clay-accent:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--character-accent) 85%, black 15%);
 }
 
 .btn3d:focus-visible {
