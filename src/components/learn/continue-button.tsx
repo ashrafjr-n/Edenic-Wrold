@@ -28,13 +28,9 @@ interface ContinueButtonProps {
  * course in the character's list (or replays the last lesson if there is
  * none); anywhere in between it is the ordinary "Continue".
  *
- * Its own tiny Client Component, deliberately NOT part of `LessonList` —
- * the desktop layout places it inline in a sticky sidebar while phone and
- * tablet place it in a fixed bottom bar, two unrelated parents in two
- * different JSX trees (see the numbers-lesson conventions in CLAUDE.md for
- * why the page forks like that). Duplicating the ~8 lines of progress
- * lookup here is cheaper and safer than threading `continueValue` down
- * through both trees from one shared source.
+ * Its own tiny Client Component: the course page places it in a fixed
+ * bottom bar on phone and tablet and under the banner on a desktop — two
+ * unrelated parents in different JSX trees.
  */
 export function ContinueButton({
   count,

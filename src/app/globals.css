@@ -3744,6 +3744,21 @@ button:disabled,
   animation: path-draw 1s cubic-bezier(0.45, 0, 0.3, 1) both;
 }
 
+/* Across a desktop board the track runs left to right, so it draws on
+   from the left. */
+.path-draw--x {
+  animation-name: path-draw-x;
+}
+
+@keyframes path-draw-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 @keyframes path-draw {
   from {
     clip-path: inset(0 0 100% 0);

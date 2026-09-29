@@ -1,10 +1,7 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
-import Image from "next/image";
-import { Hash } from "lucide-react";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
-import { LessonList } from "@/components/learn/lesson-list";
 import { ContinueButton } from "@/components/learn/continue-button";
 import { LessonPath } from "@/components/learn/lesson-path";
 import { CourseArt } from "@/components/learn/course-art";
@@ -19,61 +16,20 @@ interface LessonPageProps {
   searchParams: Promise<{ from?: string }>;
 }
 
-type AvatarVars = CSSProperties & { "--tile-tint"?: string };
-
 /**
- * A course's own page: pick a lesson. (It was the Numbers picker; the layout
- * below is kept as it was, with the course's data in place of the numbers.)
+ * A course's own page: its lessons as a winding clay path (`LessonPath`),
+ * in three layouts, one per screen size, each its own JSX tree:
  *
- * **Reworked to a hero-then-list layout on direct request** — the old
- * design (a plain "Learn Numbers" chip in the header row, then one big
- * white card holding a 3x3 grid of number tiles) was called out as
- * unfinished and out of step with the rest of the site. This follows the
- * order and rhythm of a reference lesson-list screen instead: a hero
- * (Pinki, the back button), an overlapping white sheet carrying the
- * character/subject identity and a short description, then the course's
- * lessons as list rows (`LessonList`) — not the reference's own colours,
- * just its arrangement, kept in this site's own clay language.
+ * - **Phone (< sm):** a course banner, the path winding down, a fixed
+ *   Continue bar above the bottom nav.
+ * - **Tablet (sm – lg):** the same, grown — a taller banner, the path at
+ *   tablet size, the Continue bar at the bottom edge.
+ * - **Desktop (lg+):** the height of the screen, no scrolling — the course
+ *   in a tall banner on the left with Continue under it, the path winding
+ *   ACROSS a board tinted in the course colour on the right.
  *
- * **Pinki is `sticky`, not a boxed panel** — a direct correction after the
- * first pass: no tinted background, no decorative clouds, just her render
- * pinned under the header while the white sheet (and the list inside it)
- * scrolls up and over her, exactly the effect the reference's photo-under-
- * sheet composition has. `top` is the header's own rendered height so she
- * sticks flush beneath it rather than under it. `LessonList` renders its
- * own `Button3D` as a SEPARATE `fixed` bar pinned to the viewport bottom
- * (above the phone's `BottomNav`), so it never scrolls out of reach.
- *
- * **The back button is back in the standard header row, above the hero —
- * it was floating over Pinki and that was flagged as the wrong spot.**
- * Every other route puts it in its own row at the very top (see "Locked,
- * and back buttons" in CLAUDE.md); this page now matches. The "5 lessons"
- * count moved out of `LessonList` and into the white sheet's own eyebrow
- * row, opposite the character chip — it needs no progress-store read
- * (`lesson.totalItems` is static), so it belongs here, server-rendered,
- * not in the client list.
- *
- * **The white sheet runs edge-to-edge on a phone** (`px-0` on the column,
- * restored at `sm`) — a direct correction, it used to carry the same
- * side margin as the rest of the page and left visible gutters either
- * side of it. The back-button row keeps its own `px-6` so IT doesn't
- * follow the sheet to the edge.
- *
- * **The page forks in two at `lg`, on direct request — "لا تلمس الهاتف،
- * غير التصميم كلو للديسكتوب" (don't touch the phone, change the WHOLE
- * design for desktop, not just enlarge it).** Everything above this
- * point renders ONLY below `lg` (the whole column carries `lg:hidden`) —
- * phone is untouched pixel-for-pixel, and it is also what a tablet gets,
- * except `LessonList`'s own grid (not rows) shows there from `sm` up.
- * From `lg` a SEPARATE block takes over: a sticky left sidebar (Pinki,
- * title, description, the stat chip, `ContinueButton` inline) beside a
- * 3-column grid of number cards — the same card language
- * `/learn/[character]`'s lesson hub already uses (`.card clay` open,
- * `.card card-clay-white` locked, a white "Next" pill), not invented for
- * this page. `ContinueButton` was pulled out of `LessonList` for exactly
- * this: two unrelated JSX trees (a fixed bottom bar below `lg`, inline in
- * the sidebar at `lg`) both need it, and neither should reach into the
- * list's internals to get it.
+ * `?from=n` (the lesson just finished) makes the path on screen walk on to
+ * the next stop and then open it — see `LessonPath`.
  */
 export default async function LessonPage({ params, searchParams }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
@@ -91,6 +47,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark };
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
   const covers = courseLessons[lesson.id].map((def) => def.cover);
+  const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
 
   return (
     <main
@@ -99,34 +56,15 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
          too much, which opened a bare gap of page background between the
          sheet's bottom row and the bar every time the page was scrolled all
          the way down. */
-      className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-28 lg:pb-16"
+      className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-32 lg:pb-10"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      {/* ONE back row for both layouts below — `BackRow` puts the button
-          where it is on every page. The character chip is the desktop's
-          only (the phone sheet carries its own identity row). */}
+      {/* ONE back row for every layout below — `BackRow` puts the button
+          where it is on every page. */}
       <BackRow
         href={`/learn/${character.id}`}
         label={format(dict.lessonPicker.backTo, { characterName: character.name })}
-      >
-        <div className="card card-pill hidden min-w-0 items-center gap-3 py-1.5 pl-1.5 pr-6 lg:flex">
-          <span
-            className="tile tile-round relative h-11 w-11 shrink-0 overflow-hidden"
-            style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
-          >
-            <Image
-              src={character.image}
-              alt=""
-              width={64}
-              height={73}
-              className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
-            />
-          </span>
-          <span className="truncate text-base font-bold text-[var(--color-ink)]">
-            {character.name}
-          </span>
-        </div>
-      </BackRow>
+      />
 
       {/* ================= Phone (< sm) =================
           The course as a banner in its own colour — title, progress, its
@@ -169,100 +107,50 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
           basePath={basePath}
           tone={tone}
           dict={dict.lessonPicker}
-          advanceFrom={Number.isInteger(from) && from > 0 ? from : undefined}
+          advanceFrom={advanceFrom}
         />
       </div>
 
-      {/* ================= Tablet (sm – lg) ================= */}
-      <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex md:max-w-[35rem] lg:hidden lg:max-w-[37rem]">
-        {/* The hero: just Pinki, `sticky` under the header (`z-0`, so the
-            header's own `z-30` still wins) — no panel, no tint, no clouds
-            behind her, on direct request. The white sheet below is what
-            scrolls up and covers her. */}
-        <div className="sticky top-[4.25rem] z-0 flex h-[34svh] min-h-[12rem] w-full shrink-0 items-end justify-center sm:top-[4.75rem] sm:h-[30svh] lg:top-[5.5rem]">
-          <Image
-            src="/assets/learn-with-pinki/pinki/pinki-learn-numbers.png"
-            alt=""
-            width={340}
-            height={379}
-            sizes="(min-width: 640px) 340px, 300px"
-            className="pointer-events-none h-full w-auto max-w-none object-contain"
-          />
-        </div>
-
-        {/* The overlapping white sheet: who this is (Pinki), what it is
-            (the course), and why (its own description) — the
-            reference's "Science" / "Dinosaur World" pairing, mapped onto
-            content this page actually has instead of two copies of the
-            same word. Opaque and `z-10`, above the sticky hero, so it
-            covers her as the page scrolls. Edge-to-edge on a phone. */}
-        <div className="card card-clay-white relative z-10 -mt-6 w-full px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span
-                className="tile tile-round relative h-8 w-8 shrink-0 overflow-hidden"
-                style={{ "--tile-tint": `color-mix(in srgb, ${character.accent} 22%, white)` } as AvatarVars}
-              >
-                <Image
-                  src={character.image}
-                  alt=""
-                  width={64}
-                  height={73}
-                  className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
-                />
-              </span>
-              <span
-                className="text-xs font-bold uppercase tracking-wide sm:text-sm"
-                style={{ color: character.accent }}
-              >
-                {character.name}
-              </span>
-            </div>
-
-            {/* The lesson count — a real clay pill (grain + inset shading,
-                not a flat tinted tile), opposite the character chip.
-                Static data (`lesson.totalItems`), so it costs no client
-                read. */}
-            <span
-              className="clay inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white sm:px-3.5 sm:py-2 sm:text-sm"
-              style={
-                {
-                  backgroundColor: lesson.theme.accent,
-                  "--clay-edge": lesson.theme.accentDark,
-                } as CSSProperties
-              }
-            >
-              <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
-              {lessonsCount}
-            </span>
+      {/* ================= Tablet (sm – lg) =================
+          The phone's banner and path, grown: a taller banner with a bigger
+          pile of things, the path at tablet size (`size="tablet"`). */}
+      <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex lg:hidden">
+        <section
+          className="card clay anim-pop-in relative mt-8 flex items-center gap-6 py-8 pl-8 pr-4"
+          style={{ backgroundColor: tone.face, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
+        >
+          <div dir={dir} className="min-w-0 flex-1">
+            <p className="text-sm font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
+            <h1 className="clay-title mt-1 text-4xl font-bold leading-tight text-white">{course.name}</h1>
+            <p className="mt-2 text-balance text-lg leading-snug text-white/90">{course.description}</p>
+            <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
           </div>
+          <CourseArt images={courseCovers(lesson.id)} width={224} className="-my-12 h-56 w-56 shrink-0" />
+        </section>
 
-          <h1 className="mt-2 text-2xl font-bold text-[var(--color-ink)] sm:text-3xl">
-            {course.name}
-          </h1>
-          <p dir={dir} className="mt-1.5 text-sm text-[var(--color-ink)]/60 sm:text-base">
-            {course.description}
-          </p>
-
-          <LessonList
+        <div className="mt-4">
+          <LessonPath
             titles={course.items}
+            covers={covers}
             characterId={character.id}
             lessonId={lesson.id}
             basePath={basePath}
             tone={tone}
-            dict={dict}
+            dict={dict.lessonPicker}
+            advanceFrom={advanceFrom}
+            size="tablet"
           />
         </div>
       </div>
 
-      {/* Continue — a fixed bar above the phone's `BottomNav`, exactly as
-          before (this used to live inside `LessonList`). `lg:hidden`
-          because the desktop layout below renders its own inline one. */}
+      {/* Continue — a fixed bar above the phone's `BottomNav` (at the bottom
+          edge on a tablet). `lg:hidden`: the desktop puts its own under the
+          banner. */}
       <div
         className="pointer-events-none fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 pb-4 pt-10 sm:bottom-0 sm:pb-6 lg:hidden"
         style={{ background: "linear-gradient(to top, var(--background) 55%, transparent)" }}
       >
-        <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8 md:max-w-[35rem] lg:max-w-[37rem]">
+        <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8">
           <ContinueButton
             count={lesson.totalItems}
             characterId={character.id}
@@ -275,72 +163,51 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
         </div>
       </div>
 
-      {/* ================= Desktop (lg and up) ================= */}
-      <div className="mx-auto hidden w-full max-w-7xl flex-1 px-8 lg:flex xl:px-12">
-        <div className="flex w-full flex-1 flex-col">
-          <div className="mt-10 flex flex-1 items-start gap-10 xl:gap-14">
-            {/* Sticky sidebar — everything that was the phone's "hero +
-                sheet" becomes one persistent panel here instead of a
-                scroll-reveal trick, which only makes sense against a
-                single scrolling column. No card behind it, on purpose:
-                the hub page's own header chrome sits directly on the
-                page ground too — the numbered CARDS are the only cards
-                on this side of the page. */}
-            <div className="sticky top-28 flex w-[22rem] shrink-0 flex-col xl:w-[24rem]">
-              <Image
-                src="/assets/learn-with-pinki/pinki/pinki-learn-numbers.png"
-                alt=""
-                width={320}
-                height={356}
-                sizes="320px"
-                className="mx-auto h-56 w-auto object-contain xl:h-64"
-              />
-
-              <span
-                className="clay mt-2 inline-flex w-fit items-center gap-1.5 self-start rounded-full px-3.5 py-2 text-sm font-bold text-white"
-                style={
-                  {
-                    backgroundColor: lesson.theme.accent,
-                    "--clay-edge": lesson.theme.accentDark,
-                  } as CSSProperties
-                }
-              >
-                <Hash className="h-4 w-4" strokeWidth={2.75} />
-                {lessonsCount}
-              </span>
-
-              <h1 className="mt-4 text-4xl font-bold text-[var(--color-ink)] xl:text-5xl">
-                {course.name}
-              </h1>
-              <p dir={dir} className="mt-3 text-base text-[var(--color-ink)]/60">
-                {course.description}
-              </p>
-
-              <ContinueButton
-                count={lesson.totalItems}
-                characterId={character.id}
-                lessonId={lesson.id}
-                basePath={basePath}
-                tone={tone}
-                dict={dict}
-                className="mt-6 w-full py-3.5 text-base"
-              />
+      {/* ================= Desktop (lg and up) =================
+          The height of the screen, in two parts: the course on the left
+          (its pile of things, name, progress, Continue), and the path on
+          the right, winding ACROSS a board tinted in the course colour
+          (`size="wide"`) — every lesson in view at once, no scrolling. */}
+      <div className="mx-auto hidden w-full max-w-7xl gap-8 px-8 pt-6 lg:flex lg:h-[calc(100svh-12.5rem)] lg:min-h-[30rem] xl:gap-10 xl:px-12">
+        <aside className="flex w-[21rem] shrink-0 flex-col gap-5 xl:w-[24rem]">
+          <section
+            className="card clay anim-pop-in flex min-h-0 flex-1 flex-col p-7"
+            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
+          >
+            <CourseArt images={courseCovers(lesson.id)} width={300} className="mx-auto min-h-0 w-full flex-1" />
+            <div dir={dir} className="mt-4">
+              <p className="text-sm font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
+              <h1 className="clay-title mt-1 text-4xl font-bold leading-tight text-white xl:text-5xl">{course.name}</h1>
+              <p className="mt-2 text-lg leading-snug text-white/90">{course.description}</p>
             </div>
+            <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
+          </section>
+          <ContinueButton
+            count={lesson.totalItems}
+            characterId={character.id}
+            lessonId={lesson.id}
+            basePath={basePath}
+            tone={tone}
+            dict={dict}
+            className="w-full py-4 text-lg"
+          />
+        </aside>
 
-            {/* The lessons, as a grid — `LessonList`'s own `lg:grid-cols-3`
-                output; the row markup inside it stays `sm:hidden` and
-                never shows here. */}
-            <div className="flex-1">
-              <LessonList
-                titles={course.items}
-                characterId={character.id}
-                lessonId={lesson.id}
-                basePath={basePath}
-                tone={tone}
-                dict={dict}
-              />
-            </div>
-          </div>
+        <div
+          className="card card-clay-white anim-fade-up min-w-0 flex-1 px-10 py-6"
+          style={{ background: `color-mix(in srgb, ${tone.face} 14%, var(--surface))`, animationDelay: "0.2s" }}
+        >
+          <LessonPath
+            titles={course.items}
+            covers={covers}
+            characterId={character.id}
+            lessonId={lesson.id}
+            basePath={basePath}
+            tone={tone}
+            dict={dict.lessonPicker}
+            advanceFrom={advanceFrom}
+            size="wide"
+          />
         </div>
       </div>
     </main>
