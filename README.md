@@ -17,8 +17,8 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses (Pinki: Shapes and Adding) |
-| `/learn/[character]/[lesson]` | A course: its lessons as rows, unlocked one at a time, with a Continue button to the next one |
+| `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (Pinki: Shapes and Adding) |
+| `/learn/[character]/[lesson]` | A course: on a phone, a banner and its lessons as a winding clay path (unlocked one at a time); a card grid on wider screens; a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word), then "Lesson complete!". A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -149,7 +149,8 @@ src/
   components/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, course cards, the
-                      lesson list and its Continue button
+                      course path and lesson grid, their progress bar and
+                      Continue button
     learn/lesson/     The lesson player: the task button and its how-to
                       demos, the full-screen reel, the word card, the tracing board, the
                       spelling board, Find-the-shapes, pick and count, the
@@ -179,7 +180,7 @@ public/
   assets/friends/     Mascot artwork
   assets/icons/       3D icons — Memory Match's card faces, the Play panel art
   assets/nav-icons/   The phone bottom bar's four masked icons
-  assets/learn-with-pinki/  Pinki's teaching poses and her hub banner
+  assets/learn-with-pinki/  Pinki's poses
   assets/learn/pinki/       Course card art (placeholders until the course
                             art arrives), then each course's pictures and
                             reels (shapes/reels/1–4.mp4 are placeholders cut
@@ -200,10 +201,13 @@ and all are still being iterated on visually.
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
 now has two courses, **Shapes** and **Adding**, five lessons each, both open.
-Their pages are real — the hub's course cards, and each course's lesson list,
-which keeps the old number picker's layout (a pinned Pinki with a white sheet of
-rows over her on a phone, a sidebar beside a card grid on a desktop) and its
-Start / Continue / Next Lesson button.
+Their pages are real. On a phone, the hub is Pinki saying hello above one big
+clay card per course (its things piled on it, a play button, a progress bar),
+and a course page is a banner over a winding clay path: one stop per lesson,
+wearing that lesson's thing — ticked when done, bigger with a "Start" bubble
+and Pinki beside it when it is next, padlocked after that. Tablet and desktop
+keep the earlier card layouts for now. Both pages have a Start / Continue /
+Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
 Rectangle, then a Shape review. Every step has a round **task button** beside
