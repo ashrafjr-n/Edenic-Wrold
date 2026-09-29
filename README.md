@@ -207,8 +207,11 @@ and a course page is a banner over a winding clay path: one stop per lesson,
 wearing that lesson's thing — ticked when done, bigger with a "Start" bubble
 when it is next, padlocked after that. Inside a course only two hero colours
 are used — Pinki's pink and the course's own colour (yellow for Shapes) — with
-green kept for "Next". Tablet and desktop
-keep the earlier card layouts for now. Both pages have a Start / Continue /
+green kept for "Next". Tablets and desktops get their own layouts that fill
+the screen: on the hub, Pinki greets the child beside an "Up next" card and
+big course cards; a course's path winds across a board on a desktop; and a
+lesson shows how its step is played and which lesson it is in panels beside
+the step. Both pages have a Start / Continue /
 Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
