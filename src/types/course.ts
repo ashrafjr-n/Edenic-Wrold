@@ -75,6 +75,9 @@ export interface LessonDef {
       never imported). Absent until the company delivers it — the lesson then
       starts straight at the questions. */
   reel?: string;
+  /** The picture(s) its stop on the course path wears — one thing, or a
+      few for a lesson that mixes them (a review). */
+  cover: readonly StaticImageData[];
   /** Empty until the lesson is written; the page then says it is on its way. */
   questions: Question[];
 }

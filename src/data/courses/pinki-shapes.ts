@@ -1,5 +1,6 @@
 import type { Face, LessonDef, Scene, SceneItem, ShapeId } from "@/types/course";
 import { picnic, rectangles, squares, triangles } from "@/data/scenes";
+import { SHAPES } from "@/data/shapes";
 
 const circle: Face = { kind: "shape", shape: "circle" };
 const square: Face = { kind: "shape", shape: "square" };
@@ -12,6 +13,7 @@ const rectangle: Face = { kind: "shape", shape: "rectangle" };
 function shapeLesson(n: number, shape: ShapeId, scene: Scene): LessonDef {
   return {
     reel: `/assets/learn/pinki/shapes/reels/${n}.mp4`,
+    cover: [SHAPES[shape].thing.src],
     questions: [
       { type: "word", ask: { key: "thisIs", vars: { shape } }, word: shape, shape },
       { type: "trace", ask: { key: "draw", vars: { shape } }, shape },
@@ -41,6 +43,7 @@ export const pinkiShapes: LessonDef[] = [
      and rectangle — the pair children mix up), then draw one more. Every
      step SHOWS what it is about — nothing depends on hearing the question. */
   {
+    cover: (["circle", "square", "triangle", "rectangle"] as const).map((shape) => SHAPES[shape].thing.src),
     questions: [
       {
         type: "sort",
