@@ -47,7 +47,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
      drawing (five in a row) share the card's width. */
   const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)]";
   return (
-    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md [@media(max-height:700px)]:gap-2">
+    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:max-w-lg lg:gap-4 [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center">
         <span
           aria-hidden
@@ -59,12 +59,12 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
           alt=""
           sizes="180px"
           preload
-          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)]"
+          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)] lg:h-[min(12rem,17svh)]"
         />
         <Celebration />
       </div>
 
-      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl" style={{ animationDelay: "0.2s" }}>
+      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-4xl" style={{ animationDelay: "0.2s" }}>
         {title}
       </p>
 

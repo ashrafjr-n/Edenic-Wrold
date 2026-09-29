@@ -70,6 +70,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}
           courseTone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark }}
+          covers={courseLessons[lesson.id].map((lessonDef) => lessonDef.cover)}
           dict={dict}
           dir={dir}
         />

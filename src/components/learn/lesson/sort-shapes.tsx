@@ -130,9 +130,9 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
   };
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-3 sm:gap-5">
+    <div className="flex w-full max-w-md flex-col items-center gap-3 sm:gap-5 lg:max-w-xl lg:gap-7">
       {/* The thing to sort, on its own card. */}
-      <div className="card card-clay-white relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center">
+      <div className="card card-clay-white relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center lg:h-[min(11rem,18svh)] lg:w-[min(11rem,18svh)]">
         {done ? (
           <Celebration />
         ) : (
@@ -167,7 +167,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
                 type="button"
                 aria-label={format(binAria, { shape })}
                 onClick={() => choose(shape)}
-                className={`clay flex h-[min(6.25rem,12svh)] w-full flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 ${
+                className={`clay flex h-[min(6.25rem,12svh)] w-full lg:h-[min(8.5rem,15svh)] flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 ${
                   jumping ? "anim-jump" : ""
                 }`}
                 style={

@@ -14,7 +14,8 @@ import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Button3D } from "@/components/ui/button-3d";
-import { TaskChip, type TaskKind } from "./task-chip";
+import { TaskChip, TaskPanel, type TaskKind } from "./task-chip";
+import type { StaticImageData } from "next/image";
 import type { TaskDemoDef } from "./task-demo";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
@@ -25,6 +26,7 @@ import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
+import { LessonAbout } from "./lesson-about";
 
 /* Green is every "Next" (direct request); the course's own colour (Shapes'
    yellow) is every other way onward (Your turn, Help, the reel's buttons) — a lesson wears two heroes only, the
@@ -133,6 +135,8 @@ interface LessonPlayerProps {
   tone: { face: string; edge: string };
   /** The course's colour: every "onward" button that is not green. */
   courseTone: { face: string; edge: string };
+  /** Every lesson's cover in this course — the tablet/desktop lesson card. */
+  covers: readonly (readonly StaticImageData[])[];
   dict: Dictionary;
   dir: "rtl" | "ltr";
 }
@@ -160,6 +164,7 @@ export function LessonPlayer({
   image,
   tone,
   courseTone,
+  covers,
   dict,
   dir,
 }: LessonPlayerProps) {
@@ -242,6 +247,8 @@ export function LessonPlayer({
 
   /* ---- The task chip: what to do on this step ---- */
   let task: ReactNode = null;
+  /* The same task, docked beside the step on a tablet and a desktop. */
+  let panel: ReactNode = null;
   /* Deals the step's board — and the build demo, so both show one order. */
   const seed =
     step?.kind === "question"
@@ -261,6 +268,19 @@ export function LessonPlayer({
         closeLabel={lines.close}
         tone={courseTone}
         dir={dir}
+      />
+    );
+    panel = (
+      <TaskPanel
+        key={`panel-${step.index}-${kind}`}
+        kind={kind}
+        verb={dict.tasks[kind]}
+        target={target}
+        label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
+        demo={showing ? undefined : demoFor(q, tone.face, seed)}
+        tone={courseTone}
+        dir={dir}
+        className="anim-fade-up hidden sm:flex lg:col-start-1 lg:row-start-1 lg:self-center"
       />
     );
   }
@@ -451,16 +471,35 @@ export function LessonPlayer({
           {body}
         </div>
       ) : (
-        <div
-          key={`${round}-${at}-${demo}`}
-          className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:px-8 sm:pb-0 sm:pt-7 ${
-            leaving ? "stage-swap--out" : ""
-          }`}
-        >
-          <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
-            {body}
+        /* Phone: `contents` — no box of its own, the step is laid out exactly
+           as it always was. Tablet: the task and the lesson side by side
+           above the step. Desktop: three columns — the task (its how-to
+           playing) on the left, the step in the middle under the task
+           button, the lesson on the right. The done screen has neither. */
+        <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:max-w-7xl lg:grid-cols-[14rem_minmax(0,1fr)_14rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[18rem_minmax(0,1fr)_18rem] xl:gap-x-10 xl:px-12">
+          {panel}
+          {!finished && (
+            <LessonAbout
+              courseName={courseName}
+              title={title}
+              covers={covers}
+              index={n - 1}
+              tone={courseTone}
+              dir={dir}
+              className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-center"
+            />
+          )}
+          <div
+            key={`${round}-${at}-${demo}`}
+            className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:pt-0 ${
+              leaving ? "stage-swap--out" : ""
+            }`}
+          >
+            <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
+              {body}
+            </div>
+            <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
           </div>
-          <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
         </div>
       )}
     </>

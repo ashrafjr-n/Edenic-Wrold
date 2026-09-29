@@ -21,11 +21,11 @@ interface WordCardProps {
  */
 export function WordCard({ word, shape, cue, label }: WordCardProps) {
   return (
-    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
+    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:max-w-none lg:gap-8 lg:py-12 lg:[@media(max-height:860px)]:gap-4 lg:[@media(max-height:860px)]:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
       <CueButton cue={cue} label={label} size="xl" invite />
       {shape && (
         <span
-          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center"
+          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:h-[min(13rem,17svh)] lg:w-[min(13rem,17svh)]"
           style={{ animationDelay: "0.05s" }}
         >
           <FaceView face={{ kind: "shape", shape }} size="tile" />

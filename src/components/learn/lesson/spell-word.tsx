@@ -360,7 +360,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
         {dealt.map((_, id) => (
           <span
             key={id}
-            className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] ${
+            className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] lg:h-20 lg:w-20 ${
               showHint && id === firstLetterTile ? "guide-target" : ""
             }`}
           >
