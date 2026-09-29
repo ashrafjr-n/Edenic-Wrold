@@ -127,6 +127,7 @@ export const ar: Dictionary = {
     yourTurn: "دورك!",
     playAgain: "العب مرة أخرى",
     nextLesson: "الدرس التالي",
+    nextShape: "الشكل التالي",
     finish: "إنهاء",
     lessonDone: "اكتمل الدرس!",
     unlocked: "{title} مفتوح الآن!",

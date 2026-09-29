@@ -131,6 +131,7 @@ export const ku: Dictionary = {
     yourTurn: "نۆبەتا تەیە!",
     playAgain: "دووبارە یاری بکە",
     nextLesson: "وانا دی",
+    nextShape: "شێوەیێ دی",
     finish: "بدووماهی بینە",
     lessonDone: "وانە ب دووماهی هات!",
     unlocked: "{title} ڤەبوو!",

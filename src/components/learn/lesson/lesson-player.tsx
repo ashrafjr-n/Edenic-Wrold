@@ -128,6 +128,8 @@ interface LessonPlayerProps {
   /** This lesson's and the next lesson's titles (none after the last). */
   title: string;
   nextTitle?: string;
+  /** The next lesson teaches one shape — its button says "Next shape". */
+  nextIsShape?: boolean;
   /** Art behind the reel while it loads. */
   image: string;
   /** The character's colour — the lesson wears it. */
@@ -155,6 +157,7 @@ export function LessonPlayer({
   courseName,
   title,
   nextTitle,
+  nextIsShape = false,
   image,
   tone,
   dict,
@@ -280,10 +283,13 @@ export function LessonPlayer({
     action = (
       <div className="flex items-center gap-3 sm:gap-4">
         <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />
+        {/* Onward goes BACK to the course page first: its path plays the
+            step from this stop to the next, then opens the next lesson
+            (`LessonPath`'s `advanceFrom`). */}
         <NextButton
-          label={nextTitle ? lines.nextLesson : lines.finish}
+          label={nextTitle ? (nextIsShape ? lines.nextShape : lines.nextLesson) : lines.finish}
           tone={GO_TONE}
-          href={nextTitle ? `${coursePath}/${n + 1}` : coursePath}
+          href={nextTitle ? `${coursePath}?from=${n}` : coursePath}
           dir={dir}
         />
       </div>

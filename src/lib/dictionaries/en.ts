@@ -132,6 +132,7 @@ export const en = {
     yourTurn: "Your turn!",
     playAgain: "Play again",
     nextLesson: "Next lesson",
+    nextShape: "Next shape",
     finish: "Finish",
     lessonDone: "Lesson complete!",
     unlocked: "{title} is open!",
