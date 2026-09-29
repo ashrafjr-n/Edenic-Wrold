@@ -1,11 +1,12 @@
-import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
+import { courseLessons } from "@/data/courses";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
-import { LessonCard } from "@/components/learn/lesson-card";
 import { CourseCard } from "@/components/learn/course-card";
+import { CourseCardWide } from "@/components/learn/course-card-wide";
+import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
 import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
@@ -31,69 +32,41 @@ export default async function CharacterLearnPage({
   if (character.locked) redirect("/learn");
 
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
   const lessons = lessonsByCharacter[character.id];
-  /* The lesson to lead with. Once the progress store lands this becomes the
-     first unlocked *and unfinished* one; for now the first unlocked lesson is
-     the same thing. `-1` (nothing unlocked) simply features nothing. */
-  const featuredIndex = lessons.findIndex((lesson) => !lesson.locked);
-  const cast = lessons.map((lesson, index) => ({
-    lesson,
-    index,
-    featured: index === featuredIndex,
-    /* What `LessonProgress` counts as done: the course's lessons, 1…n. */
-    items: Array.from({ length: lesson.totalItems }, (_, i) => i + 1),
-    previousName: lesson.locked
-      ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
-      : undefined,
-  }));
+  const upNextCourses: UpNextCourse[] = lessons
+    .filter((lesson) => !lesson.locked)
+    .map((lesson) => ({
+      id: lesson.id,
+      name: dict.lessons[lesson.id].name,
+      titles: dict.lessons[lesson.id].items,
+      covers: courseLessons[lesson.id].map((def) => def.cover),
+      tone: { face: lesson.theme.accent, edge: lesson.theme.accentDark },
+    }));
+  const upNext = (className: string) => (
+    <UpNext
+      characterId={character.id}
+      courses={upNextCourses}
+      labels={{
+        upNext: dict.characterHub.nextUp,
+        start: dict.lessonPicker.ctaStart,
+        continue: dict.trail.ctaContinue,
+      }}
+      dir={dir}
+      className={className}
+    />
+  );
 
   /* This character owns the page, so the back button beneath reads the
      accent from here — Nova's and Bloo's hubs come out right by default
      rather than wearing Pinki's pink. */
   return (
     <main
-      className="relative flex flex-1 flex-col pb-20 sm:pb-28"
+      className="relative flex flex-1 flex-col pb-20 sm:pb-10"
       style={pageAccent(character.accent, character.accentDark)}
     >
-      {/* Back on the left, the character chip on the right — in `BackRow`,
-          the one row that puts the back button where every page has it.
-          **The white achievements crown that used to close this row is
-          DELETED**: nothing is awarded yet. */}
-      <BackRow href="/learn" label={dict.characterHub.backToLearn}>
-        {/* Whose world this is. The hero banner is phone-only now, so
-            without this the desktop page would carry no trace of the
-            character at all. **It sits at the RIGHT end of the row**, in
-            the corner the achievements crown used to hold — it was centred
-            between the two buttons, and with one of them gone a centred
-            chip would have floated in the middle of an otherwise empty
-            row. */}
-        <div className="card card-pill hidden min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:flex sm:gap-3 sm:pr-6">
-          <div
-            className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
-            style={
-              {
-                "--tile-tint": `color-mix(in srgb, ${character.accent} 20%, #ffffff)`,
-              } as CSSProperties
-            }
-          >
-            <Image
-              src={character.image}
-              alt=""
-              width={64}
-              height={73}
-              preload
-              /* Scaled up and offset inside the circle so the crop lands on
-                 the face — the source render is a full body, and the head
-                 sits left of and above its center. Re-check this framing
-                 if the character renders are ever replaced. */
-              className="absolute left-1/2 top-1/2 h-[132%] w-auto max-w-none -translate-x-[46%] -translate-y-[36%] object-contain"
-            />
-          </div>
-          <span className="truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-            {character.name}
-          </span>
-        </div>
-      </BackRow>
+      {/* Back alone: Pinki herself says whose page this is, at every width. */}
+      <BackRow href="/learn" label={dict.characterHub.backToLearn} />
 
       {/* ================= Phone (< sm) =================
           Pinki says hello from a speech bubble, then each course is one big
@@ -137,49 +110,51 @@ export default async function CharacterLearnPage({
         </div>
       </div>
 
-      {/* `my-auto` on a wrapper rather than `justify-center` on the parent:
-          it keeps the back/crown row pinned to the top while the lessons take
-          the leftover height, and auto margins collapse to zero once there
-          are enough lessons to fill the page — so it never pushes content
-          off-screen the way `items-center` would. Same "space reads better
-          distributed" call as the `/learn` picker.
+      {/* ================= Tablet + desktop (sm and up) =================
+          The phone's pieces grown to fill a big screen. Tablet: Pinki and
+          her bubble across the top, the two courses side by side as tall
+          cards, "Up next" under them. Desktop: two columns the height of
+          the screen — Pinki, her bubble and "Up next" on the left, the
+          courses stacked on the right, each taking half the height. */}
+      <div className="mx-auto hidden w-full max-w-7xl flex-1 flex-col px-8 pt-4 sm:flex lg:grid lg:h-[calc(100svh-13rem)] lg:min-h-[32rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-10 lg:pt-6 xl:gap-14 xl:px-12">
+        <section className="flex items-end gap-5 lg:flex-col-reverse lg:items-center lg:justify-center lg:gap-3">
+          <Image
+            src={pinkiSpeak}
+            alt=""
+            sizes="(min-width: 1024px) 18rem, 11rem"
+            preload
+            className="anim-pop-in w-44 shrink-0 lg:w-[min(18rem,32svh)]"
+            style={{ animationDelay: "0.1s" }}
+          />
+          <div
+            dir={dir}
+            className="hub-bubble hub-bubble--wide card card-clay-white speech-clay anim-pop-in relative mb-8 min-w-0 flex-1 px-8 py-6 lg:mb-0 lg:w-full lg:flex-none lg:text-center"
+            style={{ animationDelay: "0.2s" }}
+          >
+            <h1 className="text-3xl font-bold leading-tight text-[var(--color-ink)] xl:text-4xl">
+              {format(dict.characterHub.hello, { name: character.name })}
+            </h1>
+            <p className="mt-1.5 text-lg text-[var(--color-ink-soft)] xl:text-xl">{dict.characterHub.askToday}</p>
+          </div>
+        </section>
 
-          The gap above the grid is PADDING on this wrapper, not a margin on
-          the grid: a `sm:mt-*` on the grid would out-rank `my-auto` in
-          Tailwind's margin ordering and dump all the free space at the
-          bottom, and a child margin could collapse straight back out. */}
-      <div className="hidden w-full sm:my-auto sm:block sm:pt-10">
-        {/* The extra left padding below `sm` is the lane the phone progress
-            rail lives in; from `sm` up the rail is gone and the padding goes
-            back to matching the rest of the page.
-
-            `--character-accent*` is the phone fallback the lesson hues
-            switch back to below `sm`. */}
-        <div
-          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:gap-7 sm:px-8 md:max-w-2xl lg:max-w-7xl lg:grid-cols-3"
-          style={
-            {
-              "--character-accent": character.accent,
-              "--character-accent-dark": character.accentDark,
-            } as CSSProperties
-          }
-        >
-          {cast.map(({ lesson, index, featured, items, previousName }) => (
-            <LessonCard
+        <div className="mt-8 grid flex-1 auto-rows-fr grid-cols-2 gap-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:grid-cols-1 xl:gap-8">
+          {lessons.map((lesson, index) => (
+            <CourseCardWide
               key={lesson.id}
               lesson={lesson}
+              characterId={character.id}
               name={dict.lessons[lesson.id].name}
               description={dict.lessons[lesson.id].description}
-              items={items}
-              character={character}
-              previousLessonName={previousName}
-              featured={featured}
+              count={format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems })}
+              ariaLabel={format(dict.characterHub.startLesson, { name: dict.lessons[lesson.id].name })}
+              dir={dir}
               index={index}
-              dict={dict.characterHub}
-              dir={dirFor(dict.locale)}
             />
           ))}
         </div>
+
+        {upNext("anim-fade-up mt-6 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-start")}
       </div>
     </main>
   );

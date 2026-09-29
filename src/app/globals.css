@@ -3798,6 +3798,15 @@ button:disabled,
   rotate: 45deg;
 }
 
+/* On a desktop the bubble sits ABOVE Pinki, so its tail points down. */
+@media (width >= 64rem) {
+  .hub-bubble--wide::before {
+    left: 50%;
+    bottom: -0.45rem;
+    translate: -50% 0;
+  }
+}
+
 /* A stop squashes under a finger. */
 .path-stop {
   transition: scale 0.15s ease;
