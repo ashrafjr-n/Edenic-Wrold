@@ -3748,3 +3748,136 @@ button:disabled,
   initial-value: 100%;
 }
 
+
+/* ---------------------------------------------------------------
+   A character's hub and a course's path (phone).
+
+   The hub is Pinki greeting the child plus one big coloured clay card per
+   course, with that course's own things piled on it (`CourseArt`). A course
+   page is a winding clay path (`LessonPath`): a thick track in two clays,
+   the dormant lavender and the course colour lit up to the next stop.
+   --------------------------------------------------------------- */
+
+/* Titles on a coloured card: white, standing on a thin edge-coloured rim,
+   so they read as pressed out of the same clay rather than printed on it. */
+.clay-title {
+  text-shadow: 0 2px 0 color-mix(in srgb, var(--clay-edge) 70%, transparent);
+}
+
+/* A thing on a card or a stop casts a shadow in the colour under it. */
+.course-art-thing {
+  filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
+}
+
+/* The progress bar: a groove pressed into the card, filled with white clay. */
+.course-track {
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: color-mix(in srgb, var(--clay-edge) 38%, transparent);
+  box-shadow: inset 0 3px 5px -1px color-mix(in srgb, var(--clay-edge) 70%, transparent);
+}
+
+.course-track-fill {
+  min-width: 0.875rem;
+  border-radius: 9999px;
+  background-color: #fff;
+  box-shadow: inset 0 -3px 4px -1px color-mix(in srgb, var(--clay-edge) 40%, transparent);
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Pinki's greeting is a speech bubble: the tail points at her. */
+.hub-bubble::before {
+  content: "";
+  position: absolute;
+  left: -0.45rem;
+  bottom: 1.6rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 0.2rem;
+  background: inherit;
+  rotate: 45deg;
+}
+
+/* A stop squashes under a finger. */
+.path-stop {
+  transition: scale 0.15s ease;
+}
+
+.path-stop:active {
+  scale: 0.94;
+}
+
+/* The next stop breathes a ring of its own colour, so it is found first. */
+.path-next::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem;
+  border-radius: 9999px;
+  border: 0.3rem solid var(--path-ring);
+  animation: path-ring 2.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes path-ring {
+  from {
+    opacity: 0.6;
+    scale: 0.92;
+  }
+  to {
+    opacity: 0;
+    scale: 1.3;
+  }
+}
+
+/* "Start" above the next stop, with a tail pointing down at it. */
+.path-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.35rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 0.15rem;
+  background: inherit;
+  translate: -50% 0;
+  rotate: 45deg;
+}
+
+/* A locked stop still shows what is coming, only quieter. */
+.path-art-locked {
+  opacity: 0.55;
+  filter: grayscale(0.5);
+}
+
+/* A stop opened since the last visit: its padlock springs off once. */
+.path-lock-off {
+  animation: path-lock-off 0.7s cubic-bezier(0.5, 0, 0.7, 0.4) 0.9s both;
+}
+
+@keyframes path-lock-off {
+  0% {
+    rotate: 0deg;
+    scale: 1;
+  }
+  30% {
+    rotate: -18deg;
+    scale: 1.2;
+  }
+  100% {
+    opacity: 0;
+    rotate: 40deg;
+    scale: 0.3;
+    translate: 1rem -3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .path-next::after,
+  .path-lock-off {
+    animation: none;
+  }
+
+  .path-lock-off {
+    opacity: 0;
+  }
+}

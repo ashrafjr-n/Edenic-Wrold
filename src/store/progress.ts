@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { ItemKey } from "@/lib/progress-keys";
+import { itemKey, type ItemKey } from "@/lib/progress-keys";
 
 /* The key builders are pure, and they live in `lib/progress-keys.ts` rather
    than here so a SERVER component can call them — anything exported from a
@@ -61,6 +61,17 @@ export const useProgress = create<ProgressState>()(
     },
   ),
 );
+
+/** Stars for each lesson of a course, 1…count (index 0 is lesson 1) — all
+    0 until the store has read localStorage, so the first render matches the
+    server's. */
+export function useCourseStars(characterId: string, lessonId: string, count: number): number[] {
+  const items = useProgress((state) => state.items);
+  const hydrated = useProgress((state) => state.hydrated);
+  return Array.from({ length: count }, (_, i) =>
+    hydrated ? (items[itemKey(characterId, lessonId, i + 1)]?.stars ?? 0) : 0,
+  );
+}
 
 /* **The failure path cannot flip `hydrated` from inside `create()`, so it is
    flipped here.**
