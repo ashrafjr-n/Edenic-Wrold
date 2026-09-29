@@ -243,7 +243,11 @@ in three.js so every shape is true and everything shares one light and style.
 
 The lesson-complete screen celebrates in three beats: a big Pinki cheering with
 confetti, then the shape beside the child's own drawing of it and the word,
-then a green pill whose padlock springs open on the next lesson.
+then a green pill whose padlock springs open on the next lesson. Its
+**Next shape** button (Next lesson when the next one is not a shape) goes back
+to the course path first: the finished stop takes its tick, the track draws on
+to the next stop while Pinki hops across, its padlock springs off, and then
+the next lesson opens by itself.
 
 The **Shape review** brings the four shapes together. First a sorting game:
 eight things from the picnics (a donut, a present, a slice of pizza, a
