@@ -104,7 +104,6 @@ export const ar: Dictionary = {
     unlocksAfter: "يُفتح بعد إكمال {name}",
     unlocksLater: "يُفتح لاحقًا",
     startLesson: "ابدأ {name}",
-    learningCorner: "ركن {name} التعليمي",
     hello: "مرحبًا، أنا {name}!",
     askToday: "ماذا سنتعلّم اليوم؟",
   },

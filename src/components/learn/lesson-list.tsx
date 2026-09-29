@@ -32,21 +32,13 @@ const ROW_DELAY = 0.15;
 const ROW_STAGGER = 0.06;
 
 /**
- * A course's lessons — TWO renderings of the same data, swapped by CSS
- * breakpoint, never both visible at once:
- *
- * **Below `sm` (phone, frozen — do not touch): a stacked row list**, one
- * `.card card-clay-white` per lesson. This is the only thing a phone ever
- * sees; it replaced the old 3x3 tile grid on direct request.
- *
- * **`sm` and up (tablet + desktop): a grid of upright cards** — the site's
- * own lesson-hub card language (`/learn/[character]`) reused here rather
- * than invented: `.card clay` (coloured, grained) for an open lesson,
- * `.card card-clay-white` for a locked one, a white "Next" pill on the one
- * to play next, the lesson number standing on its own white badge for
- * contrast against the coloured fill. 2 columns from `sm`, 3 from `lg` — a genuinely
- * different composition for wider screens, not the phone list stretched
- * out; the page itself forks around it too (see `page.tsx`'s doc comment).
+ * A course's lessons on tablet and desktop (`sm` and up; a phone gets
+ * `LessonPath` instead): a grid of upright cards — the site's own
+ * lesson-hub card language reused rather than invented: `.card clay`
+ * (coloured, grained) for an open lesson, `.card card-clay-white` for a
+ * locked one, a white "Next" pill on the one to play next, the lesson
+ * number standing on its own white badge for contrast against the coloured
+ * fill. 2 columns from `sm`, 3 from `lg`.
  *
  * The "Continue" button lives OUTSIDE this component entirely now —
  * `ContinueButton`, placed differently per breakpoint by the route.
@@ -87,97 +79,6 @@ export function LessonList({
 
   return (
     <>
-      {/* ---------- Phone: stacked rows (`sm:hidden`) ---------- */}
-      <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
-        {cast.map(({ n, title, index, locked, stars }) => {
-          const isNext = n === nextValue;
-          const rowStyle: RowVars = {
-            animationDelay: `${ROW_DELAY + index * ROW_STAGGER}s`,
-            borderColor: isNext ? tone.face : "transparent",
-          };
-          const rowClass =
-            "card card-clay-white anim-rise-in flex items-center gap-3 border-2 p-2 sm:gap-4 sm:p-2.5";
-
-          const row = (
-            <>
-              <span
-                className="tile tile-clay relative flex h-11 w-11 shrink-0 items-center justify-center sm:h-13 sm:w-13"
-                style={{ "--tile-tint": "#ffffff" } as RowVars}
-              >
-                <span
-                  className="text-xl font-bold"
-                  style={{ color: locked ? "var(--color-ink-soft)" : tone.face }}
-                >
-                  {n}
-                </span>
-              </span>
-
-              <span className="min-w-0 flex-1 truncate text-sm font-bold text-[var(--color-ink)] sm:text-base">
-                {title}
-              </span>
-
-              {locked ? (
-                <span
-                  aria-hidden
-                  className="lock-chip flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10"
-                >
-                  <Lock className="h-4 w-4" strokeWidth={2.75} />
-                </span>
-              ) : stars > 0 ? (
-                <span
-                  aria-hidden
-                  className="clay flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10"
-                  style={
-                    {
-                      backgroundColor: "var(--color-go)",
-                      "--clay-edge": "var(--color-go-dark)",
-                    } as RowVars
-                  }
-                >
-                  <Check className="h-4 w-4 text-white" strokeWidth={3} />
-                </span>
-              ) : (
-                <span
-                  aria-hidden
-                  className="clay flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10"
-                  style={
-                    {
-                      backgroundColor: tone.face,
-                      "--clay-edge": tone.edge,
-                    } as RowVars
-                  }
-                >
-                  <Play className="h-3.5 w-3.5 fill-white text-white" strokeWidth={0} />
-                </span>
-              )}
-            </>
-          );
-
-          return (
-            <li key={n}>
-              {locked ? (
-                <span
-                  className={rowClass}
-                  style={rowStyle}
-                  aria-label={format(dict.lessonPicker.lockedLessonAria, { n, title })}
-                >
-                  {row}
-                </span>
-              ) : (
-                <Link
-                  href={`${basePath}/${n}`}
-                  className={`${rowClass} transition-transform duration-300 hover:scale-[1.015]`}
-                  style={rowStyle}
-                  aria-label={format(dict.lessonPicker.startLessonAria, { n, title })}
-                >
-                  {row}
-                </Link>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
       {/* ---------- Tablet + desktop: a grid of cards (`hidden sm:grid`) ---------- */}
       <ul className="hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {cast.map(({ n, title, index, locked, stars }) => {

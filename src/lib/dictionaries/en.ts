@@ -107,7 +107,6 @@ export const en = {
     unlocksAfter: "Unlocks after {name}",
     unlocksLater: "Unlocks later",
     startLesson: "Start {name}",
-    learningCorner: "{name}'s learning corner",
     hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
   },

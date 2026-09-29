@@ -7,7 +7,6 @@ export const characters: Character[] = [
     id: "pinki",
     name: "Pinki",
     image: "/assets/friends/pinki.png",
-    heroImage: "/assets/learn-with-pinki/learn-with-pinki.webp",
     accent: "var(--color-pinki)",
     accentSoft: "var(--color-pinki-soft)",
     accentDark: "var(--color-pinki-dark)",
