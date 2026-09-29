@@ -205,7 +205,9 @@ Their pages are real. On a phone, the hub is Pinki saying hello above one big
 clay card per course (its things piled on it, a play button, a progress bar),
 and a course page is a banner over a winding clay path: one stop per lesson,
 wearing that lesson's thing — ticked when done, bigger with a "Start" bubble
-and Pinki beside it when it is next, padlocked after that. Tablet and desktop
+when it is next, padlocked after that. Inside a course only two hero colours
+are used — Pinki's pink and the course's own colour (yellow for Shapes) — with
+green kept for "Next". Tablet and desktop
 keep the earlier card layouts for now. Both pages have a Start / Continue /
 Next Lesson button.
 
@@ -246,7 +248,7 @@ confetti, then the shape beside the child's own drawing of it and the word,
 then a green pill whose padlock springs open on the next lesson. Its
 **Next shape** button (Next lesson when the next one is not a shape) goes back
 to the course path first: the finished stop takes its tick, the track draws on
-to the next stop while Pinki hops across, its padlock springs off, and then
+to the next stop, its padlock springs off, and then
 the next lesson opens by itself.
 
 The **Shape review** brings the four shapes together. First a sorting game:
