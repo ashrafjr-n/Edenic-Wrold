@@ -82,7 +82,7 @@ the bottom bar.
    drawing and the word; a green pill whose padlock springs open on the next
    lesson. *Play again* / *Next shape* (*Next lesson* before the review).
    Next goes back to the course path, which walks on to the next stop
-   (tick, track draws on, Pinki hops across, padlock springs off) and then
+   (tick, track draws on, padlock springs off) and then
    opens that lesson by itself.
 
 **The Shape review (lesson 5, approved design 2026-09-28):** no reel; every
