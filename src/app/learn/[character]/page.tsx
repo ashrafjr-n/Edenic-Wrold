@@ -5,6 +5,8 @@ import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { LessonCard } from "@/components/learn/lesson-card";
+import { CourseCard } from "@/components/learn/course-card";
+import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
 import { format } from "@/lib/format-dict";
@@ -34,7 +36,6 @@ export default async function CharacterLearnPage({
      first unlocked *and unfinished* one; for now the first unlocked lesson is
      the same thing. `-1` (nothing unlocked) simply features nothing. */
   const featuredIndex = lessons.findIndex((lesson) => !lesson.locked);
-  const lastIndex = lessons.length - 1;
   const cast = lessons.map((lesson, index) => ({
     lesson,
     index,
@@ -44,14 +45,6 @@ export default async function CharacterLearnPage({
     previousName: lesson.locked
       ? lessons[index - 1] && dict.lessons[lessons[index - 1].id].name
       : undefined,
-    /* The phone rail lights up as far as the child can actually reach: the
-       segment into a node is lit when that lesson is open, and the segment
-       out of it when the next one is. */
-    rail: {
-      isLast: index === lastIndex,
-      aboveActive: !lesson.locked,
-      belowActive: index < lastIndex && !lessons[index + 1].locked,
-    },
   }));
 
   /* This character owns the page, so the back button beneath reads the
@@ -74,7 +67,7 @@ export default async function CharacterLearnPage({
             between the two buttons, and with one of them gone a centred
             chip would have floated in the middle of an otherwise empty
             row. */}
-        <div className="card card-pill flex min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:gap-3 sm:pr-6">
+        <div className="card card-pill hidden min-w-0 items-center gap-2.5 py-1.5 pl-1.5 pr-5 sm:flex sm:gap-3 sm:pr-6">
           <div
             className="tile tile-round relative h-9 w-9 shrink-0 overflow-hidden sm:h-11 sm:w-11"
             style={
@@ -102,36 +95,46 @@ export default async function CharacterLearnPage({
         </div>
       </BackRow>
 
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
-        {/* Phone only (`sm:hidden`). On a narrow screen the scene is what
-            gives the page its warmth before the lesson list starts; from
-            tablet up there is room for the lessons themselves to be the
-            page, and the banner just pushed them below the fold. */}
-        {character.heroImage && (
+      {/* ================= Phone (< sm) =================
+          Pinki says hello from a speech bubble, then each course is one big
+          clay card in its own colour (`CourseCard`). Pinki's picture is
+          hers alone for now: Nova's and Bloo's hubs are not reachable. */}
+      <div className="flex flex-col px-6 sm:hidden">
+        <div className="mt-2 flex items-end gap-1">
+          <Image
+            src={pinkiSpeak}
+            alt=""
+            sizes="104px"
+            preload
+            className="anim-pop-in w-26 shrink-0"
+            style={{ animationDelay: "0.1s" }}
+          />
           <div
-            className="card anim-pop-in relative mt-5 aspect-[2/1] w-full overflow-hidden sm:hidden"
+            dir={dirFor(dict.locale)}
+            className="hub-bubble card card-clay-white speech-clay anim-pop-in relative mb-5 min-w-0 flex-1 px-5 py-4"
             style={{ animationDelay: "0.2s" }}
           >
-            {/* `dir` on the image itself: `alt` is Arabic with the character's
-                Latin name spliced in, and it renders visually if the picture
-                ever fails to load — the isolate marks `format()` adds keep the
-                name from reordering, but only a base direction puts the run on
-                the right side (see `dirFor`). */}
-            <Image
-              src={character.heroImage}
-              alt={format(dict.characterHub.learningCorner, { name: character.name })}
-              dir={dirFor(dict.locale)}
-              fill
-              /* The banner is `sm:hidden`, but a hidden image is still
-                 fetched — at plain `100vw` a desktop asked for the 1920/3840
-                 rendition of a picture it never shows. The first clause
-                 makes the browser pick the smallest candidate there. */
-              sizes="(min-width: 640px) 1px, 100vw"
-              preload
-              className="object-cover"
-            />
+            <h1 className="text-xl font-bold leading-tight text-[var(--color-ink)]">
+              {format(dict.characterHub.hello, { name: character.name })}
+            </h1>
+            <p className="mt-1 text-sm text-[var(--color-ink-soft)]">{dict.characterHub.askToday}</p>
           </div>
-        )}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-5">
+          {lessons.map((lesson, index) => (
+            <CourseCard
+              key={lesson.id}
+              lesson={lesson}
+              characterId={character.id}
+              name={dict.lessons[lesson.id].name}
+              description={dict.lessons[lesson.id].description}
+              ariaLabel={format(dict.characterHub.startLesson, { name: dict.lessons[lesson.id].name })}
+              dir={dirFor(dict.locale)}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
 
       {/* `my-auto` on a wrapper rather than `justify-center` on the parent:
@@ -145,7 +148,7 @@ export default async function CharacterLearnPage({
           the grid: a `sm:mt-*` on the grid would out-rank `my-auto` in
           Tailwind's margin ordering and dump all the free space at the
           bottom, and a child margin could collapse straight back out. */}
-      <div className="w-full pt-8 sm:my-auto sm:pt-10">
+      <div className="hidden w-full sm:my-auto sm:block sm:pt-10">
         {/* The extra left padding below `sm` is the lane the phone progress
             rail lives in; from `sm` up the rail is gone and the padding goes
             back to matching the rest of the page.
@@ -153,7 +156,7 @@ export default async function CharacterLearnPage({
             `--character-accent*` is the phone fallback the lesson hues
             switch back to below `sm`. */}
         <div
-          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 pl-12 sm:gap-7 sm:px-8 md:max-w-2xl lg:max-w-7xl lg:grid-cols-3"
+          className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-6 sm:gap-7 sm:px-8 md:max-w-2xl lg:max-w-7xl lg:grid-cols-3"
           style={
             {
               "--character-accent": character.accent,
@@ -161,7 +164,7 @@ export default async function CharacterLearnPage({
             } as CSSProperties
           }
         >
-          {cast.map(({ lesson, index, featured, items, previousName, rail }) => (
+          {cast.map(({ lesson, index, featured, items, previousName }) => (
             <LessonCard
               key={lesson.id}
               lesson={lesson}
@@ -171,7 +174,6 @@ export default async function CharacterLearnPage({
               character={character}
               previousLessonName={previousName}
               featured={featured}
-              rail={rail}
               index={index}
               dict={dict.characterHub}
               dir={dirFor(dict.locale)}

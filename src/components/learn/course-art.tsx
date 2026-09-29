@@ -12,8 +12,8 @@ interface CourseArtProps {
 /* Where each thing sits, as a share of the box: centre x/y, width, tilt,
    and when its float starts — staggered so the pile never bobs in step. */
 const SLOTS = [
-  { x: 34, y: 62, w: 44, r: -8, z: 4, d: 0 },
-  { x: 70, y: 60, w: 38, r: 9, z: 3, d: 0.9 },
+  { x: 34, y: 56, w: 40, r: -8, z: 4, d: 0 },
+  { x: 69, y: 56, w: 36, r: 9, z: 3, d: 0.9 },
   { x: 56, y: 26, w: 32, r: -5, z: 2, d: 1.8 },
   { x: 17, y: 27, w: 29, r: 12, z: 1, d: 2.7 },
 ] as const;

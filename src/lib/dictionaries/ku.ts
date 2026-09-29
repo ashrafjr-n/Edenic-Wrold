@@ -109,6 +109,8 @@ export const ku: Dictionary = {
     unlocksLater: "دویڤ ڕا ڤەدبیت",
     startLesson: "{name} دەستپێبکە",
     learningCorner: "گۆشەیا فێربوونێ یا {name}",
+    hello: "سلاڤ، ئەز {name} م!",
+    askToday: "ئەڤرۆ دێ چ فێربین؟",
   },
   lessonPicker: {
     backTo: "ڤەگەڕان بۆ وانەیێن {characterName}",

@@ -105,6 +105,8 @@ export const ar: Dictionary = {
     unlocksLater: "يُفتح لاحقًا",
     startLesson: "ابدأ {name}",
     learningCorner: "ركن {name} التعليمي",
+    hello: "مرحبًا، أنا {name}!",
+    askToday: "ماذا سنتعلّم اليوم؟",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",

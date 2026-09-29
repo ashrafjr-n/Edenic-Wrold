@@ -145,7 +145,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight text-white">
               {course.name}
             </h1>
-            <p dir={dir} className="mt-1 text-sm leading-snug text-white/90">
+            <p dir={dir} className="mt-1 text-balance text-sm leading-snug text-white/90">
               {course.description}
             </p>
             <CourseProgress

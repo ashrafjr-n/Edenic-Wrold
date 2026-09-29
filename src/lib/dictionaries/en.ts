@@ -108,6 +108,8 @@ export const en = {
     unlocksLater: "Unlocks later",
     startLesson: "Start {name}",
     learningCorner: "{name}'s learning corner",
+    hello: "Hi, I'm {name}!",
+    askToday: "What shall we learn today?",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",

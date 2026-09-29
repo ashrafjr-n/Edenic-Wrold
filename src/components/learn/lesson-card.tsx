@@ -19,17 +19,6 @@ type ClayVars = CSSProperties & { "--clay-edge"?: string };
 const CARD_DELAY = 0.65;
 const CARD_STAGGER = 0.12;
 
-/** How this card sits on the phone-only progress rail. Grouped into one prop
-    so the component doesn't grow four more positional booleans. */
-export interface LessonRail {
-  /** Last lesson in the list — the track stops at this node. */
-  isLast: boolean;
-  /** The segment arriving at this node is lit (this lesson is reachable). */
-  aboveActive: boolean;
-  /** The segment leaving this node is lit (the next lesson is reachable). */
-  belowActive: boolean;
-}
-
 interface LessonCardProps {
   lesson: Lesson;
   /** Translated content — see `dict.lessons[id]`. */
@@ -44,7 +33,6 @@ interface LessonCardProps {
   previousLessonName?: string;
   /** Marks the lesson to do next. Adds a badge only — never a size change. */
   featured?: boolean;
-  rail: LessonRail;
   index: number;
   dict: Dictionary["characterHub"];
   /** `description` and `unlocksAfter` can carry an English word inside this
@@ -62,24 +50,12 @@ export function LessonCard({
   character,
   previousLessonName,
   featured = false,
-  rail,
   index,
   dict,
   dir,
 }: LessonCardProps) {
   const { id, image, theme, totalItems, locked } = lesson;
-  const { accent } = character;
 
-  const isFirst = index === 0;
-
-  /* The rail's lit color stays the CHARACTER's accent, not the lesson's:
-     below `sm` the lesson hues are switched off (see `.lesson-theme`), and
-     the rail is phone-only anyway. */
-  const litTrack = accent;
-  /* A pale wash of the character's own accent rather than the neutral locked
-     grey — the same move the cards just made, so the rail reads as one path
-     that has not been walked yet instead of a silver one. */
-  const dimTrack = `color-mix(in srgb, ${accent} 28%, #ffffff)`;
 
   /* **The OPEN card is the coloured one.** It is the character's own accent
      with the grain (`.clay`); a LOCKED card is plain white
@@ -152,9 +128,8 @@ export function LessonCard({
           }`}
         />
 
-        {/* Step number, tablet and up only. Below `sm` the cards are a single
-            stack and the rail outside the card carries the sequence instead,
-            so a number here would say the same thing twice. White on an
+        {/* Step number. These cards only show from `sm` up (a phone gets
+            `CourseCard` instead). White on an
             OPEN card, where the lesson hue would otherwise sit on the
             character's accent and muddy both.
 
@@ -282,41 +257,6 @@ export function LessonCard({
     </div>
   );
 
-  /* Phone-only progress rail. The cards are one stack below `sm`, so the path
-     between them can be drawn literally: a silver track with the accent
-     travelling along it, one node per lesson. The lit length is the answer to
-     "how far have I got", which is exactly what the numbers say on wider
-     screens. The lane it sits in comes from the grid's extra left padding. */
-  const railColumn = (
-    <div className="absolute -left-9 top-0 bottom-0 w-9 sm:hidden" aria-hidden>
-      {/* Deliberately square-ended. Every segment terminus is either covered
-          by a node chip or butts against the next card's segment, so rounded
-          caps only produced a visible pinch at each join. */}
-      {!isFirst && (
-        <span
-          className="absolute left-1/2 top-0 h-1/2 w-1 -translate-x-1/2"
-          style={{ backgroundColor: rail.aboveActive ? litTrack : dimTrack }}
-        />
-      )}
-
-      {!rail.isLast && (
-        <span
-          className="absolute left-1/2 top-1/2 -bottom-5 w-1 -translate-x-1/2"
-          style={{ backgroundColor: rail.belowActive ? litTrack : dimTrack }}
-        />
-      )}
-
-      {/* White chip around the dot so the node reads against both the track
-          and the saturated page behind it. */}
-      <span className="absolute left-1/2 top-1/2 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_6px_14px_-4px_rgb(92_78_190_/_45%)]">
-        <span
-          className="h-3 w-3 rounded-full"
-          style={{ backgroundColor: locked ? dimTrack : litTrack }}
-        />
-      </span>
-    </div>
-  );
-
   /* No fade on a locked card, and none was reinstated when it went white:
      it used to sit at 78% from `sm` up so it stepped back from the open ones,
      and what separates it now is that the OPEN card is the saturated one —
@@ -334,7 +274,6 @@ export function LessonCard({
   if (locked) {
     return (
       <div className={wrapperClass} style={wrapperStyle} aria-disabled="true">
-        {railColumn}
         {card}
       </div>
     );
@@ -347,7 +286,6 @@ export function LessonCard({
       style={wrapperStyle}
       aria-label={format(dict.startLesson, { name })}
     >
-      {railColumn}
       {card}
     </Link>
   );
