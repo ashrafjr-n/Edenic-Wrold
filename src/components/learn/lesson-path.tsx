@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Check, Lock } from "lucide-react";
@@ -23,6 +24,9 @@ interface LessonPathProps {
   /** The course's own colour pair. */
   tone: { face: string; edge: string };
   dict: Dictionary["lessonPicker"];
+  /** Arriving from the done screen of this lesson (1-based, `?from=`):
+      walk on to the next stop, then open it. */
+  advanceFrom?: number;
 }
 
 /* The path's geometry, in px down and % across. A stop's centre sits on a
@@ -48,6 +52,13 @@ function trackPath(from: number, to: number) {
   return d;
 }
 
+/* The walk from a finished stop to the next one, in ms from arrival: the
+   finished stop takes its tick and the track draws on while Pinki hops
+   across, then the next stop's padlock springs off, then its lesson opens. */
+const WALK_AT = 1300;
+const OPEN_AT = 2400;
+const GO_AT = 3800;
+
 /* Remembers, per course, the furthest stop the child has SEEN open — so a
    stop opened since the last visit can spring its lock off once. */
 const SEEN_KEY = "edenic-path-seen";
@@ -69,27 +80,61 @@ type Vars = CSSProperties & Record<`--${string}`, string>;
  * and Pinki beside it; locked ones are pale with a padlock. The track is
  * lit in the course colour up to the next stop.
  */
-export function LessonPath({ titles, covers, characterId, lessonId, basePath, tone, dict }: LessonPathProps) {
+export function LessonPath({ titles, covers, characterId, lessonId, basePath, tone, dict, advanceFrom }: LessonPathProps) {
+  const router = useRouter();
   const stars = useCourseStars(characterId, lessonId, titles.length);
+  const hydrated = useProgress((state) => state.hydrated);
   const count = titles.length;
   const nextIndex = stars.findIndex((s) => s === 0);
   const allDone = nextIndex === -1;
+
+  /* Latched once, and only if the child has not yet SEEN the stop after
+     `from` open: a Back from the next lesson remounts this page with the same
+     cached `?from=`, and must land on a still path, not walk them on again. */
+  const [walkFrom] = useState(() => {
+    if (advanceFrom === undefined || typeof window === "undefined") return advanceFrom;
+    const seen = readSeen()[`${characterId}.${lessonId}`];
+    return seen === undefined || seen < advanceFrom ? advanceFrom : undefined;
+  });
+  const [phase, setPhase] = useState<"at" | "walk" | "open">("at");
+  /* Only when progress agrees: the lesson just finished is the one right
+     before the next open stop. */
+  const advancing = hydrated && walkFrom !== undefined && walkFrom === nextIndex;
+  const walked = advancing ? phase : "open";
+  const from = nextIndex - 1;
+  /* The stop that wears the "next" colour: the finished one before the
+     walk, none during it, the new one once its padlock has sprung. */
+  const current = walked === "at" ? from : walked === "walk" ? -1 : nextIndex;
+
   /* How far the lit track reaches: to the next stop, or the whole way. */
-  const reach = allDone ? count - 1 : nextIndex;
-  const pinkiAt = allDone ? count - 1 : nextIndex;
+  const reach = allDone ? count - 1 : advancing ? from : nextIndex;
+  const pinkiAt = allDone ? count - 1 : walked === "at" ? from : nextIndex;
 
   const nextRef = useRef<HTMLAnchorElement>(null);
   const [unlocking, setUnlocking] = useState(-1);
 
+  useEffect(() => {
+    if (!advancing) return;
+    window.history.replaceState(null, "", basePath);
+    const timers = [
+      setTimeout(() => setPhase("walk"), WALK_AT),
+      setTimeout(() => {
+        setPhase("open");
+        setUnlocking(nextIndex);
+      }, OPEN_AT),
+      setTimeout(() => router.push(`${basePath}/${nextIndex + 1}`), GO_AT),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [advancing, basePath, nextIndex, router]);
+
   /* Once progress is known: bring the next stop into view, and spring its
-     lock if it opened since the last visit. */
-  const hydrated = useProgress((state) => state.hydrated);
+     lock if it opened since the last visit (the walk springs its own). */
   useEffect(() => {
     if (!hydrated || allDone) return;
     const seen = readSeen();
     const key = `${characterId}.${lessonId}`;
     const timer = setTimeout(() => {
-      if (seen[key] !== undefined && seen[key] < nextIndex) setUnlocking(nextIndex);
+      if (!advancing && seen[key] !== undefined && seen[key] < nextIndex) setUnlocking(nextIndex);
       try {
         localStorage.setItem(SEEN_KEY, JSON.stringify({ ...seen, [key]: nextIndex }));
       } catch {
@@ -101,7 +146,7 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [hydrated, allDone, nextIndex, characterId, lessonId]);
+  }, [hydrated, allDone, advancing, nextIndex, characterId, lessonId]);
 
   const height = yAt(count - 1) + NEXT_DISC / 2 + BOTTOM;
   const pinkiLeft = xAt(pinkiAt) > 50;
@@ -124,18 +169,28 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
               <path d={trackPath(0, reach)} transform="translate(0 -3)" stroke="rgb(255 255 255 / 40%)" strokeWidth={5} vectorEffect="non-scaling-stroke" />
             </g>
           )}
+          {walked !== "at" && advancing && (
+            <g className="path-draw">
+              <path d={trackPath(from, nextIndex)} transform="translate(0 4)" stroke={tone.edge} strokeWidth={18} vectorEffect="non-scaling-stroke" />
+              <path d={trackPath(from, nextIndex)} stroke={tone.face} strokeWidth={18} vectorEffect="non-scaling-stroke" />
+              <path d={trackPath(from, nextIndex)} transform="translate(0 -3)" stroke="rgb(255 255 255 / 40%)" strokeWidth={5} vectorEffect="non-scaling-stroke" />
+            </g>
+          )}
           <path d={trackPath(0, count - 1)} stroke="rgb(255 255 255 / 75%)" strokeWidth={5} strokeDasharray="0 17" vectorEffect="non-scaling-stroke" />
         </g>
       </svg>
 
       {titles.map((title, i) => {
         const n = i + 1;
-        const done = stars[i] > 0;
-        const isNext = i === nextIndex;
+        const done = stars[i] > 0 && !(walked === "at" && i === from);
+        const isNext = i === current;
         const locked = !done && !isNext;
         const size = isNext ? NEXT_DISC : DISC;
         const cover = covers[i] ?? [];
         const springing = i === unlocking;
+        /* On a return visit the lock waits for the page to settle; on the
+           walk it springs the moment Pinki arrives. */
+        const springDelay = advancing ? 0.05 : 0.9;
 
         const art =
           cover.length > 1 ? (
@@ -148,13 +203,13 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
           <span
             className={`relative flex items-center justify-center ${
               isNext ? "clay path-next rounded-full" : "card card-clay-white card-pill"
-            } ${springing ? "anim-jump" : ""}`}
+            } path-disc ${springing ? "anim-jump" : ""}`}
             style={
               {
                 width: size,
                 height: size,
                 ...(isNext ? { backgroundColor: tone.face, "--clay-edge": tone.edge, "--path-ring": tone.face } : {}),
-                ...(springing ? { animationDelay: "1.1s" } : {}),
+                ...(springing ? { animationDelay: `${springDelay + 0.2}s` } : {}),
                 "--art-shadow": isNext ? tone.edge : "rgb(var(--shadow-hue))",
               } as Vars
             }
@@ -164,14 +219,19 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
             </span>
             {done && (
               <span
-                className="clay absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full"
+                className={`clay absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full ${
+                  advancing && i === from ? "anim-pop-in" : ""
+                }`}
                 style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as Vars}
               >
                 <Check className="h-4 w-4 text-white" strokeWidth={3.25} />
               </span>
             )}
             {(locked || springing) && (
-              <span className={`lock-chip absolute -bottom-1 -right-1 h-8 w-8 ${springing ? "path-lock-off" : ""}`}>
+              <span
+                className={`lock-chip absolute -bottom-1 -right-1 h-8 w-8 ${springing ? "path-lock-off" : ""}`}
+                style={springing ? { animationDelay: `${springDelay}s` } : undefined}
+              >
                 <Lock className="h-3.5 w-3.5" strokeWidth={2.75} />
               </span>
             )}
@@ -186,7 +246,7 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
 
         const body = (
           <>
-            {isNext && (
+            {isNext && walked === "open" && (
               <span
                 className="path-bubble card card-clay-white card-pill anim-breathe absolute bottom-full left-1/2 mb-3 whitespace-nowrap px-4 py-1.5 text-sm font-bold uppercase tracking-wide"
                 style={{ color: tone.edge, translate: "-50% 0" }}
@@ -234,7 +294,7 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
         src={allDone ? pinkiCheer : pinkiWave}
         alt=""
         sizes="80px"
-        className="anim-pop-in pointer-events-none absolute w-20"
+        className={`path-pinki pointer-events-none absolute w-20 ${walked === "walk" ? "path-hop" : "anim-pop-in"}`}
         style={{
           left: `${pinkiLeft ? xAt(pinkiAt) - 38 : xAt(pinkiAt) + 38}%`,
           top: yAt(pinkiAt) - 28,

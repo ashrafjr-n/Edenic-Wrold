@@ -15,6 +15,8 @@ import { format, dirFor } from "@/lib/format-dict";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
+  /** `from` — the lesson just finished, sent by its "Next" button. */
+  searchParams: Promise<{ from?: string }>;
 }
 
 type AvatarVars = CSSProperties & { "--tile-tint"?: string };
@@ -73,8 +75,9 @@ type AvatarVars = CSSProperties & { "--tile-tint"?: string };
  * the sidebar at `lg`) both need it, and neither should reach into the
  * list's internals to get it.
  */
-export default async function LessonPage({ params }: LessonPageProps) {
+export default async function LessonPage({ params, searchParams }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
+  const from = Number((await searchParams).from);
   const route = resolveLessonRoute(characterId, lessonId);
 
   if (route.status === "missing") notFound();
@@ -166,6 +169,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           basePath={basePath}
           tone={tone}
           dict={dict.lessonPicker}
+          advanceFrom={Number.isInteger(from) && from > 0 ? from : undefined}
         />
       </div>
 

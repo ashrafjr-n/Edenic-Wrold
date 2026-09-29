@@ -3843,6 +3843,48 @@ button:disabled,
   rotate: 45deg;
 }
 
+/* The walk from a finished stop to the next (`LessonPath`'s `advanceFrom`):
+   the stop settles to its finished size, the new stretch of track draws on
+   from the top, and Pinki glides across in two hops. */
+.path-disc {
+  transition:
+    width 0.45s cubic-bezier(0.34, 1.4, 0.5, 1),
+    height 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+.path-draw {
+  animation: path-draw 1s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+@keyframes path-draw {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.path-pinki {
+  transition:
+    left 1s cubic-bezier(0.45, 0, 0.3, 1),
+    top 1s cubic-bezier(0.45, 0, 0.3, 1);
+}
+
+.path-hop {
+  animation: path-hop 0.5s ease-in-out 2;
+}
+
+@keyframes path-hop {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  45% {
+    transform: translate3d(0, -26px, 0) rotate(-6deg);
+  }
+}
+
 /* A locked stop still shows what is coming, only quieter. */
 .path-art-locked {
   opacity: 0.55;
@@ -3873,7 +3915,9 @@ button:disabled,
 
 @media (prefers-reduced-motion: reduce) {
   .path-next::after,
-  .path-lock-off {
+  .path-lock-off,
+  .path-draw,
+  .path-hop {
     animation: none;
   }
 
