@@ -15,7 +15,9 @@ export function CourseProgress({ characterId, lessonId, total, className = "" }:
   const done = useCourseStars(characterId, lessonId, total).filter((stars) => stars > 0).length;
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    /* `ltr` whatever the locale: the layout never mirrors, and "0 / 5"
+       would read "5 / 0" inside a right-to-left column. */
+    <div dir="ltr" className={`flex items-center gap-3 ${className}`}>
       <div className="course-track h-3.5 flex-1">
         <div
           className="course-track-fill h-full"

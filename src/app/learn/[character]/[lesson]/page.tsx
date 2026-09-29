@@ -140,12 +140,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
             } as CSSProperties
           }
         >
-          <div className="min-w-0 flex-1">
+          <div dir={dir} className="min-w-0 flex-1">
             <p className="text-xs font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
             <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight text-white">
               {course.name}
             </h1>
-            <p dir={dir} className="mt-1 text-balance text-sm leading-snug text-white/90">
+            <p className="mt-1 text-balance text-sm leading-snug text-white/90">
               {course.description}
             </p>
             <CourseProgress

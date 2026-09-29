@@ -41,12 +41,11 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
         className={`mx-auto -mt-3 mb-2 aspect-[2/1] w-[70%] ${locked ? "path-art-locked" : ""}`}
       />
       <div className="flex items-center gap-3">
-        <div className="min-w-0 flex-1">
+        <div dir={dir} className="min-w-0 flex-1">
           <h2 className={`text-2xl font-bold leading-tight ${locked ? "text-[var(--color-ink)]" : "clay-title text-white"}`}>
             {name}
           </h2>
           <p
-            dir={dir}
             className={`mt-0.5 truncate text-sm ${locked ? "text-[var(--color-ink-soft)]" : "text-white/90"}`}
           >
             {description}
