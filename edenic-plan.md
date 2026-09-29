@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-09-28
+> Last updated: 2026-09-29
 
 ---
 
@@ -28,8 +28,8 @@ Pinki    Shapes   1. Circle
 | Page | Shows |
 | --- | --- |
 | `/learn` | the three friends (unchanged) |
-| `/learn/pinki` | Pinki's course cards (today's card style) |
-| `/learn/pinki/shapes` | 5 lesson rows + Continue (today's Numbers page layout) |
+| `/learn/pinki` | Pinki says hello, then one big clay card per course (phone) |
+| `/learn/pinki/shapes` | a course banner, then the 5 lessons as a winding clay path + Continue (phone) |
 | `/learn/pinki/shapes/1` | the lesson |
 
 Lessons open one after another.
