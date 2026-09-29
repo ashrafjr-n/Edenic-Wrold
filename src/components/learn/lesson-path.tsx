@@ -27,7 +27,7 @@ interface LessonPathProps {
 
 /* The path's geometry, in px down and % across. A stop's centre sits on a
    sine: middle, right, middle, left… so the path winds instead of stacking. */
-const ROW = 150;
+const ROW = 166;
 const TOP = 62;
 const DISC = 88;
 const NEXT_DISC = 108;
@@ -196,7 +196,7 @@ export function LessonPath({ titles, covers, characterId, lessonId, basePath, to
             )}
             {disc}
             <span
-              className={`absolute left-1/2 top-full mt-2 w-32 -translate-x-1/2 text-center text-sm font-bold leading-tight ${
+              className={`card card-pill absolute left-1/2 top-full mt-2.5 -translate-x-1/2 whitespace-nowrap px-3 py-1 text-[0.8125rem] font-bold leading-tight ${
                 locked ? "text-[var(--color-ink-soft)]" : "text-[var(--color-ink)]"
               }`}
             >

@@ -1,6 +1,7 @@
 import type { Face, LessonDef, Scene, SceneItem, ShapeId } from "@/types/course";
 import { picnic, rectangles, squares, triangles } from "@/data/scenes";
 import { SHAPES } from "@/data/shapes";
+import donut from "../../../public/assets/learn/pinki/shapes/find/donut.png";
 
 const circle: Face = { kind: "shape", shape: "circle" };
 const square: Face = { kind: "shape", shape: "square" };
@@ -9,11 +10,12 @@ const rectangle: Face = { kind: "shape", shape: "rectangle" };
 
 /** One shape, one lesson: watch its reel, meet its word, draw it, build its
     word from shuffled letters, then find it in the world — each shape in
-    its own picnic (`edenic-plan.md` §5). */
-function shapeLesson(n: number, shape: ShapeId, scene: Scene): LessonDef {
+    its own picnic (`edenic-plan.md` §5). Its stop on the course path wears
+    the thing the traced shape turns into, unless a clearer one is given. */
+function shapeLesson(n: number, shape: ShapeId, scene: Scene, cover = SHAPES[shape].thing.src): LessonDef {
   return {
     reel: `/assets/learn/pinki/shapes/reels/${n}.mp4`,
-    cover: [SHAPES[shape].thing.src],
+    cover: [cover],
     questions: [
       { type: "word", ask: { key: "thisIs", vars: { shape } }, word: shape, shape },
       { type: "trace", ask: { key: "draw", vars: { shape } }, shape },
@@ -34,7 +36,8 @@ function thing(scene: Scene, id: string): SceneItem {
     are placeholders until the company's clips replace them under the same
     names (`/assets/learn/pinki/shapes/reels/<n>.mp4`). */
 export const pinkiShapes: LessonDef[] = [
-  shapeLesson(1, "circle", picnic),
+  /* The see-through beach ball is lost at stop size; the donut reads round. */
+  shapeLesson(1, "circle", picnic, donut),
   shapeLesson(2, "square", squares),
   shapeLesson(3, "triangle", triangles),
   shapeLesson(4, "rectangle", rectangles),
@@ -43,7 +46,7 @@ export const pinkiShapes: LessonDef[] = [
      and rectangle — the pair children mix up), then draw one more. Every
      step SHOWS what it is about — nothing depends on hearing the question. */
   {
-    cover: (["circle", "square", "triangle", "rectangle"] as const).map((shape) => SHAPES[shape].thing.src),
+    cover: [donut, SHAPES.square.thing.src, SHAPES.triangle.thing.src, SHAPES.rectangle.thing.src],
     questions: [
       {
         type: "sort",

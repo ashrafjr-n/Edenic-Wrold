@@ -6,6 +6,10 @@ import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { LessonList } from "@/components/learn/lesson-list";
 import { ContinueButton } from "@/components/learn/continue-button";
+import { LessonPath } from "@/components/learn/lesson-path";
+import { CourseArt } from "@/components/learn/course-art";
+import { CourseProgress } from "@/components/learn/course-progress";
+import { courseCovers, courseLessons } from "@/data/courses";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -83,6 +87,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const basePath = `/learn/${character.id}/${lesson.id}`;
   const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark };
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
+  const covers = courseLessons[lesson.id].map((def) => def.cover);
 
   return (
     <main
@@ -120,8 +125,52 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </BackRow>
 
-      {/* ================= Phone + tablet (< lg) ================= */}
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-0 sm:px-8 md:max-w-[35rem] lg:hidden lg:max-w-[37rem]">
+      {/* ================= Phone (< sm) =================
+          The course as a banner in its own colour — title, progress, its
+          things piled on the right — then its lessons as a winding clay
+          path (`LessonPath`). */}
+      <div className="flex w-full flex-1 flex-col px-6 sm:hidden">
+        <section
+          className="card clay anim-pop-in relative mt-6 flex items-center gap-2 py-5 pl-5 pr-2"
+          style={
+            {
+              backgroundColor: tone.face,
+              "--clay-edge": tone.edge,
+              animationDelay: "0.1s",
+            } as CSSProperties
+          }
+        >
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
+            <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight text-white">
+              {course.name}
+            </h1>
+            <p dir={dir} className="mt-1 text-sm leading-snug text-white/90">
+              {course.description}
+            </p>
+            <CourseProgress
+              characterId={character.id}
+              lessonId={lesson.id}
+              total={lesson.totalItems}
+              className="mt-3.5"
+            />
+          </div>
+          <CourseArt images={courseCovers(lesson.id)} width={128} className="-my-6 h-32 w-32 shrink-0" />
+        </section>
+
+        <LessonPath
+          titles={course.items}
+          covers={covers}
+          characterId={character.id}
+          lessonId={lesson.id}
+          basePath={basePath}
+          tone={tone}
+          dict={dict.lessonPicker}
+        />
+      </div>
+
+      {/* ================= Tablet (sm – lg) ================= */}
+      <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex md:max-w-[35rem] lg:hidden lg:max-w-[37rem]">
         {/* The hero: just Pinki, `sticky` under the header (`z-0`, so the
             header's own `z-30` still wins) — no panel, no tint, no clouds
             behind her, on direct request. The white sheet below is what
