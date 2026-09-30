@@ -107,8 +107,8 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
       {unlocked && (
         <div className="clay anim-pop-in flex items-center gap-2 rounded-full py-2 pe-5 ps-2 lg:justify-self-center" style={{ ...GO, animationDelay: "0.8s" }}>
           <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white text-[var(--color-go-dark)] lg:h-10 lg:w-10">
-            <Lock className="done-lock absolute h-5 w-5" strokeWidth={2.75} />
-            <LockOpen className="done-unlock absolute h-5 w-5" strokeWidth={2.75} />
+            <Lock className="done-lock absolute h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
+            <LockOpen className="done-unlock absolute h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
           </span>
           <span dir={dir} className="text-base font-bold text-white sm:text-lg lg:text-xl">
             {unlocked}
