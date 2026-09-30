@@ -2364,17 +2364,15 @@ button:disabled,
       inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
       0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
       0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
-  }
-
-  /* A solved step rings the board in green — the colour of the Next that
-     just appeared (green is "passed, carry on"). Outline, so the clay
-     shadow stack stays untouched. */
-  .lesson-board {
+    /* Room for the solved ring below — an outline, so the clay shadow
+       stack stays untouched. */
     outline: 4px solid transparent;
     outline-offset: 5px;
     transition: outline-color 0.35s ease;
   }
 
+  /* A solved step rings the board in green — the colour of the Next that
+     just appeared (green is "passed, carry on"). */
   .lesson-board--solved {
     outline-color: color-mix(in srgb, var(--color-go) 45%, transparent);
   }
