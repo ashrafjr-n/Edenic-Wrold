@@ -45,7 +45,7 @@ export function LessonAbout({
   const cover = covers[index]?.[0];
   const stars = useCourseStars(characterId, courseId, covers.length);
   return (
-    <div className={`card card-clay-white flex items-center gap-4 p-4 lg:flex-col lg:gap-4 lg:p-6 ${className}`}>
+    <div className={`card card-clay-white flex items-center gap-4 p-4 lg:flex-col lg:gap-4 lg:p-5 xl:p-6 ${className}`}>
       <span
         className="clay flex h-24 w-24 shrink-0 items-center justify-center rounded-full lg:h-[min(9rem,14svh)] lg:w-[min(9rem,14svh)]"
         style={{ backgroundColor: tone.face, "--clay-edge": tone.edge, "--art-shadow": tone.edge } as CSSProperties}
