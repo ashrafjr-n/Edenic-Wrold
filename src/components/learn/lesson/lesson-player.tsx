@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
@@ -490,16 +490,22 @@ export function LessonPlayer({
               className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-center"
             />
           )}
+          {/* The desktop board: stays put while the steps swap on it. */}
           <div
-            key={`${round}-${at}-${demo}`}
-            className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:pt-0 ${
-              leaving ? "stage-swap--out" : ""
-            }`}
+            className="lesson-board contents lg:col-start-2 lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col"
+            style={{ "--board-tone": courseTone.face } as CSSProperties}
           >
-            <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
-              {body}
+            <div
+              key={`${round}-${at}-${demo}`}
+              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:pt-0 ${
+                leaving ? "stage-swap--out" : ""
+              }`}
+            >
+              <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
+                {body}
+              </div>
+              <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
             </div>
-            <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
           </div>
         </div>
       )}
