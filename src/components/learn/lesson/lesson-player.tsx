@@ -510,6 +510,18 @@ export function LessonPlayer({
             dir={dir}
             className="anim-fade-up hidden lg:col-start-1 lg:row-start-1 lg:flex lg:self-stretch"
           />
+          <LessonAbout
+            courseName={courseName}
+            title={title}
+            titles={titles}
+            covers={covers}
+            index={n - 1}
+            characterId={characterId}
+            courseId={courseId}
+            tone={courseTone}
+            dir={dir}
+            className="anim-fade-up hidden lg:col-start-3 lg:row-start-1 lg:flex lg:self-stretch"
+          />
         </div>
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
