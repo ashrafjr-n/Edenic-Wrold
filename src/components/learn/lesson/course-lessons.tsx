@@ -34,6 +34,8 @@ interface CourseLessonsProps {
   /** "Lesson {n}: {title}, locked" — what a closed row says to a screen
       reader, since its padlock is a picture. */
   lockedLabel?: string;
+  /** "Lesson complete!" — read after a finished row's title, for its tick. */
+  doneLabel?: string;
   tone: { face: string; edge: string };
   dir: "rtl" | "ltr";
   className?: string;
@@ -52,6 +54,7 @@ export function CourseLessons({
   courseId,
   label,
   lockedLabel,
+  doneLabel,
   tone,
   dir,
   className = "",
@@ -91,6 +94,7 @@ export function CourseLessons({
             {state === "done" && (
               <span className="clay flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={GO}>
                 <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+                {doneLabel && <span className="sr-only">{doneLabel}</span>}
               </span>
             )}
             {state === "locked" && (
