@@ -495,7 +495,9 @@ export function LessonPlayer({
       {step?.kind === "watch" ? (
         <div
           key={`${round}-${at}`}
-          className={`stage-swap absolute inset-0 ${leaving ? "stage-swap--out" : ""}`}
+          className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:grid lg:w-full lg:flex-1 lg:px-8 ${WIDE_GRID} ${
+            leaving ? "stage-swap--out" : ""
+          }`}
         >
           {body}
         </div>

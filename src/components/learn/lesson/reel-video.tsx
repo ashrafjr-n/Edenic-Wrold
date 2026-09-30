@@ -79,7 +79,7 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
   };
 
   return (
-    <div className="absolute inset-0 flex justify-center sm:px-8 sm:pb-6 sm:pt-24 lg:pb-4 lg:pt-[5.75rem]">
+    <div className="absolute inset-0 flex justify-center sm:px-8 sm:pb-6 sm:pt-24 lg:relative lg:inset-auto lg:col-start-2 lg:row-start-1 lg:p-0">
       {/* Desktop: the frame stands on the lesson's board, the one every
           step after it plays on. */}
       <div
