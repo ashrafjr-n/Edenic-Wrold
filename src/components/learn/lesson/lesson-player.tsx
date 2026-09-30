@@ -477,9 +477,10 @@ export function LessonPlayer({
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
            as it always was. Tablet: the task and the lesson side by side
-           above the step. Desktop: three columns — the task (its how-to
-           playing) on the left, the step in the middle under the task
-           button, the lesson on the right. The done screen has neither. */
+           above the step. Desktop: three columns of one height — the task
+           (its how-to playing) on the left, the step on the course-coloured
+           board in the middle, the course's lessons on the right. The done
+           screen has neither panel; its board spans all three columns. */
         <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:max-w-7xl lg:pt-4 lg:grid-cols-[14rem_minmax(0,1fr)_14rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[17rem_minmax(0,1fr)_17rem] xl:gap-x-8">
           {panel}
           {!finished && (
