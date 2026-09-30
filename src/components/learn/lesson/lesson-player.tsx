@@ -505,15 +505,16 @@ export function LessonPlayer({
           the round task button, centred between the back button and a
           spacer of its own width. A desktop has no task button: the task
           panel beside the step already shows the same how-to, always open. */}
-      {/* The page's heading, for a screen reader: the lesson's name is on
-          screen as art and panels, never as one line of text. */}
-      <h1 dir={dir} className="sr-only">
-        {courseName}: {title}
-      </h1>
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
         <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
       </BackRow>
+      {/* After the back row (it must be `<main>`'s first child): the page's
+          heading, for a screen reader — the lesson's name is
+          on screen as art and panels, never as one line of text. */}
+      <h1 dir={dir} className="sr-only">
+        {courseName}: {title}
+      </h1>
 
       {/* Two bands, always in the same places: the step filling — and centred
           in — whatever height is left, and the way onward in a fixed-height
