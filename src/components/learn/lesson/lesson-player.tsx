@@ -521,7 +521,7 @@ export function LessonPlayer({
           <div
             className={`lesson-board contents lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col ${
               finished ? "lg:col-span-3 lg:col-start-1" : "lg:col-start-2"
-            }`}
+            } ${solved && !leaving ? "lesson-board--solved" : ""}`}
             style={{ "--board-tone": courseTone.face } as CSSProperties}
           >
             <div
