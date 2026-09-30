@@ -111,6 +111,9 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   tablet width up, so the courses read apart at a glance, and it is kept separate
   from the mascot colors — a subject means the same thing on every hub. (The
   violet and blue subject tokens now only colour puzzle stages.)
+- Inside a lesson on a desktop the step sits on a board tinted with the
+  course's colour — the same board a course's path winds across — and it stays
+  put while the steps change on it, so the lesson reads as one workspace.
 - Every page sits on the same flat, pale ground. The lesson hub used to take the
   character's colour edge to edge; that was removed, and the colour now lives on
   the lesson cards themselves — the open one is the saturated card, the locked
