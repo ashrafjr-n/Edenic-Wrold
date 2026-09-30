@@ -71,7 +71,7 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
               alt={reward.word}
               fill
               sizes="(min-width: 1024px) 31rem, (min-width: 640px) 22rem, 17rem"
-              className="trace-morph-in object-contain"
+              className="trace-morph-in object-contain lg:p-[12%]"
             />
           )}
         </div>
