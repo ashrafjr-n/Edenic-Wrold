@@ -153,7 +153,7 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
       <div className="min-w-0 flex-1 lg:flex-none">
       <div className="flex items-center gap-2.5">
         <span
-          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white lg:h-12 lg:w-12"
           style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
         >
           <Icon className="h-5 w-5" strokeWidth={2.75} />
