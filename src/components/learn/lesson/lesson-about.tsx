@@ -11,6 +11,8 @@ interface LessonAboutProps {
   titles?: readonly string[];
   /** "Lesson {n}: {title}, locked", for the list's closed rows. */
   lockedLabel?: string;
+  /** "Lesson complete!", for the list's finished rows. */
+  doneLabel?: string;
   /** Every lesson's cover in the course, in order. */
   covers: readonly (readonly StaticImageData[])[];
   /** 0-based: which of them this lesson is. */
@@ -33,6 +35,7 @@ export function LessonAbout({
   title,
   titles,
   lockedLabel,
+  doneLabel,
   covers,
   index,
   characterId,
@@ -79,6 +82,7 @@ export function LessonAbout({
           courseId={courseId}
           label={courseName}
           lockedLabel={lockedLabel}
+          doneLabel={doneLabel}
           tone={tone}
           dir={dir}
           className="hidden border-t-2 border-[var(--background)] pt-4 lg:flex"
