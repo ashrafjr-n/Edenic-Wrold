@@ -255,7 +255,9 @@ in three.js so every shape is true and everything shares one light and style.
 
 The lesson-complete screen celebrates in three beats: a big Pinki cheering with
 confetti, then the shape beside the child's own drawing of it and the word,
-then a green pill whose padlock springs open on the next lesson. Its
+then a green pill whose padlock springs open on the next lesson (on a
+desktop these sit side by side: Pinki big on the left, the rest on the
+right, across the whole board). Its
 **Next shape** button (Next lesson when the next one is not a shape) goes back
 to the course path first: the finished stop takes its tick, the track draws on
 to the next stop, its padlock springs off, and then
