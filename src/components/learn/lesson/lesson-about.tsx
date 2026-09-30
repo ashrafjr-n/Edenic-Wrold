@@ -9,6 +9,8 @@ interface LessonAboutProps {
   title: string;
   /** Every lesson's title in the course, in order — the desktop list. */
   titles?: readonly string[];
+  /** "Lesson {n}: {title}, locked", for the list's closed rows. */
+  lockedLabel?: string;
   /** Every lesson's cover in the course, in order. */
   covers: readonly (readonly StaticImageData[])[];
   /** 0-based: which of them this lesson is. */
@@ -30,6 +32,7 @@ export function LessonAbout({
   courseName,
   title,
   titles,
+  lockedLabel,
   covers,
   index,
   characterId,
@@ -75,6 +78,7 @@ export function LessonAbout({
           characterId={characterId}
           courseId={courseId}
           label={courseName}
+          lockedLabel={lockedLabel}
           tone={tone}
           dir={dir}
           className="hidden border-t-2 border-[var(--background)] pt-4 lg:flex"
