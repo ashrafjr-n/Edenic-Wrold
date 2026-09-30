@@ -24,8 +24,7 @@ interface LessonAboutProps {
  * What this lesson is (tablet and desktop, beside the step): its thing on a
  * big clay disc in the course colour, its name, and where it sits in the
  * course. Tablet: a row of the course's lessons with this one standing out.
- * Desktop: the course's lessons as a list — done ones ticked, this one in
- * the course colour, the ones still closed with a padlock.
+ * Desktop: the course's lessons as a list instead (`CourseLessons`).
  */
 export function LessonAbout({
   courseName,
