@@ -69,7 +69,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
       </p>
 
       <div
-        className="card card-clay-white anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
+        className="card card-clay-white anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 lg:gap-4 lg:px-8 lg:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
         style={{ animationDelay: "0.35s" }}
       >
         <div className={`flex items-center justify-center ${shapes.length > 1 ? "gap-2" : "gap-3"}`}>
