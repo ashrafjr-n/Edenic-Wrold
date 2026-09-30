@@ -112,7 +112,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
                     className="clay anim-pop-in absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full text-white lg:h-8 lg:w-8"
                     style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
                   >
-                    <Check className="h-4 w-4" strokeWidth={3.5} />
+                    <Check className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3.5} />
                   </span>
                 </>
               ) : (
