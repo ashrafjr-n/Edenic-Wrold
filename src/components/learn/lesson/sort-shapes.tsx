@@ -147,7 +147,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
             className={`relative z-10 h-[82%] w-[82%] cursor-grab touch-none select-none ${shake > 0 ? "anim-wiggle" : "anim-pop-in"}`}
             style={drag?.moved ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.1" } : undefined}
           >
-            <Image src={current.src} alt={current.word} fill sizes="8rem" draggable={false} className="pointer-events-none object-contain" />
+            <Image src={current.src} alt={current.word} fill sizes="(min-width: 1024px) 9rem, 8rem" draggable={false} className="pointer-events-none object-contain" />
           </div>
         )}
       </div>
