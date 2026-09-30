@@ -153,7 +153,8 @@ interface LessonPlayerProps {
  * lesson is reel → word → trace → spell (`edenic-plan.md` §5). Each step only
  * reports `onSolved` / `onMiss`; the task chip (in the back row) and the way
  * onward live here (see the return). The reel is the
- * exception: it fills the whole stage and has no bands at all.
+ * exception: it fills the whole stage and has no bands at all (on a desktop
+ * it takes the board's column, between the same two panels as the steps).
  *
  * The first question is Pinki's to show: a Pick's answer glows while she
  * points, a Count's basket glows, and a Trace always starts with her drawing
