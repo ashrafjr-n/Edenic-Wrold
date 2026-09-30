@@ -163,7 +163,7 @@ function FindDemo({ scene, shape }: { scene: Scene; shape: ShapeId }) {
 function PickDemo({ word, options, answer }: { word: string; options: ShapeId[]; answer: ShapeId }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <ClayWord word={word} size="sm" />
+      <ClayWord word={word} size="demo" />
       <div className="grid w-[62%] grid-cols-2 gap-3">
         {options.map((shape) => (
           <span
