@@ -141,7 +141,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
         {/* The tray: one socket per thing to find, filled in the order they
             were found — floating over the grass at the bottom. */}
         <div
-          className="clay pointer-events-none absolute bottom-[2.5%] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[var(--surface)] p-1.5 sm:gap-2 sm:p-2"
+          className="clay pointer-events-none absolute bottom-[2.5%] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[var(--surface)] p-1.5 sm:gap-2 sm:p-2 lg:gap-2.5 lg:p-2.5"
           style={{ "--clay-edge": "var(--color-locked-dark)" } as CSSProperties}
         >
           {targets.map((target, i) => {
