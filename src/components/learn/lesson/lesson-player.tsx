@@ -614,7 +614,12 @@ export function LessonPlayer({
           the way onward at its end; green once the step is solved, with a
           tick where the ways back were. */}
       <div className={`lesson-foot hidden lg:block ${solved && !leaving ? "lesson-foot--solved" : ""}`}>
-        <div className="mx-auto flex h-24 w-full max-w-5xl items-center justify-between gap-4 px-8">
+        {/* Keyed like the stage, so a pressed (collapsed) Next never carries
+            over into the next step's button. */}
+        <div
+          key={`${round}-${at}-${demo}`}
+          className="mx-auto flex h-24 w-full max-w-5xl items-center justify-between gap-4 px-8"
+        >
           <div className="flex items-center gap-4">
             {footStart ??
               (solved && !finished && (
