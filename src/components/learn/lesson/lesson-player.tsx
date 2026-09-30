@@ -129,8 +129,6 @@ interface LessonPlayerProps {
   /** This lesson's and the next lesson's titles (none after the last). */
   title: string;
   nextTitle?: string;
-  /** Every lesson's title in this course — the desktop lesson list. */
-  titles?: readonly string[];
   /** The next lesson teaches one shape — its button says "Next shape". */
   nextIsShape?: boolean;
   /** Art behind the reel while it loads. */
@@ -165,7 +163,6 @@ export function LessonPlayer({
   courseName,
   title,
   nextTitle,
-  titles,
   nextIsShape = false,
   image,
   tone,

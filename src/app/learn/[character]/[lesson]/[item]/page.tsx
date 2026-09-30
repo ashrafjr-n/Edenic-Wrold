@@ -55,7 +55,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
       /* `overflow-x-clip`, never `-hidden`: `hidden` makes `<main>` a scroll
          container and breaks the back row's `sticky`. */
       <main
-        className="relative flex flex-1 flex-col overflow-x-clip pb-4"
+        className="relative flex flex-1 flex-col overflow-x-clip pb-4 lg:pb-0"
         style={pageAccent(character.accent, character.accentDark)}
       >
         <LessonPlayer
@@ -66,7 +66,6 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           courseName={course.name}
           title={title}
           nextTitle={course.items[n]}
-          titles={course.items}
           nextIsShape={courseLessons[lesson.id][n]?.questions.some((q) => q.type === "word" && q.shape !== undefined)}
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}
