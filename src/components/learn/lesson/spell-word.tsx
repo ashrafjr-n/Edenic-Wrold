@@ -340,7 +340,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
         onPointerCancel={() => setDrag(null)}
         /* `touch-action: none` or a drag scrolls the page instead. */
         className={`clay flex h-full w-full touch-none select-none items-center justify-center rounded-[28%] pb-[6%] text-[length:62cqi] font-bold leading-none text-white ${
-          isDragging ? "relative z-10" : ""
+          isDragging ? "relative z-10 cursor-grabbing" : "cursor-grab"
         } ${shaking ? "anim-wiggle" : ""} ${solved && inSpace !== null ? "anim-jump" : ""}`}
         style={
           {
