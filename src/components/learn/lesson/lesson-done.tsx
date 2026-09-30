@@ -41,6 +41,10 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
  * The done screen has no task button, so the middle of the back row is free:
  * the screen is pinned to the top (`mb-auto`) and Pinki rises into that gap
  * (the negative top margin), which is what lets her be this big on a phone.
+ *
+ * Desktop: the board spans the whole width here (no side panels), so the
+ * beats sit side by side — Pinki big on the left, what was learned and what
+ * is next stacked on the right.
  */
 export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
   /* One shape and a drawing get big tiles; the review's four shapes and a
