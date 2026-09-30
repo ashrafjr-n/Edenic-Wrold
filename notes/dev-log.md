@@ -58,3 +58,4 @@
 2026-09-27 simplify course backdrop
 2026-09-27 adjust word card
 2026-09-30 fix image sizes
+2026-09-30 fix locale strings
