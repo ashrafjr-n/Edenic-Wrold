@@ -285,6 +285,7 @@ export function LessonPlayer({
   if (!finished && step.kind === "question") {
     const q = step.question;
     const { kind, target } = taskFor(q, showing);
+    const how = showing ? undefined : demoFor(q, tone.face, seed);
     task = (
       <TaskChip
         key={`${step.index}-${kind}`}
@@ -292,7 +293,7 @@ export function LessonPlayer({
         verb={dict.tasks[kind]}
         target={target}
         label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
-        demo={showing ? undefined : demoFor(q, tone.face, seed)}
+        demo={how}
         closeLabel={lines.close}
         tone={courseTone}
         dir={dir}
@@ -305,7 +306,7 @@ export function LessonPlayer({
         verb={dict.tasks[kind]}
         target={target}
         label={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
-        demo={showing ? undefined : demoFor(q, tone.face, seed)}
+        demo={how}
         tone={courseTone}
         dir={dir}
         className="anim-fade-up hidden sm:flex lg:col-start-1 lg:row-start-1 lg:self-stretch"
