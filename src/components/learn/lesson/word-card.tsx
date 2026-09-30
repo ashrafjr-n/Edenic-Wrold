@@ -25,7 +25,7 @@ export function WordCard({ word, shape, cue, label }: WordCardProps) {
       <CueButton cue={cue} label={label} size="xl" invite />
       {shape && (
         <span
-          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:h-[min(13rem,17svh)] lg:w-[min(13rem,17svh)]"
+          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:h-[min(13rem,15svh)] lg:w-[min(13rem,15svh)]"
           style={{ animationDelay: "0.05s" }}
         >
           <FaceView face={{ kind: "shape", shape }} size="tile" />
