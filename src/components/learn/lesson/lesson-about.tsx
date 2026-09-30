@@ -99,7 +99,7 @@ export function LessonAbout({
                     />
                   )}
                 </span>
-                <span className={`min-w-0 flex-1 truncate text-base font-bold ${open || current ? "" : "opacity-55"}`}>
+                <span className={`min-w-0 flex-1 text-base font-bold leading-tight ${open || current ? "" : "opacity-55"}`}>
                   {name}
                 </span>
                 {done && !current ? (
