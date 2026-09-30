@@ -356,11 +356,17 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
         {solved && <Celebration />}
       </div>
 
-      <div className="flex max-w-xl flex-wrap justify-center gap-2 sm:gap-3">
+      {/* Desktop: the tray is a grid with the SAME columns as the spaces
+          above it (the columns only apply once it is a grid), so the letters
+          sit in one row, each under a space, however long the word. */}
+      <div
+        className="flex max-w-xl flex-wrap justify-center gap-2 sm:gap-3 lg:grid lg:w-full lg:gap-2.5 lg:px-6"
+        style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}
+      >
         {dealt.map((_, id) => (
           <span
             key={id}
-            className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] lg:h-20 lg:w-20 ${
+            className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] lg:aspect-square lg:h-auto lg:w-full ${
               showHint && id === firstLetterTile ? "guide-target" : ""
             }`}
           >
