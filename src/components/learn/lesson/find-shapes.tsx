@@ -109,7 +109,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
                     <ellipse className="find-ring" cx="50" cy="50" rx="48" ry="48" pathLength={100} />
                   </svg>
                   <span
-                    className="clay anim-pop-in absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full text-white"
+                    className="clay anim-pop-in absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full text-white lg:h-8 lg:w-8"
                     style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
                   >
                     <Check className="h-4 w-4" strokeWidth={3.5} />
