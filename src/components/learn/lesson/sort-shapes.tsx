@@ -190,8 +190,8 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
                 {/* What is already in — the box filling up. */}
                 <span className="flex h-7 items-center gap-1 lg:h-10 lg:gap-1.5">
                   {inside.map((item) => (
-                    <span key={item.id} className="anim-pop-in relative block h-7 w-7">
-                      <Image src={item.src} alt="" fill sizes="28px" className="object-contain" />
+                    <span key={item.id} className="anim-pop-in relative block h-7 w-7 lg:h-10 lg:w-10">
+                      <Image src={item.src} alt="" fill sizes="(min-width: 1024px) 40px, 28px" className="object-contain" />
                     </span>
                   ))}
                 </span>
