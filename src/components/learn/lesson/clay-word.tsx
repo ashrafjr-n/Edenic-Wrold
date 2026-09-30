@@ -46,8 +46,8 @@ export function ClayWord({ word, size = "lg" }: ClayWordProps) {
       ? "text-5xl sm:text-6xl"
       : size === "lg"
       ? long
-        ? "text-6xl sm:text-8xl"
-        : "text-7xl sm:text-9xl"
+        ? "text-6xl sm:text-8xl lg:text-[min(6rem,10svh)]"
+        : "text-7xl sm:text-9xl lg:text-[min(8rem,13svh)]"
       : long
         ? "text-6xl"
         : "text-[5rem] sm:text-7xl";
