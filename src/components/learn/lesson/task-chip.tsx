@@ -164,7 +164,11 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
           </span>
           <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:flex-wrap lg:gap-x-2 lg:gap-y-0 lg:leading-tight xl:text-2xl">
             <span dir={dir}>{verb}</span>
-            {target && <span dir="ltr">{target}</span>}
+            {target && (
+              <span dir="ltr" className="lg:text-[var(--task-word)]" style={{ "--task-word": tone.edge } as CSSProperties}>
+                {target}
+              </span>
+            )}
           </p>
         </div>
         <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)] lg:mt-3 lg:text-lg lg:leading-snug">
