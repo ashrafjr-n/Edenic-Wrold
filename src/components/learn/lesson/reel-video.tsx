@@ -85,7 +85,7 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
       {/* Desktop: the frame stands on the lesson's board, the one every
           step after it plays on. */}
       <div
-        className="lesson-board contents lg:flex lg:w-full lg:max-w-[76rem] lg:justify-center lg:p-5"
+        className="lesson-board contents lg:flex lg:w-full lg:justify-center lg:p-5"
         style={{ "--board-tone": tone.face } as CSSProperties}
       >
         <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
