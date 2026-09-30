@@ -153,7 +153,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
               <span key={target.id} className="letter-slot h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12" style={{ borderRadius: "999px" }}>
                 {item && (
                   <span className="anim-pop-in absolute inset-0.5">
-                    <Image src={item.src} alt="" fill sizes="44px" className="object-contain" />
+                    <Image src={item.src} alt="" fill sizes="(min-width: 1024px) 48px, 44px" className="object-contain" />
                   </span>
                 )}
               </span>
