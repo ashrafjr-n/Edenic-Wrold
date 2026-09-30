@@ -229,7 +229,8 @@ loop of how the step is done — only the first move, never the whole answer.
 A desktop has no task button: the same loop plays, always open, in the panel
 beside the step.
 Every button of a step (Next, Your turn, Start over, Help, Play again) sits in
-one spot, a little above the bottom bar.
+one spot, a little above the bottom bar. With a keyboard, Enter presses the way
+onward (Skip, Your turn, Next) whenever nothing else has focus.
 
 A shape lesson plays its reel full-screen (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
