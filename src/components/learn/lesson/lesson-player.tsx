@@ -368,7 +368,7 @@ export function LessonPlayer({
         />
       );
       action = showing ? (
-        <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} />
+        <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} className="lesson-onward" />
       ) : null;
     } else if (q.type === "count") {
       body = (
