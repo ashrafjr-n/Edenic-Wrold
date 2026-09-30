@@ -162,7 +162,7 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
         >
           <Icon className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
         </span>
-        <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:text-2xl">
+        <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:flex-wrap lg:gap-x-2 lg:gap-y-0 lg:leading-tight xl:text-2xl">
           <span dir={dir}>{verb}</span>
           {target && <span dir="ltr">{target}</span>}
         </p>
