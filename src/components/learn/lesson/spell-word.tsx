@@ -340,7 +340,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
         onPointerCancel={() => setDrag(null)}
         /* `touch-action: none` or a drag scrolls the page instead. */
         className={`clay flex h-full w-full touch-none select-none items-center justify-center rounded-[28%] pb-[6%] text-[length:62cqi] font-bold leading-none text-white focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--page-accent-color)] ${
-          isDragging ? "relative z-10 cursor-grabbing" : locked ? "cursor-default" : "cursor-grab"
+          isDragging ? "relative z-10 cursor-grabbing" : locked ? "cursor-default" : "cursor-grab hover:brightness-105"
         } ${shaking ? "anim-wiggle" : ""} ${solved && inSpace !== null ? "anim-jump" : ""}`}
         style={
           {
