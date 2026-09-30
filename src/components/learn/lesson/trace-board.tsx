@@ -275,7 +275,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
               className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[var(--color-ink-soft)]"
               style={{ left: `${mark.x}%`, top: `${mark.y}%`, rotate: `${mark.angle}deg` }}
             >
-              <ChevronRight className="h-5 w-5" strokeWidth={3.25} />
+              <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={3.25} />
             </span>
           );
         })}
