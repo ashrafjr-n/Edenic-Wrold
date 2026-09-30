@@ -498,7 +498,9 @@ export function LessonPlayer({
           )}
           {/* The desktop board: stays put while the steps swap on it. */}
           <div
-            className="lesson-board contents lg:col-start-2 lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col"
+            className={`lesson-board contents lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col ${
+              finished ? "lg:col-span-3 lg:col-start-1" : "lg:col-start-2"
+            }`}
             style={{ "--board-tone": courseTone.face } as CSSProperties}
           >
             <div
