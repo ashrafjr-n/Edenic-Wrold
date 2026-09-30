@@ -153,7 +153,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
       </div>
 
       {/* The four boxes. The glow goes on a wrapper — the box has a fill. */}
-      <div className="grid w-full grid-cols-2 gap-3">
+      <div className="grid w-full grid-cols-2 gap-3 lg:gap-4">
         {BINS.map(({ shape, face, edge, text }, i) => {
           const inside = sorted.filter((item) => item.shape === shape);
           const jumping = done || received?.shape === shape;
