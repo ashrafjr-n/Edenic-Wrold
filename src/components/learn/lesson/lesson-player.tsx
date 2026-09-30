@@ -217,7 +217,7 @@ export function LessonPlayer({
      focused control keeps its own Enter, and Start over / Help are never
      pressed this way. */
   const onEnter = useEffectEvent((event: KeyboardEvent) => {
-    if (event.key !== "Enter" || event.repeat) return;
+    if (event.key !== "Enter" || event.repeat || leaving) return;
     if (document.activeElement && document.activeElement !== document.body) return;
     if (document.querySelector("dialog[open]")) return;
     const onward = document.querySelector<HTMLElement>("main .lesson-onward");
