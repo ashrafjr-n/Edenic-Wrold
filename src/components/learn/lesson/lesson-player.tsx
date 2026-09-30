@@ -455,7 +455,7 @@ export function LessonPlayer({
           spacer of its own width. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
-        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
       </BackRow>
 
       {/* Two bands, always in the same places: the step filling — and centred
