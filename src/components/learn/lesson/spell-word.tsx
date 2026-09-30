@@ -248,7 +248,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
   /* ---- Keyboard (a desktop): typing a letter taps the first tile in the
      tray that carries it — the same move as clicking it. ---- */
   const onKey = useEffectEvent((event: KeyboardEvent) => {
-    if (locked || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (locked || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
     /* Not while the task popup is open over the board. */
     if (document.querySelector("dialog[open]")) return;
     /* Backspace sends the letter in the last filled space back home. */
