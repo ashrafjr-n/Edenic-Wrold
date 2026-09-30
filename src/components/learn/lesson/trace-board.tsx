@@ -208,7 +208,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         role="img"
         aria-label={dict.traceInstruction}
         /* `touch-action: none`, or the finger scrolls the page instead. */
-        className={`h-full w-full touch-none select-none ${missed ? "anim-wiggle" : ""}`}
+        className={`h-full w-full cursor-crosshair touch-none select-none ${missed ? "anim-wiggle" : ""}`}
         onPointerDown={handleDown}
         onPointerMove={handleMove}
         onPointerUp={handleUp}
