@@ -237,7 +237,9 @@ stroke went round the whole shape and stayed on the line. The line is drawn in
 grained pink clay, like the start marker; a passed shape fills in the same clay
 and turns into a real thing (a circle becomes a ball). Then the
 child builds the word from shuffled letter tiles — tap a tile to send it to the
-first empty space, or drag it into any space. Only once every space is full is
+first empty space, or drag it into any space; with a keyboard, typing a letter
+sends its tile and Backspace takes the last one back. On a desktop the tiles
+wait in one row, each under a space. Only once every space is full is
 the word checked: misplaced letters wiggle and fly back (the right ones stay),
 and from the second miss an optional Help button puts the word together. A
 Start over button sends every placed letter back.
