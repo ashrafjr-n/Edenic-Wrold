@@ -41,7 +41,7 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
     <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
       {/* As big as the space allows: capped by the width AND by the screen's
           height, so the board fills its band without pushing the button off. */}
-      <div className="card card-clay-white relative w-full max-w-[min(20rem,42svh)] p-4 sm:max-w-[min(30rem,40svh)] sm:p-6 lg:max-w-[min(34rem,calc(100svh-21rem))]">
+      <div className="card card-clay-white relative w-full max-w-[min(20rem,42svh)] p-4 sm:max-w-[min(30rem,40svh)] sm:p-6 lg:max-w-[min(34rem,var(--stage-h))]">
         <div className="relative aspect-square">
           {board ? (
             <div className={`h-full w-full ${finished ? "trace-morph-out" : ""}`}>
