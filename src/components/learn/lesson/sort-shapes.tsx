@@ -130,9 +130,9 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
   };
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-3 sm:gap-5 lg:max-w-xl lg:gap-7">
+    <div className="flex w-full max-w-md flex-col items-center gap-3 sm:gap-5 lg:max-w-4xl lg:flex-row lg:gap-12">
       {/* The thing to sort, on its own card. */}
-      <div className="card card-clay-white relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center lg:h-[min(11rem,18svh)] lg:w-[min(11rem,18svh)]">
+      <div className="card card-clay-white relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center lg:h-[min(15rem,calc(var(--stage-h)*0.55))] lg:w-[min(15rem,calc(var(--stage-h)*0.55))]">
         {done ? (
           <Celebration />
         ) : (
@@ -147,13 +147,13 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
             className={`relative z-10 h-[82%] w-[82%] touch-none select-none ${drag?.moved ? "cursor-grabbing" : "cursor-grab"} ${shake > 0 ? "anim-wiggle" : "anim-pop-in"}`}
             style={drag?.moved ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.1" } : undefined}
           >
-            <Image src={current.src} alt={current.word} fill sizes="(min-width: 1024px) 9rem, 8rem" draggable={false} className="pointer-events-none object-contain" />
+            <Image src={current.src} alt={current.word} fill sizes="(min-width: 1024px) 13rem, 8rem" draggable={false} className="pointer-events-none object-contain" />
           </div>
         )}
       </div>
 
       {/* The four boxes. The glow goes on a wrapper — the box has a fill. */}
-      <div className="grid w-full grid-cols-2 gap-3 lg:gap-4">
+      <div className="grid w-full grid-cols-2 gap-3 lg:flex-1 lg:gap-4">
         {BINS.map(({ shape, face, edge, text }, i) => {
           const inside = sorted.filter((item) => item.shape === shape);
           const jumping = done || received?.shape === shape;
@@ -167,7 +167,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
                 type="button"
                 aria-label={format(binAria, { shape })}
                 onClick={() => choose(shape)}
-                className={`clay flex h-[min(6.25rem,12svh)] w-full lg:h-[min(8.5rem,15svh)] flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] ${
+                className={`clay flex h-[min(6.25rem,12svh)] w-full lg:h-[min(10rem,calc((var(--stage-h)-1rem)/2))] flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] ${
                   jumping ? "anim-jump" : ""
                 } ${done ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"}`}
                 style={
