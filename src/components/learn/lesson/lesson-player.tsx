@@ -453,7 +453,7 @@ export function LessonPlayer({
             <Button3D
               tone={onward}
               onClick={() => spell.current?.help()}
-              className="anim-pop-in h-12 gap-2 px-6 text-base font-bold"
+              className="anim-pop-in h-12 gap-2 px-6 text-base font-bold lg:h-14 lg:px-7"
             >
               <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
               <span dir={dir}>{lines.help}</span>
