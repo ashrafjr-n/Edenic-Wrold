@@ -43,7 +43,7 @@ export function ClayWord({ word, size = "lg" }: ClayWordProps) {
   const long = word.length > 6;
   const type =
     size === "sm"
-      ? "text-5xl sm:text-6xl"
+      ? "text-5xl sm:text-6xl lg:text-[min(4.5rem,8svh)]"
       : size === "lg"
       ? long
         ? "text-6xl sm:text-8xl lg:text-[min(6rem,9svh)]"
