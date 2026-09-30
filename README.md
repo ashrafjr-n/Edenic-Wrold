@@ -211,8 +211,11 @@ green kept for "Next". Tablets and desktops get their own layouts that fill
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
 big course cards; a course's path winds across a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
-the step. Both pages have a Start / Continue /
-Next Lesson button.
+the step. On a desktop a lesson is one workspace of three columns the same
+height: the how-to panel on the left, the step on a board tinted in the
+course's colour in the middle, and the course's lessons as a list on the right
+(done ones ticked, this one in the course colour, the rest padlocked). Both
+pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
 Rectangle, then a Shape review. Every step has a round **task button** beside
