@@ -2366,6 +2366,19 @@ button:disabled,
       0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
   }
 
+  /* A solved step rings the board in green — the colour of the Next that
+     just appeared (green is "passed, carry on"). Outline, so the clay
+     shadow stack stays untouched. */
+  .lesson-board {
+    outline: 4px solid transparent;
+    outline-offset: 5px;
+    transition: outline-color 0.35s ease;
+  }
+
+  .lesson-board--solved {
+    outline-color: color-mix(in srgb, var(--color-go) 45%, transparent);
+  }
+
   /* The literal white highlight reads as a streak on a dark face — the same
      twin `.card-clay-white` has. And a warm course colour at 14% turns the
      navy surface muddy brown, so the dark board takes half the tint. */
