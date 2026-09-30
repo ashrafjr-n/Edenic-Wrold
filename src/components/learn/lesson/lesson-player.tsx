@@ -335,6 +335,7 @@ export function LessonPlayer({
           tone={GO_TONE}
           href={nextTitle ? `${coursePath}?from=${n}` : coursePath}
           dir={dir}
+          className="lesson-onward"
         />
       </div>
     );
