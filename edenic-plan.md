@@ -46,7 +46,9 @@ never the whole answer (the first letter, the first part of the line, one
 thing found). No Pinki picture or speech bubble anywhere on the steps, and
 no Pinki popping in on a right or wrong answer. Every button (Next, Your
 turn, Start over, Help, Play again) sits in the same spot, a little above
-the bottom bar.
+the bottom bar. On a desktop there is no task button: the how-to plays,
+always open, in a panel left of the step, and the course's lessons are
+listed on the right (2026-09-30).
 
 1. **Watch 🎬**: the reel fills the whole screen on a phone (header above,
    bottom bar below; a tall 9:16 frame on tablet/desktop). A round **Skip**
