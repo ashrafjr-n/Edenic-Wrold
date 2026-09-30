@@ -452,7 +452,8 @@ export function LessonPlayer({
     <>
       {/* The chrome row: out to the course, and what to do on this step —
           the round task button, centred between the back button and a
-          spacer of its own width. */}
+          spacer of its own width. A desktop has no task button: the task
+          panel beside the step already shows the same how-to, always open. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
         <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
