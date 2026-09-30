@@ -222,6 +222,8 @@ Rectangle, then a Shape review. Every step has a round **task button** beside
 the back button (there is no progress bar): a clay circle with the step's icon.
 It is silent; tapping it opens a popup with a close button that plays a short
 loop of how the step is done — only the first move, never the whole answer.
+A desktop has no task button: the same loop plays, always open, in the panel
+beside the step.
 Every button of a step (Next, Your turn, Start over, Help, Play again) sits in
 one spot, a little above the bottom bar.
 
