@@ -56,7 +56,7 @@ export function LessonAbout({
         <p className="truncate text-xs font-bold uppercase tracking-wide" style={{ color: tone.edge }}>
           {courseName}
         </p>
-        <p className="truncate text-2xl font-bold text-[var(--color-ink)] lg:text-3xl">{title}</p>
+        <p className="truncate text-2xl font-bold text-[var(--color-ink)] xl:text-3xl">{title}</p>
         <div dir="ltr" className={`mt-2 flex gap-1.5 lg:justify-center ${titles ? "lg:hidden" : ""}`} aria-hidden>
           {covers.map((c, i) => (
             <span
