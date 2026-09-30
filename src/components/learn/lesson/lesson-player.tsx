@@ -280,7 +280,7 @@ export function LessonPlayer({
         demo={showing ? undefined : demoFor(q, tone.face, seed)}
         tone={courseTone}
         dir={dir}
-        className="anim-fade-up hidden sm:flex lg:col-start-1 lg:row-start-1 lg:self-center"
+        className="anim-fade-up hidden sm:flex lg:col-start-1 lg:row-start-1 lg:self-stretch"
       />
     );
   }
@@ -487,7 +487,7 @@ export function LessonPlayer({
               index={n - 1}
               tone={courseTone}
               dir={dir}
-              className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-center"
+              className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-stretch"
             />
           )}
           {/* The desktop board: stays put while the steps swap on it. */}
