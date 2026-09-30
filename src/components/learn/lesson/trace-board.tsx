@@ -290,7 +290,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             className="trace-start clay flex h-11 w-11 items-center justify-center rounded-full text-white sm:h-12 sm:w-12 lg:h-14 lg:w-14"
             style={{ backgroundColor: accent, "--clay-edge": "var(--page-accent-edge)" } as CSSProperties}
           >
-            <ArrowRight className="h-6 w-6" strokeWidth={3} style={{ rotate: `${start.angle}deg` }} />
+            <ArrowRight className="h-6 w-6 lg:h-7 lg:w-7" strokeWidth={3} style={{ rotate: `${start.angle}deg` }} />
           </span>
         </span>
       )}
