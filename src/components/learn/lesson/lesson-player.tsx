@@ -392,7 +392,7 @@ export function LessonPlayer({
           label={format(lines.hearWord, { word: q.word })}
         />
       );
-      action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;
+      action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
     } else if (q.type === "spell") {
       body = (
         <SpellWord
