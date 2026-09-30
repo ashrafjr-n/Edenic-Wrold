@@ -21,17 +21,24 @@ interface WordCardProps {
  */
 export function WordCard({ word, shape, cue, label }: WordCardProps) {
   return (
-    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:max-w-none lg:gap-[min(2rem,2.5svh)] lg:py-[min(3rem,4svh)] [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
-      <CueButton cue={cue} label={label} size="xl" invite />
+    /* Desktop: side by side — the shape big on the left, the speaker above
+       the word on the right. The two wrappers are `contents` below `lg`, so
+       the phone's column is exactly what it was. */
+    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:w-auto lg:max-w-none lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
+      <span className="contents lg:col-start-2 lg:row-start-1 lg:flex lg:items-end lg:justify-center lg:self-end">
+        <CueButton cue={cue} label={label} size="xl" invite />
+      </span>
       {shape && (
         <span
-          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:h-[min(13rem,15svh)] lg:w-[min(13rem,15svh)]"
+          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]"
           style={{ animationDelay: "0.05s" }}
         >
           <FaceView face={{ kind: "shape", shape }} size="tile" />
         </span>
       )}
-      <ClayWord word={word} />
+      <span className="contents lg:col-start-2 lg:row-start-2 lg:flex lg:justify-center lg:self-start">
+        <ClayWord word={word} />
+      </span>
     </div>
   );
 }
