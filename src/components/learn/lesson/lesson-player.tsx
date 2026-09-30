@@ -316,6 +316,23 @@ export function LessonPlayer({
     );
   }
 
+  /* What this lesson is — beside the steps from `sm`, and beside the reel
+     on a desktop. */
+  const about = (className: string) => (
+    <LessonAbout
+      courseName={courseName}
+      title={title}
+      titles={titles}
+      covers={covers}
+      index={n - 1}
+      characterId={characterId}
+      courseId={courseId}
+      tone={courseTone}
+      dir={dir}
+      className={className}
+    />
+  );
+
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
   let body: ReactNode = null;
@@ -514,18 +531,7 @@ export function LessonPlayer({
             dir={dir}
             className="anim-fade-up hidden lg:col-start-1 lg:row-start-1 lg:flex lg:self-stretch"
           />
-          <LessonAbout
-            courseName={courseName}
-            title={title}
-            titles={titles}
-            covers={covers}
-            index={n - 1}
-            characterId={characterId}
-            courseId={courseId}
-            tone={courseTone}
-            dir={dir}
-            className="anim-fade-up hidden lg:col-start-3 lg:row-start-1 lg:flex lg:self-stretch"
-          />
+          {about("anim-fade-up hidden lg:col-start-3 lg:row-start-1 lg:flex lg:self-stretch")}
         </div>
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
@@ -538,20 +544,7 @@ export function LessonPlayer({
           className={`contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 ${WIDE_GRID}`}
         >
           {panel}
-          {!finished && (
-            <LessonAbout
-              courseName={courseName}
-              title={title}
-              titles={titles}
-              covers={covers}
-              index={n - 1}
-              characterId={characterId}
-              courseId={courseId}
-              tone={courseTone}
-              dir={dir}
-              className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-stretch"
-            />
-          )}
+          {!finished && about("anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-stretch")}
           {/* The desktop board: stays put while the steps swap on it. */}
           <div
             className={`lesson-board contents lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col ${
