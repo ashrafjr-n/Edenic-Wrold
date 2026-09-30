@@ -477,7 +477,7 @@ export function LessonPlayer({
            above the step. Desktop: three columns — the task (its how-to
            playing) on the left, the step in the middle under the task
            button, the lesson on the right. The done screen has neither. */
-        <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:max-w-7xl lg:grid-cols-[14rem_minmax(0,1fr)_14rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[18rem_minmax(0,1fr)_18rem] xl:gap-x-10">
+        <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:max-w-7xl lg:pt-4 lg:grid-cols-[14rem_minmax(0,1fr)_14rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[18rem_minmax(0,1fr)_18rem] xl:gap-x-10">
           {panel}
           {!finished && (
             <LessonAbout
