@@ -448,7 +448,7 @@ export function LessonPlayer({
          the child can keep trying without ever pressing it. */
       if (stepMisses >= 2 && !solved) {
         action = (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 lg:gap-4">
             {startOver}
             <Button3D
               tone={onward}
