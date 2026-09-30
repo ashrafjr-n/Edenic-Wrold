@@ -10,7 +10,7 @@ The interface reads in **English, Arabic and Badini Kurdish**. What is being
 friends' own names — since that is the subject, not the chrome.
 
 The plan for Learn lives in `edenic-plan.md`.
-
+ 
 ## Pages
 
 | Route | Description |
