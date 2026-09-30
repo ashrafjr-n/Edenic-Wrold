@@ -80,7 +80,9 @@ export function PickQuestion({ show, word, options, answer, seed, demo, onSolved
                 disabled={demo}
                 className={`card card-clay-white flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
                   wrong === index ? "anim-wiggle" : ""
-                } ${solved && !isAnswer ? "opacity-40" : ""}`}
+                } ${solved && !isAnswer ? "opacity-40" : ""} ${
+                  solved || demo ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"
+                }`}
                 style={
                   solved && isAnswer
                     ? { outline: "4px solid var(--color-go)", outlineOffset: "3px" }
