@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (Pinki: Shapes and Adding) |
 | `/learn/[character]/[lesson]` | A course: on a phone, a banner and its lessons as a winding clay path (unlocked one at a time); a card grid on wider screens; a Continue button to the next one |
-| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word), then "Lesson complete!". A lesson not written yet shows a "Pinki is getting this lesson ready" card |
+| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on a board in the course's colour, between a how-to panel and the course's lesson list. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
