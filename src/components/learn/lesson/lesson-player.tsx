@@ -37,6 +37,11 @@ const GO_TONE = {
   text: "#fff",
 };
 
+/** The desktop's three columns — the task, the board, the lesson — shared
+    by the reel and the steps, so the frame never moves between them. */
+const WIDE_GRID =
+  "lg:max-w-7xl lg:pt-4 lg:grid-cols-[13rem_minmax(0,1fr)_13rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[17rem_minmax(0,1fr)_17rem] xl:gap-x-8";
+
 /** Kept in step with `.stage-swap--out`'s 0.2s in `globals.css`. */
 const STEP_LEAVE_MS = 200;
 
@@ -501,7 +506,9 @@ export function LessonPlayer({
            (its how-to playing) on the left, the step on the course-coloured
            board in the middle, the course's lessons on the right. The done
            screen has neither panel; its board spans all three columns. */
-        <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:max-w-7xl lg:pt-4 lg:grid-cols-[13rem_minmax(0,1fr)_13rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[17rem_minmax(0,1fr)_17rem] xl:gap-x-8">
+        <div
+          className={`contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 ${WIDE_GRID}`}
+        >
           {panel}
           {!finished && (
             <LessonAbout
