@@ -364,7 +364,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
     <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7 lg:gap-[min(2.25rem,4svh)]">
       <ClayWord word={word} size="md" />
 
-      <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6">
+      <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6 lg:px-5 lg:py-5">
         <div
           className="grid justify-center gap-1.5 sm:gap-2.5"
           style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}
@@ -388,7 +388,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
           above it (the columns only apply once it is a grid), so the letters
           sit in one row, each under a space, however long the word. */}
       <div
-        className="flex max-w-xl flex-wrap justify-center gap-2 sm:gap-3 lg:grid lg:w-full lg:gap-2.5 lg:px-6"
+        className="flex max-w-xl flex-wrap justify-center gap-2 sm:gap-3 lg:grid lg:w-full lg:gap-2.5 lg:px-5"
         style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}
       >
         {dealt.map((_, id) => (
