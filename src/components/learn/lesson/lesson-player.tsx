@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { format } from "@/lib/format-dict";
@@ -211,6 +211,25 @@ export function LessonPlayer({
   const showing = first && demo && question?.type === "pick";
 
   useScrollLock(question?.type === "trace" && board);
+
+  /* Enter goes on (a keyboard, on a desktop): with nothing focused, it presses
+     the step's way onward — every forward button wears `lesson-onward`. A
+     focused control keeps its own Enter, and Start over / Help are never
+     pressed this way. */
+  const onEnter = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key !== "Enter" || event.repeat) return;
+    if (document.activeElement && document.activeElement !== document.body) return;
+    if (document.querySelector("dialog[open]")) return;
+    const onward = document.querySelector<HTMLElement>("main .lesson-onward");
+    if (!onward) return;
+    event.preventDefault();
+    onward.click();
+  });
+
+  useEffect(() => {
+    window.addEventListener("keydown", onEnter);
+    return () => window.removeEventListener("keydown", onEnter);
+  }, []);
 
   /* Recorded when "done" is reached, not on Next: closing the tab on the
      done screen must not lose the lesson. */
