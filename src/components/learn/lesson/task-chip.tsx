@@ -156,7 +156,7 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
           className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white lg:h-12 lg:w-12"
           style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
         >
-          <Icon className="h-5 w-5" strokeWidth={2.75} />
+          <Icon className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
         </span>
         <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)]">
           <span dir={dir}>{verb}</span>
