@@ -126,7 +126,7 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
               tone={tone}
               onClick={skip}
               aria-label={skipLabel}
-              className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
+              className="lesson-onward h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
             >
               <span className="morph-btn__icon" style={{ rotate: spinning ? "360deg" : "0deg" }}>
                 <SkipForward className="h-7 w-7 fill-current" strokeWidth={2.5} />
