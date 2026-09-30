@@ -501,7 +501,7 @@ export function LessonPlayer({
                 leaving ? "stage-swap--out" : ""
               }`}
             >
-              <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 [@media(max-height:700px)]:py-2">
+              <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
                 {body}
               </div>
               <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
