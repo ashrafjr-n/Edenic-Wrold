@@ -333,7 +333,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
   const showHint = hint && slots.every((id) => id === null) && !drag;
 
   return (
-    <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7">
+    <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7 lg:gap-[min(2.25rem,4svh)]">
       <ClayWord word={word} size="md" />
 
       <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6">
