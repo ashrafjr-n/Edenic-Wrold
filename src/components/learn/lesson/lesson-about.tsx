@@ -1,9 +1,6 @@
-"use client";
-
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Lock } from "lucide-react";
-import { useCourseStars } from "@/store/progress";
+import { CourseLessons } from "./course-lessons";
 
 interface LessonAboutProps {
   /** "Learn Shapes". */
@@ -43,7 +40,6 @@ export function LessonAbout({
   className = "",
 }: LessonAboutProps) {
   const cover = covers[index]?.[0];
-  const stars = useCourseStars(characterId, courseId, covers.length);
   return (
     <div className={`card card-clay-white flex items-center gap-4 p-4 lg:flex-col lg:gap-4 lg:p-5 xl:p-6 ${className}`}>
       <span
@@ -73,49 +69,17 @@ export function LessonAbout({
       </div>
 
       {titles && (
-        <ol dir={dir} aria-label={courseName} className="hidden w-full flex-col gap-1.5 border-t-2 border-[var(--background)] pt-4 lg:flex">
-          {titles.map((name, i) => {
-            const done = stars[i] > 0;
-            const current = i === index;
-            const open = i === 0 || stars[i - 1] > 0;
-            return (
-              <li
-                key={name}
-                aria-current={current ? "step" : undefined}
-                className={`flex items-center gap-3 rounded-full py-1.5 pe-3 ps-1.5 ${current ? "clay text-white" : "text-[var(--color-ink)]"}`}
-                style={current ? ({ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties) : undefined}
-              >
-                <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                    current ? "bg-white" : "bg-[var(--background)]"
-                  }`}
-                >
-                  {covers[i]?.[0] && (
-                    <Image
-                      src={covers[i][0]}
-                      alt=""
-                      sizes="24px"
-                      className={`h-auto w-[66%] ${open || current ? "" : "opacity-50"}`}
-                    />
-                  )}
-                </span>
-                <span className={`min-w-0 flex-1 text-base font-bold leading-tight ${open || current ? "" : "opacity-55"}`}>
-                  {name}
-                </span>
-                {done && !current ? (
-                  <span
-                    className="clay flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white"
-                    style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
-                  >
-                    <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
-                  </span>
-                ) : !open && !current ? (
-                  <Lock className="h-4 w-4 shrink-0 text-[var(--color-locked-text)]" strokeWidth={2.75} />
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
+        <CourseLessons
+          titles={titles}
+          covers={covers}
+          index={index}
+          characterId={characterId}
+          courseId={courseId}
+          label={courseName}
+          tone={tone}
+          dir={dir}
+          className="hidden border-t-2 border-[var(--background)] pt-4 lg:flex"
+        />
       )}
     </div>
   );
