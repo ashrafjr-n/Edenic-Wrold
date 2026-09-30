@@ -163,7 +163,7 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
           {target && <span dir="ltr">{target}</span>}
         </p>
       </div>
-      <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)]">
+      <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)] lg:mt-3 lg:text-lg lg:leading-snug">
         {label}
       </p>
       </div>
