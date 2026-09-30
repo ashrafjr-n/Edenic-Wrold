@@ -506,7 +506,7 @@ export function LessonPlayer({
           >
             <div
               key={`${round}-${at}-${demo}`}
-              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:px-8 lg:pb-3 lg:pt-2 ${
+              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:px-6 lg:pb-3 lg:pt-2 xl:px-8 ${
                 leaving ? "stage-swap--out" : ""
               }`}
             >
