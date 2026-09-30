@@ -67,7 +67,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
           alt=""
           fill
           preload
-          sizes="(min-width: 1024px) 32rem, (min-width: 640px) 28rem, 92vw"
+          sizes="(min-width: 1280px) 34rem, (min-width: 1024px) 32rem, (min-width: 640px) 28rem, 92vw"
           className="select-none object-cover"
         />
 
