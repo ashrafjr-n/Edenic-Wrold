@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, Ref } from "react";
 import { shuffle } from "@/lib/seeded";
 import { format } from "@/lib/format-dict";
@@ -244,6 +244,22 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
     }
     tap(id);
   };
+
+  /* ---- Keyboard (a desktop): typing a letter taps the first tile in the
+     tray that carries it — the same move as clicking it. ---- */
+  const onKey = useEffectEvent((event: KeyboardEvent) => {
+    if (locked || event.metaKey || event.ctrlKey || event.altKey) return;
+    const letter = event.key.toLowerCase();
+    const id = dealt.findIndex((candidate, tile) => candidate === letter && !slots.includes(tile));
+    if (id === -1) return;
+    event.preventDefault();
+    tap(id);
+  });
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   /* ---- Help ---- */
   useImperativeHandle(ref, () => ({
