@@ -179,7 +179,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
                   } as CSSProperties
                 }
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 lg:gap-2.5">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white lg:h-11 lg:w-11">
                     <FaceView face={{ kind: "shape", shape }} size="tile" />
                   </span>
