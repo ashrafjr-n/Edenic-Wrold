@@ -287,11 +287,12 @@ export function LessonPlayer({
     const { kind, target } = taskFor(q, showing);
     const how = showing ? undefined : demoFor(q, tone.face, seed);
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
+    const verb = dict.tasks[kind];
     task = (
       <TaskChip
         key={`${step.index}-${kind}`}
         kind={kind}
-        verb={dict.tasks[kind]}
+        verb={verb}
         target={target}
         label={label}
         demo={how}
@@ -304,7 +305,7 @@ export function LessonPlayer({
       <TaskPanel
         key={`panel-${step.index}-${kind}`}
         kind={kind}
-        verb={dict.tasks[kind]}
+        verb={verb}
         target={target}
         label={label}
         demo={how}
