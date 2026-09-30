@@ -70,7 +70,7 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
               src={reward.src}
               alt={reward.word}
               fill
-              sizes="(min-width: 640px) 22rem, 17rem"
+              sizes="(min-width: 1024px) 31rem, (min-width: 640px) 22rem, 17rem"
               className="trace-morph-in object-contain"
             />
           )}
