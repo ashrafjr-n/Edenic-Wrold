@@ -467,7 +467,7 @@ export function LessonPlayer({
         <NextButton label={lines.yourTurn} tone={onward} onPress={() => setBoard(true)} dir={dir} />
       );
     }
-    if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} />;
+    if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
   }
 
   return (
