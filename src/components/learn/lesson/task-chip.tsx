@@ -176,6 +176,18 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
           </div>
         </div>
       )}
+      {!demo && (
+        /* No how-to for this step (a Pick of pictures, Count): the well
+           still fills the column, holding the step's icon, big. */
+        <div className="hidden min-h-0 flex-1 items-center justify-center rounded-[1.35rem] bg-[var(--background)] lg:flex">
+          <span
+            className="clay flex h-28 w-28 items-center justify-center rounded-full text-white"
+            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
+          >
+            <Icon className="h-14 w-14" strokeWidth={2.5} />
+          </span>
+        </div>
+      )}
     </div>
   );
 }
