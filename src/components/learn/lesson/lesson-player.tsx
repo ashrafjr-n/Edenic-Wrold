@@ -323,6 +323,7 @@ export function LessonPlayer({
       courseName={courseName}
       title={title}
       titles={titles}
+      lockedLabel={dict.lessonPicker.lockedLessonAria}
       covers={covers}
       index={n - 1}
       characterId={characterId}
