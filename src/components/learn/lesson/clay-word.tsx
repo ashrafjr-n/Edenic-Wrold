@@ -45,11 +45,7 @@ export function ClayWord({ word, size = "lg" }: ClayWordProps) {
   const long = word.length > 6;
   const type =
     size === "demo"
-      ? /* Desktop: the docked panel's demo box is a container — the word
-           fits its width however long it is. */
-        long
-        ? "text-5xl sm:text-6xl lg:text-[length:min(3.75rem,16cqi)]"
-        : "text-5xl sm:text-6xl lg:text-[length:min(3.75rem,22cqi)]"
+      ? "text-5xl sm:text-6xl"
       : size === "sm"
       ? "text-5xl sm:text-6xl lg:text-[min(4.5rem,8svh)]"
       : size === "lg"
