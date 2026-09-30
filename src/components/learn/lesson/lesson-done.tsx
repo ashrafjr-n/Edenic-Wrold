@@ -64,7 +64,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
         <Celebration />
       </div>
 
-      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-4xl" style={{ animationDelay: "0.2s" }}>
+      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-5xl" style={{ animationDelay: "0.2s" }}>
         {title}
       </p>
 
