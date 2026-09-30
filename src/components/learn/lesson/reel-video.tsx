@@ -33,7 +33,9 @@ interface ReelVideoProps {
  * spins, then does the same.
  *
  * Positioned against `<main>` (`absolute inset-0`), so it covers exactly the
- * space between the chrome whatever the viewport.
+ * space between the chrome whatever the viewport. A desktop is the
+ * exception: there it sits in the lesson's middle column, on the board the
+ * steps after it play on, with the watch and lesson panels either side.
  */
 export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
