@@ -68,6 +68,8 @@ export function deal(word: string, seed: string): string[] {
  * - **Drag** a letter and it can go in ANY space. A space that is taken swaps
  *   (or sends its letter home, if the dragged one came from below). A drop
  *   anywhere else springs back.
+ * - **Type** it, on a keyboard: a letter key taps the first tile in the tray
+ *   with that letter, Backspace taps the one in the last filled space.
  *
  * Nothing is judged until every space is full: then a right word jumps, and a
  * wrong one shakes the misplaced letters (never a word like "wrong") and sends
