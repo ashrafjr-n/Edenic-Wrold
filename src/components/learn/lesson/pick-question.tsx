@@ -51,7 +51,7 @@ export function PickQuestion({ show, word, options, answer, seed, demo, onSolved
   /* Four tiles make a 2x2 square; two or three sit in one row. */
   const grid =
     options.length === 4
-      ? "grid-cols-2 max-w-[min(26rem,36svh)] sm:max-w-[min(26rem,32svh)]"
+      ? "grid-cols-2 max-w-[min(26rem,36svh)] sm:max-w-[min(26rem,32svh)] lg:max-w-[min(28rem,calc(100svh-26rem))]"
       : options.length === 3
         ? "grid-cols-3 max-w-[min(30rem,72svh)]"
         : "grid-cols-2 max-w-[min(22rem,44svh)]";
