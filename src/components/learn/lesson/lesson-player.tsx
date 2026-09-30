@@ -324,6 +324,7 @@ export function LessonPlayer({
       title={title}
       titles={titles}
       lockedLabel={dict.lessonPicker.lockedLessonAria}
+      doneLabel={lines.lessonDone}
       covers={covers}
       index={n - 1}
       characterId={characterId}
