@@ -249,6 +249,8 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
      tray that carries it — the same move as clicking it. ---- */
   const onKey = useEffectEvent((event: KeyboardEvent) => {
     if (locked || event.metaKey || event.ctrlKey || event.altKey) return;
+    /* Not while the task popup is open over the board. */
+    if (document.querySelector("dialog[open]")) return;
     /* Backspace sends the letter in the last filled space back home. */
     if (event.key === "Backspace") {
       const last = slots.findLast((tile) => tile !== null);
