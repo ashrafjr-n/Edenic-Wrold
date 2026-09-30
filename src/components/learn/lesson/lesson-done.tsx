@@ -59,7 +59,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
           alt=""
           sizes="180px"
           preload
-          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)] lg:h-[min(12rem,17svh)]"
+          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)] lg:h-[min(20rem,36svh)]"
         />
         <Celebration />
       </div>
