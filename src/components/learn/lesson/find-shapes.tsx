@@ -133,7 +133,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
                on its round part, so a corner of its box never steals a tap. */
             className={`absolute focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)] ${
               item.shape === "circle" ? "rounded-full" : "rounded-[18%]"
-            } ${solved || found.includes(item.id) ? "" : "hover:bg-white/20"}`}
+            }`}
             style={place(item.hit)}
           />
         ))}
