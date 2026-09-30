@@ -152,7 +152,8 @@ src/
                       course path and lesson grid, their progress bar and
                       Continue button
     learn/lesson/     The lesson player: the task button and its how-to
-                      demos, the full-screen reel, the word card, the tracing board, the
+                      demos, the tablet/desktop task and lesson panels,
+                      the full-screen reel, the word card, the tracing board, the
                       spelling board, Find-the-shapes, pick and count, the
                       done screen, and the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
