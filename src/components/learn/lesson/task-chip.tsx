@@ -145,6 +145,10 @@ interface TaskPanelProps {
  * the step's icon, its verb and the English word — and the same looping
  * how-to demo, always in view beside the step instead of behind a tap.
  * A step without a demo shows its instruction instead.
+ *
+ * On a desktop it REPLACES the task button (the back row hides it): the
+ * panel is as tall as the board beside it, and the demo plays in a tinted
+ * well filling the rest of it.
  */
 export function TaskPanel({ kind, verb, target, label, demo, tone, dir, className = "" }: TaskPanelProps) {
   const Icon = ICONS[kind];
