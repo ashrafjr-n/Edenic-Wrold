@@ -45,7 +45,7 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
 export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
   /* One shape and a drawing get big tiles; the review's four shapes and a
      drawing (five in a row) share the card's width. */
-  const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
+  const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
   return (
     <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center lg:row-span-3">
