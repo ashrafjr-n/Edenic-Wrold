@@ -110,7 +110,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
             <Lock className="done-lock absolute h-5 w-5" strokeWidth={2.75} />
             <LockOpen className="done-unlock absolute h-5 w-5" strokeWidth={2.75} />
           </span>
-          <span dir={dir} className="text-base font-bold text-white sm:text-lg">
+          <span dir={dir} className="text-base font-bold text-white sm:text-lg lg:text-xl">
             {unlocked}
           </span>
         </div>
