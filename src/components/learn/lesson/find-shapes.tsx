@@ -60,7 +60,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
   };
 
   return (
-    <div className="card card-clay-white relative w-full max-w-[min(100%,calc((100svh-23.5rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-md sm:p-3 lg:max-w-[min(32rem,calc((100svh-20rem)*0.8))]">
+    <div className="card card-clay-white relative w-full max-w-[min(100%,calc((100svh-23.5rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-md sm:p-3 lg:max-w-[min(32rem,calc((100svh-20rem)*0.8))] xl:max-w-[min(34rem,calc((100svh-20rem)*0.8))]">
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.35rem]">
         <Image
           src={scene.background}
