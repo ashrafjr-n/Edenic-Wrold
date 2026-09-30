@@ -232,7 +232,8 @@ Every button of a step (Next, Your turn, Start over, Help, Play again) sits in
 one spot, a little above the bottom bar. With a keyboard, Enter presses the way
 onward (Skip, Your turn, Next) whenever nothing else has focus.
 
-A shape lesson plays its reel full-screen (a round Skip button spins and moves
+A shape lesson plays its reel full-screen — on a desktop, in the board's
+column between the same two panels as the steps (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
 appears if the browser refuses to start it). Then the word card: a big speaker,
 the shape itself (large, on no tile), and the word with each letter in its own clay colour. Then the
