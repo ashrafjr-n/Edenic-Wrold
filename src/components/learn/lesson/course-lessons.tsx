@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Lock } from "lucide-react";
+import { format } from "@/lib/format-dict";
 import { useCourseStars } from "@/store/progress";
 
 type LessonState = "done" | "current" | "open" | "locked";
@@ -30,6 +31,9 @@ interface CourseLessonsProps {
   courseId: string;
   /** The course's name — the list's name for a screen reader. */
   label: string;
+  /** "Lesson {n}: {title}, locked" — what a closed row says to a screen
+      reader, since its padlock is a picture. */
+  lockedLabel?: string;
   tone: { face: string; edge: string };
   dir: "rtl" | "ltr";
   className?: string;
@@ -47,6 +51,7 @@ export function CourseLessons({
   characterId,
   courseId,
   label,
+  lockedLabel,
   tone,
   dir,
   className = "",
@@ -74,7 +79,15 @@ export function CourseLessons({
                 <Image src={covers[i][0]} alt="" sizes="24px" className={`h-auto w-[66%] ${faded ? "opacity-50" : ""}`} />
               )}
             </span>
-            <span className={`min-w-0 flex-1 text-base font-bold leading-tight ${faded ? "opacity-55" : ""}`}>{name}</span>
+            <span
+              aria-hidden={faded && lockedLabel ? true : undefined}
+              className={`min-w-0 flex-1 text-base font-bold leading-tight ${faded ? "opacity-55" : ""}`}
+            >
+              {name}
+            </span>
+            {faded && lockedLabel && (
+              <span className="sr-only">{format(lockedLabel, { n: i + 1, title: name })}</span>
+            )}
             {state === "done" && (
               <span className="clay flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={GO}>
                 <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
