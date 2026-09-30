@@ -485,6 +485,8 @@ export function LessonPlayer({
               title={title}
               covers={covers}
               index={n - 1}
+              characterId={characterId}
+              courseId={courseId}
               tone={courseTone}
               dir={dir}
               className="anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-stretch"
