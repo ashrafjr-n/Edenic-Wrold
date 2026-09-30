@@ -219,6 +219,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       button in one raised spot, bigger raised Pinki on Done.
 - [x] Shape review (lesson 5) rebuilt: Sort (new), two word picks, a
       trace — measured at 375x667 and 390x844.
+- [x] Desktop pass (2026-09-30): one three-column workspace of one height,
+      the reel and every step on a board in the course colour, the lesson
+      list, a two-column done screen, keyboard (type the word, Enter goes
+      on) — measured 1024x768 to 1920x1080, phone pixel-identical.
 - [ ] The 4 real reels replace the placeholders (same file names).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
