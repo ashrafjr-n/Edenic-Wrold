@@ -2350,6 +2350,33 @@ button:disabled,
   animation: stage-out 0.2s ease-in forwards;
 }
 
+/* The desktop lesson's stage: one board in the course colour (the course
+   page's path board, the same 14% mix) that stays put while the steps swap
+   on it — so the three columns read as one workspace, not three cards
+   floating at three heights. Clay-white's insets and shadow. Desktop only:
+   below `lg` the wrapper is `display: contents` and this never paints. */
+@media (width >= 64rem) {
+  .lesson-board {
+    background: color-mix(in srgb, var(--board-tone) 14%, var(--surface));
+    border-radius: 1.75rem;
+    box-shadow:
+      inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+      inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+      0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+      0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+  }
+
+  /* The literal white highlight reads as a streak on a dark face — the same
+     twin `.card-clay-white` has. */
+  [data-theme="dark"] .lesson-board {
+    box-shadow:
+      inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+      inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+      0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+      0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+  }
+}
+
 /* ---------------------------------------------------------------
    Celebration confetti.
 
