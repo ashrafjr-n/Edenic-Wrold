@@ -144,56 +144,33 @@ interface TaskPanelProps {
  * The task button's popup, docked (tablet and desktop): the same header —
  * the step's icon, its verb and the English word — and the same looping
  * how-to demo, always in view beside the step instead of behind a tap.
- * A step without a demo shows its instruction instead.
- *
- * On a desktop it REPLACES the task button (the back row hides it): the
- * panel is as tall as the board beside it, and the demo plays in a tinted
- * well filling the rest of it.
+ * A step without a demo shows its instruction instead. Tablet only: a
+ * desktop has the task as the back row's heading (`TaskHeading`).
  */
 export function TaskPanel({ kind, verb, target, label, demo, tone, dir, className = "" }: TaskPanelProps) {
   const Icon = ICONS[kind];
   return (
     <div className={`card card-clay-white items-center gap-4 p-4 lg:flex-col lg:items-stretch lg:gap-3 lg:p-5 ${className}`}>
       <div className="min-w-0 flex-1 lg:flex-none">
-        <div className="flex items-center gap-2.5">
-          <span
-            className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white lg:h-12 lg:w-12"
-            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
-          >
-            <Icon className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
-          </span>
-          <h2 className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:flex-wrap lg:gap-x-2 lg:gap-y-0 lg:leading-tight xl:text-2xl">
-            <span dir={dir}>{verb}</span>
-            {target && (
-              <span dir="ltr" className="lg:text-[var(--task-word)]" style={{ "--task-word": tone.edge } as CSSProperties}>
-                {target}
-              </span>
-            )}
-          </h2>
-        </div>
-        <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)] lg:mt-3 lg:text-lg lg:leading-snug">
-          {label}
-        </p>
+      <div className="flex items-center gap-2.5">
+        <span
+          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+          style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
+        >
+          <Icon className="h-5 w-5" strokeWidth={2.75} />
+        </span>
+        <h2 className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)]">
+          <span dir={dir}>{verb}</span>
+          {target && <span dir="ltr">{target}</span>}
+        </h2>
+      </div>
+      <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)]">
+        {label}
+      </p>
       </div>
       {demo && (
-        /* Desktop: the demo plays in a tinted well that fills the rest of
-           the column, so the panel is as tall as the board beside it. */
-        <div className="shrink-0 lg:flex lg:min-h-0 lg:flex-1 lg:items-center lg:justify-center lg:rounded-[1.35rem] lg:bg-[var(--background)] lg:p-3">
-          <div className="@container aspect-square w-32 lg:w-full">
-            <TaskDemo demo={demo} />
-          </div>
-        </div>
-      )}
-      {!demo && (
-        /* No how-to for this step (a Pick of pictures, Count): the well
-           still fills the column, holding the step's icon, big. */
-        <div className="hidden min-h-0 flex-1 items-center justify-center rounded-[1.35rem] bg-[var(--background)] lg:flex">
-          <span
-            className="clay flex h-28 w-28 items-center justify-center rounded-full text-white"
-            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
-          >
-            <Icon className="h-14 w-14" strokeWidth={2.5} />
-          </span>
+        <div className="aspect-square w-32 shrink-0 lg:w-full">
+          <TaskDemo demo={demo} />
         </div>
       )}
     </div>
