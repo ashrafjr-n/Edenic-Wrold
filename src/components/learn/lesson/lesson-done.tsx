@@ -57,7 +57,7 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
         <Image
           src={celebrate}
           alt=""
-          sizes="180px"
+          sizes="(min-width: 1024px) 320px, 180px"
           preload
           className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)] lg:h-[min(20rem,36svh)]"
         />
