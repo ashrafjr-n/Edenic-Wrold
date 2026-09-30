@@ -47,8 +47,8 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
      drawing (five in a row) share the card's width. */
   const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)]";
   return (
-    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:max-w-lg lg:gap-4 [@media(max-height:700px)]:gap-2">
-      <div className="relative flex items-end justify-center">
+    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
+      <div className="relative flex items-end justify-center lg:row-span-3">
         <span
           aria-hidden
           className="done-glow absolute bottom-0 left-1/2 aspect-square h-[88%] -translate-x-1/2 rounded-full"
