@@ -168,8 +168,12 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
       </p>
       </div>
       {demo && (
-        <div className="aspect-square w-32 shrink-0 lg:w-full">
-          <TaskDemo demo={demo} />
+        /* Desktop: the demo plays in a tinted well that fills the rest of
+           the column, so the panel is as tall as the board beside it. */
+        <div className="shrink-0 lg:flex lg:min-h-0 lg:flex-1 lg:items-center lg:justify-center lg:rounded-[1.35rem] lg:bg-[var(--background)] lg:p-3">
+          <div className="aspect-square w-32 lg:w-full">
+            <TaskDemo demo={demo} />
+          </div>
         </div>
       )}
     </div>
