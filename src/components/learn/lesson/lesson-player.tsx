@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { Lightbulb } from "lucide-react";
+import { Check, Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { format } from "@/lib/format-dict";
 import { lessonCue } from "@/lib/cue";
@@ -27,6 +27,8 @@ import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
+import { LessonChip } from "./lesson-chip";
+import { TaskHeading } from "./task-heading";
 
 /* Green is every "Next" (direct request); the course's own colour (Shapes'
    yellow) is every other way onward (Your turn, Help, the reel's buttons) — a lesson wears two heroes only, the
@@ -36,11 +38,6 @@ const GO_TONE = {
   edge: "var(--color-go-dark)",
   text: "#fff",
 };
-
-/** The desktop's three columns — the task, the board, the lesson — shared
-    by the reel and the steps, so the frame never moves between them. */
-const WIDE_GRID =
-  "lg:max-w-7xl lg:pt-4 lg:grid-cols-[13rem_minmax(0,1fr)_13rem] lg:grid-rows-1 lg:gap-x-6 xl:grid-cols-[17rem_minmax(0,1fr)_17rem] xl:gap-x-8";
 
 /** Kept in step with `.stage-swap--out`'s 0.2s in `globals.css`. */
 const STEP_LEAVE_MS = 200;
@@ -226,7 +223,11 @@ export function LessonPlayer({
     if (event.key !== "Enter" || event.repeat || leaving) return;
     if (document.activeElement && document.activeElement !== document.body) return;
     if (document.querySelector("dialog[open]")) return;
-    const onward = document.querySelector<HTMLElement>("main .lesson-onward");
+    /* Phone/tablet and desktop each render their own copy of the buttons;
+       the hidden one has no box. */
+    const onward = [...document.querySelectorAll<HTMLElement>("main .lesson-onward")].find(
+      (button) => button.offsetParent !== null,
+    );
     if (!onward) return;
     event.preventDefault();
     onward.click();
@@ -275,8 +276,10 @@ export function LessonPlayer({
 
   /* ---- The task chip: what to do on this step ---- */
   let task: ReactNode = null;
-  /* The same task, docked beside the step on a tablet and a desktop. */
+  /* The same task, docked beside the step on a tablet. */
   let panel: ReactNode = null;
+  /* And as the desktop's heading, in the back row. */
+  let heading: ReactNode = null;
   /* Deals the step's board — and the build demo, so both show one order. */
   const seed =
     step?.kind === "question"
@@ -311,34 +314,44 @@ export function LessonPlayer({
         demo={how}
         tone={courseTone}
         dir={dir}
-        className="anim-fade-up hidden sm:flex lg:col-start-1 lg:row-start-1 lg:self-stretch"
+        className="anim-fade-up hidden sm:flex lg:hidden"
+      />
+    );
+    heading = (
+      <TaskHeading
+        key={`heading-${step.index}-${kind}`}
+        kind={kind}
+        verb={verb}
+        target={target}
+        label={label}
+        demo={how}
+        closeLabel={lines.close}
+        tone={courseTone}
+        dir={dir}
+      />
+    );
+  } else if (!finished && step.kind === "watch") {
+    heading = (
+      <TaskHeading
+        kind="watch"
+        verb={dict.tasks.watch}
+        label={format(lines.reelAbout, { title })}
+        closeLabel={lines.close}
+        tone={courseTone}
+        dir={dir}
       />
     );
   }
 
-  /* What this lesson is — beside the steps from `sm`, and beside the reel
-     on a desktop. */
-  const about = (className: string) => (
-    <LessonAbout
-      courseName={courseName}
-      title={title}
-      titles={titles}
-      lockedLabel={dict.lessonPicker.lockedLessonAria}
-      doneLabel={lines.lessonDone}
-      covers={covers}
-      index={n - 1}
-      characterId={characterId}
-      courseId={courseId}
-      tone={courseTone}
-      dir={dir}
-      className={className}
-    />
-  );
-
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
   let body: ReactNode = null;
+  /* Phone and tablet: the one slot under the step. */
   let action: ReactNode = null;
+  /* Desktop: the footer bar — the ways back (Play again, Start over, Help)
+     at its start, the way onward at its end. */
+  let footStart: ReactNode = null;
+  let footEnd: ReactNode = null;
 
   if (finished) {
     body = (
@@ -352,21 +365,27 @@ export function LessonPlayer({
         dir={dir}
       />
     );
+    const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
+    /* Onward goes BACK to the course page first: its path plays the step
+       from this stop to the next, then opens the next lesson
+       (`LessonPath`'s `advanceFrom`). */
+    const onwardDone = (
+      <NextButton
+        label={nextTitle ? (nextIsShape ? lines.nextShape : lines.nextLesson) : lines.finish}
+        tone={GO_TONE}
+        href={nextTitle ? `${coursePath}?from=${n}` : coursePath}
+        dir={dir}
+        className="lesson-onward"
+      />
+    );
     action = (
       <div className="flex items-center gap-3 sm:gap-4">
-        <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />
-        {/* Onward goes BACK to the course page first: its path plays the
-            step from this stop to the next, then opens the next lesson
-            (`LessonPath`'s `advanceFrom`). */}
-        <NextButton
-          label={nextTitle ? (nextIsShape ? lines.nextShape : lines.nextLesson) : lines.finish}
-          tone={GO_TONE}
-          href={nextTitle ? `${coursePath}?from=${n}` : coursePath}
-          dir={dir}
-          className="lesson-onward"
-        />
+        {again}
+        {onwardDone}
       </div>
     );
+    footStart = again;
+    footEnd = onwardDone;
   } else if (step.kind === "watch" && lesson.reel) {
     body = (
       <ReelVideo
@@ -443,22 +462,32 @@ export function LessonPlayer({
           <AgainButton label={lines.startOver} onPress={() => spell.current?.reset()} dir={dir} />
         ) : null;
       action = startOver;
+      footStart = startOver;
       /* Offered from the SECOND full-but-wrong word (the first just sends the
          misplaced letters home), in the Next button's place, and it stays —
          the child can keep trying without ever pressing it. */
       if (stepMisses >= 2 && !solved) {
+        const help = (
+          <Button3D
+            tone={onward}
+            onClick={() => spell.current?.help()}
+            className="anim-pop-in h-12 gap-2 px-6 text-base font-bold lg:h-14 lg:px-7"
+          >
+            <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
+            <span dir={dir}>{lines.help}</span>
+          </Button3D>
+        );
         action = (
-          <div className="flex items-center gap-3 lg:gap-4">
+          <div className="flex items-center gap-3">
             {startOver}
-            <Button3D
-              tone={onward}
-              onClick={() => spell.current?.help()}
-              className="anim-pop-in h-12 gap-2 px-6 text-base font-bold lg:h-14 lg:px-7"
-            >
-              <Lightbulb className="h-5 w-5 fill-current" strokeWidth={2} />
-              <span dir={dir}>{lines.help}</span>
-            </Button3D>
+            {help}
           </div>
+        );
+        footStart = (
+          <>
+            {startOver}
+            {help}
+          </>
         );
       }
     } else if (q.type === "sort") {
@@ -496,18 +525,33 @@ export function LessonPlayer({
         <NextButton label={lines.yourTurn} tone={onward} onPress={() => setBoard(true)} dir={dir} className="lesson-onward" />
       );
     }
-    if (solved) action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
+    if (q.type !== "spell") footEnd = action;
+    if (solved) {
+      action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
+      footStart = null;
+      footEnd = action;
+    }
   }
 
   return (
     <>
-      {/* The chrome row: out to the course, and what to do on this step —
-          the round task button, centred between the back button and a
-          spacer of its own width. A desktop has no task button: the task
-          panel beside the step already shows the same how-to, always open. */}
+      {/* The chrome row: out to the course, and what to do on this step.
+          Phone and tablet: the round task button, centred between the back
+          button and a spacer of its own width. Desktop: the task as a
+          heading in the middle of the page (the same button, with its verb,
+          word and instruction), and which lesson this is at the end. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
         <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
+        <div className="hidden max-w-[min(40rem,55%)] lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2">{heading}</div>
+        <LessonChip
+          courseName={courseName}
+          title={title}
+          cover={covers[n - 1]?.[0]}
+          tone={courseTone}
+          dir={dir}
+          className="hidden max-w-[16rem] lg:flex"
+        />
       </BackRow>
       {/* After the back row (it must be `<main>`'s first child): the page's
           heading, for a screen reader — the lesson's name is
@@ -520,60 +564,74 @@ export function LessonPlayer({
           in — whatever height is left, and the way onward in a fixed-height
           slot at the bottom, so nothing jumps when the button appears. On a
           phone the slot stands a little clear of the tab bar (`pb`) — the
-          same lift on every step, so every button sits in one spot. */}
+          same lift on every step, so every button sits in one spot. A
+          desktop moves the way onward into the footer bar instead. */}
       {step?.kind === "watch" ? (
         <div
           key={`${round}-${at}`}
-          className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:grid lg:w-full lg:flex-1 lg:px-8 ${WIDE_GRID} ${
+          className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:flex lg:w-full lg:max-w-5xl lg:flex-1 lg:flex-col lg:px-8 lg:py-4 ${
             leaving ? "stage-swap--out" : ""
           }`}
         >
           {body}
-          {/* Desktop: the reel keeps the frame the steps will use — what
-              this step is on the left (no demo: the eye, big). */}
-          <TaskPanel
-            kind="watch"
-            verb={dict.tasks.watch}
-            label={format(lines.reelAbout, { title })}
-            tone={courseTone}
-            dir={dir}
-            className="anim-fade-up hidden lg:col-start-1 lg:row-start-1 lg:flex lg:self-stretch"
-          />
-          {about("anim-fade-up hidden lg:col-start-3 lg:row-start-1 lg:flex lg:self-stretch")}
         </div>
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
            as it always was. Tablet: the task and the lesson side by side
-           above the step. Desktop: three columns of one height — the task
-           (its how-to playing) on the left, the step on the course-coloured
-           board in the middle, the course's lessons on the right. The done
-           screen has neither panel; its board spans all three columns. */
-        <div
-          className={`contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 ${WIDE_GRID}`}
-        >
+           above the step. Desktop: one canvas — the board in the course
+           colour — as wide as the page's content column. */
+        <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:flex lg:max-w-5xl lg:flex-col lg:py-4">
           {panel}
-          {!finished && about("anim-fade-up hidden sm:flex lg:col-start-3 lg:row-start-1 lg:self-stretch")}
+          {!finished && (
+            <LessonAbout
+              courseName={courseName}
+              title={title}
+              covers={covers}
+              index={n - 1}
+              tone={courseTone}
+              dir={dir}
+              className="anim-fade-up hidden sm:flex lg:hidden"
+            />
+          )}
           {/* The desktop board: stays put while the steps swap on it. */}
           <div
-            className={`lesson-board contents lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col ${
-              finished ? "lg:col-span-3 lg:col-start-1" : "lg:col-start-2"
-            } ${solved && !leaving ? "lesson-board--solved" : ""}`}
+            className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col"
             style={{ "--board-tone": courseTone.face } as CSSProperties}
           >
             <div
               key={`${round}-${at}-${demo}`}
-              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:px-6 lg:pb-3 lg:pt-2 xl:px-8 ${
+              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
                 leaving ? "stage-swap--out" : ""
               }`}
             >
               <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
                 {body}
               </div>
-              <div className="flex h-16 shrink-0 items-center justify-center sm:h-20">{action}</div>
+              <div className="flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden">{action}</div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Desktop: the footer bar, on every step — the ways back at its start,
+          the way onward at its end; green once the step is solved, with a
+          tick where the ways back were. */}
+      <div className={`lesson-foot hidden lg:block ${solved && !leaving ? "lesson-foot--solved" : ""}`}>
+        <div className="mx-auto flex h-24 w-full max-w-5xl items-center justify-between gap-4 px-8">
+          <div className="flex items-center gap-4">
+            {footStart ??
+              (solved && !finished && (
+                <span
+                  className="clay anim-pop-in flex h-14 w-14 items-center justify-center rounded-full text-white"
+                  style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
+                >
+                  <Check className="h-7 w-7" strokeWidth={3.5} />
+                </span>
+              ))}
+          </div>
+          <div className="flex items-center gap-4">{footEnd}</div>
+        </div>
+      </div>
     </>
   );
 }

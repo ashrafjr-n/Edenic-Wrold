@@ -2350,13 +2350,24 @@ button:disabled,
   animation: stage-out 0.2s ease-in forwards;
 }
 
-/* The desktop lesson's stage: one board in the course colour (the course
-   page's path board, the same 14% mix) that stays put while the steps swap
-   on it — so the three columns read as one workspace, not three cards
-   floating at three heights. Clay-white's insets and shadow. Desktop only:
-   below `lg` the wrapper is `display: contents` and this never paints. */
+/* The desktop lesson (`lg`), one canvas and a footer bar.
+
+   `.lesson-board` is the canvas: one board in the course colour (the course
+   page's path board, the same 14% mix), clay-white insets and shadow, that
+   stays put while the steps swap on it. `--stage-h` is the height a step
+   has inside it — the screen less the header (5.5rem), the back row
+   (4.75rem), the canvas's own gaps (2rem) and padding (4.5rem) and the
+   footer (6rem) — so every step can size itself to fit without a scroll.
+
+   `.lesson-foot` is the footer bar: full width, white, a soft shadow above
+   it, the ways onward in it. A solved step turns it green (green is
+   "passed, carry on" — the colour of the Next inside it).
+
+   Desktop only: below `lg` the board wrapper is `display: contents` and
+   the footer is `hidden`, so neither ever paints. */
 @media (width >= 64rem) {
   .lesson-board {
+    --stage-h: calc(100svh - 22.75rem);
     background: color-mix(in srgb, var(--board-tone) 14%, var(--surface));
     border-radius: 1.75rem;
     box-shadow:
@@ -2364,17 +2375,6 @@ button:disabled,
       inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
       0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
       0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
-    /* Room for the solved ring below — an outline, so the clay shadow
-       stack stays untouched. */
-    outline: 4px solid transparent;
-    outline-offset: 5px;
-    transition: outline-color 0.35s ease;
-  }
-
-  /* A solved step rings the board in green — the colour of the Next that
-     just appeared (green is "passed, carry on"). */
-  .lesson-board--solved {
-    outline-color: color-mix(in srgb, var(--color-go) 45%, transparent);
   }
 
   /* The literal white highlight reads as a streak on a dark face — the same
@@ -2387,6 +2387,20 @@ button:disabled,
       inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
       0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
       0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+  }
+
+  .lesson-foot {
+    background: var(--surface);
+    box-shadow: 0 -10px 30px -18px rgb(var(--shadow-hue) / 40%);
+    transition: background-color 0.35s ease;
+  }
+
+  .lesson-foot--solved {
+    background: color-mix(in srgb, var(--color-go) 16%, var(--surface));
+  }
+
+  [data-theme="dark"] .lesson-foot--solved {
+    background: color-mix(in srgb, var(--color-go) 12%, var(--surface));
   }
 }
 
