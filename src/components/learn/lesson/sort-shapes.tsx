@@ -169,7 +169,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
                 onClick={() => choose(shape)}
                 className={`clay flex h-[min(6.25rem,12svh)] w-full lg:h-[min(8.5rem,15svh)] flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] ${
                   jumping ? "anim-jump" : ""
-                }`}
+                } ${done ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"}`}
                 style={
                   {
                     backgroundColor: face,
