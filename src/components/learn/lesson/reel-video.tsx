@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -78,54 +79,61 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
   };
 
   return (
-    <div className="absolute inset-0 flex justify-center sm:px-8 sm:pb-6 sm:pt-24">
-      <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
-        <Image
-          src={image}
-          alt=""
-          fill
-          sizes="(min-width: 640px) 28rem, 100vw"
-          preload
-          className="select-none object-contain p-12 opacity-90"
-        />
+    <div className="absolute inset-0 flex justify-center sm:px-8 sm:pb-6 sm:pt-24 lg:pb-4">
+      {/* Desktop: the frame stands on the lesson's board, the one every
+          step after it plays on. */}
+      <div
+        className="lesson-board contents lg:flex lg:w-full lg:max-w-[76rem] lg:justify-center lg:p-5"
+        style={{ "--board-tone": tone.face } as CSSProperties}
+      >
+        <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(min-width: 640px) 28rem, 100vw"
+            preload
+            className="select-none object-contain p-12 opacity-90"
+          />
 
-        <video
-          ref={video}
-          src={src}
-          playsInline
-          preload="auto"
-          aria-label={label}
-          onEnded={finish}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+          <video
+            ref={video}
+            src={src}
+            playsInline
+            preload="auto"
+            aria-label={label}
+            onEnded={finish}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
 
-        {blocked && (
-          <span className="absolute inset-0 flex items-center justify-center">
+          {blocked && (
+            <span className="absolute inset-0 flex items-center justify-center">
+              <Button3D
+                tone={tone}
+                onClick={play}
+                aria-label={playLabel}
+                className="anim-pop-in h-24 w-24 sm:h-28 sm:w-28"
+              >
+                <Play className="ms-1.5 h-11 w-11 fill-current" strokeWidth={2.5} />
+              </Button3D>
+            </span>
+          )}
+
+          {/* The wrapper places it: `.btn3d` is unlayered and sets
+              `position: relative`, which would beat an `absolute` utility. */}
+          <span className="absolute bottom-5 right-5 sm:bottom-6 sm:right-6">
             <Button3D
               tone={tone}
-              onClick={play}
-              aria-label={playLabel}
-              className="anim-pop-in h-24 w-24 sm:h-28 sm:w-28"
+              onClick={skip}
+              aria-label={skipLabel}
+              className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
             >
-              <Play className="ms-1.5 h-11 w-11 fill-current" strokeWidth={2.5} />
+              <span className="morph-btn__icon" style={{ rotate: spinning ? "360deg" : "0deg" }}>
+                <SkipForward className="h-7 w-7 fill-current" strokeWidth={2.5} />
+              </span>
             </Button3D>
           </span>
-        )}
-
-        {/* The wrapper places it: `.btn3d` is unlayered and sets
-            `position: relative`, which would beat an `absolute` utility. */}
-        <span className="absolute bottom-5 right-5 sm:bottom-6 sm:right-6">
-          <Button3D
-            tone={tone}
-            onClick={skip}
-            aria-label={skipLabel}
-            className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
-          >
-            <span className="morph-btn__icon" style={{ rotate: spinning ? "360deg" : "0deg" }}>
-              <SkipForward className="h-7 w-7 fill-current" strokeWidth={2.5} />
-            </span>
-          </Button3D>
-        </span>
+        </div>
       </div>
     </div>
   );
