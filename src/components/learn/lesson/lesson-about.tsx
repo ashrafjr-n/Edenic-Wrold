@@ -73,7 +73,7 @@ export function LessonAbout({
       </div>
 
       {titles && (
-        <ol dir={dir} className="hidden w-full flex-col gap-1.5 lg:flex">
+        <ol dir={dir} className="hidden w-full flex-col gap-1.5 border-t-2 border-[var(--background)] pt-4 lg:flex">
           {titles.map((name, i) => {
             const done = stars[i] > 0;
             const current = i === index;
