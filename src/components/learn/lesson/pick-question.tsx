@@ -78,7 +78,7 @@ export function PickQuestion({ show, word, options, answer, seed, demo, onSolved
                 onClick={() => pick(index)}
                 onAnimationEnd={() => setWrong(null)}
                 disabled={demo}
-                className={`card card-clay-white flex aspect-square w-full items-center justify-center transition-transform duration-200 active:scale-95 ${
+                className={`card card-clay-white flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
                   wrong === index ? "anim-wiggle" : ""
                 } ${solved && !isAnswer ? "opacity-40" : ""}`}
                 style={
