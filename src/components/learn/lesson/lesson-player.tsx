@@ -500,6 +500,16 @@ export function LessonPlayer({
           }`}
         >
           {body}
+          {/* Desktop: the reel keeps the frame the steps will use — what
+              this step is on the left (no demo: the eye, big). */}
+          <TaskPanel
+            kind="watch"
+            verb={dict.tasks.watch}
+            label={format(lines.reelAbout, { title })}
+            tone={courseTone}
+            dir={dir}
+            className="anim-fade-up hidden lg:col-start-1 lg:row-start-1 lg:flex lg:self-stretch"
+          />
         </div>
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
