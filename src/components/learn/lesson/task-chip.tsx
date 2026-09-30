@@ -155,21 +155,21 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
   return (
     <div className={`card card-clay-white items-center gap-4 p-4 lg:flex-col lg:items-stretch lg:gap-3 lg:p-5 ${className}`}>
       <div className="min-w-0 flex-1 lg:flex-none">
-      <div className="flex items-center gap-2.5">
-        <span
-          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white lg:h-12 lg:w-12"
-          style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
-        >
-          <Icon className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
-        </span>
-        <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:flex-wrap lg:gap-x-2 lg:gap-y-0 lg:leading-tight xl:text-2xl">
-          <span dir={dir}>{verb}</span>
-          {target && <span dir="ltr">{target}</span>}
+        <div className="flex items-center gap-2.5">
+          <span
+            className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white lg:h-12 lg:w-12"
+            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
+          >
+            <Icon className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
+          </span>
+          <p className="flex min-w-0 items-center gap-2 text-xl font-bold text-[var(--color-ink)] lg:flex-wrap lg:gap-x-2 lg:gap-y-0 lg:leading-tight xl:text-2xl">
+            <span dir={dir}>{verb}</span>
+            {target && <span dir="ltr">{target}</span>}
+          </p>
+        </div>
+        <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)] lg:mt-3 lg:text-lg lg:leading-snug">
+          {label}
         </p>
-      </div>
-      <p dir={dir} className="mt-2 text-base text-[var(--color-ink-soft)] lg:mt-3 lg:text-lg lg:leading-snug">
-        {label}
-      </p>
       </div>
       {demo && (
         /* Desktop: the demo plays in a tinted well that fills the rest of
