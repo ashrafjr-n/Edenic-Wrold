@@ -46,9 +46,11 @@ never the whole answer (the first letter, the first part of the line, one
 thing found). No Pinki picture or speech bubble anywhere on the steps, and
 no Pinki popping in on a right or wrong answer. Every button (Next, Your
 turn, Start over, Help, Play again) sits in the same spot, a little above
-the bottom bar. On a desktop there is no task button: the how-to plays,
-always open, in a panel left of the step, and the course's lessons are
-listed on the right (2026-09-30).
+the bottom bar. On a desktop (2026-10-01) the lesson is an open stage — no
+board, no cards around the steps — with the steps as a trail of discs across
+the top (the one exception to "no step list"): done ones ticked, the current
+one IS the round task button, the rest faded; the buttons sit centred under
+the step.
 
 1. **Watch 🎬**: the reel fills the whole screen on a phone (header above,
    bottom bar below; a tall 9:16 frame on tablet/desktop). A round **Skip**
@@ -225,6 +227,8 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       the reel and every step on a board in the course colour, the lesson
       list, a two-column done screen, keyboard (type the word, Enter goes
       on) — measured 1024x768 to 1920x1080, phone pixel-identical.
+- [x] Desktop open stage (2026-10-01): no board, no wrapping cards, a step
+      trail on top, buttons centred under the step.
 - [ ] The 4 real reels replace the placeholders (same file names).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
