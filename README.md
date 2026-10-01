@@ -232,7 +232,7 @@ A shape lesson plays its reel full-screen — on a desktop, as a tall frame on
 the same open stage as the steps (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
 appears if the browser refuses to start it). Then the word card: a big speaker,
-the shape itself (large, on no tile), and the word with each letter in its own clay colour. Then the
+the shape itself (large, on no tile, in soft clay with grain and shading like everything else the child touches), and the word with each letter in its own clay colour. Then the
 child traces the shape **in one stroke** from a marked start, following
 direction arrows; lifting the finger ends the attempt, and it only passes if the
 stroke went round the whole shape and stayed on the line. The line is drawn in
