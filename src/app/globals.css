@@ -2350,57 +2350,26 @@ button:disabled,
   animation: stage-out 0.2s ease-in forwards;
 }
 
-/* The desktop lesson (`lg`), one canvas and a footer bar.
+/* The desktop lesson (`lg`): an open stage, no board and no cards.
 
-   `.lesson-board` is the canvas: one board in the course colour (the course
-   page's path board, the same 14% mix), clay-white insets and shadow, that
-   stays put while the steps swap on it. `--stage-h` is the height a step
-   has inside it — the screen less the header (5.5rem), the back row
-   (4.75rem), the canvas's own gaps (2rem) and padding (4.5rem) and the
-   footer (6rem) — so every step can size itself to fit without a scroll.
+   `.lesson-board` is the step's box only — it paints nothing, so the step
+   stands straight on the page ground. `--stage-h` is the height a step has
+   inside it — the screen less the header (5.5rem), the back row (4.75rem),
+   the stage's own gaps (2rem) and padding (4.5rem) and the button row
+   (6rem) — so every step can size itself to fit without a scroll.
 
-   `.lesson-foot` is the footer bar: full width, white, a soft shadow above
-   it, the ways onward in it. A solved step turns it green (green is
-   "passed, carry on" — the colour of the Next inside it).
-
-   Desktop only: below `lg` the board wrapper is `display: contents` and
-   the footer is `hidden`, so neither ever paints. */
+   `.card-bare-lg` strips a step's own wrapping card at `lg` (its contents
+   stay as they are). `.card` is unlayered, so a Tailwind `lg:bg-*` on it
+   loses; this rule is declared after `.card-clay-white` and its dark twin,
+   so it wins at the same specificity. */
 @media (width >= 64rem) {
   .lesson-board {
     --stage-h: calc(100svh - 22.75rem);
-    background: color-mix(in srgb, var(--board-tone) 14%, var(--surface));
-    border-radius: 1.75rem;
-    box-shadow:
-      inset 0 10px 16px -8px rgb(255 255 255 / 90%),
-      inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
-      0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
-      0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
   }
 
-  /* The literal white highlight reads as a streak on a dark face — the same
-     twin `.card-clay-white` has. And a warm course colour at 14% turns the
-     navy surface muddy brown, so the dark board takes half the tint. */
-  [data-theme="dark"] .lesson-board {
-    background: color-mix(in srgb, var(--board-tone) 7%, var(--surface));
-    box-shadow:
-      inset 0 10px 16px -8px rgb(255 255 255 / 5%),
-      inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
-      0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
-      0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
-  }
-
-  .lesson-foot {
-    background: var(--surface);
-    box-shadow: 0 -10px 30px -18px rgb(var(--shadow-hue) / 40%);
-    transition: background-color 0.35s ease;
-  }
-
-  .lesson-foot--solved {
-    background: color-mix(in srgb, var(--color-go) 16%, var(--surface));
-  }
-
-  [data-theme="dark"] .lesson-foot--solved {
-    background: color-mix(in srgb, var(--color-go) 12%, var(--surface));
+  .card.card-bare-lg {
+    background: none;
+    box-shadow: none;
   }
 }
 
