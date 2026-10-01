@@ -59,3 +59,4 @@
 2026-09-27 adjust word card
 2026-09-30 fix image sizes
 2026-09-30 fix locale strings
+2026-10-01 tidy font loading
