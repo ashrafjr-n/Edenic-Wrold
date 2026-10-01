@@ -60,9 +60,18 @@ function along(stroke: Stroke, at: number): { x: number; y: number; angle: numbe
     to units, at `--noise`'s 0.62 opacity, blended `overlay`. Two octaves, not
     four — it re-renders on every point of a live stroke, and at this size the
     extra octaves are invisible. The edge colour is the page's accent edge,
-    as on the start disc. */
-export function ClayFilter({ id }: { id: string }) {
-  const edge = { floodColor: "var(--page-accent-edge)" };
+    as on the start disc, unless one is given. `depth` scales the insets and
+    the shadow — a line wants thin ones, a whole filled shape deeper ones. */
+export function ClayFilter({
+  id,
+  edge: edgeColor = "var(--page-accent-edge)",
+  depth = 1,
+}: {
+  id: string;
+  edge?: string;
+  depth?: number;
+}) {
+  const edge = { floodColor: edgeColor };
   return (
     <filter id={id} x="-15%" y="-15%" width="130%" height="130%" colorInterpolationFilters="sRGB">
       <feTurbulence type="fractalNoise" baseFrequency="2.5" numOctaves={2} stitchTiles="stitch" result="noise" />
@@ -77,17 +86,17 @@ export function ClayFilter({ id }: { id: string }) {
       <feComponentTransfer in="SourceAlpha" result="outside">
         <feFuncA type="table" tableValues="1 0" />
       </feComponentTransfer>
-      <feGaussianBlur in="outside" stdDeviation="1.6" result="outsideBlur" />
-      <feOffset in="outsideBlur" dy="2.2" result="fromTop" />
+      <feGaussianBlur in="outside" stdDeviation={1.6 * depth} result="outsideBlur" />
+      <feOffset in="outsideBlur" dy={2.2 * depth} result="fromTop" />
       <feFlood floodColor="#fff" floodOpacity="0.45" />
       <feComposite in2="fromTop" operator="in" />
       <feComposite in2="SourceAlpha" operator="in" result="highlight" />
-      <feOffset in="outsideBlur" dy="-2.4" result="fromBottom" />
+      <feOffset in="outsideBlur" dy={-2.4 * depth} result="fromBottom" />
       <feFlood style={edge} floodOpacity="0.5" />
       <feComposite in2="fromBottom" operator="in" />
       <feComposite in2="SourceAlpha" operator="in" result="shade" />
 
-      <feDropShadow in="SourceAlpha" dx="0" dy="3" stdDeviation="2.4" style={edge} floodOpacity="0.45" result="shadow" />
+      <feDropShadow in="SourceAlpha" dx="0" dy={3 * depth} stdDeviation={2.4 * depth} style={edge} floodOpacity="0.45" result="shadow" />
       <feMerge>
         <feMergeNode in="shadow" />
         <feMergeNode in="body" />

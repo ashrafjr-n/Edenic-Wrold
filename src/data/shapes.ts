@@ -23,28 +23,32 @@ interface ShapeDef {
       what `ShapeFigure` fills, so the shape a child sees and the shape they
       trace can never disagree. */
   strokes: readonly Stroke[];
-  /** Its clay colour on a tile. */
+  /** Its clay colour on a tile, and the darker edge its clay shades to. */
   color: string;
+  edge: string;
   /** A real thing that is this shape — what a traced shape turns into. From
       the picnic scene, so it is the same world as the Find activity. */
   thing: { src: StaticImageData; word: string };
 }
 
 export const SHAPES: Record<ShapeId, ShapeDef> = {
-  circle: { strokes: [ring(36, 32)], color: "var(--brand)", thing: { src: ball, word: "ball" } },
+  circle: { strokes: [ring(36, 32)], color: "var(--brand)", edge: "var(--brand-dark)", thing: { src: ball, word: "ball" } },
   square: {
     strokes: [[[16, 16], [84, 16], [84, 84], [16, 84], [16, 16]]],
     color: "var(--color-go)",
+    edge: "var(--color-go-dark)",
     thing: { src: toast, word: "toast" },
   },
   triangle: {
     strokes: [[[50, 14], [86, 82], [14, 82], [50, 14]]],
     color: "var(--color-gold)",
+    edge: "var(--color-gold-dark)",
     thing: { src: cheese, word: "cheese" },
   },
   rectangle: {
     strokes: [[[8, 26], [92, 26], [92, 74], [8, 74], [8, 26]]],
     color: "var(--accent)",
+    edge: "var(--accent-dark)",
     thing: { src: book, word: "book" },
   },
 };
