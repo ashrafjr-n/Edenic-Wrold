@@ -59,7 +59,7 @@ export function FaceView({ face, size }: FaceViewProps) {
           <ClayFilter id={clayId} edge={shape.edge} depth={2.4} spread={5} shadow={false} />
         </defs>
         <path
-          d={shape.strokes.map(strokeToPath).join(" ")}
+          d={shape.strokes.map((stroke) => `${strokeToPath(stroke)} Z`).join(" ")}
           fill={shape.color}
           stroke={shape.color}
           strokeWidth="12"
