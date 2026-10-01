@@ -1,7 +1,9 @@
+import { useId } from "react";
 import Image from "next/image";
 import { SHAPES } from "@/data/shapes";
 import { strokeToPath } from "@/lib/trace-score";
 import type { Face } from "@/types/course";
+import { ClayFilter } from "./trace-board";
 
 interface FaceViewProps {
   face: Face;
@@ -14,12 +16,16 @@ interface FaceViewProps {
  *
  * **A shape is drawn from its own tracing centreline** (`data/shapes.ts`), so
  * the circle on a tile and the circle a child traces are the same circle. It
- * is geometry being taught, not an icon, and it stands in until the clay
- * shape renders arrive — a `picture` face replaces it with no other change.
- * The drop shadow is on the wrapper: `filter` on the SVG would be clipped
- * with it.
+ * is geometry being taught, not an icon. It is CLAY, like everything a child
+ * touches here: a thick stroke of its own colour rounds the corners (the
+ * outline stays a true circle, square, triangle, rectangle) and the trace
+ * board's `ClayFilter` — grain, a light inset from the top, a shade from the
+ * bottom in the shape's edge colour, a drop shadow — at a depth made for a
+ * filled shape rather than a line. A `picture` face replaces it with no
+ * other change.
  */
 export function FaceView({ face, size }: FaceViewProps) {
+  const clayId = `shape${useId().replace(/[^\w-]/g, "")}`;
   if (face.kind === "text") {
     return (
       <span
@@ -47,14 +53,18 @@ export function FaceView({ face, size }: FaceViewProps) {
 
   const shape = SHAPES[face.shape];
   return (
-    <span className={`${box} drop-shadow-[0_8px_10px_rgb(var(--shadow-hue)/22%)]`}>
-      <svg viewBox="0 0 100 100" className="h-full w-full" role="img" aria-label={face.shape}>
+    <span className={box}>
+      <svg viewBox="0 0 100 100" overflow="visible" className="h-full w-full" role="img" aria-label={face.shape}>
+        <defs>
+          <ClayFilter id={clayId} edge={shape.edge} depth={2.4} />
+        </defs>
         <path
           d={shape.strokes.map(strokeToPath).join(" ")}
           fill={shape.color}
           stroke={shape.color}
-          strokeWidth="6"
+          strokeWidth="12"
           strokeLinejoin="round"
+          filter={`url(#${clayId})`}
         />
       </svg>
     </span>
