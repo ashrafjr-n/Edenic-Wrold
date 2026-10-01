@@ -20,9 +20,9 @@ interface FaceViewProps {
  * touches here: a thick stroke of its own colour rounds the corners (the
  * outline stays a true circle, square, triangle, rectangle) and the trace
  * board's `ClayFilter` — grain, a light inset from the top, a shade from the
- * bottom in the shape's edge colour, a drop shadow — at a depth made for a
- * filled shape rather than a line. A `picture` face replaces it with no
- * other change.
+ * bottom in the shape's edge colour — at a depth made for a filled shape
+ * rather than a line, kept off the sides (`spread`), with no drop shadow
+ * (on request). A `picture` face replaces it with no other change.
  */
 export function FaceView({ face, size }: FaceViewProps) {
   const clayId = `shape${useId().replace(/[^\w-]/g, "")}`;
@@ -56,7 +56,7 @@ export function FaceView({ face, size }: FaceViewProps) {
     <span className={box}>
       <svg viewBox="0 0 100 100" overflow="visible" className="h-full w-full" role="img" aria-label={face.shape}>
         <defs>
-          <ClayFilter id={clayId} edge={shape.edge} depth={2.4} />
+          <ClayFilter id={clayId} edge={shape.edge} depth={2.4} spread={5} shadow={false} />
         </defs>
         <path
           d={shape.strokes.map(strokeToPath).join(" ")}
