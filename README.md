@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (Pinki: Shapes and Adding) |
 | `/learn/[character]/[lesson]` | A course: on a phone, a banner and its lessons as a winding clay path (unlocked one at a time); a card grid on wider screens; a Continue button to the next one |
-| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on a board in the course's colour, between a how-to panel and the course's lesson list. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
+| `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
 | `/play/puzzle/[stage]` | One jigsaw puzzle: the board, and a heap of loose pieces to carry into it |
@@ -111,9 +111,9 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   tablet width up, so the courses read apart at a glance, and it is kept separate
   from the mascot colors — a subject means the same thing on every hub. (The
   violet and blue subject tokens now only colour puzzle stages.)
-- Inside a lesson on a desktop the step sits on a board tinted with the
-  course's colour — the same board a course's path winds across — and it stays
-  put while the steps change on it, so the lesson reads as one workspace.
+- Inside a lesson on a desktop nothing wraps the step: no board, no card. The
+  step stands on the page ground, so the one thing to play with is the biggest
+  thing on screen.
 - Every page sits on the same flat, pale ground. The lesson hub used to take the
   character's colour edge to edge; that was removed, and the colour now lives on
   the lesson cards themselves — the open one is the saturated card, the locked
@@ -155,7 +155,7 @@ src/
                       course path and lesson grid, their progress bar and
                       Continue button
     learn/lesson/     The lesson player: the task button and its how-to
-                      demos, the tablet/desktop task and lesson panels,
+                      demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find-the-shapes, pick and count, the
                       done screen, and the pieces they are built from
@@ -215,25 +215,21 @@ green kept for "Next". Tablets and desktops get their own layouts that fill
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
 big course cards; a course's path winds across a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
-the step. On a desktop a lesson is one workspace of three columns the same
-height: the how-to panel on the left, the step on a board tinted in the
-course's colour in the middle, and the course's lessons as a list on the right
-(done ones ticked, this one in the course colour, the rest padlocked). Both
+the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs across the top (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
 pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
 Rectangle, then a Shape review. Every step has a round **task button** beside
-the back button (there is no progress bar): a clay circle with the step's icon.
+the back button (no progress bar on a phone or tablet): a clay circle with the step's icon.
 It is silent; tapping it opens a popup with a close button that plays a short
 loop of how the step is done — only the first move, never the whole answer.
-A desktop has no task button: the same loop plays, always open, in the panel
-beside the step.
+On a desktop the same button is the current stop of the step trail.
 Every button of a step (Next, Your turn, Start over, Help, Play again) sits in
 one spot, a little above the bottom bar. With a keyboard, Enter presses the way
 onward (Skip, Your turn, Next) whenever nothing else has focus.
 
-A shape lesson plays its reel full-screen — on a desktop, in the board's
-column between the same two panels as the steps (a round Skip button spins and moves
+A shape lesson plays its reel full-screen — on a desktop, as a tall frame on
+the same open stage as the steps (a round Skip button spins and moves
 on; the lesson also moves on by itself when the reel ends, and a big Play button
 appears if the browser refuses to start it). Then the word card: a big speaker,
 the shape itself (large, on no tile), and the word with each letter in its own clay colour. Then the
@@ -263,7 +259,7 @@ The lesson-complete screen celebrates in three beats: a big Pinki cheering with
 confetti, then the shape beside the child's own drawing of it and the word,
 then a green pill whose padlock springs open on the next lesson (on a
 desktop these sit side by side: Pinki big on the left, the rest on the
-right, across the whole board). Its
+right, with no card around them). Its
 **Next shape** button (Next lesson when the next one is not a shape) goes back
 to the course path first: the finished stop takes its tick, the track draws on
 to the next stop, its padlock springs off, and then
