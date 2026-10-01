@@ -12,7 +12,7 @@ export type TaskKind = keyof Dictionary["tasks"];
 /** Each kind of step has its own icon, so a child who cannot read yet
     still knows what kind of thing to do. The colour is the course's (one
     hero colour per course, direct request), not the kind's. */
-const ICONS: Record<TaskKind, LucideIcon> = {
+export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   listen: Ear,
   watch: Eye,
   draw: Pencil,
@@ -54,7 +54,7 @@ interface TaskChipProps {
 export function TaskChip({ kind, verb, target, label, demo, closeLabel, tone, dir }: TaskChipProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
-  const Icon = ICONS[kind];
+  const Icon = TASK_ICONS[kind];
   const { face, edge } = tone;
   const text = "#fff";
 
@@ -145,10 +145,10 @@ interface TaskPanelProps {
  * the step's icon, its verb and the English word — and the same looping
  * how-to demo, always in view beside the step instead of behind a tap.
  * A step without a demo shows its instruction instead. Tablet only: a
- * desktop has the task as the back row's heading (`TaskHeading`).
+ * desktop has the task as the current stop of its `StepTrail`.
  */
 export function TaskPanel({ kind, verb, target, label, demo, tone, dir, className = "" }: TaskPanelProps) {
-  const Icon = ICONS[kind];
+  const Icon = TASK_ICONS[kind];
   return (
     <div className={`card card-clay-white items-center gap-4 p-4 lg:flex-col lg:items-stretch lg:gap-3 lg:p-5 ${className}`}>
       <div className="min-w-0 flex-1 lg:flex-none">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -82,12 +81,9 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
 
   return (
     <div className="absolute inset-0 flex justify-center sm:px-8 sm:pb-6 sm:pt-24 lg:relative lg:inset-auto lg:min-h-0 lg:flex-1 lg:p-0">
-      {/* Desktop: the frame stands on the lesson's board, the one every
-          step after it plays on. */}
-      <div
-        className="lesson-board contents lg:flex lg:w-full lg:justify-center lg:p-5"
-        style={{ "--board-tone": tone.face } as CSSProperties}
-      >
+      {/* Desktop: the frame stands on the open stage every step after it
+          plays on. */}
+      <div className="lesson-board contents lg:flex lg:w-full lg:justify-center lg:p-5">
         <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
           <Image
             src={image}

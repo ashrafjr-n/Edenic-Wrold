@@ -16,8 +16,8 @@ interface LessonAboutProps {
 }
 
 /**
- * What this lesson is (tablet, beside the step; a desktop shows it as the
- * back row's `LessonChip` instead): its thing on a
+ * What this lesson is (tablet, beside the step; a desktop does not show
+ * it): its thing on a
  * big clay disc in the course colour, its name, and where it sits in the
  * course — a row of the course's lessons with this one standing out.
  */

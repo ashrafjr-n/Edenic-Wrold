@@ -1,8 +1,8 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { Check, Lightbulb } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { format } from "@/lib/format-dict";
 import { lessonCue } from "@/lib/cue";
@@ -27,8 +27,7 @@ import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
-import { LessonChip } from "./lesson-chip";
-import { TaskHeading } from "./task-heading";
+import { StepTrail } from "./step-trail";
 
 /* Green is every "Next" (direct request); the course's own colour (Shapes'
    yellow) is every other way onward (Your turn, Help, the reel's buttons) — a lesson wears two heroes only, the
@@ -275,8 +274,8 @@ export function LessonPlayer({
   let task: ReactNode = null;
   /* The same task, docked beside the step on a tablet. */
   let panel: ReactNode = null;
-  /* And as the desktop's heading, in the back row. */
-  let heading: ReactNode = null;
+  /* And as the current stop of the desktop's step trail. */
+  let current: ReactNode = null;
   /* Deals the step's board — and the build demo, so both show one order. */
   const seed =
     step?.kind === "question"
@@ -314,22 +313,10 @@ export function LessonPlayer({
         className="anim-fade-up hidden sm:flex lg:hidden"
       />
     );
-    heading = (
-      <TaskHeading
-        key={`heading-${step.index}-${kind}`}
-        kind={kind}
-        verb={verb}
-        target={target}
-        label={label}
-        demo={how}
-        closeLabel={lines.close}
-        tone={courseTone}
-        dir={dir}
-      />
-    );
+    current = task;
   } else if (!finished && step.kind === "watch") {
-    heading = (
-      <TaskHeading
+    current = (
+      <TaskChip
         kind="watch"
         verb={dict.tasks.watch}
         label={format(lines.reelAbout, { title })}
@@ -340,13 +327,15 @@ export function LessonPlayer({
     );
   }
 
+  const kinds = steps.map((s) => (s.kind === "watch" ? "watch" : taskFor(s.question, false).kind));
+
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
   let body: ReactNode = null;
   /* Phone and tablet: the one slot under the step. */
   let action: ReactNode = null;
-  /* Desktop: the footer bar — the ways back (Play again, Start over, Help)
-     at its start, the way onward at its end. */
+  /* Desktop: the button row — the ways back (Play again, Start over, Help)
+     first, the way onward last. */
   let footStart: ReactNode = null;
   let footEnd: ReactNode = null;
 
@@ -534,21 +523,15 @@ export function LessonPlayer({
     <>
       {/* The chrome row: out to the course, and what to do on this step.
           Phone and tablet: the round task button, centred between the back
-          button and a spacer of its own width. Desktop: the task as a
-          heading in the middle of the page (the same button, with its verb,
-          word and instruction), and which lesson this is at the end. */}
+          button and a spacer of its own width. Desktop: the lesson's steps
+          as a trail in the middle of the page, the current one being that
+          same round button. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
         <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
-        <div className="hidden max-w-[min(40rem,55%)] lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2">{heading}</div>
-        <LessonChip
-          courseName={courseName}
-          title={title}
-          cover={covers[n - 1]?.[0]}
-          tone={courseTone}
-          dir={dir}
-          className="hidden max-w-[16rem] lg:flex"
-        />
+        <div className="hidden lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2">
+          <StepTrail kinds={kinds} at={at} current={current} tone={courseTone} />
+        </div>
       </BackRow>
       {/* After the back row (it must be `<main>`'s first child): the page's
           heading, for a screen reader — the lesson's name is
@@ -575,8 +558,8 @@ export function LessonPlayer({
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
            as it always was. Tablet: the task and the lesson side by side
-           above the step. Desktop: one canvas — the board in the course
-           colour — as wide as the page's content column. */
+           above the step. Desktop: an open stage — no board, no card — as
+           wide as the page's content column. */
         <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:flex lg:max-w-5xl lg:flex-col lg:py-4">
           {panel}
           {!finished && (
@@ -590,11 +573,8 @@ export function LessonPlayer({
               className="anim-fade-up hidden sm:flex lg:hidden"
             />
           )}
-          {/* The desktop board: stays put while the steps swap on it. */}
-          <div
-            className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col"
-            style={{ "--board-tone": courseTone.face } as CSSProperties}
-          >
+          {/* The desktop stage: stays put while the steps swap on it. */}
+          <div className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
             <div
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
@@ -610,29 +590,16 @@ export function LessonPlayer({
         </div>
       )}
 
-      {/* Desktop: the footer bar, on every step — the ways back at its start,
-          the way onward at its end; green once the step is solved, with a
-          tick where the ways back were. */}
-      <div className={`lesson-foot hidden lg:block ${solved && !leaving ? "lesson-foot--solved" : ""}`}>
-        {/* Keyed like the stage, so a pressed (collapsed) Next never carries
-            over into the next step's button. */}
-        <div
-          key={`${round}-${at}-${demo}`}
-          className="mx-auto flex h-24 w-full max-w-5xl items-center justify-between gap-4 px-8"
-        >
-          <div className="flex items-center gap-4">
-            {footStart ??
-              (solved && !finished && (
-                <span
-                  className="clay anim-pop-in flex h-14 w-14 items-center justify-center rounded-full text-white"
-                  style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
-                >
-                  <Check className="h-7 w-7" strokeWidth={3.5} />
-                </span>
-              ))}
-          </div>
-          <div className="flex items-center gap-4">{footEnd}</div>
-        </div>
+      {/* Desktop: the button row, on every step — centred under the stage,
+          the ways back first and the way onward last. Keyed like the stage,
+          so a pressed (collapsed) Next never carries over into the next
+          step's button. */}
+      <div
+        key={`${round}-${at}-${demo}`}
+        className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
+      >
+        {footStart}
+        {footEnd}
       </div>
     </>
   );
