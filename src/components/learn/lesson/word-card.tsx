@@ -24,7 +24,7 @@ export function WordCard({ word, shape, cue, label }: WordCardProps) {
     /* Desktop: side by side — the shape big on the left, the speaker above
        the word on the right. The two wrappers are `contents` below `lg`, so
        the phone's column is exactly what it was. */
-    <div className="card card-clay-white flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:w-auto lg:max-w-none lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
+    <div className="card card-clay-white card-bare-lg flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:w-auto lg:max-w-none lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
       <span className="contents lg:col-start-2 lg:row-start-1 lg:flex lg:items-end lg:justify-center lg:self-end">
         <CueButton cue={cue} label={label} size="xl" invite />
       </span>

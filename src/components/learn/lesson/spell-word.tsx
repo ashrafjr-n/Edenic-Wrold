@@ -364,7 +364,7 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
     <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7 lg:gap-[min(2.25rem,4svh)]">
       <ClayWord word={word} size="md" />
 
-      <div className="card card-clay-white relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6 lg:px-5 lg:py-5">
+      <div className="card card-clay-white card-bare-lg relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6 lg:px-5 lg:py-5">
         <div
           className="grid justify-center gap-1.5 sm:gap-2.5"
           style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}

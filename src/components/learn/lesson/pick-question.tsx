@@ -60,7 +60,7 @@ export function PickQuestion({ show, word, options, answer, seed, demo, onSolved
     <div className="flex w-full flex-col items-center gap-6 sm:gap-8 [@media(max-height:700px)]:gap-4">
       {word && <ClayWord word={word} size="sm" />}
       {show && (
-        <div className="card card-clay-white flex max-w-full flex-wrap items-center justify-center gap-2 px-5 py-4 sm:gap-3 sm:px-7">
+        <div className="card card-clay-white card-bare-lg flex max-w-full flex-wrap items-center justify-center gap-2 px-5 py-4 sm:gap-3 sm:px-7">
           {show.map((face, index) => (
             <FaceView key={index} face={face} size="inline" />
           ))}

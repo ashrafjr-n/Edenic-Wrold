@@ -132,7 +132,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:gap-5 lg:max-w-4xl lg:flex-row lg:gap-12">
       {/* The thing to sort, on its own card. */}
-      <div className="card card-clay-white relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center lg:h-[min(15rem,calc(var(--stage-h)*0.55))] lg:w-[min(15rem,calc(var(--stage-h)*0.55))]">
+      <div className="card card-clay-white card-bare-lg relative flex h-[min(8rem,15svh)] w-[min(8rem,15svh)] shrink-0 items-center justify-center lg:h-[min(15rem,calc(var(--stage-h)*0.55))] lg:w-[min(15rem,calc(var(--stage-h)*0.55))]">
         {done ? (
           <Celebration />
         ) : (
