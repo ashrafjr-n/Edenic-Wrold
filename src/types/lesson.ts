@@ -10,6 +10,9 @@ export type LessonId =
 export interface LessonTheme {
   accent: string;
   accentDark: string;
+  /** What sits ON the accent — white, or ink on a face too pale for white
+      type (Nova's gold). */
+  ink: string;
 }
 
 /** `name`/`description` are translated content and live in the dictionaries

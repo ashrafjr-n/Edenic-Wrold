@@ -2,19 +2,25 @@ import type { CharacterId } from "@/types/character";
 import type { Lesson, LessonId } from "@/types/lesson";
 import { courseLessons } from "./courses";
 
-type Tone = "shapes" | "colors" | "numbers" | "letters" | "pinki";
+type Tone = "shapes" | "colors" | "numbers" | "letters" | "pinki" | "nova";
 
 /** A course in one of the four subject colours — or, for Pinki's courses,
-    Pinki's own pink, so her whole corner reads pink. Only Shapes has its own
+    Pinki's own pink, so her whole corner reads pink; for Nova's, gold (her
+    "Learn With" button's colour, direct request 2026-10-02), with ink on
+    it instead of white. Only Shapes has its own
     card art; every other course shows its friend until its art arrives
     (the image is the reel's poster). */
 const course = (id: LessonId, tone: Tone, image: string): Lesson => ({
   id,
   image,
-  theme: {
-    accent: tone === "pinki" ? "var(--color-pinki)" : `var(--color-subject-${tone})`,
-    accentDark: tone === "pinki" ? "var(--color-pinki-dark)" : `var(--color-subject-${tone}-dark)`,
-  },
+  theme:
+    tone === "nova"
+      ? { accent: "var(--color-gold)", accentDark: "var(--color-gold-dark)", ink: "var(--color-ink-fixed)" }
+      : {
+          accent: tone === "pinki" ? "var(--color-pinki)" : `var(--color-subject-${tone})`,
+          accentDark: tone === "pinki" ? "var(--color-pinki-dark)" : `var(--color-subject-${tone}-dark)`,
+          ink: "#fff",
+        },
   totalItems: courseLessons[id].length,
   locked: false,
 });
@@ -28,9 +34,9 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
     course("colors", "pinki", "/assets/friends/pinki.png"),
   ],
   nova: [
-    course("fruits", "shapes", "/assets/friends/nova.png"),
-    course("seasons", "letters", "/assets/friends/nova.png"),
-    course("months", "colors", "/assets/friends/nova.png"),
+    course("fruits", "nova", "/assets/friends/nova.png"),
+    course("seasons", "nova", "/assets/friends/nova.png"),
+    course("months", "nova", "/assets/friends/nova.png"),
   ],
   bloo: [
     course("animals", "shapes", "/assets/friends/bloo.png"),
