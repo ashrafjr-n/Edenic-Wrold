@@ -67,7 +67,7 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
             <>
               <CourseProgress characterId={characterId} lessonId={id} total={totalItems} fill={{ face: theme.accent, edge: theme.accentDark }} className="flex-1" />
               <span className="clay flex h-16 w-16 shrink-0 items-center justify-center rounded-full lg:h-14 lg:w-14" style={play} aria-hidden>
-                <Play className="ml-1 h-7 w-7 fill-white text-white" strokeWidth={0} />
+                <Play className="ml-1 h-7 w-7 fill-current" style={{ color: theme.ink }} strokeWidth={0} />
               </span>
             </>
           )}

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import { resolveLessonRoute } from "@/lib/learn-route";
-import { BackRow, pageAccent } from "@/components/ui/back-button";
+import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { ContinueButton } from "@/components/learn/continue-button";
 import { LessonBox } from "@/components/learn/lesson-box";
 import { CourseArt } from "@/components/learn/course-art";
@@ -45,7 +45,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const dir = dirFor(dict.locale);
   const course = dict.lessons[lesson.id];
   const basePath = `/learn/${character.id}/${lesson.id}`;
-  const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark };
+  const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink };
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
   const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
   const stops = courseStops(lesson.id);
@@ -72,7 +72,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
          sheet's bottom row and the bar every time the page was scrolled all
          the way down. */
       className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-32 lg:pb-10"
-      style={pageAccent(character.accent, character.accentDark)}
+      style={characterAccent(character)}
     >
       {/* ONE back row for every layout below — `BackRow` puts the button
           where it is on every page. */}
@@ -91,17 +91,18 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
           style={
             {
               backgroundColor: tone.face,
+              color: tone.ink,
               "--clay-edge": tone.edge,
               animationDelay: "0.1s",
             } as CSSProperties
           }
         >
           <div dir={dir} className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
-            <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight text-white">
+            <p className="text-xs font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
+            <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight">
               {course.name}
             </h1>
-            <p className="mt-1 text-balance text-sm leading-snug text-white/90">
+            <p className="mt-1 text-balance text-sm leading-snug opacity-90">
               {course.description}
             </p>
             <CourseProgress
@@ -123,12 +124,12 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
       <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex lg:hidden">
         <section
           className="card clay anim-pop-in relative mt-8 flex items-center gap-6 py-8 pl-8 pr-4"
-          style={{ backgroundColor: tone.face, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
+          style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
         >
           <div dir={dir} className="min-w-0 flex-1">
-            <p className="text-sm font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
-            <h1 className="clay-title mt-1 text-4xl font-bold leading-tight text-white">{course.name}</h1>
-            <p className="mt-2 text-balance text-lg leading-snug text-white/90">{course.description}</p>
+            <p className="text-sm font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
+            <h1 className="clay-title mt-1 text-4xl font-bold leading-tight">{course.name}</h1>
+            <p className="mt-2 text-balance text-lg leading-snug opacity-90">{course.description}</p>
             <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
           </div>
           <CourseArt images={courseCovers(lesson.id)} width={224} className="-my-12 h-56 w-56 shrink-0" />
@@ -168,13 +169,13 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
         <aside className="flex w-[21rem] shrink-0 flex-col gap-5 xl:w-[24rem]">
           <section
             className="card clay anim-pop-in flex min-h-0 flex-1 flex-col p-7"
-            style={{ backgroundColor: tone.face, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
+            style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
           >
             <CourseArt images={courseCovers(lesson.id)} width={300} className="mx-auto min-h-0 w-full flex-1" />
             <div dir={dir} className="mt-4">
-              <p className="text-sm font-bold uppercase tracking-wide text-white/85">{lessonsCount}</p>
-              <h1 className="clay-title mt-1 text-4xl font-bold leading-tight text-white xl:text-5xl">{course.name}</h1>
-              <p className="mt-2 text-lg leading-snug text-white/90">{course.description}</p>
+              <p className="text-sm font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
+              <h1 className="clay-title mt-1 text-4xl font-bold leading-tight xl:text-5xl">{course.name}</h1>
+              <p className="mt-2 text-lg leading-snug opacity-90">{course.description}</p>
             </div>
             <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
           </section>

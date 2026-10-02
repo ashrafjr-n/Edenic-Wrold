@@ -13,7 +13,7 @@ export interface UpNextCourse {
   titles: readonly string[];
   /** Each lesson's cover (`LessonDef.cover`). */
   covers: readonly (readonly StaticImageData[])[];
-  tone: { face: string; edge: string };
+  tone: { face: string; edge: string; ink: string };
 }
 
 interface UpNextProps {
@@ -62,7 +62,7 @@ export function UpNext({ characterId, courses, labels, dir, className = "" }: Up
       </div>
       <Button3D
         href={`/learn/${characterId}/${course.id}/${index + 1}`}
-        tone={{ ...course.tone, text: "#fff" }}
+        tone={{ ...course.tone, text: course.tone.ink }}
         className="shrink-0 gap-2 px-6 py-3 text-base"
       >
         {started ? labels.continue : labels.start}

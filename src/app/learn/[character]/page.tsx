@@ -3,7 +3,7 @@ import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { courseLessons } from "@/data/courses";
-import { BackRow, pageAccent } from "@/components/ui/back-button";
+import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { CourseCard } from "@/components/learn/course-card";
 import { CourseCardWide } from "@/components/learn/course-card-wide";
 import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
@@ -47,7 +47,7 @@ export default async function CharacterLearnPage({
       name: dict.lessons[lesson.id].name,
       titles: dict.lessons[lesson.id].items,
       covers: courseLessons[lesson.id].map((def) => def.cover),
-      tone: { face: lesson.theme.accent, edge: lesson.theme.accentDark },
+      tone: { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink },
     }));
   const upNext = (className: string) => (
     <UpNext
@@ -69,7 +69,7 @@ export default async function CharacterLearnPage({
   return (
     <main
       className="relative flex flex-1 flex-col pb-20 sm:pb-10"
-      style={pageAccent(character.accent, character.accentDark)}
+      style={characterAccent(character)}
     >
       {/* Back alone: Pinki herself says whose page this is, at every width. */}
       <BackRow href="/learn" label={dict.characterHub.backToLearn} />

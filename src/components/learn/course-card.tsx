@@ -56,7 +56,7 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
           </span>
         ) : (
           <span className="clay flex h-14 w-14 shrink-0 items-center justify-center rounded-full" style={play} aria-hidden>
-            <Play className="ml-0.5 h-6 w-6 fill-white text-white" strokeWidth={0} />
+            <Play className="ml-0.5 h-6 w-6 fill-current" style={{ color: theme.ink }} strokeWidth={0} />
           </span>
         )}
       </div>

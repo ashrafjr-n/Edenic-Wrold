@@ -9,7 +9,8 @@ interface CourseProgressProps {
   total: number;
   /** On a WHITE card: the bar fills in the course's own colour and the
       count reads in ink. Without it, the bar is white clay sunk into a
-      coloured card (the course page's banner). */
+      coloured card (the course page's banner), the count in the banner's
+      own text colour. */
   fill?: { face: string; edge: string };
   className?: string;
 }
@@ -35,7 +36,7 @@ export function CourseProgress({ characterId, lessonId, total, fill, className =
           }}
         />
       </div>
-      <span className={`shrink-0 text-sm font-bold tabular-nums ${fill ? "text-[var(--color-ink-soft)]" : "text-white"}`}>
+      <span className={`shrink-0 text-sm font-bold tabular-nums ${fill ? "text-[var(--color-ink-soft)]" : "text-current"}`}>
         {done} / {total}
       </span>
     </div>

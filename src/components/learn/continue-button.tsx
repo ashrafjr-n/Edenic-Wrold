@@ -13,7 +13,7 @@ interface ContinueButtonProps {
   characterId: CharacterId;
   lessonId: string;
   basePath: string;
-  tone: { face: string; edge: string };
+  tone: { face: string; edge: string; ink?: string };
   dict: Dictionary;
   className?: string;
 }
@@ -78,7 +78,7 @@ export function ContinueButton({
   return (
     <Button3D
       href={href}
-      tone={{ face: tone.face, edge: tone.edge }}
+      tone={{ face: tone.face, edge: tone.edge, text: tone.ink }}
       className={`flex items-center justify-center gap-2 ${className}`}
     >
       {label}
