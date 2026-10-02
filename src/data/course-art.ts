@@ -2,10 +2,6 @@
    `tools/picnic-scene` (the same light and clay as Shapes and Colors), until
    each course gets its own. Things the Colors course already rendered are
    borrowed from it. */
-import dad from "../../public/assets/learn/art/dad.png";
-import mom from "../../public/assets/learn/art/mom.png";
-import kid from "../../public/assets/learn/art/kid.png";
-import baby from "../../public/assets/learn/art/baby.png";
 import sun from "../../public/assets/learn/art/sun.png";
 import cloud from "../../public/assets/learn/art/cloud.png";
 import umbrella from "../../public/assets/learn/art/umbrella.png";
@@ -29,7 +25,6 @@ import whale from "../../public/assets/learn/pinki/colors/paint/whale.png";
 import snowman from "../../public/assets/learn/pinki/colors/paint/snowman.png";
 
 export const COURSE_ART = {
-  family: [dad, mom, kid, baby],
   fruits: [apple, banana, grapes, carrot, pear, orange],
   seasons: [flower, sun, leaf, snowman],
   months: [calendar, flower, sun, snowman],
