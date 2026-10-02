@@ -24,7 +24,8 @@ export type TaskDemoDef =
   | { kind: "find"; scene: Scene; target: Target }
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: SceneItem; bins: SortBin[] }
-  | { kind: "paint"; round: PaintRound; pots: ColorId[] };
+  | { kind: "paint"; round: PaintRound; pots: ColorId[] }
+  | { kind: "pop"; color: ColorId; others: ColorId[] };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -285,6 +286,31 @@ function PaintDemo({ round, pots }: { round: PaintRound; pots: ColorId[] }) {
   );
 }
 
+/** Pop: three balloons in a pale sky; the finger taps the one of the color
+    and it bursts. */
+function PopDemo({ color, others }: { color: ColorId; others: ColorId[] }) {
+  const row = [others[0], color, others[1] ?? others[0]];
+  return (
+    <div
+      className="relative flex h-full w-full items-center justify-center gap-[6%] overflow-hidden rounded-[1.35rem]"
+      style={{ backgroundColor: "color-mix(in srgb, var(--brand) 16%, var(--surface))" }}
+    >
+      {row.map((c, i) => (
+        <span key={i} className={`relative block w-[24%] ${i === 1 ? "-mt-[12%]" : "mt-[8%]"}`}>
+          <span className={`block ${i === 1 ? "demo-pop" : ""}`}>
+            <Image src={COLORS[c].balloon} alt="" sizes="6rem" className="h-auto w-full" />
+          </span>
+          {i === 1 && (
+            <span className="absolute left-1/2 top-[28%]">
+              <Finger />
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -302,5 +328,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <SortDemo item={demo.item} bins={demo.bins} />;
     case "paint":
       return <PaintDemo round={demo.round} pots={demo.pots} />;
+    case "pop":
+      return <PopDemo color={demo.color} others={demo.others} />;
   }
 }

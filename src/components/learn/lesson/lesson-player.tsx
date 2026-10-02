@@ -27,6 +27,7 @@ import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { PaintColors } from "./paint-colors";
+import { PopBalloons } from "./pop-balloons";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -70,6 +71,8 @@ function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: stri
       return { kind: "sort" };
     case "paint":
       return { kind: "paint" };
+    case "pop":
+      return { kind: "pop", target: q.color };
     case "count":
       return { kind: "count", target: q.item.word };
     case "pick": {
@@ -99,6 +102,8 @@ function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undef
       return { kind: "sort", item: q.items[0], bins: q.bins };
     case "paint":
       return { kind: "paint", round: q.rounds[0], pots: q.pots };
+    case "pop":
+      return { kind: "pop", color: q.color, others: q.others };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
@@ -495,6 +500,10 @@ export function LessonPlayer({
       );
     } else if (q.type === "paint") {
       body = <PaintColors key={seed} rounds={q.rounds} pots={q.pots} potAria={lines.potAria} onSolved={onSolved} onMiss={onMiss} />;
+    } else if (q.type === "pop") {
+      body = (
+        <PopBalloons key={seed} color={q.color} others={q.others} seed={seed} balloonAria={lines.balloonAria} onSolved={onSolved} onMiss={onMiss} />
+      );
     } else if (q.type === "find") {
       body = (
         <FindShapes
