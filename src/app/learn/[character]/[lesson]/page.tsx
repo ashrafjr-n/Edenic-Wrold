@@ -12,8 +12,6 @@ import { format, dirFor } from "@/lib/format-dict";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
-  /** `from` — the lesson just finished, sent by its "Next" button. */
-  searchParams: Promise<{ from?: string }>;
 }
 
 /**
@@ -28,13 +26,9 @@ interface LessonPageProps {
  * - **Desktop (lg+):** the height of the screen, no scrolling — the course
  *   in a tall banner on the left with Continue under it, the box filling a
  *   board tinted in the course colour on the right.
- *
- * `?from=n` (the lesson just finished) makes the box tick it and open the
- * next cell — see `useCourseWalk`.
  */
-export default async function LessonPage({ params, searchParams }: LessonPageProps) {
+export default async function LessonPage({ params }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
-  const from = Number((await searchParams).from);
   const route = resolveLessonRoute(characterId, lessonId);
 
   if (route.status === "missing") notFound();
@@ -47,7 +41,6 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const basePath = `/learn/${character.id}/${lesson.id}`;
   const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink };
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
-  const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
   const stops = courseStops(lesson.id);
   /* The lessons themselves, one box per screen size. */
   const lessons = (size: "phone" | "tablet" | "wide") => (
@@ -59,7 +52,6 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
       basePath={basePath}
       tone={tone}
       dict={dict.lessonPicker}
-      advanceFrom={advanceFrom}
       size={size}
     />
   );

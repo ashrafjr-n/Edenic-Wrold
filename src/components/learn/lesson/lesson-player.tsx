@@ -280,14 +280,14 @@ export function LessonPlayer({
       />
     );
     const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
-    /* Onward goes BACK to the course page first: its path (or box) plays the
-       step from this stop to the next, then opens the next lesson
-       (`useCourseWalk`'s `advanceFrom`). */
+    /* Onward goes straight on to the next lesson (direct request
+       2026-10-02) — the course page is only for coming back; after the
+       last lesson it is where Finish goes. */
     const onwardDone = (
       <NextButton
         label={nextTitle ? (nextIsShape ? lines.nextShape : lines.nextLesson) : lines.finish}
         tone={GO_TONE}
-        href={nextTitle ? `${coursePath}?from=${n}` : coursePath}
+        href={nextTitle ? `${coursePath}/${n + 1}` : coursePath}
         dir={dir}
         className="lesson-onward"
       />
