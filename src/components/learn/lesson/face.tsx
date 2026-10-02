@@ -41,12 +41,14 @@ export function FaceView({ face, size }: FaceViewProps) {
   const box = size === "tile" ? "h-[62%] w-[62%]" : "h-10 w-10 sm:h-14 sm:w-14";
 
   if (face.kind === "picture") {
+    /* A picture in a sum ("red + yellow = ?") is what the question is
+       about — bigger than a shape token. */
     return (
       <Image
         src={face.src}
         alt={face.word}
-        sizes={size === "tile" ? "(min-width: 640px) 120px, 80px" : "(min-width: 640px) 56px, 40px"}
-        className={`${box} object-contain`}
+        sizes={size === "tile" ? "(min-width: 640px) 120px, 80px" : "(min-width: 1024px) 96px, (min-width: 640px) 80px, 64px"}
+        className={`${size === "tile" ? box : "h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24"} object-contain`}
       />
     );
   }
