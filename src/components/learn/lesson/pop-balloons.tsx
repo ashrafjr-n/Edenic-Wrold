@@ -8,6 +8,7 @@ import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
 import { shuffle } from "@/lib/seeded";
 import type { ColorId } from "@/types/course";
+import { SocketTray, STAGE_CARD } from "./find-shapes";
 
 /** How many balloons of the color there are to pop. */
 const TO_POP = 4;
@@ -42,7 +43,7 @@ type Burst = { id: number; color: ColorId; x: number; y: number };
 /**
  * Pop the balloons: balloons of many colors float up a patch of sky, slowly,
  * over and over; tap every balloon of the lesson's color and it bursts into
- * pieces and lands in a tray of sockets at the bottom. Any other balloon
+ * pieces and lands in a tray of sockets under the sky. Any other balloon
  * only wiggles; after two misses the next one to pop glows. The color is
  * all that tells them apart — nothing else could be asked this way.
  *
@@ -110,86 +111,73 @@ export function PopBalloons({ color, others, seed, balloonAria, onSolved, onMiss
   };
 
   return (
-    <div className="card card-clay-white card-bare-lg relative w-full max-w-[min(100%,calc((100svh-23.5rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-md sm:p-3 lg:max-w-[min(36rem,calc((var(--stage-h)-1.5rem)*0.8+1.5rem))]">
-      <div
-        ref={sky}
-        className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] [container-type:size] lg:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]"
-        style={{ backgroundColor: "color-mix(in srgb, var(--brand) 16%, var(--surface))" }}
-      >
-        {balloons.map((balloon) => {
-          if (popped.includes(balloon.id)) return null;
-          const shaking = shake?.id === balloon.id;
-          return (
-            <button
-              key={balloon.id}
-              type="button"
-              aria-label={format(balloonAria, { color: balloon.color })}
-              onClick={(event) => tap(balloon, event)}
-              className="balloon-rise absolute top-0 w-[19cqw] focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]"
-              style={
-                {
-                  left: `${balloon.lane}%`,
-                  animationDuration: `${balloon.rise}s`,
-                  animationDelay: `-${balloon.start}s`,
-                  "--rest": `${balloon.rest}cqh`,
-                } as CSSProperties
-              }
-            >
-              <span className="balloon-sway block" style={{ animationDelay: `-${balloon.id * 0.6}s` }}>
-                <span
-                  key={shaking ? shake.n : "still"}
-                  className={`relative block ${shaking ? "anim-wiggle" : ""} ${hinted === balloon.id ? "guide-target rounded-full" : ""}`}
-                >
-                  <Image
-                    src={COLORS[balloon.color].balloon}
-                    alt=""
-                    sizes="(min-width: 1024px) 7rem, 20vw"
-                    draggable={false}
-                    className="pointer-events-none h-auto w-full select-none"
-                  />
-                </span>
-              </span>
-            </button>
-          );
-        })}
-
-        {/* A popped balloon: a ring and its pieces flying out, where it was. */}
-        {bursts.map((burst) => (
-          <span
-            key={`burst-${burst.id}`}
-            aria-hidden
-            className="pointer-events-none absolute h-[16cqw] w-[16cqw]"
-            style={{ left: `${burst.x}%`, top: `${burst.y}%`, translate: "-50% -50%" }}
-          >
-            <span className="pop-ring absolute inset-0 rounded-full border-4" style={{ borderColor: COLORS[burst.color].face }} />
-            {SHARDS.map(([dx, dy], i) => (
-              <span
-                key={i}
-                className="pop-shard absolute left-1/2 top-1/2 h-[22%] w-[22%] rounded-full"
-                style={{ backgroundColor: COLORS[burst.color].face, "--shard-x": `${dx}%`, "--shard-y": `${dy}%` } as CSSProperties}
-              />
-            ))}
-          </span>
-        ))}
-
-        {/* The tray: one socket per balloon to pop, filled as they pop. */}
+    <div className="flex w-full flex-col items-center gap-3">
+      <div className={STAGE_CARD}>
         <div
-          className="clay pointer-events-none absolute bottom-[2.5%] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[var(--surface)] p-1.5 sm:gap-2 sm:p-2 lg:gap-2.5 lg:p-2.5"
-          style={{ "--clay-edge": "var(--color-locked-dark)" } as CSSProperties}
+          ref={sky}
+          className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] [container-type:size] lg:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]"
+          style={{ backgroundColor: "color-mix(in srgb, var(--brand) 16%, var(--surface))" }}
         >
-          {Array.from({ length: TO_POP }, (_, i) => (
-            <span key={i} className="letter-slot h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12" style={{ borderRadius: "999px" }}>
-              {i < popped.length && (
-                <span className="anim-pop-in absolute inset-1">
-                  <Image src={COLORS[color].balloon} alt="" fill sizes="48px" className="object-contain" />
+          {balloons.map((balloon) => {
+            if (popped.includes(balloon.id)) return null;
+            const shaking = shake?.id === balloon.id;
+            return (
+              <button
+                key={balloon.id}
+                type="button"
+                aria-label={format(balloonAria, { color: balloon.color })}
+                onClick={(event) => tap(balloon, event)}
+                className="balloon-rise absolute top-0 w-[19cqw] focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]"
+                style={
+                  {
+                    left: `${balloon.lane}%`,
+                    animationDuration: `${balloon.rise}s`,
+                    animationDelay: `-${balloon.start}s`,
+                    "--rest": `${balloon.rest}cqh`,
+                  } as CSSProperties
+                }
+              >
+                <span className="balloon-sway block" style={{ animationDelay: `-${balloon.id * 0.6}s` }}>
+                  <span
+                    key={shaking ? shake.n : "still"}
+                    className={`relative block ${shaking ? "anim-wiggle" : ""} ${hinted === balloon.id ? "guide-target rounded-full" : ""}`}
+                  >
+                    <Image
+                      src={COLORS[balloon.color].balloon}
+                      alt=""
+                      sizes="(min-width: 1024px) 7rem, 20vw"
+                      draggable={false}
+                      className="pointer-events-none h-auto w-full select-none"
+                    />
+                  </span>
                 </span>
-              )}
+              </button>
+            );
+          })}
+
+          {/* A popped balloon: a ring and its pieces flying out, where it was. */}
+          {bursts.map((burst) => (
+            <span
+              key={`burst-${burst.id}`}
+              aria-hidden
+              className="pointer-events-none absolute h-[16cqw] w-[16cqw]"
+              style={{ left: `${burst.x}%`, top: `${burst.y}%`, translate: "-50% -50%" }}
+            >
+              <span className="pop-ring absolute inset-0 rounded-full border-4" style={{ borderColor: COLORS[burst.color].face }} />
+              {SHARDS.map(([dx, dy], i) => (
+                <span
+                  key={i}
+                  className="pop-shard absolute left-1/2 top-1/2 h-[22%] w-[22%] rounded-full"
+                  style={{ backgroundColor: COLORS[burst.color].face, "--shard-x": `${dx}%`, "--shard-y": `${dy}%` } as CSSProperties}
+                />
+              ))}
             </span>
           ))}
-        </div>
 
-        {solved && <Celebration />}
+          {solved && <Celebration />}
+        </div>
       </div>
+      <SocketTray count={TO_POP} filled={popped.map(() => COLORS[color].balloon)} />
     </div>
   );
 }
