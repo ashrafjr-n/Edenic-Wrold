@@ -165,7 +165,6 @@ export const ar: Dictionary = {
     nextShape: "الشكل التالي",
     finish: "إنهاء",
     lessonDone: "اكتمل الدرس!",
-    unlocked: "{title} مفتوح الآن!",
     skip: "تخطٍّ",
     help: "مساعدة",
     startOver: "من جديد",

@@ -170,7 +170,6 @@ export const en = {
     nextShape: "Next shape",
     finish: "Finish",
     lessonDone: "Lesson complete!",
-    unlocked: "{title} is open!",
     skip: "Skip",
     help: "Help",
     startOver: "Start over",

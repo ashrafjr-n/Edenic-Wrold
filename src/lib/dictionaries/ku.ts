@@ -169,7 +169,6 @@ export const ku: Dictionary = {
     nextShape: "شێوەیێ دی",
     finish: "بدووماهی بینە",
     lessonDone: "وانە ب دووماهی هات!",
-    unlocked: "{title} ڤەبوو!",
     skip: "دەرباز ببە",
     help: "هاریکاری",
     startOver: "ژ نوی",

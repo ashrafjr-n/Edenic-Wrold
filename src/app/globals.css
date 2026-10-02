@@ -3181,34 +3181,6 @@ button:disabled,
   }
 }
 
-.done-lock {
-  animation: done-lock 0.3s ease-in 1.4s both;
-}
-
-@keyframes done-lock {
-  to {
-    opacity: 0;
-    scale: 0.4;
-  }
-}
-
-.done-unlock {
-  animation: done-unlock 0.5s cubic-bezier(0.34, 1.6, 0.5, 1) 1.55s both;
-}
-
-@keyframes done-unlock {
-  from {
-    opacity: 0;
-    scale: 0.4;
-    rotate: -20deg;
-  }
-  to {
-    opacity: 1;
-    scale: 1;
-    rotate: 0deg;
-  }
-}
-
 .trace-morph-in {
   animation: trace-morph-in 0.7s cubic-bezier(0.34, 1.5, 0.5, 1) 0.95s both;
 }
@@ -3497,8 +3469,7 @@ button:disabled,
     animation: none;
   }
 
-  .confetti-piece,
-  .done-lock {
+  .confetti-piece {
     display: none;
   }
 

@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Lock, LockOpen } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
 import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
@@ -19,22 +18,19 @@ interface LessonDoneProps {
   /** The child's own passing trace, drawn back beside the shape. */
   drawing?: readonly StrokePoint[];
   accent: string;
-  /** "Square is open!" — absent after a course's last lesson. */
-  unlocked?: string;
   dir: "rtl" | "ltr";
 }
 
-const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties;
-
 /**
- * The end of a lesson, as one celebration in three beats, top to bottom:
+ * The end of a lesson, as one celebration in two beats, top to bottom:
  *
  * 1. Pinki cheering on a glowing clay disc, confetti bursting round her.
  * 2. What was learned: the shape, the child's OWN drawing of it (the most
  *    personal reward there is — no stars or points before sign-in), and the
  *    word in clay letters.
- * 3. What is next: a green pill whose padlock springs open, naming the lesson
- *    it just unlocked.
+ *
+ * (A green "X is open!" pill under them was removed on request — the course
+ * page's walk already shows the next lesson opening.)
  *
  * The beats arrive one after another (`animation-delay`); Again / Next are the
  * player's, in the action band as on every step.
@@ -44,16 +40,16 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
  * (the negative top margin), which is what lets her be this big on a phone.
  *
  * Desktop: the board spans the whole width here (no side panels), so the
- * beats sit side by side — Pinki big on the left, what was learned and what
- * is next stacked on the right.
+ * beats sit side by side — Pinki big on the left, what was learned on the
+ * right.
  */
-export function LessonDone({ title, words, faces, drawing, accent, unlocked, dir }: LessonDoneProps) {
+export function LessonDone({ title, words, faces, drawing, accent, dir }: LessonDoneProps) {
   /* One or two things and a drawing get big tiles; a review's four things
      and a drawing (five in a row) share the card's width. */
   const tile = faces.length > 2 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
   return (
     <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
-      <div className="relative flex items-end justify-center lg:row-span-3">
+      <div className="relative flex items-end justify-center lg:row-span-2">
         <span
           aria-hidden
           className="done-glow absolute bottom-0 left-1/2 aspect-square h-[88%] -translate-x-1/2 rounded-full"
@@ -115,17 +111,6 @@ export function LessonDone({ title, words, faces, drawing, accent, unlocked, dir
         )}
       </div>
 
-      {unlocked && (
-        <div className="clay anim-pop-in flex items-center gap-2 rounded-full py-2 pe-5 ps-2 lg:justify-self-center" style={{ ...GO, animationDelay: "0.8s" }}>
-          <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white text-[var(--color-go-dark)] lg:h-10 lg:w-10">
-            <Lock className="done-lock absolute h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
-            <LockOpen className="done-unlock absolute h-5 w-5 lg:h-6 lg:w-6" strokeWidth={2.75} />
-          </span>
-          <span dir={dir} className="text-base font-bold text-white sm:text-lg lg:text-xl">
-            {unlocked}
-          </span>
-        </div>
-      )}
     </div>
   );
 }

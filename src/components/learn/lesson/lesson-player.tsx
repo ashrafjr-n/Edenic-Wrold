@@ -360,7 +360,6 @@ export function LessonPlayer({
         faces={lessonFaces(lesson)}
         drawing={drawing}
         accent={tone.face}
-        unlocked={nextTitle ? format(lines.unlocked, { title: nextTitle }) : undefined}
         dir={dir}
       />
     );
@@ -608,7 +607,11 @@ export function LessonPlayer({
               <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
                 {body}
               </div>
-              <div className="flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden">{action}</div>
+              {/* On the done screen the buttons sit higher (direct request) —
+                  closer to what was just learned. */}
+              <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? "mb-[min(4.5rem,8svh)]" : ""}`}>
+                {action}
+              </div>
             </div>
           </div>
         </div>
@@ -620,7 +623,7 @@ export function LessonPlayer({
           step's button. */}
       <div
         key={`${round}-${at}-${demo}`}
-        className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
+        className={`mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex ${finished ? "lg:mb-[min(4rem,7svh)]" : ""}`}
       >
         {footStart}
         {footEnd}
