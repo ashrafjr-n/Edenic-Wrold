@@ -1,11 +1,12 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
-import { Check, Pointer, Volume2 } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
+import { Check, Pointer, Slice, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
+import { CONTAINERS, MARKET_BAG, MARKET_BOARD } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
+import type { ColorId, Container, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -27,7 +28,11 @@ export type TaskDemoDef =
   | { kind: "sort"; item: SceneItem; bins: SortBin[] }
   | { kind: "paint"; round: PaintRound; pots: ColorId[] }
   | { kind: "pop"; color: ColorId; others: ColorId[] }
-  | { kind: "order"; items: Face[]; seed: string };
+  | { kind: "order"; items: Face[]; seed: string }
+  | { kind: "guess"; word: string; picture: StaticImageData; decoy: Face; seed: string }
+  | { kind: "cut"; picture: StaticImageData; inside: StaticImageData }
+  | { kind: "shop"; list: string[]; stall: Face[]; into: Container; seed: string }
+  | { kind: "like"; face: Face };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -349,6 +354,160 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
   );
 }
 
+/** A tick popping onto a tapped tile, on the demos' beat. */
+function DemoTick() {
+  return (
+    <span
+      className="demo-tick clay absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-white"
+      style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
+    >
+      <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+    </span>
+  );
+}
+
+/** Guess: the bag with a shadow peeking over it, the two pictures under
+    it as the board deals them; the finger taps the right one. */
+function GuessDemo({ word, picture, decoy, seed }: { word: string; picture: StaticImageData; decoy: Face; seed: string }) {
+  const choices: Face[] = [{ kind: "picture", src: picture, word }, decoy];
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <span className="relative block h-[46%] w-[46%]">
+        <span className="absolute left-1/2 top-[2%] h-[46%] w-[46%] -translate-x-1/2" style={{ filter: "brightness(0) opacity(0.8)" }}>
+          <Image src={picture} alt="" fill sizes="5rem" className="object-contain" />
+        </span>
+        <span className="absolute inset-x-0 bottom-0 top-[28%]">
+          <Image src={MARKET_BAG} alt="" fill sizes="8rem" className="object-contain object-bottom" />
+        </span>
+      </span>
+      <div className="grid w-[62%] grid-cols-2 gap-3">
+        {shuffle([0, 1], seed).map((index) => (
+          <span key={index} className={`card card-clay-white relative flex aspect-square items-center justify-center ${index === 0 ? "demo-press" : ""}`}>
+            <FaceView face={choices[index]} size="tile" />
+            {index === 0 && (
+              <>
+                <DemoTick />
+                <span className="absolute left-1/2 top-1/2">
+                  <Finger />
+                </span>
+              </>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Cut: the finger on the knife, the knife along the line, and the thing
+    falls open on the board. */
+function CutDemo({ picture, inside }: { picture: StaticImageData; inside: StaticImageData }) {
+  return (
+    <div dir="ltr" className="flex h-full items-center justify-center">
+      <div className="relative aspect-[1.75] w-[92%]">
+        <Image src={MARKET_BOARD} alt="" fill sizes="16rem" className="object-contain" />
+        <div className="absolute inset-y-[12%] left-[10%] w-[62%]">
+          <span className="demo-cut-whole absolute inset-0">
+            <Image src={picture} alt="" fill sizes="10rem" className="object-contain" />
+          </span>
+          <span className="demo-cut-inside absolute inset-[-6%]">
+            <Image src={inside} alt="" fill sizes="11rem" className="object-contain" />
+          </span>
+          <div className="absolute inset-x-[-4%] top-1/2 h-0">
+            <span aria-hidden className="cut-line absolute inset-x-0 top-0 -translate-y-1/2" />
+            <span className="demo-knife absolute top-0 -translate-y-1/2">
+              <span
+                className="clay -ml-5 flex h-10 w-10 items-center justify-center rounded-full"
+                style={{ backgroundColor: "var(--page-accent-color)", color: "var(--page-accent-ink, #fff)", "--clay-edge": "var(--page-accent-edge)" } as CSSProperties}
+              >
+                <Slice className="h-5 w-5" strokeWidth={2.75} />
+              </span>
+              <span className="absolute left-0 top-1/2">
+                <Finger />
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Shop: the note's first word, the container, three things on the stall
+    as the board deals them; the finger taps the one on the list and it
+    flies into the container. Laid out in % of the square stage: the stall
+    tiles are 28% wide at 4/36/68% left, 60% top; the container's mouth is
+    at (74, 26). */
+function ShopDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; into: Container; seed: string }) {
+  const word = list[0];
+  const wordOf = (face: Face) => (face.kind === "picture" ? face.word : face.kind === "shape" ? face.shape : face.text);
+  const answer = stall.findIndex((face) => wordOf(face) === word);
+  const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
+  return (
+    <div dir="ltr" className="relative h-full w-full">
+      <span className="card card-clay-white absolute left-[4%] top-[8%] flex h-[30%] w-[48%] -rotate-2 items-center justify-center text-2xl font-bold text-[var(--color-ink)]">
+        {word}
+      </span>
+      <span className="absolute right-[6%] top-[2%] h-[44%] w-[40%]">
+        <Image src={CONTAINERS[into]} alt="" fill sizes="7rem" className="object-contain" />
+      </span>
+      {shown.map((index, slot) => {
+        const left = 4 + slot * 32;
+        const fly = { "--fly-x": `${((74 - (left + 14)) / 28) * 100}%`, "--fly-y": `${((26 - 75) / 30) * 100}%` } as CSSProperties;
+        return (
+          <span key={index} className="absolute top-[60%] h-[30%] w-[28%]" style={{ left: `${left}%` }}>
+            <span className={`card card-clay-white absolute inset-0 flex items-center justify-center ${index === answer ? "demo-press" : ""}`}>
+              {index === answer ? (
+                <span className="demo-fly absolute inset-0 z-[1] flex items-center justify-center" style={fly}>
+                  <FaceView face={stall[index]} size="tile" />
+                </span>
+              ) : (
+                <FaceView face={stall[index]} size="tile" />
+              )}
+            </span>
+            {index === answer && (
+              <span className="absolute left-1/2 top-1/2">
+                <Finger />
+              </span>
+            )}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Like: the thing, the two thumbs; the finger taps the thumb up and the
+    thing hops onto the "I like" plate. */
+function LikeDemo({ face }: { face: Face }) {
+  return (
+    <div dir="ltr" className="relative h-full w-full">
+      <span className="card card-clay-white absolute left-[34%] top-[2%] flex h-[32%] w-[32%] items-center justify-center">
+        <span className="demo-fly absolute inset-0 flex items-center justify-center" style={{ "--fly-x": "-78%", "--fly-y": "190%" } as CSSProperties}>
+          <FaceView face={face} size="tile" />
+        </span>
+      </span>
+      <span
+        className="demo-press clay absolute left-[24%] top-[42%] flex h-[18%] w-[18%] items-center justify-center rounded-full text-white"
+        style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
+      >
+        <ThumbsUp className="h-6 w-6" strokeWidth={2.5} />
+        <span className="absolute left-1/2 top-1/2">
+          <Finger />
+        </span>
+      </span>
+      <span
+        className="clay absolute left-[58%] top-[42%] flex h-[18%] w-[18%] items-center justify-center rounded-full text-white"
+        style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)" } as CSSProperties}
+      >
+        <ThumbsDown className="h-6 w-6" strokeWidth={2.5} />
+      </span>
+      <span className="plate absolute left-[6%] top-[70%] h-[22%] w-[40%]" />
+      <span className="plate absolute right-[6%] top-[70%] h-[22%] w-[40%]" />
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -370,5 +529,13 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PopDemo color={demo.color} others={demo.others} />;
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
+    case "guess":
+      return <GuessDemo word={demo.word} picture={demo.picture} decoy={demo.decoy} seed={demo.seed} />;
+    case "cut":
+      return <CutDemo picture={demo.picture} inside={demo.inside} />;
+    case "shop":
+      return <ShopDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
+    case "like":
+      return <LikeDemo face={demo.face} />;
   }
 }
