@@ -20,6 +20,11 @@ export const characters: Character[] = [
     accentSoft: "var(--color-nova-soft)",
     accentDark: "var(--color-nova-dark)",
     locked: false,
+    button: {
+      face: "var(--color-gold)",
+      edge: "var(--color-gold-dark)",
+      text: "var(--color-ink-fixed)",
+    },
   },
   {
     id: "bloo",

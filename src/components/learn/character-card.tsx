@@ -50,7 +50,7 @@ export function CharacterCard({
   dict,
   dir,
 }: CharacterCardProps) {
-  const { name, image, accent, accentDark, locked } = character;
+  const { name, image, accent, accentDark, locked, button } = character;
 
   const delay = {
     card: `${CARD_DELAY}s`,
@@ -174,7 +174,7 @@ export function CharacterCard({
                 edge: "var(--color-locked-dark)",
                 text: "var(--color-locked-text)",
               }
-            : { face: accent, edge: accentDark }
+            : (button ?? { face: accent, edge: accentDark })
         }
         href={locked ? undefined : `/learn/${character.id}`}
         disabled={locked}
