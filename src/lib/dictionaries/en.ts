@@ -96,24 +96,24 @@ export const en = {
       items: ["Circle", "Square", "Triangle", "Rectangle", "Shape review"],
     },
     colors: {
-      name: "Learn Colours",
-      description: "Red, blue, yellow and every colour around you",
-      items: ["Red & Blue", "Yellow & Green", "Orange & Purple", "Pink & Brown", "Black & White", "Colour review"],
+      name: "Learn Colors",
+      description: "Red, blue, yellow and every color around you",
+      items: ["Red & Blue", "Yellow & Green", "Orange & Purple", "Pink & Brown", "Black & White", "Color review"],
     },
     family: {
       name: "My Family",
-      description: "Mum, Dad and everyone at home",
-      items: ["Mum & Dad", "Brother & Sister", "Grandma & Grandpa", "Baby & Me", "Family review"],
+      description: "Mom, Dad and everyone at home",
+      items: ["Mom & Dad", "Brother & Sister", "Grandma & Grandpa", "Baby & Me", "Family review"],
     },
     fruits: {
       name: "Fruits & Vegetables",
       description: "Yummy things to eat and how to spell them",
-      items: ["Apple, Banana, Orange", "Grape, Pear, Mango", "Carrot, Tomato, Potato", "Onion, Pea, Corn", "Fruit or vegetable?", "Market review"],
+      items: ["Apple & Banana", "Grape & Orange", "Carrot & Tomato", "Potato & Corn", "Fruit or vegetable?", "Market review"],
     },
     seasons: {
       name: "The Seasons",
-      description: "Spring, summer, autumn and winter",
-      items: ["Spring", "Summer", "Autumn", "Winter", "Seasons review"],
+      description: "Spring, summer, fall and winter",
+      items: ["Spring", "Summer", "Fall", "Winter", "Seasons review"],
     },
     months: {
       name: "Months of the Year",
@@ -123,7 +123,7 @@ export const en = {
     animals: {
       name: "Animals",
       description: "Pets, farm, wild and sea animals",
-      items: ["Pets", "On the farm", "In the wild", "In the sea", "Babies & homes", "Animals review"],
+      items: ["Cat & Dog", "Cow & Sheep", "Lion & Monkey", "Fish & Whale", "Duck & Horse", "Animals review"],
     },
     weather: {
       name: "The Weather",
@@ -133,7 +133,7 @@ export const en = {
     body: {
       name: "My Body",
       description: "Head, hands, feet and more",
-      items: ["My face", "Head & hair", "Arms & hands", "Legs & feet", "Body review"],
+      items: ["Eyes & Ears", "Nose & Mouth", "Hands & Arms", "Legs & Feet", "Body review"],
     },
   },
   characterHub: {
