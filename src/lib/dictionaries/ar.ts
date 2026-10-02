@@ -136,8 +136,6 @@ export const ar: Dictionary = {
   characterHub: {
     backToLearn: "العودة إلى التعلّم",
     nextUp: "التالي",
-    unlocksAfter: "يُفتح بعد إكمال {name}",
-    unlocksLater: "يُفتح لاحقًا",
     startLesson: "ابدأ {name}",
     hello: "مرحبًا، أنا {name}!",
     askToday: "ماذا سنتعلّم اليوم؟",
@@ -177,9 +175,6 @@ export const ar: Dictionary = {
   },
   asks: {
     whichShape: "أين {shape}؟",
-    shapeOf: "ما شكل {thing}؟",
-    howMany: "كم المجموع؟",
-    putIn: "ضع {n} {item} في السلة!",
     draw: "ارسم {shape}!",
     thisIs: "هذا {shape}!",
     spell: "كوّن كلمة {word}!",

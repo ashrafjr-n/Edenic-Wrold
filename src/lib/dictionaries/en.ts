@@ -139,8 +139,6 @@ export const en = {
   characterHub: {
     backToLearn: "Back to Learn",
     nextUp: "Next up",
-    unlocksAfter: "Unlocks after {name}",
-    unlocksLater: "Unlocks later",
     startLesson: "Start {name}",
     hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
@@ -183,9 +181,6 @@ export const en = {
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
     whichShape: "Which one is the {shape}?",
-    shapeOf: "Which shape is the {thing}?",
-    howMany: "How many altogether?",
-    putIn: "Put {n} {item} in the basket!",
     draw: "Draw a {shape}!",
     thisIs: "This is a {shape}!",
     spell: "Build the word {word}!",

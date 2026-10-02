@@ -140,8 +140,6 @@ export const ku: Dictionary = {
   characterHub: {
     backToLearn: "ڤەگەڕان بۆ فێربوونێ",
     nextUp: "یا دی",
-    unlocksAfter: "پشتی {name} ڤەدبیت",
-    unlocksLater: "دویڤ ڕا ڤەدبیت",
     startLesson: "{name} دەستپێبکە",
     hello: "سلاڤ، ئەز {name} م!",
     askToday: "ئەڤرۆ دێ چ فێربین؟",
@@ -181,9 +179,6 @@ export const ku: Dictionary = {
   },
   asks: {
     whichShape: "{shape} کیژە؟",
-    shapeOf: "{thing} چ شێوەیە؟",
-    howMany: "هەمی پێکڤە چەندن؟",
-    putIn: "{n} {item} بکە د سەلکێ دا!",
     draw: "{shape} بکێشە!",
     thisIs: "ئەڤە {shape}!",
     spell: "پەیڤا {word} چێ بکە!",
