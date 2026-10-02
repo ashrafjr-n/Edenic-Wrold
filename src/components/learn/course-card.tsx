@@ -28,10 +28,11 @@ type ClayVars = CSSProperties & Record<`--${string}`, string>;
 export function CourseCard({ lesson, characterId, name, description, ariaLabel, dir, index }: CourseCardProps) {
   const { id, theme, totalItems, locked } = lesson;
 
-  const style: ClayVars = {
-    animationDelay: `${0.25 + index * 0.12}s`,
-    ...(locked ? {} : { backgroundColor: theme.accent, "--clay-edge": theme.accentDark }),
-  };
+  /* Every card is WHITE clay (direct request 2026-10-02: a different colour
+     per card was too much); the course's colour lives in its play button
+     and its progress bar. */
+  const style: ClayVars = { animationDelay: `${0.25 + index * 0.12}s` };
+  const play: ClayVars = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
 
   const body = (
     <>
@@ -42,12 +43,10 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
       />
       <div className="flex items-center gap-3">
         <div dir={dir} className="min-w-0 flex-1">
-          <h2 className={`text-2xl font-bold leading-tight ${locked ? "text-[var(--color-ink)]" : "clay-title text-white"}`}>
+          <h2 className="text-2xl font-bold leading-tight text-[var(--color-ink)]">
             {name}
           </h2>
-          <p
-            className={`mt-0.5 truncate text-sm ${locked ? "text-[var(--color-ink-soft)]" : "text-white/90"}`}
-          >
+          <p className="mt-0.5 truncate text-sm text-[var(--color-ink-soft)]">
             {description}
           </p>
         </div>
@@ -56,18 +55,18 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
             <Lock className="h-5 w-5" strokeWidth={2.75} />
           </span>
         ) : (
-          <span className="btn3d btn3d--clay-white h-14 w-14 shrink-0" aria-hidden>
-            <Play className="ml-0.5 h-6 w-6" style={{ color: theme.accent, fill: theme.accent }} strokeWidth={0} />
+          <span className="clay flex h-14 w-14 shrink-0 items-center justify-center rounded-full" style={play} aria-hidden>
+            <Play className="ml-0.5 h-6 w-6 fill-white text-white" strokeWidth={0} />
           </span>
         )}
       </div>
       {!locked && (
-        <CourseProgress characterId={characterId} lessonId={id} total={totalItems} className="mt-4" />
+        <CourseProgress characterId={characterId} lessonId={id} total={totalItems} fill={{ face: theme.accent, edge: theme.accentDark }} className="mt-4" />
       )}
     </>
   );
 
-  const cardClass = `card anim-fade-up block px-5 pb-5 ${locked ? "card-clay-white" : "clay card-lift"}`;
+  const cardClass = `card card-clay-white anim-fade-up block px-5 pb-5 ${locked ? "" : "card-lift"}`;
 
   return locked ? (
     <div className={cardClass} style={style} aria-disabled="true">

@@ -31,10 +31,10 @@ type ClayVars = CSSProperties & Record<`--${string}`, string>;
 export function CourseCardWide({ lesson, characterId, name, description, count, ariaLabel, dir, index }: CourseCardWideProps) {
   const { id, theme, totalItems, locked } = lesson;
 
-  const style: ClayVars = {
-    animationDelay: `${0.25 + index * 0.12}s`,
-    ...(locked ? {} : { backgroundColor: theme.accent, "--clay-edge": theme.accentDark }),
-  };
+  /* White clay like every course card (direct request 2026-10-02); the
+     course's colour is in its play button and progress bar. */
+  const style: ClayVars = { animationDelay: `${0.25 + index * 0.12}s` };
+  const play: ClayVars = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
 
   const body = (
     <>
@@ -45,17 +45,13 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
       />
       <div className="flex flex-col gap-4 lg:flex-1 lg:justify-center lg:gap-5">
         <div dir={dir} className="min-w-0">
-          <p className={`text-sm font-bold uppercase tracking-wide ${locked ? "text-[var(--color-ink-soft)]" : "text-white/85"}`}>
+          <p className="text-sm font-bold uppercase tracking-wide" style={{ color: locked ? "var(--color-ink-soft)" : theme.accentDark }}>
             {count}
           </p>
-          <h2
-            className={`mt-1 text-3xl font-bold leading-tight xl:text-5xl ${
-              locked ? "text-[var(--color-ink)]" : "clay-title text-white"
-            }`}
-          >
+          <h2 className="mt-1 text-3xl font-bold leading-tight text-[var(--color-ink)] xl:text-5xl">
             {name}
           </h2>
-          <p className={`mt-1.5 text-base xl:text-lg ${locked ? "text-[var(--color-ink-soft)]" : "text-white/90"}`}>
+          <p className="mt-1.5 text-base text-[var(--color-ink-soft)] xl:text-lg">
             {description}
           </p>
         </div>
@@ -66,9 +62,9 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
             </span>
           ) : (
             <>
-              <CourseProgress characterId={characterId} lessonId={id} total={totalItems} className="flex-1" />
-              <span className="btn3d btn3d--clay-white h-16 w-16 shrink-0 xl:h-[4.5rem] xl:w-[4.5rem]" aria-hidden>
-                <Play className="ml-1 h-7 w-7" style={{ color: theme.accent, fill: theme.accent }} strokeWidth={0} />
+              <CourseProgress characterId={characterId} lessonId={id} total={totalItems} fill={{ face: theme.accent, edge: theme.accentDark }} className="flex-1" />
+              <span className="clay flex h-16 w-16 shrink-0 items-center justify-center rounded-full xl:h-[4.5rem] xl:w-[4.5rem]" style={play} aria-hidden>
+                <Play className="ml-1 h-7 w-7 fill-white text-white" strokeWidth={0} />
               </span>
             </>
           )}
@@ -77,8 +73,8 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
     </>
   );
 
-  const cardClass = `card anim-fade-up flex h-full flex-col gap-4 p-6 lg:flex-row lg:gap-6 xl:p-8 ${
-    locked ? "card-clay-white" : "clay card-lift"
+  const cardClass = `card card-clay-white anim-fade-up flex h-full flex-col gap-4 p-6 lg:flex-row lg:gap-6 xl:p-8 ${
+    locked ? "" : "card-lift"
   }`;
 
   return locked ? (
