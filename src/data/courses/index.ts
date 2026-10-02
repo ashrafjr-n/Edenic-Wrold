@@ -2,6 +2,8 @@ import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef } from "@/types/course";
 import { COURSE_ART } from "@/data/course-art";
+import { COLORS, EMPTY_POT } from "@/data/colors";
+import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 
@@ -31,4 +33,35 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
 export function courseCovers(id: LessonId): StaticImageData[] {
   const bySrc = new Map(courseLessons[id].flatMap((lesson) => lesson.cover).map((c) => [c.src, c]));
   return [...bySrc.values()];
+}
+
+/** One lesson as a cell of a course box (`LessonBox`): its picture(s), and
+    — for a lesson that meets one word — that word, the color of the ring
+    it wears when it is next, and its letters' tone. `blank` is what a
+    locked cell shows instead of its pictures (else they show greyed). */
+export interface BoxStop {
+  pictures: readonly StaticImageData[];
+  blank?: StaticImageData;
+  word?: string;
+  ring?: string;
+  letter?: { face: string; edge: string };
+}
+
+/** A course's lessons as box cells, read off each lesson's own "meet the
+    word" step — the review (no such step) wears its covers. A color still
+    to learn is an empty pot. */
+export function courseStops(id: LessonId): BoxStop[] {
+  const blank = id === "colors" ? EMPTY_POT : undefined;
+  return courseLessons[id].map(({ cover, questions }) => {
+    const meet = questions.find((q) => q.type === "word");
+    if (meet?.type !== "word") return { pictures: cover, blank };
+    const { word, color, shape } = meet;
+    return {
+      pictures: cover,
+      blank,
+      word,
+      ring: color ? COLORS[color].face : shape ? SHAPES[shape].color : undefined,
+      letter: color ? COLORS[color].letter : undefined,
+    };
+  });
 }

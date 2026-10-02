@@ -4,10 +4,10 @@ import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { ContinueButton } from "@/components/learn/continue-button";
 import { LessonPath } from "@/components/learn/lesson-path";
-import { ColorBox } from "@/components/learn/color-box";
+import { LessonBox } from "@/components/learn/lesson-box";
 import { CourseArt } from "@/components/learn/course-art";
 import { CourseProgress } from "@/components/learn/course-progress";
-import { courseCovers, courseLessons } from "@/data/courses";
+import { courseCovers, courseLessons, courseStops } from "@/data/courses";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -18,7 +18,7 @@ interface LessonPageProps {
 }
 
 /**
- * A course's own page: its lessons as a winding clay path (`LessonPath`),
+ * A course's own page: its lessons as a winding clay path (`LessonPath`) or a box of things (`LessonBox`),
  * in three layouts, one per screen size, each its own JSX tree:
  *
  * - **Phone (< sm):** a course banner, the path winding down, a fixed
@@ -49,12 +49,14 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
   const covers = courseLessons[lesson.id].map((def) => def.cover);
   const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
+  const stops = lesson.view === "box" ? courseStops(lesson.id) : [];
   /* The lessons themselves, one view per screen size: the winding path, or
-     — for Colors — the box of paint pots. */
+     — for Pinki's Shapes and Colors — a box of things (`LessonBox`). */
   const lessons = (size: "phone" | "tablet" | "wide") =>
     lesson.view === "box" ? (
-      <ColorBox
+      <LessonBox
         titles={course.items}
+        stops={stops}
         characterId={character.id}
         lessonId={lesson.id}
         basePath={basePath}
