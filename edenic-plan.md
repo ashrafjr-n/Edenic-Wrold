@@ -239,7 +239,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Seasons, Weather |
-| **Put in order**: a train of cards to arrange | later | Months, Family |
+| **Put in order**: tap them in order into a line of spaces | My Family (new, `order`) | Months, Family |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -360,7 +360,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       colors-only activity (Pop the balloons), the course page as a box of
       paint pots — done the same day, all 11 lessons played through.
 - [ ] The user checks Colors again → fixes.
-- [ ] Then, one at a time with a check after each: My Family → Fruits &
+- [x] My Family built (2026-10-02): one person per lesson (word, spell,
+      pick, find in a rendered living room), review with the new Order.
+- [ ] The user checks My Family → fixes.
+- [ ] Then, one at a time with a check after each: Fruits &
       Vegetables → The Seasons → Months → Animals → The Weather → My Body.
 
 ### Phase 6 — Reels, sound, finish
