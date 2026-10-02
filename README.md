@@ -20,7 +20,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (three each; all three friends are open) |
-| `/learn/[character]/[lesson]` | A course: on a phone, a banner and its lessons as a winding clay path (unlocked one at a time); a card grid on wider screens; a Continue button to the next one |
+| `/learn/[character]/[lesson]` | A course: a banner and its lessons, unlocked one at a time — a box of things for Pinki's Shapes and Colors, a winding clay path for the others; a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -219,11 +219,9 @@ English (color, fall, mom).
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 white clay card per course (its things piled on it, a play button and a
 progress bar in the course's colour),
-and a course page is a banner over a winding clay path: one stop per lesson,
-wearing that lesson's thing — ticked when done, bigger with a "Start" bubble
-when it is next, padlocked after that. Inside a course only two hero colours
-are used — Pinki's pink and the course's own colour (yellow for Shapes) — with
-green kept for "Next". Tablets and desktops get their own layouts that fill
+and a course page is a banner over its lessons. Everything in Pinki's courses
+is Pinki's pink — the banners, the cards' play buttons and progress bars,
+Continue, and the lesson's own buttons — with green kept for "Next". Tablets and desktops get their own layouts that fill
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
 big course cards; a course's path winds across a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
@@ -305,11 +303,13 @@ The courses still to come already wear their own clay art — a family of peg
 dolls, fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
 rendered with the same light and clay as Shapes and Colors.
 
-The Colors course page is not a path but a **box of paint pots**: one pot per
-color, empty grey clay with a padlock until its lesson opens, filled with its
-paint (and its word in that color) once learned. Coming back from a finished
-lesson, the next pot fills with paint as its padlock springs off, and then
-the lesson opens by itself.
+Pinki's course pages are not a path but a **box of things**: Colors is one
+paint pot per color, empty grey clay with a padlock until its lesson opens,
+filled with its paint (and its word in that color) once learned; Shapes is
+the same box with one thing per shape (greyed until it opens). Coming back
+from a finished lesson, the next cell colours in as its padlock springs off,
+and then the lesson opens by itself. Courses still to be written keep the
+winding clay path.
 
 Other lessons use pick the right tile or count things into a basket, and on
 the first one Pinki shows how. A wrong
