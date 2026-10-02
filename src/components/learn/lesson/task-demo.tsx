@@ -7,7 +7,7 @@ import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
 import type { ColorId, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
-import { ClayWord, letterTones } from "./clay-word";
+import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
@@ -22,7 +22,7 @@ export type TaskDemoDef =
   | { kind: "draw"; shape: ShapeId; accent: string }
   | { kind: "build"; word: string; seed: string }
   | { kind: "find"; scene: Scene; target: Target }
-  | { kind: "pick"; word?: string; show?: Face[]; options: Face[]; answer: number }
+  | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: SceneItem; bins: SortBin[] }
   | { kind: "paint"; round: PaintRound; pots: ColorId[] };
 
@@ -163,10 +163,10 @@ function FindDemo({ scene, target: looking }: { scene: Scene; target: Target }) 
 
 /** Pick: under the word (or the sum), the finger taps the answer and a
     tick pops on it. */
-function PickDemo({ word, show, options, answer }: { word?: string; show?: Face[]; options: Face[]; answer: number }) {
+function PickDemo({ word, plain, show, options, answer }: { word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      {word && <ClayWord word={word} size="demo" />}
+      {word && <ClayWord word={word} size="demo" tone={plain ? PLAIN_TONE : undefined} />}
       {show && (
         <div className="flex items-center justify-center gap-1.5">
           {show.map((face, i) => (
@@ -254,17 +254,21 @@ function SortDemo({ item, bins }: { item: SceneItem; bins: SortBin[] }) {
     over the grey thing. */
 function PaintDemo({ round, pots }: { round: PaintRound; pots: ColorId[] }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3">
-      <ClayWord word={round.color} size="demo" />
-      <span className="relative block h-[38%] w-[38%]">
+    /* Sized by its own box (`cqi`): the same demo fills the popup and the
+       small panel docked beside a tablet's step. */
+    <div className="@container flex h-full w-full flex-col items-center justify-center gap-[4cqi]">
+      <span className="[&>span]:text-[17cqi]">
+        <ClayWord word={round.color} size="demo" tone={PLAIN_TONE} />
+      </span>
+      <span className="relative block h-[36%] w-[36%]">
         <Image src={round.blank} alt="" fill sizes="8rem" className="object-contain" />
         <Image src={round.painted} alt="" fill sizes="8rem" className="demo-paint object-contain" />
       </span>
-      <div className="flex gap-2">
+      <div className="flex gap-[3cqi]">
         {pots.map((color) => (
           <span
             key={color}
-            className={`card card-clay-white relative flex h-14 w-14 items-center justify-center p-1.5 ${color === round.color ? "demo-press" : ""}`}
+            className={`card card-clay-white relative flex h-[19cqi] w-[19cqi] items-center justify-center p-[2cqi] ${color === round.color ? "demo-press" : ""}`}
           >
             <span className="relative block h-full w-full">
               <Image src={COLORS[color].pot} alt="" fill sizes="3.5rem" className="object-contain" />
@@ -293,7 +297,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
     case "find":
       return <FindDemo scene={demo.scene} target={demo.target} />;
     case "pick":
-      return <PickDemo word={demo.word} show={demo.show} options={demo.options} answer={demo.answer} />;
+      return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
     case "sort":
       return <SortDemo item={demo.item} bins={demo.bins} />;
     case "paint":
