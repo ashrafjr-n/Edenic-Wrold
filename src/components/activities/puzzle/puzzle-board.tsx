@@ -11,7 +11,6 @@ import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
 import {
   isUpright,
   pieceBoxStyle,
-  pieceCropStyle,
   piecesFor,
   slotStyle,
   trayHeightInCells,
@@ -20,6 +19,7 @@ import {
 } from "@/lib/puzzle-pieces";
 import type { PuzzlePiece } from "@/lib/puzzle-pieces";
 import { TAB_DEPTH, clipId, piecePath } from "@/lib/puzzle-shape";
+import { PieceArt } from "./piece-art";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Celebration } from "@/components/ui/celebration";
@@ -50,7 +50,7 @@ interface PuzzleBoardProps {
 }
 
 /** Below this the pointer never really moved. A tap does nothing — carrying
-    the piece across IS the exercise, same call `NumberComplete` makes. */
+    the piece across IS the exercise. */
 const DRAG_THRESHOLD = 6;
 /** Loose pieces lie smaller than their slot; picking one up brings it back to
     full size and straightens it.
@@ -108,72 +108,6 @@ interface FlightState {
   id: number;
   dx: number;
   dy: number;
-}
-
-/**
- * One piece of the picture: the box holds the crop, the clip path cuts the
- * jigsaw outline out of it.
- *
- * The drop shadow sits on the OUTER span rather than the clipped one — a
- * filter is applied before the clip on the same element, so a shadow declared
- * there would be cut away with everything else outside the outline. From a
- * parent it follows the piece's real silhouette instead.
- */
-function PieceArt({
-  picture,
-  piece,
-  grid,
-  shadow = true,
-  hitArea = false,
-}: {
-  picture: PuzzlePicture;
-  piece: PuzzlePiece;
-  grid: PuzzleGrid;
-  shadow?: boolean;
-  /** Makes the clipped shape itself the only part that answers a pointer.
-      Loose pieces overlap in a heap, and a piece box is a RECTANGLE — without
-      this, a piece's empty corners sit on top of its neighbours and a tap
-      picks up something the child cannot even see. `clip-path` clips
-      hit-testing as well as pixels, so the silhouette becomes the target. */
-  hitArea?: boolean;
-}) {
-  return (
-    <span
-      className="block"
-      style={{
-        ...pieceBoxStyle,
-        filter: shadow
-          ? "drop-shadow(0 6px 8px rgb(var(--shadow-hue) / 40%))"
-          : undefined,
-      }}
-    >
-      {/* `overflow-hidden` as well as the clip path, and it is load-bearing:
-          the image inside is drawn at THREE TIMES the board's size and pushed
-          off-centre, and `clip-path` only hides it — it does not contain the
-          layout. Without this the page's scroll width grew past the viewport,
-          which on a phone widens the layout viewport itself, zooms the whole
-          page out and drags every `position: fixed` overlay off-screen with
-          it. */}
-      <span
-        className={`relative block h-full w-full overflow-hidden ${
-          hitArea ? "pointer-events-auto" : ""
-        }`}
-        style={{ clipPath: `url(#${clipId(piece.id)})` }}
-      >
-        <Image
-          src={picture.image}
-          alt=""
-          sizes="(min-width: 640px) 32rem, 100vw"
-          /* Images are natively draggable: without this the browser's own
-             image drag starts instead, firing `pointercancel` and killing the
-             custom drag on its first move. */
-          draggable={false}
-          className="pointer-events-none select-none"
-          style={pieceCropStyle(piece, grid)}
-        />
-      </span>
-    </span>
-  );
 }
 
 /**
@@ -631,7 +565,7 @@ export function PuzzleBoard({
         /* No stars: the finished picture IS the reward here, and a second
            star currency next to the lessons' own would only muddy both. */
         <div className="anim-pop-in flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          {/* Same shared replay button the numbers lesson uses, keeping the
+          {/* The shared replay button, keeping the
               WHITE clay face rather than this section's green: the "Next"
               beside it is already green, and the pair would stop reading as
               a secondary and a primary. */}
