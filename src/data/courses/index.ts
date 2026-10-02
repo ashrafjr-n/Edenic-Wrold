@@ -1,34 +1,29 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef } from "@/types/course";
-import apple from "../../../public/assets/icons/apple.png";
-import cat from "../../../public/assets/icons/cat.png";
-import cloud from "../../../public/assets/icons/cloud.png";
-import numbers from "../../../public/assets/icons/123.png";
-import rabbit from "../../../public/assets/icons/rabbit.png";
-import star from "../../../public/assets/icons/yellow-star.png";
+import { COURSE_ART } from "@/data/course-art";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 
 /** A course whose lessons are not written yet: `count` "coming soon"
-    lessons, all wearing one placeholder icon until the course's own
-    pictures arrive. Titles live in `dict.lessons[id].items`; what goes in
-    each lesson is `edenic-plan.md` §5–§7. */
-const comingSoon = (count: number, cover: StaticImageData): LessonDef[] =>
-  Array.from({ length: count }, () => ({ cover: [cover], questions: [] }));
+    lessons, each wearing one of the course's clay things in turn
+    (`data/course-art.ts`). Titles live in `dict.lessons[id].items`; what
+    goes in each lesson is `edenic-plan.md` §5–§6. */
+const comingSoon = (count: number, art: readonly StaticImageData[]): LessonDef[] =>
+  Array.from({ length: count }, (_, i) => ({ cover: [art[i % art.length]], questions: [] }));
 
 /** Every course's lessons, by course id. A course's `totalItems` is the
     length of its list here. */
 export const courseLessons: Record<LessonId, LessonDef[]> = {
   shapes: pinkiShapes,
   colors: pinkiColors,
-  family: comingSoon(5, star),
-  fruits: comingSoon(6, apple),
-  seasons: comingSoon(5, cloud),
-  months: comingSoon(5, numbers),
-  animals: comingSoon(6, cat),
-  weather: comingSoon(5, cloud),
-  body: comingSoon(5, rabbit),
+  family: comingSoon(5, COURSE_ART.family),
+  fruits: comingSoon(6, COURSE_ART.fruits),
+  seasons: comingSoon(5, COURSE_ART.seasons),
+  months: comingSoon(5, COURSE_ART.months),
+  animals: comingSoon(6, COURSE_ART.animals),
+  weather: comingSoon(5, COURSE_ART.weather),
+  body: comingSoon(5, COURSE_ART.body),
 };
 
 /** A course's pictures, for its card and banner: every lesson's cover, each
