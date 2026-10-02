@@ -12,8 +12,8 @@ import grandpa from "../../../public/assets/learn/pinki/family/grandpa.png";
 const person = (picture: StaticImageData): LessonDef => ({ cover: [picture], questions: [] });
 
 /** Pinki · My Family: one person a lesson, then a review wearing four of
-    them. Titles live in `dict.lessons.family.items`. The faces are
-    Microsoft Fluent Emoji 3D (MIT), medium skin tone. */
+    them. Titles live in `dict.lessons.family.items`. Each person is a chibi
+    clay figure rendered by `tools/picnic-scene` (`member:<who>`). */
 export const pinkiFamily: LessonDef[] = [
   person(mom),
   person(dad),
