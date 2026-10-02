@@ -20,7 +20,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
 | `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (three each; all three friends are open) |
-| `/learn/[character]/[lesson]` | A course: a banner and its lessons, unlocked one at a time — a box of things for Pinki's Shapes and Colors, a winding clay path for the others; a Continue button to the next one |
+| `/learn/[character]/[lesson]` | A course: a banner and its lessons, unlocked one at a time — a box of things (one cell per lesson) for every course; a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -303,13 +303,13 @@ The courses still to come already wear their own clay art — a family of peg
 dolls, fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
 rendered with the same light and clay as Shapes and Colors.
 
-Pinki's course pages are not a path but a **box of things**: Colors is one
+Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
 filled with its paint (and its word in that color) once learned; Shapes is
 the same box with one thing per shape (greyed until it opens). Coming back
 from a finished lesson, the next cell colours in as its padlock springs off,
-and then the lesson opens by itself. Courses still to be written keep the
-winding clay path.
+and then the lesson opens by itself. Courses still to be written use the
+same box, one plain cell per lesson.
 
 Picks (tap the right tile) show the answer once on the first question. A wrong
 answer only wiggles; after two, the right one glows, so nobody gets stuck.
