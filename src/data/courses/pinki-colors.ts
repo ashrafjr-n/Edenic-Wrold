@@ -22,8 +22,8 @@ const text = (value: string): Face => ({ kind: "text", text: value });
 
 /** Meet a color (its pot and its word), then spell it straight away. */
 const meet = (color: ColorId): Question[] => [
-  { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, picture: COLORS[color].pot },
-  { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color },
+  { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color, picture: COLORS[color].pot },
+  { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color, color },
 ];
 
 /** Read the word, tap its pot, paint the thing — one round per color. */
@@ -121,8 +121,8 @@ export const pinkiColors: LessonDef[] = [
           thing(purpleThings, "eggplant"),
         ],
       },
-      { type: "pick", ask: { key: "whichColor", vars: { color: "brown" } }, word: "brown", options: [potFace("brown"), potFace("orange"), potFace("black"), potFace("pink")], answer: 0 },
-      { type: "pick", ask: { key: "whichColor", vars: { color: "orange" } }, word: "orange", options: [potFace("purple"), potFace("orange"), potFace("red"), potFace("yellow")], answer: 1 },
+      { type: "pick", ask: { key: "whichColor", vars: { color: "brown" } }, word: "brown", plain: true, options: [potFace("brown"), potFace("orange"), potFace("black"), potFace("pink")], answer: 0 },
+      { type: "pick", ask: { key: "whichColor", vars: { color: "orange" } }, word: "orange", plain: true, options: [potFace("purple"), potFace("orange"), potFace("red"), potFace("yellow")], answer: 1 },
       { type: "spell", ask: { key: "spellColor" }, word: "green", picture: COLORS.green.pot },
       { type: "spell", ask: { key: "spellColor" }, word: "pink", picture: COLORS.pink.pot },
     ],

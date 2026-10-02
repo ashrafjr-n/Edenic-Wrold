@@ -79,20 +79,21 @@ export interface Ask {
 export type Question =
   /** Tap the right tile. `show` is what the question is about, drawn above
       the tiles (an equation made of pictures); `word` is a taught word in
-      clay letters above them instead. `answer` indexes `options` before they
+      clay letters above them instead — `plain` writes it in one quiet ink,
+      for a word that must be READ (a color word). `answer` indexes `options` before they
       are shuffled. */
-  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; options: Face[]; answer: number }
+  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number }
   /** Put `target` things in the basket, by tap or drag. */
   | { type: "count"; ask: Ask; item: { src: StaticImageData; word: string }; target: number }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the
-      English word in clay letters. */
-  | { type: "word"; ask: Ask; word: string; shape?: ShapeId; picture?: StaticImageData }
+      English word in clay letters — a color word in its own `color`. */
+  | { type: "word"; ask: Ask; word: string; shape?: ShapeId; picture?: StaticImageData; color?: ColorId }
   /** Build the word from its shuffled letters, by tap or drag. With a
       `picture`, the picture is shown INSTEAD of the word — spell it from
       memory. */
-  | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData }
+  | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData; color?: ColorId }
   /** Find every thing in the scene that is this shape or color. */
   | { type: "find"; ask: Ask; target: Target; scene: Scene }
   /** Put each thing, one at a time, in the box it belongs in. */

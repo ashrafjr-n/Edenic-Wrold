@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
+import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
 import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
@@ -99,7 +100,7 @@ function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undef
     case "paint":
       return { kind: "paint", round: q.rounds[0], pots: q.pots };
     case "pick":
-      return q.word || q.show ? { kind: "pick", word: q.word, show: q.show, options: q.options, answer: q.answer } : undefined;
+      return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
       return undefined;
   }
@@ -350,7 +351,7 @@ export function LessonPlayer({
     body = (
       <LessonDone
         title={lines.lessonDone}
-        words={lesson.questions.flatMap((q) => (q.type === "word" ? [q.word] : []))}
+        words={lesson.questions.flatMap((q) => (q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : []))}
         faces={lessonFaces(lesson)}
         drawing={drawing}
         accent={tone.face}
@@ -400,6 +401,7 @@ export function LessonPlayer({
           key={seed}
           show={q.show}
           word={q.word}
+          plain={q.plain}
           options={q.options}
           answer={q.answer}
           seed={seed}
@@ -430,6 +432,7 @@ export function LessonPlayer({
           word={q.word}
           shape={q.shape}
           picture={q.picture}
+          tone={q.color && COLORS[q.color].letter}
           cue={lessonCue.word(q.word)}
           label={format(lines.hearWord, { word: q.word })}
         />
@@ -441,6 +444,7 @@ export function LessonPlayer({
           key={seed}
           ref={spell}
           word={q.word}
+          tone={q.color && COLORS[q.color].letter}
           picture={q.picture}
           seed={seed}
           letterAria={lines.letterAria}

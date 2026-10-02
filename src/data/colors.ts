@@ -20,23 +20,34 @@ interface ColorDef {
   face: string;
   edge: string;
   text: string;
+  /** Its clay letters — the color word written in the color itself. */
+  letter: { face: string; edge: string };
 }
 
 const INK = "var(--color-ink-fixed)";
 
 /** The ten taught colors. These are content, not theme: red is red in dark
     mode too. Kept close to the paint the pictures were rendered with. */
+const color = (pot: StaticImageData, face: string, edge: string, text = "#fff", letterEdge = edge): ColorDef => ({
+  pot,
+  face,
+  edge,
+  text,
+  letter: { face, edge: letterEdge },
+});
+
 export const COLORS: Record<ColorId, ColorDef> = {
-  red: { pot: red, face: "#ee4645", edge: "#b52a2c", text: "#fff" },
-  blue: { pot: blue, face: "#3f86e8", edge: "#2a5fae", text: "#fff" },
-  yellow: { pot: yellow, face: "#ffd31a", edge: "#c99a00", text: INK },
-  green: { pot: green, face: "#4fbf5a", edge: "#2f8a3a", text: "#fff" },
-  orange: { pot: orange, face: "#ff8c2e", edge: "#c45f10", text: "#fff" },
-  purple: { pot: purple, face: "#9257de", edge: "#6334a8", text: "#fff" },
-  pink: { pot: pink, face: "#ff86c2", edge: "#cc5591", text: "#fff" },
-  brown: { pot: brown, face: "#96592f", edge: "#643814", text: "#fff" },
-  black: { pot: black, face: "#3a3640", edge: "#1b1820", text: "#fff" },
-  white: { pot: white, face: "#ffffff", edge: "#c5cbd8", text: INK },
+  red: color(red, "#ee4645", "#b52a2c"),
+  blue: color(blue, "#3f86e8", "#2a5fae"),
+  yellow: color(yellow, "#ffd31a", "#c99a00", INK),
+  green: color(green, "#4fbf5a", "#2f8a3a"),
+  orange: color(orange, "#ff8c2e", "#c45f10"),
+  purple: color(purple, "#9257de", "#6334a8"),
+  pink: color(pink, "#ff86c2", "#cc5591"),
+  brown: color(brown, "#96592f", "#643814"),
+  black: color(black, "#3a3640", "#1b1820"),
+  /* White letters on a white card are read by their edge — a deeper one. */
+  white: color(white, "#ffffff", "#c5cbd8", INK, "#8f98ab"),
 };
 
 /** A color as something to look at: its paint pot. */

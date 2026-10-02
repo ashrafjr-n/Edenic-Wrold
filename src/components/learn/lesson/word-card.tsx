@@ -1,7 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import type { ShapeId } from "@/types/course";
 import { CueButton } from "./cue-button";
-import { ClayWord } from "./clay-word";
+import { ClayWord, type LetterTone } from "./clay-word";
 import { FaceView } from "./face";
 
 interface WordCardProps {
@@ -10,6 +10,8 @@ interface WordCardProps {
   shape?: ShapeId;
   /** Or a picture of what it names — a color's paint pot. */
   picture?: StaticImageData;
+  /** One tone for all its letters — a color word in its own color. */
+  tone?: LetterTone;
   /** The word's own clip — `lessonCue.word`. */
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
@@ -22,7 +24,7 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, cue, label }: WordCardProps) {
+export function WordCard({ word, shape, picture, tone, cue, label }: WordCardProps) {
   return (
     /* Desktop: side by side — the shape big on the left, the speaker above
        the word on the right. The two wrappers are `contents` below `lg`, so
@@ -44,7 +46,7 @@ export function WordCard({ word, shape, picture, cue, label }: WordCardProps) {
         </span>
       )}
       <span className="contents lg:col-start-2 lg:row-start-2 lg:flex lg:justify-center lg:self-start">
-        <ClayWord word={word} />
+        <ClayWord word={word} tone={tone} />
       </span>
     </div>
   );

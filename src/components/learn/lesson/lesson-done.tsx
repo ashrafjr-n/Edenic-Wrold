@@ -5,14 +5,14 @@ import { Celebration } from "@/components/ui/celebration";
 import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { FaceView } from "./face";
-import { ClayWord } from "./clay-word";
+import { ClayWord, type LetterTone } from "./clay-word";
 import celebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 
 interface LessonDoneProps {
   /** "Lesson complete!" */
   title: string;
   /** The taught words ("circle"; "red", "blue"), none for a review. */
-  words: string[];
+  words: { word: string; tone?: LetterTone }[];
   /** What the lesson was about — a shape, two colors' pots, or a review's
       four. */
   faces: Face[];
@@ -108,8 +108,8 @@ export function LessonDone({ title, words, faces, drawing, accent, unlocked, dir
         </div>
         {words.length > 0 && (
           <div className={`flex flex-wrap items-center justify-center ${words.length > 1 ? "gap-x-5 gap-y-1 [&>span]:text-4xl sm:[&>span]:text-5xl" : ""}`}>
-            {words.map((word) => (
-              <ClayWord key={word} word={word} size="sm" />
+            {words.map(({ word, tone }) => (
+              <ClayWord key={word} word={word} size="sm" tone={tone} />
             ))}
           </div>
         )}

@@ -6,7 +6,7 @@ import Image, { type StaticImageData } from "next/image";
 import { shuffle } from "@/lib/seeded";
 import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
-import { ClayWord, letterTones } from "./clay-word";
+import { ClayWord, letterTones, type LetterTone } from "./clay-word";
 
 /** Below this the finger never really moved — a tap, not a drag. */
 const DRAG_THRESHOLD = 8;
@@ -27,6 +27,8 @@ export interface SpellWordHandle {
 
 interface SpellWordProps {
   word: string;
+  /** One tone for the word's letters on top — a color word in its color. */
+  tone?: LetterTone;
   /** Shown INSTEAD of the word: spell it from the picture alone. */
   picture?: StaticImageData;
   /** Deals the letters — the same seed gives the same order on the server. */
@@ -86,7 +88,7 @@ export function deal(word: string, seed: string): string[] {
  * one with the Web Animations API on `translate`, so tiles in the tray and
  * tiles in a space are just rendered where they are.
  */
-export function SpellWord({ word, picture, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
+export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
   const [dealt] = useState(() => deal(word, seed));
   const [slots, setSlots] = useState<Slots>(() => Array(word.length).fill(null));
   const [drag, setDrag] = useState<Drag | null>(null);
@@ -370,7 +372,7 @@ export function SpellWord({ word, picture, seed, letterAria, hint, onSolved, onM
           <Image src={picture} alt="" fill preload sizes="(min-width: 1024px) 9rem, 7rem" className="object-contain" />
         </span>
       ) : (
-        <ClayWord word={word} size="md" />
+        <ClayWord word={word} size="md" tone={tone} />
       )}
 
       <div className="card card-clay-white card-bare-lg relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6 lg:px-5 lg:py-5">

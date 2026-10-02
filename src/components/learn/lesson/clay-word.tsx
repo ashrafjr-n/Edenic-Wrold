@@ -11,7 +11,11 @@ const LETTER_TONES = [
   { face: "var(--color-bloo)", edge: "var(--color-bloo-dark)" },
 ] as const;
 
-export type LetterTone = (typeof LETTER_TONES)[number];
+export type LetterTone = { face: string; edge: string };
+
+/** One quiet ink for every letter — a word to READ, where colourful letters
+    would give the answer away (a color word in the Colors course). */
+export const PLAIN_TONE: LetterTone = { face: "var(--color-ink)", edge: "color-mix(in srgb, var(--color-ink) 55%, #000)" };
 
 /** One tone per letter of `word`. The SAME letter always gets the same tone
     ("circle"'s two c's match), so a letter tile's colour never argues with
@@ -33,6 +37,9 @@ interface ClayWordProps {
       word inside a how-to demo, which never grows with the screen (the
       demo's box is the same size everywhere). */
   size?: "lg" | "md" | "sm" | "demo";
+  /** One tone for every letter instead of one per letter: a color word in
+      its own color, or `PLAIN_TONE`. */
+  tone?: LetterTone;
 }
 
 /**
@@ -40,8 +47,8 @@ interface ClayWordProps {
  * another. The look lives in `.clay-letter` (globals.css). Always `ltr` — the
  * taught word is English in every locale.
  */
-export function ClayWord({ word, size = "lg" }: ClayWordProps) {
-  const tones = letterTones(word);
+export function ClayWord({ word, size = "lg", tone }: ClayWordProps) {
+  const tones = tone ? [...word].map(() => tone) : letterTones(word);
   const long = word.length > 6;
   const type =
     size === "demo"
