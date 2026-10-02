@@ -9,7 +9,7 @@ import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import type { LessonDef, Question, ShapeId } from "@/types/course";
+import type { Face, LessonDef, Question } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
@@ -25,6 +25,7 @@ import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
+import { PaintColors } from "./paint-colors";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -63,58 +64,64 @@ function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: stri
     case "spell":
       return { kind: "build" };
     case "find":
-      return { kind: "find", target: `${q.shape}s` };
+      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : q.target.color };
     case "sort":
       return { kind: "sort" };
+    case "paint":
+      return { kind: "paint" };
     case "count":
       return { kind: "count", target: q.item.word };
     case "pick": {
-      const shape = q.ask.vars?.shape;
-      return { kind: "pick", target: shape === undefined ? undefined : String(shape) };
+      const named = q.ask.vars?.shape ?? q.ask.vars?.color;
+      return { kind: "pick", target: named === undefined ? undefined : String(named) };
     }
   }
 }
 
-/** How a step is played, for the task button's popup — only the steps a
-    shape lesson is made of have one. The spelling demo deals with the
-    board's own seed, so it shows the very letters the child sees. */
+/** How a step is played, for the task button's popup. The spelling demo
+    deals with the board's own seed, so it shows the very letters the child
+    sees. A Pick of pictures with nothing above it (no word, no sum) has none. */
 function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undefined {
   switch (q.type) {
     case "word":
-      return { kind: "listen", shape: q.shape };
+      return {
+        kind: "listen",
+        face: q.picture ? { kind: "picture", src: q.picture, word: q.word } : q.shape ? { kind: "shape", shape: q.shape } : undefined,
+      };
     case "trace":
       return { kind: "draw", shape: q.shape, accent };
     case "spell":
       return { kind: "build", word: q.word, seed };
     case "find":
-      return { kind: "find", scene: q.scene, shape: q.shape };
+      return { kind: "find", scene: q.scene, target: q.target };
     case "sort":
-      return { kind: "sort", item: q.items[0] };
-    case "pick": {
-      const answer = q.options[q.answer];
-      const shapes = q.options.flatMap((face) => (face.kind === "shape" ? [face.shape] : []));
-      return q.word && answer.kind === "shape" && shapes.length === q.options.length
-        ? { kind: "pick", word: q.word, options: shapes, answer: answer.shape }
-        : undefined;
-    }
+      return { kind: "sort", item: q.items[0], bins: q.bins };
+    case "paint":
+      return { kind: "paint", round: q.rounds[0], pots: q.pots };
+    case "pick":
+      return q.word || q.show ? { kind: "pick", word: q.word, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
       return undefined;
   }
 }
 
-/** The shapes a lesson is about, for the done screen: what it traces and
-    finds, and the right answers of its picks. */
-function lessonShapes(lesson: LessonDef): ShapeId[] {
-  const shapes = lesson.questions.flatMap((q): ShapeId[] => {
-    if (q.type === "trace" || q.type === "find") return [q.shape];
-    if (q.type === "sort") return q.items.flatMap((item) => (item.shape ? [item.shape] : []));
+/** What a lesson was about, for the done screen: the shapes it traces,
+    finds and sorts, and the pictures it names (a color's pot) — on the word
+    card, in a pick's answer, or to spell from. Each once. */
+function lessonFaces(lesson: LessonDef): Face[] {
+  const faces = lesson.questions.flatMap((q): Face[] => {
+    if (q.type === "trace") return [{ kind: "shape", shape: q.shape }];
+    if (q.type === "find" && "shape" in q.target) return [{ kind: "shape", shape: q.target.shape }];
+    if (q.type === "sort") return q.items.flatMap((item): Face[] => (item.shape ? [{ kind: "shape", shape: item.shape }] : []));
     if (q.type === "pick") {
       const answer = q.options[q.answer];
-      return answer.kind === "shape" ? [answer.shape] : [];
+      return answer.kind === "text" ? [] : [answer];
     }
+    if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
     return [];
   });
-  return [...new Set(shapes)];
+  const key = (face: Face) => (face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text);
+  return faces.filter((face, i) => faces.findIndex((other) => key(other) === key(face)) === i);
 }
 
 interface LessonPlayerProps {
@@ -343,8 +350,8 @@ export function LessonPlayer({
     body = (
       <LessonDone
         title={lines.lessonDone}
-        word={lesson.questions.find((q) => q.type === "word")?.word}
-        shapes={lessonShapes(lesson)}
+        words={lesson.questions.flatMap((q) => (q.type === "word" ? [q.word] : []))}
+        faces={lessonFaces(lesson)}
         drawing={drawing}
         accent={tone.face}
         unlocked={nextTitle ? format(lines.unlocked, { title: nextTitle }) : undefined}
@@ -422,6 +429,7 @@ export function LessonPlayer({
         <WordCard
           word={q.word}
           shape={q.shape}
+          picture={q.picture}
           cue={lessonCue.word(q.word)}
           label={format(lines.hearWord, { word: q.word })}
         />
@@ -433,6 +441,7 @@ export function LessonPlayer({
           key={seed}
           ref={spell}
           word={q.word}
+          picture={q.picture}
           seed={seed}
           letterAria={lines.letterAria}
           hint
@@ -478,14 +487,16 @@ export function LessonPlayer({
       }
     } else if (q.type === "sort") {
       body = (
-        <SortShapes key={seed} items={q.items} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
+        <SortShapes key={seed} items={q.items} bins={q.bins} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
       );
+    } else if (q.type === "paint") {
+      body = <PaintColors key={seed} rounds={q.rounds} pots={q.pots} potAria={lines.potAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
       body = (
         <FindShapes
           key={seed}
           scene={q.scene}
-          shape={q.shape}
+          target={q.target}
           itemAria={lines.findItemAria}
           onSolved={onSolved}
           onMiss={onMiss}

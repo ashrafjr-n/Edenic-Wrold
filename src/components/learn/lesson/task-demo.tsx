@@ -1,27 +1,30 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Check, Pointer, Volume2 } from "lucide-react";
+import { COLORS } from "@/data/colors";
 import { SHAPES } from "@/data/shapes";
+import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { Scene, SceneItem, ShapeId } from "@/types/course";
+import type { ColorId, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones } from "./clay-word";
 import { deal } from "./spell-word";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
-import { BINS } from "./sort-shapes";
+import { binFor } from "./sort-shapes";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
     (`.demo-*` in `globals.css`, 3.6s), so it is always mid-show when the
     popup opens and a child who looks away has missed nothing. */
 export type TaskDemoDef =
-  | { kind: "listen"; shape?: ShapeId }
+  | { kind: "listen"; face?: Face }
   | { kind: "draw"; shape: ShapeId; accent: string }
   | { kind: "build"; word: string; seed: string }
-  | { kind: "find"; scene: Scene; shape: ShapeId }
-  | { kind: "pick"; word: string; options: ShapeId[]; answer: ShapeId }
-  | { kind: "sort"; item: SceneItem };
+  | { kind: "find"; scene: Scene; target: Target }
+  | { kind: "pick"; word?: string; show?: Face[]; options: Face[]; answer: number }
+  | { kind: "sort"; item: SceneItem; bins: SortBin[] }
+  | { kind: "paint"; round: PaintRound; pots: ColorId[] };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -36,12 +39,12 @@ function Finger() {
 }
 
 /** Listen: the finger taps the big speaker and the sound rings out. */
-function ListenDemo({ shape }: { shape?: ShapeId }) {
+function ListenDemo({ face }: { face?: Face }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      {shape && (
+      {face && (
         <span className="flex h-24 w-24 items-center justify-center">
-          <FaceView face={{ kind: "shape", shape }} size="tile" />
+          <FaceView face={face} size="tile" />
         </span>
       )}
       <span className="relative">
@@ -127,8 +130,8 @@ function BuildDemo({ word, seed }: { word: string; seed: string }) {
 }
 
 /** Find: the finger taps ONE of the things and the ring draws round it. */
-function FindDemo({ scene, shape }: { scene: Scene; shape: ShapeId }) {
-  const target = scene.items.find((item) => item.shape === shape);
+function FindDemo({ scene, target: looking }: { scene: Scene; target: Target }) {
+  const target = scene.items.find((item) => isTarget(item, looking));
   return (
     <div className="relative mx-auto aspect-[4/5] h-full overflow-hidden rounded-[1.35rem]">
       <Image src={scene.background} alt="" fill sizes="18rem" className="object-cover" />
@@ -158,20 +161,27 @@ function FindDemo({ scene, shape }: { scene: Scene; shape: ShapeId }) {
   );
 }
 
-/** Pick: under the word, the finger taps the shape it names and a tick
-    pops on it. */
-function PickDemo({ word, options, answer }: { word: string; options: ShapeId[]; answer: ShapeId }) {
+/** Pick: under the word (or the sum), the finger taps the answer and a
+    tick pops on it. */
+function PickDemo({ word, show, options, answer }: { word?: string; show?: Face[]; options: Face[]; answer: number }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <ClayWord word={word} size="demo" />
-      <div className="grid w-[62%] grid-cols-2 gap-3">
-        {options.map((shape) => (
+      {word && <ClayWord word={word} size="demo" />}
+      {show && (
+        <div className="flex items-center justify-center gap-1.5">
+          {show.map((face, i) => (
+            <FaceView key={i} face={face} size="inline" />
+          ))}
+        </div>
+      )}
+      <div className={`grid gap-3 ${options.length === 4 ? "w-[62%] grid-cols-2" : "w-[86%] grid-cols-3"}`}>
+        {options.map((face, i) => (
           <span
-            key={shape}
-            className={`card card-clay-white relative flex aspect-square items-center justify-center ${shape === answer ? "demo-press" : ""}`}
+            key={i}
+            className={`card card-clay-white relative flex aspect-square items-center justify-center ${i === answer ? "demo-press" : ""}`}
           >
-            <FaceView face={{ kind: "shape", shape }} size="tile" />
-            {shape === answer && (
+            <FaceView face={face} size="tile" />
+            {i === answer && (
               <>
                 <span
                   className="demo-tick clay absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full text-white"
@@ -194,8 +204,8 @@ function PickDemo({ word, options, answer }: { word: string; options: ShapeId[];
 /** Sort: the finger taps the right box and the thing flies into it. Laid
     out in % of the square stage so the flight can be worked out: the thing
     is 30% wide, centred at (50, 17); box i sits in a 2x2 grid below. */
-function SortDemo({ item }: { item: SceneItem }) {
-  const i = BINS.findIndex((bin) => bin.shape === item.shape);
+function SortDemo({ item, bins }: { item: SceneItem; bins: SortBin[] }) {
+  const i = bins.indexOf(binFor(bins, item) ?? bins[0]);
   const centre = { x: i % 2 === 0 ? 26 : 74, y: i < 2 ? 53.5 : 83.5 };
   const fly = {
     "--fly-x": `${((centre.x - 50) / 30) * 100}%`,
@@ -209,9 +219,9 @@ function SortDemo({ item }: { item: SceneItem }) {
           <Image src={item.src} alt="" fill sizes="6rem" className="object-contain" />
         </span>
       </span>
-      {BINS.map(({ shape, face, edge, text }, b) => (
+      {bins.map(({ word, face: picture, tone: { face, edge, text } }, b) => (
         <span
-          key={shape}
+          key={word}
           className={`clay absolute flex h-[27%] w-[44%] flex-col items-center justify-center gap-1 rounded-[1.2rem] ${b === i ? "demo-press" : ""}`}
           style={
             {
@@ -224,10 +234,10 @@ function SortDemo({ item }: { item: SceneItem }) {
           }
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
-            <FaceView face={{ kind: "shape", shape }} size="tile" />
+            <FaceView face={picture} size="tile" />
           </span>
           <span dir="ltr" className="text-sm font-bold">
-            {shape}
+            {word}
           </span>
           {b === i && (
             <span className="absolute left-1/2 top-1/2">
@@ -240,20 +250,53 @@ function SortDemo({ item }: { item: SceneItem }) {
   );
 }
 
+/** Paint: under the word, the finger taps its pot and the paint spreads
+    over the grey thing. */
+function PaintDemo({ round, pots }: { round: PaintRound; pots: ColorId[] }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <ClayWord word={round.color} size="demo" />
+      <span className="relative block h-[38%] w-[38%]">
+        <Image src={round.blank} alt="" fill sizes="8rem" className="object-contain" />
+        <Image src={round.painted} alt="" fill sizes="8rem" className="demo-paint object-contain" />
+      </span>
+      <div className="flex gap-2">
+        {pots.map((color) => (
+          <span
+            key={color}
+            className={`card card-clay-white relative flex h-14 w-14 items-center justify-center p-1.5 ${color === round.color ? "demo-press" : ""}`}
+          >
+            <span className="relative block h-full w-full">
+              <Image src={COLORS[color].pot} alt="" fill sizes="3.5rem" className="object-contain" />
+            </span>
+            {color === round.color && (
+              <span className="absolute left-1/2 top-1/2">
+                <Finger />
+              </span>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
     case "listen":
-      return <ListenDemo shape={demo.shape} />;
+      return <ListenDemo face={demo.face} />;
     case "draw":
       return <DrawDemo shape={demo.shape} accent={demo.accent} />;
     case "build":
       return <BuildDemo word={demo.word} seed={demo.seed} />;
     case "find":
-      return <FindDemo scene={demo.scene} shape={demo.shape} />;
+      return <FindDemo scene={demo.scene} target={demo.target} />;
     case "pick":
-      return <PickDemo word={demo.word} options={demo.options} answer={demo.answer} />;
+      return <PickDemo word={demo.word} show={demo.show} options={demo.options} answer={demo.answer} />;
     case "sort":
-      return <SortDemo item={demo.item} />;
+      return <SortDemo item={demo.item} bins={demo.bins} />;
+    case "paint":
+      return <PaintDemo round={demo.round} pots={demo.pots} />;
   }
 }
