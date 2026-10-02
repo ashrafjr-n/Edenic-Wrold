@@ -11,6 +11,8 @@
 export const lessonCue = {
   /** A taught English word on its own — the same clip in every locale. */
   word: (word: string) => `words/${word}`,
+  /** A taught English sentence ("I like apples.") — named by its words. */
+  sentence: (text: string) => `sentences/${text.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")}`,
 };
 
 /** How long the "speaking" state lasts without a clip. Once audio lands this

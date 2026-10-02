@@ -6,13 +6,12 @@ export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
 
-/** A set things belong to, for Nova's courses: fruit or vegetable, or the
-    season a thing goes with. */
-export type Group = "fruit" | "vegetable" | "spring" | "summer" | "fall" | "winter";
+/** A set things belong to: the season a thing goes with (Nova's Seasons). */
+export type Group = "spring" | "summer" | "fall" | "winter";
 
-/** What a Find looks for, or what a Sort box takes: a shape, a color, one
-    kind of thing (every apple — matched on its English `word`), or a group. */
-export type Target = { shape: ShapeId } | { color: ColorId } | { word: string } | { group: Group };
+/** What a Find looks for, or what a Sort box takes: a shape, a color, or a
+    group. */
+export type Target = { shape: ShapeId } | { color: ColorId } | { group: Group };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
@@ -111,7 +110,27 @@ export type Question =
   | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] }
   /** Tap the things in their order — each lands in the next space of the
       line. `items` are in the right order. */
-  | { type: "order"; ask: Ask; items: Face[] };
+  | { type: "order"; ask: Ask; items: Face[] }
+  /** What's in the bag? Tap Nova's bag and the thing peeks out as a
+      shadow; pick which of two it is and it jumps out — its picture, its
+      word, its speaker. `decoy` is the other choice. */
+  | { type: "reveal"; ask: Ask; word: string; picture: StaticImageData; decoy: Face }
+  /** Cut it open: drag the knife across the thing (or tap the knife) and
+      it falls open on the board — `inside` is the cut picture. */
+  | { type: "cut"; ask: Ask; word: string; picture: StaticImageData; inside: StaticImageData }
+  /** Collect what is on a list: the English words on a note, the things on
+      a stall (`stall` — every thing on offer, each with its `word`). Tap one
+      on the list and it goes into the container; with `ordered` it has to
+      be the next one on the list (a recipe). */
+  | { type: "shop"; ask: Ask; list: string[]; stall: Face[]; into: Container; ordered?: boolean }
+  /** Do you like it? One thing at a time, thumbs up or down, onto the "I
+      like" or the "I don't like" plate — no wrong answer: the sentences
+      ("I like apples.") are the lesson. `things` is each one's plural. */
+  | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] };
+
+/** What a Shop fills: a basket at the market, a bowl for a salad, a pot
+    for a soup. */
+export type Container = "basket" | "bowl" | "pot";
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
