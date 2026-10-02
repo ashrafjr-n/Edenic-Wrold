@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent } from "react";
 import Image from "next/image";
 import { Celebration } from "@/components/ui/celebration";
@@ -72,6 +72,15 @@ export function PopBalloons({ color, others, seed, balloonAria, onSolved, onMiss
   const sky = useRef<HTMLDivElement>(null);
 
   const solved = popped.length >= TO_POP;
+
+  /* Reported once the last one is in — taps can land faster than renders,
+     so the count is only trusted after the state has settled. */
+  const reported = useRef(false);
+  useEffect(() => {
+    if (!solved || reported.current) return;
+    reported.current = true;
+    onSolved();
+  }, [solved, onSolved]);
   const hinted = !solved && misses >= HINT_AFTER ? balloons.find((b) => b.color === color && !popped.includes(b.id))?.id : undefined;
 
   const tap = (balloon: (typeof balloons)[number], event: MouseEvent<HTMLButtonElement>) => {
@@ -87,7 +96,7 @@ export function PopBalloons({ color, others, seed, balloonAria, onSolved, onMiss
     const box = sky.current?.getBoundingClientRect();
     const hit = event.currentTarget.getBoundingClientRect();
     if (box) {
-      setBursts((all) => [
+      setBursts((all) => all.some((b) => b.id === balloon.id) ? all : [
         ...all,
         {
           id: balloon.id,
@@ -97,9 +106,7 @@ export function PopBalloons({ color, others, seed, balloonAria, onSolved, onMiss
         },
       ]);
     }
-    const next = [...popped, balloon.id];
-    setPopped(next);
-    if (next.length === TO_POP) onSolved();
+    setPopped((all) => (all.includes(balloon.id) || all.length >= TO_POP ? all : [...all, balloon.id]));
   };
 
   return (
