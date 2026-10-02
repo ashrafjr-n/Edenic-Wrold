@@ -192,7 +192,7 @@ sort boxes, done screen, the course page).
 ### The other seven (lesson titles provisional until each is built)
 | Friend | Course | Lessons |
 | --- | --- | --- |
-| Pinki | My Family | Mom & Dad · Brother & Sister · Grandma & Grandpa · Baby & Me · Family review |
+| Pinki | My Family | Mom · Dad · Sister · Brother · Baby · Grandma · Grandpa · Family review (one person per lesson, 2026-10-02) |
 | Nova | Fruits & Vegetables | Apple & Banana · Grape & Orange · Carrot & Tomato · Potato & Corn · Fruit or vegetable? · Market review |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review |

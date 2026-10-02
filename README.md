@@ -299,8 +299,10 @@ color. Every lesson ends by finding the things of its color in a picnic, and
 the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
 
-The courses still to come already wear their own clay art — a family of peg
-dolls, fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
+My Family is one person per lesson — Mom, Dad, Sister, Brother, Baby,
+Grandma, Grandpa — then a family review; each person is a 3D face from
+Microsoft's Fluent Emoji (MIT license), in their own card. The other courses
+still to come already wear their own clay art — fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
 rendered with the same light and clay as Shapes and Colors.
 
 Every course page is a **box of things**, not a path: Colors is one
