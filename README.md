@@ -272,10 +272,9 @@ confetti, then the shape beside the child's own drawing of it and the word
 (on a desktop side by side: Pinki big on the left, the rest on the right,
 with no card around them); its two buttons sit a little higher than on the
 steps. Its
-**Next shape** button (Next lesson when the next one is not a shape) goes back
-to the course path first: the finished stop takes its tick, the track draws on
-to the next stop, its padlock springs off, and then
-the next lesson opens by itself.
+**Next shape** button (Next lesson when the next one is not a shape) goes
+straight on to the next lesson; after the last one, Finish goes back to the
+course page.
 
 The **Shape review** brings the four shapes together. First a sorting game:
 eight things from the picnics (a donut, a present, a slice of pizza, a
@@ -326,9 +325,9 @@ and clay.
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
 filled with its paint (and its word in that color) once learned; Shapes is
-the same box with one thing per shape (greyed until it opens). Coming back
-from a finished lesson, the next cell colours in as its padlock springs off,
-and then the lesson opens by itself. Courses still to be written use the
+the same box with one thing per shape (greyed until it opens). Coming back to
+the course page after lessons have opened, the next cell colours in as its
+padlock springs off. Courses still to be written use the
 same box, one plain cell per lesson.
 
 Picks (tap the right tile) show the answer once on the first question. A wrong
