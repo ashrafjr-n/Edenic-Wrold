@@ -63,7 +63,7 @@ export function LessonBox({ titles, stops, characterId, lessonId, basePath, tone
   /* The one-word lessons fill even rows (ten colors: two rows of five;
      four shapes: one row on a tablet, two of two on the board, where one
      row would stand them tall and thin); the review takes a row of its own. */
-  const singles = stops.filter((stop) => stop.word).length;
+  const singles = stops.filter((stop) => !stop.review).length;
   const cols = size === "phone" ? 2 : singles > 5 || wide ? Math.ceil(singles / 2) : singles;
   const rows = Math.ceil(singles / cols);
   const gridStyle: CSSProperties = {
@@ -83,7 +83,7 @@ export function LessonBox({ titles, stops, characterId, lessonId, basePath, tone
         /* On a return visit the lock waits for the page to settle; on the
            walk it springs as soon as the box has played its tick. */
         const springDelay = advancing ? 0.05 : 0.9;
-        const review = stop.word === undefined;
+        const review = stop.review === true;
 
         const art = (
           <span className={`flex items-center justify-center ${review ? "gap-[4%]" : ""} ${wide ? "min-h-0 w-full flex-1" : "w-full"}`}>
@@ -114,7 +114,9 @@ export function LessonBox({ titles, stops, characterId, lessonId, basePath, tone
           </span>
         );
 
-        const label = review ? (
+        /* A review, or a lesson not written yet (no word to keep secret),
+           is labelled by its title. */
+        const label = review || (!locked && stop.word === undefined) ? (
           <span className={`font-bold leading-tight ${locked ? "text-[var(--color-ink-soft)]" : "text-[var(--color-ink)]"} ${wide ? "text-lg" : "text-base"}`}>
             {title}
           </span>

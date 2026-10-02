@@ -42,19 +42,22 @@ export function courseCovers(id: LessonId): StaticImageData[] {
 export interface BoxStop {
   pictures: readonly StaticImageData[];
   blank?: StaticImageData;
+  /** A review — several covers, no word of its own — takes a full row. */
+  review?: boolean;
   word?: string;
   ring?: string;
   letter?: { face: string; edge: string };
 }
 
 /** A course's lessons as box cells, read off each lesson's own "meet the
-    word" step — the review (no such step) wears its covers. A color still
-    to learn is an empty pot. */
+    word" step — the review (no such step) wears its covers across a row;
+    a lesson not written yet (no such step, one cover) is a plain cell. A
+    color still to learn is an empty pot. */
 export function courseStops(id: LessonId): BoxStop[] {
   const blank = id === "colors" ? EMPTY_POT : undefined;
   return courseLessons[id].map(({ cover, questions }) => {
     const meet = questions.find((q) => q.type === "word");
-    if (meet?.type !== "word") return { pictures: cover, blank };
+    if (meet?.type !== "word") return { pictures: cover, blank, review: cover.length > 1 };
     const { word, color, shape } = meet;
     return {
       pictures: cover,
