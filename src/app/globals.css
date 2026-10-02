@@ -3033,6 +3033,94 @@ button:disabled,
   }
 }
 
+/* Pop the balloons (Colors): each balloon rises up the sky on its own clock
+   (`animation-duration`/`-delay` set inline), from just under the bottom to
+   just over the top. The sky is a size container, so `cqh` is ITS height.
+   The centring `-50%` lives inside the keyframes: an animation owning
+   `translate` would drop a `-translate-x-1/2` utility. */
+.balloon-rise {
+  translate: -50% 0;
+  animation: balloon-rise 10s linear infinite;
+}
+
+@keyframes balloon-rise {
+  from {
+    translate: -50% 100cqh;
+  }
+  to {
+    translate: -50% -100%;
+  }
+}
+
+.balloon-sway {
+  transform-origin: 50% 85%;
+  animation: balloon-sway 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes balloon-sway {
+  from {
+    rotate: -5deg;
+  }
+  to {
+    rotate: 5deg;
+  }
+}
+
+/* A popped balloon: a ring going out, and its pieces flying off. */
+.pop-ring {
+  animation: pop-ring 0.5s ease-out forwards;
+}
+
+@keyframes pop-ring {
+  from {
+    scale: 0.3;
+    opacity: 1;
+  }
+  to {
+    scale: 1.6;
+    opacity: 0;
+  }
+}
+
+.pop-shard {
+  translate: -50% -50%;
+  animation: pop-shard 0.6s ease-out forwards;
+}
+
+@keyframes pop-shard {
+  from {
+    translate: -50% -50%;
+    opacity: 1;
+  }
+  to {
+    translate: calc(-50% + var(--shard-x) * 4) calc(-50% + var(--shard-y) * 4);
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+
+/* The task button's Pop demo: the tapped balloon bursts on the beat. */
+.demo-pop {
+  animation: demo-pop 3.6s ease-out infinite;
+}
+
+@keyframes demo-pop {
+  0%,
+  36% {
+    scale: 1;
+    opacity: 1;
+  }
+  46%,
+  88% {
+    scale: 1.5;
+    opacity: 0;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
 /* …and in the task button's demo, on the demos' beat: it spreads just
    after the finger taps the pot. */
 .demo-paint {
@@ -3425,8 +3513,21 @@ button:disabled,
   .demo-ring,
   .demo-tick,
   .demo-paint,
-  .paint-reveal {
+  .paint-reveal,
+  .balloon-sway,
+  .demo-pop {
     animation: none;
+  }
+
+  /* Balloons hang still, spread down the sky; a pop just removes one. */
+  .balloon-rise {
+    animation: none;
+    translate: -50% var(--rest);
+  }
+
+  .pop-ring,
+  .pop-shard {
+    display: none;
   }
 
   .demo-pen {
