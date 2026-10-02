@@ -162,7 +162,7 @@ export const en = {
     dropItem: "Drop {article} {itemLabel} here",
     pickItemAria: "Pick {article} {itemLabel}",
     reelAbout: "A short video: {title}",
-    comingSoon: "Pinki is still getting this lesson ready!",
+    comingSoon: "{name} is still getting this lesson ready!",
     next: "Next",
     yourTurn: "Your turn!",
     playAgain: "Play again",
@@ -180,6 +180,7 @@ export const en = {
     letterAria: "Letter {letter}",
     playReel: "Play the video",
     findItemAria: "Tap the {word}",
+    potAria: "{color} paint",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -192,6 +193,13 @@ export const en = {
     spell: "Build the word {word}!",
     findAll: "Find all the {shape}s!",
     sortAll: "Put each thing in its shape's box!",
+    thisColor: "This is {color}!",
+    paint: "Read the word, then paint!",
+    findColor: "Find all the {color} things!",
+    mix: "What do {a} and {b} make?",
+    whichColor: "Which one is {color}?",
+    spellColor: "Build the word for this color!",
+    sortColors: "Put each thing in its color's box!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -203,6 +211,7 @@ export const en = {
     pick: "Pick",
     count: "Count",
     sort: "Sort",
+    paint: "Paint",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

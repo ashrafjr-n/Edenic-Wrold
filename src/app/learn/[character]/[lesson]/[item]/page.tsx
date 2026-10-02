@@ -101,7 +101,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
             {title}
           </h1>
           <p dir={dir} className="text-base text-[var(--color-ink)]/60">
-            {dict.lessonPlayer.comingSoon}
+            {format(dict.lessonPlayer.comingSoon, { name: character.name })}
           </p>
         </div>
       </div>

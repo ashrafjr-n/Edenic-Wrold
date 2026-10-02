@@ -161,7 +161,7 @@ export const ku: Dictionary = {
     dropItem: "{itemLabel} ل ڤێرێ دانە",
     pickItemAria: "{itemLabel} هەلبژێرە",
     reelAbout: "ڤیدیۆیەکا کورت: {title}",
-    comingSoon: "Pinki هێشتا ڤێ وانێ ئامادە دکەت!",
+    comingSoon: "{name} هێشتا ڤێ وانێ ئامادە دکەت!",
     next: "یا دی",
     yourTurn: "نۆبەتا تەیە!",
     playAgain: "دووبارە یاری بکە",
@@ -179,6 +179,7 @@ export const ku: Dictionary = {
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",
     findItemAria: "دەست بدە {word}",
+    potAria: "ڕەنگێ {color}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -190,6 +191,13 @@ export const ku: Dictionary = {
     spell: "پەیڤا {word} چێ بکە!",
     findAll: "هەمی {shape} بدۆزە!",
     sortAll: "هەر تشتەکی بکە د سندوقا شێوێ وی دا!",
+    thisColor: "ئەڤە ڕەنگێ {color}ە!",
+    paint: "پەیڤێ بخوینە، پاشان ڕەنگ بکە!",
+    findColor: "هەمی تشتێن {color} بدۆزە!",
+    mix: "{a} و {b} پێکڤە چ چێدکەن؟",
+    whichColor: "{color} کیژە؟",
+    spellColor: "پەیڤا ڤی ڕەنگی چێ بکە!",
+    sortColors: "هەر تشتەکی بکە د سندوقا ڕەنگێ وی دا!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -200,6 +208,7 @@ export const ku: Dictionary = {
     pick: "هەلبژێرە",
     count: "بژمێرە",
     sort: "ڕێک بێخە",
+    paint: "ڕەنگ بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

@@ -157,7 +157,7 @@ export const ar: Dictionary = {
     dropItem: "ضع {itemLabel} هنا",
     pickItemAria: "التقط {itemLabel}",
     reelAbout: "فيديو قصير: {title}",
-    comingSoon: "Pinki لا تزال تجهّز هذا الدرس!",
+    comingSoon: "هذا الدرس قيد التحضير عند {name}!",
     next: "التالي",
     yourTurn: "دورك!",
     playAgain: "العب مرة أخرى",
@@ -175,6 +175,7 @@ export const ar: Dictionary = {
     letterAria: "الحرف {letter}",
     playReel: "شغّل الفيديو",
     findItemAria: "المس {word}",
+    potAria: "طلاء {color}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -186,6 +187,13 @@ export const ar: Dictionary = {
     spell: "كوّن كلمة {word}!",
     findAll: "ابحث عن كل شكل {shape}!",
     sortAll: "ضع كل شيء في صندوق شكله!",
+    thisColor: "هذا اللون {color}!",
+    paint: "اقرأ الكلمة ثم لوّن!",
+    findColor: "ابحث عن كل الأشياء ذات اللون {color}!",
+    mix: "ماذا يصنع {a} و{b} معًا؟",
+    whichColor: "أين اللون {color}؟",
+    spellColor: "كوّن كلمة هذا اللون!",
+    sortColors: "ضع كل شيء في صندوق لونه!",
   },
   tasks: {
     listen: "استمع",
@@ -196,6 +204,7 @@ export const ar: Dictionary = {
     pick: "اختر",
     count: "عُدّ",
     sort: "رتّب",
+    paint: "لوّن",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",
