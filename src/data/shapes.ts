@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { ShapeId } from "@/types/course";
+import type { ShapeId, SortBin } from "@/types/course";
 import ball from "../../public/assets/learn/pinki/shapes/find/ball.png";
 import toast from "../../public/assets/learn/pinki/shapes/find/toast.png";
 import cheese from "../../public/assets/learn/pinki/shapes/find/cheese.png";
@@ -52,3 +52,15 @@ export const SHAPES: Record<ShapeId, ShapeDef> = {
     thing: { src: book, word: "book" },
   },
 };
+
+/** The Shape review's four boxes, in a fixed 2x2 order, each in its shape's
+    own clay colour — the shape sits on a white disc so it still shows. */
+export const SHAPE_BINS: SortBin[] = (
+  [
+    ["circle", "var(--brand)", "var(--brand-dark)", "#fff"],
+    ["square", "var(--color-go)", "var(--color-go-dark)", "#fff"],
+    ["triangle", "var(--color-gold)", "var(--color-gold-dark)", "var(--color-ink-fixed)"],
+    ["rectangle", "var(--accent)", "var(--accent-dark)", "#fff"],
+  ] as const
+).map(([shape, face, edge, text]) => ({ target: { shape }, word: shape, face: { kind: "shape", shape }, tone: { face, edge, text } }));
+

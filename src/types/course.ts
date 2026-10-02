@@ -3,6 +3,12 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 
 export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 
+/** The ten colors the Colors course teaches, in the order it teaches them. */
+export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
+
+/** What a Find looks for, or what a Sort box takes: a shape or a color. */
+export type Target = { shape: ShapeId } | { color: ColorId };
+
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
     picture's alt text. */
@@ -22,6 +28,8 @@ export interface SceneItem {
   /** English, and the tap target's name. */
   word: string;
   shape: ShapeId | null;
+  /** Its color, in the Colors course's scenes. */
+  color?: ColorId;
   /** Where its picture (shadow included) sits. */
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */
@@ -33,6 +41,25 @@ export interface SceneItem {
 export interface Scene {
   background: StaticImageData;
   items: SceneItem[];
+}
+
+/** One box of a Sort: what goes in it, its name, what it shows, its clay. */
+export interface SortBin {
+  target: Target;
+  /** English — the box's label. */
+  word: string;
+  face: Face;
+  tone: { face: string; edge: string; text: string };
+}
+
+/** One round of a Paint: the word names the color, the thing gets it. */
+export interface PaintRound {
+  color: ColorId;
+  /** The thing in plain grey clay, and painted. */
+  blank: StaticImageData;
+  painted: StaticImageData;
+  /** English — the thing's name. */
+  word: string;
 }
 
 /** Pinki's question, as a key into `dict.asks` plus its values. The taught
@@ -59,15 +86,20 @@ export type Question =
   | { type: "count"; ask: Ask; item: { src: StaticImageData; word: string }; target: number }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
-  /** Meet the word: a big speaker, the shape it names, and the English word
-      in clay letters. */
-  | { type: "word"; ask: Ask; word: string; shape?: ShapeId }
-  /** Build the word from its shuffled letters, by tap or drag. */
-  | { type: "spell"; ask: Ask; word: string }
-  /** Find every thing in the scene that is this shape. */
-  | { type: "find"; ask: Ask; shape: ShapeId; scene: Scene }
-  /** Put each thing, one at a time, in the box of its shape. */
-  | { type: "sort"; ask: Ask; items: SceneItem[] };
+  /** Meet the word: a big speaker, the shape (or picture) it names, and the
+      English word in clay letters. */
+  | { type: "word"; ask: Ask; word: string; shape?: ShapeId; picture?: StaticImageData }
+  /** Build the word from its shuffled letters, by tap or drag. With a
+      `picture`, the picture is shown INSTEAD of the word — spell it from
+      memory. */
+  | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData }
+  /** Find every thing in the scene that is this shape or color. */
+  | { type: "find"; ask: Ask; target: Target; scene: Scene }
+  /** Put each thing, one at a time, in the box it belongs in. */
+  | { type: "sort"; ask: Ask; items: SceneItem[]; bins: SortBin[] }
+  /** Read the color word, tap its pot, and the thing is painted — a round
+      per color. `pots` are the colors on offer, in order. */
+  | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] };
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {

@@ -1,6 +1,6 @@
 import type { Face, LessonDef, Scene, SceneItem, ShapeId } from "@/types/course";
 import { picnic, rectangles, squares, triangles } from "@/data/scenes";
-import { SHAPES } from "@/data/shapes";
+import { SHAPE_BINS, SHAPES } from "@/data/shapes";
 import donut from "../../../public/assets/learn/pinki/shapes/find/donut.png";
 
 const circle: Face = { kind: "shape", shape: "circle" };
@@ -20,7 +20,7 @@ function shapeLesson(n: number, shape: ShapeId, scene: Scene, cover = SHAPES[sha
       { type: "word", ask: { key: "thisIs", vars: { shape } }, word: shape, shape },
       { type: "trace", ask: { key: "draw", vars: { shape } }, shape },
       { type: "spell", ask: { key: "spell", vars: { word: shape } }, word: shape },
-      { type: "find", ask: { key: "findAll", vars: { shape } }, shape, scene },
+      { type: "find", ask: { key: "findAll", vars: { shape } }, target: { shape }, scene },
     ],
   };
 }
@@ -51,6 +51,7 @@ export const pinkiShapes: LessonDef[] = [
       {
         type: "sort",
         ask: { key: "sortAll" },
+        bins: SHAPE_BINS,
         items: [
           thing(picnic, "donut"),
           thing(squares, "gift"),
