@@ -46,7 +46,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || ["family", "red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1290,226 +1290,6 @@ const ITEMS = {
 
   /* ---------- Course art for the courses still to come ---------- */
 
-  /* A family member (My Family): a chibi clay figure — a big round head with
-     glossy eyes, hair and one thing each that says who they are (Mom's long
-     hair, Dad's beard, Sister's pigtails, Brother's cap, Baby's dummy,
-     Grandma's bun and glasses, Grandpa's moustache, glasses and cane). Built
-     standing on y = 0, facing +z. */
-  member(who = "mom") {
-    const SKIN = 0xe9b48f, BROWN = 0x4a2c1d, GREY = 0xd9d6de;
-    const look = {
-      mom:     { top: 0xff7fae, bottom: 0xff7fae, dress: true,  hair: BROWN, legs: 0.42, body: 0.62, R: 0.46, shoe: 0xd94f86 },
-      dad:     { top: 0x4f8ff0, bottom: 0x2f4a7a, dress: false, hair: BROWN, legs: 0.5,  body: 0.66, R: 0.46, shoe: 0x5b3a26 },
-      sister:  { top: 0xffcf3a, bottom: 0xffcf3a, dress: true,  hair: BROWN, legs: 0.3,  body: 0.46, R: 0.5,  shoe: 0xff6f91 },
-      brother: { top: 0x52c46a, bottom: 0x3f6fc9, dress: false, hair: BROWN, legs: 0.32, body: 0.46, R: 0.5,  shoe: 0xee4645, shorts: true },
-      baby:    { top: 0x8fd0ff, bottom: 0x8fd0ff, dress: false, hair: 0x7a4b2e, legs: 0.18, body: 0.36, R: 0.52, shoe: 0x8fd0ff },
-      grandma: { top: 0xa98be8, bottom: 0x8a6fd0, dress: true,  hair: GREY,  legs: 0.36, body: 0.58, R: 0.46, shoe: 0x6b4fa8 },
-      grandpa: { top: 0xc98a52, bottom: 0x6d6a78, dress: false, hair: GREY,  legs: 0.44, body: 0.62, R: 0.46, shoe: 0x5b3a26 },
-    }[who];
-    const { R } = look;
-    const g = new THREE.Group();
-    const skin = clay(SKIN, { clearcoat: 0.35, roughness: 0.5 });
-    const hairM = clay(look.hair, { roughness: 0.6, clearcoat: 0.3 });
-    const topM = clay(look.top, { clearcoat: 0.5 });
-    const ink = clay(0x2a2430, { clearcoat: 1, clearcoatRoughness: 0.05, roughness: 0.2 });
-    const white = clay(0xffffff, { roughness: 0.2, clearcoat: 1 });
-    const add = (m, x = 0, y = 0, z = 0) => { m.position.set(x, y, z); g.add(m); return m; };
-    /* A point on a sphere of radius r around `c`: yaw left/right, pitch up/down. */
-    const on = (c, r, yaw, pitch) => new THREE.Vector3(c.x + r * Math.sin(yaw) * Math.cos(pitch), c.y + r * Math.sin(pitch), c.z + r * Math.cos(yaw) * Math.cos(pitch));
-    /* Stick a flat-ish blob onto the head, facing out. */
-    const stick = (geo, mat, c, r, yaw, pitch, sx = 1, sy = 1, sz = 0.45) => {
-      const m = mesh(geo, mat);
-      m.position.copy(on(c, r, yaw, pitch));
-      m.lookAt(on(c, r * 2, yaw, pitch));
-      m.scale.set(sx, sy, sz);
-      g.add(m);
-      return m;
-    };
-
-    // legs and shoes
-    const legW = who === "baby" ? 0.11 : 0.085;
-    for (const x of [-0.13, 0.13]) {
-      const legMat = look.shorts && look.legs ? skin : clay(look.dress ? SKIN : look.bottom, { clearcoat: 0.4 });
-      add(mesh(new THREE.CapsuleGeometry(legW, look.legs, 8, 24), legMat), x, look.legs / 2 + 0.08, 0);
-      const shoe = add(mesh(new THREE.SphereGeometry(0.13, 32, 24), clay(look.shoe, { clearcoat: 0.8 })), x, 0.07, 0.05);
-      shoe.scale.set(0.95, 0.6, 1.3);
-    }
-    if (look.shorts) {
-      add(mesh(smoothLathe([[0, 0], [0.3, 0.02], [0.31, 0.16], [0.28, 0.24], [0, 0.24]]), clay(look.bottom, { clearcoat: 0.4 })), 0, look.legs * 0.62, 0);
-    }
-
-    // the body: a dress flares out, a top is a softer barrel
-    const hip = look.legs + 0.08;
-    const bodyW = who === "baby" ? 0.36 : look.dress ? 0.3 : 0.31;
-    const torso = look.dress
-      ? smoothLathe([[0, 0], [bodyW + 0.17, 0.0], [bodyW + 0.12, look.body * 0.3], [bodyW * 0.85, look.body * 0.7], [bodyW * 0.6, look.body * 0.97], [0, look.body]])
-      : smoothLathe([[0, 0], [bodyW * 0.92, 0.0], [bodyW, look.body * 0.35], [bodyW * 0.92, look.body * 0.78], [bodyW * 0.6, look.body * 0.98], [0, look.body]]);
-    add(mesh(torso, topM), 0, look.dress ? hip - 0.12 : hip - 0.04, 0);
-    const shoulderY = hip + look.body * 0.8;
-
-    // collar / details on the top
-    if (who === "dad") {
-      for (const s of [-1, 1]) {
-        const flap = add(mesh(new THREE.ConeGeometry(0.08, 0.14, 3), clay(0xffffff)), s * 0.07, shoulderY + 0.06, 0.19);
-        flap.rotation.set(0.5, 0, s * 2.6);
-        flap.scale.z = 0.4;
-      }
-    }
-    if (who === "brother") {
-      const band = add(mesh(new THREE.TorusGeometry(bodyW * 0.99, 0.035, 12, 64), clay(0xffffff)), 0, hip + look.body * 0.42, 0);
-      band.rotation.x = Math.PI / 2;
-    }
-    if (who === "grandpa") {
-      for (const y of [0.18, 0.32, 0.46]) add(mesh(new THREE.SphereGeometry(0.03, 16, 12), clay(0x6b3a10, { clearcoat: 0.9 })), 0, hip + y, bodyW * 0.99 + 0.005);
-    }
-    if (who === "grandma") {
-      const shawl = add(mesh(new THREE.TorusGeometry(0.2, 0.07, 16, 48), clay(0xffe7f1, { roughness: 0.8 })), 0, shoulderY + 0.04, 0);
-      shawl.rotation.x = Math.PI / 2 - 0.25;
-    }
-    if (who === "baby") {
-      const bib = add(mesh(new THREE.CircleGeometry(0.17, 48), clay(0xffffff)), 0, shoulderY - 0.07, bodyW * 0.92);
-      bib.rotation.x = -0.25;
-    }
-
-    // arms and hands
-    const armL = who === "baby" ? 0.16 : look.body * 0.55;
-    for (const s of [-1, 1]) {
-      const arm = new THREE.Group();
-      arm.add(mesh(new THREE.CapsuleGeometry(0.075, armL, 8, 24), topM));
-      arm.children[0].position.y = -armL / 2;
-      const hand = mesh(new THREE.SphereGeometry(0.085, 24, 16), skin);
-      hand.position.y = -armL - 0.07;
-      arm.add(hand);
-      arm.position.set(s * (bodyW + (look.dress ? 0.0 : 0.04)), shoulderY, 0.02);
-      arm.rotation.z = s * (who === "baby" ? 0.9 : 0.32);
-      if (who === "baby") arm.rotation.z = s * 2.3; // arms up, waving
-      g.add(arm);
-    }
-
-    // the head
-    const headY = shoulderY + R * 0.92;
-    const c = new THREE.Vector3(0, headY, 0);
-    const head = add(mesh(new THREE.SphereGeometry(R, 64, 48), skin), 0, headY, 0);
-    head.scale.set(1.04, 0.96, 0.96);
-    for (const s of [-1, 1]) add(mesh(new THREE.SphereGeometry(R * 0.17, 24, 16), skin), s * R * 1.0, headY - R * 0.04, 0).scale.z = 0.6;
-
-    // face
-    const eyeYaw = 0.34, eyePitch = -0.05;
-    for (const s of [-1, 1]) {
-      stick(new THREE.SphereGeometry(R * 0.13, 32, 24), ink, c, R * 0.96, s * eyeYaw, eyePitch, 0.85, 1.12, 0.5);
-      stick(new THREE.SphereGeometry(R * 0.045, 16, 12), white, c, R * 1.005, s * eyeYaw - 0.06, eyePitch + 0.07, 1, 1, 0.6);
-      stick(new THREE.SphereGeometry(R * 0.022, 16, 12), white, c, R * 1.0, s * eyeYaw + 0.05, eyePitch - 0.06, 1, 1, 0.6);
-      stick(new THREE.SphereGeometry(R * 0.14, 24, 16), clay(0xff8fa8, { roughness: 0.8, clearcoat: 0 }), c, R * 0.95, s * 0.55, -0.3, 1.1, 0.75, 0.3);
-      if (who !== "baby") {
-        const brow = stick(new THREE.CapsuleGeometry(R * 0.025, R * 0.13, 6, 12), clay(look.hair === GREY ? 0xb9b4c2 : BROWN), c, R * 0.97, s * 0.36, 0.25, 1, 1, 0.6);
-        brow.rotateZ(Math.PI / 2 + s * 0.12);
-      }
-    }
-    stick(new THREE.SphereGeometry(R * 0.07, 24, 16), clay(0xe09a78), c, R * 0.97, 0, -0.2, 1, 0.8, 0.7);
-    if (who === "baby") {
-      // a dummy: a shield and a ring
-      stick(new THREE.SphereGeometry(R * 0.17, 32, 16), clay(0x7fd6c6, { clearcoat: 0.9 }), c, R * 0.97, 0, -0.42, 1.25, 0.85, 0.35);
-      const ring = stick(new THREE.TorusGeometry(R * 0.09, R * 0.025, 12, 32), clay(0xffd31a, { clearcoat: 0.9 }), c, R * 1.06, 0, -0.44);
-      ring.scale.set(1, 1, 1);
-    } else {
-      const smile = mesh(new THREE.TorusGeometry(R * 0.15, R * 0.035, 12, 32, Math.PI), clay(0x9a2f45));
-      smile.position.copy(on(c, R * 0.95, 0, -0.38));
-      smile.rotation.set(-0.35, 0, Math.PI);
-      g.add(smile);
-      const mouth = stick(new THREE.SphereGeometry(R * 0.11, 24, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), clay(0x9a2f45), c, R * 0.93, 0, -0.36, 1.25, 0.7, 0.4);
-      mouth.visible = false;
-    }
-
-    // hair
-    const cap = (scale = 1.05, tilt = -0.42, len = 0.52) => {
-      const m = mesh(new THREE.SphereGeometry(R * scale, 64, 32, 0, Math.PI * 2, 0, Math.PI * len), hairM);
-      m.position.set(0, headY + R * 0.02, -R * 0.02);
-      m.rotation.x = tilt;
-      m.scale.set(1.04, 1, 1);
-      g.add(m);
-      return m;
-    };
-    if (who === "mom") {
-      cap(1.07, -0.45, 0.55);
-      const back = add(mesh(new THREE.CapsuleGeometry(R * 0.85, R * 0.7, 12, 32), hairM), 0, headY - R * 0.35, -R * 0.35);
-      back.scale.z = 0.8;
-      for (const s of [-1, 1]) {
-        const lock = add(mesh(new THREE.CapsuleGeometry(R * 0.2, R * 0.85, 8, 24), hairM), s * R * 0.88, headY - R * 0.45, R * 0.12);
-        lock.rotation.z = -s * 0.12;
-      }
-      const flower = add(mesh(new THREE.SphereGeometry(R * 0.11, 24, 16), clay(0xffd31a)), R * 0.66, headY + R * 0.6, R * 0.5);
-      for (let i = 0; i < 5; i++) {
-        const a = (i / 5) * Math.PI * 2;
-        add(mesh(new THREE.SphereGeometry(R * 0.13, 24, 16), clay(0xff5f9e, { clearcoat: 0.8 })), flower.position.x + Math.cos(a) * R * 0.19, flower.position.y + Math.sin(a) * R * 0.19, flower.position.z - 0.02).scale.z = 0.6;
-      }
-    }
-    if (who === "dad") {
-      cap(1.05, -0.5, 0.47);
-      // a short beard round the jaw, under the smile
-      const beard = mesh(new THREE.SphereGeometry(R * 1.02, 64, 32, Math.PI * 0.5 - 1.45 + Math.PI, 2.9, Math.PI * 0.6, Math.PI * 0.3), hairM);
-      beard.position.set(0, headY, 0);
-      beard.rotation.y = Math.PI;
-      g.add(beard);
-    }
-    if (who === "sister") {
-      cap(1.06, -0.55, 0.5);
-      for (const s of [-1, 1]) {
-        const tail = add(mesh(new THREE.SphereGeometry(R * 0.32, 32, 24), hairM), s * R * 1.12, headY + R * 0.15, -R * 0.15);
-        tail.scale.set(0.8, 1.15, 0.85);
-        add(mesh(new THREE.SphereGeometry(R * 0.1, 16, 12), clay(0xff6f91, { clearcoat: 0.9 })), s * R * 0.92, headY + R * 0.38, -R * 0.05);
-      }
-    }
-    if (who === "brother") {
-      cap(1.05, -0.5, 0.48);
-      // a cap, peak forward
-      const crown = mesh(new THREE.SphereGeometry(R * 1.08, 64, 32, 0, Math.PI * 2, 0, Math.PI * 0.36), clay(0xee4645, { clearcoat: 0.6 }));
-      crown.position.set(0, headY + R * 0.06, -R * 0.03);
-      crown.rotation.x = -0.25;
-      g.add(crown);
-      // the peak sticks out from the crown's front rim
-      const peak = add(mesh(new THREE.CylinderGeometry(R * 0.72, R * 0.72, 0.04, 48, 1, false, -Math.PI / 2, Math.PI), clay(0xee4645, { clearcoat: 0.6 })), 0, headY + R * 0.76, R * 0.7);
-      peak.rotation.x = 0.06;
-      add(mesh(new THREE.SphereGeometry(R * 0.09, 16, 12), clay(0xffffff)), 0, headY + R * 1.12, -R * 0.15);
-    }
-    if (who === "baby") {
-      // one soft tuft on top
-      const tuft = add(mesh(new THREE.SphereGeometry(R * 0.13, 24, 16), hairM), R * 0.05, headY + R * 1.02, R * 0.15);
-      tuft.scale.set(0.7, 1.5, 0.7);
-      tuft.rotation.z = -0.5;
-    }
-    if (who === "grandma") {
-      cap(1.06, -0.48, 0.52);
-      add(mesh(new THREE.SphereGeometry(R * 0.34, 32, 24), hairM), 0, headY + R * 1.02, -R * 0.2);
-    }
-    if (who === "grandpa") {
-      for (const s of [-1, 1]) {
-        const tuft = add(mesh(new THREE.SphereGeometry(R * 0.28, 32, 24), hairM), s * R * 0.9, headY + R * 0.15, -R * 0.15);
-        tuft.scale.set(0.6, 1, 1.1);
-      }
-      for (const s of [-1, 1]) {
-        const half = stick(new THREE.CapsuleGeometry(R * 0.09, R * 0.2, 8, 16), hairM, c, R * 0.99, s * 0.15, -0.28, 1, 1, 0.7);
-        half.rotateZ(Math.PI / 2 + s * 0.35);
-      }
-      // a cane in the right hand
-      const cane = new THREE.Group();
-      const stickM = clay(0x8a5a33, { clearcoat: 0.6 });
-      const shaft = mesh(new THREE.CylinderGeometry(0.035, 0.035, shoulderY - 0.25, 16), stickM);
-      shaft.position.y = (shoulderY - 0.25) / 2;
-      cane.add(shaft);
-      const hook = mesh(new THREE.TorusGeometry(0.08, 0.035, 12, 32, Math.PI), stickM);
-      hook.position.set(-0.08, shoulderY - 0.25, 0);
-      cane.add(hook);
-      cane.position.set(bodyW + 0.32, 0, 0.12);
-      g.add(cane);
-    }
-    if (who === "grandma" || who === "grandpa") {
-      const rim = clay(0x3a3346, { clearcoat: 1, roughness: 0.2 });
-      for (const s of [-1, 1]) stick(new THREE.TorusGeometry(R * 0.2, R * 0.03, 12, 48), rim, c, R * 1.02, s * eyeYaw, eyePitch, 1, 1, 1);
-      stick(new THREE.CapsuleGeometry(R * 0.025, R * 0.12, 6, 12), rim, c, R * 1.04, 0, eyePitch + 0.02, 1, 1, 1).rotateZ(Math.PI / 2);
-    }
-    return g;
-  },
-
   sun() {
     const g = new THREE.Group();
     const gold = clay(0xffc414, { clearcoat: 0.8, clearcoatRoughness: 0.2 });
@@ -1657,130 +1437,11 @@ const ITEMS = {
   },
 };
 
-/* ---------- The living room (My Family's Find) ----------
-   A warm wooden floor with a round rug, a pale wall with a window, a
-   framed heart and a skirting board, a plant and a lamp out at the sides —
-   nothing that looks like a person. The family stands on the rug. */
-function buildRoom(world) {
-  const floor = mesh(new THREE.PlaneGeometry(30, 30), clay(0xe9c49a, { clearcoat: 0.15, roughness: 0.8, sheen: 0 }));
-  floor.rotation.x = -Math.PI / 2;
-  floor.castShadow = false;
-  world.add(floor);
-  for (let i = -8; i <= 8; i++) {
-    const seam = mesh(new THREE.BoxGeometry(0.02, 0.004, 30), clay(0xd9ae80, { roughness: 0.9, clearcoat: 0 }));
-    seam.position.set(i * 0.9, 0.002, 0);
-    seam.castShadow = false;
-    world.add(seam);
-  }
-  const rug = mesh(new THREE.CylinderGeometry(3.4, 3.4, 0.04, 96), clay(0x9fd8cf, { roughness: 0.95, clearcoat: 0, sheen: 0.3 }));
-  rug.scale.z = 0.92;
-  rug.position.set(0, 0.02, 0.4);
-  rug.castShadow = false;
-  world.add(rug);
-  const rim = mesh(new THREE.TorusGeometry(3.25, 0.05, 12, 128), clay(0xfff6e8, { roughness: 0.9, clearcoat: 0 }));
-  rim.rotation.x = -Math.PI / 2;
-  rim.scale.y = 0.92;
-  rim.position.set(0, 0.045, 0.4);
-  world.add(rim);
-
-  const WZ = -3.3;
-  const wall = mesh(new THREE.PlaneGeometry(30, 12), clay(0xffe3d3, { roughness: 0.9, clearcoat: 0, sheen: 0 }));
-  wall.position.set(0, 6, WZ);
-  world.add(wall);
-  const skirt = mesh(new RoundedBoxGeometry(30, 0.3, 0.08, 4, 0.03), clay(0xffffff, { clearcoat: 0.3 }));
-  skirt.position.set(0, 0.15, WZ + 0.04);
-  world.add(skirt);
-
-  // a window: white frame, sky glass, a cross of bars, a cloud outside
-  const win = new THREE.Group();
-  win.add(mesh(new RoundedBoxGeometry(2.2, 1.7, 0.12, 6, 0.08), clay(0xffffff, { clearcoat: 0.4 })));
-  const glass = mesh(new RoundedBoxGeometry(1.95, 1.45, 0.04, 4, 0.04), clay(0xaedcff, { clearcoat: 0.9, roughness: 0.2 }));
-  glass.position.z = 0.05;
-  win.add(glass);
-  for (const [w, h] of [[0.08, 1.45], [1.95, 0.08]]) {
-    const bar = mesh(new RoundedBoxGeometry(w, h, 0.06, 2, 0.02), clay(0xffffff));
-    bar.position.z = 0.09;
-    win.add(bar);
-  }
-  for (const [x, y, r] of [[-0.45, 0.35, 0.16], [-0.25, 0.4, 0.2], [-0.05, 0.34, 0.15]]) {
-    const puff = mesh(new THREE.SphereGeometry(r, 24, 16), clay(0xffffff, { roughness: 0.7 }));
-    puff.scale.z = 0.3;
-    puff.position.set(x, y, 0.08);
-    win.add(puff);
-  }
-  win.position.set(-1.25, 2.45, WZ + 0.06);
-  world.add(win);
-
-  // a framed heart
-  const frame = mesh(new RoundedBoxGeometry(0.9, 0.9, 0.08, 4, 0.06), clay(0xffc94d, { clearcoat: 0.6 }));
-  frame.position.set(1.6, 2.55, WZ + 0.05);
-  world.add(frame);
-  const paper = mesh(new RoundedBoxGeometry(0.7, 0.7, 0.04, 2, 0.02), clay(0xffffff));
-  paper.position.set(1.6, 2.55, WZ + 0.1);
-  world.add(paper);
-  const heartShape = new THREE.Shape();
-  heartShape.moveTo(0, -0.18);
-  heartShape.bezierCurveTo(-0.32, 0.02, -0.18, 0.26, 0, 0.12);
-  heartShape.bezierCurveTo(0.18, 0.26, 0.32, 0.02, 0, -0.18);
-  const heartGeo = roundedShapeExtrude(heartShape, 0.03, 0.02);
-  heartGeo.center();
-  const heart = mesh(heartGeo, clay(0xff6f91, { clearcoat: 0.8 }));
-  heart.position.set(1.6, 2.55, WZ + 0.15);
-  world.add(heart);
-
-  // a plant in a pot, far left
-  const plant = new THREE.Group();
-  plant.add(mesh(smoothLathe([[0, 0], [0.3, 0], [0.38, 0.55], [0, 0.55]]), clay(0xf28c5b, { clearcoat: 0.5 })));
-  for (let i = 0; i < 7; i++) {
-    const a = (i / 7) * Math.PI * 2;
-    const leaf = mesh(new THREE.SphereGeometry(0.22, 24, 16), clay(i % 2 ? 0x5cc46a : 0x4fb05d));
-    leaf.scale.set(0.45, 1.3, 0.25);
-    leaf.position.set(Math.cos(a) * 0.2, 0.95 + (i % 3) * 0.12, Math.sin(a) * 0.2);
-    leaf.rotation.z = -Math.cos(a) * 0.5;
-    leaf.rotation.x = Math.sin(a) * 0.5;
-    plant.add(leaf);
-  }
-  plant.position.set(-2.55, 0, -2.6);
-  world.add(plant);
-
-  // a floor lamp, far right
-  const lamp = new THREE.Group();
-  const base = mesh(new THREE.CylinderGeometry(0.28, 0.3, 0.06, 32), clay(0x8a6fd0, { clearcoat: 0.6 }));
-  base.position.y = 0.03;
-  lamp.add(base);
-  const pole = mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.1, 16), clay(0x8a6fd0, { clearcoat: 0.6 }));
-  pole.position.y = 1.08;
-  lamp.add(pole);
-  const shade = mesh(smoothLathe([[0.2, 0], [0.42, 0], [0.3, 0.5], [0.18, 0.5]]), clay(0xfff1b8, { clearcoat: 0.3, side: THREE.DoubleSide }));
-  shade.position.y = 2.05;
-  lamp.add(shade);
-  lamp.position.set(2.6, 0, -2.6);
-  world.add(lamp);
-}
-
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
    bottom-centre — and things at z ≈ -3.3 on the grass above it. */
 const SCENES = {
-  /* My Family's Find: the whole family in their living room, seen from the
-     front (`tilt`) — grown-ups at the back, the children in front. */
-  family: {
-    world: "room",
-    tilt: 38,
-    zoom: 5.9,
-    look: [0, 1.3, 0.2],
-    autoGround: true,
-    items: {
-      grandpa: { model: "member", arg: "grandpa", at: [-0.85, 0, -2.0] },
-      grandma: { model: "member", arg: "grandma", at: [0.85, 0, -2.0] },
-      dad: { model: "member", arg: "dad", at: [-1.8, 0, 0.3] },
-      baby: { model: "member", arg: "baby", at: [0, 0, 0.3] },
-      mom: { model: "member", arg: "mom", at: [1.8, 0, 0.3] },
-      sister: { model: "member", arg: "sister", at: [-0.95, 0, 2.6] },
-      brother: { model: "member", arg: "brother", at: [0.95, 0, 2.6] },
-    },
-  },
   picnic: {
     blanket: "pinkStripes",
     items: {
@@ -2025,7 +1686,7 @@ if (THING) {
   const centre = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
   const span = Math.max(size.x, size.y, size.z) * 0.78;
-  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (THING === "pot" ? 32 : THING === "member" ? 8 : 24)));
+  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (THING === "pot" ? 32 : 24)));
   /* `?lift=` for a thing best seen from higher up (a leaf, a foot). */
   renderer.setSize(800, 800);
   camera.left = -span; camera.right = span; camera.top = span; camera.bottom = -span;
@@ -2040,19 +1701,6 @@ if (THING) {
   const world = new THREE.Group();
   scene.add(world);
 
-  if (def.tilt) {
-    const t = THREE.MathUtils.degToRad(def.tilt);
-    const [lx, ly, lz] = def.look ?? [0, 0, 0];
-    camera.position.set(lx, ly + Math.sin(t) * 30, lz + Math.cos(t) * 30);
-    camera.lookAt(lx, ly, lz);
-  }
-  if (def.zoom) {
-    const vh = def.zoom * H / W;
-    Object.assign(camera, { left: -def.zoom / 2, right: def.zoom / 2, top: vh / 2, bottom: -vh / 2 });
-    camera.updateProjectionMatrix();
-  }
-  if (def.world === "room") buildRoom(world);
-  else {
   // grass
   const grass = mesh(new THREE.PlaneGeometry(30, 30), clay(0x8fd16e, { clearcoat: 0.05, roughness: 0.9, sheen: 0 }));
   grass.rotation.x = -Math.PI / 2;
@@ -2079,7 +1727,6 @@ if (THING) {
   }
 
   world.add(BLANKETS[def.blanket]());
-  }
 
   const items = {};
   for (const [name, it] of Object.entries(def.items)) {
@@ -2112,7 +1759,7 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () =>
-    Object.fromEntries(Object.entries(def.items).map(([k, it]) => [k, { shape: SHAPE_OF[it.model ?? k] ?? null, color: it.color ?? COLOR_OF[it.model ?? k] ?? null, ...(it.model === "member" ? { person: it.arg } : {}) }]));
+    Object.fromEntries(Object.entries(def.items).map(([k, it]) => [k, { shape: SHAPE_OF[it.model ?? k] ?? null, color: it.color ?? COLOR_OF[it.model ?? k] ?? null }]));
 }
 window.ready = true;
 </script>
