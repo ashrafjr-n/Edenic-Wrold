@@ -279,8 +279,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
            that actually put the line on the cloud, and the same later request
            to move her left brought it back to `-28%`: her face returns to the
            screen and the line now passes ~14px outside the stop's left edge
-           at 390 (38px at 430), which is the state Pinki's stick is already
-           in on the numbers picker. The other end of the range is `-38%`,
+           at 390 (38px at 430), which is an accepted crop. The other end of the range is `-38%`,
            which aims dead centre and takes her second eye off the screen —
            on the one screen where she is wider than the viewport, the crop
            costs more than the last few degrees of aim.

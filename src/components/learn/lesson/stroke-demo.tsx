@@ -8,14 +8,14 @@ interface StrokeDemoProps {
 }
 
 /** One full cycle: the line draws for the first 62% of it and the finished
-    numeral is held for the rest (the split lives in the keyframes, which
-    cannot take a variable stop). A two-stroke numeral gets longer, so the
-    hand does not have to race to fit both into number 1's three seconds. */
+    shape is held for the rest (the split lives in the keyframes, which
+    cannot take a variable stop). Each extra stroke lengthens the cycle, so
+    the hand never has to race. */
 const CYCLE_SECONDS = 3;
 const EXTRA_PER_STROKE = 1.2;
 
 /**
- * The numeral drawing itself, over and over, along the same centrelines the
+ * The shape drawing itself, over and over, along the same centreline the
  * child is about to trace.
  *
  * Reusing the trace data is the point: a demonstration that disagreed with the
@@ -26,37 +26,23 @@ const EXTRA_PER_STROKE = 1.2;
  * It loops instead of playing once — a child who looks away has not missed it,
  * and there is nothing to press to see it again.
  *
- * **One `<path>` PER STROKE, sharing one animation — not one path holding
- * them all, and not one animation per stroke either.** Both of those have
- * shipped here and both drew number 4 wrong:
+ * **One `<path>` PER STROKE, sharing one animation.** Every shape today is one
+ * stroke, but the drawing stays correct for more: staggering strokes with
+ * `animation-delay` falls out of step with the loop, and joining them into one
+ * path with a `moveto` restarts the dash pattern at every subpath, so they all
+ * draw at once. Instead every path dashes on the WHOLE drawing's length and
+ * starts as far back as there is drawing before it (`--stroke-offset`, see
+ * the `stroke-draw` keyframes in `globals.css`) — one animation, one period.
  *
- * - Staggering with `animation-delay` on a shared three-second loop is
- *   coherent for a one-stroke numeral and nonsense for any other — the second
- *   stroke's delay was not a factor of the period, so it was still drawing
- *   when the first restarted and the numeral never once appeared whole.
- * - Joining every stroke into ONE path with a `moveto` between them looks
- *   like it fixes that by construction, since a `moveto` has no length. It
- *   does not: **the dash pattern restarts at every subpath**, so each stroke
- *   got its own copy of the same offset and they all drew AT THE SAME TIME.
- *   Number 4 is the only numeral with two strokes, which is why it was the
- *   only one that looked wrong.
- *
- * What actually sequences them is `--stroke-offset` (see the `stroke-draw`
- * keyframes in `globals.css`): every path dashes on the WHOLE numeral's
- * length and starts its own dash as far back as there is numeral before it,
- * so a stroke is invisible until the pen reaches it and complete the moment
- * the pen leaves. One animation, one period, nothing to keep in step.
- *
- * The pen rides the combined path and lifts across the gap between strokes,
- * which is what a hand does anyway.
+ * The pen rides the combined path and lifts across any gap between strokes.
  */
 export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
   const segments = strokes.map(strokeToPath);
-  /* The whole numeral as one `d` — what the faint shape underneath is drawn
+  /* The whole drawing as one `d` — what the faint shape underneath is drawn
      from, and what the pen travels. Only the drawing line is split. */
   const path = segments.join(" ");
 
-  /* How much numeral comes BEFORE each stroke, and how much there is in
+  /* How much drawing comes BEFORE each stroke, and how much there is in
      total. Resolved here rather than in the markup: the offsets are a running
      sum, which is not something a `map` in JSX can express honestly — and the
      two dash ends below have to be finished NUMBERS by the time they reach
@@ -79,7 +65,7 @@ export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
 
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
-      {/* The finished shape, held faintly underneath, so the numeral reads as
+      {/* The finished shape, held faintly underneath, so the shape reads as
           a whole even at the start of each replay. */}
       <path
         d={path}
@@ -90,7 +76,7 @@ export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
         strokeLinejoin="round"
       />
 
-      {/* The key is the index on purpose: a numeral's strokes are fixed data
+      {/* The key is the index on purpose: a shape's strokes are fixed data
           that never reorders, and there is nothing else stable to key on. */}
       {segments.map((segment, index) => (
         <path

@@ -23,8 +23,7 @@ interface CloudProps {
   tint?: CloudTint;
   /** This is the one stage that's open right now — brighter lobes, a soft
       white glow behind it, and a slow breathing scale (reusing
-      `.anim-pulse-invite`, the same "tap me" pulse the numbers picker puts
-      on its own next-up numeral). Purely a look: it never locks, dims, or
+      `.anim-pulse-invite`, the site's "tap me" pulse). Purely a look: it never locks, dims, or
       recolors any other cloud. */
   active?: boolean;
   className?: string;

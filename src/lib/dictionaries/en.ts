@@ -2,7 +2,7 @@ import type { Locale } from "@/types/locale";
 /**
  * Site chrome and Pinki's speech, in English — the default locale and the
  * type source every other dictionary is checked against (`Dictionary =
- * typeof en`). The taught content itself (numeral words, letters, colors,
+ * typeof en`). The taught content itself (shape words, colors,
  * and every brand/character name) never lives here: it stays English (and
  * unchanged) in every locale, per CLAUDE.md's language switcher conventions.
  *

@@ -63,7 +63,7 @@ type ChipVars = CSSProperties & {
  * card IS, not where it sits in the list** (`TONES` above): finished, next to
  * play, or locked. Gold leads this game the way green leads the puzzles. The
  * one card to play next also carries a static "Next" pill hung over its top
- * edge — the exact mark the numbers picker uses for the same job — rather
+ * edge rather
  * than an animated glow: a glow that rode the same wrapper as the idle
  * breathe bounced with it, and being pure `box-shadow` outside the card's own
  * `anim-rise-in` opacity, it was visible on the very first paint, before any
@@ -202,8 +202,7 @@ export function MemoryGrid({ levels, dict }: MemoryGridProps) {
               {/* The same top-right corner the finished tick and the padlock
                   use — the three are mutually exclusive (done / next /
                   locked), so they can share one slot without ever
-                  colliding. Was centred over the top edge, matching the
-                  numbers picker's pill; moved here so all three status marks
+                  colliding. Was centred over the top edge; moved here so all three status marks
                   read from the same spot on every card. `--color-gold-glow` —
                   a bright orange, deliberately off the card's own gold family
                   — is what keeps it legible: `tone.edge` (the dark end of

@@ -309,7 +309,7 @@ body {
   /* Fredoka has no Arabic glyphs, so `--font-rtl` is the face the browser
      reaches for per-character on any Arabic-script run — Latin text keeps
      rendering in Fredoka throughout, which is what keeps "Pinki" and every
-     numeral looking the same in all three locales.
+     digit looking the same in all three locales.
 
      **The bare `Fredoka` first, then `var(--font-fredoka)` further down, is
      deliberate and is the whole reason this works.** That variable expands to
@@ -453,7 +453,7 @@ bdi {
    What's still handled per-rule below is only what `--shadow-hue` can't
    reach: LITERAL white insets (highlights meant to read as light bouncing
    off a pale surface — meaningless once that surface goes dark navy) and
-   the few places that assume a pale ground outright (the numeral bloom). */
+   the few places that assume a pale ground outright (the glow halos). */
 [data-theme="dark"] {
   --background: #1e1b2e;
   --surface: #2a2b3d;
@@ -1131,7 +1131,7 @@ bdi {
    TWO elements, and the split is load-bearing, not tidiness: `filter` is
    applied BEFORE `mask` on the same element, so a drop shadow declared on
    the masked body would be cut away with everything outside the silhouette
-   (the same trap `.numeral-mask` documents). The wrapper carries the soft
+   (the same trap the puzzle pieces' shadows avoid). The wrapper carries the soft
    outer shadow; the body carries the mask and the fill.
 
    The clay read comes from ONE continuous vertical gradient across the
@@ -2089,43 +2089,36 @@ button:disabled,
 /* ---------------------------------------------------------------
    "Watch me draw it."
 
-   The numeral draws itself along the same centreline the child then traces,
-   so the demonstration and the guide can never disagree about how the number
-   is written. The dash offset starts at the full path length and runs to 0 —
+   The shape draws itself along the same centreline the child then traces,
+   so the demonstration and the guide can never disagree about how it is
+   drawn. The dash offset starts at the full path length and runs to 0 —
    both are set inline from the measured length, in the strokes' own 0–100
    units.
    --------------------------------------------------------------- */
-/* **`--stroke-offset` is how a numeral with more than one stroke draws them
-   IN ORDER, and it exists because the obvious way does not work.** The demo
-   used to be a single `<path>` holding every stroke, joined by a `moveto`, on
-   the assumption that a zero-length move lets one dash offset run straight
-   from the end of one stroke into the start of the next. It does not: the
-   dash pattern RESTARTS at every subpath, so both of number 4's strokes were
-   revealed at once — the crossbar, the diagonal and the stem all growing
-   together, which is what "the 4 is drawn wrong" actually was.
-
-   So each stroke is now its own `<path>`, and each is told how much of the
-   numeral is drawn BEFORE it (`--stroke-offset`) out of the whole
-   (`--stroke-length`). The dash pattern is the numeral's full length on every
-   one of them, and the offset simply starts that stroke's own dash further
-   back — so while the pen is still on an earlier stroke this one sits inside
-   the pattern's gap and shows nothing, and it finishes exactly when the pen
-   leaves it. One shared animation, no per-stroke delays or durations to keep
-   in step, and a one-stroke numeral draws precisely as it always did.
+/* **`--stroke-offset` is how a drawing with more than one stroke draws them
+   IN ORDER.** One `<path>` holding every stroke, joined by a `moveto`, does
+   not work: the dash pattern RESTARTS at every subpath, so every stroke
+   would be revealed at once. So each stroke is its own `<path>`, told how
+   much of the drawing comes BEFORE it out of the whole (`--stroke-length`).
+   The dash pattern is the drawing's full length on every one of them, and
+   the offset starts that stroke's own dash further back — it sits in the
+   gap until the pen reaches it and finishes exactly when the pen leaves it.
+   One shared animation; a one-stroke shape (every shape today) draws as
+   plainly as it looks.
 
    **Both ends are handed over as finished numbers (`--stroke-from` /
    `--stroke-to`), never assembled here with `calc()`.** Chrome leaves a
    `calc()` in a keyframe unresolved — the computed value stays the literal
    string `calc(226.246px)` — and then cannot interpolate it against a plain
    number, so it swaps between the two keyframes discretely instead: the
-   numeral sat invisible for the whole draw and appeared complete in a single
+   drawing sat invisible for the whole draw and appeared complete in a single
    frame. Measured with `getComputedStyle`, not guessed. Do the arithmetic in
    `StrokeDemo` and keep these two values plain. */
 @keyframes stroke-draw {
   0% {
     stroke-dashoffset: var(--stroke-from, var(--stroke-length));
   }
-  /* Drawn by 62%, then held: the finished numeral has to sit still long
+  /* Drawn by 62%, then held: the finished shape has to sit still long
      enough to be read before the loop starts over. A keyframe stop cannot be
      a variable, so the hold is a fixed share of the cycle and the component
      sizes the duration around it. */
@@ -2168,7 +2161,7 @@ button:disabled,
     offset-distance: 100%;
     opacity: 1;
   }
-  /* Gone during the hold — a pencil parked on the finished numeral reads as
+  /* Gone during the hold — a pencil parked on the finished shape reads as
      part of the shape. */
   72%,
   100% {
@@ -2289,9 +2282,9 @@ button:disabled,
   animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* A plain fade-and-grow, deliberately NOT `pop-in`: this is what the numeral
-   arrives on in the number journey, and pop-in's travel-and-overshoot reads
-   as a thing being thrown in rather than a thing appearing. */
+/* A plain fade-and-grow, deliberately NOT `pop-in`: pop-in's
+   travel-and-overshoot reads as a thing being thrown in rather than a thing
+   appearing. */
 @keyframes rise-in {
   from {
     opacity: 0;
@@ -2449,11 +2442,9 @@ button:disabled,
   animation: pinki-lean-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Invites a tap on the one numeral the child has actually reached — the
-   first open number with no stars yet. Uses the standalone `scale` property
-   (not `transform`) so it never fights the numeral's own hover `scale-105`
-   utility; the two live on different elements anyway (see `NumberGrid`), but
-   staying off `transform` keeps this reusable wherever else it's needed. */
+/* Invites a tap on the one thing the child has actually reached (the open
+   trail cloud). Uses the standalone `scale` property (not `transform`) so it
+   never fights a hover `scale-*` utility or a `translate`. */
 @keyframes pulse-invite {
   0%,
   100% {
@@ -2511,8 +2502,7 @@ button:disabled,
      `closest-side` measures to the halo box's own edge, so with the old
      `inset: -12%` and a `transparent 72%` stop the gradient faded out to
      nothing INSIDE the element it was meant to ring — invisible on anything
-     with a fill, and only readable at all on the quiz numerals because those
-     are transparent PNGs and the glow showed through around the digit. The
+     with a fill. The
      colour now holds to 45% of the radius and fades over the rest, so there
      is real light outside the element's own edge. */
   inset: -24%;
@@ -2532,7 +2522,7 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   The dotted numeral, before the first stroke.
+   The dotted shape, before the first stroke.
 
    A second, much wider copy of the guide path lying under the dots, breathing
    in the character's accent — the trace board's version of the halo above.
@@ -2634,8 +2624,7 @@ button:disabled,
   }
 }
 
-/* The keyframes above finally have a user: a wrong pick in the number quiz
-   shakes its head rather than showing an error. Nothing on this site tells a
+/* A wrong answer shakes its head rather than showing an error. Nothing on this site tells a
    child they are wrong in words. */
 .anim-wiggle {
   animation: wiggle 0.5s ease-in-out;

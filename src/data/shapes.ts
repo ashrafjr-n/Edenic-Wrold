@@ -19,7 +19,7 @@ function ring(radius: number, points: number): Stroke {
 
 interface ShapeDef {
   /** The CENTRELINE a child traces, one stroke, in a 0–100 square — the same
-      format and scorer the old numerals used (`lib/trace-score.ts`). Also
+      format the trace scorer reads (`lib/trace-score.ts`). Also
       what `ShapeFigure` fills, so the shape a child sees and the shape they
       trace can never disagree. */
   strokes: readonly Stroke[];
