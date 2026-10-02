@@ -22,8 +22,4 @@ export interface Lesson {
       "n / total" progress readout on its card and the rows on its page. */
   totalItems: number;
   locked: boolean;
-  /** How its page lays the lessons out: a winding path (default), or a
-      box of things that colour in as they are learned (`LessonBox` —
-      Pinki's Shapes and Colors). */
-  view?: "path" | "box";
 }

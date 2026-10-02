@@ -8,9 +8,8 @@ type Tone = "shapes" | "colors" | "numbers" | "letters" | "pinki";
     Pinki's own pink, so her whole corner reads pink. Only Shapes has its own
     card art; every other course shows its friend until its art arrives
     (the image is the reel's poster). */
-const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]): Lesson => ({
+const course = (id: LessonId, tone: Tone, image: string): Lesson => ({
   id,
-  view,
   image,
   theme: {
     accent: tone === "pinki" ? "var(--color-pinki)" : `var(--color-subject-${tone})`,
@@ -25,8 +24,8 @@ const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]):
     dictionaries, not this file. */
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
-    course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png", "box"),
-    course("colors", "pinki", "/assets/friends/pinki.png", "box"),
+    course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png"),
+    course("colors", "pinki", "/assets/friends/pinki.png"),
     course("family", "pinki", "/assets/friends/pinki.png"),
   ],
   nova: [
