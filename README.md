@@ -211,9 +211,9 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-has two courses — **Shapes** and **Colors**, both written — and Nova and Bloo
-are open with three each (Fruits & Vegetables, The Seasons, Months of the Year;
-Animals, The Weather, My Body), which list their lessons and show "coming
+has two courses — **Shapes** and **Colors** — and Nova three — **Fruits &
+Vegetables**, **The Seasons** and **Months of the Year** — all written. Bloo's
+three (Animals, The Weather, My Body) list their lessons and show "coming
 soon". Every taught word is American English (color, fall, mom). Each
 friend's corner wears one colour: Pinki's is pink, Nova's is gold (back
 button, play buttons, progress bars, banners — with dark ink on the gold).
@@ -300,10 +300,28 @@ color. Every lesson ends by finding the things of its color in a picnic, and
 the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
 
-A ready **Order** activity (tap things in their order into a line of
-shrinking spaces) waits for the course that needs it. The courses
-still to come already wear their own clay art — fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
-rendered with the same light and clay as Shapes and Colors.
+Nova's courses follow the same pattern, one thing per lesson, because the
+word has to BE the picture:
+
+- **Fruits & Vegetables** — apple, banana, orange, grapes, carrot, broccoli,
+  corn, potato. Each lesson meets the word, spells it, paints the thing its
+  own color (reading the color word, so Pinki's Colors come back), then finds
+  every one of it in a picnic. The review sorts fruit and vegetables into two
+  baskets, picks two by their word and spells two from the picture.
+- **The Seasons** — spring (a flower), summer (the sun), fall (an orange
+  leaf), winter (a snowman). Meet, spell, pick the season by its word, then
+  find everything that goes with it in a picnic of all four. The review
+  sorts things into four season boxes, puts the seasons in order and spells
+  two from their sign.
+- **Months of the Year** — three months a lesson. A month has no picture of
+  its own, so the ORDER is what is learned: each month is met on its
+  calendar page (its number big in clay, the band in its season's color),
+  then the three are put in order (**Order**: tap them into numbered
+  spaces), "what comes after…?" is picked, and one name is spelled.
+
+Bloo's courses, still to come, already wear their own clay art — a sun, a
+cloud, an umbrella, a hand, a foot and animals — rendered with the same light
+and clay.
 
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,

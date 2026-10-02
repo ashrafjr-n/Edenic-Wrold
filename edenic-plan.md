@@ -193,9 +193,9 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple & Banana · Grape & Orange · Carrot & Tomato · Potato & Corn · Fruit or vegetable? · Market review |
-| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review |
-| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Fruit or vegetable? (built 2026-10-02) |
+| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
+| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
 | Bloo | My Body | Eyes & Ears · Nose & Mouth · Hands & Arms · Legs & Feet · Body review |
@@ -239,7 +239,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Seasons, Weather |
-| **Put in order**: tap them in order into a line of spaces | built (`order`), unused yet | Months |
+| **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -362,8 +362,12 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [ ] The user checks Colors again → fixes.
 - [x] My Family built (2026-10-02), then CANCELLED the same day — family
       words are relationships, not things; rethink it from the videos.
-- [ ] Then, one at a time with a check after each: Fruits &
-      Vegetables → The Seasons → Months → Animals → The Weather → My Body.
+- [x] Nova's three built at once on request (2026-10-02): Fruits &
+      Vegetables, The Seasons, Months (order-based) — all 19 lessons
+      played through headless.
+- [ ] The user checks Nova's courses → fixes.
+- [ ] Then, one at a time with a check after each: Animals → The Weather →
+      My Body.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
