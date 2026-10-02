@@ -7,6 +7,14 @@ import red_strawberry from "../../public/assets/learn/pinki/colors/find/red/stra
 import red_fish from "../../public/assets/learn/pinki/colors/find/red/fish.png";
 import red_banana from "../../public/assets/learn/pinki/colors/find/red/banana.png";
 import red_pear from "../../public/assets/learn/pinki/colors/find/red/pear.png";
+import blueGround from "../../public/assets/learn/pinki/colors/find/blue/ground.jpg";
+import blue_fish from "../../public/assets/learn/pinki/colors/find/blue/fish.png";
+import blue_whale from "../../public/assets/learn/pinki/colors/find/blue/whale.png";
+import blue_mug from "../../public/assets/learn/pinki/colors/find/blue/mug.png";
+import blue_ball from "../../public/assets/learn/pinki/colors/find/blue/ball.png";
+import blue_apple from "../../public/assets/learn/pinki/colors/find/blue/apple.png";
+import blue_strawberry from "../../public/assets/learn/pinki/colors/find/blue/strawberry.png";
+import blue_banana from "../../public/assets/learn/pinki/colors/find/blue/banana.png";
 import yellowGround from "../../public/assets/learn/pinki/colors/find/yellow/ground.jpg";
 import yellow_banana from "../../public/assets/learn/pinki/colors/find/yellow/banana.png";
 import yellow_star from "../../public/assets/learn/pinki/colors/find/yellow/star.png";
@@ -15,6 +23,22 @@ import yellow_cheese from "../../public/assets/learn/pinki/colors/find/yellow/ch
 import yellow_frog from "../../public/assets/learn/pinki/colors/find/yellow/frog.png";
 import yellow_apple from "../../public/assets/learn/pinki/colors/find/yellow/apple.png";
 import yellow_fish from "../../public/assets/learn/pinki/colors/find/yellow/fish.png";
+import greenGround from "../../public/assets/learn/pinki/colors/find/green/ground.jpg";
+import green_frog from "../../public/assets/learn/pinki/colors/find/green/frog.png";
+import green_leaf from "../../public/assets/learn/pinki/colors/find/green/leaf.png";
+import green_pear from "../../public/assets/learn/pinki/colors/find/green/pear.png";
+import green_broccoli from "../../public/assets/learn/pinki/colors/find/green/broccoli.png";
+import green_lemon from "../../public/assets/learn/pinki/colors/find/green/lemon.png";
+import green_apple from "../../public/assets/learn/pinki/colors/find/green/apple.png";
+import green_fish from "../../public/assets/learn/pinki/colors/find/green/fish.png";
+import orangeGround from "../../public/assets/learn/pinki/colors/find/orange/ground.jpg";
+import orange_orange from "../../public/assets/learn/pinki/colors/find/orange/orange.png";
+import orange_goldfish from "../../public/assets/learn/pinki/colors/find/orange/goldfish.png";
+import orange_carrot from "../../public/assets/learn/pinki/colors/find/orange/carrot.png";
+import orange_basketball from "../../public/assets/learn/pinki/colors/find/orange/basketball.png";
+import orange_frog from "../../public/assets/learn/pinki/colors/find/orange/frog.png";
+import orange_strawberry from "../../public/assets/learn/pinki/colors/find/orange/strawberry.png";
+import orange_banana from "../../public/assets/learn/pinki/colors/find/orange/banana.png";
 import purpleGround from "../../public/assets/learn/pinki/colors/find/purple/ground.jpg";
 import purple_grapes from "../../public/assets/learn/pinki/colors/find/purple/grapes.png";
 import purple_gift from "../../public/assets/learn/pinki/colors/find/purple/gift.png";
@@ -31,6 +55,22 @@ import pink_icecream from "../../public/assets/learn/pinki/colors/find/pink/icec
 import pink_cookie from "../../public/assets/learn/pinki/colors/find/pink/cookie.png";
 import pink_teddy from "../../public/assets/learn/pinki/colors/find/pink/teddy.png";
 import pink_lemon from "../../public/assets/learn/pinki/colors/find/pink/lemon.png";
+import brownGround from "../../public/assets/learn/pinki/colors/find/brown/ground.jpg";
+import brown_teddy from "../../public/assets/learn/pinki/colors/find/brown/teddy.png";
+import brown_cookie from "../../public/assets/learn/pinki/colors/find/brown/cookie.png";
+import brown_chocolate from "../../public/assets/learn/pinki/colors/find/brown/chocolate.png";
+import brown_acorn from "../../public/assets/learn/pinki/colors/find/brown/acorn.png";
+import brown_donut from "../../public/assets/learn/pinki/colors/find/brown/donut.png";
+import brown_grapes from "../../public/assets/learn/pinki/colors/find/brown/grapes.png";
+import brown_carrot from "../../public/assets/learn/pinki/colors/find/brown/carrot.png";
+import blackGround from "../../public/assets/learn/pinki/colors/find/black/ground.jpg";
+import black_hat from "../../public/assets/learn/pinki/colors/find/black/hat.png";
+import black_ant from "../../public/assets/learn/pinki/colors/find/black/ant.png";
+import black_tire from "../../public/assets/learn/pinki/colors/find/black/tire.png";
+import black_bowling from "../../public/assets/learn/pinki/colors/find/black/bowling.png";
+import black_donut from "../../public/assets/learn/pinki/colors/find/black/donut.png";
+import black_star from "../../public/assets/learn/pinki/colors/find/black/star.png";
+import black_carrot from "../../public/assets/learn/pinki/colors/find/black/carrot.png";
 import whiteGround from "../../public/assets/learn/pinki/colors/find/white/ground.jpg";
 import white_egg from "../../public/assets/learn/pinki/colors/find/white/egg.png";
 import white_sheep from "../../public/assets/learn/pinki/colors/find/white/sheep.png";
@@ -40,12 +80,13 @@ import white_hat from "../../public/assets/learn/pinki/colors/find/white/hat.png
 import white_chocolate from "../../public/assets/learn/pinki/colors/find/white/chocolate.png";
 import white_apple from "../../public/assets/learn/pinki/colors/find/white/apple.png";
 
-/* Pinki's Colors picnics, one per lesson: four things of the lesson's color
-   among a few of other colors. Rendered by `tools/picnic-scene`
-   (`render.cjs <name>` then `crop.py <name> public/assets/learn/pinki/colors/find`);
-   the boxes are what `crop.py` printed, as % of the 4:5 scene. */
+/* Pinki's Colors picnics, one per color: four things of that color among a
+   few of others (the colors already learned, where it can). Rendered by
+   `tools/picnic-scene` (`render.cjs <color>` then
+   `crop.py <color> public/assets/learn/pinki/colors/find`); the boxes are what
+   `crop.py` printed, as % of the 4:5 scene. */
 
-/** The reds' picnic: a cream blanket with a sky-blue gingham. */
+/** The reds' picnic: cream with a sky-blue gingham. */
 export const redThings: Scene = {
   background: redGround,
   items: [
@@ -59,7 +100,21 @@ export const redThings: Scene = {
   ],
 };
 
-/** The yellows' picnic: the blue striped blanket. */
+/** The blues' picnic: pink stripes. */
+export const blueThings: Scene = {
+  background: blueGround,
+  items: [
+    { id: "fish", src: blue_fish, word: "fish", shape: null, color: "blue", box: [11.8, 21.2, 26.9, 13.44], hit: [12.4, 23.12, 24.1, 11.04] },
+    { id: "whale", src: blue_whale, word: "whale", shape: null, color: "blue", box: [58.0, 26.24, 26.6, 13.52], hit: [58.6, 27.92, 23.1, 11.36] },
+    { id: "mug", src: blue_mug, word: "mug", shape: null, color: "blue", box: [65.8, 56.08, 17.9, 14.0], hit: [66.4, 57.76, 14.2, 11.76] },
+    { id: "ball", src: blue_ball, word: "ball", shape: null, color: "blue", box: [10.0, 78.16, 19.8, 13.04], hit: [10.6, 80.08, 14.7, 10.64] },
+    { id: "apple", src: blue_apple, word: "apple", shape: null, color: "red", box: [41.0, 41.2, 20.8, 15.28], hit: [41.6, 42.72, 16.8, 13.28] },
+    { id: "strawberry", src: blue_strawberry, word: "strawberry", shape: null, color: "red", box: [15.7, 60.16, 16.0, 11.44], hit: [16.3, 61.6, 11.9, 9.52] },
+    { id: "banana", src: blue_banana, word: "banana", shape: null, color: "yellow", box: [72.7, 78.0, 22.1, 9.84], hit: [73.3, 78.8, 20.0, 8.56] },
+  ],
+};
+
+/** The yellows' picnic: blue stripes. */
 export const yellowThings: Scene = {
   background: yellowGround,
   items: [
@@ -73,7 +128,35 @@ export const yellowThings: Scene = {
   ],
 };
 
-/** The purples' picnic: the mint blanket. */
+/** The greens' picnic: cream with a sky-blue gingham — every green thing ON it, off the grass. */
+export const greenThings: Scene = {
+  background: greenGround,
+  items: [
+    { id: "frog", src: green_frog, word: "frog", shape: null, color: "green", box: [18.4, 28.56, 19.1, 14.0], hit: [19.0, 29.76, 16.3, 12.24] },
+    { id: "leaf", src: green_leaf, word: "leaf", shape: null, color: "green", box: [65.1, 28.0, 15.8, 13.84], hit: [65.7, 28.64, 14.1, 12.72] },
+    { id: "pear", src: green_pear, word: "pear", shape: null, color: "green", box: [57.8, 55.04, 20.5, 12.88], hit: [58.4, 56.72, 15.6, 10.72] },
+    { id: "broccoli", src: green_broccoli, word: "broccoli", shape: null, color: "green", box: [13.3, 60.4, 18.6, 10.88], hit: [13.9, 61.76, 14.6, 9.04] },
+    { id: "lemon", src: green_lemon, word: "lemon", shape: null, color: "yellow", box: [39.7, 42.88, 23.0, 11.84], hit: [40.3, 44.32, 19.4, 9.92] },
+    { id: "apple", src: green_apple, word: "apple", shape: null, color: "red", box: [9.0, 78.0, 20.8, 15.2], hit: [9.6, 79.44, 16.8, 13.28] },
+    { id: "fish", src: green_fish, word: "fish", shape: null, color: "blue", box: [69.8, 76.0, 24.3, 12.0], hit: [70.4, 77.12, 20.1, 10.32] },
+  ],
+};
+
+/** The oranges' picnic: blue stripes. */
+export const orangeThings: Scene = {
+  background: orangeGround,
+  items: [
+    { id: "orange", src: orange_orange, word: "orange", shape: null, color: "orange", box: [19.3, 26.24, 19.7, 14.16], hit: [19.9, 28.0, 14.9, 11.92] },
+    { id: "goldfish", src: orange_goldfish, word: "goldfish", shape: null, color: "orange", box: [58.4, 22.0, 27.3, 13.84], hit: [59.0, 23.36, 22.0, 12.0] },
+    { id: "carrot", src: orange_carrot, word: "carrot", shape: null, color: "orange", box: [52.4, 62.96, 22.3, 10.16], hit: [53.0, 63.84, 19.8, 8.8] },
+    { id: "basketball", src: orange_basketball, word: "basketball", shape: null, color: "orange", box: [10.5, 78.64, 18.3, 13.12], hit: [11.1, 80.32, 13.7, 10.96] },
+    { id: "frog", src: orange_frog, word: "frog", shape: null, color: "green", box: [41.8, 43.84, 17.3, 13.04], hit: [42.4, 45.04, 15.4, 11.28] },
+    { id: "strawberry", src: orange_strawberry, word: "strawberry", shape: null, color: "red", box: [16.9, 61.44, 16.2, 11.44], hit: [17.5, 62.88, 12.0, 9.52] },
+    { id: "banana", src: orange_banana, word: "banana", shape: null, color: "yellow", box: [72.7, 78.0, 22.1, 9.84], hit: [73.3, 78.8, 20.0, 8.56] },
+  ],
+};
+
+/** The purples' picnic: mint bands. */
 export const purpleThings: Scene = {
   background: purpleGround,
   items: [
@@ -101,7 +184,35 @@ export const pinkThings: Scene = {
   ],
 };
 
-/** The whites' picnic: a plain lilac blanket, so white things show. */
+/** The browns' picnic: mint bands. */
+export const brownThings: Scene = {
+  background: brownGround,
+  items: [
+    { id: "teddy", src: brown_teddy, word: "teddy", shape: null, color: "brown", box: [18.8, 18.0, 19.9, 17.2], hit: [19.4, 19.12, 15.8, 15.6] },
+    { id: "cookie", src: brown_cookie, word: "cookie", shape: null, color: "brown", box: [60.8, 25.52, 24.4, 18.48], hit: [61.4, 26.24, 22.5, 17.2] },
+    { id: "chocolate", src: brown_chocolate, word: "chocolate", shape: null, color: "brown", box: [61.5, 53.52, 24.3, 22.48], hit: [62.1, 54.24, 21.8, 21.2] },
+    { id: "acorn", src: brown_acorn, word: "acorn", shape: null, color: "brown", box: [5.3, 82.88, 16.5, 11.44], hit: [5.9, 84.32, 12.6, 9.52] },
+    { id: "donut", src: brown_donut, word: "donut", shape: null, color: "pink", box: [39.3, 41.2, 22.7, 17.04], hit: [39.9, 42.24, 20.2, 15.52] },
+    { id: "grapes", src: brown_grapes, word: "grapes", shape: null, color: "purple", box: [19.7, 49.68, 17.8, 16.0], hit: [20.3, 50.88, 13.9, 14.32] },
+    { id: "carrot", src: brown_carrot, word: "carrot", shape: null, color: "orange", box: [62.7, 79.12, 22.1, 8.48], hit: [63.3, 80.16, 19.7, 6.96] },
+  ],
+};
+
+/** The blacks' picnic: the round yellow blanket. */
+export const blackThings: Scene = {
+  background: blackGround,
+  items: [
+    { id: "hat", src: black_hat, word: "hat", shape: null, color: "black", box: [18.0, 25.68, 23.7, 17.6], hit: [18.6, 28.0, 17.3, 14.8] },
+    { id: "ant", src: black_ant, word: "ant", shape: null, color: "black", box: [57.5, 26.4, 28.5, 16.24], hit: [58.1, 28.08, 23.6, 14.08] },
+    { id: "tire", src: black_tire, word: "tire", shape: null, color: "black", box: [60.4, 55.52, 21.2, 15.84], hit: [61.0, 56.48, 18.6, 14.4] },
+    { id: "bowling", src: black_bowling, word: "bowling ball", shape: null, color: "black", box: [10.7, 78.8, 17.8, 12.8], hit: [11.3, 80.48, 13.3, 10.64] },
+    { id: "donut", src: black_donut, word: "donut", shape: null, color: "pink", box: [18.2, 55.52, 22.7, 17.04], hit: [18.8, 56.48, 20.2, 15.6] },
+    { id: "star", src: black_star, word: "star", shape: null, color: "yellow", box: [39.8, 42.64, 21.8, 17.28], hit: [40.4, 43.52, 19.4, 15.92] },
+    { id: "carrot", src: black_carrot, word: "carrot", shape: null, color: "orange", box: [63.6, 85.6, 21.2, 9.6], hit: [64.2, 86.4, 18.8, 8.32] },
+  ],
+};
+
+/** The whites' picnic: plain lilac, so white things show. */
 export const whiteThings: Scene = {
   background: whiteGround,
   items: [

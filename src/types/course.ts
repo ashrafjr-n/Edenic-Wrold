@@ -100,7 +100,10 @@ export type Question =
   | { type: "sort"; ask: Ask; items: SceneItem[]; bins: SortBin[] }
   /** Read the color word, tap its pot, and the thing is painted — a round
       per color. `pots` are the colors on offer, in order. */
-  | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] };
+  | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] }
+  /** Balloons of many colors float up; pop every one of `color` (four of
+      them) and leave the `others` be. */
+  | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] };
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
