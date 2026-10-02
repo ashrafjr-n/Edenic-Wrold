@@ -2,13 +2,13 @@ import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef } from "@/types/course";
 import apple from "../../../public/assets/icons/apple.png";
-import blueBall from "../../../public/assets/icons/blue-ball.png";
 import cat from "../../../public/assets/icons/cat.png";
 import cloud from "../../../public/assets/icons/cloud.png";
 import numbers from "../../../public/assets/icons/123.png";
 import rabbit from "../../../public/assets/icons/rabbit.png";
 import star from "../../../public/assets/icons/yellow-star.png";
 import { pinkiShapes } from "./pinki-shapes";
+import { pinkiColors } from "./pinki-colors";
 
 /** A course whose lessons are not written yet: `count` "coming soon"
     lessons, all wearing one placeholder icon until the course's own
@@ -21,7 +21,7 @@ const comingSoon = (count: number, cover: StaticImageData): LessonDef[] =>
     length of its list here. */
 export const courseLessons: Record<LessonId, LessonDef[]> = {
   shapes: pinkiShapes,
-  colors: comingSoon(6, blueBall),
+  colors: pinkiColors,
   family: comingSoon(5, star),
   fruits: comingSoon(6, apple),
   seasons: comingSoon(5, cloud),
