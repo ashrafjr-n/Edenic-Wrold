@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Fruit or vegetable? (built 2026-10-02) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; "Nova's market": bag → cut → list → spell) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
@@ -247,7 +247,8 @@ Months start with a **capital letter** — the first tile is the capital.
 - **My Family** (simplest): mom, dad, brother, sister, grandma, grandpa, baby,
   me. `mom`/`dad` are the easiest first spells. Touch it on a family photo;
   review: put the family in order, oldest → youngest.
-- **Fruits & Vegetables**: Count into a basket ("Put 3 bananas in the
+- **Fruits & Vegetables** (BUILT as "Nova's market", 2026-10-02 — see
+  `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
   basket"), find them on a market stall, sort fruit / vegetable; review: a
   shopping list to read and fill.
 - **The Seasons**: spring, summer, fall, winter + one sign each; Dress up
@@ -365,7 +366,11 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] Nova's three built at once on request (2026-10-02): Fruits &
       Vegetables, The Seasons, Months (order-based) — all 19 lessons
       played through headless.
-- [ ] The user checks Nova's courses → fixes.
+- [x] Fruits restructured as "Nova's market" (2026-10-02, on request, after
+      research): bag → cut → shopping list → spell; review: salad, soup,
+      "Do you like…?", spelling.
+- [ ] The user checks Fruits → then Seasons and Months get their own new
+      structure (Nova's tree; the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
       My Body.
 

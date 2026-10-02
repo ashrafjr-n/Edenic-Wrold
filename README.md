@@ -299,14 +299,21 @@ color. Every lesson ends by finding the things of its color in a picnic, and
 the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
 
-Nova's courses follow the same pattern, one thing per lesson, because the
-word has to BE the picture:
+Nova's courses teach one thing per lesson, because the word has to BE the
+picture:
 
-- **Fruits & Vegetables** — apple, banana, orange, grapes, carrot, broccoli,
-  corn, potato. Each lesson meets the word, spells it, paints the thing its
-  own color (reading the color word, so Pinki's Colors come back), then finds
-  every one of it in a picnic. The review sorts fruit and vegetables into two
-  baskets, picks two by their word and spells two from the picture.
+- **Fruits & Vegetables — Nova's market**, a structure of its own (listen →
+  do → spell → use): apple, banana, orange, grapes, carrot, broccoli, corn,
+  potato. **What's in the bag?** — tap Nova's bag, the thing peeks out as a
+  shadow, pick which of two it is and out it comes with its word and
+  speaker. **Cut it open** — drag the knife across it (or tap the knife) and
+  it falls open on the board. **The shopping list** — read Nova's note (each
+  word has its speaker; from lesson 2 the word met last time is on it too)
+  and tap those things on the stall into the basket. Then **spell** it. The
+  review makes a **fruit salad** and a **vegetable soup** by their recipes,
+  line by line, asks **"Do you like…?"** (thumbs up or down onto two plates —
+  "I like apples." / "I don't like corn." — no wrong answer), and spells two
+  words from the picture.
 - **The Seasons** — spring (a flower), summer (the sun), fall (an orange
   leaf), winter (a snowman). Meet, spell, pick the season by its word, then
   find everything that goes with it in a picnic of all four. The review
