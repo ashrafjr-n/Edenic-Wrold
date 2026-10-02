@@ -184,6 +184,11 @@ export const ar: Dictionary = {
     spellColor: "كوّن كلمة هذا اللون!",
     sortColors: "ضع كل شيء في صندوق لونه!",
     popColor: "فرقع البالونات {color}!",
+    thisIsPerson: "تعرّف على {person}!",
+    whoIs: "أين {person}؟",
+    findPerson: "ابحث عن {person}!",
+    spellPerson: "كوّن كلمة هذا الشخص!",
+    orderAge: "رتّبهم من الأكبر إلى الأصغر!",
   },
   tasks: {
     listen: "استمع",
@@ -195,6 +200,7 @@ export const ar: Dictionary = {
     sort: "رتّب",
     paint: "لوّن",
     pop: "فرقع",
+    order: "صُفّ",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

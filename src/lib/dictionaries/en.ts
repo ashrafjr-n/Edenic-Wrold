@@ -194,6 +194,11 @@ export const en = {
     spellColor: "Build the word for this color!",
     sortColors: "Put each thing in its color's box!",
     popColor: "Pop the {color} balloons!",
+    thisIsPerson: "This is {person}!",
+    whoIs: "Who is {person}?",
+    findPerson: "Find {person}!",
+    spellPerson: "Build the word for this person!",
+    orderAge: "Line them up, oldest first!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -206,6 +211,7 @@ export const en = {
     sort: "Sort",
     paint: "Paint",
     pop: "Pop",
+    order: "Line up",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

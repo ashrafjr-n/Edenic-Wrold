@@ -188,6 +188,11 @@ export const ku: Dictionary = {
     spellColor: "پەیڤا ڤی ڕەنگی چێ بکە!",
     sortColors: "هەر تشتەکی بکە د سندوقا ڕەنگێ وی دا!",
     popColor: "بالۆنێن {color} بتەقینە!",
+    thisIsPerson: "ئەڤە {person}ە!",
+    whoIs: "{person} کیژە؟",
+    findPerson: "{person} بدۆزە!",
+    spellPerson: "پەیڤا ڤی کەسی چێ بکە!",
+    orderAge: "ڕیز بکە، ژ مەزنترین بۆ بچویکترین!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -199,6 +204,7 @@ export const ku: Dictionary = {
     sort: "ڕێک بێخە",
     paint: "ڕەنگ بکە",
     pop: "بتەقینە",
+    order: "ڕیز بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",
