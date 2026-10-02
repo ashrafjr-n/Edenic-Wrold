@@ -6,7 +6,8 @@ import Image from "next/image";
 import { format } from "@/lib/format-dict";
 import { shuffle } from "@/lib/seeded";
 import { Celebration } from "@/components/ui/celebration";
-import type { SceneItem, ShapeId } from "@/types/course";
+import { isTarget } from "@/lib/target";
+import type { SceneItem, SortBin } from "@/types/course";
 import { FaceView } from "./face";
 
 /** Two misses on one thing and its box starts to glow. */
@@ -16,20 +17,16 @@ const FLY_MS = 420;
 /** Below this the finger never really moved — a tap, not a drag. */
 const DRAG_THRESHOLD = 8;
 
-/** The boxes, in a fixed 2x2 order, each in its shape's own clay colour
-    (`data/shapes.ts`) — the shape sits on a white disc so it still shows. */
-export const BINS: { shape: ShapeId; face: string; edge: string; text: string }[] = [
-  { shape: "circle", face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" },
-  { shape: "square", face: "var(--color-go)", edge: "var(--color-go-dark)", text: "#fff" },
-  { shape: "triangle", face: "var(--color-gold)", edge: "var(--color-gold-dark)", text: "var(--color-ink-fixed)" },
-  { shape: "rectangle", face: "var(--accent)", edge: "var(--accent-dark)", text: "#fff" },
-];
+/** The box a thing belongs in. */
+export const binFor = (bins: SortBin[], item: SceneItem) => bins.find((bin) => isTarget(item, bin.target));
 
 interface SortShapesProps {
   items: SceneItem[];
+  /** The four boxes, in a fixed 2x2 order (`SHAPE_BINS`, `colorBin`). */
+  bins: SortBin[];
   /** Deals the order the things come in. */
   seed: string;
-  /** "The {shape} box", each box's screen-reader name. */
+  /** "The {shape} box", each box's screen-reader name — `{shape}` is the box's word. */
   binAria: string;
   onSolved: () => void;
   onMiss: () => void;
@@ -43,17 +40,17 @@ interface SortShapesProps {
  * only wiggles the thing, and after two misses the right box glows. When
  * every thing is in, all four boxes jump.
  */
-export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShapesProps) {
+export function SortShapes({ items, bins, seed, binAria, onSolved, onMiss }: SortShapesProps) {
   const order = useMemo(() => shuffle(items, seed), [items, seed]);
   const [at, setAt] = useState(0);
   const [misses, setMisses] = useState(0);
   const [shake, setShake] = useState(0);
-  const [received, setReceived] = useState<{ shape: ShapeId; n: number } | null>(null);
+  const [received, setReceived] = useState<{ word: string; n: number } | null>(null);
   const [flying, setFlying] = useState(false);
   const [drag, setDrag] = useState<{ x: number; y: number; dx: number; dy: number; moved: boolean } | null>(null);
 
   const thingRef = useRef<HTMLDivElement>(null);
-  const binRefs = useRef(new Map<ShapeId, HTMLButtonElement>());
+  const binRefs = useRef(new Map<string, HTMLButtonElement>());
   const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -61,14 +58,14 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
   const current = order[at];
   const done = at >= order.length;
   const sorted = order.slice(0, at);
-  const hinted = !done && misses >= HINT_AFTER ? current.shape : undefined;
+  const hinted = !done && misses >= HINT_AFTER ? binFor(bins, current)?.word : undefined;
 
-  /** The thing is let go over box `shape` (a tap on it, or a drop). */
-  const choose = (shape: ShapeId, offset = { dx: 0, dy: 0 }) => {
+  /** The thing is let go over box `word` (a tap on it, or a drop). */
+  const choose = (word: string, offset = { dx: 0, dy: 0 }) => {
     if (done || flying) return;
     const thing = thingRef.current;
-    const bin = binRefs.current.get(shape);
-    if (shape !== current.shape || !thing || !bin) {
+    const bin = binRefs.current.get(word);
+    if (word !== binFor(bins, current)?.word || !thing || !bin) {
       /* Back to the middle from wherever the finger let go, then a wiggle. */
       thing?.animate([{ translate: `${offset.dx}px ${offset.dy}px` }, { translate: "0px 0px" }], { duration: 260, easing: "ease-out" });
       setShake((n) => n + 1);
@@ -93,7 +90,7 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
       setFlying(false);
       setMisses(0);
       setShake(0);
-      setReceived((last) => ({ shape, n: (last?.n ?? 0) + 1 }));
+      setReceived((last) => ({ word, n: (last?.n ?? 0) + 1 }));
       setAt((value) => value + 1);
       if (at + 1 === order.length) onSolved();
     }, FLY_MS);
@@ -121,11 +118,11 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
     const { dx, dy, moved } = drag;
     setDrag(null);
     if (!moved) return;
-    const over = BINS.find(({ shape }) => {
-      const box = binRefs.current.get(shape)?.getBoundingClientRect();
+    const over = bins.find(({ word }) => {
+      const box = binRefs.current.get(word)?.getBoundingClientRect();
       return box && event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
     });
-    if (over) choose(over.shape, { dx, dy });
+    if (over) choose(over.word, { dx, dy });
     else thingRef.current?.animate([{ translate: `${dx}px ${dy}px` }, { translate: "0px 0px" }], { duration: 260, easing: "ease-out" });
   };
 
@@ -154,19 +151,19 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
 
       {/* The four boxes. The glow goes on a wrapper — the box has a fill. */}
       <div className="grid w-full grid-cols-2 gap-3 lg:flex-1 lg:gap-4">
-        {BINS.map(({ shape, face, edge, text }, i) => {
-          const inside = sorted.filter((item) => item.shape === shape);
-          const jumping = done || received?.shape === shape;
+        {bins.map(({ target, word, face: picture, tone: { face, edge, text } }, i) => {
+          const inside = sorted.filter((item) => isTarget(item, target));
+          const jumping = done || received?.word === word;
           return (
-            <span key={shape} className={`relative block ${hinted === shape ? "guide-target" : ""}`}>
+            <span key={word} className={`relative block ${hinted === word ? "guide-target" : ""}`}>
               <button
-                key={jumping ? `${shape}.${done ? "done" : received?.n}` : shape}
+                key={jumping ? `${word}.${done ? "done" : received?.n}` : word}
                 ref={(el) => {
-                  if (el) binRefs.current.set(shape, el);
+                  if (el) binRefs.current.set(word, el);
                 }}
                 type="button"
-                aria-label={format(binAria, { shape })}
-                onClick={() => choose(shape)}
+                aria-label={format(binAria, { shape: word })}
+                onClick={() => choose(word)}
                 className={`clay flex h-[min(6.25rem,12svh)] w-full lg:h-[min(10rem,calc((var(--stage-h)-1rem)/2))] flex-col items-center justify-center gap-1 rounded-[1.6rem] px-2 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] ${
                   jumping ? "anim-jump" : ""
                 } ${done ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"}`}
@@ -181,10 +178,10 @@ export function SortShapes({ items, seed, binAria, onSolved, onMiss }: SortShape
               >
                 <span className="flex items-center gap-2 lg:gap-2.5">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white lg:h-11 lg:w-11">
-                    <FaceView face={{ kind: "shape", shape }} size="tile" />
+                    <FaceView face={picture} size="tile" />
                   </span>
                   <span dir="ltr" className="text-lg font-bold lg:text-xl">
-                    {shape}
+                    {word}
                   </span>
                 </span>
                 {/* What is already in — the box filling up. */}

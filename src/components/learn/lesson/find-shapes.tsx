@@ -6,14 +6,16 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
-import type { Scene, SceneItem, SceneRect, ShapeId } from "@/types/course";
+import { isTarget } from "@/lib/target";
+import type { Scene, SceneItem, SceneRect, Target } from "@/types/course";
 
 /** Two misses on this board and the next thing to find starts to glow. */
 const HINT_AFTER = 2;
 
 interface FindShapesProps {
   scene: Scene;
-  shape: ShapeId;
+  /** The shape or color to find. */
+  target: Target;
   /** "Tap the {word}", naming each thing for a screen reader. */
   itemAria: string;
   onSolved: () => void;
@@ -28,8 +30,9 @@ export const place = ([left, top, width, height]: SceneRect): CSSProperties => (
 });
 
 /**
- * Find every thing in the scene that is `shape` — the lesson's last step,
- * where the shape leaves the page and turns up in the child's world.
+ * Find every thing in the scene that is the `target` shape or color — the
+ * lesson's last step, where the word leaves the page and turns up in the
+ * child's world.
  *
  * The scene is one render: an empty picnic with each thing laid over it at the
  * spot it was rendered in, so it reads as one picture but every thing can move
@@ -37,8 +40,8 @@ export const place = ([left, top, width, height]: SceneRect): CSSProperties => (
  * sockets (one per thing to find); a wrong one only wiggles. After two misses
  * the next thing to find glows. All found → the whole set jumps together.
  */
-export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindShapesProps) {
-  const targets = scene.items.filter((item) => item.shape === shape);
+export function FindShapes({ scene, target, itemAria, onSolved, onMiss }: FindShapesProps) {
+  const targets = scene.items.filter((item) => isTarget(item, target));
   const [found, setFound] = useState<string[]>([]);
   const [shake, setShake] = useState<{ id: string; n: number } | null>(null);
   const [misses, setMisses] = useState(0);
@@ -48,7 +51,7 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
 
   const tap = (item: SceneItem) => {
     if (solved || found.includes(item.id)) return;
-    if (item.shape === shape) {
+    if (isTarget(item, target)) {
       const next = [...found, item.id];
       setFound(next);
       if (next.length === targets.length) onSolved();
@@ -144,13 +147,13 @@ export function FindShapes({ scene, shape, itemAria, onSolved, onMiss }: FindSha
           className="clay pointer-events-none absolute bottom-[2.5%] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[var(--surface)] p-1.5 sm:gap-2 sm:p-2 lg:gap-2.5 lg:p-2.5"
           style={{ "--clay-edge": "var(--color-locked-dark)" } as CSSProperties}
         >
-          {targets.map((target, i) => {
+          {targets.map((socket, i) => {
             const id = found[i];
             const item = id ? scene.items.find((candidate) => candidate.id === id) : undefined;
             return (
               /* `.letter-slot` sets its own radius, unlayered — the round
                  one has to come inline. */
-              <span key={target.id} className="letter-slot h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12" style={{ borderRadius: "999px" }}>
+              <span key={socket.id} className="letter-slot h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12" style={{ borderRadius: "999px" }}>
                 {item && (
                   <span className="anim-pop-in absolute inset-0.5">
                     <Image src={item.src} alt="" fill sizes="(min-width: 1024px) 48px, 44px" className="object-contain" />
