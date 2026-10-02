@@ -151,31 +151,42 @@ hardest, so they come last in Nova's set).
 | 4 | Rectangle | Reel, Word, Trace, Spell `rectangle`, Find the rectangles (round yellow picnic) |
 | 5 | Shape review | Sort ×8 things, Pick the word ×2 (square, rectangle), Trace a triangle |
 
-### Pinki · Colors — two colors per lesson (BUILDING, 2026-10-02)
-The colors in the order children are taught them: the three primaries first,
-then what they make. A color is shown as a **clay paint pot** in that color
-(one picture per color, used for the word card, the paint buttons, the sort
-boxes and the done screen).
+### Pinki · Colors — one color per lesson (BUILT, 2026-10-02)
+Direct request: "each color on its own", plus a new activity only colors can
+have, and a course page that is not a map. The colors in the order children
+are taught them: the three primaries, what they make, then the rest. A color
+is shown as a **clay paint pot** in that color (word card, paint buttons,
+sort boxes, done screen, the course page).
 
 | # | Lesson | Steps |
 | --- | --- | --- |
-| 1 | Red & Blue | Reel · Meet `red` · Spell `red` · Meet `blue` · Spell `blue` · Paint (apple → red, fish → blue) · Find the red things |
-| 2 | Yellow & Green | Reel · Meet/Spell `yellow` · Meet/Spell `green` · Paint (duck → yellow, frog → green) · Find the yellow things |
-| 3 | Orange & Purple | Reel · Meet/Spell `orange` · Meet/Spell `purple` · Mix: red + yellow = ? · Mix: red + blue = ? · Find the purple things |
-| 4 | Pink & Brown | Reel · Meet/Spell `pink` · Meet/Spell `brown` · Paint (pig → pink, teddy → brown) · Find the pink things |
-| 5 | Black & White | Reel · Meet/Spell `black` · Meet/Spell `white` · Paint (hat → black, snowman → white) · Find the white things |
-| 6 | Color review | Sort ×8 into four color boxes · Pick the color a word names ×2 (brown, orange) · Spell from the pot alone ×2 (green, pink) |
+| 1 | Red | Reel · Meet · Spell · Paint (apple) · Pop the red balloons · Find the red things |
+| 2 | Blue | … · Paint (fish, then the apple red again) · Pop · Find |
+| 3 | Yellow | … · Paint (duck, fish) · Pop · Find |
+| 4 | Green | … · Paint (frog, duck) · **Mix: blue + yellow = ?** · Pop · Find |
+| 5 | Orange | … · Paint (carrot, frog) · **Mix: red + yellow = ?** · Pop · Find |
+| 6 | Purple | … · Paint (grapes, carrot) · **Mix: red + blue = ?** · Pop · Find |
+| 7 | Pink | … · Paint (pig, grapes) · Pop · Find |
+| 8 | Brown | … · Paint (teddy bear, pig) · Pop · Find |
+| 9 | Black | … · Paint (hat, teddy bear) · Pop · Find |
+| 10 | White | … · Paint (snowman, hat) · Pop · Find |
+| 11 | Color review | Sort ×8 into four color boxes · Pick the color a word names ×2 (brown, orange) · Spell from the pot alone ×2 (green, pink) |
 
-- **Meet → Spell, word by word**: a word is spelled right after it is met.
-- **Paint** (new): the color word in clay letters on top, the thing in grey
-  clay, a row of paint pots (the lesson's colors + ones already learned).
-  Tap the pot the WORD names → the paint spreads over the thing. Two rounds.
-  It is reading, not guessing: the word, not the thing, picks the pot.
-- **Mix** (lesson 3, a Pick): two pots and a "?" → which pot do they make.
-- **Find**: a rendered scene with four things of the color, the lesson's
-  other color and a few more among them.
-- The review asks every word from the picture only (the spelling ladder's
-  rung 4) — no word shown.
+- **Meet → Spell** straight away; the word in its own color.
+- **Paint**: the color word in plain dark letters, the thing in grey clay,
+  a row of pots (the lesson's color + ones already learned). Tap the pot the
+  WORD names → the paint spreads. The second round repaints the color before
+  (spaced review).
+- **Pop the balloons** (new, colors only): balloons of many colors rise up a
+  patch of sky; pop the four of the lesson's color, leave the rest. The color
+  is the only thing that tells them apart.
+- **Mix** (green, orange, purple — the colors made from ones already met).
+- **Find**: a rendered picnic per color, four things of it among others.
+- **The course page is a box of paint pots, not a map**: ten pots and the
+  review. A pot is empty grey clay with a padlock until its lesson opens;
+  the open one shows its paint, a ring in its color and "Start"; a learned
+  one keeps its paint, its word in its color and a tick. Back from a
+  finished lesson, the next pot fills with paint as its lock springs off.
 
 ### The other seven (lesson titles provisional until each is built)
 | Friend | Course | Lessons |
@@ -344,7 +355,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       color (Meet/Spell) or plain ink (Paint, Pick — they must be read);
       six lessons of data; all six played through at 375x667, 390x844,
       820x1180, 1440x900, dark mode checked.
-- [ ] The user checks Colors → fixes.
+- [x] The user checked Colors (2026-10-02): one color per lesson, a new
+      colors-only activity (Pop the balloons), the course page as a box of
+      paint pots — done the same day, all 11 lessons played through.
+- [ ] The user checks Colors again → fixes.
 - [ ] Then, one at a time with a check after each: My Family → Fruits &
       Vegetables → The Seasons → Months → Animals → The Weather → My Body.
 

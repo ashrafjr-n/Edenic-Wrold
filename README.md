@@ -285,17 +285,25 @@ finally one more drawing, a triangle. The done screen shows all four shapes
 beside the child's drawing. The reels are placeholders until
 the real clips arrive.
 
-**Colors is written: two colors per lesson** — Red & Blue, Yellow & Green,
-Orange & Purple, Pink & Brown, Black & White, then a Color review. A color is
+**Colors is written: one color per lesson** — red, blue, yellow, green,
+orange, purple, pink, brown, black, white, then a Color review. A color is
 shown as a clay paint pot of that color. Each color is met (the pot, and the
 word written in its own color) and spelled straight away; then the child
 **paints**: the color word appears in plain dark letters over a thing in grey
 clay and a row of paint pots, and tapping the pot the word names spreads the
-paint over the thing — it is reading, not guessing. Orange and purple are
-**mixed** instead (red + yellow = ?), from the primaries met before. Every
-lesson ends by finding the things of one color in a picnic, and the review
-sorts things into four color boxes, names a color from its word, and spells
-two colors from the pot alone, with no word on screen.
+paint over the thing — it is reading, not guessing — and then repaints the
+color before. Green, orange and purple are also **mixed** (blue + yellow = ?)
+from colors already met. Then **Pop the balloons**: balloons of many colors
+float up a patch of sky and the child pops only the ones of the lesson's
+color. Every lesson ends by finding the things of its color in a picnic, and
+the review sorts things into four color boxes, names a color from its word,
+and spells two colors from the pot alone, with no word on screen.
+
+The Colors course page is not a path but a **box of paint pots**: one pot per
+color, empty grey clay with a padlock until its lesson opens, filled with its
+paint (and its word in that color) once learned. Coming back from a finished
+lesson, the next pot fills with paint as its padlock springs off, and then
+the lesson opens by itself.
 
 Other lessons use pick the right tile or count things into a basket, and on
 the first one Pinki shows how. A wrong
