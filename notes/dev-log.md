@@ -62,3 +62,4 @@
 2026-10-01 tidy font loading
 2026-10-01 adjust confetti timing
 2026-10-01 document image sizes
+2026-10-02 improve button states
