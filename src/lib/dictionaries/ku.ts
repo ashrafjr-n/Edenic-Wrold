@@ -100,7 +100,7 @@ export const ku: Dictionary = {
     fruits: {
       name: "فێقی و سەوزە",
       description: "تشتێن خۆش بۆ خوارنێ و چاوا دنڤیسن",
-      items: ["سێڤ و مۆز", "تری و پرتەقال", "گێزەر و تەماتە", "پەتاتە و گەنمەشامی", "فێقی یان سەوزە؟", "دووبارەکرنا بازاڕی"],
+      items: ["سێڤ", "مۆز", "پرتەقال", "تری", "گێزەر", "بڕۆکلی", "گەنمەشامی", "پەتاتە", "فێقی یان سەوزە؟"],
     },
     seasons: {
       name: "وەرزێن سالێ",
@@ -183,6 +183,19 @@ export const ku: Dictionary = {
     spellColor: "پەیڤا ڤی ڕەنگی چێ بکە!",
     sortColors: "هەر تشتەکی بکە د سندوقا ڕەنگێ وی دا!",
     popColor: "بالۆنێن {color} بتەقینە!",
+    meetThing: "{thing} بناسە!",
+    findThings: "هەمی {things} بدۆزە!",
+    whichThing: "{thing} کیژە؟",
+    sortFood: "فێقی یان سەوزە؟ هەر ئێکێ بکە د سەبەتا وی دا!",
+    spellPicture: "پەیڤا ڤی وێنەی چێ بکە!",
+    thisSeason: "ئەڤە وەرزێ {season}ە!",
+    whichSeason: "{season} کیژە؟",
+    findSeason: "هەمی تشتێن {season} بدۆزە!",
+    sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
+    orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
+    thisMonth: "ئەڤە هەیڤا {month}ە!",
+    orderMonths: "هەیڤان ب ڕێزێ ڕیز بکە!",
+    afterMonth: "پشتی {month} کیژ هەیڤ دهێت؟",
   },
   tasks: {
     listen: "گوهداری بکە",

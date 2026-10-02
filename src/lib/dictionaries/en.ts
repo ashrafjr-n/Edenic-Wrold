@@ -103,7 +103,7 @@ export const en = {
     fruits: {
       name: "Fruits & Vegetables",
       description: "Yummy things to eat and how to spell them",
-      items: ["Apple & Banana", "Grape & Orange", "Carrot & Tomato", "Potato & Corn", "Fruit or vegetable?", "Market review"],
+      items: ["Apple", "Banana", "Orange", "Grapes", "Carrot", "Broccoli", "Corn", "Potato", "Fruit or vegetable?"],
     },
     seasons: {
       name: "The Seasons",
@@ -189,6 +189,19 @@ export const en = {
     spellColor: "Build the word for this color!",
     sortColors: "Put each thing in its color's box!",
     popColor: "Pop the {color} balloons!",
+    meetThing: "Meet the {thing}!",
+    findThings: "Find all the {things}!",
+    whichThing: "Which one is the {thing}?",
+    sortFood: "Fruit or vegetable? Put each in its basket!",
+    spellPicture: "Build the word for this picture!",
+    thisSeason: "This is {season}!",
+    whichSeason: "Which one is {season}?",
+    findSeason: "Find all the {season} things!",
+    sortSeasons: "Put each thing in its season's box!",
+    orderSeasons: "Put the seasons in order!",
+    thisMonth: "This is {month}!",
+    orderMonths: "Put the months in order!",
+    afterMonth: "What comes after {month}?",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {

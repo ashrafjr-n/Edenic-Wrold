@@ -96,7 +96,7 @@ export const ar: Dictionary = {
     fruits: {
       name: "الفواكه والخضار",
       description: "أشياء لذيذة نأكلها ونتعلّم تهجئتها",
-      items: ["تفاح وموز", "عنب وبرتقال", "جزر وطماطم", "بطاطا وذرة", "فاكهة أم خضار؟", "مراجعة السوق"],
+      items: ["التفاح", "الموز", "البرتقال", "العنب", "الجزر", "البروكلي", "الذرة", "البطاطا", "فاكهة أم خضار؟"],
     },
     seasons: {
       name: "فصول السنة",
@@ -179,6 +179,19 @@ export const ar: Dictionary = {
     spellColor: "كوّن كلمة هذا اللون!",
     sortColors: "ضع كل شيء في صندوق لونه!",
     popColor: "فرقع البالونات {color}!",
+    meetThing: "تعرّف على {thing}!",
+    findThings: "ابحث عن كل {things}!",
+    whichThing: "أين {thing}؟",
+    sortFood: "فاكهة أم خضار؟ ضع كل شيء في سلّته!",
+    spellPicture: "كوّن كلمة هذه الصورة!",
+    thisSeason: "هذا فصل {season}!",
+    whichSeason: "أين {season}؟",
+    findSeason: "ابحث عن كل أشياء {season}!",
+    sortSeasons: "ضع كل شيء في صندوق فصله!",
+    orderSeasons: "رتّب الفصول بالترتيب!",
+    thisMonth: "هذا شهر {month}!",
+    orderMonths: "رتّب الأشهر بالترتيب!",
+    afterMonth: "ما الشهر الذي يأتي بعد {month}؟",
   },
   tasks: {
     listen: "استمع",
