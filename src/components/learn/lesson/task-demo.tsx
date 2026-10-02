@@ -313,18 +313,18 @@ function PopDemo({ color, others }: { color: ColorId; others: ColorId[] }) {
   );
 }
 
-/** Order: the line of spaces, the tiles dealt under it as the board deals
-    them; the finger taps the one that comes FIRST and it flies into the
-    first space. */
+/** Order: the line of numbered spaces, the tiles dealt under it as the
+    board deals them; the finger taps the one that comes FIRST and it flies
+    into space 1. */
 function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
   const order = shuffle(items.map((_, i) => i), seed);
   const columns = { gridTemplateColumns: `repeat(${items.length}, minmax(0, 3.5rem))` };
   return (
     <div dir="ltr" className="flex h-full flex-col items-center justify-center gap-5">
-      <div className="grid items-end justify-center gap-1.5" style={columns}>
+      <div className="grid justify-center gap-1.5" style={columns}>
         {items.map((_, i) => (
-          <span key={i} className="flex aspect-square items-end justify-center">
-            <span className="letter-slot" style={{ width: `${100 - i * 12}%`, height: `${100 - i * 12}%` }} />
+          <span key={i} className="letter-slot aspect-square text-lg font-bold text-[rgb(var(--shadow-hue)/0.28)]">
+            {i + 1}
           </span>
         ))}
       </div>

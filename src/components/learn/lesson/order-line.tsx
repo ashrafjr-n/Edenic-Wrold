@@ -25,9 +25,9 @@ interface OrderLineProps {
 const wordOf = (face: Face) => (face.kind === "picture" ? face.word : face.kind === "shape" ? face.shape : face.text);
 
 /**
- * Put them in order: a line of spaces on top, each a little smaller than
- * the one before it (first → last reads as big → small), and the tiles
- * dealt in a row under it. Tap the one that comes next and it lands
+ * Put them in order: a line of numbered spaces on top (1, 2, 3 … — the
+ * number fades out as its space fills), and the tiles dealt in a row
+ * under it. Tap the one that comes next and it lands
  * in the next space, leaving an empty socket behind; a wrong one only
  * wiggles, and after two misses the right one glows. All in → the line
  * jumps together.
@@ -57,19 +57,22 @@ export function OrderLine({ items, seed, itemAria, onSolved, onMiss }: OrderLine
     /* The taught content is English and reads left to right in every
        language — the line never mirrors. */
     <div dir="ltr" className="flex w-full max-w-[min(34rem,62svh)] flex-col items-center gap-8 sm:gap-10 lg:max-w-[min(40rem,calc(var(--stage-h)*1.1))]">
-      <div className="card card-clay-white card-bare-lg relative grid w-full items-end gap-2 p-3 sm:gap-3 sm:p-4" style={columns}>
+      <div className="card card-clay-white card-bare-lg relative grid w-full gap-2 p-3 sm:gap-3 sm:p-4" style={columns}>
         {items.map((face, i) => (
-          <span key={i} className="flex aspect-square items-end justify-center">
-            <span
-              className={`letter-slot relative flex items-center justify-center ${solved ? "find-cheer" : ""}`}
-              style={{ width: `${100 - i * 12}%`, height: `${100 - i * 12}%`, ...(solved ? { animationDelay: `${i * 0.12}s` } : {}) }}
-            >
-              {i < placed && (
-                <span className="anim-pop-in flex h-full w-full items-center justify-center">
-                  <FaceView face={face} size="tile" />
-                </span>
-              )}
-            </span>
+          <span
+            key={i}
+            className={`letter-slot @container relative flex aspect-square items-center justify-center ${solved ? "find-cheer" : ""}`}
+            style={solved ? { animationDelay: `${i * 0.12}s` } : undefined}
+          >
+            {i < placed ? (
+              <span className="anim-pop-in flex h-full w-full items-center justify-center">
+                <FaceView face={face} size="tile" />
+              </span>
+            ) : (
+              <span aria-hidden className="text-[length:34cqi] font-bold text-[rgb(var(--shadow-hue)/0.28)]">
+                {i + 1}
+              </span>
+            )}
           </span>
         ))}
         {solved && <Celebration />}
