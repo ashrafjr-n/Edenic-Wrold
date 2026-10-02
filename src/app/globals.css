@@ -3009,6 +3009,45 @@ button:disabled,
   }
 }
 
+/* Paint (Colors): the paint spreads over the thing from its middle — the
+   painted picture, laid over the grey one, uncovered by a growing circle. */
+.paint-reveal {
+  animation: paint-reveal 0.8s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+@keyframes paint-reveal {
+  from {
+    clip-path: circle(0% at 50% 55%);
+  }
+  to {
+    clip-path: circle(75% at 50% 55%);
+  }
+}
+
+/* …and in the task button's demo, on the demos' beat: it spreads just
+   after the finger taps the pot. */
+.demo-paint {
+  animation: demo-paint 3.6s ease-out infinite;
+}
+
+@keyframes demo-paint {
+  0%,
+  38% {
+    clip-path: circle(0% at 50% 55%);
+    opacity: 1;
+  }
+  58%,
+  84% {
+    clip-path: circle(75% at 50% 55%);
+    opacity: 1;
+  }
+  96%,
+  100% {
+    clip-path: circle(75% at 50% 55%);
+    opacity: 0;
+  }
+}
+
 /* ---------------------------------------------------------------
    The done screen (`LessonDone`): a soft disc of the lesson's colour
    breathing behind Pinki, the child's drawing redrawing itself, and the
@@ -3375,7 +3414,9 @@ button:disabled,
   .demo-draw,
   .demo-pen,
   .demo-ring,
-  .demo-tick {
+  .demo-tick,
+  .demo-paint,
+  .paint-reveal {
     animation: none;
   }
 
