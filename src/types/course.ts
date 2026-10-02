@@ -6,8 +6,12 @@ export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
 
-/** What a Find looks for, or what a Sort box takes: a shape or a color. */
-export type Target = { shape: ShapeId } | { color: ColorId };
+/** The family the My Family course teaches, in the order it teaches them. */
+export type PersonId = "mom" | "dad" | "sister" | "brother" | "baby" | "grandma" | "grandpa";
+
+/** What a Find looks for, or what a Sort box takes: a shape, a color, or
+    one of the family. */
+export type Target = { shape: ShapeId } | { color: ColorId } | { person: PersonId };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
@@ -30,6 +34,8 @@ export interface SceneItem {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
+  /** Who it is, in the My Family course's living room. */
+  person?: PersonId;
   /** Where its picture (shadow included) sits. */
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */
@@ -101,7 +107,10 @@ export type Question =
   | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] }
   /** Balloons of many colors float up; pop every one of `color` (four of
       them) and leave the `others` be. */
-  | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] };
+  | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] }
+  /** Tap the things in their order (the family, oldest first) — each
+      lands in the next space of the line. `items` are in the right order. */
+  | { type: "order"; ask: Ask; items: Face[] };
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
