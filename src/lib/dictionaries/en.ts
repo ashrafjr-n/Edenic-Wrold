@@ -100,11 +100,6 @@ export const en = {
       description: "Red, blue, yellow and every color around you",
       items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White", "Color review"],
     },
-    family: {
-      name: "My Family",
-      description: "Mom, Dad and everyone at home",
-      items: ["Mom", "Dad", "Sister", "Brother", "Baby", "Grandma", "Grandpa", "Family review"],
-    },
     fruits: {
       name: "Fruits & Vegetables",
       description: "Yummy things to eat and how to spell them",
@@ -194,11 +189,6 @@ export const en = {
     spellColor: "Build the word for this color!",
     sortColors: "Put each thing in its color's box!",
     popColor: "Pop the {color} balloons!",
-    thisIsPerson: "This is {person}!",
-    whoIs: "Who is {person}?",
-    findPerson: "Find {person}!",
-    spellPerson: "Build the word for this person!",
-    orderAge: "Line them up, oldest first!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {

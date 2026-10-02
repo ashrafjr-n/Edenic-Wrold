@@ -26,7 +26,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
     course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png"),
     course("colors", "pinki", "/assets/friends/pinki.png"),
-    course("family", "pinki", "/assets/friends/pinki.png"),
   ],
   nova: [
     course("fruits", "shapes", "/assets/friends/nova.png"),
