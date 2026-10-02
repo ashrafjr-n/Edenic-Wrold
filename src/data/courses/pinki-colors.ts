@@ -1,6 +1,7 @@
+import type { StaticImageData } from "next/image";
 import type { ColorId, Face, LessonDef, PaintRound, Question, Scene, SceneItem } from "@/types/course";
-import { COLORS, colorBin, potFace } from "@/data/colors";
-import { pinkThings, purpleThings, redThings, whiteThings, yellowThings } from "@/data/color-scenes";
+import { COLOR_ORDER, COLORS, colorBin, potFace } from "@/data/colors";
+import * as scenes from "@/data/color-scenes";
 import apple from "../../../public/assets/learn/pinki/colors/paint/apple.png";
 import appleBlank from "../../../public/assets/learn/pinki/colors/paint/apple-blank.png";
 import fish from "../../../public/assets/learn/pinki/colors/paint/fish.png";
@@ -9,6 +10,10 @@ import duck from "../../../public/assets/learn/pinki/colors/paint/duck.png";
 import duckBlank from "../../../public/assets/learn/pinki/colors/paint/duck-blank.png";
 import frog from "../../../public/assets/learn/pinki/colors/paint/frog.png";
 import frogBlank from "../../../public/assets/learn/pinki/colors/paint/frog-blank.png";
+import carrot from "../../../public/assets/learn/pinki/colors/paint/carrot.png";
+import carrotBlank from "../../../public/assets/learn/pinki/colors/paint/carrot-blank.png";
+import grapes from "../../../public/assets/learn/pinki/colors/paint/grapes.png";
+import grapesBlank from "../../../public/assets/learn/pinki/colors/paint/grapes-blank.png";
 import pig from "../../../public/assets/learn/pinki/colors/paint/pig.png";
 import pigBlank from "../../../public/assets/learn/pinki/colors/paint/pig-blank.png";
 import teddy from "../../../public/assets/learn/pinki/colors/paint/teddy.png";
@@ -20,31 +25,76 @@ import snowmanBlank from "../../../public/assets/learn/pinki/colors/paint/snowma
 
 const text = (value: string): Face => ({ kind: "text", text: value });
 
-/** Meet a color (its pot and its word), then spell it straight away. */
-const meet = (color: ColorId): Question[] => [
-  { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color, picture: COLORS[color].pot },
-  { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color, color },
-];
+/** Each color's thing to paint (grey, then painted) and its picnic. */
+const OF: Record<ColorId, { word: string; blank: StaticImageData; painted: StaticImageData; scene: Scene }> = {
+  red: { word: "apple", blank: appleBlank, painted: apple, scene: scenes.redThings },
+  blue: { word: "fish", blank: fishBlank, painted: fish, scene: scenes.blueThings },
+  yellow: { word: "duck", blank: duckBlank, painted: duck, scene: scenes.yellowThings },
+  green: { word: "frog", blank: frogBlank, painted: frog, scene: scenes.greenThings },
+  orange: { word: "carrot", blank: carrotBlank, painted: carrot, scene: scenes.orangeThings },
+  purple: { word: "grapes", blank: grapesBlank, painted: grapes, scene: scenes.purpleThings },
+  pink: { word: "pig", blank: pigBlank, painted: pig, scene: scenes.pinkThings },
+  brown: { word: "teddy bear", blank: teddyBlank, painted: teddy, scene: scenes.brownThings },
+  black: { word: "hat", blank: hatBlank, painted: hat, scene: scenes.blackThings },
+  white: { word: "snowman", blank: snowmanBlank, painted: snowman, scene: scenes.whiteThings },
+};
 
-/** Read the word, tap its pot, paint the thing — one round per color. */
-const paint = (rounds: PaintRound[], pots: ColorId[]): Question => ({ type: "paint", ask: { key: "paint" }, rounds, pots });
+/** The colors that make the secondaries — lessons 4–6 mix them. */
+const MIXES: Partial<Record<ColorId, [ColorId, ColorId]>> = {
+  green: ["blue", "yellow"],
+  orange: ["red", "yellow"],
+  purple: ["red", "blue"],
+};
 
-/** Find every thing of the color in its picnic. */
-const find = (color: ColorId, scene: Scene): Question => ({
-  type: "find",
-  ask: { key: "findColor", vars: { color } },
-  target: { color },
-  scene,
-});
+const round = (color: ColorId): PaintRound => ({ color, ...OF[color] });
 
-/** Two pots and a "?": which pot do they make? The answer is listed first. */
-const mix = (a: ColorId, b: ColorId, makes: ColorId, others: ColorId[]): Question => ({
-  type: "pick",
-  ask: { key: "mix", vars: { a, b } },
-  show: [potFace(a), text("+"), potFace(b), text("="), text("?")],
-  options: [potFace(makes), ...others.map(potFace)],
-  answer: 0,
-});
+/** `count` other colors for a step: the ones learned most recently first
+    (spaced review), then ones still to come. */
+function othersFor(color: ColorId, count: number): ColorId[] {
+  const at = COLOR_ORDER.indexOf(color);
+  const learned = COLOR_ORDER.slice(0, at).reverse();
+  const coming = COLOR_ORDER.slice(at + 1);
+  return [...learned, ...coming].slice(0, count);
+}
+
+/** Turns a list so the right one does not always sit in the same place. */
+const turn = <T,>(items: T[], by: number): T[] => items.map((_, i) => items[(i + by) % items.length]);
+
+/**
+ * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (its
+ * pot, the word in its own color), spell it, paint with it — and, from the
+ * second lesson, paint the color before it again — mix it (the three made
+ * colors), pop its balloons, then find it in its picnic.
+ */
+function colorLesson(color: ColorId, n: number): LessonDef {
+  const before = COLOR_ORDER[COLOR_ORDER.indexOf(color) - 1];
+  const mix = MIXES[color];
+  const questions: Question[] = [
+    { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color, picture: COLORS[color].pot },
+    { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color, color },
+    {
+      type: "paint",
+      ask: { key: "paint" },
+      rounds: before ? [round(color), round(before)] : [round(color)],
+      pots: turn([color, ...othersFor(color, 2)], n),
+    },
+  ];
+  if (mix) {
+    const [a, b] = mix;
+    questions.push({
+      type: "pick",
+      ask: { key: "mix", vars: { a, b } },
+      show: [potFace(a), text("+"), potFace(b), text("="), text("?")],
+      options: [color, ...othersFor(color, 9).filter((c) => !mix.includes(c)).slice(0, 2)].map(potFace),
+      answer: 0,
+    });
+  }
+  questions.push(
+    { type: "pop", ask: { key: "popColor", vars: { color } }, color, others: othersFor(color, 5) },
+    { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: OF[color].scene },
+  );
+  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].pot], questions };
+}
 
 /** One thing out of a picnic, for the review's boxes. */
 function thing(scene: Scene, id: string): SceneItem {
@@ -53,56 +103,14 @@ function thing(scene: Scene, id: string): SceneItem {
   return item;
 }
 
-/** Two colors, one lesson: watch its reel, meet and spell each color, use
-    them (paint, or mix), then hunt one of them in a picnic
-    (`edenic-plan.md` §5). Its stop on the course path wears both pots. */
-function colorLesson(n: number, colors: [ColorId, ColorId], use: Question[], hunt: Question): LessonDef {
-  return {
-    reel: `/assets/learn/pinki/colors/reels/${n}.mp4`,
-    cover: colors.map((color) => COLORS[color].pot),
-    questions: [...meet(colors[0]), ...meet(colors[1]), ...use, hunt],
-  };
-}
-
 /** Pinki · Colors. Titles live in `dict.lessons.colors.items`. The reels
     are placeholders until the real clips replace them under the same names
-    (`/assets/learn/pinki/colors/reels/<n>.mp4`). The colors come in the
-    order children learn them: the primaries, then what they make. */
+    (`/assets/learn/pinki/colors/reels/<n>.mp4`). */
 export const pinkiColors: LessonDef[] = [
-  colorLesson(
-    1,
-    ["red", "blue"],
-    [paint([{ color: "red", blank: appleBlank, painted: apple, word: "apple" }, { color: "blue", blank: fishBlank, painted: fish, word: "fish" }], ["red", "blue", "yellow"])],
-    find("red", redThings),
-  ),
-  colorLesson(
-    2,
-    ["yellow", "green"],
-    [paint([{ color: "yellow", blank: duckBlank, painted: duck, word: "duck" }, { color: "green", blank: frogBlank, painted: frog, word: "frog" }], ["yellow", "green", "red", "blue"])],
-    find("yellow", yellowThings),
-  ),
-  /* Orange and purple are MADE: the primaries from lessons 1–2 mixed. */
-  colorLesson(
-    3,
-    ["orange", "purple"],
-    [mix("red", "yellow", "orange", ["green", "purple"]), mix("red", "blue", "purple", ["orange", "green"])],
-    find("purple", purpleThings),
-  ),
-  colorLesson(
-    4,
-    ["pink", "brown"],
-    [paint([{ color: "pink", blank: pigBlank, painted: pig, word: "pig" }, { color: "brown", blank: teddyBlank, painted: teddy, word: "teddy bear" }], ["pink", "brown", "red", "orange"])],
-    find("pink", pinkThings),
-  ),
-  colorLesson(
-    5,
-    ["black", "white"],
-    [paint([{ color: "black", blank: hatBlank, painted: hat, word: "hat" }, { color: "white", blank: snowmanBlank, painted: snowman, word: "snowman" }], ["black", "white", "brown", "blue"])],
-    find("white", whiteThings),
-  ),
+  ...COLOR_ORDER.map((color, i) => colorLesson(color, i + 1)),
   /* The review, no reel: things from the picnics into four color boxes,
-     then a color named by its word, then two colors spelled from the pot
-     alone — no word on screen, the spelling ladder's rung 4. */
+     a color named by its word (plain letters — it must be read), then two
+     colors spelled from the pot alone, with no word on screen. */
   {
     cover: [COLORS.red.pot, COLORS.yellow.pot, COLORS.green.pot, COLORS.purple.pot],
     questions: [
@@ -111,14 +119,14 @@ export const pinkiColors: LessonDef[] = [
         ask: { key: "sortColors" },
         bins: [colorBin("red"), colorBin("yellow"), colorBin("green"), colorBin("purple")],
         items: [
-          thing(redThings, "apple"),
-          thing(yellowThings, "banana"),
-          thing(redThings, "pear"),
-          thing(purpleThings, "grapes"),
-          thing(redThings, "cherries"),
-          thing(yellowThings, "star"),
-          thing(yellowThings, "frog"),
-          thing(purpleThings, "eggplant"),
+          thing(scenes.redThings, "apple"),
+          thing(scenes.yellowThings, "banana"),
+          thing(scenes.greenThings, "leaf"),
+          thing(scenes.purpleThings, "grapes"),
+          thing(scenes.redThings, "cherries"),
+          thing(scenes.yellowThings, "star"),
+          thing(scenes.greenThings, "frog"),
+          thing(scenes.purpleThings, "eggplant"),
         ],
       },
       { type: "pick", ask: { key: "whichColor", vars: { color: "brown" } }, word: "brown", plain: true, options: [potFace("brown"), potFace("orange"), potFace("black"), potFace("pink")], answer: 0 },

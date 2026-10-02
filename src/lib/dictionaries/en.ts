@@ -98,7 +98,7 @@ export const en = {
     colors: {
       name: "Learn Colors",
       description: "Red, blue, yellow and every color around you",
-      items: ["Red & Blue", "Yellow & Green", "Orange & Purple", "Pink & Brown", "Black & White", "Color review"],
+      items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White", "Color review"],
     },
     family: {
       name: "My Family",
@@ -181,6 +181,7 @@ export const en = {
     playReel: "Play the video",
     findItemAria: "Tap the {word}",
     potAria: "{color} paint",
+    balloonAria: "{color} balloon",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -200,6 +201,7 @@ export const en = {
     whichColor: "Which one is {color}?",
     spellColor: "Build the word for this color!",
     sortColors: "Put each thing in its color's box!",
+    popColor: "Pop the {color} balloons!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -212,6 +214,7 @@ export const en = {
     count: "Count",
     sort: "Sort",
     paint: "Paint",
+    pop: "Pop",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

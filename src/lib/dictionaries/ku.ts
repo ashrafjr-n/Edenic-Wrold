@@ -99,7 +99,7 @@ export const ku: Dictionary = {
     colors: {
       name: "فێربوونا ڕەنگان",
       description: "سۆر، شین، زەر و هەمی ڕەنگێن دۆر تە",
-      items: ["سۆر و شین", "زەر و کەسک", "پرتەقالی و مۆر", "پەمبەیی و قاوەیی", "ڕەش و سپی", "دووبارەکرنا ڕەنگان"],
+      items: ["سۆر", "شین", "زەر", "کەسک", "پرتەقالی", "مۆر", "پەمبەیی", "قاوەیی", "ڕەش", "سپی", "دووبارەکرنا ڕەنگان"],
     },
     family: {
       name: "خێزانا من",
@@ -180,6 +180,7 @@ export const ku: Dictionary = {
     playReel: "ڤیدیۆیێ لێ بدە",
     findItemAria: "دەست بدە {word}",
     potAria: "ڕەنگێ {color}",
+    balloonAria: "بالۆنا {color}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -198,6 +199,7 @@ export const ku: Dictionary = {
     whichColor: "{color} کیژە؟",
     spellColor: "پەیڤا ڤی ڕەنگی چێ بکە!",
     sortColors: "هەر تشتەکی بکە د سندوقا ڕەنگێ وی دا!",
+    popColor: "بالۆنێن {color} بتەقینە!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -209,6 +211,7 @@ export const ku: Dictionary = {
     count: "بژمێرە",
     sort: "ڕێک بێخە",
     paint: "ڕەنگ بکە",
+    pop: "بتەقینە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

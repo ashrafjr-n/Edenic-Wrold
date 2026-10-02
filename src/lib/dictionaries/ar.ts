@@ -95,7 +95,7 @@ export const ar: Dictionary = {
     colors: {
       name: "تعلّم الألوان",
       description: "أحمر وأزرق وأصفر وكل الألوان من حولك",
-      items: ["أحمر وأزرق", "أصفر وأخضر", "برتقالي وبنفسجي", "زهري وبني", "أسود وأبيض", "مراجعة الألوان"],
+      items: ["الأحمر", "الأزرق", "الأصفر", "الأخضر", "البرتقالي", "البنفسجي", "الزهري", "البني", "الأسود", "الأبيض", "مراجعة الألوان"],
     },
     family: {
       name: "عائلتي",
@@ -176,6 +176,7 @@ export const ar: Dictionary = {
     playReel: "شغّل الفيديو",
     findItemAria: "المس {word}",
     potAria: "طلاء {color}",
+    balloonAria: "بالون {color}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -194,6 +195,7 @@ export const ar: Dictionary = {
     whichColor: "أين اللون {color}؟",
     spellColor: "كوّن كلمة هذا اللون!",
     sortColors: "ضع كل شيء في صندوق لونه!",
+    popColor: "فرقع البالونات {color}!",
   },
   tasks: {
     listen: "استمع",
@@ -205,6 +207,7 @@ export const ar: Dictionary = {
     count: "عُدّ",
     sort: "رتّب",
     paint: "لوّن",
+    pop: "فرقع",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",
