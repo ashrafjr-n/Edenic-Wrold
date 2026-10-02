@@ -128,7 +128,7 @@ export default async function CharacterLearnPage({
             alt=""
             sizes="(min-width: 1024px) 18rem, 11rem"
             preload
-            className="anim-pop-in w-44 shrink-0 lg:w-[min(18rem,32svh)]"
+            className="anim-pop-in w-44 shrink-0 lg:w-[min(18rem,32svh)] lg:[@media(max-height:820px)]:w-[25svh]"
             style={{ animationDelay: "0.1s" }}
           />
           <div
