@@ -160,23 +160,24 @@ sort boxes, done screen, the course page).
 
 | # | Lesson | Steps |
 | --- | --- | --- |
-| 1 | Red | Reel · Meet · Spell · Paint (apple) · Pop the red balloons · Find the red things |
-| 2 | Blue | … · Paint (fish, then the apple red again) · Pop · Find |
-| 3 | Yellow | … · Paint (duck, fish) · Pop · Find |
-| 4 | Green | … · Paint (frog, duck) · **Mix: blue + yellow = ?** · Pop · Find |
-| 5 | Orange | … · Paint (carrot, frog) · **Mix: red + yellow = ?** · Pop · Find |
-| 6 | Purple | … · Paint (grapes, carrot) · **Mix: red + blue = ?** · Pop · Find |
-| 7 | Pink | … · Paint (pig, grapes) · Pop · Find |
-| 8 | Brown | … · Paint (teddy bear, pig) · Pop · Find |
-| 9 | Black | … · Paint (hat, teddy bear) · Pop · Find |
-| 10 | White | … · Paint (snowman, hat) · Pop · Find |
+| 1 | Red | Reel · Meet · Spell · Paint (apple, strawberry) · Pop the red balloons · Find the red things |
+| 2 | Blue | … · Paint (fish, whale) · Pop · Find |
+| 3 | Yellow | … · Paint (duck, banana) · Pop · Find |
+| 4 | Green | … · Paint (frog, pear) · **Mix: blue + yellow = ?** · Pop · Find |
+| 5 | Orange | … · Paint (carrot, orange) · **Mix: red + yellow = ?** · Pop · Find |
+| 6 | Purple | … · Paint (grapes, eggplant) · **Mix: red + blue = ?** · Pop · Find |
+| 7 | Pink | … · Paint (pig, ice cream) · Pop · Find |
+| 8 | Brown | … · Paint (teddy bear, acorn) · Pop · Find |
+| 9 | Black | … · Paint (hat, ant) · Pop · Find |
+| 10 | White | … · Paint (snowman, sheep) · Pop · Find |
 | 11 | Color review | Sort ×8 into four color boxes · Pick the color a word names ×2 (brown, orange) · Spell from the pot alone ×2 (green, pink) |
 
 - **Meet → Spell** straight away; the word in its own color.
 - **Paint**: the color word in plain dark letters, the thing in grey clay,
   a row of pots (the lesson's color + ones already learned). Tap the pot the
-  WORD names → the paint spreads. The second round repaints the color before
-  (spaced review).
+  WORD names → the paint spreads. Two things, BOTH in the lesson's own color
+  (direct request: every step of a lesson is about its one color — other
+  colors only appear as choices).
 - **Pop the balloons** (new, colors only): balloons of many colors rise up a
   patch of sky; pop the four of the lesson's color, leave the rest. The color
   is the only thing that tells them apart.

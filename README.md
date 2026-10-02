@@ -291,8 +291,8 @@ shown as a clay paint pot of that color. Each color is met (the pot, and the
 word written in its own color) and spelled straight away; then the child
 **paints**: the color word appears in plain dark letters over a thing in grey
 clay and a row of paint pots, and tapping the pot the word names spreads the
-paint over the thing — it is reading, not guessing — and then repaints the
-color before. Green, orange and purple are also **mixed** (blue + yellow = ?)
+paint over the thing — it is reading, not guessing — then a second thing in
+the same color: every step of a lesson is about its one color. Green, orange and purple are also **mixed** (blue + yellow = ?)
 from colors already met. Then **Pop the balloons**: balloons of many colors
 float up a patch of sky and the child pops only the ones of the lesson's
 color. Every lesson ends by finding the things of its color in a picnic, and
