@@ -27,6 +27,20 @@ interface FaceViewProps {
 export function FaceView({ face, size }: FaceViewProps) {
   const clayId = `shape${useId().replace(/[^\w-]/g, "")}`;
   if (face.kind === "text") {
+    /* A word on a tile ("September") is sized to the tile itself, so the
+       longest still fits on a phone; a sign or a number keeps its size. */
+    if (size === "tile" && face.text.length > 3) {
+      return (
+        <span className="@container block w-full px-[6%]">
+          <span
+            className="block text-center font-bold leading-none text-[var(--color-ink)]"
+            style={{ fontSize: `${Math.min(28, 150 / face.text.length)}cqi` }}
+          >
+            {face.text}
+          </span>
+        </span>
+      );
+    }
     return (
       <span
         className={`font-bold leading-none text-[var(--color-ink)] ${

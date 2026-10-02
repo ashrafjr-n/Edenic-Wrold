@@ -6,8 +6,13 @@ export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
 
-/** What a Find looks for, or what a Sort box takes: a shape or a color. */
-export type Target = { shape: ShapeId } | { color: ColorId };
+/** A set things belong to, for Nova's courses: fruit or vegetable, or the
+    season a thing goes with. */
+export type Group = "fruit" | "vegetable" | "spring" | "summer" | "fall" | "winter";
+
+/** What a Find looks for, or what a Sort box takes: a shape, a color, one
+    kind of thing (every apple — matched on its English `word`), or a group. */
+export type Target = { shape: ShapeId } | { color: ColorId } | { word: string } | { group: Group };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
@@ -30,6 +35,8 @@ export interface SceneItem {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
+  /** The group it belongs to, in Nova's scenes. */
+  group?: Group;
   /** Where its picture (shadow included) sits. */
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */

@@ -10,7 +10,7 @@ interface StepTrailProps {
   /** What stands in the current step's place: its round task button. */
   current: ReactNode;
   /** The course's colour. */
-  tone: { face: string; edge: string };
+  tone: { face: string; edge: string; ink: string };
 }
 
 /**
@@ -20,7 +20,7 @@ interface StepTrailProps {
  * show their icon, faded.
  */
 export function StepTrail({ kinds, at, current, tone }: StepTrailProps) {
-  const clay = { backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties;
+  const clay = { backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties;
   return (
     <ol className="flex items-center gap-2">
       {kinds.map((kind, i) => {
@@ -37,7 +37,7 @@ export function StepTrail({ kinds, at, current, tone }: StepTrailProps) {
             {i === at ? (
               current
             ) : i < at ? (
-              <span aria-hidden className="clay flex h-10 w-10 items-center justify-center rounded-full text-white" style={clay}>
+              <span aria-hidden className="clay flex h-10 w-10 items-center justify-center rounded-full" style={clay}>
                 <Check className="h-5 w-5" strokeWidth={3.5} />
               </span>
             ) : (

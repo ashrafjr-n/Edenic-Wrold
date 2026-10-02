@@ -1,4 +1,4 @@
-import type { Face, LessonDef, Question } from "@/types/course";
+import type { Ask, Face, LessonDef, Question, Target } from "@/types/course";
 import type { TaskKind } from "./task-chip";
 import type { TaskDemoDef } from "./task-demo";
 
@@ -11,6 +11,15 @@ export function starsFor(mistakes: number): number {
   if (mistakes <= 1) return 3;
   if (mistakes <= 4) return 2;
   return 1;
+}
+
+/** The word on a Find's task chip: "circles", "red", "apples" (the ask's
+    own plural), "spring". */
+function findLabel(target: Target, vars: Ask["vars"]): string {
+  if ("shape" in target) return `${target.shape}s`;
+  if ("color" in target) return target.color;
+  if ("word" in target) return String(vars?.things ?? target.word);
+  return target.group;
 }
 
 export type Step = { kind: "watch" } | { kind: "question"; question: Question; index: number };
@@ -27,7 +36,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "spell":
       return { kind: "build" };
     case "find":
-      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : q.target.color };
+      return { kind: "find", target: findLabel(q.target, q.ask.vars) };
     case "sort":
       return { kind: "sort" };
     case "paint":
@@ -37,7 +46,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "order":
       return { kind: "order" };
     case "pick": {
-      const named = q.ask.vars?.shape ?? q.ask.vars?.color;
+      const named = q.ask.vars?.shape ?? q.ask.vars?.color ?? q.ask.vars?.thing ?? q.ask.vars?.season;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
     }
   }

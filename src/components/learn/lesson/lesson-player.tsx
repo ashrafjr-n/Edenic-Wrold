@@ -62,8 +62,9 @@ interface LessonPlayerProps {
   image: string;
   /** The character's colour — the lesson wears it. */
   tone: { face: string; edge: string };
-  /** The course's colour: every "onward" button that is not green. */
-  courseTone: { face: string; edge: string };
+  /** The course's colour: every "onward" button that is not green. `ink`
+      is what sits on it (white, or ink on Nova's gold). */
+  courseTone: { face: string; edge: string; ink: string };
   /** Every lesson's cover in this course — the tablet/desktop lesson card. */
   covers: readonly (readonly StaticImageData[])[];
   dict: Dictionary;
@@ -98,7 +99,7 @@ export function LessonPlayer({
   dict,
   dir,
 }: LessonPlayerProps) {
-  const onward = { ...courseTone, text: "#fff" };
+  const onward = { face: courseTone.face, edge: courseTone.edge, text: courseTone.ink };
   const complete = useProgress((state) => state.complete);
   const lines = dict.lessonPlayer;
 

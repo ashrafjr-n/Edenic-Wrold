@@ -38,7 +38,8 @@ interface TaskChipProps {
   demo?: TaskDemoDef;
   closeLabel: string;
   /** The course's colour. */
-  tone: { face: string; edge: string };
+  /** The course's colour, and what sits on it. */
+  tone: { face: string; edge: string; ink: string };
   dir: "rtl" | "ltr";
 }
 
@@ -57,8 +58,7 @@ export function TaskChip({ kind, verb, target, label, demo, closeLabel, tone, di
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const Icon = TASK_ICONS[kind];
-  const { face, edge } = tone;
-  const text = "#fff";
+  const { face, edge, ink: text } = tone;
 
   if (!demo) {
     return (
@@ -137,7 +137,8 @@ interface TaskPanelProps {
   /** The full instruction, in the child's language. */
   label: string;
   demo?: TaskDemoDef;
-  tone: { face: string; edge: string };
+  /** The course's colour, and what sits on it. */
+  tone: { face: string; edge: string; ink: string };
   dir: "rtl" | "ltr";
   className?: string;
 }
@@ -156,8 +157,8 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
       <div className="min-w-0 flex-1 lg:flex-none">
       <div className="flex items-center gap-2.5">
         <span
-          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
-          style={{ backgroundColor: tone.face, "--clay-edge": tone.edge } as CSSProperties}
+          className="clay flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+          style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
         >
           <Icon className="h-5 w-5" strokeWidth={2.75} />
         </span>
