@@ -10,7 +10,8 @@
  *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
- * clay, the thing before it is painted). Then `crop.py things <dest>`.
+ * clay, the thing before it is painted; `@float`: no ground shadow). Then
+ * `crop.py things <dest>`.
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
  *
@@ -41,9 +42,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     fs.mkdirSync(out, { recursive: true });
     for (const spec of specs) {
       const [file, rest] = spec.split("=");
-      const [what, blank] = rest.split("@");
+      const [what, ...flags] = rest.split("@");
       const [thing, arg] = what.split(":");
-      const query = new URLSearchParams({ thing, ...(arg ? { arg } : {}), ...(blank ? { paint: "blank" } : {}) });
+      const query = new URLSearchParams({
+        thing,
+        ...(arg ? { arg } : {}),
+        ...(flags.includes("blank") ? { paint: "blank" } : {}),
+        ...(flags.includes("float") ? { shadow: "0" } : {}),
+      });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
     }

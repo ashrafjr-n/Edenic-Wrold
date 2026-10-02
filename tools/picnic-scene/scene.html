@@ -46,7 +46,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || ["red", "yellow", "purple", "pink", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -644,6 +644,8 @@ const ITEMS = {
   fish(color = 0x4b8fe8) {
     const g = new THREE.Group();
     const skin = clay(color, { clearcoat: 0.85, clearcoatRoughness: 0.18 });
+    /* Fins and tail: the body's own color, paler. */
+    const finColor = new THREE.Color(color).lerp(new THREE.Color(0xffffff), 0.42);
     const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), skin);
     body.scale.set(1.35, 0.85, 0.5);
     body.position.y = 0.45;
@@ -652,12 +654,12 @@ const ITEMS = {
     tailShape.moveTo(0, 0); tailShape.quadraticCurveTo(-0.25, 0.32, -0.45, 0.42); tailShape.quadraticCurveTo(-0.32, 0, -0.45, -0.42); tailShape.quadraticCurveTo(-0.25, -0.32, 0, 0);
     const tailGeo = roundedShapeExtrude(tailShape, 0.06, 0.05);
     tailGeo.translate(0, 0, -0.03);
-    const tail = mesh(tailGeo, clay(0x8cc4f2, { clearcoat: 0.6 }));
+    const tail = mesh(tailGeo, clay(finColor, { clearcoat: 0.6 }));
     tail.position.set(-0.6, 0.45, 0);
     g.add(tail);
     const finShape = new THREE.Shape();
     finShape.moveTo(-0.25, 0); finShape.quadraticCurveTo(-0.05, 0.28, 0.2, 0); finShape.closePath();
-    const fin = mesh(roundedShapeExtrude(finShape, 0.04, 0.03), clay(0x8cc4f2, { clearcoat: 0.6 }));
+    const fin = mesh(roundedShapeExtrude(finShape, 0.04, 0.03), clay(finColor, { clearcoat: 0.6 }));
     fin.position.set(0, 0.84, -0.035);
     g.add(fin);
     const eye = mesh(new THREE.SphereGeometry(0.11, 24, 16), clay(0xffffff, { clearcoat: 0.9 }));
@@ -667,7 +669,7 @@ const ITEMS = {
     const pupil = mesh(new THREE.SphereGeometry(0.055, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
     pupil.position.set(0.4, 0.55, 0.255);
     g.add(pupil);
-    const gill = mesh(new THREE.TorusGeometry(0.16, 0.022, 8, 32, Math.PI * 0.7), clay(0x3a76c4));
+    const gill = mesh(new THREE.TorusGeometry(0.16, 0.022, 8, 32, Math.PI * 0.7), clay(new THREE.Color(color).multiplyScalar(0.8)));
     gill.position.set(0.18, 0.45, 0.2);
     gill.rotation.z = -Math.PI * 0.35;
     g.add(gill);
@@ -1133,6 +1135,187 @@ const ITEMS = {
     g.add(label);
     return g;
   },
+
+  // a party balloon: a glossy teardrop, its knot, a wavy string
+  balloon(color = "red") {
+    const paint = PAINT[color];
+    const g = new THREE.Group();
+    const skin = clay(paint, { clearcoat: 1, clearcoatRoughness: 0.08, roughness: 0.22, sheen: 0.1 });
+    const body = mesh(smoothLathe([[0, 0], [0.1, 0.03], [0.32, 0.25], [0.46, 0.58], [0.45, 0.92], [0.32, 1.16], [0.14, 1.27], [0, 1.29]]), skin);
+    body.position.y = 1.0;
+    g.add(body);
+    const knot = mesh(new THREE.ConeGeometry(0.07, 0.1, 24), skin);
+    knot.position.y = 0.97;
+    knot.rotation.x = Math.PI;
+    g.add(knot);
+    const string = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.93, 0), new THREE.Vector3(0.06, 0.66, 0), new THREE.Vector3(-0.05, 0.36, 0), new THREE.Vector3(0.04, 0.05, 0)]);
+    g.add(mesh(new THREE.TubeGeometry(string, 32, 0.012, 8), clay(0xffffff, { roughness: 0.6 })));
+    return g;
+  },
+
+  whale() {
+    const g = new THREE.Group();
+    const blue = clay(0x3f86e8, { clearcoat: 0.85, clearcoatRoughness: 0.18 });
+    const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), blue);
+    body.scale.set(1.5, 0.82, 0.75);
+    body.position.y = 0.42;
+    g.add(body);
+    const belly = mesh(new THREE.SphereGeometry(0.45, 48, 32), clay(0xcfe6fb, { clearcoat: 0.5 }));
+    belly.scale.set(1.3, 0.45, 0.62);
+    belly.position.set(0.08, 0.24, 0.06);
+    g.add(belly);
+    const tail = mesh(new THREE.CapsuleGeometry(0.1, 0.3, 8, 16), blue);
+    tail.position.set(-0.78, 0.6, 0);
+    tail.rotation.z = -0.9;
+    g.add(tail);
+    for (const z of [-0.18, 0.18]) {
+      const fluke = mesh(new THREE.SphereGeometry(0.16, 32, 16), blue);
+      fluke.scale.set(1.2, 0.3, 0.9);
+      fluke.position.set(-0.92, 0.78, z);
+      fluke.rotation.x = z * 1.6;
+      g.add(fluke);
+      const eye = mesh(new THREE.SphereGeometry(0.045, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
+      eye.position.set(0.5, 0.48, z * 1.85);
+      g.add(eye);
+    }
+    return g;
+  },
+
+  ball(color = 0x3f86e8) {
+    const g = new THREE.Group();
+    const ball = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(color, { clearcoat: 0.95, clearcoatRoughness: 0.1, roughness: 0.3 }));
+    ball.position.y = 0.5;
+    g.add(ball);
+    const stripe = mesh(new THREE.TorusGeometry(0.5, 0.05, 16, 96), clay(0xffffff, { clearcoat: 0.9 }));
+    stripe.position.y = 0.5;
+    stripe.rotation.set(0.5, 0, 0.3);
+    g.add(stripe);
+    return g;
+  },
+
+  mug() {
+    const g = new THREE.Group();
+    const blue = clay(0x3f86e8, { clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.3 });
+    g.add(mesh(lathe([[0, 0], [0.4, 0], [0.44, 0.04], [0.44, 0.7], [0.4, 0.74], [0.36, 0.7], [0.36, 0.1], [0, 0.1]], 96), blue));
+    const drink = mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.02, 64), clay(0xf6e7d0, { roughness: 0.5 }));
+    drink.position.y = 0.6;
+    g.add(drink);
+    const handle = mesh(new THREE.TorusGeometry(0.18, 0.055, 16, 48, Math.PI * 1.2), blue);
+    handle.position.set(0.44, 0.38, 0);
+    handle.rotation.z = -Math.PI * 0.6;
+    g.add(handle);
+    return g;
+  },
+
+  leaf() {
+    const s = new THREE.Shape();
+    s.moveTo(0, -0.75); s.quadraticCurveTo(0.6, -0.2, 0, 0.75); s.quadraticCurveTo(-0.6, -0.2, 0, -0.75);
+    const g = new THREE.Group();
+    g.add(flat(s, 0.06, 0.04, clay(0x4fbf5a, { clearcoat: 0.7 })));
+    const vein = mesh(new THREE.CapsuleGeometry(0.025, 1.3, 8, 12), clay(0x9be38f, { clearcoat: 0.5 }));
+    vein.rotation.x = Math.PI / 2;
+    vein.position.y = 0.11;
+    g.add(vein);
+    return g;
+  },
+
+  broccoli() {
+    const g = new THREE.Group();
+    const stem = mesh(lathe([[0, 0], [0.16, 0], [0.13, 0.3], [0.18, 0.5], [0, 0.5]], 48), clay(0x9be38f, { clearcoat: 0.4 }));
+    g.add(stem);
+    const floret = clay(0x3fae4f, { clearcoat: 0.4, roughness: 0.6 });
+    for (const [x, y, z, r] of [[0, 0.75, 0, 0.28], [-0.25, 0.65, 0.05, 0.2], [0.25, 0.66, -0.05, 0.21], [0.05, 0.62, 0.24, 0.19], [-0.05, 0.62, -0.24, 0.19], [0.15, 0.85, 0.12, 0.17], [-0.16, 0.84, -0.1, 0.17]]) {
+      const ball = mesh(new THREE.SphereGeometry(r, 32, 24), floret);
+      ball.position.set(x, y, z);
+      g.add(ball);
+    }
+    return g;
+  },
+
+  basketball() {
+    const g = new THREE.Group();
+    const ball = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(0xf07a2a, { clearcoat: 0.3, roughness: 0.6 }));
+    ball.position.y = 0.5;
+    g.add(ball);
+    const line = clay(0x2e2b35);
+    for (const rot of [[0, 0, 0], [Math.PI / 2, 0, 0], [0, Math.PI / 2, 0]]) {
+      const ring = mesh(new THREE.TorusGeometry(0.5, 0.014, 8, 96), line);
+      ring.position.y = 0.5;
+      ring.rotation.set(...rot);
+      g.add(ring);
+    }
+    return g;
+  },
+
+  acorn() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.12, 0.04], [0.3, 0.22], [0.36, 0.45], [0.34, 0.62], [0, 0.62]]), clay(0xc0884e, { clearcoat: 0.7, clearcoatRoughness: 0.2 })));
+    const cap = mesh(new THREE.SphereGeometry(0.4, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2), clay(0x7a4a2c, { roughness: 0.75 }));
+    cap.scale.y = 0.55;
+    cap.position.y = 0.56;
+    g.add(cap);
+    const stem = mesh(new THREE.CapsuleGeometry(0.04, 0.14, 8, 12), clay(0x6a4026));
+    stem.position.y = 0.86;
+    g.add(stem);
+    return g;
+  },
+
+  tire() {
+    const g = new THREE.Group();
+    const rubber = mesh(new THREE.TorusGeometry(0.46, 0.2, 32, 96), clay(0x2e2b35, { roughness: 0.75, clearcoat: 0.1 }));
+    rubber.rotation.x = Math.PI / 2;
+    rubber.position.y = 0.2;
+    g.add(rubber);
+    const hub = mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.22, 64), clay(0xb8c1d8, { clearcoat: 0.8, roughness: 0.3 }));
+    hub.position.y = 0.16;
+    g.add(hub);
+    return g;
+  },
+
+  bowling() {
+    const g = new THREE.Group();
+    const ball = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(0x2e2b35, { clearcoat: 1, clearcoatRoughness: 0.06, roughness: 0.2 }));
+    ball.position.y = 0.5;
+    g.add(ball);
+    for (const [x, z] of [[-0.11, 0.13], [0.11, 0.13], [0, -0.11]]) {
+      const hole = mesh(new THREE.SphereGeometry(0.06, 24, 12), clay(0x0d0c10, { roughness: 0.9, clearcoat: 0 }));
+      hole.scale.y = 0.15;
+      hole.position.set(x, 0.5 + Math.sqrt(0.25 - x * x - z * z) - 0.004, z);
+      hole.lookAt(0, 0.5, 0);
+      hole.rotateX(Math.PI / 2);
+      g.add(hole);
+    }
+    return g;
+  },
+
+  ant() {
+    const g = new THREE.Group();
+    const black = clay(0x2e2b35, { clearcoat: 0.9, clearcoatRoughness: 0.15, roughness: 0.3 });
+    for (const [x, r, sy] of [[0.48, 0.2, 0.9], [0.12, 0.17, 0.85], [-0.32, 0.3, 0.8]]) {
+      const part = mesh(new THREE.SphereGeometry(r, 32, 24), black);
+      part.scale.set(1.15, sy, 1);
+      part.position.set(x, 0.28, 0);
+      g.add(part);
+    }
+    for (const x of [0.22, 0.1, -0.02]) {
+      for (const side of [-1, 1]) {
+        const leg = mesh(new THREE.CapsuleGeometry(0.022, 0.32, 6, 8), black);
+        leg.position.set(x + (x - 0.1) * 0.8, 0.14, side * 0.2);
+        leg.rotation.set(side * 1.0, 0, (x - 0.1) * 2);
+        g.add(leg);
+      }
+    }
+    for (const side of [-1, 1]) {
+      const antenna = mesh(new THREE.CapsuleGeometry(0.018, 0.28, 6, 8), black);
+      antenna.position.set(0.66, 0.46, side * 0.1);
+      antenna.rotation.set(side * 0.5, 0, -0.7);
+      g.add(antenna);
+      const eye = mesh(new THREE.SphereGeometry(0.04, 12, 8), clay(0xffffff));
+      eye.position.set(0.62, 0.34, side * 0.12);
+      g.add(eye);
+    }
+    return g;
+  },
 };
 
 /* ---------- The scenes: a blanket, and where each thing lies ----------
@@ -1256,6 +1439,71 @@ const SCENES = {
       apple: { at: [-0.6, 0, -3.3], scale: 0.85 },
     },
   },
+  blue: {
+    blanket: "pinkStripes",
+    autoGround: true,
+    items: {
+      fish: { at: [-1.45, ON_BLANKET, -1.15], rot: [-Math.PI / 2, 0, 0], rotY: 0.3, scale: 0.9 },
+      whale: { at: [1.45, ON_BLANKET, -1.15], rotY: -0.3, scale: 0.8 },
+      mug: { at: [1.45, ON_BLANKET, 1.3], rotY: 0.6, scale: 0.9 },
+      ball: { at: [-2.05, 0, 3.15], scale: 0.85 },
+      apple: { at: [0.0, ON_BLANKET, 0.1], scale: 0.85 },
+      strawberry: { at: [-1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: 0.6, scale: 0.85 },
+      banana: { at: [2.1, 0, 3.15], rot: [-Math.PI / 2, 0, 0], scale: 0.75 },
+    },
+  },
+  green: {
+    blanket: "creamChecks",
+    autoGround: true,
+    items: {
+      frog: { at: [-1.45, ON_BLANKET, -1.15], rotY: 0.3, scale: 0.8 },
+      leaf: { at: [1.45, ON_BLANKET, -1.2], rotY: 0.7, scale: 0.85 },
+      pear: { at: [1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: -0.4, scale: 0.85 },
+      broccoli: { at: [-1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: 0.5, scale: 0.9 },
+      lemon: { at: [0.0, ON_BLANKET, 0.1], rotY: 0.4, scale: 0.85 },
+      apple: { at: [-2.05, 0, 3.15], scale: 0.85 },
+      fish: { at: [2.1, 0, 3.15], rot: [-Math.PI / 2, 0, 0], rotY: -0.3, scale: 0.75 },
+    },
+  },
+  orange: {
+    blanket: "blueStripes",
+    autoGround: true,
+    items: {
+      orange: { at: [-1.45, ON_BLANKET, -1.15], scale: 0.95 },
+      goldfish: { model: "fish", arg: 0xff8c2e, color: "orange", at: [1.45, ON_BLANKET, -1.2], rot: [-Math.PI / 2, 0, 0], rotY: -0.4, scale: 0.85 },
+      carrot: { at: [1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: 0.5, scale: 0.9 },
+      basketball: { at: [-2.05, 0, 3.15], scale: 0.85 },
+      frog: { at: [0.0, ON_BLANKET, 0.1], rotY: -0.2, scale: 0.75 },
+      strawberry: { at: [-1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: 1.0, scale: 0.85 },
+      banana: { at: [2.1, 0, 3.15], rot: [-Math.PI / 2, 0, 0], scale: 0.75 },
+    },
+  },
+  brown: {
+    blanket: "mintBands",
+    autoGround: true,
+    items: {
+      teddy: { at: [-1.45, ON_BLANKET, -1.15], rot: [-Math.PI / 2, 0, 0], scale: 0.75 },
+      cookie: { at: [1.45, ON_BLANKET, -1.2] },
+      chocolate: { at: [1.45, ON_BLANKET, 1.3], rotY: 0.4, scale: 0.95 },
+      acorn: { at: [-2.05, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: 0.6, scale: 0.95 },
+      donut: { at: [0.0, ON_BLANKET, 0.1], scale: 0.85 },
+      grapes: { at: [-1.45, ON_BLANKET, 1.3], rot: [-Math.PI / 2, 0, 0], rotY: -0.3, scale: 0.75 },
+      carrot: { at: [2.1, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: -0.4, scale: 0.85 },
+    },
+  },
+  black: {
+    blanket: "yellowRound",
+    autoGround: true,
+    items: {
+      hat: { at: [-1.2, ON_BLANKET, -1.1], rot: [0, 0, Math.PI / 2], rotY: 0.6, scale: 0.75 },
+      ant: { at: [1.2, ON_BLANKET, -1.05], rotY: 0.5, scale: 1.1 },
+      tire: { at: [1.3, ON_BLANKET, 1.25], scale: 0.9 },
+      bowling: { at: [-2.05, 0, 3.15], scale: 0.85 },
+      donut: { at: [-1.35, ON_BLANKET, 1.3], scale: 0.85 },
+      star: { at: [0.05, ON_BLANKET, 0.15], rotY: 0.3, scale: 0.75 },
+      carrot: { at: [2.1, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: 0.5, scale: 0.85 },
+    },
+  },
 };
 
 /* What each thing IS — its shape (`null` for no taught shape) and, for the
@@ -1269,14 +1517,14 @@ const SHAPE_OF = {
 };
 const COLOR_OF = {
   apple: "red", strawberry: "red", cherries: "red", ladybug: "red",
-  fish: "blue",
+  fish: "blue", whale: "blue", ball: "blue", mug: "blue",
   banana: "yellow", lemon: "yellow", star: "yellow", cheese: "yellow", duck: "yellow",
-  pear: "green", frog: "green",
-  orange: "orange", carrot: "orange",
+  pear: "green", frog: "green", leaf: "green", broccoli: "green",
+  orange: "orange", carrot: "orange", basketball: "orange",
   grapes: "purple", eggplant: "purple", book: "purple", gift: "purple",
   donut: "pink", icecream: "pink", cupcake: "pink", flower: "pink", pig: "pink",
-  cookie: "brown", chocolate: "brown", teddy: "brown",
-  hat: "black",
+  cookie: "brown", chocolate: "brown", teddy: "brown", acorn: "brown",
+  hat: "black", tire: "black", bowling: "black", ant: "black",
   egg: "white", sheep: "white", milk: "white", dice: "white", snowman: "white",
 };
 
@@ -1312,6 +1560,8 @@ if (THING) {
   const group = ITEMS[THING](arg ?? undefined);
   scene.add(group);
   catcher.position.y = 0.001;
+  /* `?shadow=0`: a thing that floats (a balloon) casts no ground shadow. */
+  catcher.visible = params.get("shadow") !== "0";
   group.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(group);
   const centre = box.getCenter(new THREE.Vector3());
