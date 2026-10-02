@@ -6,7 +6,7 @@ import { Celebration } from "@/components/ui/celebration";
 import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
 import type { ColorId, PaintRound } from "@/types/course";
-import { ClayWord } from "./clay-word";
+import { ClayWord, PLAIN_TONE } from "./clay-word";
 
 /** Two misses in a round and the right pot starts to glow. */
 const HINT_AFTER = 2;
@@ -68,9 +68,9 @@ export function PaintColors({ rounds, pots, potAria, onSolved, onMiss }: PaintCo
   return (
     /* Phone: a column — the word, the thing, the pots. Desktop: the thing
        big on the left, the word over the pots on the right. */
-    <div className="flex w-full max-w-md flex-col items-center gap-4 sm:gap-6 lg:grid lg:max-w-4xl lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:justify-center lg:gap-x-14 lg:gap-y-6 [@media(max-height:700px)]:gap-3">
-      <span key={`word-${at}`} className="lg:col-start-2 lg:row-start-1 lg:self-end lg:justify-self-center">
-        <ClayWord word={round.color} size="md" />
+    <div className="flex w-full max-w-md flex-col items-center gap-4 [--pot:min(5.5rem,11svh)] sm:gap-6 lg:grid lg:[--pot:min(7rem,14svh)] lg:max-w-4xl lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:justify-center lg:gap-x-14 lg:gap-y-6 [@media(max-height:700px)]:gap-3">
+      <span key={`word-${at}`} className="lg:col-start-2 lg:row-start-1 lg:self-end lg:justify-self-center [@media(max-height:700px)]:[&>span]:text-6xl">
+        <ClayWord word={round.color} size="md" tone={PLAIN_TONE} />
       </span>
 
       <div className="card card-clay-white card-bare-lg relative flex aspect-square w-[min(15rem,30svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:w-[min(22rem,calc(var(--stage-h)-3rem))] [@media(max-height:700px)]:w-[24svh]">
@@ -79,19 +79,28 @@ export function PaintColors({ rounds, pots, potAria, onSolved, onMiss }: PaintCo
             src={round.blank}
             alt={round.word}
             fill
+            loading="eager"
             sizes="(min-width: 1024px) 22rem, 15rem"
             className="select-none object-contain"
           />
-          {painted && (
-            <Image
-              src={round.painted}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 22rem, 15rem"
-              className="paint-reveal select-none object-contain"
-            />
-          )}
+          {/* Loaded up front, hidden until the paint goes on — fetched only
+              on the tap, it arrived after the spread had already played. */}
+          <Image
+            src={round.painted}
+            alt=""
+            fill
+            loading="eager"
+            sizes="(min-width: 1024px) 22rem, 15rem"
+            className={`select-none object-contain ${painted ? "paint-reveal" : "invisible"}`}
+          />
         </div>
+        {/* The next rounds' pictures, fetched now so each arrives ready. */}
+        <span hidden>
+          {rounds.slice(at + 1).flatMap((next) => [
+            <Image key={`${next.word}-blank`} src={next.blank} alt="" width={240} height={240} loading="eager" sizes="(min-width: 1024px) 22rem, 15rem" />,
+            <Image key={`${next.word}-painted`} src={next.painted} alt="" width={240} height={240} loading="eager" sizes="(min-width: 1024px) 22rem, 15rem" />,
+          ])}
+        </span>
         {/* What is already painted, waiting in the corner. */}
         {at > 0 && (
           <span className="absolute start-2 top-2 flex gap-1">
@@ -105,7 +114,12 @@ export function PaintColors({ rounds, pots, potAria, onSolved, onMiss }: PaintCo
         {painted && <Celebration />}
       </div>
 
-      <ul className="flex items-center justify-center gap-3 sm:gap-4 lg:col-start-2 lg:row-start-2 lg:self-start">
+      {/* As many columns as pots, each at most a tile wide — four still fit
+          a phone's width. */}
+      <ul
+        className="grid w-full justify-center gap-3 sm:gap-4 lg:col-start-2 lg:row-start-2 lg:w-auto lg:self-start"
+        style={{ gridTemplateColumns: `repeat(${pots.length}, minmax(0, var(--pot)))` }}
+      >
         {pots.map((color) => {
           const isShaking = shake?.color === color;
           const isRight = painted && color === round.color;
@@ -117,7 +131,7 @@ export function PaintColors({ rounds, pots, potAria, onSolved, onMiss }: PaintCo
                 aria-label={format(potAria, { color })}
                 onClick={() => tap(color)}
                 disabled={painted}
-                className={`card card-clay-white flex h-[min(5.5rem,11svh)] w-[min(5.5rem,11svh)] items-center justify-center p-[10%] transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 lg:h-[min(7rem,14svh)] lg:w-[min(7rem,14svh)] ${
+                className={`card card-clay-white flex aspect-square w-full items-center justify-center p-[10%] transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
                   isShaking ? "anim-wiggle" : ""
                 } ${isRight ? "anim-jump" : ""} ${
                   painted ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"
