@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import type { Character } from "@/types/character";
 
 interface BackButtonProps {
   href: string;
@@ -34,6 +35,13 @@ export function pageAccent(
     "--page-accent-edge": edge,
     ...(ink ? { "--page-accent-ink": ink } : {}),
   };
+}
+
+/** A friend's section colour: their own button colours where they have
+    them (Nova's gold, with ink on it — direct request 2026-10-02), else
+    their accent. */
+export function characterAccent({ accent, accentDark, button }: Pick<Character, "accent" | "accentDark" | "button">): PageAccentVars {
+  return button ? pageAccent(button.face, button.edge, button.text) : pageAccent(accent, accentDark);
 }
 
 /**

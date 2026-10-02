@@ -4,7 +4,7 @@ import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
 import { courseLessons } from "@/data/courses";
 import { resolveLessonRoute } from "@/lib/learn-route";
-import { BackRow, pageAccent } from "@/components/ui/back-button";
+import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { LessonPlayer } from "@/components/learn/lesson/lesson-player";
 import { getDictionary, getLocale } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
@@ -56,7 +56,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
          container and breaks the back row's `sticky`. */
       <main
         className="relative flex flex-1 flex-col overflow-x-clip pb-4 lg:pb-0"
-        style={pageAccent(character.accent, character.accentDark)}
+        style={characterAccent(character)}
       >
         <LessonPlayer
           lesson={def}
@@ -81,7 +81,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
   return (
     <main
       className="relative flex flex-1 flex-col overflow-x-clip pb-4 sm:pb-20"
-      style={pageAccent(character.accent, character.accentDark)}
+      style={characterAccent(character)}
     >
       <BackRow
         href={`/learn/${character.id}/${lesson.id}`}
