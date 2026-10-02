@@ -27,13 +27,15 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "spell":
       return { kind: "build" };
     case "find":
-      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : q.target.color };
+      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : "color" in q.target ? q.target.color : q.target.person };
     case "sort":
       return { kind: "sort" };
     case "paint":
       return { kind: "paint" };
     case "pop":
       return { kind: "pop", target: q.color };
+    case "order":
+      return { kind: "order" };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -63,6 +65,8 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "paint", round: q.rounds[0], pots: q.pots };
     case "pop":
       return { kind: "pop", color: q.color, others: q.others };
+    case "order":
+      return { kind: "order", items: q.items, seed };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:

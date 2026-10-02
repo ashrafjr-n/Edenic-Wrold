@@ -27,6 +27,7 @@ import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
+import { OrderLine } from "./order-line";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -404,6 +405,8 @@ export function LessonPlayer({
       body = (
         <PopBalloons key={seed} color={q.color} others={q.others} seed={seed} balloonAria={lines.balloonAria} onSolved={onSolved} onMiss={onMiss} />
       );
+    } else if (q.type === "order") {
+      body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
       body = (
         <FindShapes
