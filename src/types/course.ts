@@ -83,8 +83,6 @@ export type Question =
       for a word that must be READ (a color word). `answer` indexes `options` before they
       are shuffled. */
   | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number }
-  /** Put `target` things in the basket, by tap or drag. */
-  | { type: "count"; ask: Ask; item: { src: StaticImageData; word: string }; target: number }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the

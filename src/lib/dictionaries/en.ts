@@ -159,8 +159,6 @@ export const en = {
   lessonPlayer: {
     backTo: "Back to {lessonName}",
     traceInstruction: "Trace the shape with your finger",
-    dropItem: "Drop {article} {itemLabel} here",
-    pickItemAria: "Pick {article} {itemLabel}",
     reelAbout: "A short video: {title}",
     comingSoon: "{name} is still getting this lesson ready!",
     next: "Next",
@@ -210,7 +208,6 @@ export const en = {
     build: "Build",
     find: "Find",
     pick: "Pick",
-    count: "Count",
     sort: "Sort",
     paint: "Paint",
     pop: "Pop",

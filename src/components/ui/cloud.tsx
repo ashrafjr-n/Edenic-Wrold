@@ -59,8 +59,7 @@ interface CloudProps {
  * **Built for motion, with none of it built.** A later idle float belongs on
  * the WRAPPER as a `translate` animation (its own property in Tailwind v4,
  * composited, so it fights neither the mask nor the filter) with a
- * per-cloud `animationDelay` passed through `style` — the same way
- * `CountGive` staggers its items. Nothing here has to be restructured
+ * per-cloud `animationDelay` passed through `style`. Nothing here has to be restructured
  * for it. Note the project animates with plain CSS keyframes, not
  * framer-motion (see CLAUDE.md "Libraries").
  */

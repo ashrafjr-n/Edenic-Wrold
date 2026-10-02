@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Balloon, Blocks, Ear, Eye, Hand, Paintbrush, Pencil, Pointer, Search, Shapes, X, type LucideIcon } from "lucide-react";
+import { Balloon, Blocks, Ear, Eye, Paintbrush, Pencil, Pointer, Search, Shapes, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
@@ -19,7 +19,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   build: Blocks,
   find: Search,
   pick: Pointer,
-  count: Hand,
   sort: Shapes,
   paint: Paintbrush,
   pop: Balloon,

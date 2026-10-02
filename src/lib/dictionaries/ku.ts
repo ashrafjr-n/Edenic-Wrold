@@ -158,8 +158,6 @@ export const ku: Dictionary = {
   lessonPlayer: {
     backTo: "ڤەگەڕان بۆ {lessonName}",
     traceInstruction: "شێوەی ب تلییا خۆ بشوپینە",
-    dropItem: "{itemLabel} ل ڤێرێ دانە",
-    pickItemAria: "{itemLabel} هەلبژێرە",
     reelAbout: "ڤیدیۆیەکا کورت: {title}",
     comingSoon: "{name} هێشتا ڤێ وانێ ئامادە دکەت!",
     next: "یا دی",
@@ -207,7 +205,6 @@ export const ku: Dictionary = {
     build: "چێ بکە",
     find: "بدۆزە",
     pick: "هەلبژێرە",
-    count: "بژمێرە",
     sort: "ڕێک بێخە",
     paint: "ڕەنگ بکە",
     pop: "بتەقینە",

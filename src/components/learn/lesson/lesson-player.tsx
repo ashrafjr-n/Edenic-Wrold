@@ -21,7 +21,6 @@ import type { TaskDemoDef } from "./task-demo";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { PickQuestion } from "./pick-question";
-import { CountGive } from "./count-give";
 import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
@@ -73,8 +72,6 @@ function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: stri
       return { kind: "paint" };
     case "pop":
       return { kind: "pop", target: q.color };
-    case "count":
-      return { kind: "count", target: q.item.word };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -417,19 +414,6 @@ export function LessonPlayer({
       action = showing ? (
         <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} className="lesson-onward" />
       ) : null;
-    } else if (q.type === "count") {
-      body = (
-        <CountGive
-          key={seed}
-          target={q.target}
-          icon={q.item.src}
-          itemLabel={q.item.word}
-          dict={lines}
-          dir={dir}
-          highlightTarget={first}
-          onGiven={onSolved}
-        />
-      );
     } else if (q.type === "word") {
       body = (
         <WordCard

@@ -154,8 +154,6 @@ export const ar: Dictionary = {
   lessonPlayer: {
     backTo: "العودة إلى {lessonName}",
     traceInstruction: "تتبّع الشكل بإصبعك",
-    dropItem: "ضع {itemLabel} هنا",
-    pickItemAria: "التقط {itemLabel}",
     reelAbout: "فيديو قصير: {title}",
     comingSoon: "هذا الدرس قيد التحضير عند {name}!",
     next: "التالي",
@@ -203,7 +201,6 @@ export const ar: Dictionary = {
     build: "ركّب",
     find: "ابحث",
     pick: "اختر",
-    count: "عُدّ",
     sort: "رتّب",
     paint: "لوّن",
     pop: "فرقع",
