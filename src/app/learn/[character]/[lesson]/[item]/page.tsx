@@ -91,7 +91,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 py-8">
         <div className="card card-clay-white flex w-full flex-col items-center gap-4 px-6 py-8 text-center">
           <Image
-            src="/assets/learn-with-pinki/pinki/pinki-with-pen.png"
+            src={character.id === "pinki" ? "/assets/learn-with-pinki/pinki/pinki-with-pen.png" : character.image}
             alt=""
             width={141}
             height={160}

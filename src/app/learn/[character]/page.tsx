@@ -8,9 +8,15 @@ import { CourseCard } from "@/components/learn/course-card";
 import { CourseCardWide } from "@/components/learn/course-card-wide";
 import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
 import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
+import nova from "../../../../public/assets/friends/nova.png";
+import bloo from "../../../../public/assets/friends/bloo.png";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
 import { format } from "@/lib/format-dict";
+
+/** Who says hello on each hub. Only Pinki has a talking pose yet; Nova and
+    Bloo wave from their portraits until theirs arrive. */
+const hello = { pinki: pinkiSpeak, nova, bloo };
 
 export function generateStaticParams() {
   return characters.map((character) => ({ character: character.id }));
@@ -70,12 +76,11 @@ export default async function CharacterLearnPage({
 
       {/* ================= Phone (< sm) =================
           Pinki says hello from a speech bubble, then each course is one big
-          clay card in its own colour (`CourseCard`). Pinki's picture is
-          hers alone for now: Nova's and Bloo's hubs are not reachable. */}
+          clay card in its own colour (`CourseCard`). */}
       <div className="flex flex-col px-6 sm:hidden">
         <div className="mt-2 flex items-end gap-1">
           <Image
-            src={pinkiSpeak}
+            src={hello[character.id]}
             alt=""
             sizes="104px"
             preload
@@ -119,7 +124,7 @@ export default async function CharacterLearnPage({
       <div className="mx-auto hidden w-full max-w-7xl flex-1 flex-col px-8 pt-4 sm:flex lg:grid lg:h-[calc(100svh-13rem)] lg:min-h-[32rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-10 lg:pt-6 xl:gap-14 xl:px-12">
         <section className="flex items-end gap-5 lg:flex-col-reverse lg:items-center lg:justify-center lg:gap-3">
           <Image
-            src={pinkiSpeak}
+            src={hello[character.id]}
             alt=""
             sizes="(min-width: 1024px) 18rem, 11rem"
             preload
