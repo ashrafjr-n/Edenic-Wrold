@@ -22,4 +22,7 @@ export interface Lesson {
       "n / total" progress readout on its card and the rows on its page. */
   totalItems: number;
   locked: boolean;
+  /** How its page lays the lessons out: a winding path (default), or —
+      for Colors — a box of paint pots that fill as the colors are learned. */
+  view?: "path" | "box";
 }

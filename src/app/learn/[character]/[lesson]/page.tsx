@@ -4,6 +4,7 @@ import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { ContinueButton } from "@/components/learn/continue-button";
 import { LessonPath } from "@/components/learn/lesson-path";
+import { ColorBox } from "@/components/learn/color-box";
 import { CourseArt } from "@/components/learn/course-art";
 import { CourseProgress } from "@/components/learn/course-progress";
 import { courseCovers, courseLessons } from "@/data/courses";
@@ -48,6 +49,33 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
   const covers = courseLessons[lesson.id].map((def) => def.cover);
   const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
+  /* The lessons themselves, one view per screen size: the winding path, or
+     — for Colors — the box of paint pots. */
+  const lessons = (size: "phone" | "tablet" | "wide") =>
+    lesson.view === "box" ? (
+      <ColorBox
+        titles={course.items}
+        characterId={character.id}
+        lessonId={lesson.id}
+        basePath={basePath}
+        tone={tone}
+        dict={dict.lessonPicker}
+        advanceFrom={advanceFrom}
+        size={size}
+      />
+    ) : (
+      <LessonPath
+        titles={course.items}
+        covers={covers}
+        characterId={character.id}
+        lessonId={lesson.id}
+        basePath={basePath}
+        tone={tone}
+        dict={dict.lessonPicker}
+        advanceFrom={advanceFrom}
+        size={size}
+      />
+    );
 
   return (
     <main
@@ -99,16 +127,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
           <CourseArt images={courseCovers(lesson.id)} width={128} className="-my-6 h-32 w-32 shrink-0" />
         </section>
 
-        <LessonPath
-          titles={course.items}
-          covers={covers}
-          characterId={character.id}
-          lessonId={lesson.id}
-          basePath={basePath}
-          tone={tone}
-          dict={dict.lessonPicker}
-          advanceFrom={advanceFrom}
-        />
+        <div className={lesson.view === "box" ? "mt-7" : undefined}>{lessons("phone")}</div>
       </div>
 
       {/* ================= Tablet (sm – lg) =================
@@ -129,17 +148,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
         </section>
 
         <div className="mt-4">
-          <LessonPath
-            titles={course.items}
-            covers={covers}
-            characterId={character.id}
-            lessonId={lesson.id}
-            basePath={basePath}
-            tone={tone}
-            dict={dict.lessonPicker}
-            advanceFrom={advanceFrom}
-            size="tablet"
-          />
+          {lessons("tablet")}
         </div>
       </div>
 
@@ -197,17 +206,7 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
           className="card card-clay-white anim-fade-up min-w-0 flex-1 px-10 py-6"
           style={{ background: `color-mix(in srgb, ${tone.face} 14%, var(--surface))`, animationDelay: "0.2s" }}
         >
-          <LessonPath
-            titles={course.items}
-            covers={covers}
-            characterId={character.id}
-            lessonId={lesson.id}
-            basePath={basePath}
-            tone={tone}
-            dict={dict.lessonPicker}
-            advanceFrom={advanceFrom}
-            size="wide"
-          />
+          {lessons("wide")}
         </div>
       </div>
     </main>

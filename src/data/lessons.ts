@@ -7,8 +7,9 @@ type Tone = "shapes" | "colors" | "numbers" | "letters";
 /** A course in one of the four subject colours. Only Shapes has its own
     card art; every other course shows its friend until its art arrives
     (the image is the reel's poster). */
-const course = (id: LessonId, tone: Tone, image: string): Lesson => ({
+const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]): Lesson => ({
   id,
+  view,
   image,
   theme: {
     accent: `var(--color-subject-${tone})`,
@@ -24,7 +25,7 @@ const course = (id: LessonId, tone: Tone, image: string): Lesson => ({
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
     course("shapes", "shapes", "/assets/learn/pinki/course-shapes.png"),
-    course("colors", "colors", "/assets/friends/pinki.png"),
+    course("colors", "colors", "/assets/friends/pinki.png", "box"),
     course("family", "numbers", "/assets/friends/pinki.png"),
   ],
   nova: [
