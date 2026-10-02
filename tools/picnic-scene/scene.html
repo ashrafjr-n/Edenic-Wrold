@@ -1828,44 +1828,10 @@ const ITEMS = {
    below the blanket, out at the sides — the tray of sockets floats
    bottom-centre — and things at z ≈ -3.3 on the grass above it. */
 const SCENES = {
-  /* Nova's Find scenes: twelve things in a 4x3 grid on a blanket, three
-     of each kind, no two of a kind side by side. */
-  fruits: {
-    blanket: "creamChecks",
-    autoGround: true,
-    items: {
-      apple1: { model: "apple", at: [-2.1, ON_BLANKET, -1.45], rotY: 0.25, scale: 0.72 },
-      banana1: { model: "banana", at: [-0.77, ON_BLANKET, -1.45], rotY: -0.4, rot: [-Math.PI / 2, 0, 0], scale: 0.62 },
-      orange1: { model: "orange", at: [0.5700000000000001, ON_BLANKET, -1.45], rotY: 0.6, scale: 0.66 },
-      grapes1: { model: "grapes", at: [1.9, ON_BLANKET, -1.45], rotY: -0.15, rot: [-Math.PI / 2, 0, 0], scale: 0.66 },
-      orange2: { model: "orange", at: [-1.88, ON_BLANKET, 0.05], rotY: 0.35, scale: 0.66 },
-      grapes2: { model: "grapes", at: [-0.55, ON_BLANKET, 0.05], rotY: -0.55, rot: [-Math.PI / 2, 0, 0], scale: 0.66 },
-      apple2: { model: "apple", at: [0.79, ON_BLANKET, 0.05], rotY: 0.1, scale: 0.72 },
-      banana2: { model: "banana", at: [2.12, ON_BLANKET, 0.05], rotY: 0.5, rot: [-Math.PI / 2, 0, 0], scale: 0.62 },
-      banana3: { model: "banana", at: [-2.1, ON_BLANKET, 1.55], rotY: -0.3, rot: [-Math.PI / 2, 0, 0], scale: 0.62 },
-      apple3: { model: "apple", at: [-0.77, ON_BLANKET, 1.55], rotY: 0.45, scale: 0.72 },
-      grapes3: { model: "grapes", at: [0.5700000000000001, ON_BLANKET, 1.55], rotY: -0.2, rot: [-Math.PI / 2, 0, 0], scale: 0.66 },
-      orange3: { model: "orange", at: [1.9, ON_BLANKET, 1.55], rotY: 0.3, scale: 0.66 },
-    },
-  },
-  veggies: {
-    blanket: "blueStripes",
-    autoGround: true,
-    items: {
-      carrot1: { model: "carrot", at: [-2.1, ON_BLANKET, -1.45], rotY: 0.25, rot: [0, 0, Math.PI / 2], scale: 0.86 },
-      broccoli1: { model: "broccoli", at: [-0.77, ON_BLANKET, -1.45], rotY: -0.4, rot: [0, 0, Math.PI / 2], scale: 0.82 },
-      corn1: { model: "corn", at: [0.5700000000000001, ON_BLANKET, -1.45], rotY: 0.6, rot: [0, 0, Math.PI / 2], scale: 0.84 },
-      potato1: { model: "potato", at: [1.9, ON_BLANKET, -1.45], rotY: -0.15, scale: 0.82 },
-      corn2: { model: "corn", at: [-1.88, ON_BLANKET, 0.05], rotY: 0.35, rot: [0, 0, Math.PI / 2], scale: 0.84 },
-      potato2: { model: "potato", at: [-0.55, ON_BLANKET, 0.05], rotY: -0.55, scale: 0.82 },
-      carrot2: { model: "carrot", at: [1.04, ON_BLANKET, -0.05], rotY: 0.75, rot: [0, 0, Math.PI / 2], scale: 0.86 },
-      broccoli2: { model: "broccoli", at: [2.12, ON_BLANKET, 0.05], rotY: 0.5, rot: [0, 0, Math.PI / 2], scale: 0.82 },
-      broccoli3: { model: "broccoli", at: [-2.1, ON_BLANKET, 1.55], rotY: -0.3, rot: [0, 0, Math.PI / 2], scale: 0.82 },
-      carrot3: { model: "carrot", at: [-0.77, ON_BLANKET, 1.55], rotY: 0.45, rot: [0, 0, Math.PI / 2], scale: 0.86 },
-      potato3: { model: "potato", at: [0.5700000000000001, ON_BLANKET, 1.55], rotY: -0.2, scale: 0.82 },
-      corn3: { model: "corn", at: [1.9, ON_BLANKET, 1.55], rotY: 0.3, rot: [0, 0, Math.PI / 2], scale: 0.84 },
-    },
-  },
+  /* Nova's Seasons Find: twelve things in a 4x3 grid on a blanket, three
+     for each season, no two of a kind side by side. */
+
+
   seasons: {
     blanket: "lilacPlain",
     autoGround: true,
