@@ -46,7 +46,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || ["family", "red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1657,11 +1657,130 @@ const ITEMS = {
   },
 };
 
+/* ---------- The living room (My Family's Find) ----------
+   A warm wooden floor with a round rug, a pale wall with a window, a
+   framed heart and a skirting board, a plant and a lamp out at the sides —
+   nothing that looks like a person. The family stands on the rug. */
+function buildRoom(world) {
+  const floor = mesh(new THREE.PlaneGeometry(30, 30), clay(0xe9c49a, { clearcoat: 0.15, roughness: 0.8, sheen: 0 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.castShadow = false;
+  world.add(floor);
+  for (let i = -8; i <= 8; i++) {
+    const seam = mesh(new THREE.BoxGeometry(0.02, 0.004, 30), clay(0xd9ae80, { roughness: 0.9, clearcoat: 0 }));
+    seam.position.set(i * 0.9, 0.002, 0);
+    seam.castShadow = false;
+    world.add(seam);
+  }
+  const rug = mesh(new THREE.CylinderGeometry(3.4, 3.4, 0.04, 96), clay(0x9fd8cf, { roughness: 0.95, clearcoat: 0, sheen: 0.3 }));
+  rug.scale.z = 0.92;
+  rug.position.set(0, 0.02, 0.4);
+  rug.castShadow = false;
+  world.add(rug);
+  const rim = mesh(new THREE.TorusGeometry(3.25, 0.05, 12, 128), clay(0xfff6e8, { roughness: 0.9, clearcoat: 0 }));
+  rim.rotation.x = -Math.PI / 2;
+  rim.scale.y = 0.92;
+  rim.position.set(0, 0.045, 0.4);
+  world.add(rim);
+
+  const WZ = -3.3;
+  const wall = mesh(new THREE.PlaneGeometry(30, 12), clay(0xffe3d3, { roughness: 0.9, clearcoat: 0, sheen: 0 }));
+  wall.position.set(0, 6, WZ);
+  world.add(wall);
+  const skirt = mesh(new RoundedBoxGeometry(30, 0.3, 0.08, 4, 0.03), clay(0xffffff, { clearcoat: 0.3 }));
+  skirt.position.set(0, 0.15, WZ + 0.04);
+  world.add(skirt);
+
+  // a window: white frame, sky glass, a cross of bars, a cloud outside
+  const win = new THREE.Group();
+  win.add(mesh(new RoundedBoxGeometry(2.2, 1.7, 0.12, 6, 0.08), clay(0xffffff, { clearcoat: 0.4 })));
+  const glass = mesh(new RoundedBoxGeometry(1.95, 1.45, 0.04, 4, 0.04), clay(0xaedcff, { clearcoat: 0.9, roughness: 0.2 }));
+  glass.position.z = 0.05;
+  win.add(glass);
+  for (const [w, h] of [[0.08, 1.45], [1.95, 0.08]]) {
+    const bar = mesh(new RoundedBoxGeometry(w, h, 0.06, 2, 0.02), clay(0xffffff));
+    bar.position.z = 0.09;
+    win.add(bar);
+  }
+  for (const [x, y, r] of [[-0.45, 0.35, 0.16], [-0.25, 0.4, 0.2], [-0.05, 0.34, 0.15]]) {
+    const puff = mesh(new THREE.SphereGeometry(r, 24, 16), clay(0xffffff, { roughness: 0.7 }));
+    puff.scale.z = 0.3;
+    puff.position.set(x, y, 0.08);
+    win.add(puff);
+  }
+  win.position.set(-1.25, 2.45, WZ + 0.06);
+  world.add(win);
+
+  // a framed heart
+  const frame = mesh(new RoundedBoxGeometry(0.9, 0.9, 0.08, 4, 0.06), clay(0xffc94d, { clearcoat: 0.6 }));
+  frame.position.set(1.6, 2.55, WZ + 0.05);
+  world.add(frame);
+  const paper = mesh(new RoundedBoxGeometry(0.7, 0.7, 0.04, 2, 0.02), clay(0xffffff));
+  paper.position.set(1.6, 2.55, WZ + 0.1);
+  world.add(paper);
+  const heartShape = new THREE.Shape();
+  heartShape.moveTo(0, -0.18);
+  heartShape.bezierCurveTo(-0.32, 0.02, -0.18, 0.26, 0, 0.12);
+  heartShape.bezierCurveTo(0.18, 0.26, 0.32, 0.02, 0, -0.18);
+  const heartGeo = roundedShapeExtrude(heartShape, 0.03, 0.02);
+  heartGeo.center();
+  const heart = mesh(heartGeo, clay(0xff6f91, { clearcoat: 0.8 }));
+  heart.position.set(1.6, 2.55, WZ + 0.15);
+  world.add(heart);
+
+  // a plant in a pot, far left
+  const plant = new THREE.Group();
+  plant.add(mesh(smoothLathe([[0, 0], [0.3, 0], [0.38, 0.55], [0, 0.55]]), clay(0xf28c5b, { clearcoat: 0.5 })));
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2;
+    const leaf = mesh(new THREE.SphereGeometry(0.22, 24, 16), clay(i % 2 ? 0x5cc46a : 0x4fb05d));
+    leaf.scale.set(0.45, 1.3, 0.25);
+    leaf.position.set(Math.cos(a) * 0.2, 0.95 + (i % 3) * 0.12, Math.sin(a) * 0.2);
+    leaf.rotation.z = -Math.cos(a) * 0.5;
+    leaf.rotation.x = Math.sin(a) * 0.5;
+    plant.add(leaf);
+  }
+  plant.position.set(-2.55, 0, -2.6);
+  world.add(plant);
+
+  // a floor lamp, far right
+  const lamp = new THREE.Group();
+  const base = mesh(new THREE.CylinderGeometry(0.28, 0.3, 0.06, 32), clay(0x8a6fd0, { clearcoat: 0.6 }));
+  base.position.y = 0.03;
+  lamp.add(base);
+  const pole = mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.1, 16), clay(0x8a6fd0, { clearcoat: 0.6 }));
+  pole.position.y = 1.08;
+  lamp.add(pole);
+  const shade = mesh(smoothLathe([[0.2, 0], [0.42, 0], [0.3, 0.5], [0.18, 0.5]]), clay(0xfff1b8, { clearcoat: 0.3, side: THREE.DoubleSide }));
+  shade.position.y = 2.05;
+  lamp.add(shade);
+  lamp.position.set(2.6, 0, -2.6);
+  world.add(lamp);
+}
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
    bottom-centre — and things at z ≈ -3.3 on the grass above it. */
 const SCENES = {
+  /* My Family's Find: the whole family in their living room, seen from the
+     front (`tilt`) — grown-ups at the back, the children in front. */
+  family: {
+    world: "room",
+    tilt: 38,
+    zoom: 5.9,
+    look: [0, 1.3, 0.2],
+    autoGround: true,
+    items: {
+      grandpa: { model: "member", arg: "grandpa", at: [-0.85, 0, -2.0] },
+      grandma: { model: "member", arg: "grandma", at: [0.85, 0, -2.0] },
+      dad: { model: "member", arg: "dad", at: [-1.8, 0, 0.3] },
+      baby: { model: "member", arg: "baby", at: [0, 0, 0.3] },
+      mom: { model: "member", arg: "mom", at: [1.8, 0, 0.3] },
+      sister: { model: "member", arg: "sister", at: [-0.95, 0, 2.6] },
+      brother: { model: "member", arg: "brother", at: [0.95, 0, 2.6] },
+    },
+  },
   picnic: {
     blanket: "pinkStripes",
     items: {
@@ -1921,6 +2040,19 @@ if (THING) {
   const world = new THREE.Group();
   scene.add(world);
 
+  if (def.tilt) {
+    const t = THREE.MathUtils.degToRad(def.tilt);
+    const [lx, ly, lz] = def.look ?? [0, 0, 0];
+    camera.position.set(lx, ly + Math.sin(t) * 30, lz + Math.cos(t) * 30);
+    camera.lookAt(lx, ly, lz);
+  }
+  if (def.zoom) {
+    const vh = def.zoom * H / W;
+    Object.assign(camera, { left: -def.zoom / 2, right: def.zoom / 2, top: vh / 2, bottom: -vh / 2 });
+    camera.updateProjectionMatrix();
+  }
+  if (def.world === "room") buildRoom(world);
+  else {
   // grass
   const grass = mesh(new THREE.PlaneGeometry(30, 30), clay(0x8fd16e, { clearcoat: 0.05, roughness: 0.9, sheen: 0 }));
   grass.rotation.x = -Math.PI / 2;
@@ -1947,6 +2079,7 @@ if (THING) {
   }
 
   world.add(BLANKETS[def.blanket]());
+  }
 
   const items = {};
   for (const [name, it] of Object.entries(def.items)) {
@@ -1979,7 +2112,7 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () =>
-    Object.fromEntries(Object.entries(def.items).map(([k, it]) => [k, { shape: SHAPE_OF[it.model ?? k] ?? null, color: it.color ?? COLOR_OF[it.model ?? k] ?? null }]));
+    Object.fromEntries(Object.entries(def.items).map(([k, it]) => [k, { shape: SHAPE_OF[it.model ?? k] ?? null, color: it.color ?? COLOR_OF[it.model ?? k] ?? null, ...(it.model === "member" ? { person: it.arg } : {}) }]));
 }
 window.ready = true;
 </script>
