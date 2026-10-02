@@ -38,7 +38,7 @@ Pinki    Shapes   1. Circle
 | --- | --- |
 | `/learn` | the three friends (unchanged) |
 | `/learn/pinki` | Pinki says hello, then one big clay card per course (phone) |
-| `/learn/pinki/shapes` | a course banner, then the 5 lessons as a winding clay path + Continue (phone) |
+| `/learn/pinki/shapes` | a course banner, then the 5 lessons as a box of things (like Colors) + Continue |
 | `/learn/pinki/shapes/1` | the lesson |
 
 Lessons open one after another.
