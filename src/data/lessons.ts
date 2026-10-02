@@ -25,7 +25,7 @@ const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]):
     dictionaries, not this file. */
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
-    course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png"),
+    course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png", "box"),
     course("colors", "pinki", "/assets/friends/pinki.png", "box"),
     course("family", "pinki", "/assets/friends/pinki.png"),
   ],
