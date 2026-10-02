@@ -300,8 +300,8 @@ the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
 
 My Family is one person per lesson — Mom, Dad, Sister, Brother, Baby,
-Grandma, Grandpa — then a family review; each person is a 3D face from
-Microsoft's Fluent Emoji (MIT license), in their own card. The other courses
+Grandma, Grandpa — then a family review; each person is a full-body chibi clay figure rendered
+for the course, in their own card. The other courses
 still to come already wear their own clay art — fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
 rendered with the same light and clay as Shapes and Colors.
 
