@@ -10,10 +10,6 @@ import type { Dictionary } from "./en";
  * Brand and character names (Edenic World, Pinki, Nova, Bloo) are never
  * translated — they stay Latin even inside an Arabic sentence, matching how
  * the rest of the site keeps them as identity, not content.
- *
- * Simplified corner, called out on purpose: Arabic dual/plural agreement is
- * not modelled (e.g. `numberOf` always use the singular counter
- * form) — correct enough for a children's site, not grammatically complete.
  */
 export const ar: Dictionary = {
   locale: "ar",

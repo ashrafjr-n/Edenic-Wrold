@@ -14,10 +14,6 @@ import type { Dictionary } from "./en";
  * translated and never transliterated — they stay Latin even inside a Kurdish
  * sentence, which is the rule CLAUDE.md states. (`ar.ts` transliterates the
  * three mascots in two prose lines; that is the deviation, not this.)
- *
- * Simplified corner, called out on purpose, same as `ar.ts`: Kurdish noun
- * inflection after a numeral is not modelled — `countGive`/`countHow` use the
- * bare digit with the item's plain singular form regardless of count.
  */
 export const ku: Dictionary = {
   locale: "ku",

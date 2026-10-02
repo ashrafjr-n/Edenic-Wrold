@@ -2520,9 +2520,8 @@ button:disabled,
   border-radius: 999px;
   /* The page's own accent, so the mark means the same thing on every
      character's lesson. No shape keyword, so it is an ELLIPSE — it has to
-     stretch to whatever box it is put on, and a circle on the apple basket
-     (much wider than it is tall) would light the middle and leave the ends
-     dark. */
+     stretch to whatever box it is put on, and a circle on a wide target
+     would light the middle and leave the ends dark. */
   background: radial-gradient(
     closest-side,
     color-mix(in srgb, var(--page-accent-color) 55%, transparent) 45%,

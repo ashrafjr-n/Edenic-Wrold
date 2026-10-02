@@ -160,9 +160,9 @@ interface LessonPlayerProps {
  * exception: it fills the whole stage and has no bands at all (on a desktop
  * it takes the board's column, between the same two panels as the steps).
  *
- * The first question is Pinki's to show: a Pick's answer glows while she
- * points, a Count's basket glows, and a Trace always starts with her drawing
- * it. Then it is the child's turn.
+ * The first question is shown before it is asked: a Pick's answer glows,
+ * and a Trace always starts with the shape drawing itself. Then it is the
+ * child's turn.
  */
 export function LessonPlayer({
   lesson,
@@ -215,7 +215,7 @@ export function LessonPlayer({
   const finished = at >= steps.length;
   const question = step?.kind === "question" ? step.question : undefined;
   const first = step?.kind === "question" && step.index === 0;
-  /* Pinki's turn on the first question — only while the child has not been
+  /* The demo's turn on the first question — only while the child has not been
      handed it yet. A Trace's demo is its own (the pen draws before the board). */
   const showing = first && demo && question?.type === "pick";
 

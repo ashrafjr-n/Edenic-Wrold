@@ -97,9 +97,8 @@ export function BackButton({ href, label }: BackButtonProps) {
  * container's padding edge, computed from the viewport. Put it on a WRAPPER,
  * never on the button: `.btn3d` is unlayered and sets `position: relative`.
  */
-export const BACK_TOP = "top-[5.25rem] sm:top-[10rem] lg:top-[6.75rem]";
-export const BACK_FIXED =
-  "fixed left-6 z-20 sm:left-8 lg:left-[max(2rem,calc(50%-38rem))] top-[5.25rem] sm:top-[10rem] lg:top-[6.75rem]";
+const BACK_TOP = "top-[5.25rem] sm:top-[10rem] lg:top-[6.75rem]";
+export const BACK_FIXED = `fixed left-6 z-20 sm:left-8 lg:left-[max(2rem,calc(50%-38rem))] ${BACK_TOP}`;
 
 interface BackRowProps extends BackButtonProps {
   /** Anything that shares the row with the button, to its right. */
