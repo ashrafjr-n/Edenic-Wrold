@@ -24,7 +24,17 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
-const SCENE = new URLSearchParams(location.search).get("scene") || "picnic";
+const params = new URLSearchParams(location.search);
+
+const SCENE = params.get("scene") || "picnic";
+/* `?paint=blank`: everything in plain grey clay — a thing before it is painted. */
+const BLANK = params.get("paint") === "blank";
+
+/* The Colors course's paints, one per taught color. */
+const PAINT = {
+  red: 0xee4645, blue: 0x3f86e8, yellow: 0xffd31a, green: 0x4fbf5a, orange: 0xff8c2e,
+  purple: 0x9257de, pink: 0xff86c2, brown: 0x96592f, black: 0x2e2b35, white: 0xfbfbf8,
+};
 
 const W = 1000, H = 1250;              // 4:5 — the phone's stage
 const VIEW_W = 6.4;                      // world units across
@@ -33,8 +43,12 @@ renderer.setPixelRatio(1);
 renderer.setSize(W, H);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.92;
+/* ACES for the Shapes picnics; the Colors art (single things, and the
+   scenes that stand things on their own boxes) uses Neutral, which keeps a
+   color's hue and saturation — ACES washes yellows into mustard. */
+const VIVID = params.has("thing") || ["red", "yellow", "purple", "pink", "white"].includes(params.get("scene"));
+renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
@@ -63,7 +77,7 @@ scene.add(sun);
 
 /* The clay: pastel, soft sheen, a light glossy coat. */
 const clay = (color, extra = {}) =>
-  new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, clearcoat: 0.45, clearcoatRoughness: 0.35, sheen: 0.4, sheenRoughness: 0.6, sheenColor: 0xffffff, ...extra });
+  new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, clearcoat: 0.45, clearcoatRoughness: 0.35, sheen: 0.4, sheenRoughness: 0.6, sheenColor: 0xffffff, ...extra, ...(BLANK ? { color: 0xc8c5d1, map: null } : {}) });
 
 /* Seeded — the same scene every render. */
 let seed = 7;
@@ -79,6 +93,10 @@ const mesh = (geometry, material) => {
 /* A lathe from a 2D profile (x = radius, y = height). */
 const lathe = (points, segments = 160) =>
   new THREE.LatheGeometry(points.map(([x, y]) => new THREE.Vector2(x, y)), segments);
+
+/* A lathe through a smooth curve: the profile's points are only guides. */
+const smoothLathe = (points, segments = 160) =>
+  new THREE.LatheGeometry(new THREE.SplineCurve(points.map(([x, y]) => new THREE.Vector2(x, y))).getPoints(72), segments);
 
 function roundedShapeExtrude(shape, depth, bevel) {
   return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 8, curveSegments: 64 });
@@ -151,6 +169,38 @@ const BLANKETS = {
     ring.position.y = BH / 2;
     g.add(ring);
     g.position.set(0, BH / 2, 0.1);
+    return g;
+  },
+  // cream with a soft sky-blue gingham — the reds' picnic
+  creamChecks() {
+    const g = new THREE.Group();
+    const BW = 5.7, BD = 4.8;
+    g.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0xfff3dc, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    const check = clay(0xcfe6fb, { clearcoat: 0.05, roughness: 0.9, sheen: 0.2 });
+    for (let i = -3; i <= 3; i++) {
+      const down = mesh(new RoundedBoxGeometry(0.36, 0.02, BD - 0.02, 2, 0.01), check);
+      down.position.set(i * 0.8, BH / 2, 0);
+      g.add(down);
+    }
+    for (let j = -2; j <= 2; j++) {
+      const across = mesh(new RoundedBoxGeometry(BW - 0.02, 0.022, 0.36, 2, 0.01), check);
+      across.position.set(0, BH / 2, j * 0.9);
+      g.add(across);
+    }
+    g.position.set(0, BH / 2, 0.05);
+    g.rotation.y = 0.04;
+    return g;
+  },
+  // plain lilac with a deeper border — the whites' picnic (white shows on it)
+  lilacPlain() {
+    const g = new THREE.Group();
+    const BW = 5.7, BD = 4.8;
+    g.add(mesh(new RoundedBoxGeometry(BW, BH, BD, 6, 0.06), clay(0xb9a6ee, { clearcoat: 0.1, roughness: 0.85, sheen: 0.2 })));
+    const inner = mesh(new RoundedBoxGeometry(BW - 0.6, 0.02, BD - 0.6, 4, 0.01), clay(0xc9baf3, { clearcoat: 0.05, roughness: 0.9 }));
+    inner.position.y = BH / 2;
+    g.add(inner);
+    g.position.set(0, BH / 2, 0.05);
+    g.rotation.y = -0.05;
     return g;
   },
 };
@@ -258,9 +308,9 @@ const ITEMS = {
     return g;
   },
   // a present: a square box, ribbon both ways, a bow on top
-  gift() {
+  gift(color = 0xb89cf0) {
     const g = new THREE.Group();
-    const box = mesh(new RoundedBoxGeometry(1.1, 0.7, 1.1, 6, 0.08), clay(0xb89cf0, { clearcoat: 0.5 }));
+    const box = mesh(new RoundedBoxGeometry(1.1, 0.7, 1.1, 6, 0.08), clay(color, { clearcoat: 0.5 }));
     box.position.y = 0.35;
     g.add(box);
     for (const rot of [0, Math.PI / 2]) {
@@ -352,15 +402,15 @@ const ITEMS = {
     g.add(stick);
     return g;
   },
-  book() {
+  book(color = 0x8d74e2) {
     const g = new THREE.Group();
-    const cover = mesh(new RoundedBoxGeometry(1.15, 0.28, 1.6, 6, 0.06), clay(0x8d74e2, { clearcoat: 0.5 }));
+    const cover = mesh(new RoundedBoxGeometry(1.15, 0.28, 1.6, 6, 0.06), clay(color, { clearcoat: 0.5 }));
     cover.position.y = 0.14;
     g.add(cover);
     const pages = mesh(new RoundedBoxGeometry(1.08, 0.2, 1.5, 4, 0.03), clay(0xfffaf0, { roughness: 0.8, clearcoat: 0.1 }));
     pages.position.set(0.05, 0.14, 0);
     g.add(pages);
-    const top = mesh(new RoundedBoxGeometry(1.15, 0.05, 1.6, 4, 0.025), clay(0x8d74e2, { clearcoat: 0.5 }));
+    const top = mesh(new RoundedBoxGeometry(1.15, 0.05, 1.6, 4, 0.025), clay(color, { clearcoat: 0.5 }));
     top.position.y = 0.27;
     g.add(top);
     const label = mesh(new RoundedBoxGeometry(0.6, 0.02, 0.28, 2, 0.01), clay(0xffe07a));
@@ -447,6 +497,642 @@ const ITEMS = {
     }
     return g;
   },
+
+  /* ---------- Colors (Pinki's second course) ----------
+     Things are built standing up, facing +z (the thing camera's side) and
+     +x for animals seen in profile; a scene lays them down with `rot`. */
+
+  // a paint pot: a pale tin, a glossy pool of paint, one drip down the front
+  pot(color = "red") {
+    const paint = PAINT[color];
+    const g = new THREE.Group();
+    const tin = clay(0xd3daea, { roughness: 0.32, clearcoat: 0.9, clearcoatRoughness: 0.15, sheen: 0.2 });
+    g.add(mesh(lathe([[0, 0], [0.56, 0], [0.62, 0.04], [0.64, 0.12], [0.64, 0.86], [0.6, 0.9], [0.56, 0.9], [0.56, 0.84], [0, 0.84]], 128), tin));
+    const rim = mesh(new THREE.TorusGeometry(0.61, 0.045, 24, 128), clay(0xe6ebf5, { roughness: 0.3, clearcoat: 0.9 }));
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.9;
+    g.add(rim);
+    const band = mesh(new THREE.CylinderGeometry(0.645, 0.645, 0.08, 128, 1, true), clay(0xb8c1d8, { roughness: 0.35, clearcoat: 0.8 }));
+    band.position.y = 0.2;
+    g.add(band);
+    // the paint: a full pool, domed a little, satin rather than mirror-wet
+    const wet = { clearcoat: 0.35, clearcoatRoughness: 0.3, roughness: 0.42, sheen: 0 };
+    const pool = mesh(new THREE.SphereGeometry(0.585, 96, 32, 0, Math.PI * 2, 0, Math.PI / 2), clay(paint, wet));
+    pool.scale.y = 0.12;
+    pool.position.y = 0.885;
+    g.add(pool);
+    // spilled over the front of the rim, and running down the tin in drips
+    const spill = mesh(new THREE.TorusGeometry(0.615, 0.06, 24, 64, Math.PI * 0.55), clay(paint, wet));
+    spill.rotation.set(Math.PI / 2, 0, Math.PI * 0.22);
+    spill.position.y = 0.905;
+    g.add(spill);
+    for (const [a, len] of [[1.18, 0.3], [1.5, 0.44], [1.86, 0.22]]) {
+      const x = Math.cos(a) * 0.655, z = Math.sin(a) * 0.655;
+      const drip = mesh(new THREE.CapsuleGeometry(0.055, len, 8, 20), clay(paint, wet));
+      drip.scale.set(1, 1, 0.6);
+      drip.position.set(x, 0.9 - len / 2, z);
+      drip.rotation.y = -a + Math.PI / 2;
+      g.add(drip);
+      const bead = mesh(new THREE.SphereGeometry(0.075, 24, 16), clay(paint, wet));
+      bead.scale.set(1, 1.15, 0.75);
+      bead.position.set(x, 0.9 - len - 0.03, z);
+      bead.rotation.y = -a + Math.PI / 2;
+      g.add(bead);
+    }
+    return g;
+  },
+
+  apple() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0.06], [0.2, 0.0], [0.42, 0.05], [0.57, 0.19], [0.63, 0.38], [0.6, 0.58], [0.5, 0.74], [0.32, 0.81], [0.14, 0.77], [0, 0.69]]), clay(0xe8433f, { clearcoat: 0.85, clearcoatRoughness: 0.18, roughness: 0.38 })));
+    const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.2, 8, 16), clay(0x7a4a2c));
+    stem.position.set(0.02, 0.84, 0);
+    stem.rotation.z = -0.25;
+    g.add(stem);
+    const leaf = mesh(new THREE.SphereGeometry(0.15, 32, 16), clay(0x6cc35a, { clearcoat: 0.6 }));
+    leaf.scale.set(1.7, 0.28, 0.75);
+    leaf.position.set(0.2, 0.9, 0.02);
+    leaf.rotation.z = 0.45;
+    g.add(leaf);
+    return g;
+  },
+
+  strawberry() {
+    const g = new THREE.Group();
+    const profile = [[0, 0], [0.1, 0.02], [0.27, 0.16], [0.4, 0.4], [0.44, 0.6], [0.38, 0.74], [0.2, 0.81], [0, 0.82]];
+    g.add(mesh(smoothLathe(profile), clay(0xf04e5a, { clearcoat: 0.8, clearcoatRoughness: 0.2, roughness: 0.4 })));
+    const radiusAt = (h) => {
+      for (let i = 1; i < profile.length; i++) {
+        const [r0, h0] = profile[i - 1], [r1, h1] = profile[i];
+        if (h <= h1) return r0 + ((r1 - r0) * (h - h0)) / (h1 - h0);
+      }
+      return 0;
+    };
+    for (let i = 0; i < 46; i++) {
+      const h = 0.12 + (i % 8) * 0.075 + rand() * 0.03;
+      const a = i * 2.4 + rand() * 0.3;
+      const r = radiusAt(h) + 0.005;
+      const seedM = mesh(new THREE.SphereGeometry(0.026, 12, 8), clay(0xffe07a, { clearcoat: 0.8 }));
+      seedM.scale.set(1, 1.5, 1);
+      seedM.position.set(Math.cos(a) * r, h, Math.sin(a) * r);
+      g.add(seedM);
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const sepal = mesh(new THREE.SphereGeometry(0.11, 24, 12), clay(0x6cc35a, { clearcoat: 0.6 }));
+      sepal.scale.set(1.9, 0.3, 0.7);
+      sepal.position.set(Math.cos(a) * 0.17, 0.82, Math.sin(a) * 0.17);
+      sepal.rotation.y = -a;
+      sepal.rotation.z = -0.25;
+      g.add(sepal);
+    }
+    const stem = mesh(new THREE.CapsuleGeometry(0.03, 0.12, 8, 12), clay(0x5aa648));
+    stem.position.y = 0.9;
+    g.add(stem);
+    return g;
+  },
+
+  cherries() {
+    const g = new THREE.Group();
+    const red = clay(0xd9363e, { clearcoat: 0.95, clearcoatRoughness: 0.1, roughness: 0.3 });
+    const joint = new THREE.Vector3(0.05, 1.05, 0);
+    for (const [x, z] of [[-0.3, 0.05], [0.3, -0.05]]) {
+      const cherry = mesh(new THREE.SphereGeometry(0.3, 64, 48), red);
+      cherry.scale.set(1, 0.92, 1);
+      cherry.position.set(x, 0.28, z);
+      g.add(cherry);
+      const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(x, 0.52, z), new THREE.Vector3(x * 0.7, 0.8, z), joint]);
+      g.add(mesh(new THREE.TubeGeometry(curve, 32, 0.028, 12), clay(0x6a8f3a)));
+    }
+    const leaf = mesh(new THREE.SphereGeometry(0.15, 32, 16), clay(0x6cc35a, { clearcoat: 0.6 }));
+    leaf.scale.set(1.8, 0.28, 0.8);
+    leaf.position.set(0.3, 1.08, 0);
+    leaf.rotation.z = 0.35;
+    g.add(leaf);
+    return g;
+  },
+
+  ladybug() {
+    const g = new THREE.Group();
+    const shell = mesh(new THREE.SphereGeometry(0.5, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), clay(0xe8433f, { clearcoat: 0.95, clearcoatRoughness: 0.1, roughness: 0.3 }));
+    shell.scale.set(1, 0.7, 0.92);
+    g.add(shell);
+    const black = clay(0x2f2b36, { clearcoat: 0.8, roughness: 0.35 });
+    const head = mesh(new THREE.SphereGeometry(0.22, 32, 24), black);
+    head.scale.set(1, 0.8, 1);
+    head.position.set(0.48, 0.1, 0);
+    g.add(head);
+    const seam = mesh(new THREE.TorusGeometry(0.5, 0.018, 8, 64, Math.PI), black);
+    seam.scale.set(1, 0.7, 1);
+    g.add(seam);
+    for (const [x, z] of [[0.15, 0.22], [0.15, -0.22], [-0.18, 0.25], [-0.18, -0.25], [-0.02, 0.0]]) {
+      const spot = mesh(new THREE.SphereGeometry(0.085, 24, 16), black);
+      spot.scale.y = 0.25;
+      const y = 0.35 * Math.sqrt(Math.max(0, 1 - (x / 0.5) ** 2 - (z / 0.46) ** 2)) - 0.02;
+      spot.position.set(x, y, z === 0 ? 0.0 : z);
+      if (z === 0) spot.position.set(-0.32, 0.22, 0);
+      g.add(spot);
+    }
+    for (const z of [-0.1, 0.1]) {
+      const eye = mesh(new THREE.SphereGeometry(0.05, 16, 12), clay(0xffffff));
+      eye.position.set(0.62, 0.16, z);
+      g.add(eye);
+    }
+    return g;
+  },
+
+  fish(color = 0x4b8fe8) {
+    const g = new THREE.Group();
+    const skin = clay(color, { clearcoat: 0.85, clearcoatRoughness: 0.18 });
+    const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), skin);
+    body.scale.set(1.35, 0.85, 0.5);
+    body.position.y = 0.45;
+    g.add(body);
+    const tailShape = new THREE.Shape();
+    tailShape.moveTo(0, 0); tailShape.quadraticCurveTo(-0.25, 0.32, -0.45, 0.42); tailShape.quadraticCurveTo(-0.32, 0, -0.45, -0.42); tailShape.quadraticCurveTo(-0.25, -0.32, 0, 0);
+    const tailGeo = roundedShapeExtrude(tailShape, 0.06, 0.05);
+    tailGeo.translate(0, 0, -0.03);
+    const tail = mesh(tailGeo, clay(0x8cc4f2, { clearcoat: 0.6 }));
+    tail.position.set(-0.6, 0.45, 0);
+    g.add(tail);
+    const finShape = new THREE.Shape();
+    finShape.moveTo(-0.25, 0); finShape.quadraticCurveTo(-0.05, 0.28, 0.2, 0); finShape.closePath();
+    const fin = mesh(roundedShapeExtrude(finShape, 0.04, 0.03), clay(0x8cc4f2, { clearcoat: 0.6 }));
+    fin.position.set(0, 0.84, -0.035);
+    g.add(fin);
+    const eye = mesh(new THREE.SphereGeometry(0.11, 24, 16), clay(0xffffff, { clearcoat: 0.9 }));
+    eye.scale.z = 0.5;
+    eye.position.set(0.38, 0.55, 0.2);
+    g.add(eye);
+    const pupil = mesh(new THREE.SphereGeometry(0.055, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
+    pupil.position.set(0.4, 0.55, 0.255);
+    g.add(pupil);
+    const gill = mesh(new THREE.TorusGeometry(0.16, 0.022, 8, 32, Math.PI * 0.7), clay(0x3a76c4));
+    gill.position.set(0.18, 0.45, 0.2);
+    gill.rotation.z = -Math.PI * 0.35;
+    g.add(gill);
+    return g;
+  },
+
+  banana() {
+    const g = new THREE.Group();
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.75, 0.55, 0), new THREE.Vector3(-0.35, 0.2, 0), new THREE.Vector3(0.15, 0.18, 0), new THREE.Vector3(0.6, 0.45, 0), new THREE.Vector3(0.78, 0.72, 0)]);
+    const T = 96, R = 24;
+    const geo = new THREE.TubeGeometry(curve, T, 0.2, R);
+    const pos = geo.attributes.position;
+    for (let i = 0; i <= T; i++) {
+      const t = i / T;
+      const c = curve.getPoint(t);
+      const k = Math.max(0.2, Math.sin(Math.PI * t) ** 0.55);
+      for (let j = 0; j <= R; j++) {
+        const idx = i * (R + 1) + j;
+        pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * k, c.y + (pos.getY(idx) - c.y) * k, c.z + (pos.getZ(idx) - c.z) * k);
+      }
+    }
+    geo.computeVertexNormals();
+    g.add(mesh(geo, clay(0xffd31a, { clearcoat: 0.7, clearcoatRoughness: 0.25 })));
+    const tip = clay(0x7a5a2c);
+    for (const t of [0, 1]) {
+      const p = curve.getPoint(t);
+      const cap = mesh(new THREE.SphereGeometry(0.055, 16, 12), tip);
+      cap.position.copy(p);
+      g.add(cap);
+    }
+    const stalk = mesh(new THREE.CapsuleGeometry(0.05, 0.12, 8, 12), clay(0xb89a4a));
+    const end = curve.getPoint(1);
+    stalk.position.set(end.x + 0.03, end.y + 0.08, 0);
+    stalk.rotation.z = -0.5;
+    g.add(stalk);
+    return g;
+  },
+
+  pear() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.3, 0.02], [0.47, 0.14], [0.52, 0.32], [0.44, 0.5], [0.3, 0.64], [0.24, 0.78], [0.18, 0.9], [0, 0.95]]), clay(0x8fcf4f, { clearcoat: 0.7, clearcoatRoughness: 0.25 })));
+    const stem = mesh(new THREE.CapsuleGeometry(0.03, 0.16, 8, 12), clay(0x7a4a2c));
+    stem.position.set(0.02, 1.02, 0);
+    stem.rotation.z = -0.3;
+    g.add(stem);
+    const leaf = mesh(new THREE.SphereGeometry(0.12, 32, 16), clay(0x5aa648, { clearcoat: 0.6 }));
+    leaf.scale.set(1.7, 0.28, 0.75);
+    leaf.position.set(0.17, 1.05, 0);
+    leaf.rotation.z = 0.5;
+    g.add(leaf);
+    return g;
+  },
+
+  lemon() {
+    const g = new THREE.Group();
+    const skin = clay(0xffd826, { clearcoat: 0.7, clearcoatRoughness: 0.3, roughness: 0.5 });
+    const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), skin);
+    body.scale.set(1.25, 0.86, 0.86);
+    body.position.y = 0.43;
+    g.add(body);
+    for (const side of [-1, 1]) {
+      const nub = mesh(new THREE.SphereGeometry(0.1, 24, 16), skin);
+      nub.scale.set(1.3, 0.8, 0.8);
+      nub.position.set(side * 0.66, 0.43, 0);
+      g.add(nub);
+    }
+    return g;
+  },
+
+  star() {
+    const s = new THREE.Shape();
+    for (let i = 0; i < 10; i++) {
+      const a = Math.PI / 2 + (i * Math.PI) / 5;
+      const r = i % 2 ? 0.34 : 0.78;
+      const [x, y] = [Math.cos(a) * r, Math.sin(a) * r];
+      i ? s.lineTo(x, y) : s.moveTo(x, y);
+    }
+    s.closePath();
+    const g = new THREE.Group();
+    g.add(flat(s, 0.16, 0.09, clay(0xffd31a, { clearcoat: 0.8, clearcoatRoughness: 0.15 })));
+    return g;
+  },
+
+  frog() {
+    const g = new THREE.Group();
+    const green = clay(0x5cc45f, { clearcoat: 0.8, clearcoatRoughness: 0.2 });
+    const body = mesh(new THREE.SphereGeometry(0.55, 64, 48), green);
+    body.scale.set(1, 0.68, 0.9);
+    body.position.y = 0.36;
+    g.add(body);
+    const belly = mesh(new THREE.SphereGeometry(0.4, 48, 32), clay(0xc6ec9a, { clearcoat: 0.5 }));
+    belly.scale.set(1, 0.6, 0.5);
+    belly.position.set(0, 0.28, 0.3);
+    g.add(belly);
+    for (const side of [-1, 1]) {
+      const bump = mesh(new THREE.SphereGeometry(0.17, 32, 24), green);
+      bump.position.set(side * 0.24, 0.68, 0.22);
+      g.add(bump);
+      const white = mesh(new THREE.SphereGeometry(0.12, 32, 24), clay(0xffffff, { clearcoat: 0.9 }));
+      white.position.set(side * 0.24, 0.72, 0.31);
+      g.add(white);
+      const pupil = mesh(new THREE.SphereGeometry(0.06, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
+      pupil.position.set(side * 0.24, 0.73, 0.42);
+      g.add(pupil);
+      const front = mesh(new THREE.SphereGeometry(0.13, 24, 16), green);
+      front.scale.set(1.2, 0.5, 1.4);
+      front.position.set(side * 0.3, 0.06, 0.42);
+      g.add(front);
+      const back = mesh(new THREE.SphereGeometry(0.2, 24, 16), green);
+      back.scale.set(0.9, 0.6, 1.5);
+      back.position.set(side * 0.48, 0.12, -0.05);
+      g.add(back);
+    }
+    const smile = mesh(new THREE.TorusGeometry(0.2, 0.025, 8, 32, Math.PI), clay(0x2e7d3c));
+    smile.rotation.z = Math.PI;
+    smile.position.set(0, 0.47, 0.49);
+    g.add(smile);
+    return g;
+  },
+
+  duck() {
+    const g = new THREE.Group();
+    const yellow = clay(0xffd31a, { clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.32 });
+    const body = mesh(new THREE.SphereGeometry(0.55, 64, 48), yellow);
+    body.scale.set(1.15, 0.72, 0.9);
+    body.position.y = 0.4;
+    g.add(body);
+    const tail = mesh(new THREE.ConeGeometry(0.16, 0.34, 24), yellow);
+    tail.position.set(-0.62, 0.62, 0);
+    tail.rotation.z = 0.9;
+    g.add(tail);
+    const head = mesh(new THREE.SphereGeometry(0.34, 48, 32), yellow);
+    head.position.set(0.32, 0.95, 0);
+    g.add(head);
+    const beak = mesh(new THREE.SphereGeometry(0.16, 32, 16), clay(0xff9636, { clearcoat: 0.8 }));
+    beak.scale.set(1.45, 0.48, 1);
+    beak.position.set(0.66, 0.9, 0);
+    g.add(beak);
+    for (const z of [-0.17, 0.17]) {
+      const eye = mesh(new THREE.SphereGeometry(0.055, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
+      eye.position.set(0.5, 1.03, z);
+      g.add(eye);
+    }
+    const wing = mesh(new THREE.SphereGeometry(0.3, 32, 16), clay(0xffc21f, { clearcoat: 0.8 }));
+    wing.scale.set(1.2, 0.6, 0.3);
+    wing.position.set(-0.08, 0.48, 0.42);
+    wing.rotation.z = 0.25;
+    g.add(wing);
+    return g;
+  },
+
+  grapes() {
+    const g = new THREE.Group();
+    const purple = clay(0x8a55d0, { clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.3 });
+    const rows = [4, 3, 3, 2, 1];
+    rows.forEach((n, r) => {
+      for (let i = 0; i < n; i++) {
+        const grape = mesh(new THREE.SphereGeometry(0.17, 32, 24), purple);
+        grape.position.set((i - (n - 1) / 2) * 0.3, 1.0 - r * 0.24, ((i + r) % 2) * 0.07);
+        g.add(grape);
+      }
+    });
+    const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.22, 8, 12), clay(0x7a5a2c));
+    stem.position.set(0, 1.28, 0);
+    g.add(stem);
+    const leaf = mesh(new THREE.SphereGeometry(0.18, 32, 16), clay(0x6cc35a, { clearcoat: 0.6 }));
+    leaf.scale.set(1.6, 0.25, 1);
+    leaf.position.set(0.25, 1.3, -0.05);
+    leaf.rotation.z = 0.4;
+    g.add(leaf);
+    return g;
+  },
+
+  eggplant() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.24, 0.04], [0.37, 0.22], [0.38, 0.5], [0.3, 0.85], [0.21, 1.15], [0.15, 1.36], [0, 1.4]]), clay(0x7b4bbf, { clearcoat: 0.95, clearcoatRoughness: 0.1, roughness: 0.28 })));
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      const sepal = mesh(new THREE.SphereGeometry(0.12, 24, 12), clay(0x5aa648, { clearcoat: 0.6 }));
+      sepal.scale.set(1.6, 0.3, 0.7);
+      sepal.position.set(Math.cos(a) * 0.12, 1.33, Math.sin(a) * 0.12);
+      sepal.rotation.y = -a;
+      sepal.rotation.z = -0.6;
+      g.add(sepal);
+    }
+    const stem = mesh(new THREE.CapsuleGeometry(0.05, 0.2, 8, 12), clay(0x5aa648));
+    stem.position.y = 1.5;
+    g.add(stem);
+    return g;
+  },
+
+  carrot() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.05, 0.04], [0.12, 0.35], [0.19, 0.75], [0.22, 0.98], [0.17, 1.06], [0, 1.08]]), clay(0xff8a2a, { clearcoat: 0.7, clearcoatRoughness: 0.25 })));
+    for (const [a, h] of [[-0.35, 0.36], [0, 0.42], [0.35, 0.36]]) {
+      const leaf = mesh(new THREE.CapsuleGeometry(0.045, h, 8, 12), clay(0x6cc35a, { clearcoat: 0.5 }));
+      leaf.position.set(Math.sin(a) * 0.12, 1.12 + h / 2 * Math.cos(a), 0);
+      leaf.rotation.z = -a;
+      g.add(leaf);
+    }
+    return g;
+  },
+
+  icecream() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.05, 0.03], [0.3, 0.75], [0.33, 0.8], [0, 0.8]]), clay(0xe9b574, { roughness: 0.7, clearcoat: 0.2 })));
+    const scoop = mesh(new THREE.SphereGeometry(0.38, 64, 48), clay(0xff8cc6, { clearcoat: 0.7, clearcoatRoughness: 0.25 }));
+    scoop.position.y = 1.02;
+    g.add(scoop);
+    const drip = mesh(new THREE.TorusGeometry(0.33, 0.07, 16, 64), clay(0xff8cc6, { clearcoat: 0.7 }));
+    drip.rotation.x = Math.PI / 2;
+    drip.position.y = 0.82;
+    g.add(drip);
+    const cherry = mesh(new THREE.SphereGeometry(0.09, 24, 16), clay(0xe8433f, { clearcoat: 0.95 }));
+    cherry.position.y = 1.43;
+    g.add(cherry);
+    return g;
+  },
+
+  cupcake() {
+    const g = new THREE.Group();
+    const cup = mesh(new THREE.CylinderGeometry(0.46, 0.34, 0.5, 18, 1), clay(0xa8dff5, { clearcoat: 0.4, roughness: 0.6 }));
+    cup.position.y = 0.25;
+    g.add(cup);
+    const pink = clay(0xff8cc6, { clearcoat: 0.8, clearcoatRoughness: 0.2 });
+    [[0.42, 0.56], [0.32, 0.72], [0.2, 0.86]].forEach(([r, y]) => {
+      const ring = mesh(new THREE.TorusGeometry(r, 0.12, 24, 64), pink);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = y;
+      g.add(ring);
+    });
+    const top = mesh(new THREE.SphereGeometry(0.14, 24, 16), pink);
+    top.position.y = 0.97;
+    g.add(top);
+    const sprinkles = [0xffffff, 0xffe07a, 0x8cc8f5];
+    for (let i = 0; i < 14; i++) {
+      const a = rand() * Math.PI * 2, r = 0.2 + rand() * 0.25;
+      const s = mesh(new THREE.CapsuleGeometry(0.018, 0.05, 4, 8), clay(sprinkles[i % 3], { clearcoat: 0.9 }));
+      s.position.set(Math.cos(a) * r, 0.68 + (0.45 - r) * 0.6, Math.sin(a) * r);
+      s.rotation.set(Math.PI / 2, 0, rand() * Math.PI);
+      g.add(s);
+    }
+    return g;
+  },
+
+  flower() {
+    const g = new THREE.Group();
+    const pink = clay(0xff8cc6, { clearcoat: 0.7, clearcoatRoughness: 0.25 });
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const petal = mesh(new THREE.SphereGeometry(0.26, 32, 16), pink);
+      petal.scale.set(1, 0.35, 0.72);
+      petal.position.set(Math.cos(a) * 0.32, 0.1, Math.sin(a) * 0.32);
+      petal.rotation.y = -a;
+      g.add(petal);
+    }
+    const centre = mesh(new THREE.SphereGeometry(0.2, 32, 24), clay(0xffd23a, { clearcoat: 0.7 }));
+    centre.scale.y = 0.6;
+    centre.position.y = 0.16;
+    g.add(centre);
+    return g;
+  },
+
+  pig() {
+    const g = new THREE.Group();
+    const pink = clay(0xff9fcd, { clearcoat: 0.8, clearcoatRoughness: 0.2 });
+    const body = mesh(new THREE.SphereGeometry(0.55, 64, 48), pink);
+    body.scale.set(1.2, 0.92, 0.95);
+    body.position.y = 0.6;
+    g.add(body);
+    const head = mesh(new THREE.SphereGeometry(0.4, 48, 32), pink);
+    head.position.set(0.58, 0.85, 0);
+    g.add(head);
+    const snout = mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 48), clay(0xffc0dd, { clearcoat: 0.8 }));
+    snout.rotation.z = Math.PI / 2;
+    snout.position.set(0.98, 0.8, 0);
+    g.add(snout);
+    for (const z of [-0.06, 0.06]) {
+      const nostril = mesh(new THREE.SphereGeometry(0.035, 12, 8), clay(0xd0588f));
+      nostril.position.set(1.055, 0.8, z);
+      g.add(nostril);
+    }
+    for (const z of [-0.2, 0.2]) {
+      const ear = mesh(new THREE.ConeGeometry(0.13, 0.26, 24), pink);
+      ear.position.set(0.5, 1.22, z);
+      ear.rotation.set(z * 1.2, 0, -0.35);
+      g.add(ear);
+      const eye = mesh(new THREE.SphereGeometry(0.05, 16, 12), clay(0x2f2b36, { clearcoat: 0.9 }));
+      eye.position.set(0.88, 0.98, z * 0.8);
+      g.add(eye);
+    }
+    for (const [x, z] of [[0.38, 0.3], [0.38, -0.3], [-0.38, 0.3], [-0.38, -0.3]]) {
+      const leg = mesh(new THREE.CapsuleGeometry(0.12, 0.18, 8, 16), pink);
+      leg.position.set(x, 0.15, z);
+      g.add(leg);
+    }
+    const tail = mesh(new THREE.TorusGeometry(0.08, 0.03, 12, 32), pink);
+    tail.position.set(-0.68, 0.78, 0);
+    tail.rotation.y = Math.PI / 2;
+    g.add(tail);
+    return g;
+  },
+
+  teddy() {
+    const g = new THREE.Group();
+    const fur = clay(0x9a5f35, { clearcoat: 0.25, roughness: 0.7, sheen: 0.8, sheenColor: 0xd9a77a });
+    const light = clay(0xdcae80, { clearcoat: 0.2, roughness: 0.75 });
+    const black = clay(0x2f2b36, { clearcoat: 0.9, roughness: 0.3 });
+    const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), fur);
+    body.scale.set(1, 1.1, 0.88);
+    body.position.y = 0.55;
+    g.add(body);
+    const belly = mesh(new THREE.SphereGeometry(0.3, 48, 32), light);
+    belly.scale.set(1, 1.1, 0.5);
+    belly.position.set(0, 0.52, 0.32);
+    g.add(belly);
+    const head = mesh(new THREE.SphereGeometry(0.4, 64, 48), fur);
+    head.position.y = 1.25;
+    g.add(head);
+    for (const x of [-0.3, 0.3]) {
+      const ear = mesh(new THREE.SphereGeometry(0.15, 32, 24), fur);
+      ear.scale.z = 0.7;
+      ear.position.set(x, 1.58, -0.02);
+      g.add(ear);
+      const inner = mesh(new THREE.SphereGeometry(0.08, 24, 16), light);
+      inner.scale.z = 0.5;
+      inner.position.set(x, 1.58, 0.07);
+      g.add(inner);
+      const eye = mesh(new THREE.SphereGeometry(0.05, 16, 12), black);
+      eye.position.set(x * 0.45, 1.34, 0.35);
+      g.add(eye);
+      const arm = mesh(new THREE.SphereGeometry(0.17, 32, 24), fur);
+      arm.scale.set(0.9, 1.4, 0.9);
+      arm.position.set(x * 1.65, 0.68, 0.12);
+      arm.rotation.z = x > 0 ? 0.5 : -0.5;
+      g.add(arm);
+      const leg = mesh(new THREE.SphereGeometry(0.19, 32, 24), fur);
+      leg.scale.set(1, 0.85, 1.3);
+      leg.position.set(x * 1.05, 0.16, 0.3);
+      g.add(leg);
+      const pad = mesh(new THREE.SphereGeometry(0.1, 24, 16), light);
+      pad.scale.z = 0.4;
+      pad.position.set(x * 1.05, 0.17, 0.53);
+      g.add(pad);
+    }
+    const muzzle = mesh(new THREE.SphereGeometry(0.16, 32, 24), light);
+    muzzle.scale.set(1.2, 0.85, 0.8);
+    muzzle.position.set(0, 1.15, 0.32);
+    g.add(muzzle);
+    const nose = mesh(new THREE.SphereGeometry(0.06, 16, 12), black);
+    nose.scale.set(1.3, 0.8, 0.8);
+    nose.position.set(0, 1.2, 0.45);
+    g.add(nose);
+    return g;
+  },
+
+  hat() {
+    const g = new THREE.Group();
+    const black = clay(0x34313b, { clearcoat: 0.6, clearcoatRoughness: 0.3, roughness: 0.45 });
+    const crown = mesh(smoothLathe([[0, 0.1], [0.44, 0.1], [0.46, 0.5], [0.48, 0.92], [0.44, 0.97], [0, 0.97]]), black);
+    g.add(crown);
+    const brim = mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.05, 96), black);
+    brim.position.y = 0.09;
+    g.add(brim);
+    const edge = mesh(new THREE.TorusGeometry(0.78, 0.045, 16, 96), black);
+    edge.rotation.x = Math.PI / 2;
+    edge.position.y = 0.11;
+    g.add(edge);
+    const band = mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.17, 96), clay(0xe8433f, { clearcoat: 0.6 }));
+    band.position.y = 0.24;
+    g.add(band);
+    return g;
+  },
+
+  snowman() {
+    const g = new THREE.Group();
+    const snow = clay(0xfbfbf8, { clearcoat: 0.3, roughness: 0.6, sheen: 0.5 });
+    const black = clay(0x2f2b36, { clearcoat: 0.9, roughness: 0.3 });
+    [[0.52, 0.48], [0.4, 1.18], [0.3, 1.74]].forEach(([r, y]) => {
+      const ball = mesh(new THREE.SphereGeometry(r, 64, 48), snow);
+      ball.position.y = y;
+      g.add(ball);
+    });
+    const nose = mesh(new THREE.ConeGeometry(0.06, 0.3, 24), clay(0xff8a2a, { clearcoat: 0.7 }));
+    nose.rotation.x = Math.PI / 2;
+    nose.position.set(0, 1.72, 0.42);
+    g.add(nose);
+    for (const x of [-0.11, 0.11]) {
+      const eye = mesh(new THREE.SphereGeometry(0.045, 16, 12), black);
+      eye.position.set(x, 1.83, 0.26);
+      g.add(eye);
+    }
+    for (const y of [1.05, 1.22, 1.39]) {
+      const button = mesh(new THREE.SphereGeometry(0.05, 16, 12), black);
+      button.position.set(0, y, 0.39 - Math.abs(y - 1.18) * 0.3);
+      g.add(button);
+    }
+    const scarf = mesh(new THREE.TorusGeometry(0.29, 0.07, 16, 64), clay(0xe8433f, { clearcoat: 0.5 }));
+    scarf.rotation.x = Math.PI / 2;
+    scarf.position.y = 1.5;
+    g.add(scarf);
+    const end = mesh(new RoundedBoxGeometry(0.14, 0.34, 0.06, 3, 0.03), clay(0xe8433f, { clearcoat: 0.5 }));
+    end.position.set(0.16, 1.32, 0.27);
+    end.rotation.z = 0.15;
+    g.add(end);
+    for (const side of [-1, 1]) {
+      const arm = mesh(new THREE.CapsuleGeometry(0.03, 0.5, 8, 12), clay(0x7a4a2c));
+      arm.position.set(side * 0.58, 1.32, 0);
+      arm.rotation.z = side * -1.0;
+      g.add(arm);
+    }
+    return g;
+  },
+
+  egg() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.24, 0.03], [0.36, 0.16], [0.39, 0.34], [0.34, 0.56], [0.22, 0.72], [0, 0.78]]), clay(0xfbf8f0, { clearcoat: 0.6, clearcoatRoughness: 0.25, roughness: 0.45 })));
+    return g;
+  },
+
+  sheep() {
+    const g = new THREE.Group();
+    const wool = clay(0xfbfbf8, { clearcoat: 0.25, roughness: 0.65, sheen: 0.6 });
+    const dark = clay(0x4a4550, { clearcoat: 0.5, roughness: 0.45 });
+    const puffs = [[0, 0.62, 0, 0.42], [-0.35, 0.58, 0.15, 0.3], [0.32, 0.6, 0.15, 0.3], [-0.35, 0.58, -0.15, 0.3], [0.3, 0.6, -0.15, 0.3], [0, 0.85, 0.12, 0.28], [0, 0.85, -0.12, 0.28], [-0.2, 0.8, 0, 0.28], [0.2, 0.82, 0, 0.27], [0, 0.55, 0.28, 0.27], [0, 0.55, -0.28, 0.27], [-0.5, 0.66, 0, 0.22]];
+    for (const [x, y, z, r] of puffs) {
+      const p = mesh(new THREE.SphereGeometry(r, 32, 24), wool);
+      p.position.set(x, y, z);
+      g.add(p);
+    }
+    const head = mesh(new THREE.SphereGeometry(0.22, 32, 24), dark);
+    head.scale.set(1.25, 0.95, 0.9);
+    head.position.set(0.6, 0.78, 0);
+    g.add(head);
+    const fringe = mesh(new THREE.SphereGeometry(0.13, 24, 16), wool);
+    fringe.position.set(0.55, 0.98, 0);
+    g.add(fringe);
+    for (const z of [-0.17, 0.17]) {
+      const ear = mesh(new THREE.SphereGeometry(0.08, 16, 12), dark);
+      ear.scale.set(1.6, 0.5, 0.8);
+      ear.position.set(0.52, 0.84, z * 1.25);
+      g.add(ear);
+      const eye = mesh(new THREE.SphereGeometry(0.035, 12, 8), clay(0xffffff));
+      eye.position.set(0.76, 0.84, z * 0.55);
+      g.add(eye);
+    }
+    for (const [x, z] of [[0.25, 0.18], [0.25, -0.18], [-0.25, 0.18], [-0.25, -0.18]]) {
+      const leg = mesh(new THREE.CapsuleGeometry(0.06, 0.3, 8, 12), dark);
+      leg.position.set(x, 0.2, z);
+      g.add(leg);
+    }
+    return g;
+  },
+
+  milk() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.3, 0], [0.34, 0.05], [0.35, 0.62], [0.3, 0.8], [0.17, 0.92], [0.15, 1.02], [0, 1.02]]), clay(0xfbfbf8, { clearcoat: 0.9, clearcoatRoughness: 0.12, roughness: 0.3 })));
+    const cap = mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 48), clay(0x4b8fe8, { clearcoat: 0.8 }));
+    cap.position.y = 1.08;
+    g.add(cap);
+    const label = mesh(new THREE.CylinderGeometry(0.355, 0.355, 0.26, 64, 1, true), clay(0xe3ecfa, { clearcoat: 0.5 }));
+    label.position.y = 0.35;
+    g.add(label);
+    return g;
+  },
 };
 
 /* ---------- The scenes: a blanket, and where each thing lies ----------
@@ -503,9 +1189,77 @@ const SCENES = {
       donut: { at: [2.25, 0, 3.15] },
     },
   },
+  /* The Colors course: four things of the lesson's color, three of others.
+     Things are laid down with `rot` and stood on the ground by their box. */
+  red: {
+    blanket: "creamChecks",
+    autoGround: true,
+    items: {
+      apple: { at: [-1.45, ON_BLANKET, -1.15], scale: 0.95 },
+      ladybug: { at: [1.45, ON_BLANKET, -1.2], rotY: 0.5 },
+      cherries: { at: [1.45, ON_BLANKET, 1.25], rot: [-Math.PI / 2, 0, 0.3], scale: 0.9 },
+      strawberry: { at: [-1.9, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: 0.4 },
+      fish: { at: [0.0, ON_BLANKET, 0.1], rot: [-Math.PI / 2, 0, 0], rotY: -0.3, scale: 0.85 },
+      banana: { at: [2.15, 0, 3.15], rot: [-Math.PI / 2, 0, 0], scale: 0.8 },
+      pear: { at: [-0.6, 0, -3.3], rot: [0, 0, Math.PI / 2], rotY: 1.2, scale: 0.85 },
+    },
+  },
+  yellow: {
+    blanket: "blueStripes",
+    autoGround: true,
+    items: {
+      banana: { at: [-1.45, ON_BLANKET, -1.15], rot: [-Math.PI / 2, 0, 0], rotY: 0.2, scale: 0.9 },
+      star: { at: [1.45, ON_BLANKET, -1.2], rotY: 0.2, scale: 0.9 },
+      lemon: { at: [1.45, ON_BLANKET, 1.3], rotY: -0.4, scale: 0.9 },
+      cheese: { at: [-2.1, 0, 3.15], rotY: 0.5, scale: 0.85 },
+      frog: { at: [0.0, ON_BLANKET, 0.1], rotY: 0.3, scale: 0.8 },
+      apple: { at: [2.15, 0, 3.15], scale: 0.85 },
+      fish: { at: [-0.6, 0, -3.3], rot: [-Math.PI / 2, 0, 0], rotY: 0.2, scale: 0.75 },
+    },
+  },
+  purple: {
+    blanket: "mintBands",
+    autoGround: true,
+    items: {
+      grapes: { at: [-1.45, ON_BLANKET, -1.15], rot: [-Math.PI / 2, 0, 0], rotY: 0.2, scale: 0.85 },
+      gift: { at: [1.45, ON_BLANKET, -1.2], arg: 0x9b62e0, rotY: 0.3, scale: 0.9 },
+      eggplant: { at: [1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: -0.5, scale: 0.9 },
+      book: { at: [-2.1, 0, 3.15], arg: 0x8f5fd8, rotY: 0.35, scale: 0.85 },
+      orange: { at: [0.0, ON_BLANKET, 0.1], scale: 0.9 },
+      carrot: { at: [2.15, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: 0.5, scale: 0.85 },
+      strawberry: { at: [-0.6, 0, -3.3], rot: [0, 0, Math.PI / 2], rotY: 1.3, scale: 0.85 },
+    },
+  },
+  pink: {
+    blanket: "yellowRound",
+    autoGround: true,
+    items: {
+      donut: { at: [-1.2, ON_BLANKET, -1.1], scale: 0.95 },
+      flower: { at: [1.2, ON_BLANKET, -1.05], scale: 0.95 },
+      cupcake: { at: [1.3, ON_BLANKET, 1.25], scale: 0.85 },
+      icecream: { at: [-2.1, 0, 3.15], rot: [0, 0, Math.PI / 2], rotY: 0.5, scale: 0.85 },
+      cookie: { at: [-1.35, ON_BLANKET, 1.3] },
+      teddy: { at: [2.05, 0, 3.1], rot: [-Math.PI / 2, 0, 0], scale: 0.8 },
+      lemon: { at: [-0.6, 0, -3.3], rotY: 0.4, scale: 0.85 },
+    },
+  },
+  white: {
+    blanket: "lilacPlain",
+    autoGround: true,
+    items: {
+      egg: { at: [-1.45, ON_BLANKET, -1.15], rot: [0, 0, Math.PI / 2], rotY: 0.4, scale: 1.2 },
+      sheep: { at: [1.45, ON_BLANKET, -1.2], rotY: -0.3, scale: 0.8 },
+      milk: { at: [1.45, ON_BLANKET, 1.3], rot: [0, 0, Math.PI / 2], rotY: -0.4, scale: 0.85 },
+      dice: { at: [-2.1, 0, 3.15], rotY: 0.4 },
+      hat: { at: [0.0, ON_BLANKET, 0.1], rot: [0, 0, Math.PI / 2], rotY: 0.6, scale: 0.75 },
+      chocolate: { at: [2.15, 0, 3.15], rotY: -0.3 },
+      apple: { at: [-0.6, 0, -3.3], scale: 0.85 },
+    },
+  },
 };
 
-/* What each thing IS — `null` for things that are no taught shape. */
+/* What each thing IS — its shape (`null` for no taught shape) and, for the
+   Colors course, its color. */
 const SHAPE_OF = {
   plate: "circle", donut: "circle", cookie: "circle", ball: "circle", orange: "circle",
   toast: "square", cracker: "square", gift: "square", dice: "square",
@@ -513,49 +1267,20 @@ const SHAPE_OF = {
   book: "rectangle", chocolate: "rectangle", juice: "rectangle", ruler: "rectangle",
   kite: null,
 };
+const COLOR_OF = {
+  apple: "red", strawberry: "red", cherries: "red", ladybug: "red",
+  fish: "blue",
+  banana: "yellow", lemon: "yellow", star: "yellow", cheese: "yellow", duck: "yellow",
+  pear: "green", frog: "green",
+  orange: "orange", carrot: "orange",
+  grapes: "purple", eggplant: "purple", book: "purple", gift: "purple",
+  donut: "pink", icecream: "pink", cupcake: "pink", flower: "pink", pig: "pink",
+  cookie: "brown", chocolate: "brown", teddy: "brown",
+  hat: "black",
+  egg: "white", sheep: "white", milk: "white", dice: "white", snowman: "white",
+};
 
-const def = SCENES[SCENE];
-
-/* ---------- The world ---------- */
-const world = new THREE.Group();
-scene.add(world);
-
-// grass
-const grass = mesh(new THREE.PlaneGeometry(30, 30), clay(0x8fd16e, { clearcoat: 0.05, roughness: 0.9, sheen: 0 }));
-grass.rotation.x = -Math.PI / 2;
-grass.castShadow = false;
-world.add(grass);
-
-// tufts of grass — little clay blades, never round, never under a thing
-const onGrass = Object.values(def.items).filter((it) => it.at[1] === 0).map((it) => [it.at[0], it.at[2]]);
-for (let i = 0; i < 70; i++) {
-  const x = (rand() - 0.5) * 7.5, z = (rand() - 0.5) * 9.5;
-  if (Math.abs(x) < 3.0 && Math.abs(z - 0.05) < 2.5) continue;
-  if (onGrass.some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue;
-  const tuft = new THREE.Group();
-  const n = 3 + Math.floor(rand() * 3);
-  for (let j = 0; j < n; j++) {
-    const blade = mesh(new THREE.ConeGeometry(0.05, 0.32 + rand() * 0.18, 12), clay(rand() > 0.5 ? 0x86c96b : 0x94d27a));
-    blade.position.set((rand() - 0.5) * 0.18, 0.16, (rand() - 0.5) * 0.18);
-    blade.rotation.z = (rand() - 0.5) * 0.7;
-    blade.rotation.x = (rand() - 0.5) * 0.7;
-    tuft.add(blade);
-  }
-  tuft.position.set(x, 0, z);
-  world.add(tuft);
-}
-
-world.add(BLANKETS[def.blanket]());
-
-const items = {};
-for (const [name, it] of Object.entries(def.items)) {
-  const group = ITEMS[name]();
-  group.position.set(...it.at);
-  if (it.rotY) group.rotation.y = it.rotY;
-  if (it.scale) group.scale.setScalar(it.scale);
-  scene.add(group);
-  items[name] = { group, at: it.at };
-}
+function frame() { renderer.render(scene, camera); return renderer.domElement.toDataURL("image/png"); }
 
 /* A see-through floor that only shows shadows, for the item layers. */
 const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
@@ -563,31 +1288,109 @@ catcher.rotation.x = -Math.PI / 2;
 catcher.receiveShadow = true;
 scene.add(catcher);
 
-function frame() { renderer.render(scene, camera); return renderer.domElement.toDataURL("image/png"); }
-
-window.renderLayers = () => {
-  const out = {};
-  // everything, for a preview
-  catcher.visible = false;
-  out.all = frame();
-  // the world alone
-  Object.values(items).forEach((it) => (it.group.visible = false));
-  out.background = frame();
-  // each item alone, on a shadow catcher at its own surface height
-  world.visible = false;
-  catcher.visible = true;
-  renderer.setClearColor(0x000000, 0);
-  for (const [name, it] of Object.entries(items)) {
-    Object.values(items).forEach((o) => (o.group.visible = o === it));
-    catcher.position.y = it.at[1] + 0.001;
-    out[name] = frame();
-    catcher.visible = false;
-    out[name + "__hit"] = frame();
-    catcher.visible = true;
+/* Lay a thing down or turn it as its scene says, then stand it on `y`. */
+function place(group, it) {
+  if (it.rot) group.rotation.set(...it.rot);
+  if (it.rotY) group.rotation.y = it.rotY;
+  if (it.scale) group.scale.setScalar(it.scale);
+  group.position.set(it.at[0], 0, it.at[2]);
+  if (def && def.autoGround) {
+    group.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(group);
+    group.position.y = it.at[1] - box.min.y;
+  } else {
+    group.position.y = it.at[1];
   }
-  return out;
-};
-window.itemsMeta = () => Object.fromEntries(Object.keys(items).map((k) => [k, { shape: SHAPE_OF[k] }]));
+}
+
+const THING = params.get("thing");
+const def = THING ? null : SCENES[SCENE];
+
+if (THING) {
+  /* ---------- One thing alone, seen from the front and a little above ---------- */
+  const arg = params.get("arg");
+  const group = ITEMS[THING](arg ?? undefined);
+  scene.add(group);
+  catcher.position.y = 0.001;
+  group.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(group);
+  const centre = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const span = Math.max(size.x, size.y, size.z) * 0.78;
+  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (THING === "pot" ? 32 : 24)));
+  renderer.setSize(800, 800);
+  camera.left = -span; camera.right = span; camera.top = span; camera.bottom = -span;
+  camera.position.set(centre.x, centre.y + Math.sin(lift) * 30, centre.z + Math.cos(lift) * 30);
+  camera.lookAt(centre);
+  camera.updateProjectionMatrix();
+  renderer.setClearColor(0x000000, 0);
+  window.renderLayers = () => ({ [THING]: frame() });
+  window.itemsMeta = () => ({});
+} else {
+  /* ---------- The world ---------- */
+  const world = new THREE.Group();
+  scene.add(world);
+
+  // grass
+  const grass = mesh(new THREE.PlaneGeometry(30, 30), clay(0x8fd16e, { clearcoat: 0.05, roughness: 0.9, sheen: 0 }));
+  grass.rotation.x = -Math.PI / 2;
+  grass.castShadow = false;
+  world.add(grass);
+
+  // tufts of grass — little clay blades, never round, never under a thing
+  const onGrass = Object.values(def.items).filter((it) => it.at[1] === 0).map((it) => [it.at[0], it.at[2]]);
+  for (let i = 0; i < 70; i++) {
+    const x = (rand() - 0.5) * 7.5, z = (rand() - 0.5) * 9.5;
+    if (Math.abs(x) < 3.0 && Math.abs(z - 0.05) < 2.5) continue;
+    if (onGrass.some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue;
+    const tuft = new THREE.Group();
+    const n = 3 + Math.floor(rand() * 3);
+    for (let j = 0; j < n; j++) {
+      const blade = mesh(new THREE.ConeGeometry(0.05, 0.32 + rand() * 0.18, 12), clay(rand() > 0.5 ? 0x86c96b : 0x94d27a));
+      blade.position.set((rand() - 0.5) * 0.18, 0.16, (rand() - 0.5) * 0.18);
+      blade.rotation.z = (rand() - 0.5) * 0.7;
+      blade.rotation.x = (rand() - 0.5) * 0.7;
+      tuft.add(blade);
+    }
+    tuft.position.set(x, 0, z);
+    world.add(tuft);
+  }
+
+  world.add(BLANKETS[def.blanket]());
+
+  const items = {};
+  for (const [name, it] of Object.entries(def.items)) {
+    const group = ITEMS[it.model ?? name](it.arg);
+    place(group, it);
+    scene.add(group);
+    items[name] = { group, at: it.at };
+  }
+
+  window.renderLayers = () => {
+    const out = {};
+    // everything, for a preview
+    catcher.visible = false;
+    out.all = frame();
+    // the world alone
+    Object.values(items).forEach((it) => (it.group.visible = false));
+    out.background = frame();
+    // each item alone, on a shadow catcher at its own surface height
+    world.visible = false;
+    catcher.visible = true;
+    renderer.setClearColor(0x000000, 0);
+    for (const [name, it] of Object.entries(items)) {
+      Object.values(items).forEach((o) => (o.group.visible = o === it));
+      catcher.position.y = it.at[1] + 0.001;
+      out[name] = frame();
+      catcher.visible = false;
+      out[name + "__hit"] = frame();
+      catcher.visible = true;
+    }
+    return out;
+  };
+  window.itemsMeta = () =>
+    Object.fromEntries(Object.entries(def.items).map(([k, it]) => [k, { shape: SHAPE_OF[it.model ?? k] ?? null, color: it.color ?? COLOR_OF[it.model ?? k] ?? null }]));
+}
 window.ready = true;
 </script>
 </body>

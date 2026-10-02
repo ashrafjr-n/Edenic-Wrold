@@ -1,11 +1,18 @@
 /*
- * Renders one Find scene (`scene.html?scene=<name>`, three.js from the
- * jsdelivr CDN) in headless Chromium and writes every layer to `out/<name>/`:
- * the scene, the empty world, and each item alone on a shadow catcher (+ a
- * shadow-less copy for its hit area). Then run
- * `python3 tools/picnic-scene/crop.py <name>`.
+ * Renders the clay art in headless Chromium (`scene.html`, three.js from the
+ * jsdelivr CDN).
  *
- *   node tools/picnic-scene/render.cjs squares   (picnic | squares | triangles | rectangles)
+ * A Find scene — writes every layer to `out/<name>/`: the scene, the empty
+ * world, and each item alone on a shadow catcher (+ a shadow-less copy for
+ * its hit area). Then run `python3 tools/picnic-scene/crop.py <name> [dest]`.
+ *
+ *   node tools/picnic-scene/render.cjs squares   (picnic | squares | triangles | rectangles | red | yellow | purple | pink | white)
+ *
+ * Single things — one PNG each in `out/things/`, seen from the front and a
+ * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
+ * clay, the thing before it is painted). Then `crop.py things <dest>`.
+ *
+ *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
  *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
@@ -14,19 +21,39 @@ const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 
-const name = process.argv[2] || "picnic";
+const [mode, ...specs] = process.argv.slice(2);
+const page_ = (browser) => browser.newPage({ viewport: { width: 1000, height: 1250 } });
+
+async function render(page, query) {
+  await page.goto("file://" + path.join(__dirname, "scene.html") + "?" + query);
+  await page.waitForFunction(() => window.ready, null, { timeout: 60000 });
+  return page.evaluate(() => window.renderLayers());
+}
+
+const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`), Buffer.from(url.split(",")[1], "base64"));
 
 (async () => {
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
-  const page = await browser.newPage({ viewport: { width: 1000, height: 1250 } });
-  await page.goto("file://" + path.join(__dirname, "scene.html") + "?scene=" + name);
-  await page.waitForFunction(() => window.ready, null, { timeout: 60000 });
-  const layers = await page.evaluate(() => window.renderLayers());
-  const out = path.join(__dirname, "out", name);
-  fs.mkdirSync(out, { recursive: true });
-  for (const [name, url] of Object.entries(layers)) {
-    fs.writeFileSync(path.join(out, `${name}.png`), Buffer.from(url.split(",")[1], "base64"));
+  const page = await page_(browser);
+  page.on("pageerror", (error) => console.error("scene.html:", error.message));
+  if (mode === "thing") {
+    const out = path.join(__dirname, "out", "things");
+    fs.mkdirSync(out, { recursive: true });
+    for (const spec of specs) {
+      const [file, rest] = spec.split("=");
+      const [what, blank] = rest.split("@");
+      const [thing, arg] = what.split(":");
+      const query = new URLSearchParams({ thing, ...(arg ? { arg } : {}), ...(blank ? { paint: "blank" } : {}) });
+      const layers = await render(page, query.toString());
+      save(out, file, layers[thing]);
+    }
+  } else {
+    const name = mode || "picnic";
+    const layers = await render(page, `scene=${name}`);
+    const out = path.join(__dirname, "out", name);
+    fs.mkdirSync(out, { recursive: true });
+    for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+    fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
   }
-  fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
   await browser.close();
 })();
