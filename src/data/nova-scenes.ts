@@ -73,7 +73,7 @@ export const vegetablePicnic: Scene = {
     { id: "potato1", src: veggies_potato1, word: "potato", shape: null, group: "vegetable", box: [71.3, 25.92, 18.3, 10.0], hit: [71.9, 27.12, 15.0, 8.32] },
     { id: "corn2", src: veggies_corn2, word: "corn", shape: null, group: "vegetable", box: [6.4, 46.24, 17.4, 8.48], hit: [7.0, 47.44, 14.0, 6.8] },
     { id: "potato2", src: veggies_potato2, word: "potato", shape: null, group: "vegetable", box: [33.7, 43.52, 16.9, 10.64], hit: [34.3, 44.72, 13.6, 8.96] },
-    { id: "carrot2", src: veggies_carrot2, word: "carrot", shape: null, group: "vegetable", box: [40.5, 46.96, 23.8, 6.24], hit: [41.1, 47.92, 21.3, 4.8] },
+    { id: "carrot2", src: veggies_carrot2, word: "carrot", shape: null, group: "vegetable", box: [49.9, 47.12, 18.4, 12.8], hit: [50.5, 47.92, 16.0, 11.52] },
     { id: "broccoli2", src: veggies_broccoli2, word: "broccoli", shape: null, group: "vegetable", box: [70.3, 45.92, 17.1, 10.0], hit: [70.9, 47.2, 13.2, 8.24] },
     { id: "broccoli3", src: veggies_broccoli3, word: "broccoli", shape: null, group: "vegetable", box: [3.5, 59.44, 17.7, 9.84], hit: [4.1, 60.64, 13.7, 8.16] },
     { id: "carrot3", src: veggies_carrot3, word: "carrot", shape: null, group: "vegetable", box: [18.1, 66.0, 21.9, 9.04], hit: [18.7, 66.88, 19.4, 7.68] },
