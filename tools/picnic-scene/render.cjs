@@ -10,7 +10,8 @@
  *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
- * clay, the thing before it is painted; `@float`: no ground shadow). Then
+ * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
+ * seen from higher up). Then
  * `crop.py things <dest>`.
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
@@ -49,6 +50,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         ...(arg ? { arg } : {}),
         ...(flags.includes("blank") ? { paint: "blank" } : {}),
         ...(flags.includes("float") ? { shadow: "0" } : {}),
+        ...(flags.includes("top") ? { lift: "58" } : {}),
       });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
