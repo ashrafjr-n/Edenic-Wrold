@@ -23,6 +23,12 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
+/* Clay numbers (a month's calendar page) — the bold sans from three's own
+   examples. */
+const FONT = await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/helvetiker_bold.typeface.json");
 
 const params = new URLSearchParams(location.search);
 
@@ -1408,12 +1414,17 @@ const ITEMS = {
   },
 
   // a desk calendar: a page with a red top band, two rings, a grid of days
-  calendar() {
+  /* A calendar page. `?arg=<1–12>`: that month's page — its number big in
+     clay, the band in its season's color (winter blue, spring green,
+     summer yellow, fall orange). */
+  calendar(month) {
     const g = new THREE.Group();
     const page = mesh(new RoundedBoxGeometry(1.1, 1.0, 0.16, 6, 0.08), clay(0xffffff, { clearcoat: 0.5 }));
     page.position.y = 0.5;
     g.add(page);
-    const band = mesh(new RoundedBoxGeometry(1.1, 0.28, 0.18, 6, 0.08), clay(0xee4645, { clearcoat: 0.6 }));
+    const n = Number(month);
+    const season = n ? [PAINT.blue, PAINT.blue, PAINT.green, PAINT.green, PAINT.green, PAINT.yellow, PAINT.yellow, PAINT.yellow, PAINT.orange, PAINT.orange, PAINT.orange, PAINT.blue][n - 1] : 0xee4645;
+    const band = mesh(new RoundedBoxGeometry(1.1, 0.28, 0.18, 6, 0.08), clay(season, { clearcoat: 0.6 }));
     band.position.y = 0.88;
     g.add(band);
     for (const x of [-0.28, 0.28]) {
@@ -1421,6 +1432,14 @@ const ITEMS = {
       ring.position.set(x, 1.04, 0);
       ring.rotation.y = Math.PI / 2;
       g.add(ring);
+    }
+    if (n) {
+      const geo = new TextGeometry(String(n), { font: FONT, size: 0.46, depth: 0.08, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 6 });
+      geo.center();
+      const digits = mesh(geo, clay(0x2f2a52, { clearcoat: 0.7 }));
+      digits.position.set(0, 0.42, 0.13);
+      g.add(digits);
+      return g;
     }
     const dots = [0x3f86e8, 0x4fbf5a, 0xff8c2e, 0x9257de];
     for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) {
