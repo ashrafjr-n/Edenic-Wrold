@@ -9,6 +9,7 @@ import type { ColorId, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Tar
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
+import { shuffle } from "@/lib/seeded";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
@@ -25,7 +26,8 @@ export type TaskDemoDef =
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: SceneItem; bins: SortBin[] }
   | { kind: "paint"; round: PaintRound; pots: ColorId[] }
-  | { kind: "pop"; color: ColorId; others: ColorId[] };
+  | { kind: "pop"; color: ColorId; others: ColorId[] }
+  | { kind: "order"; items: Face[]; seed: string };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -311,6 +313,42 @@ function PopDemo({ color, others }: { color: ColorId; others: ColorId[] }) {
   );
 }
 
+/** Order: the line of spaces, the tiles dealt under it as the board deals
+    them; the finger taps the one that comes FIRST and it flies into the
+    first space. */
+function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
+  const order = shuffle(items.map((_, i) => i), seed);
+  const columns = { gridTemplateColumns: `repeat(${items.length}, minmax(0, 3.5rem))` };
+  return (
+    <div dir="ltr" className="flex h-full flex-col items-center justify-center gap-5">
+      <div className="grid items-end justify-center gap-1.5" style={columns}>
+        {items.map((_, i) => (
+          <span key={i} className="flex aspect-square items-end justify-center">
+            <span className="letter-slot" style={{ width: `${100 - i * 12}%`, height: `${100 - i * 12}%` }} />
+          </span>
+        ))}
+      </div>
+      <div className="grid justify-center gap-1.5" style={columns}>
+        {order.map((index, i) => (
+          <span key={index} className="relative aspect-square">
+            <span
+              className={`card card-clay-white flex h-full w-full items-center justify-center ${index === 0 ? "demo-fly relative z-[1]" : ""}`}
+              style={index === 0 ? ({ "--fly-x": `calc(${-i} * (100% + 0.375rem))`, "--fly-y": "calc(-100% - 1.25rem)" } as CSSProperties) : undefined}
+            >
+              <FaceView face={items[index]} size="tile" />
+            </span>
+            {index === 0 && (
+              <span className="absolute left-1/2 top-1/2">
+                <Finger />
+              </span>
+            )}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -330,5 +368,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PaintDemo round={demo.round} pots={demo.pots} />;
     case "pop":
       return <PopDemo color={demo.color} others={demo.others} />;
+    case "order":
+      return <OrderDemo items={demo.items} seed={demo.seed} />;
   }
 }
