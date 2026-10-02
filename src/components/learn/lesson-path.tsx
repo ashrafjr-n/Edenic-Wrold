@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, type CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Check, Lock } from "lucide-react";
-import { useCourseStars, useProgress } from "@/store/progress";
 import { format } from "@/lib/format-dict";
 import { CourseArt } from "@/components/learn/course-art";
+import { useCourseWalk } from "@/components/learn/use-course-walk";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface LessonPathProps {
@@ -122,25 +121,6 @@ function geometry(size: PathSize, count: number) {
   };
 }
 
-/* The walk from a finished stop to the next one, in ms from arrival: the
-   finished stop takes its tick and the track draws on to the next stop,
-   then the next stop's padlock springs off, then its lesson opens. */
-const WALK_AT = 1300;
-const OPEN_AT = 2400;
-const GO_AT = 3800;
-
-/* Remembers, per course, the furthest stop the child has SEEN open — so a
-   stop opened since the last visit can spring its lock off once. */
-const SEEN_KEY = "edenic-path-seen";
-
-function readSeen(): Record<string, number> {
-  try {
-    return JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}");
-  } catch {
-    return {};
-  }
-}
-
 type Vars = CSSProperties & Record<`--${string}`, string>;
 
 /**
@@ -162,77 +142,24 @@ export function LessonPath({
   advanceFrom,
   size = "phone",
 }: LessonPathProps) {
-  const router = useRouter();
   const geo = geometry(size, titles.length);
   const chrome = CHROME[size];
-  /* A page renders one path per screen size and hides the others; only the
-     one on screen may walk, remember what was seen, or scroll. */
   const rootRef = useRef<HTMLDivElement>(null);
-  const onScreen = () => rootRef.current?.offsetParent != null;
-  const stars = useCourseStars(characterId, lessonId, titles.length);
-  const hydrated = useProgress((state) => state.hydrated);
+  const nextRef = useRef<HTMLAnchorElement>(null);
   const count = titles.length;
-  const nextIndex = stars.findIndex((s) => s === 0);
-  const allDone = nextIndex === -1;
-
-  /* Latched once, and only if the child has not yet SEEN the stop after
-     `from` open: a Back from the next lesson remounts this page with the same
-     cached `?from=`, and must land on a still path, not walk them on again. */
-  const [walkFrom] = useState(() => {
-    if (advanceFrom === undefined || typeof window === "undefined") return advanceFrom;
-    const seen = readSeen()[`${characterId}.${lessonId}`];
-    return seen === undefined || seen < advanceFrom ? advanceFrom : undefined;
+  const { stars, nextIndex, allDone, advancing, walked, from, current, unlocking } = useCourseWalk({
+    characterId,
+    lessonId,
+    basePath,
+    count,
+    advanceFrom,
+    rootRef,
+    nextRef,
+    scroll: size !== "wide",
   });
-  const [phase, setPhase] = useState<"at" | "walk" | "open">("at");
-  /* Only when progress agrees: the lesson just finished is the one right
-     before the next open stop. */
-  const advancing = hydrated && walkFrom !== undefined && walkFrom === nextIndex;
-  const walked = advancing ? phase : "open";
-  const from = nextIndex - 1;
-  /* The stop that wears the "next" colour: the finished one before the
-     walk, none during it, the new one once its padlock has sprung. */
-  const current = walked === "at" ? from : walked === "walk" ? -1 : nextIndex;
 
   /* How far the lit track reaches: to the next stop, or the whole way. */
   const reach = allDone ? count - 1 : advancing ? from : nextIndex;
-
-  const nextRef = useRef<HTMLAnchorElement>(null);
-  const [unlocking, setUnlocking] = useState(-1);
-
-  useEffect(() => {
-    if (!advancing || !onScreen()) return;
-    window.history.replaceState(null, "", basePath);
-    const timers = [
-      setTimeout(() => setPhase("walk"), WALK_AT),
-      setTimeout(() => {
-        setPhase("open");
-        setUnlocking(nextIndex);
-      }, OPEN_AT),
-      setTimeout(() => router.push(`${basePath}/${nextIndex + 1}`), GO_AT),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [advancing, basePath, nextIndex, router]);
-
-  /* Once progress is known: bring the next stop into view, and spring its
-     lock if it opened since the last visit (the walk springs its own). */
-  useEffect(() => {
-    if (!hydrated || allDone || !onScreen()) return;
-    const seen = readSeen();
-    const key = `${characterId}.${lessonId}`;
-    const timer = setTimeout(() => {
-      if (!advancing && seen[key] !== undefined && seen[key] < nextIndex) setUnlocking(nextIndex);
-      try {
-        localStorage.setItem(SEEN_KEY, JSON.stringify({ ...seen, [key]: nextIndex }));
-      } catch {
-        /* Storage off: the lock just doesn't spring. Nothing is lost. */
-      }
-      const el = nextRef.current;
-      if (size !== "wide" && el && el.getBoundingClientRect().bottom > window.innerHeight - 160) {
-        el.scrollIntoView({ block: "center", behavior: "smooth" });
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [hydrated, allDone, advancing, nextIndex, characterId, lessonId, size]);
 
   const { height, xAt } = geo;
   const trackPath = geo.track;
