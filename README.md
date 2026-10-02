@@ -217,7 +217,8 @@ Animals, The Weather, My Body). Shapes and Colors are written; the other seven
 list their lessons and show "coming soon". Every taught word is American
 English (color, fall, mom).
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
-clay card per course (its things piled on it, a play button, a progress bar),
+white clay card per course (its things piled on it, a play button and a
+progress bar in the course's colour),
 and a course page is a banner over a winding clay path: one stop per lesson,
 wearing that lesson's thing — ticked when done, bigger with a "Start" bubble
 when it is next, padlocked after that. Inside a course only two hero colours
@@ -262,15 +263,16 @@ child taps every thing of that shape — four of them among clearly different
 things, on a different blanket each time (circles: a plate, a donut, a cookie,
 a beach ball; squares: toast, a present, a cracker, a die; triangles: cheese,
 pizza, a sandwich, a flag; rectangles: a book, a chocolate bar, a juice box, a
-ruler). Each find gets a ring and flies into a tray of sockets; wrong taps
+ruler). Each find gets a ring and drops into a tray of sockets under the
+picture; wrong taps
 wiggle, and after two the next one glows. The scenes are modelled and rendered
 in three.js so every shape is true and everything shares one light and style.
 
-The lesson-complete screen celebrates in three beats: a big Pinki cheering with
-confetti, then the shape beside the child's own drawing of it and the word,
-then a green pill whose padlock springs open on the next lesson (on a
-desktop these sit side by side: Pinki big on the left, the rest on the
-right, with no card around them). Its
+The lesson-complete screen celebrates in two beats: a big Pinki cheering with
+confetti, then the shape beside the child's own drawing of it and the word
+(on a desktop side by side: Pinki big on the left, the rest on the right,
+with no card around them); its two buttons sit a little higher than on the
+steps. Its
 **Next shape** button (Next lesson when the next one is not a shape) goes back
 to the course path first: the finished stop takes its tick, the track draws on
 to the next stop, its padlock springs off, and then
@@ -298,6 +300,10 @@ float up a patch of sky and the child pops only the ones of the lesson's
 color. Every lesson ends by finding the things of its color in a picnic, and
 the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
+
+The courses still to come already wear their own clay art — a family of peg
+dolls, fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
+rendered with the same light and clay as Shapes and Colors.
 
 The Colors course page is not a path but a **box of paint pots**: one pot per
 color, empty grey clay with a padlock until its lesson opens, filled with its
