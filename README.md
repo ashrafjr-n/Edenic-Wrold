@@ -1,9 +1,11 @@
 # Edenic World
 
 An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
-**Nova**, and **Bloo** — each teach one subject: Pinki maths and shapes, Nova
-English words, Bloo animals and the world. Each friend has a few courses, and a
-course is a short run of lessons the child opens one after another.
+**Nova**, and **Bloo** — each teach three courses: Pinki shapes, colours and
+family; Nova fruits and vegetables, the seasons and the months; Bloo animals,
+the weather and the body. A course is a short run of lessons the child opens one
+after another, each starting with a video and centred on spelling the English
+words it teaches.
 
 The interface reads in **English, Arabic and Badini Kurdish**. What is being
 *taught* stays English in every language — the shape names, the words, and the
@@ -17,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (Pinki: Shapes and Adding) |
+| `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (three each; all three friends are open) |
 | `/learn/[character]/[lesson]` | A course: on a phone, a banner and its lessons as a winding clay path (unlocked one at a time); a card grid on wider screens; a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
@@ -107,10 +109,10 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Course subjects own a second, parallel palette (`--color-subject-*`): Shapes
-  orange, Adding pink (the `numbers` token). It is used on the lesson hub from
-  tablet width up, so the courses read apart at a glance, and it is kept separate
-  from the mascot colors — a subject means the same thing on every hub. (The
-  violet and blue subject tokens now only colour puzzle stages.)
+  orange; the other courses borrow the `colors`, `numbers` and `letters` tokens
+  until they get their own. It is used on the lesson hub from tablet width up,
+  so the courses read apart at a glance, and it is kept separate from the
+  mascot colors.
 - Inside a lesson on a desktop nothing wraps the step: no board, no card. The
   step stands on the page ground, so the one thing to play with is the biggest
   thing on screen.
@@ -204,7 +206,10 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-now has two courses, **Shapes** and **Adding**, five lessons each, both open.
+has three courses — **Shapes**, **Colours** and **My Family** — and Nova and Bloo
+are open with three each (Fruits & Vegetables, The Seasons, Months of the Year;
+Animals, The Weather, My Body). Only Shapes is written; the other eight list
+their lessons and show "coming soon".
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 clay card per course (its things piled on it, a play button, a progress bar),
 and a course page is a banner over a winding clay path: one stop per lesson,
@@ -277,9 +282,9 @@ the real clips arrive.
 Other lessons use pick the right tile or count things into a basket, and on
 the first one Pinki shows how. A wrong
 answer only wiggles; after two, the right one glows, so nobody gets stuck.
-Finishing a lesson opens the next. Adding has lesson 1 written (Putting
-together); the other four show Pinki saying they are on their way. The shapes
-are drawn from their own tracing outlines until their clay pictures arrive. Nova and Bloo come after Pinki, on the same pattern. Audio is designed
+Finishing a lesson opens the next. A lesson that is not written yet shows
+its friend saying it is on its way. The shapes
+are drawn from their own tracing outlines until their clay pictures arrive. Audio is designed
 for but not recorded: every button that will play a sound already calls
 `lib/cue.ts`.
 
@@ -324,11 +329,10 @@ eventual plan.
 
 Planned, in order:
 
-1. The real Shapes reels and pictures, then the Adding content (`edenic-plan.md`)
-2. Nova's and Bloo's courses, on the same pattern
-3. Voice for every line a child should hear, recorded once the content is done
-4. The trail itself — the path, the stage pages, and progress along it
-5. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
+1. The other eight courses' lessons, on the Shapes pattern (`edenic-plan.md` §5–§6)
+2. Every course's real reels, then voice for every taught word, once the content is done
+3. The trail itself — the path, the stage pages, and progress along it
+4. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
 
 Audio narration is deliberately out of scope for the MVP, but the experience is
 built around where it will go.
