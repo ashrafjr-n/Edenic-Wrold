@@ -1,8 +1,8 @@
 # Edenic World
 
 An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
-**Nova**, and **Bloo** — each teach three courses: Pinki shapes, colors and
-family; Nova fruits and vegetables, the seasons and the months; Bloo animals,
+**Nova**, and **Bloo** — teach their own courses: Pinki shapes and colors;
+Nova fruits and vegetables, the seasons and the months; Bloo animals,
 the weather and the body. A course is a short run of lessons the child opens one
 after another, each starting with a video and centred on spelling the English
 words it teaches.
@@ -211,11 +211,12 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-has three courses — **Shapes**, **Colors** and **My Family** — and Nova and Bloo
+has two courses — **Shapes** and **Colors**, both written — and Nova and Bloo
 are open with three each (Fruits & Vegetables, The Seasons, Months of the Year;
-Animals, The Weather, My Body). Shapes, Colors and My Family are written; the
-other six list their lessons and show "coming soon". Every taught word is American
-English (color, fall, mom).
+Animals, The Weather, My Body), which list their lessons and show "coming
+soon". Every taught word is American English (color, fall, mom). Each
+friend's corner wears one colour: Pinki's is pink, Nova's is gold (back
+button, play buttons, progress bars, banners — with dark ink on the gold).
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 white clay card per course (its things piled on it, a play button and a
 progress bar in the course's colour),
@@ -299,13 +300,8 @@ color. Every lesson ends by finding the things of its color in a picnic, and
 the review sorts things into four color boxes, names a color from its word,
 and spells two colors from the pot alone, with no word on screen.
 
-My Family is one person per lesson — Mom, Dad, Sister, Brother, Baby,
-Grandma, Grandpa — each a full-body chibi clay figure rendered for the course,
-in their own card. A lesson meets the person and their word, spells it, picks
-them out of three, then finds them in the family's living room (one rendered
-scene, the whole family in it). The review picks two people by their word,
-lines the family up oldest first (a new **Order** activity), and spells two
-words from the picture alone. The other courses
+A ready **Order** activity (tap things in their order into a line of
+shrinking spaces) waits for the course that needs it. The courses
 still to come already wear their own clay art — fruits, a sun, a cloud, an umbrella, a calendar, a hand and a foot —
 rendered with the same light and clay as Shapes and Colors.
 
@@ -366,7 +362,7 @@ eventual plan.
 
 Planned, in order:
 
-1. The other six courses' lessons, one at a time, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
+1. The other courses' lessons, one at a time, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
 2. Every course's real reels, then voice for every taught word, once the content is done
 3. The trail itself — the path, the stage pages, and progress along it
 4. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to

@@ -12,7 +12,7 @@ children this age already know them.
 
 Three friends, three courses each (decided 2026-10-02):
 
-- **Pinki**: Shapes · Colors · My Family
+- **Pinki**: Shapes · Colors (My Family cancelled 2026-10-02 — rethink from the videos)
 - **Nova**: Fruits & Vegetables · The Seasons · Months of the Year
 - **Bloo**: Animals · The Weather · My Body
 
@@ -137,7 +137,7 @@ understand every question.
 Decided 2026-10-02: **American English** everywhere a word is taught (color,
 fall, mom — the most widespread spelling), **1–2 new words per lesson**, and
 the courses are built ONE AT A TIME: build → the user checks → fix → next.
-Order: Colors → My Family → Fruits & Vegetables → The Seasons → Months →
+Order: Colors → Fruits & Vegetables → The Seasons → Months →
 Animals → The Weather → My Body. Words come from the Cambridge Pre A1
 Starters list where the topic has one (months and seasons are A2 words — the
 hardest, so they come last in Nova's set).
@@ -192,7 +192,7 @@ sort boxes, done screen, the course page).
 ### The other seven (lesson titles provisional until each is built)
 | Friend | Course | Lessons |
 | --- | --- | --- |
-| Pinki | My Family | Mom · Dad · Sister · Brother · Baby · Grandma · Grandpa · Family review (one person per lesson, 2026-10-02) |
+| Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Fruits & Vegetables | Apple & Banana · Grape & Orange · Carrot & Tomato · Potato & Corn · Fruit or vegetable? · Market review |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review |
@@ -239,7 +239,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Seasons, Weather |
-| **Put in order**: tap them in order into a line of spaces | My Family (new, `order`) | Months, Family |
+| **Put in order**: tap them in order into a line of spaces | built (`order`), unused yet | Months |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -360,9 +360,8 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       colors-only activity (Pop the balloons), the course page as a box of
       paint pots — done the same day, all 11 lessons played through.
 - [ ] The user checks Colors again → fixes.
-- [x] My Family built (2026-10-02): one person per lesson (word, spell,
-      pick, find in a rendered living room), review with the new Order.
-- [ ] The user checks My Family → fixes.
+- [x] My Family built (2026-10-02), then CANCELLED the same day — family
+      words are relationships, not things; rethink it from the videos.
 - [ ] Then, one at a time with a check after each: Fruits &
       Vegetables → The Seasons → Months → Animals → The Weather → My Body.
 
