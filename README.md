@@ -159,7 +159,7 @@ src/
     learn/lesson/     The lesson player: the task button and its how-to
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
-                      spelling board, Find-the-shapes, pick and count, the
+                      spelling board, Find, Sort, Paint, Pop, Pick, the
                       done screen, and the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
@@ -311,8 +311,7 @@ from a finished lesson, the next cell colours in as its padlock springs off,
 and then the lesson opens by itself. Courses still to be written keep the
 winding clay path.
 
-Other lessons use pick the right tile or count things into a basket, and on
-the first one Pinki shows how. A wrong
+Picks (tap the right tile) show the answer once on the first question. A wrong
 answer only wiggles; after two, the right one glows, so nobody gets stuck.
 Finishing a lesson opens the next. A lesson that is not written yet shows
 its friend saying it is on its way. The shapes
