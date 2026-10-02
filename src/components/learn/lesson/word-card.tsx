@@ -1,3 +1,4 @@
+import Image, { type StaticImageData } from "next/image";
 import type { ShapeId } from "@/types/course";
 import { CueButton } from "./cue-button";
 import { ClayWord } from "./clay-word";
@@ -7,6 +8,8 @@ interface WordCardProps {
   word: string;
   /** The shape the word names, drawn above it — word and shape together. */
   shape?: ShapeId;
+  /** Or a picture of what it names — a color's paint pot. */
+  picture?: StaticImageData;
   /** The word's own clip — `lessonCue.word`. */
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
@@ -19,7 +22,7 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, cue, label }: WordCardProps) {
+export function WordCard({ word, shape, picture, cue, label }: WordCardProps) {
   return (
     /* Desktop: side by side — the shape big on the left, the speaker above
        the word on the right. The two wrappers are `contents` below `lg`, so
@@ -28,12 +31,16 @@ export function WordCard({ word, shape, cue, label }: WordCardProps) {
       <span className="contents lg:col-start-2 lg:row-start-1 lg:flex lg:items-end lg:justify-center lg:self-end">
         <CueButton cue={cue} label={label} size="xl" invite />
       </span>
-      {shape && (
+      {(shape || picture) && (
         <span
-          className="anim-pop-in flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]"
+          className="anim-pop-in relative flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]"
           style={{ animationDelay: "0.05s" }}
         >
-          <FaceView face={{ kind: "shape", shape }} size="tile" />
+          {picture ? (
+            <Image src={picture} alt="" fill preload sizes="(min-width: 1024px) 15rem, 10rem" className="object-contain" />
+          ) : (
+            shape && <FaceView face={{ kind: "shape", shape }} size="tile" />
+          )}
         </span>
       )}
       <span className="contents lg:col-start-2 lg:row-start-2 lg:flex lg:justify-center lg:self-start">

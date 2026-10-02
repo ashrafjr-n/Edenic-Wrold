@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, Ref } from "react";
+import Image, { type StaticImageData } from "next/image";
 import { shuffle } from "@/lib/seeded";
 import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
@@ -26,6 +27,8 @@ export interface SpellWordHandle {
 
 interface SpellWordProps {
   word: string;
+  /** Shown INSTEAD of the word: spell it from the picture alone. */
+  picture?: StaticImageData;
   /** Deals the letters — the same seed gives the same order on the server. */
   seed: string;
   /** "Letter {letter}", for each tile's screen-reader name. */
@@ -83,7 +86,7 @@ export function deal(word: string, seed: string): string[] {
  * one with the Web Animations API on `translate`, so tiles in the tray and
  * tiles in a space are just rendered where they are.
  */
-export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
+export function SpellWord({ word, picture, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
   const [dealt] = useState(() => deal(word, seed));
   const [slots, setSlots] = useState<Slots>(() => Array(word.length).fill(null));
   const [drag, setDrag] = useState<Drag | null>(null);
@@ -362,7 +365,13 @@ export function SpellWord({ word, seed, letterAria, hint, onSolved, onMiss, onSt
 
   return (
     <div dir="ltr" className="flex w-full flex-col items-center gap-3 sm:gap-7 lg:gap-[min(2.25rem,4svh)]">
-      <ClayWord word={word} size="md" />
+      {picture ? (
+        <span className="anim-pop-in relative block h-[min(7rem,13svh)] w-[min(7rem,13svh)] lg:h-[min(9rem,15svh)] lg:w-[min(9rem,15svh)]">
+          <Image src={picture} alt="" fill preload sizes="(min-width: 1024px) 9rem, 7rem" className="object-contain" />
+        </span>
+      ) : (
+        <ClayWord word={word} size="md" />
+      )}
 
       <div className="card card-clay-white card-bare-lg relative w-full max-w-xl px-3 py-3 sm:px-6 sm:py-6 lg:px-5 lg:py-5">
         <div

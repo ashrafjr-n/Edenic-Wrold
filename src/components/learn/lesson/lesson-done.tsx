@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Lock, LockOpen } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
-import type { ShapeId } from "@/types/course";
+import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { FaceView } from "./face";
 import { ClayWord } from "./clay-word";
@@ -11,10 +11,11 @@ import celebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-ce
 interface LessonDoneProps {
   /** "Lesson complete!" */
   title: string;
-  /** The taught word ("circle"), for a one-shape lesson. */
-  word?: string;
-  /** The shapes the lesson was about — one, or all four in a review. */
-  shapes: ShapeId[];
+  /** The taught words ("circle"; "red", "blue"), none for a review. */
+  words: string[];
+  /** What the lesson was about — a shape, two colors' pots, or a review's
+      four. */
+  faces: Face[];
   /** The child's own passing trace, drawn back beside the shape. */
   drawing?: readonly StrokePoint[];
   accent: string;
@@ -46,10 +47,10 @@ const GO = { backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-
  * beats sit side by side — Pinki big on the left, what was learned and what
  * is next stacked on the right.
  */
-export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir }: LessonDoneProps) {
-  /* One shape and a drawing get big tiles; the review's four shapes and a
-     drawing (five in a row) share the card's width. */
-  const tile = shapes.length > 1 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
+export function LessonDone({ title, words, faces, drawing, accent, unlocked, dir }: LessonDoneProps) {
+  /* One or two things and a drawing get big tiles; a review's four things
+     and a drawing (five in a row) share the card's width. */
+  const tile = faces.length > 2 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
   return (
     <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center lg:row-span-3">
@@ -76,14 +77,14 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
         className="card card-clay-white card-bare-lg anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 lg:gap-4 lg:px-8 lg:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
         style={{ animationDelay: "0.35s" }}
       >
-        <div className={`flex items-center justify-center ${shapes.length > 1 ? "gap-2" : "gap-3"}`}>
-          {shapes.map((shape) => (
+        <div className={`flex items-center justify-center ${faces.length > 2 ? "gap-2" : "gap-3"}`}>
+          {faces.map((face) => (
             <span
-              key={shape}
+              key={face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text}
               className={`tile flex items-center justify-center ${tile}`}
               style={{ "--tile-tint": "var(--background)" } as CSSProperties}
             >
-              <FaceView face={{ kind: "shape", shape }} size="tile" />
+              <FaceView face={face} size="tile" />
             </span>
           ))}
           {drawing && drawing.length > 1 && (
@@ -105,7 +106,13 @@ export function LessonDone({ title, word, shapes, drawing, accent, unlocked, dir
             </span>
           )}
         </div>
-        {word && <ClayWord word={word} size="sm" />}
+        {words.length > 0 && (
+          <div className={`flex flex-wrap items-center justify-center ${words.length > 1 ? "gap-x-5 gap-y-1 [&>span]:text-4xl sm:[&>span]:text-5xl" : ""}`}>
+            {words.map((word) => (
+              <ClayWord key={word} word={word} size="sm" />
+            ))}
+          </div>
+        )}
       </div>
 
       {unlocked && (
