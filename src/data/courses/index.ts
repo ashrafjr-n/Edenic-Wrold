@@ -6,6 +6,9 @@ import { COLORS, EMPTY_POT } from "@/data/colors";
 import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
+import { novaFruits } from "./nova-fruits";
+import { novaSeasons } from "./nova-seasons";
+import { novaMonths } from "./nova-months";
 
 /** A course whose lessons are not written yet: `count` "coming soon"
     lessons, each wearing one of the course's clay things in turn
@@ -19,9 +22,9 @@ const comingSoon = (count: number, art: readonly StaticImageData[]): LessonDef[]
 export const courseLessons: Record<LessonId, LessonDef[]> = {
   shapes: pinkiShapes,
   colors: pinkiColors,
-  fruits: comingSoon(6, COURSE_ART.fruits),
-  seasons: comingSoon(5, COURSE_ART.seasons),
-  months: comingSoon(5, COURSE_ART.months),
+  fruits: novaFruits,
+  seasons: novaSeasons,
+  months: novaMonths,
   animals: comingSoon(6, COURSE_ART.animals),
   weather: comingSoon(5, COURSE_ART.weather),
   body: comingSoon(5, COURSE_ART.body),
