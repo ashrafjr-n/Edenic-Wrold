@@ -28,6 +28,10 @@ import { SortShapes } from "./sort-shapes";
 import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
+import { RevealBag } from "./reveal-bag";
+import { CutBoard } from "./cut-board";
+import { ShopList } from "./shop-list";
+import { LikesPlates } from "./likes-plates";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -272,7 +276,9 @@ export function LessonPlayer({
     body = (
       <LessonDone
         title={lines.lessonDone}
-        words={lesson.questions.flatMap((q) => (q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : []))}
+        words={lesson.questions.flatMap((q) =>
+          q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : q.type === "reveal" ? [{ word: q.word, tone: undefined }] : [],
+        )}
         faces={lessonFaces(lesson)}
         drawing={drawing}
         accent={tone.face}
@@ -408,6 +414,39 @@ export function LessonPlayer({
       );
     } else if (q.type === "order") {
       body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
+    } else if (q.type === "reveal") {
+      body = (
+        <RevealBag
+          key={seed}
+          word={q.word}
+          picture={q.picture}
+          decoy={q.decoy}
+          seed={seed}
+          bagAria={lines.openBagAria}
+          hearLabel={lines.hearWord}
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
+      );
+    } else if (q.type === "cut") {
+      body = <CutBoard key={seed} word={q.word} picture={q.picture} inside={q.inside} knifeAria={lines.knifeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
+    } else if (q.type === "shop") {
+      body = (
+        <ShopList
+          key={seed}
+          list={q.list}
+          stall={q.stall}
+          into={q.into}
+          ordered={q.ordered ?? false}
+          seed={seed}
+          itemAria={lines.findItemAria}
+          hearLabel={lines.hearWord}
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
+      );
+    } else if (q.type === "likes") {
+      body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "find") {
       body = (
         <FindShapes

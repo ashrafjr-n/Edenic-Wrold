@@ -1,4 +1,4 @@
-import type { Ask, Face, LessonDef, Question, Target } from "@/types/course";
+import type { Face, LessonDef, Question, Target } from "@/types/course";
 import type { TaskKind } from "./task-chip";
 import type { TaskDemoDef } from "./task-demo";
 
@@ -13,12 +13,10 @@ export function starsFor(mistakes: number): number {
   return 1;
 }
 
-/** The word on a Find's task chip: "circles", "red", "apples" (the ask's
-    own plural), "spring". */
-function findLabel(target: Target, vars: Ask["vars"]): string {
+/** The word on a Find's task chip: "circles", "red", "spring". */
+function findLabel(target: Target): string {
   if ("shape" in target) return `${target.shape}s`;
   if ("color" in target) return target.color;
-  if ("word" in target) return String(vars?.things ?? target.word);
   return target.group;
 }
 
@@ -36,7 +34,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "spell":
       return { kind: "build" };
     case "find":
-      return { kind: "find", target: findLabel(q.target, q.ask.vars) };
+      return { kind: "find", target: findLabel(q.target) };
     case "sort":
       return { kind: "sort" };
     case "paint":
@@ -45,8 +43,16 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "pop", target: q.color };
     case "order":
       return { kind: "order" };
+    case "reveal":
+      return { kind: "guess" };
+    case "cut":
+      return { kind: "cut", target: q.word };
+    case "shop":
+      return { kind: q.into === "basket" ? "shop" : "cook" };
+    case "likes":
+      return { kind: "like" };
     case "pick": {
-      const named = q.ask.vars?.shape ?? q.ask.vars?.color ?? q.ask.vars?.thing ?? q.ask.vars?.season;
+      const named = q.ask.vars?.shape ?? q.ask.vars?.color ?? q.ask.vars?.season;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
     }
   }
@@ -76,6 +82,14 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "pop", color: q.color, others: q.others };
     case "order":
       return { kind: "order", items: q.items, seed };
+    case "reveal":
+      return { kind: "guess", word: q.word, picture: q.picture, decoy: q.decoy, seed };
+    case "cut":
+      return { kind: "cut", picture: q.picture, inside: q.inside };
+    case "shop":
+      return { kind: "shop", list: q.list, stall: q.stall, into: q.into, seed };
+    case "likes":
+      return { kind: "like", face: q.items[0].face };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
@@ -95,7 +109,7 @@ export function lessonFaces(lesson: LessonDef): Face[] {
       const answer = q.options[q.answer];
       return answer.kind === "text" ? [] : [answer];
     }
-    if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
+    if ((q.type === "word" || q.type === "spell" || q.type === "reveal") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
     return [];
   });
   const key = (face: Face) => (face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text);
