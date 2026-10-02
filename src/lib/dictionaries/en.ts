@@ -95,10 +95,45 @@ export const en = {
       description: "Circles, squares, triangles and more",
       items: ["Circle", "Square", "Triangle", "Rectangle", "Shape review"],
     },
-    adding: {
-      name: "Learn to Add",
-      description: "Put numbers together, up to 10",
-      items: ["Putting together", "Up to 5", "Up to 10", "Doubles", "Quick sums"],
+    colors: {
+      name: "Learn Colours",
+      description: "Red, blue, yellow and every colour around you",
+      items: ["Red & Blue", "Yellow & Green", "Orange & Purple", "Pink & Brown", "Black & White", "Colour review"],
+    },
+    family: {
+      name: "My Family",
+      description: "Mum, Dad and everyone at home",
+      items: ["Mum & Dad", "Brother & Sister", "Grandma & Grandpa", "Baby & Me", "Family review"],
+    },
+    fruits: {
+      name: "Fruits & Vegetables",
+      description: "Yummy things to eat and how to spell them",
+      items: ["Apple, Banana, Orange", "Grape, Pear, Mango", "Carrot, Tomato, Potato", "Onion, Pea, Corn", "Fruit or vegetable?", "Market review"],
+    },
+    seasons: {
+      name: "The Seasons",
+      description: "Spring, summer, autumn and winter",
+      items: ["Spring", "Summer", "Autumn", "Winter", "Seasons review"],
+    },
+    months: {
+      name: "Months of the Year",
+      description: "Twelve months, one big year",
+      items: ["January to March", "April to June", "July to September", "October to December", "Months review"],
+    },
+    animals: {
+      name: "Animals",
+      description: "Pets, farm, wild and sea animals",
+      items: ["Pets", "On the farm", "In the wild", "In the sea", "Babies & homes", "Animals review"],
+    },
+    weather: {
+      name: "The Weather",
+      description: "Sunny, rainy, windy, snowy",
+      items: ["Sunny", "Rainy", "Cloudy & Windy", "Snowy", "Weather review"],
+    },
+    body: {
+      name: "My Body",
+      description: "Head, hands, feet and more",
+      items: ["My face", "Head & hair", "Arms & hands", "Legs & feet", "Body review"],
     },
   },
   characterHub: {

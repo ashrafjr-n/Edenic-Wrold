@@ -1,34 +1,40 @@
 import type { CharacterId } from "@/types/character";
-import type { Lesson } from "@/types/lesson";
+import type { Lesson, LessonId } from "@/types/lesson";
 import { courseLessons } from "./courses";
 
-/** Each character's courses. `name`/`description` and the lesson titles are
-    translated content — see `dict.lessons` in the dictionaries, not this file.
-    The two card images are placeholders (Pinki holding shapes / numbers) until
-    the course art arrives; the new files replace them under the same names. */
+type Tone = "shapes" | "colors" | "numbers" | "letters";
+
+/** A course in one of the four subject colours. Only Shapes has its own
+    card art; every other course shows its friend until its art arrives
+    (the image is the reel's poster). */
+const course = (id: LessonId, tone: Tone, image: string): Lesson => ({
+  id,
+  image,
+  theme: {
+    accent: `var(--color-subject-${tone})`,
+    accentDark: `var(--color-subject-${tone}-dark)`,
+  },
+  totalItems: courseLessons[id].length,
+  locked: false,
+});
+
+/** Each character's courses, in hub order. `name`/`description` and the
+    lesson titles are translated content — see `dict.lessons` in the
+    dictionaries, not this file. */
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
-    {
-      id: "shapes",
-      image: "/assets/learn/pinki/course-shapes.png",
-      theme: {
-        accent: "var(--color-subject-shapes)",
-        accentDark: "var(--color-subject-shapes-dark)",
-      },
-      totalItems: courseLessons.shapes.length,
-      locked: false,
-    },
-    {
-      id: "adding",
-      image: "/assets/learn/pinki/course-adding.png",
-      theme: {
-        accent: "var(--color-subject-numbers)",
-        accentDark: "var(--color-subject-numbers-dark)",
-      },
-      totalItems: courseLessons.adding.length,
-      locked: false,
-    },
+    course("shapes", "shapes", "/assets/learn/pinki/course-shapes.png"),
+    course("colors", "colors", "/assets/friends/pinki.png"),
+    course("family", "numbers", "/assets/friends/pinki.png"),
   ],
-  nova: [],
-  bloo: [],
+  nova: [
+    course("fruits", "shapes", "/assets/friends/nova.png"),
+    course("seasons", "letters", "/assets/friends/nova.png"),
+    course("months", "colors", "/assets/friends/nova.png"),
+  ],
+  bloo: [
+    course("animals", "shapes", "/assets/friends/bloo.png"),
+    course("weather", "colors", "/assets/friends/bloo.png"),
+    course("body", "numbers", "/assets/friends/bloo.png"),
+  ],
 };

@@ -1,5 +1,8 @@
 /** A course. The route segment too: `/learn/pinki/shapes`. */
-export type LessonId = "shapes" | "adding";
+export type LessonId =
+  | "shapes" | "colors" | "family"
+  | "fruits" | "seasons" | "months"
+  | "animals" | "weather" | "body";
 
 /** A course's own colour world (its cards, banner, path and buttons).
     Deliberately independent of the character's accent: the hue says what
