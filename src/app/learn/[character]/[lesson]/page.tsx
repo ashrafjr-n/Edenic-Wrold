@@ -3,11 +3,10 @@ import { notFound, redirect } from "next/navigation";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, pageAccent } from "@/components/ui/back-button";
 import { ContinueButton } from "@/components/learn/continue-button";
-import { LessonPath } from "@/components/learn/lesson-path";
 import { LessonBox } from "@/components/learn/lesson-box";
 import { CourseArt } from "@/components/learn/course-art";
 import { CourseProgress } from "@/components/learn/course-progress";
-import { courseCovers, courseLessons, courseStops } from "@/data/courses";
+import { courseCovers, courseStops } from "@/data/courses";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -18,19 +17,20 @@ interface LessonPageProps {
 }
 
 /**
- * A course's own page: its lessons as a winding clay path (`LessonPath`) or a box of things (`LessonBox`),
- * in three layouts, one per screen size, each its own JSX tree:
+ * A course's own page: its lessons as a box of things (`LessonBox`) — every
+ * course, written or still to come — in three layouts, one per screen size,
+ * each its own JSX tree:
  *
- * - **Phone (< sm):** a course banner, the path winding down, a fixed
+ * - **Phone (< sm):** a course banner, the box two cells a row, a fixed
  *   Continue bar above the bottom nav.
- * - **Tablet (sm – lg):** the same, grown — a taller banner, the path at
+ * - **Tablet (sm – lg):** the same, grown — a taller banner, the box at
  *   tablet size, the Continue bar at the bottom edge.
  * - **Desktop (lg+):** the height of the screen, no scrolling — the course
- *   in a tall banner on the left with Continue under it, the path winding
- *   ACROSS a board tinted in the course colour on the right.
+ *   in a tall banner on the left with Continue under it, the box filling a
+ *   board tinted in the course colour on the right.
  *
- * `?from=n` (the lesson just finished) makes the path on screen walk on to
- * the next stop and then open it — see `LessonPath`.
+ * `?from=n` (the lesson just finished) makes the box tick it and open the
+ * next cell — see `useCourseWalk`.
  */
 export default async function LessonPage({ params, searchParams }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
@@ -47,37 +47,22 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
   const basePath = `/learn/${character.id}/${lesson.id}`;
   const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark };
   const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
-  const covers = courseLessons[lesson.id].map((def) => def.cover);
   const advanceFrom = Number.isInteger(from) && from > 0 ? from : undefined;
-  const stops = lesson.view === "box" ? courseStops(lesson.id) : [];
-  /* The lessons themselves, one view per screen size: the winding path, or
-     — for Pinki's Shapes and Colors — a box of things (`LessonBox`). */
-  const lessons = (size: "phone" | "tablet" | "wide") =>
-    lesson.view === "box" ? (
-      <LessonBox
-        titles={course.items}
-        stops={stops}
-        characterId={character.id}
-        lessonId={lesson.id}
-        basePath={basePath}
-        tone={tone}
-        dict={dict.lessonPicker}
-        advanceFrom={advanceFrom}
-        size={size}
-      />
-    ) : (
-      <LessonPath
-        titles={course.items}
-        covers={covers}
-        characterId={character.id}
-        lessonId={lesson.id}
-        basePath={basePath}
-        tone={tone}
-        dict={dict.lessonPicker}
-        advanceFrom={advanceFrom}
-        size={size}
-      />
-    );
+  const stops = courseStops(lesson.id);
+  /* The lessons themselves, one box per screen size. */
+  const lessons = (size: "phone" | "tablet" | "wide") => (
+    <LessonBox
+      titles={course.items}
+      stops={stops}
+      characterId={character.id}
+      lessonId={lesson.id}
+      basePath={basePath}
+      tone={tone}
+      dict={dict.lessonPicker}
+      advanceFrom={advanceFrom}
+      size={size}
+    />
+  );
 
   return (
     <main
@@ -98,8 +83,8 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
 
       {/* ================= Phone (< sm) =================
           The course as a banner in its own colour — title, progress, its
-          things piled on the right — then its lessons as a winding clay
-          path (`LessonPath`). */}
+          things piled on the right — then its lessons as a box of things
+          (`LessonBox`). */}
       <div className="flex w-full flex-1 flex-col px-6 sm:hidden">
         <section
           className="card clay anim-pop-in relative mt-6 flex items-center gap-2 py-5 pl-5 pr-2"
@@ -129,12 +114,12 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
           <CourseArt images={courseCovers(lesson.id)} width={128} className="-my-6 h-32 w-32 shrink-0" />
         </section>
 
-        <div className={lesson.view === "box" ? "mt-7" : undefined}>{lessons("phone")}</div>
+        <div className="mt-7">{lessons("phone")}</div>
       </div>
 
       {/* ================= Tablet (sm – lg) =================
-          The phone's banner and path, grown: a taller banner with a bigger
-          pile of things, the path at tablet size (`size="tablet"`). */}
+          The phone's banner and box, grown: a taller banner with a bigger
+          pile of things, the box at tablet size (`size="tablet"`). */}
       <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex lg:hidden">
         <section
           className="card clay anim-pop-in relative mt-8 flex items-center gap-6 py-8 pl-8 pr-4"
@@ -176,8 +161,8 @@ export default async function LessonPage({ params, searchParams }: LessonPagePro
 
       {/* ================= Desktop (lg and up) =================
           The height of the screen, in two parts: the course on the left
-          (its pile of things, name, progress, Continue), and the path on
-          the right, winding ACROSS a board tinted in the course colour
+          (its pile of things, name, progress, Continue), and the box on
+          the right, filling a board tinted in the course colour
           (`size="wide"`) — every lesson in view at once, no scrolling. */}
       <div className="mx-auto hidden w-full max-w-7xl gap-8 px-8 pt-6 lg:flex lg:h-[calc(100svh-12.5rem)] lg:min-h-[30rem] xl:gap-10 xl:px-12">
         <aside className="flex w-[21rem] shrink-0 flex-col gap-5 xl:w-[24rem]">
