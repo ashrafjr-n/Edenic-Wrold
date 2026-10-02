@@ -11,7 +11,7 @@ import { FaceView } from "./face";
 const HINT_AFTER = 2;
 
 interface OrderLineProps {
-  /** In the right order — the family, oldest first. */
+  /** In the right order. */
   items: Face[];
   /** Deals the tiles — a new seed is a new order. */
   seed: string;
@@ -26,8 +26,8 @@ const wordOf = (face: Face) => (face.kind === "picture" ? face.word : face.kind 
 
 /**
  * Put them in order: a line of spaces on top, each a little smaller than
- * the one before it (oldest → youngest reads as big → small), and the
- * tiles dealt in a row under it. Tap the one that comes next and it lands
+ * the one before it (first → last reads as big → small), and the tiles
+ * dealt in a row under it. Tap the one that comes next and it lands
  * in the next space, leaving an empty socket behind; a wrong one only
  * wiggles, and after two misses the right one glows. All in → the line
  * jumps together.

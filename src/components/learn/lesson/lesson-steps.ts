@@ -27,7 +27,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "spell":
       return { kind: "build" };
     case "find":
-      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : "color" in q.target ? q.target.color : q.target.person };
+      return { kind: "find", target: "shape" in q.target ? `${q.target.shape}s` : q.target.color };
     case "sort":
       return { kind: "sort" };
     case "paint":
