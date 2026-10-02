@@ -347,7 +347,7 @@ eventual plan.
 
 Planned, in order:
 
-1. The other eight courses' lessons, on the Shapes pattern (`edenic-plan.md` §5–§6)
+1. The other seven courses' lessons, one at a time, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
 2. Every course's real reels, then voice for every taught word, once the content is done
 3. The trail itself — the path, the stage pages, and progress along it
 4. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to

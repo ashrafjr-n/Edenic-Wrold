@@ -332,15 +332,19 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
 
-### Phase 5 — The other eight courses
+### Phase 5 — The other courses, one at a time
 - [x] Adding dropped; Pinki's courses are Shapes · Colors · My Family; Nova
       and Bloo open, each with three courses whose lessons show "coming
       soon" (titles provisional, 2026-10-02).
 - [x] §5–§6 approved with changes (2026-10-02): American English, 1–2
       words a lesson, one course at a time, the user checks each.
-- [ ] **Colors**: color data + paint-pot pictures, things and five Find
-      scenes rendered; Find/Sort by color, picture Word/Spell, Paint; six
-      lessons of data; measured at 390 / 820 / 1440 → the user checks.
+- [x] **Colors** (2026-10-02): ten paint pots, eight things to paint (grey
+      + painted) and five color picnics rendered; Find/Sort by color,
+      picture Word/Spell (rung 4), Paint, Mix; color words in their own
+      color (Meet/Spell) or plain ink (Paint, Pick — they must be read);
+      six lessons of data; all six played through at 375x667, 390x844,
+      820x1180, 1440x900, dark mode checked.
+- [ ] The user checks Colors → fixes.
 - [ ] Then, one at a time with a check after each: My Family → Fruits &
       Vegetables → The Seasons → Months → Animals → The Weather → My Body.
 
