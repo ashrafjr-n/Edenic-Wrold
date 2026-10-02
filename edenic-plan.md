@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-09-30
+> Last updated: 2026-10-02
 
 ---
 
@@ -10,13 +10,22 @@
 Learn is for children aged **5–9**. Numbers 1–9 and the alphabet are gone, because
 children this age already know them.
 
-- **Pinki** teaches maths & shapes
-- **Nova** teaches English words
-- **Bloo** teaches animals & the world
+Three friends, three courses each (decided 2026-10-02):
+
+- **Pinki**: Shapes · Colours · My Family
+- **Nova**: Fruits & Vegetables · The Seasons · Months of the Year
+- **Bloo**: Animals · The Weather · My Body
+
+**The focus, in order:** (1) every lesson opens with a **video**; (2) **English
+spelling** — a child of 5–9 learns to write every word they meet, in a way that
+feels like play; (3) **fun activities**, not games for their own sake: hunts,
+sorting, small challenges.
 
 Every lesson is the same: **watch a reel → a few steps → done ⭐**. A Shapes
-lesson teaches ONE shape: reel → word → trace → spell (§3).
-All three friends are open from the start.
+lesson teaches ONE shape: reel → word → trace → spell → find (§3). Every
+course copies that rhythm (§6).
+All three friends are open from the start. Real reels and sound are added
+LAST, once every course is built (placeholders until then).
 
 ## 2. How it's organised
 
@@ -104,21 +113,16 @@ step SHOWS what it is about, so nothing depends on hearing the question.
 3. **Trace ✏️**: a triangle, as in the lessons.
 4. **Done ⭐**: all four shapes and the child's triangle; *Finish*.
 
-**Other lessons (Adding):**
-
-1. **Watch 🎬**: as above.
-2. **Play 🎮**: questions, the round task button on top.
-   - Right: bounce + Next.
-   - Wrong: soft shake, try again. Never the word "wrong".
-   - Wrong twice: the right answer glows. Nobody gets stuck.
-3. **Done ⭐**: a star on the lesson row, then *Next lesson* / *Watch again*.
+**Feedback in every step:** right → bounce + Next; wrong → soft shake, try
+again, never the word "wrong"; wrong twice → the right answer glows. Nobody
+gets stuck.
 
 ## 4. Question types
 
 | Type | The child | Example |
 | --- | --- | --- |
-| **Pick** | taps 1 of 3–4 big tiles | "Which is the triangle?" · "3 + 2 = ?" |
-| **Count** | taps objects in until there are enough | "Put 4 cupcakes in the box" |
+| **Pick** | taps 1 of 3–4 big tiles | "Which is the triangle?" |
+| **Count** | taps objects in until there are enough | "Put 3 bananas in the basket" |
 | **Trace** | draws over a dotted outline | "Draw a circle" |
 | **Sort** | puts each thing in its shape's box (review) | "Put each thing in its shape's box" |
 
@@ -128,9 +132,16 @@ step SHOWS what it is about, so nothing depends on hearing the question.
 of each lesson, Pinki shows how once. A child who can't read yet must still
 understand every question.
 
-## 5. Pinki's content (release 1: 2 courses, 10 lessons)
+## 5. The courses (release 1: 9 courses)
 
-### Shapes — one shape per lesson
+Only **Shapes** is built and approved. The other eight show their lessons as
+"coming soon"; their titles below are a **proposal (§6), not yet approved**.
+Words follow **British English** (colour, autumn, mum), the spelling Iraq's
+school English uses, and come from the Cambridge Pre A1 Starters list where
+the topic has one (months and seasons are A2 Flyers words — harder, so they
+come last in Nova's set).
+
+### Pinki · Shapes — one shape per lesson (BUILT)
 | # | Lesson | Steps |
 | --- | --- | --- |
 | 1 | Circle | Reel, Word, Trace, Spell `circle`, Find the circles (picnic) |
@@ -139,22 +150,122 @@ understand every question.
 | 4 | Rectangle | Reel, Word, Trace, Spell `rectangle`, Find the rectangles (round yellow picnic) |
 | 5 | Shape review | Sort ×8 things, Pick the word ×2 (square, rectangle), Trace a triangle |
 
-### Adding (up to 10)
-| # | Lesson | Questions |
+### The other eight (lesson titles provisional)
+| Friend | Course | Lessons |
 | --- | --- | --- |
-| 1 | Putting together | Count ×2, Pick ×3 (pictures) |
-| 2 | Up to 5 | Pick ×5 (pictures + numbers) |
-| 3 | Up to 10 | Count ×2, Pick ×3 |
-| 4 | Doubles | Pick ×5 (numbers, pictures as hint) |
-| 5 | Quick sums | Pick ×5 (numbers only) |
+| Pinki | Colours | Red & Blue · Yellow & Green · Orange & Purple · Pink & Brown · Black & White · Colour review |
+| Pinki | My Family | Mum & Dad · Brother & Sister · Grandma & Grandpa · Baby & Me · Family review |
+| Nova | Fruits & Vegetables | Apple, Banana, Orange · Grape, Pear, Mango · Carrot, Tomato, Potato · Onion, Pea, Corn · Fruit or vegetable? · Market review |
+| Nova | The Seasons | Spring · Summer · Autumn · Winter · Seasons review |
+| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review |
+| Bloo | Animals | Pets · On the farm · In the wild · In the sea · Babies & homes · Animals review |
+| Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
+| Bloo | My Body | My face · Head & hair · Arms & hands · Legs & feet · Body review |
 
-Later courses: Taking Away, Patterns.
+## 6. Proposal: what goes inside every course (2026-10-02, awaiting approval)
 
-## 6. Nova and Bloo (general)
-Same lesson steps, same three question types. Only the pictures change.
-- **Nova:** picture ↔ English word (clothes, food, home, toys), then action words,
-  then short sentences.
-- **Bloo:** animals: names, homes, babies, food. Later: weather, my body.
+### 6.1 One rhythm for every lesson (Shapes' flow, generalised)
+
+**Watch 🎬 → Meet 🔊 → Do 🖐️ → Spell 🔤 → Hunt 🔍 → Done ⭐**, about 3 minutes.
+
+- **Watch**: the reel (placeholder until Phase 6).
+- **Meet**: the Word card — picture + the word in clay letters (+ its sound
+  later). A lesson teaches **2–3 words**, never more (Shapes teaches 1).
+- **Do**: the course's own hands-on step (trace, colour, dress, touch, mix…).
+- **Spell**: the core. Every taught word is spelled (§6.2).
+- **Hunt**: a short challenge in a scene — find, sort, put in order.
+- **Review lesson** (last of every course): no reel; it re-asks every word of
+  the course **from the picture only** (retrieval beats re-reading) and ends
+  with the course's biggest hunt.
+- **Warm-up (cheap spaced repetition):** from lesson 2 on, the first step is
+  one word from the previous lesson, spelled from its picture.
+
+### 6.2 The spelling ladder (one engine, data picks the rung)
+
+| Rung | What the child does | Used for |
+| --- | --- | --- |
+| 1 | Spell with only the word's letters (today's Spell) | every first meeting |
+| 2 | A few letters already placed, fill the gaps | long words: `February`, `September`, `vegetable`, `grandfather` |
+| 3 | The word's letters + 2 decoy letters | review lessons |
+| 4 | Picture only, word hidden — spell from memory | review lessons, warm-ups |
+| 5 | Type it on the keyboard (desktop already has this) | ages 8–9 / desktop |
+
+Months start with a **capital letter** — the first tile is the capital.
+
+### 6.3 Activity library (reuse first, few new pieces)
+
+| Activity | Status | Where |
+| --- | --- | --- |
+| Word, Spell, Trace, Pick, Count, Sort, Find (3D scene) | built | everywhere |
+| **Find by tag**: Find with any target (a colour, an animal), not only a shape | small change | Colours, Fruits, Animals, Body |
+| **Sort into any boxes** (season, home, fruit/veg, colour bucket) | small change | most reviews |
+| **Spell rungs 2–4** (given letters, decoys, hidden word) | small change | §6.2 |
+| **Colour it**: pick a paint pot, tap the thing | new | Colours |
+| **Dress up**: drag things onto the friend (coat, umbrella, sunglasses) | new (drop-onto-zones) | Seasons, Weather |
+| **Put in order**: a train of cards to arrange | new | Months, Colours (rainbow), Family (oldest→youngest) |
+| **Touch it**: tap a part on one big picture ("Touch the nose") | Find on one picture | My Body, My Family |
+
+### 6.4 Per course
+
+**Pinki · Colours** — words: red, blue, yellow, green, orange, purple, pink,
+brown, black, white. *Do*: **Colour it** (tomato → red, sea → blue). *Hunt*:
+find every red thing in the picnic scene (Find by tag). Lesson 3 adds a
+**mixing** Pick: red + yellow = ? (paint blobs). *Review*: sort things into
+colour buckets, then put the rainbow in order.
+
+**Pinki · My Family** (the simplest) — words: mum, dad, brother, sister,
+grandma, grandpa, baby, me. Three-letter `mum`/`dad` make the easiest first
+spells. *Do*: **Touch it** on a family photo ("Touch Grandma"). *Hunt*: who's
+missing from the photo? *Review*: put the family in order, oldest → youngest,
+then spell from the picture only.
+
+**Nova · Fruits & Vegetables** — 3 words per lesson (apple, banana, orange,
+grape, pear, mango, carrot, tomato, potato, onion, pea, corn). *Do*: **Count**
+into a basket ("Put 3 bananas in the basket" — numbers sneak back in). *Hunt*:
+find them on a market stall. Lesson 5: **Sort** fruit / vegetable. *Review*:
+a shopping list — read the words, put the right things in the basket
+(reading, not just spelling).
+
+**Nova · The Seasons** — words: spring, summer, autumn, winter + one sign each
+(flower, sun, leaf, snow). *Do*: **Dress up** Nova for the season. *Hunt*: the
+same tree four times — tap the winter one. *Review*: sort things into four
+season boxes; put the seasons in order round a circle.
+
+**Nova · Months of the Year** (hardest words, comes after Seasons) — three
+months a lesson; short ones (`May`, `June`, `July`) spelled whole, long ones on
+rung 2. *Do*: **Put in order** (a month train). *Hunt*: "Which season is
+December?" — months sorted into seasons (links to the course before).
+*Review*: the whole year train + "When is your birthday?" (tap your month;
+visual only, nothing stored).
+
+**Bloo · Animals** — words: cat, dog, fish · cow, sheep, duck, horse · lion,
+monkey, elephant, giraffe · whale, shark, octopus · puppy, kitten, nest.
+*Do*: **shadow match** — which animal makes this shadow? (Pick; works with no
+sound; becomes "who says moo?" once audio lands). *Hunt*: find the animals in
+a farm / safari / sea scene. *Review*: sort animals into their homes.
+
+**Bloo · The Weather** — words: sun, rain, cloud, wind, snow, then sunny,
+rainy, cloudy, windy, snowy (the `-y` ending is a spelling lesson by itself).
+*Do*: **Dress up** Bloo (umbrella, sunglasses, scarf). *Hunt*: "Make it
+rainy" — pick what changes the sky. *Review*: weather report — read a short
+sentence ("It is windy.") and pick its picture.
+
+**Bloo · My Body** — words: eye, ear, nose, mouth, face, head, hair, arm,
+hand, leg, foot. *Do*: **Touch it** on Bloo ("Touch the ear"). *Hunt*:
+**build a monster** — "give it 3 eyes and 2 noses" (silly, counting + words).
+*Review*: drag the words onto the body (label it), then spell from memory.
+
+### 6.5 Open questions
+
+- British spelling (`colour`, `autumn`, `mum`) — confirm.
+- 2–3 words per lesson, or keep Shapes' one?
+- New activities to build: Colour it, Dress up, Put in order — all three, or
+  start with one?
+
+Sources: Cambridge Pre A1 Starters wordlist (cambridgeenglish.org);
+retrieval/spaced practice in child word learning (PMC8084525, PMC11087082);
+letter-tile and missing-letter spelling apps (Letter Tiles, Spelling City);
+months/seasons ESL lesson ideas (eslkidstuff.com).
 
 ## 7. Sound
 None yet. Only the taught English words will be recorded (the word card's big
@@ -163,12 +274,12 @@ instead (decided 2026-09-28).
 
 ## 8. Not now (on purpose)
 Collections, "Is Pinki right?", hint friends, translate button, questions inside
-the reel, review rounds, more question types (Sort is the one exception, added for the Shape review on request). Add one only if testing with
+the reel, question types beyond §6.3. Add one only if testing with
 children shows it's needed.
 
 ---
 
-## 9. Build plan: Pinki
+## 9. Build plan
 
 Each phase ends with typecheck + lint passing, the dev server clean, and the
 docs (README, CLAUDE.md, `claude-docs/`) updated.
@@ -233,18 +344,26 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
 
-### Phase 5 — Adding course
-- [ ] 5 reels + ~6 pictures.
-- [ ] 5 lessons of data.
-- [ ] Same test round.
+### Phase 5 — The other eight courses
+- [x] Adding dropped; Pinki's courses are Shapes · Colours · My Family; Nova
+      and Bloo open, each with three courses whose lessons show "coming
+      soon" (titles provisional, 2026-10-02).
+- [ ] §6 proposal approved (or changed) — then lesson titles fixed.
+- [ ] Engine additions (§6.3), each built once and fed by data.
+- [ ] Pictures + scenes per course, then lesson data, in this order:
+      Colours → My Family → Fruits & Vegetables → The Seasons → Months →
+      Animals → The Weather → My Body.
+- [ ] Play each course through on a phone.
 
-### Phase 6 — Finish
-- [ ] Fix what the tests showed.
-- [ ] Final docs pass. Pinki becomes the pattern Nova and Bloo copy.
+### Phase 6 — Reels, sound, finish
+- [ ] Every course's reels replace the placeholders (same file names).
+- [ ] Audio: every taught word recorded (§7), `playCue` wired.
+- [ ] Test with one child aged 5–6 and one aged 8–9; fix what it shows.
+- [ ] Final docs pass.
 
 ---
 
-## 10. Assets for Pinki
+## 10. Assets
 
 **Pictures** (AI clay, same style as `public/assets/icons/giraffe.png`):
 
@@ -256,8 +375,8 @@ pastel colours, soft light, centred, plain white background, no text, no shadow.
 | Folder | Files |
 | --- | --- |
 | `public/assets/learn/pinki/shapes/` | `circle.png` `square.png` `triangle.png` `rectangle.png` · `pizza.png` `clock.png` `window.png` `door.png` `book.png` `cake-slice.png` `kite.png` `plate.png` `phone.png` `ball.png` |
-| `public/assets/learn/pinki/adding/` | `apple.png` `cupcake.png` `basket.png` `box.png` `star.png` `ball.png` |
-| `public/assets/learn/pinki/` | `course-shapes.png` `course-adding.png` (card icons) |
+| `public/assets/learn/pinki/` | `course-shapes.png` (card icon) |
+| `public/assets/learn/{friend}/{course}/` | each new course's pictures, same prompt (§6.4 lists the words) |
 
 **Find scenes** (in place): `public/assets/learn/pinki/shapes/find/` —
 `picnic.jpg` (the circles' empty scene) and one PNG per thing (plate, donut,
@@ -271,7 +390,7 @@ cookie, ball, toast, cheese, book, kite); `squares/`, `triangles/`,
 | Folder | Files |
 | --- | --- |
 | `public/assets/learn/pinki/shapes/reels/` | `1.mp4` … `4.mp4` (circle, square, triangle, rectangle; placeholders in place now) |
-| `public/assets/learn/pinki/adding/reels/` | `1.mp4` … `5.mp4` |
+| `public/assets/learn/{friend}/{course}/reels/` | `1.mp4` … `n.mp4`, one per lesson (placeholders until Phase 6) |
 
 PNG with or without background is fine: background removal and un-matting are
 done on our side. Pictures are imported in code; reels are played by path.
