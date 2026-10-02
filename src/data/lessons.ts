@@ -2,9 +2,10 @@ import type { CharacterId } from "@/types/character";
 import type { Lesson, LessonId } from "@/types/lesson";
 import { courseLessons } from "./courses";
 
-type Tone = "shapes" | "colors" | "numbers" | "letters";
+type Tone = "shapes" | "colors" | "numbers" | "letters" | "pinki";
 
-/** A course in one of the four subject colours. Only Shapes has its own
+/** A course in one of the four subject colours — or, for Pinki's courses,
+    Pinki's own pink, so her whole corner reads pink. Only Shapes has its own
     card art; every other course shows its friend until its art arrives
     (the image is the reel's poster). */
 const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]): Lesson => ({
@@ -12,8 +13,8 @@ const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]):
   view,
   image,
   theme: {
-    accent: `var(--color-subject-${tone})`,
-    accentDark: `var(--color-subject-${tone}-dark)`,
+    accent: tone === "pinki" ? "var(--color-pinki)" : `var(--color-subject-${tone})`,
+    accentDark: tone === "pinki" ? "var(--color-pinki-dark)" : `var(--color-subject-${tone}-dark)`,
   },
   totalItems: courseLessons[id].length,
   locked: false,
@@ -24,9 +25,9 @@ const course = (id: LessonId, tone: Tone, image: string, view?: Lesson["view"]):
     dictionaries, not this file. */
 export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   pinki: [
-    course("shapes", "shapes", "/assets/learn/pinki/course-shapes.png"),
-    course("colors", "colors", "/assets/friends/pinki.png", "box"),
-    course("family", "numbers", "/assets/friends/pinki.png"),
+    course("shapes", "pinki", "/assets/learn/pinki/course-shapes.png"),
+    course("colors", "pinki", "/assets/friends/pinki.png", "box"),
+    course("family", "pinki", "/assets/friends/pinki.png"),
   ],
   nova: [
     course("fruits", "shapes", "/assets/friends/nova.png"),
