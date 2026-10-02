@@ -1,7 +1,7 @@
 # Edenic World
 
 An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
-**Nova**, and **Bloo** — each teach three courses: Pinki shapes, colours and
+**Nova**, and **Bloo** — each teach three courses: Pinki shapes, colors and
 family; Nova fruits and vegetables, the seasons and the months; Bloo animals,
 the weather and the body. A course is a short run of lessons the child opens one
 after another, each starting with a video and centred on spelling the English
@@ -109,7 +109,7 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Course subjects own a second, parallel palette (`--color-subject-*`): Shapes
-  orange; the other courses borrow the `colors`, `numbers` and `letters` tokens
+  orange, Colors blue; the other courses borrow the `colors`, `numbers` and `letters` tokens
   until they get their own. It is used on the lesson hub from tablet width up,
   so the courses read apart at a glance, and it is kept separate from the
   mascot colors.
@@ -176,8 +176,9 @@ src/
   store/              Progress, theme and page-transition state (zustand)
   types/              Shared TypeScript types
 tools/
-  picnic-scene/       Renders the Find scenes (one per shape) in three.js
-                      (headless Chromium) and crops them into layers — not
+  picnic-scene/       Renders every clay picture in three.js (headless
+                      Chromium): the Find scenes, the paint pots and the
+                      things to paint, then crops them into layers — not
                       part of the site build
 public/
   hero.webp           Home hero scene
@@ -194,7 +195,11 @@ public/
                             until the real reels replace them by name;
                             shapes/find/ holds the rendered Find scenes:
                             the circles' picnic, then squares/, triangles/
-                            and rectangles/)
+                            and rectangles/; colors/ holds the ten paint
+                            pots, the things to paint (grey and painted),
+                            the five color picnics and the same placeholder
+                            reels. All pictures are rendered by
+                            tools/picnic-scene — none come from outside)
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -206,10 +211,11 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-has three courses — **Shapes**, **Colours** and **My Family** — and Nova and Bloo
+has three courses — **Shapes**, **Colors** and **My Family** — and Nova and Bloo
 are open with three each (Fruits & Vegetables, The Seasons, Months of the Year;
-Animals, The Weather, My Body). Only Shapes is written; the other eight list
-their lessons and show "coming soon".
+Animals, The Weather, My Body). Shapes and Colors are written; the other seven
+list their lessons and show "coming soon". Every taught word is American
+English (color, fall, mom).
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 clay card per course (its things piled on it, a play button, a progress bar),
 and a course page is a banner over a winding clay path: one stop per lesson,
@@ -278,6 +284,18 @@ word ("square", "rectangle") is shown in clay letters above four shapes, and
 finally one more drawing, a triangle. The done screen shows all four shapes
 beside the child's drawing. The reels are placeholders until
 the real clips arrive.
+
+**Colors is written: two colors per lesson** — Red & Blue, Yellow & Green,
+Orange & Purple, Pink & Brown, Black & White, then a Color review. A color is
+shown as a clay paint pot of that color. Each color is met (the pot, and the
+word written in its own color) and spelled straight away; then the child
+**paints**: the color word appears in plain dark letters over a thing in grey
+clay and a row of paint pots, and tapping the pot the word names spreads the
+paint over the thing — it is reading, not guessing. Orange and purple are
+**mixed** instead (red + yellow = ?), from the primaries met before. Every
+lesson ends by finding the things of one color in a picnic, and the review
+sorts things into four color boxes, names a color from its word, and spells
+two colors from the pot alone, with no word on screen.
 
 Other lessons use pick the right tile or count things into a basket, and on
 the first one Pinki shows how. A wrong
