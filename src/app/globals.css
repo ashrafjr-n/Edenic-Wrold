@@ -252,6 +252,12 @@
      actually pops as "look here" rather than blending into the card. */
   --color-gold-glow: #ffa733;
 
+  /* The word "black" in black clay letters (Colors course). On the dark
+     theme's card black letters vanish, so there they lift a little and
+     take a pale edge to read by. */
+  --color-letter-black: #3a3640;
+  --color-letter-black-edge: #1b1820;
+
   /* Deep violet, sampled from the eyes — every piece of text on the site. */
   --color-ink: #2f2a52;
   /* The SAME violet, but never overridden in dark mode — unlike `--color-ink`
@@ -452,6 +458,9 @@ bdi {
   --background: #1e1b2e;
   --surface: #2a2b3d;
   --foreground: #ece8f7;
+
+  --color-letter-black: #4a4553;
+  --color-letter-black-edge: #9c95b5;
 
   --color-ink: #ece8f7;
   --color-ink-soft: #b3addc;

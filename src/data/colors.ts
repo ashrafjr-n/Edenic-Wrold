@@ -45,7 +45,9 @@ export const COLORS: Record<ColorId, ColorDef> = {
   purple: color(purple, "#9257de", "#6334a8"),
   pink: color(pink, "#ff86c2", "#cc5591"),
   brown: color(brown, "#96592f", "#643814"),
-  black: color(black, "#3a3640", "#1b1820"),
+  /* Black letters follow the theme (`--color-letter-black`): black on the
+     dark card would disappear. */
+  black: { ...color(black, "#3a3640", "#1b1820"), letter: { face: "var(--color-letter-black)", edge: "var(--color-letter-black-edge)" } },
   /* White letters on a white card are read by their edge — a deeper one. */
   white: color(white, "#ffffff", "#c5cbd8", INK, "#8f98ab"),
 };
