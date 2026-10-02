@@ -103,7 +103,7 @@ export const en = {
     family: {
       name: "My Family",
       description: "Mom, Dad and everyone at home",
-      items: ["Mom & Dad", "Brother & Sister", "Grandma & Grandpa", "Baby & Me", "Family review"],
+      items: ["Mom", "Dad", "Sister", "Brother", "Baby", "Grandma", "Grandpa", "Family review"],
     },
     fruits: {
       name: "Fruits & Vegetables",
