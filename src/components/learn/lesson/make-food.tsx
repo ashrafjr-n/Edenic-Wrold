@@ -252,9 +252,13 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
             );
           })}
         </ul>
-        {serve && phase === "full" && (
-          <span className="anim-pop-in pointer-events-none absolute inset-[-8%]" style={{ animationDelay: "0.55s" }}>
-            <Image src={serve} alt="" fill sizes="(min-width: 1024px) 18rem, 9rem" className="object-contain" />
+        {/* Loaded up front too, hidden until it pours. */}
+        {serve && (
+          <span
+            className={`pointer-events-none absolute inset-[-8%] ${phase === "full" ? "anim-pop-in" : "invisible"}`}
+            style={{ animationDelay: "0.55s" }}
+          >
+            <Image src={serve} alt="" fill preload sizes="(min-width: 1024px) 18rem, 9rem" className="object-contain" />
           </span>
         )}
       </div>
