@@ -154,15 +154,16 @@ src/
   components/
     home/             Hero, friends introduction, Learn/Play panels
     learn/            Friend picker, character cards, course cards, the
-                      course path and lesson grid, their progress bar and
+                      course's box of lessons, their progress bar and
                       Continue button
     learn/lesson/     The lesson player: the task button and its how-to
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      Fill the word, Nova's garden to pick from, her
-                      blender and soup pot, the "Do you like…?" plates,
-                      the done screen, and the pieces they are built from
+                      Fill the word, the review's garden to pick Nova's
+                      list from, her blender and soup pot, the "Do you
+                      like…?" plates, the done screen, and the pieces they
+                      are built from
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
@@ -181,10 +182,11 @@ tools/
   picnic-scene/       Renders every clay picture in three.js (headless
                       Chromium): the Find scenes, the paint pots and the
                       things to paint, Nova's blender, juice glasses and
-                      soup pots, and her gardens (a tree, a banana plant, a
-                      vine, a vegetable bed, corn stalks — each with its
-                      food and her basket), then crops them into layers —
-                      not part of the site build
+                      soup pots, and her gardens (an apple tree, a banana
+                      plant and an orange tree; a carrot bed, the banana
+                      plant and a potato bed — each with its food and one
+                      basket), then crops them into layers — not part of
+                      the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -208,8 +210,10 @@ public/
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
                             (things/, props/ — the blender and the soup pot
                             — make/: the review's mixed juice, its glass and
-                            the soup, and garden/: one garden per food, in
-                            layers), seasons/ (the seasons picnic), months/
+                            the soup, fill/: each food as it grows, to fill
+                            its word with, and garden/: the review's two
+                            gardens, in layers), seasons/ (the seasons
+                            picnic), months/
                             (the calendar pages), and each course's
                             placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
@@ -236,7 +240,7 @@ and a course page is a banner over its lessons. Everything in Pinki's courses
 is Pinki's pink — the banners, the cards' play buttons and progress bars,
 Continue, and the lesson's own buttons — with green kept for "Next". Tablets and desktops get their own layouts that fill
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
-big course cards; a course's path winds across a board on a desktop; and a
+big course cards; a course's box of lessons fills a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
 the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs across the top (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
 pages have a Start / Continue / Next Lesson button.
@@ -320,16 +324,18 @@ picture:
   (the thing, the word in clay letters, the speaker) and **spelled**; then
   the child **fills the word**: it stands in big empty letters, and
   rubbing a letter with a finger fills it with little apples (carrots…)
-  until the whole word is made of the thing. Last, the child **picks
-  them**: Nova's apple tree (her banana plant, her vine, her vegetable bed,
-  her corn) with five of the thing on it and her basket on the grass — tap
-  one and it comes off (a vegetable is pulled up out of the soil), flies
-  into the basket and its word pops up where it was; with all five in, the
-  word under the garden becomes its plural ("apples"). The review makes a
-  **mixed juice** (a layered one) in Nova's 3D blender and a **vegetable
-  soup** in her pot from recipes of words alone, asks **"Do you like…?"**
-  (thumbs up or down onto two plates — "I like apples." / "I don't like
-  corn." — no wrong answer), and spells two words from the picture.
+  until the whole word is made of the thing. The review makes a **mixed
+  juice** (a layered one) in Nova's 3D blender and a **vegetable soup** in
+  her pot from recipes of words alone, asks **"Do you like…?"** (thumbs up
+  or down onto two plates — "I like apples." / "I don't like corn." — no
+  wrong answer), spells two words from the picture, and ends with an
+  **exam in Nova's garden**: three plants side by side, one basket, and
+  her list — "3 apples · 2 oranges · 1 banana", then "1 potato · 3
+  carrots · 2 bananas". Each plant has more than the list asks for, and the
+  list is never in the plants' order, so every line has to be read and
+  counted. Tap one and it comes off (a vegetable is pulled up out of the
+  soil), flies into the basket and its word pops up where it was, filling
+  a socket on its line; one too many wiggles back on its branch.
 - **The Seasons** — spring (a flower), summer (the sun), fall (an orange
   leaf), winter (a snowman). Meet, spell, pick the season by its word, then
   find everything that goes with it in a picnic of all four. The review
