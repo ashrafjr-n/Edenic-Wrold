@@ -175,14 +175,15 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
   };
 
   return (
-    /* Phone and tablet: the word across the top, the things in a column on
-       the left, the blender on the right — a recipe's note goes over the
-       things. Desktop: the word (the note) over the things on the left,
-       the blender on the right, as tall as the stage. */
+    /* Phone: the word (a recipe's note) across the top, the things on the
+       left under it, the blender on the right. Tablet: the same, except a
+       recipe's note goes over the things. Desktop: the word (the note) over
+       the things on the left, the blender on the right, as tall as the
+       stage. */
     <div
       className={`grid w-full max-w-md items-center gap-x-4 gap-y-4 sm:max-w-xl sm:gap-x-8 sm:gap-y-6 lg:w-auto lg:max-w-4xl lg:grid-cols-[auto_auto] lg:gap-x-16 lg:gap-y-6 lg:[grid-template-areas:'word_maker'_'stall_maker'] [@media(max-height:700px)]:gap-y-2.5 ${
         recipe
-          ? "grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] [grid-template-areas:'word_maker'_'stall_maker']"
+          ? "grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] [grid-template-areas:'word_word'_'stall_maker'] sm:[grid-template-areas:'word_maker'_'stall_maker']"
           : "grid-cols-[minmax(0,2fr)_minmax(0,3fr)] [grid-template-areas:'word_word'_'stall_maker']"
       }`}
     >
@@ -212,7 +213,7 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
                 key={index}
                 className={`relative aspect-square w-full transition-opacity duration-300 lg:max-w-none ${
                   recipe
-                    ? "max-w-[min(6rem,11svh)] sm:max-w-28 lg:w-[min(7rem,calc(var(--stage-h)*0.28))] [@media(max-height:700px)]:max-w-[min(6rem,9.5svh)]"
+                    ? "max-w-[min(6rem,13svh)] sm:max-w-28 lg:w-[min(7rem,calc(var(--stage-h)*0.28))] [@media(max-height:700px)]:max-w-[min(6rem,9.5svh)] max-sm:[@media(max-height:700px)]:max-w-[min(6rem,11svh)]"
                     : "max-w-[min(6.5rem,11.5svh)] sm:max-w-32 lg:w-[min(8.5rem,calc(var(--stage-h)*0.3))]"
                 } ${hinted === index ? "guide-target" : ""} ${phase === "full" && serve ? "opacity-0" : ""}`}
               >
@@ -231,8 +232,9 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
                     onPointerMove={onPointerMove}
                     onPointerUp={onPointerUp}
                     onPointerCancel={() => setDrag(null)}
-                    /* `touch-action: none` or a drag scrolls the page instead. */
-                    className={`card card-clay-white flex h-full w-full touch-none select-none items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
+                    /* `touch-action: none` or a drag scrolls the page instead.
+                       On a phone the picture fills more of its tile. */
+                    className={`card card-clay-white flex h-full w-full touch-none select-none items-center justify-center transition-transform duration-200 max-sm:[&_img]:h-[76%] max-sm:[&_img]:w-[76%] focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
                       held ? "cursor-grabbing" : "cursor-grab"
                     } ${isShaking ? "anim-wiggle" : ""} ${adding ? "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]" : ""}`}
                   >
