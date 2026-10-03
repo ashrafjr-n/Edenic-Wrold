@@ -10,6 +10,17 @@ Shapes `find/` itself (`picnic.jpg`); every other scene in `<dest>/<name>/`
     python3 tools/picnic-scene/crop.py squares
     python3 tools/picnic-scene/crop.py red public/assets/learn/pinki/colors/find
 
+Nova's garden — run after `render.cjs harvest <food>`: writes the garden
+without the food (`ground.jpg`), the food (`item.png` — all five are alike),
+what stands in front of it (`front.png`: a bed's near half and the basket)
+and the basket's near half that goes over what is piled in it (`rim.png`),
+both cut out of the garden, into `<dest>/<food>/`, and prints each food's
+box and hit area (the part not behind the front), the two layers' boxes and
+the basket's mouth — paste them into `data/garden.ts`. `dest` defaults to
+`public/assets/learn/nova/fruits/garden`.
+
+    python3 tools/picnic-scene/crop.py harvest-apple
+
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`.
@@ -19,7 +30,7 @@ into `dest`.
 import json
 import os
 import sys
-from PIL import Image
+from PIL import Image, ImageChops
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.join(HERE, "../..")
@@ -43,16 +54,44 @@ if NAME == "things":
         thing.save(os.path.join(dest, f"{name}.png"), optimize=True)
     sys.exit()
 
+
+def pct(r):
+    return [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2),
+            round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
+
+
+if NAME.startswith("harvest-"):
+    food = NAME[len("harvest-"):]
+    out = os.path.join(HERE, "out", NAME)
+    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/garden", food)
+    os.makedirs(dest, exist_ok=True)
+    ground = Image.open(f"{out}/background.png").convert("RGB")
+    ground.save(f"{dest}/ground.jpg", quality=86, optimize=True, progressive=True)
+    boxes = {}
+    for layer_name in ("front", "rim"):
+        mask = Image.open(f"{out}/{layer_name}mask.png").convert("L")
+        cut = ground.convert("RGBA")
+        cut.putalpha(mask)
+        boxes[layer_name] = alpha_box(cut, pad=2)
+        cut.crop(boxes[layer_name]).save(f"{dest}/{layer_name}.png", optimize=True)
+    solid = Image.open(f"{out}/frontmask.png").convert("L").point(lambda v: 255 if v > 127 else 0)
+    meta = json.load(open(f"{out}/meta.json"))
+    items = []
+    for k in range(meta["count"]):
+        layer = Image.open(f"{out}/item{k}.png")
+        box = alpha_box(layer)
+        if k == 0:
+            layer.crop(box).save(f"{dest}/item.png", optimize=True)
+        seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
+        items.append({"box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
+    print(json.dumps({"items": items, "pivot": meta["pivot"], "front": pct(boxes["front"]), "rim": pct(boxes["rim"]), "basket": meta["basket"]}))
+    sys.exit()
+
 OUT = os.path.join(HERE, "out", NAME)
 FIND = os.path.join(ROOT, sys.argv[2]) if len(sys.argv) > 2 else os.path.join(ROOT, "public/assets/learn/pinki/shapes/find")
 DEST = FIND if NAME == "picnic" else os.path.join(FIND, NAME)
 GROUND = "picnic.jpg" if NAME == "picnic" else "ground.jpg"
 os.makedirs(DEST, exist_ok=True)
-
-
-def pct(r):
-    return [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2),
-            round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
 
 
 Image.open(f"{OUT}/background.png").convert("RGB").save(

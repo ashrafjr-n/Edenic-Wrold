@@ -52,7 +52,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1708,6 +1708,369 @@ const ITEMS = {
   },
 };
 
+/* ---------- Nova's garden (Fruits & Vegetables: pick them) ----------
+   `?harvest=<food>` — seen from the front and a little above: a sky, the
+   grass, the tree (the bed, the stalks) with five of the food on it and
+   Nova's basket on the grass. `GARDENS[food]` says what grows where. */
+
+const SKY = 0xdbecfa; // `--brand` 16% on white, the Pop sky
+
+/* A tube along a curve, `r0` thick at its start and `r1` at its end, its
+   ends rounded off. */
+function taperTube(points, r0, r1, material, segments = 48) {
+  const curve = new THREE.CatmullRomCurve3(points.map(([x, y, z]) => new THREE.Vector3(x, y, z)));
+  const R = 24;
+  const geo = new THREE.TubeGeometry(curve, segments, 1, R);
+  const pos = geo.attributes.position;
+  for (let i = 0; i <= segments; i++) {
+    const c = curve.getPointAt(i / segments);
+    const k = r0 + (r1 - r0) * (i / segments);
+    for (let j = 0; j <= R; j++) {
+      const idx = i * (R + 1) + j;
+      pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * k, c.y + (pos.getY(idx) - c.y) * k, c.z + (pos.getZ(idx) - c.z) * k);
+    }
+  }
+  geo.computeVertexNormals();
+  const g = new THREE.Group();
+  g.add(mesh(geo, material));
+  for (const [t, r] of [[0, r0], [1, r1]]) {
+    const cap = mesh(new THREE.SphereGeometry(r, 24, 16), material);
+    cap.position.copy(curve.getPointAt(t));
+    g.add(cap);
+  }
+  return g;
+}
+
+const turf = (color) => clay(color, { clearcoat: 0.05, roughness: 0.9, sheen: 0 });
+
+/* The grass out to `far` and two soft hills on its edge. */
+function gardenGround(far = 12) {
+  const g = new THREE.Group();
+  const grass = mesh(new THREE.PlaneGeometry(16, far + 6), turf(0x8fd16e));
+  grass.rotation.x = -Math.PI / 2;
+  grass.position.z = (6 - far) / 2;
+  grass.castShadow = false;
+  g.add(grass);
+  for (const [x, back, r, color] of [[-3.9, 3.6, 4.4, 0x80c765], [3.7, 2.4, 5.0, 0x89ce6b]]) {
+    const hill = mesh(new THREE.SphereGeometry(r, 96, 48), turf(color));
+    hill.scale.y = far < 12 ? 0.22 : 0.4;
+    hill.position.set(x, 0, back - far);
+    hill.castShadow = false;
+    g.add(hill);
+  }
+  return g;
+}
+
+/* A round fruit tree: a bent trunk, two branches into a crown of leafy
+   balls. Its front is at z ≈ 1.4 — the fruit hangs just in front of it. */
+function fruitTree(leafColor) {
+  const g = new THREE.Group();
+  const bark = clay(0xa0703f, { roughness: 0.75, clearcoat: 0.2 });
+  g.add(taperTube([[0, 0, 0], [0.08, 0.9, 0], [-0.05, 1.8, 0], [0.02, 2.8, -0.2]], 0.42, 0.26, bark));
+  g.add(taperTube([[0, 1.8, 0], [-0.6, 2.4, 0.05], [-1.2, 2.85, -0.15]], 0.2, 0.1, bark));
+  g.add(taperTube([[0, 2.1, 0], [0.55, 2.6, 0.05], [1.15, 3.05, -0.15]], 0.18, 0.09, bark));
+  g.add(mesh(smoothLathe([[0, 0], [0.7, 0], [0.52, 0.12], [0.43, 0.42], [0, 0.48]]), bark));
+  const leaf = clay(leafColor, { clearcoat: 0.3, clearcoatRoughness: 0.4, roughness: 0.6 });
+  for (const [x, y, z, r] of [[0, 4.5, -0.7, 1.75], [-1.45, 3.9, -0.3, 1.3], [1.45, 3.9, -0.3, 1.3], [-0.85, 5.35, -0.5, 1.2], [0.9, 5.3, -0.5, 1.2], [-0.9, 3.25, 0.1, 1.05], [0.95, 3.3, 0.05, 1.05], [0, 4.0, 0.2, 1.2]]) {
+    const ball = mesh(new THREE.SphereGeometry(r, 64, 48), leaf);
+    ball.position.set(x, y, z);
+    g.add(ball);
+  }
+  return { group: g };
+}
+
+/* A banana plant: a thick soft stem and a crown of long leaves, a dark
+   knob under them where the bunch hangs from. */
+function bananaPlant() {
+  const g = new THREE.Group();
+  g.add(taperTube([[0, 0, 0], [0.05, 1.6, 0], [0, 3.4, -0.1]], 0.4, 0.3, clay(0x9fae5a, { roughness: 0.7, clearcoat: 0.2 })));
+  const leaf = clay(0x5fbf58, { clearcoat: 0.35, roughness: 0.55, side: THREE.DoubleSide });
+  const light = clay(0x7fd06a, { clearcoat: 0.35, roughness: 0.55, side: THREE.DoubleSide });
+  /* [angle from straight up, length, droop, z] — leaves fan out of the top. */
+  for (const [a, len, droop, z, k] of [[-1.25, 2.6, 0.35, -0.3, 0], [-0.7, 2.5, 0.25, -0.5, 1], [-0.2, 2.2, 0.1, -0.7, 0], [0.3, 2.3, 0.15, -0.6, 1], [0.8, 2.6, 0.3, -0.4, 0], [1.3, 2.5, 0.4, -0.2, 1], [-1.6, 2.2, 0.5, 0.1, 1], [1.65, 2.1, 0.5, 0.15, 0]]) {
+    const dir = new THREE.Vector3(Math.sin(a), Math.cos(a), 0);
+    const base = new THREE.Vector3(0, 3.3, z);
+    const mid = base.clone().addScaledVector(dir, len * 0.55).add(new THREE.Vector3(0, 0.25, 0));
+    const tip = base.clone().addScaledVector(dir, len).add(new THREE.Vector3(0, -droop * len, 0));
+    const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
+    /* A flat blade along the curve: a tube squashed flat, widest midway. */
+    const T = 40, R = 16;
+    const geo = new THREE.TubeGeometry(curve, T, 1, R);
+    const pos = geo.attributes.position;
+    for (let i = 0; i <= T; i++) {
+      const t = i / T;
+      const c = curve.getPointAt(t);
+      const w = 0.55 * Math.sin(Math.PI * Math.min(1, t * 1.05)) ** 0.7 + 0.03;
+      for (let j = 0; j <= R; j++) {
+        const idx = i * (R + 1) + j;
+        const off = new THREE.Vector3(pos.getX(idx) - c.x, pos.getY(idx) - c.y, pos.getZ(idx) - c.z);
+        /* Wide across the screen-facing side, thin front to back. */
+        pos.setXYZ(idx, c.x + off.x * w, c.y + off.y * w, c.z + off.z * w * 0.12);
+      }
+    }
+    geo.computeVertexNormals();
+    g.add(mesh(geo, k ? light : leaf));
+  }
+  const knob = mesh(new THREE.SphereGeometry(0.22, 32, 24), clay(0x7a4a2c));
+  knob.position.set(0, 3.2, 0.35);
+  g.add(knob);
+  return { group: g };
+}
+
+/* A wooden arbour under a vine: two posts, two beams, vine leaves along
+   the beams and up a post. The bunches hang under the beams. */
+function grapeArbour() {
+  const g = new THREE.Group();
+  const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
+  for (const x of [-2.65, 2.65]) {
+    const post = mesh(new RoundedBoxGeometry(0.34, 6.3, 0.34, 4, 0.08), wood);
+    post.position.set(x, 3.15, -0.2);
+    g.add(post);
+  }
+  for (const y of [6.0, 3.85]) {
+    const beam = mesh(new RoundedBoxGeometry(6.0, 0.3, 0.34, 4, 0.08), wood);
+    beam.position.set(0, y, 0);
+    g.add(beam);
+  }
+  const vine = clay(0x5fb85a, { clearcoat: 0.35, roughness: 0.55 });
+  const pale = clay(0x7cc860, { clearcoat: 0.35, roughness: 0.55 });
+  /* Leaves: flattened balls, a few along each beam and the left post. */
+  const leaves = [
+    [-2.4, 6.25, 0.05, 0.42], [-1.75, 6.35, -0.1, 0.36], [-0.95, 6.2, 0.1, 0.4], [-0.25, 6.38, -0.05, 0.34], [0.5, 6.22, 0.1, 0.4], [1.2, 6.36, -0.1, 0.35], [1.95, 6.24, 0.08, 0.4], [2.5, 6.4, -0.05, 0.33],
+    [-2.3, 4.1, 0.05, 0.36], [-1.55, 4.2, -0.05, 0.32], [-0.05, 4.12, 0.08, 0.34], [1.5, 4.18, -0.04, 0.33], [2.35, 4.08, 0.06, 0.35],
+    [-2.85, 5.1, 0.1, 0.33], [-2.45, 2.7, 0.12, 0.32], [-2.9, 1.6, 0.1, 0.3],
+  ];
+  leaves.forEach(([x, y, z, r], i) => {
+    const l = mesh(new THREE.SphereGeometry(r, 32, 20), i % 3 ? vine : pale);
+    l.scale.set(1.25, 0.95, 0.35);
+    l.position.set(x, y, z);
+    l.rotation.z = (i % 2 ? 1 : -1) * 0.4;
+    g.add(l);
+  });
+  g.add(taperTube([[-2.7, 0.2, 0.25], [-2.35, 1.4, 0.3], [-2.95, 2.6, 0.3], [-2.4, 3.8, 0.25], [-2.8, 5.0, 0.3], [-2.3, 6.0, 0.25]], 0.06, 0.04, clay(0x7a5a2c)));
+  return { group: g };
+}
+
+/* A white picket fence across the garden at `z`. */
+function fence(z) {
+  const g = new THREE.Group();
+  const paint = clay(0xf6f1e7, { roughness: 0.6, clearcoat: 0.3 });
+  for (let x = -3.4; x <= 3.4; x += 0.56) {
+    const picket = mesh(new THREE.CapsuleGeometry(0.13, 1.05, 6, 16), paint);
+    picket.scale.z = 0.45;
+    picket.position.set(x, 0.66, z);
+    g.add(picket);
+  }
+  for (const y of [0.4, 0.95]) {
+    const rail = mesh(new RoundedBoxGeometry(7.2, 0.12, 0.08, 3, 0.04), paint);
+    rail.position.set(0, y, z - 0.1);
+    g.add(rail);
+  }
+  return g;
+}
+
+/* A raised bed of soil in wooden planks, its near half standing in front
+   of the vegetables in it (so they can be pulled up out of it); a fence
+   and the sun behind. */
+const SOIL_TOP = 1.15;
+function gardenBed() {
+  const g = new THREE.Group();
+  const back = new THREE.Group();
+  back.add(fence(-2.4));
+  const sun = ITEMS.sun();
+  sun.scale.setScalar(0.95);
+  sun.position.set(1.95, 1.2, -7.6);
+  back.add(sun);
+  const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
+  for (const z of [-0.95, 0.95]) {
+    const plank = mesh(new RoundedBoxGeometry(5.9, 1.3, 0.22, 4, 0.07), wood);
+    plank.position.set(0, 0.65, z);
+    g.add(plank);
+  }
+  for (const x of [-2.84, 2.84]) {
+    const side = mesh(new RoundedBoxGeometry(0.22, 1.3, 2.12, 4, 0.07), wood);
+    side.position.set(x, 0.65, 0);
+    g.add(side);
+  }
+  const earth = clay(0x7d5134, { roughness: 0.95, clearcoat: 0.05, sheen: 0 });
+  const soil = mesh(new RoundedBoxGeometry(5.5, SOIL_TOP, 1.75, 4, 0.1), earth);
+  soil.position.y = SOIL_TOP / 2;
+  g.add(soil);
+  for (let i = 0; i < 26; i++) {
+    const clump = mesh(new THREE.SphereGeometry(0.07 + rand() * 0.06, 16, 10), earth);
+    clump.scale.y = 0.55;
+    clump.position.set((rand() - 0.5) * 5.2, SOIL_TOP, (rand() - 0.5) * 1.5);
+    g.add(clump);
+  }
+  const all = new THREE.Group();
+  all.add(back, g);
+  return { group: all, front: [[g, 0]], far: 7 };
+}
+
+/* Corn: three tall stalks with long leaves and a tassel each, standing in
+   little mounds. The ears grow on them. [x, height] */
+const CORN_STALKS = [[-2.05, 6.6], [0.05, 7.1], [2.1, 6.5]];
+function cornStalks() {
+  const g = new THREE.Group();
+  const stalk = clay(0x7cc455, { roughness: 0.6, clearcoat: 0.25 });
+  const blade = clay(0x67b84f, { roughness: 0.6, clearcoat: 0.3, side: THREE.DoubleSide });
+  const earth = clay(0x7d5134, { roughness: 0.95, clearcoat: 0.05, sheen: 0 });
+  for (const [x, h] of CORN_STALKS) {
+    g.add(taperTube([[x, 0, -0.4], [x, h * 0.5, -0.4], [x, h, -0.4]], 0.16, 0.09, stalk));
+    const mound = mesh(new THREE.SphereGeometry(0.6, 32, 16), earth);
+    mound.scale.y = 0.35;
+    mound.position.set(x, 0, -0.4);
+    g.add(mound);
+    /* Long leaves, alternate sides, drooping. */
+    [[1.3, 1], [2.3, -1], [3.4, 1], [4.4, -1], [5.4, 1]].forEach(([y, side], i) => {
+      const base = new THREE.Vector3(x, y, -0.4);
+      const tip = base.clone().add(new THREE.Vector3(side * (1.2 + (i % 2) * 0.3), -0.35, 0.1));
+      const mid = base.clone().add(new THREE.Vector3(side * 0.6, 0.45, 0.05));
+      const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
+      const T = 30, R = 12;
+      const geo = new THREE.TubeGeometry(curve, T, 1, R);
+      const pos = geo.attributes.position;
+      for (let k = 0; k <= T; k++) {
+        const t = k / T;
+        const c = curve.getPointAt(t);
+        const w = 0.16 * Math.sin(Math.PI * Math.min(1, 0.15 + t * 0.9)) + 0.02;
+        for (let j = 0; j <= R; j++) {
+          const idx = k * (R + 1) + j;
+          pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * w, c.y + (pos.getY(idx) - c.y) * w, c.z + (pos.getZ(idx) - c.z) * w * 0.2);
+        }
+      }
+      geo.computeVertexNormals();
+      g.add(mesh(geo, blade));
+    });
+    for (const a of [-0.35, 0, 0.35]) {
+      const tassel = mesh(new THREE.CapsuleGeometry(0.035, 0.45, 6, 10), clay(0xe7c35a, { clearcoat: 0.4 }));
+      tassel.position.set(x + Math.sin(a) * 0.2, h + 0.18, -0.4);
+      tassel.rotation.z = -a;
+      g.add(tassel);
+    }
+  }
+  return { group: g };
+}
+
+/* A carrot as it grows: the clay carrot and a fuller top of leaves. */
+function carrotPlant() {
+  const g = ITEMS.carrot();
+  for (const [a, h] of [[-0.6, 0.5], [-0.2, 0.62], [0.2, 0.6], [0.6, 0.48]]) {
+    const leaf = mesh(new THREE.CapsuleGeometry(0.04, h, 8, 12), clay(0x5fb85a, { clearcoat: 0.5 }));
+    leaf.position.set(Math.sin(a) * 0.2, 1.12 + (h / 2) * Math.cos(a), -0.04);
+    leaf.rotation.z = -a;
+    g.add(leaf);
+  }
+  return g;
+}
+
+/* A potato as it grows: the clay potato and a little sprout of leaves on
+   top, where it is pulled from. */
+function potatoPlant() {
+  const g = ITEMS.potato();
+  const green = clay(0x5fb85a, { clearcoat: 0.5 });
+  const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.32, 8, 12), green);
+  stem.position.set(0, 0.78, 0);
+  g.add(stem);
+  for (const [a, y] of [[-0.9, 0.86], [0.9, 0.9], [-0.35, 1.02], [0.4, 1.05]]) {
+    const leaf = mesh(new THREE.SphereGeometry(0.12, 24, 12), green);
+    leaf.scale.set(1.5, 0.4, 0.8);
+    leaf.position.set(Math.sin(a) * 0.16, y, 0);
+    leaf.rotation.z = a * 0.6;
+    g.add(leaf);
+  }
+  return g;
+}
+
+/* Along a bed: five spots, the food stood `bury` deep in the soil. */
+const inBed = (bury) => [-2.1, -1.05, 0, 1.05, 2.1].map((x) => [x, SOIL_TOP - bury, 0]);
+
+/* What grows where. `centreY` is the height the camera looks at (`lift`°
+   down — higher over a bed, to see into it); `at` the
+   five foods ([x, y, z], y the food's own origin); `basket` [x, z, scale];
+   `tilt` turns each food (°, about its top) where the picture is shown —
+   the renders are all one food, alike. */
+const GARDENS = {
+  apple: {
+    centreY: 3.0,
+    world: () => fruitTree(0x63bb59),
+    food: "apple",
+    scale: 0.95,
+    rot: [0, 0.35, 0],
+    at: [[-1.2, 4.65, 1.75], [1.2, 4.6, 1.75], [-1.95, 3.4, 1.75], [0, 3.45, 1.75], [1.95, 3.35, 1.75]],
+    tilt: [-8, 6, 4, -5, 9],
+    basket: [1.85, 1.5, 1.4],
+  },
+  orange: {
+    centreY: 3.0,
+    world: () => fruitTree(0x4ea957),
+    food: "orange",
+    scale: 1.12,
+    rot: [0, 0.6, 0],
+    at: [[-1.2, 4.6, 1.75], [1.2, 4.55, 1.75], [-1.95, 3.35, 1.75], [0, 3.4, 1.75], [1.95, 3.3, 1.75]],
+    tilt: [6, -8, -4, 7, -6],
+    basket: [1.85, 1.5, 1.4],
+  },
+  banana: {
+    centreY: 3.0,
+    world: bananaPlant,
+    food: "banana",
+    scale: 0.9,
+    rot: [0, 0, Math.PI / 2],
+    at: [[-0.95, 2.16, 0.9], [-0.15, 2.26, 1.0], [0.65, 2.31, 1.1], [1.45, 2.26, 1.0], [2.25, 2.16, 0.9]],
+    tilt: [22, 11, 0, -11, -22],
+    basket: [1.85, 1.6, 1.4],
+  },
+  grapes: {
+    centreY: 3.15,
+    world: grapeArbour,
+    food: "grapes",
+    scale: 0.82,
+    at: [[-1.55, 4.7, 0.45], [0, 4.7, 0.45], [1.55, 4.7, 0.45], [-0.8, 2.55, 0.45], [0.8, 2.55, 0.45]],
+    tilt: [5, -4, 6, -6, 4],
+    basket: [1.85, 1.6, 1.4],
+  },
+  carrot: {
+    centreY: 2.65,
+    lift: 24,
+    world: gardenBed,
+    make: carrotPlant,
+    scale: 1.6,
+    at: inBed(1.05),
+    basket: [1.9, 3.1, 1.25],
+  },
+  potato: {
+    centreY: 2.65,
+    lift: 24,
+    world: gardenBed,
+    make: potatoPlant,
+    scale: 1.0,
+    rot: [0, 0.25, 0],
+    at: inBed(0.42),
+    basket: [1.9, 3.1, 1.25],
+  },
+  broccoli: {
+    centreY: 2.65,
+    lift: 24,
+    world: gardenBed,
+    food: "broccoli",
+    scale: 1.32,
+    rot: [0, 0.4, 0],
+    at: inBed(0.55),
+    basket: [1.9, 3.1, 1.25],
+  },
+  corn: {
+    centreY: 3.2,
+    world: cornStalks,
+    food: "corn",
+    scale: 0.95,
+    at: [[-1.63, 2.3, 0.3], [-2.47, 3.8, 0.3], [0.47, 3.1, 0.3], [-0.37, 4.5, 0.3], [1.68, 2.6, 0.3]],
+    tilt: [18, -18, 18, -18, -18],
+    pivot: "bottom",
+    basket: [1.85, 1.6, 1.4],
+  },
+};
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
@@ -1964,7 +2327,8 @@ function place(group, it) {
 }
 
 const THING = params.get("thing");
-const def = THING ? null : SCENES[SCENE];
+const HARVEST = params.get("harvest");
+const def = THING || HARVEST ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -1989,6 +2353,104 @@ if (THING) {
   renderer.setClearColor(0x000000, 0);
   window.renderLayers = () => ({ [THING]: frame() });
   window.itemsMeta = () => ({});
+} else if (HARVEST) {
+  /* ---------- Nova's garden: the world, the five foods, and what stands
+     in front of them (the basket's near half, a bed's near half) ---------- */
+  const garden = GARDENS[HARVEST];
+  const lift = THREE.MathUtils.degToRad(garden.lift ?? 12);
+  camera.position.set(0, garden.centreY + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, garden.centreY, 0);
+  renderer.localClippingEnabled = true;
+  catcher.visible = false;
+
+  const world = new THREE.Group();
+  scene.add(world);
+  const { group: grown, front = [], far } = garden.world();
+  world.add(gardenGround(far), grown);
+  const [bx, bz, bs] = garden.basket;
+  const basket = ITEMS.basket();
+  basket.scale.setScalar(bs);
+  basket.position.set(bx, 0, bz);
+  world.add(basket);
+  /* [thing, z]: the part of the thing nearer than z. In FRONT of the food:
+     a bed's near half and the whole basket; over what is piled in the
+     basket, its near half (the rim). */
+  const frontParts = [...front, [basket, -Infinity]];
+  const rimParts = [[basket, bz]];
+
+  const foods = garden.at.map(([x, y, z]) => {
+    const food = (garden.make ?? ITEMS[garden.food])();
+    if (garden.rot) food.rotation.set(...garden.rot);
+    food.scale.setScalar(garden.scale);
+    food.position.set(x, y, z);
+    scene.add(food);
+    return food;
+  });
+
+  /* White where one of `parts` is the nearest thing, black everywhere
+     else: the whole world drawn black (for its depth), then each part again
+     in white, cut at its z, wherever it is the nearest. */
+  const black = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false, side: THREE.DoubleSide });
+  function maskOf(parts) {
+    renderer.setClearColor(0x000000, 1);
+    scene.overrideMaterial = black;
+    renderer.render(scene, camera);
+    scene.overrideMaterial = null;
+    const layer = new THREE.Scene();
+    for (const [thing, cut] of parts) {
+      thing.updateMatrixWorld(true);
+      const white = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        toneMapped: false,
+        side: THREE.DoubleSide,
+        depthFunc: THREE.LessEqualDepth,
+        clippingPlanes: cut === -Infinity ? [] : [new THREE.Plane(new THREE.Vector3(0, 0, 1), -cut)],
+      });
+      thing.traverse((o) => {
+        if (!o.isMesh) return;
+        const copy = new THREE.Mesh(o.geometry, white);
+        copy.matrixAutoUpdate = false;
+        copy.matrix.copy(o.matrixWorld);
+        layer.add(copy);
+      });
+    }
+    renderer.autoClear = false;
+    renderer.render(layer, camera);
+    renderer.autoClear = true;
+    return renderer.domElement.toDataURL("image/png");
+  }
+
+  /* The basket's mouth on the picture, % — where what is picked piles up. */
+  function basketMouth() {
+    const p = new THREE.Vector3();
+    let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
+    for (let i = 0; i < 96; i++) {
+      const a = (i / 96) * Math.PI * 2;
+      p.set(bx + Math.cos(a) * 0.84 * bs, 0.66 * bs, bz + Math.sin(a) * 0.84 * bs).project(camera);
+      const x = ((p.x + 1) / 2) * 100;
+      const y = ((1 - p.y) / 2) * 100;
+      [l, t, r, b] = [Math.min(l, x), Math.min(t, y), Math.max(r, x), Math.max(b, y)];
+    }
+    return [l, t, r - l, b - t].map((v) => Math.round(v * 100) / 100);
+  }
+
+  window.renderLayers = () => {
+    const out = {};
+    renderer.setClearColor(SKY, 1);
+    out.all = frame();
+    foods.forEach((f) => (f.visible = false));
+    out.background = frame();
+    out.frontmask = maskOf(frontParts);
+    out.rimmask = maskOf(rimParts);
+    world.visible = false;
+    renderer.setClearColor(0x000000, 0);
+    foods.forEach((f, k) => {
+      foods.forEach((o) => (o.visible = o === f));
+      out[`item${k}`] = frame();
+    });
+    return out;
+  };
+  window.itemsMeta = () => ({ count: foods.length, basket: basketMouth(), tilt: garden.tilt ?? foods.map(() => 0), pivot: garden.pivot ?? "top" });
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();

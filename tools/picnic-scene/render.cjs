@@ -8,6 +8,12 @@
  *
  *   node tools/picnic-scene/render.cjs squares   (picnic | squares | triangles | rectangles | red | yellow | purple | pink | white)
  *
+ * Nova's garden — for each food, writes `out/harvest-<food>/`: the garden
+ * without the food, a mask of what stands in front of it, each food alone,
+ * and `meta.json` (the basket's mouth). Then `crop.py harvest-<food>`.
+ *
+ *   node tools/picnic-scene/render.cjs harvest apple orange carrot
+ *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -54,6 +60,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
+    }
+  } else if (mode === "harvest") {
+    for (const food of specs) {
+      const layers = await render(page, `harvest=${food}`);
+      const out = path.join(__dirname, "out", `harvest-${food}`);
+      fs.mkdirSync(out, { recursive: true });
+      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
   } else {
     const name = mode || "picnic";
