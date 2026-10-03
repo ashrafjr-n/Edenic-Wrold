@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → make it in the 3D blender / soup pot → list; review: a mixed juice, a soup, "Do you like…?", two picture spells) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing → pick five into Nova's basket; review: a mixed juice, a soup, "Do you like…?", two picture spells) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
@@ -240,7 +240,9 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Seasons, Weather |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
-| **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits |
+| **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
+| **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits |
+| **Pick them**: five of the thing on its tree (in its bed) into Nova's basket, the word popping up at each | built (`harvest`) | Fruits |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -377,6 +379,14 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       the bag and the cut removed (neither needed the word). Review: a
       mixed juice and a soup from word-only recipes, "Do you like…?", two
       picture spells. All 9 played through headless at 375x667 → 1440x900.
+- [x] Fruits steps 4–5 replaced (2026-10-03, on request: "no choosing —
+      the child knows it is the apple lesson; consolidate the word"):
+      **Fill the word** (rub the empty letters, they fill with the thing)
+      → **Pick them** (Nova's garden: a tree, a banana plant, a vine, a
+      vegetable bed, corn — five into her basket, the word at each, its
+      plural at the end). The juice and the soup are the review's only;
+      the shopping list went. All 8 lessons + the review played through
+      headless (375x667 → 1440x900, en/ar/ku).
 - [ ] The user checks Fruits → then Seasons and Months get their own new
       structure (Nova's tree; the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
