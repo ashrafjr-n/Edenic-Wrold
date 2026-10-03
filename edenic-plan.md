@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing → pick five into Nova's basket; review: a mixed juice, a soup, "Do you like…?", two picture spells) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
@@ -242,7 +242,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits |
-| **Pick them**: five of the thing on its tree (in its bed) into Nova's basket, the word popping up at each | built (`harvest`) | Fruits |
+| **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -387,6 +387,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       plural at the end). The juice and the soup are the review's only;
       the shopping list went. All 8 lessons + the review played through
       headless (375x667 → 1440x900, en/ar/ku).
+- [x] Fruits review on a phone tidied and the pick made an exam
+      (2026-10-03, on request): the recipes' words stand whole across the
+      top, bigger pictures, the thumbs beside the thing over their plates;
+      the pick left the eight lessons (they end with Fill the word) and
+      closes the review twice — three plants and one basket, "3 apples ·
+      2 oranges · 1 banana", then "1 potato · 3 carrots · 2 bananas". All
+      played through headless (360x640 → 1920x1080, no scroll).
 - [ ] The user checks Fruits → then Seasons and Months get their own new
       structure (Nova's tree; the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
