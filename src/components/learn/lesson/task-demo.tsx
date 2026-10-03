@@ -1,6 +1,6 @@
 import { useId } from "react";
 import type { CSSProperties } from "react";
-import Image, { getImageProps, type StaticImageData } from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { MAKERS } from "@/data/market";
@@ -16,6 +16,7 @@ import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
 import { wordOf } from "./list-note";
+import { FillPattern } from "./fill-word";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -448,7 +449,6 @@ const FILL_CELL = 66;
 function FillDemo({ word, picture }: { word: string; picture: StaticImageData }) {
   const patternId = `demofill${useId().replace(/[^\w-]/g, "")}`;
   const tones = letterTones(word);
-  const tiny = getImageProps({ src: picture, alt: "", width: 32 }).props.src;
   const width = word.length * FILL_CELL + 24;
   const first = { left: `${(12 / width) * 100}%`, width: `${(FILL_CELL / width) * 100}%` };
   const centre = (i: number) => 12 + FILL_CELL * (i + 0.5);
@@ -473,9 +473,7 @@ function FillDemo({ word, picture }: { word: string; picture: StaticImageData })
         <span className="demo-fill absolute top-0 h-full" style={first}>
           <svg viewBox={`12 0 ${FILL_CELL} 140`} className="h-full w-full overflow-visible font-bold" aria-hidden>
             <defs>
-              <pattern id={patternId} width={16} height={16} patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
-                <image href={tiny} x={0.5} y={0.5} width={15} height={15} />
-              </pattern>
+              <FillPattern id={patternId} picture={picture} />
             </defs>
             <text x={centre(0)} y={102} fontSize={100} textAnchor="middle" fill={`url(#${patternId})`}>
               {word[0]}

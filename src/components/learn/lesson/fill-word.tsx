@@ -23,8 +23,8 @@ const STEP = 5;
 const BRUSH_PX = 18;
 /** Rubbed this much, a letter fills the rest of the way by itself. */
 const ENOUGH = 0.6;
-/** One small picture every TILE units. */
-const TILE = 16;
+/** The small pictures fit a square this big (units), one unit apart. */
+const TILE = 15;
 /** The last letter fills, then the word is done. */
 const DONE_MS = 500;
 
@@ -82,6 +82,20 @@ function measure(word: string): Layout | null {
   const right = Math.max(...letters.map((l) => l.box[2]));
   const bottom = Math.max(...letters.map((l) => l.box[3]));
   return { letters, view: [left - PAD, top - PAD, right - left + PAD * 2, bottom - top + PAD * 2] };
+}
+
+/** The small pictures a letter fills with, packed close whatever their
+    shape — a carrot is tall, an apple wide. */
+export function FillPattern({ id, picture }: { id: string; picture: StaticImageData }) {
+  const aspect = picture.width / picture.height;
+  const width = aspect >= 1 ? TILE : TILE * aspect;
+  const height = aspect >= 1 ? TILE / aspect : TILE;
+  const href = getImageProps({ src: picture, alt: "", width: 32 }).props.src;
+  return (
+    <pattern id={id} width={width + 1} height={height + 1} patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+      <image href={href} x={0.5} y={0.5} width={width} height={height} />
+    </pattern>
+  );
 }
 
 interface FillWordProps {
@@ -148,7 +162,6 @@ export function FillWord({ word, picture, letterAria, hearLabel, onSolved }: Fil
 
   const solved = filled.length > 0 && filled.every(Boolean);
   const tones = letterTones(word);
-  const tiny = getImageProps({ src: picture, alt: "", width: 32 }).props.src;
 
   const complete = (i: number) => {
     if (done.current[i]) return;
@@ -256,9 +269,7 @@ export function FillWord({ word, picture, letterAria, hearLabel, onSolved }: Fil
             className="block h-auto max-h-[min(12rem,26svh)] w-full touch-none select-none overflow-visible font-bold sm:max-h-[min(16rem,28svh)] lg:max-h-[min(20rem,calc(var(--stage-h)*0.55))]"
           >
             <defs>
-              <pattern id={`${fillId}-p`} width={TILE} height={TILE} patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
-                <image href={tiny} x={0.5} y={0.5} width={TILE - 1} height={TILE - 1} />
-              </pattern>
+              <FillPattern id={`${fillId}-p`} picture={picture} />
               <mask id={`${fillId}-m`} maskUnits="userSpaceOnUse" x={layout.view[0]} y={layout.view[1]} width={layout.view[2]} height={layout.view[3]}>
                 <path ref={inkRef} fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" />
               </mask>
