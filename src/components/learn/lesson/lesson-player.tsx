@@ -29,6 +29,7 @@ import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
 import { ShopList } from "./shop-list";
+import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
@@ -420,6 +421,22 @@ export function LessonPlayer({
           stall={q.stall}
           into={q.into}
           ordered={q.ordered ?? false}
+          seed={seed}
+          itemAria={lines.findItemAria}
+          hearLabel={lines.hearWord}
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
+      );
+    } else if (q.type === "make") {
+      body = (
+        <MakeFood
+          key={seed}
+          list={q.list}
+          stall={q.stall}
+          into={q.into}
+          full={q.full}
+          serve={q.serve}
           seed={seed}
           itemAria={lines.findItemAria}
           hearLabel={lines.hearWord}

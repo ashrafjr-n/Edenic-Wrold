@@ -116,6 +116,13 @@ export type Question =
       on the list and it goes into the container; with `ordered` it has to
       be the next one on the list (a recipe). */
   | { type: "shop"; ask: Ask; list: string[]; stall: Face[]; into: Container; ordered?: boolean }
+  /** Make it: what goes in (`list` — the English word, or a recipe of a
+      few), Nova's blender (or her soup pot) and the things beside it. Drag
+      or tap each one in; once all are in, it whirs (or bubbles) and fills.
+      `full` is the blender or pot full — rendered from the same camera as
+      the empty one, so it lies exactly over it — and `serve` what it
+      pours out (a glass of juice). */
+  | { type: "make"; ask: Ask; list: string[]; stall: Face[]; into: Maker; full: StaticImageData; serve?: StaticImageData }
   /** Do you like it? One thing at a time, thumbs up or down, onto the "I
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
@@ -124,6 +131,9 @@ export type Question =
 /** What a Shop fills: a basket at the market, a bowl for a salad, a pot
     for a soup. */
 export type Container = "basket" | "bowl" | "pot";
+
+/** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
+export type Maker = "blender" | "pot";
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {

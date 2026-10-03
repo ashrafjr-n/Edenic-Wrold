@@ -204,6 +204,9 @@ export const en = {
     shopList: "Get the things on the list!",
     makeSalad: "Make a fruit salad!",
     makeSoup: "Make a vegetable soup!",
+    makeJuice: "Make juice with the {thing}!",
+    cookSoup: "Make soup with the {thing}!",
+    mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
   },
   /** The task chip's one verb per kind of step. */
@@ -220,6 +223,7 @@ export const en = {
     order: "Line up",
     shop: "Shop",
     cook: "Cook",
+    juice: "Blend",
     like: "Like?",
   },
   activities: {

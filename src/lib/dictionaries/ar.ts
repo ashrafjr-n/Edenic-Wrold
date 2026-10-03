@@ -194,6 +194,9 @@ export const ar: Dictionary = {
     shopList: "أحضر ما في القائمة!",
     makeSalad: "اصنع سلطة فواكه!",
     makeSoup: "اصنع حساء خضار!",
+    makeJuice: "اصنع عصير {thing}!",
+    cookSoup: "اصنع حساء {thing}!",
+    mixJuice: "اصنع عصير فواكه!",
     likeThem: "هل تحبّها؟",
   },
   tasks: {
@@ -209,6 +212,7 @@ export const ar: Dictionary = {
     order: "صُفّ",
     shop: "تسوّق",
     cook: "اطبخ",
+    juice: "اعصر",
     like: "تحبّه؟",
   },
   activities: {

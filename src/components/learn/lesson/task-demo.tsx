@@ -2,11 +2,11 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { CONTAINERS } from "@/data/market";
+import { CONTAINERS, MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Container, Face, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
+import type { ColorId, Container, Face, Maker, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -14,6 +14,7 @@ import { shuffle } from "@/lib/seeded";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
+import { wordOf } from "./shop-list";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -30,6 +31,7 @@ export type TaskDemoDef =
   | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "shop"; list: string[]; stall: Face[]; into: Container; seed: string }
+  | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
@@ -359,7 +361,6 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
     at (74, 26). */
 function ShopDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; into: Container; seed: string }) {
   const word = list[0];
-  const wordOf = (face: Face) => (face.kind === "picture" ? face.word : face.kind === "shape" ? face.shape : face.text);
   const answer = stall.findIndex((face) => wordOf(face) === word);
   const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
   return (
@@ -375,6 +376,57 @@ function ShopDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; 
         const fly = { "--fly-x": `${((74 - (left + 14)) / 28) * 100}%`, "--fly-y": `${((26 - 75) / 30) * 100}%` } as CSSProperties;
         return (
           <span key={index} className="absolute top-[60%] h-[30%] w-[28%]" style={{ left: `${left}%` }}>
+            <span className={`card card-clay-white absolute inset-0 flex items-center justify-center ${index === answer ? "demo-press" : ""}`}>
+              {index === answer ? (
+                <span className="demo-fly absolute inset-0 z-[1] flex items-center justify-center" style={fly}>
+                  <FaceView face={stall[index]} size="tile" />
+                </span>
+              ) : (
+                <FaceView face={stall[index]} size="tile" />
+              )}
+            </span>
+            {index === answer && (
+              <span className="absolute left-1/2 top-1/2">
+                <Finger />
+              </span>
+            )}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Make: the word, three things beside the blender (or the pot) as the
+    board deals them; the finger takes the one the word names and it flies
+    into the jar (the pot's mouth). Laid out in % of the square stage: the
+    tiles are 25% wide at 5% left, 25/51/77% top; the blender is 58% wide
+    at 38% left, as tall as its picture makes it. */
+function MakeDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; into: Maker; seed: string }) {
+  const word = list[0];
+  const answer = stall.findIndex((face) => wordOf(face) === word);
+  const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
+  const { empty, inside } = MAKERS[into];
+  const [left, top, width, height] = inside;
+  const boxW = 58;
+  const boxH = (boxW * empty.height) / empty.width;
+  const boxTop = 25 + (74 - boxH) / 2;
+  const target = { x: 38 + (boxW * (left + width / 2)) / 100, y: boxTop + (boxH * (top + height * 0.62)) / 100 };
+  return (
+    /* Sized by its own box (`cqi`): the same demo fills the popup and the
+       small panel docked beside a tablet's step. */
+    <div dir="ltr" className="@container relative h-full w-full">
+      <span className="absolute inset-x-0 top-[3%] flex justify-center [&>span]:text-[13cqi]">
+        <ClayWord word={word} size="demo" />
+      </span>
+      <span className="absolute left-[38%]" style={{ top: `${boxTop}%`, width: `${boxW}%`, height: `${boxH}%` }}>
+        <Image src={empty} alt="" fill sizes="12rem" className="object-contain" />
+      </span>
+      {shown.map((index, slot) => {
+        const tileTop = 25 + slot * 26;
+        const fly = { "--fly-x": `${((target.x - 17.5) / 25) * 100}%`, "--fly-y": `${((target.y - (tileTop + 11)) / 22) * 100}%` } as CSSProperties;
+        return (
+          <span key={index} className="absolute left-[5%] h-[22%] w-[25%]" style={{ top: `${tileTop}%` }}>
             <span className={`card card-clay-white absolute inset-0 flex items-center justify-center ${index === answer ? "demo-press" : ""}`}>
               {index === answer ? (
                 <span className="demo-fly absolute inset-0 z-[1] flex items-center justify-center" style={fly}>
@@ -450,6 +502,8 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "shop":
       return <ShopDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
+    case "make":
+      return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
   }

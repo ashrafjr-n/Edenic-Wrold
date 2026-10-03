@@ -198,6 +198,9 @@ export const ku: Dictionary = {
     shopList: "تشتێن د لیستێ دا بینە!",
     makeSalad: "سەلەتەیا فێقیان چێ بکە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
+    makeJuice: "ئاڤا {thing} چێ بکە!",
+    cookSoup: "شۆربەیا {thing} چێ بکە!",
+    mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
   },
   tasks: {
@@ -213,6 +216,7 @@ export const ku: Dictionary = {
     order: "ڕیز بکە",
     shop: "بکڕە",
     cook: "چێ بکە",
+    juice: "چێ بکە",
     like: "حەز دکەی؟",
   },
   activities: {
