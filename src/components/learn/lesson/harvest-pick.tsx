@@ -79,8 +79,9 @@ interface HarvestPickProps {
 /**
  * Pick what Nova's note says — the Fruits review's exam: three plants side
  * by side (an apple tree, a banana plant, an orange tree), ONE basket, and
- * the note: "3 apples · 1 banana · 2 oranges". Every plant has more than
- * the note asks for, so the child has to read each word AND count. Tap one
+ * the note: "3 apples · 2 oranges · 1 banana" — never in the plants' order,
+ * and every plant has more than the note asks for, so the child has to
+ * read each word AND count. Tap one
  * and it comes off (out of the soil), flies into the basket and lies
  * there, its word popping up where it was, a socket on its line filling.
  * One too many wiggles on its branch — that line is done (ticked); two
