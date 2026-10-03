@@ -82,6 +82,7 @@ function foodLesson({ word, picture, makes: { into, full, serve } }: Food, i: nu
   const questions: Question[] = [
     { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
     { type: "spell", ask: { key: "spell", vars: { word } }, word },
+    { type: "fill", ask: { key: "fillWord", vars: { word } }, word, picture },
     {
       type: "make",
       ask: { key: into === "blender" ? "makeJuice" : "cookSoup", vars: { thing: word } },
