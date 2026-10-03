@@ -1,5 +1,6 @@
+import { useId } from "react";
 import type { CSSProperties } from "react";
-import Image from "next/image";
+import Image, { getImageProps, type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { MAKERS, MARKET_BASKET } from "@/data/market";
@@ -32,7 +33,8 @@ export type TaskDemoDef =
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "shop"; list: string[]; stall: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
-  | { kind: "like"; face: Face };
+  | { kind: "like"; face: Face }
+  | { kind: "fill"; word: string; picture: StaticImageData };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -479,6 +481,60 @@ function LikeDemo({ face }: { face: Face }) {
   );
 }
 
+/** How wide each letter of the fill demo stands — even, so the first one's
+    place is known without measuring the font. */
+const FILL_CELL = 66;
+
+/** Fill: the word in empty clay letters; the finger rubs the FIRST one back
+    and forth and the thing's small pictures fill it in behind the finger.
+    The other letters stay empty. */
+function FillDemo({ word, picture }: { word: string; picture: StaticImageData }) {
+  const patternId = `demofill${useId().replace(/[^\w-]/g, "")}`;
+  const tones = letterTones(word);
+  const tiny = getImageProps({ src: picture, alt: "", width: 32 }).props.src;
+  const width = word.length * FILL_CELL + 24;
+  const first = { left: `${(12 / width) * 100}%`, width: `${(FILL_CELL / width) * 100}%` };
+  const centre = (i: number) => 12 + FILL_CELL * (i + 0.5);
+  return (
+    <div dir="ltr" className="flex h-full w-full items-center justify-center">
+      <span className="relative block w-[92%]" style={{ aspectRatio: `${width} / 140` }}>
+        <svg viewBox={`0 0 ${width} 140`} className="absolute inset-0 h-full w-full overflow-visible font-bold" aria-hidden>
+          {[...word].map((char, i) => (
+            <text
+              key={i}
+              x={centre(i)}
+              y={102}
+              fontSize={100}
+              textAnchor="middle"
+              className="fill-outline"
+              style={{ fill: `color-mix(in srgb, ${tones[i].face} 18%, var(--surface))`, stroke: tones[i].face }}
+            >
+              {char}
+            </text>
+          ))}
+        </svg>
+        <span className="demo-fill absolute top-0 h-full" style={first}>
+          <svg viewBox={`12 0 ${FILL_CELL} 140`} className="h-full w-full overflow-visible font-bold" aria-hidden>
+            <defs>
+              <pattern id={patternId} width={16} height={16} patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+                <image href={tiny} x={0.5} y={0.5} width={15} height={15} />
+              </pattern>
+            </defs>
+            <text x={centre(0)} y={102} fontSize={100} textAnchor="middle" fill={`url(#${patternId})`}>
+              {word[0]}
+            </text>
+          </svg>
+        </span>
+        <span className="demo-rub absolute top-0 h-full" style={first}>
+          <span className="absolute left-1/2 top-[58%]">
+            <Finger />
+          </span>
+        </span>
+      </span>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -506,5 +562,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
+    case "fill":
+      return <FillDemo word={demo.word} picture={demo.picture} />;
   }
 }

@@ -197,6 +197,7 @@ export const ar: Dictionary = {
     cookSoup: "اصنع حساء {thing}!",
     mixJuice: "اصنع عصير فواكه!",
     likeThem: "هل تحبّها؟",
+    fillWord: "املأ كلمة {word} بإصبعك!",
   },
   tasks: {
     listen: "استمع",
@@ -213,6 +214,7 @@ export const ar: Dictionary = {
     cook: "اطبخ",
     juice: "اعصر",
     like: "تحبّه؟",
+    fill: "املأ",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

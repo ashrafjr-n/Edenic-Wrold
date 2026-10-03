@@ -125,7 +125,10 @@ export type Question =
   /** Do you like it? One thing at a time, thumbs up or down, onto the "I
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
-  | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] };
+  | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
+  /** The word in big empty letters: rub each one with a finger and it
+      fills with small `picture`s of the thing — a word made of apples. */
+  | { type: "fill"; ask: Ask; word: string; picture: StaticImageData };
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";

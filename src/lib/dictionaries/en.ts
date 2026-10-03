@@ -207,6 +207,7 @@ export const en = {
     cookSoup: "Make soup with the {thing}!",
     mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
+    fillWord: "Fill the word {word} with your finger!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -224,6 +225,7 @@ export const en = {
     cook: "Cook",
     juice: "Blend",
     like: "Like?",
+    fill: "Fill",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

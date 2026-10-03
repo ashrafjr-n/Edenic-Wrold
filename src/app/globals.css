@@ -3122,6 +3122,55 @@ button:disabled,
   }
 }
 
+/* …the fill demo: the first letter fills from the left as the finger
+   rubs across it (`.demo-rub` carries the finger, zig-zagging over the
+   letter's box — its own width, so the % are the letter's). */
+.demo-fill {
+  animation: demo-fill 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-fill {
+  0%,
+  38% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  70%,
+  84% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  96%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+
+.demo-rub {
+  animation: demo-rub 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-rub {
+  0%,
+  36% {
+    translate: -36% 0;
+  }
+  46% {
+    translate: -14% -14%;
+  }
+  54% {
+    translate: 4% 12%;
+  }
+  62% {
+    translate: 22% -12%;
+  }
+  70%,
+  100% {
+    translate: 36% 4%;
+  }
+}
+
 /* ---------------------------------------------------------------
    Nova's market (Fruits & Vegetables).
    --------------------------------------------------------------- */
@@ -3259,6 +3308,62 @@ button:disabled,
     translate: -50% -150%;
     scale: 1.5;
     opacity: 0;
+  }
+}
+
+/* Fill the word (`FillWord`, an SVG): each letter an empty clay outline in
+   its own colour — the stroke painted UNDER the fill, so only its outer
+   half shows. Lengths are the drawing's own units (the font is 100). The
+   first letter's outline breathes until the child starts to rub; a full
+   letter's pictures fade over what is left (`.fill-in`) and it hops. A
+   focused letter (a keyboard) gets a thicker outline. */
+.fill-outline {
+  stroke-width: 7px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+
+.fill-letter {
+  outline: none;
+}
+
+.fill-letter:focus-visible .fill-outline {
+  stroke-width: 13px;
+}
+
+.fill-hint {
+  animation: fill-hint 1.6s ease-in-out infinite;
+}
+
+@keyframes fill-hint {
+  0%,
+  100% {
+    stroke-width: 7px;
+  }
+  50% {
+    stroke-width: 15px;
+  }
+}
+
+.fill-in {
+  animation: fill-in 0.45s ease-out both;
+}
+
+@keyframes fill-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.fill-pop {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: fill-pop 0.5s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+@keyframes fill-pop {
+  40% {
+    scale: 1.14;
   }
 }
 
@@ -3566,7 +3671,12 @@ button:disabled,
   .make-fill-up,
   .make-fill-out,
   .balloon-sway,
-  .demo-pop {
+  .demo-pop,
+  .demo-fill,
+  .demo-rub,
+  .fill-hint,
+  .fill-in,
+  .fill-pop {
     animation: none;
   }
 
