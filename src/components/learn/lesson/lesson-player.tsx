@@ -31,6 +31,7 @@ import { OrderLine } from "./order-line";
 import { ShopList } from "./shop-list";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
+import { FillWord } from "./fill-word";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -444,6 +445,8 @@ export function LessonPlayer({
       );
     } else if (q.type === "likes") {
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
+    } else if (q.type === "fill") {
+      body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "find") {
       body = (
         <FindShapes
