@@ -28,7 +28,6 @@ import { SortShapes } from "./sort-shapes";
 import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
-import { ShopList } from "./shop-list";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { FillWord } from "./fill-word";
@@ -415,19 +414,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "order") {
       body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
-    } else if (q.type === "shop") {
-      body = (
-        <ShopList
-          key={seed}
-          list={q.list}
-          stall={q.stall}
-          seed={seed}
-          itemAria={lines.findItemAria}
-          hearLabel={lines.hearWord}
-          onSolved={onSolved}
-          onMiss={onMiss}
-        />
-      );
     } else if (q.type === "make") {
       body = (
         <MakeFood

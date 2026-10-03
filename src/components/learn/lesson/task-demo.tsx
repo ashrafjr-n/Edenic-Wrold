@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import Image, { getImageProps, type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { MAKERS, MARKET_BASKET } from "@/data/market";
+import { MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
@@ -15,7 +15,7 @@ import { shuffle } from "@/lib/seeded";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
-import { wordOf } from "./shop-list";
+import { wordOf } from "./list-note";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -31,7 +31,6 @@ export type TaskDemoDef =
   | { kind: "paint"; round: PaintRound; pots: ColorId[] }
   | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
-  | { kind: "shop"; list: string[]; stall: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "fill"; word: string; picture: StaticImageData }
@@ -357,49 +356,6 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
   );
 }
 
-/** Shop: the note's first word, the container, three things on the stall
-    as the board deals them; the finger taps the one on the list and it
-    flies into the container. Laid out in % of the square stage: the stall
-    tiles are 28% wide at 4/36/68% left, 60% top; the container's mouth is
-    at (74, 26). */
-function ShopDemo({ list, stall, seed }: { list: string[]; stall: Face[]; seed: string }) {
-  const word = list[0];
-  const answer = stall.findIndex((face) => wordOf(face) === word);
-  const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
-  return (
-    <div dir="ltr" className="relative h-full w-full">
-      <span className="card card-clay-white absolute left-[4%] top-[8%] flex h-[30%] w-[48%] -rotate-2 items-center justify-center text-2xl font-bold text-[var(--color-ink)]">
-        {word}
-      </span>
-      <span className="absolute right-[6%] top-[2%] h-[44%] w-[40%]">
-        <Image src={MARKET_BASKET} alt="" fill sizes="7rem" className="object-contain" />
-      </span>
-      {shown.map((index, slot) => {
-        const left = 4 + slot * 32;
-        const fly = { "--fly-x": `${((74 - (left + 14)) / 28) * 100}%`, "--fly-y": `${((26 - 75) / 30) * 100}%` } as CSSProperties;
-        return (
-          <span key={index} className="absolute top-[60%] h-[30%] w-[28%]" style={{ left: `${left}%` }}>
-            <span className={`card card-clay-white absolute inset-0 flex items-center justify-center ${index === answer ? "demo-press" : ""}`}>
-              {index === answer ? (
-                <span className="demo-fly absolute inset-0 z-[1] flex items-center justify-center" style={fly}>
-                  <FaceView face={stall[index]} size="tile" />
-                </span>
-              ) : (
-                <FaceView face={stall[index]} size="tile" />
-              )}
-            </span>
-            {index === answer && (
-              <span className="absolute left-1/2 top-1/2">
-                <Finger />
-              </span>
-            )}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
 /** Make: the word, three things beside the blender (or the pot) as the
     board deals them; the finger takes the one the word names and it flies
     into the jar (the pot's mouth). Laid out in % of the square stage: the
@@ -593,8 +549,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PopDemo color={demo.color} others={demo.others} />;
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
-    case "shop":
-      return <ShopDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "make":
       return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
     case "like":

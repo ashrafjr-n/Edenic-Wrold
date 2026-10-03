@@ -23,7 +23,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   paint: Paintbrush,
   pop: Balloon,
   order: ListOrdered,
-  shop: ShoppingBasket,
   cook: CookingPot,
   juice: CupSoda,
   like: ThumbsUp,

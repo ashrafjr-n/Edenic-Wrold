@@ -43,8 +43,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "pop", target: q.color };
     case "order":
       return { kind: "order" };
-    case "shop":
-      return { kind: "shop" };
     case "make":
       return { kind: q.into === "blender" ? "juice" : "cook", target: q.list.length === 1 ? q.list[0] : undefined };
     case "likes":
@@ -84,8 +82,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "pop", color: q.color, others: q.others };
     case "order":
       return { kind: "order", items: q.items, seed };
-    case "shop":
-      return { kind: "shop", list: q.list, stall: q.stall, seed };
     case "make":
       return { kind: "make", list: q.list, stall: q.stall, into: q.into, seed };
     case "likes":

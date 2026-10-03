@@ -111,10 +111,6 @@ export type Question =
   /** Tap the things in their order — each lands in the next space of the
       line. `items` are in the right order. */
   | { type: "order"; ask: Ask; items: Face[] }
-  /** Collect what is on a list: the English words on a note, the things on
-      a stall (`stall` — every thing on offer, each with its `word`). Tap one
-      on the list and it goes into Nova's basket. */
-  | { type: "shop"; ask: Ask; list: string[]; stall: Face[] }
   /** Make it: what goes in (`list` — the English word, or a recipe of a
       few), Nova's blender (or her soup pot) and the things beside it. Drag
       or tap each one in; once all are in, it whirs (or bubbles) and fills.

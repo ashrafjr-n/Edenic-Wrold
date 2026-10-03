@@ -13,7 +13,7 @@ import { ClayWord } from "./clay-word";
 import { CueButton } from "./cue-button";
 import { FaceView } from "./face";
 import { place } from "./find-shapes";
-import { ListNote, wordOf } from "./shop-list";
+import { ListNote, wordOf } from "./list-note";
 
 /** Two misses and the next thing to put in starts to glow. */
 const HINT_AFTER = 2;

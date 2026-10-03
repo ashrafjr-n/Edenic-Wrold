@@ -1,15 +1,11 @@
 import type { StaticImageData } from "next/image";
 import type { Maker, SceneRect } from "@/types/course";
-import basket from "../../public/assets/learn/nova/fruits/props/basket.png";
 import blender from "../../public/assets/learn/nova/fruits/props/blender.png";
 import pot from "../../public/assets/learn/nova/fruits/props/pot.png";
 
-/* Nova's market — the things her Fruits & Vegetables steps happen in,
-   rendered by `tools/picnic-scene` (`basket`, `soupPot`, `blender`) in
-   the same clay as everything else. */
-
-/** What a Shop fills. */
-export const MARKET_BASKET: StaticImageData = basket;
+/* Nova's market — the things her Fruits & Vegetables review happens in,
+   rendered by `tools/picnic-scene` (`soupPot`, `blender`) in the same clay
+   as everything else. */
 
 /** What a Make fills, empty, and where what goes in lies in that picture —
     the jar's inside, the pot's mouth (% of the picture, measured off the
