@@ -196,7 +196,6 @@ export const ku: Dictionary = {
     afterMonth: "پشتی {month} کیژ هەیڤ دهێت؟",
     meetThing: "{thing} بناسە!",
     shopList: "تشتێن د لیستێ دا بینە!",
-    makeSalad: "سەلەتەیا فێقیان چێ بکە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     makeJuice: "ئاڤا {thing} چێ بکە!",
     cookSoup: "شۆربەیا {thing} چێ بکە!",

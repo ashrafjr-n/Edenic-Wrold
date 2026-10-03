@@ -2,11 +2,11 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { CONTAINERS, MAKERS } from "@/data/market";
+import { MAKERS, MARKET_BASKET } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Container, Face, Maker, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
+import type { ColorId, Face, Maker, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -30,7 +30,7 @@ export type TaskDemoDef =
   | { kind: "paint"; round: PaintRound; pots: ColorId[] }
   | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
-  | { kind: "shop"; list: string[]; stall: Face[]; into: Container; seed: string }
+  | { kind: "shop"; list: string[]; stall: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face };
 
@@ -359,7 +359,7 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
     flies into the container. Laid out in % of the square stage: the stall
     tiles are 28% wide at 4/36/68% left, 60% top; the container's mouth is
     at (74, 26). */
-function ShopDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; into: Container; seed: string }) {
+function ShopDemo({ list, stall, seed }: { list: string[]; stall: Face[]; seed: string }) {
   const word = list[0];
   const answer = stall.findIndex((face) => wordOf(face) === word);
   const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
@@ -369,7 +369,7 @@ function ShopDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; 
         {word}
       </span>
       <span className="absolute right-[6%] top-[2%] h-[44%] w-[40%]">
-        <Image src={CONTAINERS[into]} alt="" fill sizes="7rem" className="object-contain" />
+        <Image src={MARKET_BASKET} alt="" fill sizes="7rem" className="object-contain" />
       </span>
       {shown.map((index, slot) => {
         const left = 4 + slot * 32;
@@ -501,7 +501,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "shop":
-      return <ShopDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
+      return <ShopDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "make":
       return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
     case "like":

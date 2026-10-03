@@ -94,7 +94,7 @@ function foodLesson({ word, picture, makes: { into, full, serve } }: Food, i: nu
   ];
   if (i > 0) {
     const list = [word, FOODS[i - 1].word];
-    questions.push({ type: "shop", ask: { key: "shopList" }, list, stall: stallFor(list, i), into: "basket" });
+    questions.push({ type: "shop", ask: { key: "shopList" }, list, stall: stallFor(list, i) });
   }
   return { reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`, cover: [picture], questions };
 }

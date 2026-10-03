@@ -202,7 +202,6 @@ export const en = {
     afterMonth: "What comes after {month}?",
     meetThing: "Meet the {thing}!",
     shopList: "Get the things on the list!",
-    makeSalad: "Make a fruit salad!",
     makeSoup: "Make a vegetable soup!",
     makeJuice: "Make juice with the {thing}!",
     cookSoup: "Make soup with the {thing}!",

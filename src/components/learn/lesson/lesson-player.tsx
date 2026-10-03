@@ -419,8 +419,6 @@ export function LessonPlayer({
           key={seed}
           list={q.list}
           stall={q.stall}
-          into={q.into}
-          ordered={q.ordered ?? false}
           seed={seed}
           itemAria={lines.findItemAria}
           hearLabel={lines.hearWord}

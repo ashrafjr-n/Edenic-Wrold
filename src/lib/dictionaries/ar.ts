@@ -192,7 +192,6 @@ export const ar: Dictionary = {
     afterMonth: "ما الشهر الذي يأتي بعد {month}؟",
     meetThing: "تعرّف على {thing}!",
     shopList: "أحضر ما في القائمة!",
-    makeSalad: "اصنع سلطة فواكه!",
     makeSoup: "اصنع حساء خضار!",
     makeJuice: "اصنع عصير {thing}!",
     cookSoup: "اصنع حساء {thing}!",
