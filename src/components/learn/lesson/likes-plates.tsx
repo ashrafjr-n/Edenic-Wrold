@@ -93,12 +93,19 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
   const lines = done ? summary : said ? [said] : [];
 
   return (
-    /* Phone and tablet: one column. Desktop: the thing, its sentence and
-       the thumbs on the left, the two plates stacked on the right. */
+    /* Phone: the thing between its two thumbs — each over its own plate —
+       its sentence under it, then the plates; at the end the thing makes
+       way for what the child said. Tablet: one column, the thumbs under
+       the sentence. Desktop: the thing, its sentence and the thumbs on the
+       left, the two plates stacked on the right. */
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:max-w-lg sm:gap-5 lg:grid lg:max-w-3xl lg:grid-cols-2 lg:items-center lg:gap-x-12 [@media(max-height:700px)]:gap-2">
-      <div className="flex flex-col items-center gap-3 sm:gap-5 lg:gap-4 [@media(max-height:700px)]:gap-2">
+      <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-4 gap-y-3 [grid-template-areas:'like_thing_dislike'_'line_line_line'] sm:flex sm:w-auto sm:flex-col sm:gap-5 lg:gap-4 [@media(max-height:700px)]:gap-2">
         {/* The thing being asked about. */}
-        <div className="card card-clay-white card-bare-lg relative flex aspect-square w-[min(8.5rem,13svh)] items-center justify-center sm:w-[min(11rem,17svh)] lg:w-[min(11rem,calc(var(--stage-h)*0.3))]">
+        <div
+          className={`card card-clay-white card-bare-lg relative flex aspect-square w-[min(9.5rem,18svh)] items-center justify-center [grid-area:thing] sm:w-[min(11rem,17svh)] lg:w-[min(11rem,calc(var(--stage-h)*0.3))] ${
+            done ? "max-sm:hidden" : ""
+          }`}
+        >
           {done ? (
             <Celebration />
           ) : (
@@ -109,18 +116,18 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
         </div>
 
         {/* The sentence(s) — English, with their speakers. One slot height. */}
-        <div dir="ltr" className="flex min-h-[min(5rem,9svh)] flex-col items-center justify-center gap-1.5 lg:min-h-[min(5rem,calc(var(--stage-h)*0.18))]">
+        <div dir="ltr" className="flex min-h-[min(5rem,9svh)] flex-col items-center justify-center gap-1.5 [grid-area:line] lg:min-h-[min(5rem,calc(var(--stage-h)*0.18))]">
           {lines.map((line) => (
-            <p key={line} className="anim-pop-in flex items-center gap-2.5 text-xl font-bold text-[var(--color-ink)] sm:text-2xl lg:text-3xl">
+            <p key={line} className="anim-pop-in flex items-center gap-2.5 text-xl font-bold text-[var(--color-ink)] max-sm:text-balance sm:text-2xl lg:text-3xl">
               <CueButton cue={lessonCue.sentence(line)} label={format(hearLabel, { word: line })} size="sm" />
               {line}
             </p>
           ))}
         </div>
 
-        {/* The thumbs. */}
+        {/* The thumbs — on a phone each one is its own cell beside the thing. */}
         {!done && (
-          <div className="flex items-center gap-6 sm:gap-8">
+          <div className="contents items-center gap-6 sm:flex sm:gap-8">
             {(["like", "dislike"] as const).map((choice) => {
               const { Icon, tone } = PLATES[choice];
               return (
@@ -129,9 +136,9 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
                   tone={tone}
                   onClick={() => choose(choice)}
                   aria-label={choice === "like" ? likeAria : dislikeAria}
-                  className="h-14 w-14 sm:h-20 sm:w-20 lg:h-16 lg:w-16"
+                  className={`h-16 w-16 justify-self-center sm:h-20 sm:w-20 lg:h-16 lg:w-16 ${choice === "like" ? "[grid-area:like]" : "[grid-area:dislike]"}`}
                 >
-                  <Icon className="h-7 w-7 sm:h-10 sm:w-10 lg:h-8 lg:w-8" strokeWidth={2.5} />
+                  <Icon className="h-8 w-8 sm:h-10 sm:w-10 lg:h-8 lg:w-8" strokeWidth={2.5} />
                 </Button3D>
               );
             })}
@@ -140,7 +147,13 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
       </div>
 
       {/* The two plates, filling up. Labels are taught English. */}
-      <div dir="ltr" className="grid w-full grid-cols-2 gap-4 sm:gap-6 lg:w-[min(18rem,calc(var(--stage-h)*0.75))] lg:grid-cols-1 lg:justify-self-center lg:gap-4">
+      <div dir="ltr" className="relative grid w-full grid-cols-2 gap-4 sm:gap-6 lg:w-[min(18rem,calc(var(--stage-h)*0.75))] lg:grid-cols-1 lg:justify-self-center lg:gap-4">
+        {/* On a phone the thing's card is gone by now — the burst is here. */}
+        {done && (
+          <span className="absolute inset-0 sm:hidden">
+            <Celebration />
+          </span>
+        )}
         {(["like", "dislike"] as const).map((choice, p) => {
           const { label, Icon, tone } = PLATES[choice];
           return (
@@ -163,8 +176,8 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
                   )}
                 </span>
               </div>
-              <span className="flex items-center gap-1.5 text-base font-bold sm:text-lg" style={{ color: tone.edge } as CSSProperties}>
-                <Icon className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.75} />
+              <span className="flex items-center gap-1.5 text-lg font-bold" style={{ color: tone.edge } as CSSProperties}>
+                <Icon className="h-5 w-5" strokeWidth={2.75} />
                 {label}
               </span>
             </div>
