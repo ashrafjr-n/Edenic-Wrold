@@ -40,13 +40,13 @@ interface ListNoteProps {
     right in every language. */
 export function ListNote({ list, got, next, hearLabel, className = "" }: ListNoteProps) {
   return (
-    <ol dir="ltr" className={`card card-clay-white -rotate-1 flex flex-col gap-1.5 p-3 sm:gap-2 sm:p-4 ${className}`}>
+    <ol dir="ltr" className={`card card-clay-white -rotate-1 flex flex-col gap-1.5 p-3 sm:gap-2 sm:p-4 [@media(max-height:700px)]:gap-1 ${className}`}>
       {list.map((word, i) => {
         const isGot = got.includes(word);
         return (
           <li
             key={word}
-            className={`flex items-center gap-2 rounded-2xl px-1.5 py-1 sm:gap-3 sm:px-2 ${i === next ? "bg-[color-mix(in_srgb,var(--page-accent-color)_22%,transparent)]" : ""}`}
+            className={`flex items-center gap-2 rounded-2xl px-1.5 py-1 sm:gap-3 sm:px-2 [@media(max-height:700px)]:py-0 ${i === next ? "bg-[color-mix(in_srgb,var(--page-accent-color)_22%,transparent)]" : ""}`}
           >
             <CueButton cue={lessonCue.word(word)} label={format(hearLabel, { word })} size="sm" />
             <span className={`min-w-0 flex-1 truncate text-xl font-bold text-[var(--color-ink)] sm:text-2xl ${isGot ? "opacity-45 line-through decoration-[3px]" : ""}`}>

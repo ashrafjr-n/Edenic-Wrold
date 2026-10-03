@@ -200,7 +200,7 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
 
       {/* The things. Once it is made they make way for the glass. */}
       <div className="relative self-start [grid-area:stall]">
-        <ul className={`grid justify-items-center gap-2.5 sm:gap-4 ${recipe ? "grid-cols-2" : "grid-cols-1 lg:grid-cols-3"}`}>
+        <ul className={`grid justify-items-center gap-2.5 sm:gap-4 ${recipe ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1 lg:grid-cols-3"}`}>
           {order.map((index) => {
             const word = wordOf(stall[index]);
             const taken = got.includes(word);
@@ -210,9 +210,11 @@ export function MakeFood({ list, stall, into, full, serve, seed, itemAria, hearL
             return (
               <li
                 key={index}
-                className={`relative aspect-square w-full transition-opacity duration-300 ${
-                  recipe ? "max-w-[min(6rem,11svh)] sm:max-w-28" : "max-w-[min(6.5rem,11.5svh)] sm:max-w-32"
-                } lg:w-[min(8.5rem,calc(var(--stage-h)*0.3))] lg:max-w-none ${hinted === index ? "guide-target" : ""} ${phase === "full" && serve ? "opacity-0" : ""}`}
+                className={`relative aspect-square w-full transition-opacity duration-300 lg:max-w-none ${
+                  recipe
+                    ? "max-w-[min(6rem,11svh)] sm:max-w-28 lg:w-[min(7rem,calc(var(--stage-h)*0.28))] [@media(max-height:700px)]:max-w-[min(6rem,9.5svh)]"
+                    : "max-w-[min(6.5rem,11.5svh)] sm:max-w-32 lg:w-[min(8.5rem,calc(var(--stage-h)*0.3))]"
+                } ${hinted === index ? "guide-target" : ""} ${phase === "full" && serve ? "opacity-0" : ""}`}
               >
                 {taken ? (
                   <span className="letter-slot block h-full w-full" />
