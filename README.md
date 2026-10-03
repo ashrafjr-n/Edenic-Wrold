@@ -160,9 +160,9 @@ src/
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      Nova's shopping list, blender and soup pot, the
-                      "Do you like…?" plates, the done screen, and the
-                      pieces they are built from
+                      Fill the word, Nova's garden to pick from, her
+                      blender and soup pot, the "Do you like…?" plates,
+                      the done screen, and the pieces they are built from
     activities/       The Play page's cards, plus the puzzle and
                       memory-match grids and boards
     trail/            The trail sky and Nova's welcome
@@ -170,8 +170,8 @@ src/
     ui/               Shared primitives (Button3D, BackButton, Cloud, Logo,
                       confetti, the progress bar, the page transition)
   data/               Characters, courses and their lessons (data/courses),
-                      the taught shapes, the Find scenes, puzzles, memory levels,
-                      navigation, socials, home panels
+                      the taught shapes, the Find scenes, Nova's gardens,
+                      puzzles, memory levels, navigation, socials, home panels
   lib/                Dictionaries and locale, trace scoring, jigsaw piece
                       and outline maths, the memory deal, the audio cue
                       player, the shared /learn route resolver
@@ -181,8 +181,10 @@ tools/
   picnic-scene/       Renders every clay picture in three.js (headless
                       Chromium): the Find scenes, the paint pots and the
                       things to paint, Nova's blender, juice glasses and
-                      soup pots, then crops them into layers — not part of
-                      the site build
+                      soup pots, and her gardens (a tree, a banana plant, a
+                      vine, a vegetable bed, corn stalks — each with its
+                      food and her basket), then crops them into layers —
+                      not part of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -204,12 +206,12 @@ public/
                             reels. All pictures are rendered by
                             tools/picnic-scene — none come from outside)
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
-                            (things/, props/ — the basket, the blender, the
-                            soup pot — and make/: the blender and the pot full
-                            of each juice and soup, and the juice glasses),
-                            seasons/ (the seasons picnic), months/ (the
-                            calendar pages), and each course's placeholder
-                            reels
+                            (things/, props/ — the blender and the soup pot
+                            — make/: the review's mixed juice, its glass and
+                            the soup, and garden/: one garden per food, in
+                            layers), seasons/ (the seasons picnic), months/
+                            (the calendar pages), and each course's
+                            placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -312,22 +314,22 @@ and spells two colors from the pot alone, with no word on screen.
 Nova's courses teach one thing per lesson, because the word has to BE the
 picture:
 
-- **Fruits & Vegetables — Nova's market**: apple, banana, orange, grapes,
-  carrot, broccoli, corn, potato, one a lesson. The word is **met** (the
-  thing, the word in clay letters, the speaker) and **spelled**; then the
-  child **makes something of it**: the word sits on top with its speaker,
-  three things of the same kind stand on the left and Nova's 3D blender on
-  the right — drag (or tap) the one the word names into it, and it whirs,
-  the juice rises up the jar and a glass of it pours out with the fruit
-  beside it. A vegetable goes into Nova's soup pot instead, which bubbles,
-  fills with its soup and steams. A wrong thing just wiggles back. From
-  lesson 2 the **shopping list** follows — read Nova's note (each word has
-  its speaker) and tap those things on the stall into the basket — with the
-  word met last time on it too, so every word comes back. The review makes
-  a **mixed juice** (a layered one) and a **vegetable soup** from recipes of
-  words alone, asks **"Do you like…?"** (thumbs up or down onto two plates —
-  "I like apples." / "I don't like corn." — no wrong answer), and spells two
-  words from the picture.
+- **Fruits & Vegetables — Nova's garden**: apple, banana, orange, grapes,
+  carrot, broccoli, corn, potato, one a lesson, and every step of a lesson
+  is about its one thing — nothing to choose between. The word is **met**
+  (the thing, the word in clay letters, the speaker) and **spelled**; then
+  the child **fills the word**: it stands in big empty letters, and
+  rubbing a letter with a finger fills it with little apples (carrots…)
+  until the whole word is made of the thing. Last, the child **picks
+  them**: Nova's apple tree (her banana plant, her vine, her vegetable bed,
+  her corn) with five of the thing on it and her basket on the grass — tap
+  one and it comes off (a vegetable is pulled up out of the soil), flies
+  into the basket and its word pops up where it was; with all five in, the
+  word under the garden becomes its plural ("apples"). The review makes a
+  **mixed juice** (a layered one) in Nova's 3D blender and a **vegetable
+  soup** in her pot from recipes of words alone, asks **"Do you like…?"**
+  (thumbs up or down onto two plates — "I like apples." / "I don't like
+  corn." — no wrong answer), and spells two words from the picture.
 - **The Seasons** — spring (a flower), summer (the sun), fall (an orange
   leaf), winter (a snowman). Meet, spell, pick the season by its word, then
   find everything that goes with it in a picnic of all four. The review
