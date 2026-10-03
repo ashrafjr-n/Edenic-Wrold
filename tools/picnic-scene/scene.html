@@ -1743,12 +1743,12 @@ function taperTube(points, r0, r1, material, segments = 48) {
 
 const turf = (color) => clay(color, { clearcoat: 0.05, roughness: 0.9, sheen: 0 });
 
-/* The grass out to `far` and two soft hills on its edge. */
-function gardenGround(far = 12) {
+/* The grass from `near` out to `far`, and two soft hills on its edge. */
+function gardenGround(far = 12, near = 6) {
   const g = new THREE.Group();
-  const grass = mesh(new THREE.PlaneGeometry(16, far + 6), turf(0x8fd16e));
+  const grass = mesh(new THREE.PlaneGeometry(16, far + near), turf(0x8fd16e));
   grass.rotation.x = -Math.PI / 2;
-  grass.position.z = (6 - far) / 2;
+  grass.position.z = (near - far) / 2;
   grass.castShadow = false;
   g.add(grass);
   for (const [x, back, r, color] of [[-3.9, 3.6, 4.4, 0x80c765], [3.7, 2.4, 5.0, 0x89ce6b]]) {
@@ -1871,16 +1871,18 @@ function fence(z) {
 
 /* A raised bed of soil in wooden planks, its near half standing in front
    of the vegetables in it (so they can be pulled up out of it); a fence
-   and the sun behind. */
+   and the sun behind (`withBack` — not when it is one of several). */
 const SOIL_TOP = 1.15;
-function gardenBed() {
+function gardenBed(withBack = true) {
   const g = new THREE.Group();
   const back = new THREE.Group();
-  back.add(fence(-2.4));
-  const sun = ITEMS.sun();
-  sun.scale.setScalar(0.95);
-  sun.position.set(1.95, 1.2, -7.6);
-  back.add(sun);
+  if (withBack) {
+    back.add(fence(-2.4));
+    const sun = ITEMS.sun();
+    sun.scale.setScalar(0.95);
+    sun.position.set(1.95, 1.2, -7.6);
+    back.add(sun);
+  }
   const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
   for (const z of [-0.95, 0.95]) {
     const plank = mesh(new RoundedBoxGeometry(5.9, 1.3, 0.22, 4, 0.07), wood);
@@ -1985,6 +1987,26 @@ function potatoPlant() {
 /* Along a bed: five spots, the food stood `bury` deep in the soil. */
 const inBed = (bury) => [-2.1, -1.05, 0, 1.05, 2.1].map((x) => [x, SOIL_TOP - bury, 0]);
 
+/* Several plants in one garden, side by side: `[maker, x, scale]` each.
+   What stands in front of the food (a bed's near half) is cut at its own
+   z, wherever the plant now stands. */
+function plants(list) {
+  return () => {
+    const group = new THREE.Group();
+    const front = [];
+    for (const [maker, x, scale] of list) {
+      const plant = maker();
+      plant.group.scale.setScalar(scale);
+      plant.group.position.x = x;
+      group.add(plant.group);
+      for (const [part, cut] of plant.front ?? []) front.push([part, cut * scale]);
+    }
+    return { group, front };
+  };
+}
+/* One bed of several: no fence or sun of its own. */
+const bed = () => gardenBed(false);
+
 /* What grows where. `centreY` is the height the camera looks at (`lift`°
    down — higher over a bed, to see into it); `at` the
    five foods ([x, y, z], y the food's own origin); `basket` [x, z, scale];
@@ -2068,6 +2090,37 @@ const GARDENS = {
     tilt: [18, -18, 18, -18, -18],
     pivot: "bottom",
     basket: [1.85, 1.6, 1.4],
+  },
+
+  /* The Fruits review's exams: three plants side by side and ONE basket —
+     wider than a phone's stage (3:2, `size` px, `view` world units
+     across). `foods` holds each kind and where it grows; there are more
+     of each than the note asks for, so the child has to count. */
+  fruits: {
+    size: [1200, 800],
+    view: 9.6,
+    centreY: 1.8,
+    lift: 14,
+    world: plants([[() => fruitTree(0x63bb59), -3.15, 0.56], [bananaPlant, 0, 0.62], [() => fruitTree(0x4ea957), 3.15, 0.56]]),
+    foods: [
+      { food: "apple", scale: 0.84, rot: [0, 0.35, 0], at: [[-3.8, 2.5, 1.05], [-2.5, 2.45, 1.05], [-3.82, 1.35, 1.05], [-2.52, 1.4, 1.05]], tilt: [-8, 6, 4, -5] },
+      { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
+      { food: "orange", scale: 0.96, rot: [0, 0.6, 0], at: [[2.5, 2.45, 1.05], [3.8, 2.4, 1.05], [3.15, 1.3, 1.1]], tilt: [6, -8, 4] },
+    ],
+    basket: [0, 3.4, 1.0],
+  },
+  vegetables: {
+    size: [1200, 800],
+    view: 9.4,
+    centreY: 1.8,
+    lift: 18,
+    world: plants([[bed, -3.05, 0.52], [bananaPlant, 0, 0.62], [bed, 3.05, 0.52]]),
+    foods: [
+      { food: "carrot", make: carrotPlant, scale: 1.0, at: [[-4.1, 0.15, 0], [-3.4, 0.15, 0], [-2.7, 0.15, 0], [-2.0, 0.15, 0]] },
+      { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
+      { food: "potato", make: potatoPlant, scale: 0.85, rot: [0, 0.25, 0], at: [[2.1, 0.4, 0], [3.05, 0.4, 0], [4.0, 0.4, 0]] },
+    ],
+    basket: [0, 3.4, 1.0],
   },
 };
 
@@ -2357,6 +2410,13 @@ if (THING) {
   /* ---------- Nova's garden: the world, the five foods, and what stands
      in front of them (the basket's near half, a bed's near half) ---------- */
   const garden = GARDENS[HARVEST];
+  /* A garden of several plants is wider than the phone's 4:5. */
+  if (garden.size) {
+    const [w, h] = garden.size;
+    renderer.setSize(w, h);
+    Object.assign(camera, { left: -garden.view / 2, right: garden.view / 2, top: (garden.view * h) / w / 2, bottom: -(garden.view * h) / w / 2 });
+    camera.updateProjectionMatrix();
+  }
   const lift = THREE.MathUtils.degToRad(garden.lift ?? 12);
   camera.position.set(0, garden.centreY + Math.sin(lift) * 30, Math.cos(lift) * 30);
   camera.lookAt(0, garden.centreY, 0);
@@ -2366,7 +2426,7 @@ if (THING) {
   const world = new THREE.Group();
   scene.add(world);
   const { group: grown, front = [], far } = garden.world();
-  world.add(gardenGround(far), grown);
+  world.add(gardenGround(far, garden.size ? 16 : 6), grown);
   const [bx, bz, bs] = garden.basket;
   const basket = ITEMS.basket();
   basket.scale.setScalar(bs);
@@ -2378,14 +2438,19 @@ if (THING) {
   const frontParts = [...front, [basket, -Infinity]];
   const rimParts = [[basket, bz]];
 
-  const foods = garden.at.map(([x, y, z]) => {
-    const food = (garden.make ?? ITEMS[garden.food])();
-    if (garden.rot) food.rotation.set(...garden.rot);
-    food.scale.setScalar(garden.scale);
-    food.position.set(x, y, z);
-    scene.add(food);
-    return food;
-  });
+  /* Each kind of food and where it grows — one kind, unless the garden
+     lists several. */
+  const kinds = garden.foods ?? [{ ...garden, food: garden.food ?? HARVEST }];
+  const foods = kinds.flatMap((kind) =>
+    kind.at.map(([x, y, z]) => {
+      const food = (kind.make ?? ITEMS[kind.food])();
+      if (kind.rot) food.rotation.set(...kind.rot);
+      food.scale.setScalar(kind.scale);
+      food.position.set(x, y, z);
+      scene.add(food);
+      return food;
+    }),
+  );
 
   /* White where one of `parts` is the nearest thing, black everywhere
      else: the whole world drawn black (for its depth), then each part again
@@ -2450,7 +2515,13 @@ if (THING) {
     });
     return out;
   };
-  window.itemsMeta = () => ({ count: foods.length, basket: basketMouth(), tilt: garden.tilt ?? foods.map(() => 0), pivot: garden.pivot ?? "top" });
+  window.itemsMeta = () => ({
+    count: foods.length,
+    basket: basketMouth(),
+    foods: kinds.flatMap((kind) => kind.at.map(() => kind.food)),
+    tilt: kinds.flatMap((kind) => kind.tilt ?? kind.at.map(() => 0)),
+    pivot: garden.pivot ?? "top",
+  });
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();

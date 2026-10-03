@@ -10,16 +10,17 @@ Shapes `find/` itself (`picnic.jpg`); every other scene in `<dest>/<name>/`
     python3 tools/picnic-scene/crop.py squares
     python3 tools/picnic-scene/crop.py red public/assets/learn/pinki/colors/find
 
-Nova's garden — run after `render.cjs harvest <food>`: writes the garden
-without the food (`ground.jpg`), the food (`item.png` — all five are alike),
-what stands in front of it (`front.png`: a bed's near half and the basket)
-and the basket's near half that goes over what is piled in it (`rim.png`),
-both cut out of the garden, into `<dest>/<food>/`, and prints each food's
-box and hit area (the part not behind the front), the two layers' boxes and
-the basket's mouth — paste them into `data/garden.ts`. `dest` defaults to
+Nova's garden — run after `render.cjs harvest <garden>`: writes the garden
+without its food (`ground.jpg`), each kind of food once (`<food>.png` — all
+of one kind are alike), what stands in front of them (`front.png`: a bed's
+near half and the basket) and the basket's near half that goes over what is
+piled in it (`rim.png`), both cut out of the garden, into
+`<dest>/<garden>/`, and prints each food's kind, box and hit area (the part
+not behind the front), the two layers' boxes and the basket's mouth — paste
+them into `data/garden.ts`. `dest` defaults to
 `public/assets/learn/nova/fruits/garden`.
 
-    python3 tools/picnic-scene/crop.py harvest-apple
+    python3 tools/picnic-scene/crop.py harvest-fruits
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
@@ -61,11 +62,12 @@ def pct(r):
 
 
 if NAME.startswith("harvest-"):
-    food = NAME[len("harvest-"):]
+    garden = NAME[len("harvest-"):]
     out = os.path.join(HERE, "out", NAME)
-    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/garden", food)
+    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/garden", garden)
     os.makedirs(dest, exist_ok=True)
     ground = Image.open(f"{out}/background.png").convert("RGB")
+    W, H = ground.size
     ground.save(f"{dest}/ground.jpg", quality=86, optimize=True, progressive=True)
     boxes = {}
     for layer_name in ("front", "rim"):
@@ -78,12 +80,14 @@ if NAME.startswith("harvest-"):
     meta = json.load(open(f"{out}/meta.json"))
     items = []
     for k in range(meta["count"]):
+        food = meta["foods"][k]
         layer = Image.open(f"{out}/item{k}.png")
         box = alpha_box(layer)
-        if k == 0:
-            layer.crop(box).save(f"{dest}/item.png", optimize=True)
+        # One picture per food — all of one kind are alike.
+        if food not in meta["foods"][:k]:
+            layer.crop(box).save(f"{dest}/{food}.png", optimize=True)
         seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
-        items.append({"box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
+        items.append({"food": food, "box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
     print(json.dumps({"items": items, "pivot": meta["pivot"], "front": pct(boxes["front"]), "rim": pct(boxes["rim"]), "basket": meta["basket"]}))
     sys.exit()
 
