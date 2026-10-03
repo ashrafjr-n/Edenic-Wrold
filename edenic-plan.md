@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-10-02
+> Last updated: 2026-10-03
 
 ---
 
@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; "Nova's market": bag → cut → list → spell) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → make it in the 3D blender / soup pot → list; review: a mixed juice, a soup, "Do you like…?", two picture spells) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
@@ -240,6 +240,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Seasons, Weather |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
+| **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
@@ -247,8 +248,8 @@ Months start with a **capital letter** — the first tile is the capital.
 - **My Family** (simplest): mom, dad, brother, sister, grandma, grandpa, baby,
   me. `mom`/`dad` are the easiest first spells. Touch it on a family photo;
   review: put the family in order, oldest → youngest.
-- **Fruits & Vegetables** (BUILT as "Nova's market", 2026-10-02 — see
-  `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
+- **Fruits & Vegetables** (BUILT as "Nova's market", 2026-10-02, reworked
+  2026-10-03 — see §5 and `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
   basket"), find them on a market stall, sort fruit / vegetable; review: a
   shopping list to read and fill.
 - **The Seasons**: spring, summer, fall, winter + one sign each; Dress up
@@ -369,6 +370,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] Fruits restructured as "Nova's market" (2026-10-02, on request, after
       research): bag → cut → shopping list → spell; review: salad, soup,
       "Do you like…?", spelling.
+- [x] Fruits reworked (2026-10-03, on request): the word card (picture +
+      speaker) → spell → **Make it** (drag the fruit the word names into
+      Nova's 3D blender → its juice rises and a glass pours out; a
+      vegetable goes into the soup pot) → the shopping list from lesson 2;
+      the bag and the cut removed (neither needed the word). Review: a
+      mixed juice and a soup from word-only recipes, "Do you like…?", two
+      picture spells. All 9 played through headless at 375x667 → 1440x900.
 - [ ] The user checks Fruits → then Seasons and Months get their own new
       structure (Nova's tree; the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
