@@ -3126,28 +3126,6 @@ button:disabled,
    Nova's market (Fruits & Vegetables).
    --------------------------------------------------------------- */
 
-/* Cut it open (`CutBoard`): the dotted line the knife rides. */
-.cut-line {
-  height: 0;
-  border-top: 0.25rem dashed rgb(var(--shadow-hue) / 42%);
-}
-
-/* The thing's two halves slide apart and fade as the inside drops in. */
-.cut-half {
-  animation: cut-apart 0.55s ease-out both;
-}
-
-@keyframes cut-apart {
-  to {
-    translate: var(--apart) 0;
-    opacity: 0;
-  }
-}
-
-.cut-inside {
-  animation: pop-in 0.75s cubic-bezier(0.34, 1.4, 0.5, 1) 0.12s both;
-}
-
 /* A plate (`LikesPlates`): a white clay oval with a sunken rim. */
 .plate {
   border-radius: 50%;
@@ -3165,70 +3143,6 @@ button:disabled,
     inset 0 6px 10px -4px rgb(255 255 255 / 5%),
     inset 0 -8px 12px -6px rgb(var(--shadow-hue) / 22%),
     0 14px 28px -14px rgb(var(--shadow-hue) / 34%);
-}
-
-/* The task button's Cut demo, on the demos' beat: the knife slides along
-   the line just after the finger lands on it, and the thing falls open. */
-.demo-knife {
-  animation: demo-knife 3.6s ease-in-out infinite;
-}
-
-@keyframes demo-knife {
-  0%,
-  34% {
-    left: 0%;
-    opacity: 1;
-  }
-  58%,
-  84% {
-    left: 100%;
-    opacity: 1;
-  }
-  94%,
-  100% {
-    left: 100%;
-    opacity: 0;
-  }
-}
-
-.demo-cut-whole {
-  animation: demo-cut-whole 3.6s ease-out infinite;
-}
-
-@keyframes demo-cut-whole {
-  0%,
-  56% {
-    opacity: 1;
-  }
-  64%,
-  96% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.demo-cut-inside {
-  animation: demo-cut-inside 3.6s ease-out infinite;
-}
-
-@keyframes demo-cut-inside {
-  0%,
-  56% {
-    opacity: 0;
-    scale: 0.85;
-  }
-  66%,
-  88% {
-    opacity: 1;
-    scale: 1;
-  }
-  96%,
-  100% {
-    opacity: 0;
-    scale: 1;
-  }
 }
 
 /* ---------------------------------------------------------------
@@ -3527,10 +3441,6 @@ button:disabled,
   .demo-ring,
   .demo-tick,
   .demo-paint,
-  .demo-knife,
-  .demo-cut-whole,
-  .demo-cut-inside,
-  .cut-inside,
   .paint-reveal,
   .balloon-sway,
   .demo-pop {
@@ -3544,18 +3454,8 @@ button:disabled,
   }
 
   .pop-ring,
-  .pop-shard,
-  .cut-half {
+  .pop-shard {
     display: none;
-  }
-
-  /* The Cut demo holds its opened frame. */
-  .demo-knife {
-    left: 100%;
-  }
-
-  .demo-cut-whole {
-    opacity: 0;
   }
 
   .demo-pen {
