@@ -43,10 +43,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "pop", target: q.color };
     case "order":
       return { kind: "order" };
-    case "reveal":
-      return { kind: "guess" };
-    case "cut":
-      return { kind: "cut", target: q.word };
     case "shop":
       return { kind: q.into === "basket" ? "shop" : "cook" };
     case "likes":
@@ -82,10 +78,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "pop", color: q.color, others: q.others };
     case "order":
       return { kind: "order", items: q.items, seed };
-    case "reveal":
-      return { kind: "guess", word: q.word, picture: q.picture, decoy: q.decoy, seed };
-    case "cut":
-      return { kind: "cut", picture: q.picture, inside: q.inside };
     case "shop":
       return { kind: "shop", list: q.list, stall: q.stall, into: q.into, seed };
     case "likes":
@@ -109,7 +101,7 @@ export function lessonFaces(lesson: LessonDef): Face[] {
       const answer = q.options[q.answer];
       return answer.kind === "text" ? [] : [answer];
     }
-    if ((q.type === "word" || q.type === "spell" || q.type === "reveal") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
+    if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
     return [];
   });
   const key = (face: Face) => (face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text);

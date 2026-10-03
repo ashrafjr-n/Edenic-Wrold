@@ -111,13 +111,6 @@ export type Question =
   /** Tap the things in their order — each lands in the next space of the
       line. `items` are in the right order. */
   | { type: "order"; ask: Ask; items: Face[] }
-  /** What's in the bag? Tap Nova's bag and the thing peeks out as a
-      shadow; pick which of two it is and it jumps out — its picture, its
-      word, its speaker. `decoy` is the other choice. */
-  | { type: "reveal"; ask: Ask; word: string; picture: StaticImageData; decoy: Face }
-  /** Cut it open: drag the knife across the thing (or tap the knife) and
-      it falls open on the board — `inside` is the cut picture. */
-  | { type: "cut"; ask: Ask; word: string; picture: StaticImageData; inside: StaticImageData }
   /** Collect what is on a list: the English words on a note, the things on
       a stall (`stall` — every thing on offer, each with its `word`). Tap one
       on the list and it goes into the container; with `ordered` it has to

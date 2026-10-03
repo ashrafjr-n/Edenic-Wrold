@@ -1,6 +1,6 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
-import type { LessonDef } from "@/types/course";
+import type { LessonDef, Question } from "@/types/course";
 import { COURSE_ART } from "@/data/course-art";
 import { COLORS, EMPTY_POT } from "@/data/colors";
 import { SHAPES } from "@/data/shapes";
@@ -52,20 +52,16 @@ export interface BoxStop {
 }
 
 /** A course's lessons as box cells, read off each lesson's own "meet the
-    word" step (a word card, or the bag) — the review (no such step) wears its covers across a row;
+    word" step (its word card) — the review (no such step) wears its covers across a row;
     a lesson not written yet (no such step, one cover), or one that meets
     several words (three months), is a plain cell under its title. A color
     still to learn is an empty pot. */
 export function courseStops(id: LessonId): BoxStop[] {
   const blank = id === "colors" ? EMPTY_POT : undefined;
   return courseLessons[id].map(({ cover, questions }) => {
-    /* A lesson meets its word on a word card, or as it comes out of the
-       bag (Nova's market). */
-    const meets = questions.filter((q) => q.type === "word" || q.type === "reveal");
+    const meets = questions.filter((q): q is Extract<Question, { type: "word" }> => q.type === "word");
     const meet = meets.length === 1 ? meets[0] : undefined;
     if (meet === undefined) return { pictures: cover, blank, review: meets.length === 0 && cover.length > 1 };
-    if (meet.type === "reveal") return { pictures: cover, blank, word: meet.word };
-    if (meet.type !== "word") return { pictures: cover, blank };
     const { word, color, shape } = meet;
     return {
       pictures: cover,

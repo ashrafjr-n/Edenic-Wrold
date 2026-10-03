@@ -28,8 +28,6 @@ import { SortShapes } from "./sort-shapes";
 import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
-import { RevealBag } from "./reveal-bag";
-import { CutBoard } from "./cut-board";
 import { ShopList } from "./shop-list";
 import { LikesPlates } from "./likes-plates";
 import { LessonDone } from "./lesson-done";
@@ -277,7 +275,7 @@ export function LessonPlayer({
       <LessonDone
         title={lines.lessonDone}
         words={lesson.questions.flatMap((q) =>
-          q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : q.type === "reveal" ? [{ word: q.word, tone: undefined }] : [],
+          q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : [],
         )}
         faces={lessonFaces(lesson)}
         drawing={drawing}
@@ -414,22 +412,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "order") {
       body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
-    } else if (q.type === "reveal") {
-      body = (
-        <RevealBag
-          key={seed}
-          word={q.word}
-          picture={q.picture}
-          decoy={q.decoy}
-          seed={seed}
-          bagAria={lines.openBagAria}
-          hearLabel={lines.hearWord}
-          onSolved={onSolved}
-          onMiss={onMiss}
-        />
-      );
-    } else if (q.type === "cut") {
-      body = <CutBoard key={seed} word={q.word} picture={q.picture} inside={q.inside} knifeAria={lines.knifeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "shop") {
       body = (
         <ShopList
