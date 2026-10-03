@@ -20,6 +20,9 @@ import potCarrot from "../../../public/assets/learn/nova/fruits/make/pot-carrot.
 import potBroccoli from "../../../public/assets/learn/nova/fruits/make/pot-broccoli.png";
 import potCorn from "../../../public/assets/learn/nova/fruits/make/pot-corn.png";
 import potPotato from "../../../public/assets/learn/nova/fruits/make/pot-potato.png";
+import blenderMix from "../../../public/assets/learn/nova/fruits/make/blender-mix.png";
+import glassMix from "../../../public/assets/learn/nova/fruits/make/glass-mix.png";
+import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural (for "I like apples."), its
     picture (the Colors course's clay fruit is reused — the same renders)
@@ -101,17 +104,19 @@ function foodLesson({ word, picture, makes: { into, full, serve } }: Food, i: nu
     same names (`/assets/learn/nova/fruits/reels/<n>.mp4`). */
 export const novaFruits: LessonDef[] = [
   ...FOODS.map(foodLesson),
-  /* The review, no reel: a fruit salad and a vegetable soup made by their
-     recipes (line by line), "Do you like…?" (I like / I don't like), then
-     two words spelled from the picture alone. */
+  /* The review, no reel: a mixed juice and a vegetable soup made from
+     recipes of words alone (the fourth thing beside each is one of its own
+     kind, so every word has to be read), "Do you like…?" (I like / I don't
+     like), then two words spelled from the picture alone — grapes, the one
+     fruit the juice leaves out. */
   {
     cover: [apple, banana, carrot, broccoli],
     questions: [
-      { type: "shop", ask: { key: "makeSalad" }, list: ["banana", "apple", "grapes"], stall: ["banana", "apple", "grapes", "carrot"].map(face), into: "bowl", ordered: true },
-      { type: "shop", ask: { key: "makeSoup" }, list: ["carrot", "potato", "corn"], stall: ["carrot", "potato", "corn", "orange"].map(face), into: "pot", ordered: true },
+      { type: "make", ask: { key: "mixJuice" }, list: ["apple", "banana", "orange"], stall: ["apple", "banana", "orange", "grapes"].map(face), into: "blender", full: blenderMix, serve: glassMix },
+      { type: "make", ask: { key: "makeSoup" }, list: ["carrot", "potato", "corn"], stall: ["carrot", "potato", "corn", "broccoli"].map(face), into: "pot", full: potMix },
       { type: "likes", ask: { key: "likeThem" }, items: ["apple", "broccoli", "banana", "carrot"].map((word) => ({ face: face(word), things: food(word).things })) },
       { type: "spell", ask: { key: "spellPicture" }, word: "carrot", picture: carrot },
-      { type: "spell", ask: { key: "spellPicture" }, word: "banana", picture: banana },
+      { type: "spell", ask: { key: "spellPicture" }, word: "grapes", picture: grapes },
     ],
   },
 ];
