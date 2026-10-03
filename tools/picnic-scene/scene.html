@@ -1384,16 +1384,6 @@ const ITEMS = {
     return g;
   },
 
-  // a salad bowl: cream, a gold band
-  bowl() {
-    const g = new THREE.Group();
-    g.add(mesh(smoothLathe([[0, 0], [0.38, 0], [0.42, 0.05], [0.72, 0.32], [0.86, 0.6], [0.8, 0.6], [0.66, 0.36], [0.36, 0.1], [0, 0.1]]), clay(0xfdf6ec, { clearcoat: 0.9, clearcoatRoughness: 0.15, roughness: 0.3 })));
-    const band = mesh(new THREE.TorusGeometry(0.8, 0.035, 12, 96), clay(0xf7c948, { clearcoat: 0.8 }));
-    band.rotation.x = Math.PI / 2;
-    band.position.y = 0.5;
-    g.add(band);
-    return g;
-  },
 
   // a soup pot: red, two handles. `?arg=<soup>`: full of it, pieces of
   // what it is made of floating on top — from the same camera as the empty
