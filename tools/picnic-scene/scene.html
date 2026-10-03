@@ -211,6 +211,66 @@ const BLANKETS = {
   },
 };
 
+/* ---------- Nova's juices and soups ---------- */
+
+/* What each comes out as: a juice's colors bottom to top (a mix is layered,
+   one band per fruit in it), a soup's color and the pieces floating in it. */
+const JUICES = {
+  apple: [0xf6b844],
+  banana: [0xf8e38f],
+  orange: [0xff9b2f],
+  grapes: [0x8f45b8],
+  mix: [0xff9b2f, 0xf6b844, 0xf8e38f],
+};
+const SOUPS = {
+  carrot: { color: 0xf28a30, pieces: ["coin", "coin", "coin", "coin", "leaf", "leaf"] },
+  broccoli: { color: 0x9ccb5c, pieces: ["floret", "floret", "floret", "floret", "floret"] },
+  corn: { color: 0xf6d661, pieces: ["kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "leaf"] },
+  potato: { color: 0xeedcae, pieces: ["cube", "cube", "cube", "cube", "leaf", "leaf"] },
+  mix: { color: 0xf3ad5e, pieces: ["coin", "cube", "kernel", "coin", "cube", "kernel", "kernel", "leaf"] },
+};
+const PIECES = {
+  coin: () => mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.035, 32), clay(0xe0661a, { clearcoat: 0.5 })),
+  cube: () => mesh(new RoundedBoxGeometry(0.13, 0.08, 0.13, 3, 0.03), clay(0xf3e2b4, { roughness: 0.7 })),
+  kernel: () => mesh(new THREE.SphereGeometry(0.045, 20, 12), clay(0xffc928, { clearcoat: 0.7 })),
+  floret() {
+    const f = new THREE.Group();
+    for (const [x, z] of [[0, 0], [0.06, 0.03], [-0.04, 0.05]]) {
+      const bud = mesh(new THREE.SphereGeometry(0.06, 20, 12), clay(0x3f8f3a, { roughness: 0.75 }));
+      bud.position.set(x, 0, z);
+      f.add(bud);
+    }
+    return f;
+  },
+  leaf() {
+    const leaf = mesh(new THREE.SphereGeometry(0.05, 20, 12), clay(0x5aa846));
+    leaf.scale.set(1.4, 0.3, 0.8);
+    return leaf;
+  },
+};
+
+/* Glass: pale, clear and glossy — the page shows through it. */
+const glassy = () =>
+  new THREE.MeshPhysicalMaterial({ color: 0xf2fbff, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.04, transparent: true, opacity: 0.17, side: THREE.DoubleSide, depthWrite: false });
+
+/* A juice filling a glass from `y0` to `y1`, one band per color, each band
+   just inside the wall (`wall(y)` is the inside radius at height y). */
+function pour(colors, y0, y1, wall) {
+  const g = new THREE.Group();
+  const step = (y1 - y0) / colors.length;
+  colors.forEach((color, i) => {
+    const a = y0 + i * step, b = a + step;
+    /* A cylinder, not a lathe: its caps keep their own normals, so two
+       bands meet in a clean line instead of a dark rounded seam. */
+    const band = mesh(new THREE.CylinderGeometry(wall(b) - 0.004, wall(a) - 0.004, b - a, 96), clay(color, { roughness: 0.25, clearcoat: 0.9, clearcoatRoughness: 0.1, emissive: color, emissiveIntensity: 0.14 }));
+    band.position.y = (a + b) / 2;
+    /* Lit as if the glass were not there — its shadow would grey the juice. */
+    band.receiveShadow = false;
+    g.add(band);
+  });
+  return g;
+}
+
 /* ---------- The things ---------- */
 const ITEMS = {
   plate() {
@@ -1335,8 +1395,10 @@ const ITEMS = {
     return g;
   },
 
-  // a soup pot: red, two handles
-  pot() {
+  // a soup pot: red, two handles. `?arg=<soup>`: full of it, pieces of
+  // what it is made of floating on top — from the same camera as the empty
+  // pot, so the two renders lie exactly over each other.
+  soupPot(soup) {
     const g = new THREE.Group();
     const red = clay(0xee4645, { clearcoat: 0.8, clearcoatRoughness: 0.2 });
     g.add(mesh(smoothLathe([[0, 0], [0.62, 0], [0.7, 0.08], [0.72, 0.62], [0.78, 0.66], [0.66, 0.66], [0.64, 0.12], [0, 0.12]]), red));
@@ -1349,6 +1411,91 @@ const ITEMS = {
       handle.rotation.z = s * Math.PI / 2;
       handle.position.set(s * 0.74, 0.5, 0);
       g.add(handle);
+    }
+    if (soup) {
+      const { color, pieces } = SOUPS[soup];
+      const top = mesh(new THREE.CircleGeometry(0.645, 64), clay(color, { roughness: 0.35, clearcoat: 0.6 }));
+      top.rotation.x = -Math.PI / 2;
+      top.position.y = 0.6;
+      g.add(top);
+      pieces.forEach((kind, i) => {
+        const piece = PIECES[kind]();
+        const a = i * 2.39996, r = 0.14 + (i % 3) * 0.15;
+        piece.position.set(Math.cos(a) * r, 0.61, Math.sin(a) * r);
+        piece.rotation.y = a;
+        g.add(piece);
+      });
+    }
+    return g;
+  },
+
+  // Nova's blender: a teal clay base with a dial, a glass jar with its
+  // blades, a lid. `?arg=<juice>`: the jar full of that juice (the same
+  // camera, so the full render lies exactly over the empty one).
+  blender(juice) {
+    const g = new THREE.Group();
+    const teal = clay(0x4fc3b4, { clearcoat: 0.75, clearcoatRoughness: 0.2 });
+    g.add(mesh(smoothLathe([[0, 0], [0.62, 0], [0.67, 0.06], [0.63, 0.46], [0.54, 0.6], [0, 0.6]]), teal));
+    const dial = mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.08, 48), clay(0xffffff, { clearcoat: 0.8 }));
+    dial.rotation.x = Math.PI / 2;
+    dial.position.set(0, 0.3, 0.62);
+    g.add(dial);
+    const knob = mesh(new RoundedBoxGeometry(0.05, 0.16, 0.05, 3, 0.02), clay(0x2e2b35));
+    knob.position.set(0, 0.32, 0.67);
+    knob.rotation.z = -0.5;
+    g.add(knob);
+    for (const [x, color] of [[-0.34, 0xf7c948], [0.34, 0xff86c2]]) {
+      const button = mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.06, 32), clay(color, { clearcoat: 0.8 }));
+      button.rotation.x = Math.PI / 2;
+      button.position.set(x, 0.26, 0.56);
+      g.add(button);
+    }
+    const collar = mesh(new THREE.CylinderGeometry(0.47, 0.5, 0.12, 64), teal);
+    collar.position.y = 0.66;
+    g.add(collar);
+    /* The jar: thin walls, flaring a little to the top. */
+    const wall = (y) => 0.4 + ((y - 0.74) / (1.9 - 0.74)) * 0.11;
+    const blade = clay(0xc9ced8, { clearcoat: 0.9, roughness: 0.3 });
+    const hub = mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 24), blade);
+    hub.position.y = 0.8;
+    g.add(hub);
+    for (const a of [0.3, 0.3 + Math.PI / 2]) {
+      const arm = mesh(new RoundedBoxGeometry(0.46, 0.025, 0.08, 2, 0.01), blade);
+      arm.position.y = 0.84;
+      arm.rotation.y = a;
+      g.add(arm);
+    }
+    if (juice) g.add(pour(JUICES[juice], 0.745, 1.72, wall));
+    g.add(mesh(lathe([[0, 0.7], [0.4, 0.7], [0.44, 0.74], [0.55, 1.9], [0.56, 1.95], [0.515, 1.95], [0.51, 1.9], [0.4, 0.74], [0, 0.74]], 128), glassy()));
+    const handle = mesh(new THREE.TorusGeometry(0.3, 0.065, 16, 48, Math.PI), teal);
+    handle.rotation.z = -Math.PI / 2;
+    handle.position.set(0.49, 1.32, 0);
+    g.add(handle);
+    const lid = mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.12, 64), teal);
+    lid.position.y = 2.0;
+    g.add(lid);
+    const cap = mesh(new THREE.CylinderGeometry(0.15, 0.17, 0.12, 32), clay(0xf7c948, { clearcoat: 0.8 }));
+    cap.position.y = 2.12;
+    g.add(cap);
+    return g;
+  },
+
+  // a glass of juice with a pink straw, and the fruit it was made of
+  // beside it. `?arg=<juice>`.
+  glass(juice = "orange") {
+    const g = new THREE.Group();
+    const wall = (y) => 0.335 + ((y - 0.12) / (1.05 - 0.12)) * 0.05;
+    g.add(pour(JUICES[juice], 0.121, 0.86, wall));
+    const straw = mesh(new THREE.CapsuleGeometry(0.04, 0.95, 8, 16), clay(0xff86c2, { clearcoat: 0.7 }));
+    straw.position.set(0.14, 1.0, -0.06);
+    straw.rotation.z = -0.3;
+    g.add(straw);
+    g.add(mesh(lathe([[0, 0], [0.33, 0], [0.36, 0.04], [0.42, 1.05], [0.385, 1.05], [0.335, 0.12], [0, 0.12]], 96), glassy()));
+    if (juice !== "mix") {
+      const fruit = ITEMS[juice]();
+      fruit.scale.setScalar(0.5);
+      fruit.position.set(-0.62, 0, 0.32);
+      g.add(fruit);
     }
     return g;
   },
@@ -1842,7 +1989,7 @@ if (THING) {
   const centre = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
   const span = Math.max(size.x, size.y, size.z) * 0.78;
-  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (THING === "pot" ? 32 : 24)));
+  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (["pot", "soupPot"].includes(THING) ? 32 : 24)));
   /* `?lift=` for a thing best seen from higher up (a leaf, a foot). */
   renderer.setSize(800, 800);
   camera.left = -span; camera.right = span; camera.top = span; camera.bottom = -span;
