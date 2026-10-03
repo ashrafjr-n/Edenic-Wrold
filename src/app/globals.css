@@ -3145,6 +3145,123 @@ button:disabled,
     0 14px 28px -14px rgb(var(--shadow-hue) / 34%);
 }
 
+/* Make it (`MakeFood`): the blender shivers as it whirs while what is in
+   it spins down into juice; the pot bubbles and what is in it sinks. Then
+   it fills — the full render, lying exactly over the empty one, uncovered
+   from the jar's bottom up (`--fill-from`: the juice rising) or from the
+   pot's middle out (`--fill-at`: the soup spreading) — and a soup steams. */
+.make-whir {
+  animation: make-whir 0.11s linear infinite;
+}
+
+@keyframes make-whir {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  25% {
+    translate: -0.09rem 0.03rem;
+    rotate: -0.7deg;
+  }
+  75% {
+    translate: 0.09rem -0.03rem;
+    rotate: 0.7deg;
+  }
+}
+
+.make-blend {
+  animation: make-blend 1.1s ease-in forwards;
+}
+
+@keyframes make-blend {
+  to {
+    rotate: 720deg;
+    scale: 0.15;
+    opacity: 0;
+  }
+}
+
+.make-bubble {
+  transform-origin: 50% 100%;
+  animation: make-bubble 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes make-bubble {
+  to {
+    scale: 1.035 0.965;
+  }
+}
+
+.make-sink {
+  animation: make-sink 1.1s ease-in forwards;
+}
+
+@keyframes make-sink {
+  to {
+    translate: 0 30%;
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+
+.make-fill-up {
+  animation: make-fill-up 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+@keyframes make-fill-up {
+  from {
+    clip-path: inset(var(--fill-from) 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.make-fill-out {
+  animation: make-fill-out 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+@keyframes make-fill-out {
+  from {
+    clip-path: circle(0% at var(--fill-at));
+  }
+  to {
+    clip-path: circle(75% at var(--fill-at));
+  }
+}
+
+/* A puff of steam over the soup; three of them, one after another. The
+   centring lives in the keyframes — an animation owning `translate` would
+   drop a `-translate-x-1/2` utility. */
+.make-steam {
+  position: absolute;
+  bottom: 0;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 80%);
+  filter: blur(5px);
+  opacity: 0;
+  animation: make-steam 1.8s ease-out infinite;
+}
+
+@keyframes make-steam {
+  from {
+    translate: -50% 0;
+    scale: 0.5;
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  to {
+    translate: -50% -150%;
+    scale: 1.5;
+    opacity: 0;
+  }
+}
+
 /* ---------------------------------------------------------------
    The done screen (`LessonDone`): a soft disc of the lesson's colour
    breathing behind Pinki, the child's drawing redrawing itself, and the
@@ -3442,6 +3559,12 @@ button:disabled,
   .demo-tick,
   .demo-paint,
   .paint-reveal,
+  .make-whir,
+  .make-blend,
+  .make-bubble,
+  .make-sink,
+  .make-fill-up,
+  .make-fill-out,
   .balloon-sway,
   .demo-pop {
     animation: none;
@@ -3454,7 +3577,8 @@ button:disabled,
   }
 
   .pop-ring,
-  .pop-shard {
+  .pop-shard,
+  .make-steam {
     display: none;
   }
 
