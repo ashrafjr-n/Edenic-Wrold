@@ -3367,6 +3367,47 @@ button:disabled,
   }
 }
 
+/* Pick them (`HarvestPick`): the word pops up where a food was picked and
+   floats off. Its `-50%` centring lives IN the keyframes — an animation
+   owning `translate` drops a utility's. Under reduced motion it only
+   fades (`harvest-word-still`). */
+.harvest-word {
+  translate: -50% -100%;
+  animation: harvest-word 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes harvest-word {
+  from {
+    translate: -50% -40%;
+    scale: 0.5;
+    opacity: 0;
+  }
+  18% {
+    translate: -50% -110%;
+    scale: 1;
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  to {
+    translate: -50% -230%;
+    scale: 1;
+    opacity: 0;
+  }
+}
+
+@keyframes harvest-word-still {
+  from,
+  to {
+    opacity: 0;
+  }
+  15%,
+  70% {
+    opacity: 1;
+  }
+}
+
 /* ---------------------------------------------------------------
    The done screen (`LessonDone`): a soft disc of the lesson's colour
    breathing behind Pinki, the child's drawing redrawing itself, and the
@@ -3690,6 +3731,10 @@ button:disabled,
   .pop-shard,
   .make-steam {
     display: none;
+  }
+
+  .harvest-word {
+    animation-name: harvest-word-still;
   }
 
   .demo-pen {

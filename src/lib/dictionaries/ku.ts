@@ -202,6 +202,7 @@ export const ku: Dictionary = {
     mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     fillWord: "پەیڤا {word} ب تبلا خۆ تژی بکە!",
+    pickThem: "{things} بچنە!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -219,6 +220,7 @@ export const ku: Dictionary = {
     juice: "چێ بکە",
     like: "حەز دکەی؟",
     fill: "تژی بکە",
+    harvest: "بچنە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

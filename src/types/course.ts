@@ -128,7 +128,32 @@ export type Question =
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
-  | { type: "fill"; ask: Ask; word: string; picture: StaticImageData };
+  | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
+  /** Pick them: five of the thing on its tree (in its bed); tap one and it
+      is picked (pulled up) into Nova's basket, its `word` popping up where
+      it was. All five in → the word under the garden turns into `things`
+      ("apples"). */
+  | { type: "harvest"; ask: Ask; word: string; things: string; garden: Garden };
+
+/** Where a food grows, to pick it (Nova's Fruits) — one render
+    (`tools/picnic-scene`, `?harvest=`): the garden without the food, the
+    food (the five are alike), what stands in front of it (a bed's near half
+    and the basket) and the basket's near half, which goes over what is
+    piled in it. */
+export interface Garden {
+  ground: StaticImageData;
+  item: StaticImageData;
+  /** Each food: where its picture sits, what of it can be tapped (the part
+      not behind the front), and how far it is turned (°, about `pivot`) so
+      the five are not all alike. */
+  items: { box: SceneRect; hit: SceneRect; tilt: number }[];
+  /** What a food turns about: a hanging fruit's stem, an ear of corn's foot. */
+  pivot: "top" | "bottom";
+  front: { src: StaticImageData; box: SceneRect };
+  rim: { src: StaticImageData; box: SceneRect };
+  /** The basket's mouth, where what is picked piles up. */
+  basket: SceneRect;
+}
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";

@@ -208,6 +208,7 @@ export const en = {
     mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
     fillWord: "Fill the word {word} with your finger!",
+    pickThem: "Pick the {things}!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -226,6 +227,7 @@ export const en = {
     juice: "Blend",
     like: "Like?",
     fill: "Fill",
+    harvest: "Pick",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

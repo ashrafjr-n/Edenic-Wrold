@@ -7,7 +7,7 @@ import { MAKERS, MARKET_BASKET } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Maker, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
+import type { ColorId, Face, Garden, Maker, PaintRound, Scene, SceneItem, ShapeId, SortBin, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -34,7 +34,8 @@ export type TaskDemoDef =
   | { kind: "shop"; list: string[]; stall: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
-  | { kind: "fill"; word: string; picture: StaticImageData };
+  | { kind: "fill"; word: string; picture: StaticImageData }
+  | { kind: "harvest"; garden: Garden };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -535,6 +536,42 @@ function FillDemo({ word, picture }: { word: string; picture: StaticImageData })
   );
 }
 
+/** Pick: the garden, its five foods; the finger taps the first and it
+    flies into the basket — behind the basket's front, so it goes IN. */
+function HarvestDemo({ garden }: { garden: Garden }) {
+  const [left, top, width, height] = garden.items[0].box;
+  const [hl, ht, hw, hh] = garden.items[0].hit;
+  const [bl, bt, bw, bh] = garden.basket;
+  const fly = {
+    "--fly-x": `${((bl + bw / 2 - (left + width / 2)) / width) * 100}%`,
+    "--fly-y": `${((bt + bh * 0.3 - (top + height / 2)) / height) * 100}%`,
+  } as CSSProperties;
+  const pivot = garden.pivot === "top" ? "50% 0%" : "50% 100%";
+  return (
+    <div className="relative mx-auto aspect-[4/5] h-full overflow-hidden rounded-[1.35rem]">
+      <Image src={garden.ground} alt="" fill sizes="18rem" className="object-cover" />
+      {garden.items.map(({ box, tilt }, i) => (
+        <span
+          key={i}
+          className={`absolute z-[1] ${i === 0 ? "demo-fly" : ""}`}
+          style={{ ...place(box), rotate: `${tilt}deg`, transformOrigin: pivot, ...(i === 0 ? fly : {}) }}
+        >
+          <Image src={garden.item} alt="" fill sizes="4rem" className="object-contain" />
+        </span>
+      ))}
+      <span className="absolute z-[2]" style={place(garden.front.box)}>
+        <Image src={garden.front.src} alt="" fill sizes="8rem" />
+      </span>
+      <span className="absolute z-[3]" style={place(garden.rim.box)}>
+        <Image src={garden.rim.src} alt="" fill sizes="8rem" />
+      </span>
+      <span className="absolute z-[4]" style={{ left: `${hl + hw / 2}%`, top: `${ht + hh / 2}%` }}>
+        <Finger />
+      </span>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -564,5 +601,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <LikeDemo face={demo.face} />;
     case "fill":
       return <FillDemo word={demo.word} picture={demo.picture} />;
+    case "harvest":
+      return <HarvestDemo garden={demo.garden} />;
   }
 }
