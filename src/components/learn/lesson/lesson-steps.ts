@@ -50,7 +50,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "fill":
       return { kind: "fill", target: q.word };
     case "harvest":
-      return { kind: "harvest", target: q.things };
+      return { kind: "harvest" };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color ?? q.ask.vars?.season;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -89,7 +89,7 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
     case "fill":
       return { kind: "fill", word: q.word, picture: q.picture };
     case "harvest":
-      return { kind: "harvest", garden: q.garden };
+      return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:

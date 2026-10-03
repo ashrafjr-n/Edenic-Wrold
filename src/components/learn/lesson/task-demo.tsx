@@ -17,6 +17,7 @@ import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
 import { wordOf } from "./list-note";
 import { FillPattern } from "./fill-word";
+import { lineOf } from "./harvest-pick";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -35,7 +36,7 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "fill"; word: string; picture: StaticImageData }
-  | { kind: "harvest"; garden: Garden };
+  | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -490,38 +491,56 @@ function FillDemo({ word, picture }: { word: string; picture: StaticImageData })
   );
 }
 
-/** Pick: the garden, its five foods; the finger taps the first and it
-    flies into the basket — behind the basket's front, so it goes IN. */
-function HarvestDemo({ garden }: { garden: Garden }) {
-  const [left, top, width, height] = garden.items[0].box;
-  const [hl, ht, hw, hh] = garden.items[0].hit;
+/** Pick (a review's exam): the note's first line over the garden; the
+    finger taps one of its food and it flies into the basket — behind the
+    basket's front, so it goes IN — as the line's first socket fills.
+    Sized by its own box (`cqi`), like the make demo. */
+function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; things: string; count: number } }) {
+  const first = Math.max(0, garden.items.findIndex((item) => item.food === line.word));
+  const [left, top, width, height] = garden.items[first].box;
+  const [hl, ht, hw, hh] = garden.items[first].hit;
   const [bl, bt, bw, bh] = garden.basket;
   const fly = {
     "--fly-x": `${((bl + bw / 2 - (left + width / 2)) / width) * 100}%`,
     "--fly-y": `${((bt + bh * 0.3 - (top + height / 2)) / height) * 100}%`,
   } as CSSProperties;
-  const pivot = garden.pivot === "top" ? "50% 0%" : "50% 100%";
   return (
-    <div className="relative mx-auto aspect-[4/5] h-full overflow-hidden rounded-[1.35rem]">
-      <Image src={garden.ground} alt="" fill sizes="18rem" className="object-cover" />
-      {garden.items.map(({ box, tilt }, i) => (
-        <span
-          key={i}
-          className={`absolute z-[1] ${i === 0 ? "demo-fly" : ""}`}
-          style={{ ...place(box), rotate: `${tilt}deg`, transformOrigin: pivot, ...(i === 0 ? fly : {}) }}
-        >
-          <Image src={garden.item} alt="" fill sizes="4rem" className="object-contain" />
+    <div dir="ltr" className="@container flex h-full w-full flex-col items-center justify-center gap-[5cqi]">
+      <span className="card card-clay-white -rotate-1 flex items-center gap-[3cqi] px-[5cqi] py-[2.5cqi]">
+        <span className="whitespace-nowrap text-[9cqi] font-bold leading-none text-[var(--color-ink)]">{lineOf(line)}</span>
+        <span className="flex gap-[1.5cqi]">
+          {Array.from({ length: line.count }, (_, k) => (
+            <span key={k} className="letter-slot h-[8cqi] w-[8cqi]" style={{ borderRadius: "999px" }}>
+              {k === 0 && (
+                <span className="demo-tick absolute inset-0.5">
+                  <Image src={garden.foods[line.word]} alt="" fill sizes="2rem" className="object-contain" />
+                </span>
+              )}
+            </span>
+          ))}
         </span>
-      ))}
-      <span className="absolute z-[2]" style={place(garden.front.box)}>
-        <Image src={garden.front.src} alt="" fill sizes="8rem" />
       </span>
-      <span className="absolute z-[3]" style={place(garden.rim.box)}>
-        <Image src={garden.rim.src} alt="" fill sizes="8rem" />
-      </span>
-      <span className="absolute z-[4]" style={{ left: `${hl + hw / 2}%`, top: `${ht + hh / 2}%` }}>
-        <Finger />
-      </span>
+      <div className="relative w-full overflow-hidden rounded-[1.1rem]" style={{ aspectRatio: `${garden.ground.width} / ${garden.ground.height}` }}>
+        <Image src={garden.ground} alt="" fill sizes="20rem" className="object-cover" />
+        {garden.items.map(({ food, box, tilt }, i) => (
+          <span
+            key={i}
+            className={`absolute z-[1] ${i === first ? "demo-fly" : ""}`}
+            style={{ ...place(box), rotate: `${tilt}deg`, transformOrigin: "50% 0%", ...(i === first ? fly : {}) }}
+          >
+            <Image src={garden.foods[food]} alt="" fill sizes="3rem" className="object-contain" />
+          </span>
+        ))}
+        <span className="absolute z-[2]" style={place(garden.front.box)}>
+          <Image src={garden.front.src} alt="" fill sizes="20rem" />
+        </span>
+        <span className="absolute z-[3]" style={place(garden.rim.box)}>
+          <Image src={garden.rim.src} alt="" fill sizes="5rem" />
+        </span>
+        <span className="absolute z-[4]" style={{ left: `${hl + hw / 2}%`, top: `${ht + hh / 2}%` }}>
+          <Finger />
+        </span>
+      </div>
     </div>
   );
 }
@@ -554,6 +573,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
     case "fill":
       return <FillDemo word={demo.word} picture={demo.picture} />;
     case "harvest":
-      return <HarvestDemo garden={demo.garden} />;
+      return <HarvestDemo garden={demo.garden} line={demo.line} />;
   }
 }

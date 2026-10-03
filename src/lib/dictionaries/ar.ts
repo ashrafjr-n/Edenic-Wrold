@@ -197,7 +197,7 @@ export const ar: Dictionary = {
     mixJuice: "اصنع عصير فواكه!",
     likeThem: "هل تحبّها؟",
     fillWord: "املأ كلمة {word} بإصبعك!",
-    pickThem: "اقطف {things}!",
+    pickList: "اقطف ما في قائمة نوفا!",
   },
   tasks: {
     listen: "استمع",

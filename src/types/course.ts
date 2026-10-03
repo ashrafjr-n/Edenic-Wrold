@@ -125,26 +125,26 @@ export type Question =
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
-  /** Pick them: five of the thing on its tree (in its bed); tap one and it
-      is picked (pulled up) into Nova's basket, its `word` popping up where
-      it was. All five in → the word under the garden turns into `things`
-      ("apples"). */
-  | { type: "harvest"; ask: Ask; word: string; things: string; garden: Garden };
+  /** Pick what Nova's note says (a review's exam): three plants, one
+      basket, and the note — "3 apples, 1 banana, 2 oranges". Tap one and
+      it is picked (pulled up) into the basket, its word popping up where it
+      was; one more than the note says wiggles back. `order` is each line:
+      the English word, its plural and how many. */
+  | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden };
 
-/** Where a food grows, to pick it (Nova's Fruits) — one render
-    (`tools/picnic-scene`, `?harvest=`): the garden without the food, the
-    food (the five are alike), what stands in front of it (a bed's near half
-    and the basket) and the basket's near half, which goes over what is
-    piled in it. */
+/** Where the foods grow, to pick them (Nova's Fruits review) — one render
+    (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
+    kind of food (all of one kind are alike), what stands in front of them
+    (a bed's near half and the basket) and the basket's near half, which
+    goes over what is piled in it. */
 export interface Garden {
   ground: StaticImageData;
-  item: StaticImageData;
-  /** Each food: where its picture sits, what of it can be tapped (the part
-      not behind the front), and how far it is turned (°, about `pivot`) so
-      the five are not all alike. */
-  items: { box: SceneRect; hit: SceneRect; tilt: number }[];
-  /** What a food turns about: a hanging fruit's stem, an ear of corn's foot. */
-  pivot: "top" | "bottom";
+  /** Each kind of food that grows here, by its English word. */
+  foods: Record<string, StaticImageData>;
+  /** Each food: which it is, where its picture sits, what of it can be
+      tapped (the part not behind the front), and how far it is turned (°,
+      about its stem) so they are not all alike. */
+  items: { food: string; box: SceneRect; hit: SceneRect; tilt: number }[];
   front: { src: StaticImageData; box: SceneRect };
   rim: { src: StaticImageData; box: SceneRect };
   /** The basket's mouth, where what is picked piles up. */

@@ -201,7 +201,7 @@ export const ku: Dictionary = {
     mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     fillWord: "پەیڤا {word} ب تبلا خۆ تژی بکە!",
-    pickThem: "{things} بچنە!",
+    pickList: "تشتێن د لیستا Nova دا بچنە!",
   },
   tasks: {
     listen: "گوهداری بکە",

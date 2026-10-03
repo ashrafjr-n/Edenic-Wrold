@@ -435,7 +435,7 @@ export function LessonPlayer({
     } else if (q.type === "fill") {
       body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "harvest") {
-      body = <HarvestPick key={seed} word={q.word} things={q.things} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
+      body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
       body = (
         <FindShapes
