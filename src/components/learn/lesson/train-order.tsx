@@ -50,6 +50,9 @@ export function TrainOrder({ engine, wagons, seed, itemAria, onSolved, onMiss }:
   const { width, height } = wagons[0].src;
   const wagonBox = { aspectRatio: `${width} / ${height}` };
   const columns = { gridTemplateColumns: `repeat(${wagons.length}, minmax(0, 1fr))` };
+  /* The names as big as the longest fits its wagon (about 0.6em a letter in
+     `cqi` of the wagon): "May" is not set as small as "September". */
+  const fit = 150 / Math.max(...wagons.map(({ word }) => word.length));
 
   const tap = (index: number) => {
     if (solved || index < placed) return;
@@ -85,7 +88,7 @@ export function TrainOrder({ engine, wagons, seed, itemAria, onSolved, onMiss }:
                     </span>
                   )}
                 </span>
-                <span className="mt-0.5 h-[1.3em] w-full truncate text-center text-[length:min(17cqi,1.25rem)] font-bold leading-tight text-[var(--color-ink)]">
+                <span className="mt-0.5 h-[1.3em] w-full truncate text-center font-bold leading-tight text-[var(--color-ink)]" style={{ fontSize: `min(${fit}cqi, 1.25rem)` }}>
                   {i < placed ? wagon.word : ""}
                 </span>
               </span>
@@ -125,7 +128,7 @@ export function TrainOrder({ engine, wagons, seed, itemAria, onSolved, onMiss }:
                   <span className="relative block w-full" style={wagonBox}>
                     <Image src={wagons[index].src} alt="" fill sizes="(min-width: 1024px) 9rem, 28vw" className="object-contain" />
                   </span>
-                  <span className="w-full truncate text-center text-[length:min(16cqi,1.375rem)] font-bold leading-tight text-[var(--color-ink)]">
+                  <span className="w-full truncate text-center font-bold leading-tight text-[var(--color-ink)]" style={{ fontSize: `min(${fit}cqi, 1.375rem)` }}>
                     {wagons[index].word}
                   </span>
                 </button>
