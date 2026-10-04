@@ -193,8 +193,7 @@ export const en = {
     popColor: "Pop the {color} balloons!",
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
-    whichSeason: "Which one is {season}?",
-    findSeason: "Find all the {season} things!",
+    changeSeason: "Make it {season}!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
     thisMonth: "This is {month}!",
@@ -226,6 +225,7 @@ export const en = {
     like: "Like?",
     fill: "Fill",
     harvest: "Pick",
+    change: "Make",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

@@ -183,8 +183,7 @@ export const ar: Dictionary = {
     popColor: "فرقع البالونات {color}!",
     spellPicture: "كوّن كلمة هذه الصورة!",
     thisSeason: "هذا فصل {season}!",
-    whichSeason: "أين {season}؟",
-    findSeason: "ابحث عن كل أشياء {season}!",
+    changeSeason: "اصنع فصل {season}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
     thisMonth: "هذا شهر {month}!",
@@ -215,6 +214,7 @@ export const ar: Dictionary = {
     like: "تحبّه؟",
     fill: "املأ",
     harvest: "اقطف",
+    change: "اصنع",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

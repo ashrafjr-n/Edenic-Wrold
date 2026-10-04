@@ -187,8 +187,7 @@ export const ku: Dictionary = {
     popColor: "بالۆنێن {color} بتەقینە!",
     spellPicture: "پەیڤا ڤی وێنەی چێ بکە!",
     thisSeason: "ئەڤە وەرزێ {season}ە!",
-    whichSeason: "{season} کیژە؟",
-    findSeason: "هەمی تشتێن {season} بدۆزە!",
+    changeSeason: "وەرزێ {season} چێ بکە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     thisMonth: "ئەڤە هەیڤا {month}ە!",
@@ -219,6 +218,7 @@ export const ku: Dictionary = {
     like: "حەز دکەی؟",
     fill: "تژی بکە",
     harvest: "بچنە",
+    change: "چێ بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",
