@@ -12,15 +12,21 @@ Shapes `find/` itself (`picnic.jpg`); every other scene in `<dest>/<name>/`
 
 Nova's garden — run after `render.cjs harvest <garden>`: writes the garden
 without its food (`ground.jpg`), each kind of food once (`<food>.png` — all
-of one kind are alike), what stands in front of them (`front.png`: a bed's
-near half and the basket) and the basket's near half that goes over what is
-piled in it (`rim.png`), both cut out of the garden, into
+of one kind are alike) and, if anything stands in front of them, that cut
+out of the garden (`front.png`: the beds' near halves) into
 `<dest>/<garden>/`, and prints each food's kind, box and hit area (the part
-not behind the front), the two layers' boxes and the basket's mouth — paste
-them into `data/garden.ts`. `dest` defaults to
+not behind the front) and the front's box — paste them into
+`data/garden.ts`. `dest` defaults to
 `public/assets/learn/nova/fruits/garden`.
 
     python3 tools/picnic-scene/crop.py harvest-fruits
+
+Nova's basket — run after `render.cjs basket`: writes the basket
+(`basket.png`) and its near half, which goes over what is piled in it
+(`basket-rim.png`), both on one box, into `dest`, and prints the mouth (%
+of that box).
+
+    python3 tools/picnic-scene/crop.py basket
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
@@ -69,14 +75,16 @@ if NAME.startswith("harvest-"):
     ground = Image.open(f"{out}/background.png").convert("RGB")
     W, H = ground.size
     ground.save(f"{dest}/ground.jpg", quality=86, optimize=True, progressive=True)
-    boxes = {}
-    for layer_name in ("front", "rim"):
-        mask = Image.open(f"{out}/{layer_name}mask.png").convert("L")
+    # What stands in front of the food — none in a garden of trees alone.
+    front = None
+    solid = Image.new("L", ground.size, 0)
+    if os.path.exists(f"{out}/frontmask.png"):
+        mask = Image.open(f"{out}/frontmask.png").convert("L")
         cut = ground.convert("RGBA")
         cut.putalpha(mask)
-        boxes[layer_name] = alpha_box(cut, pad=2)
-        cut.crop(boxes[layer_name]).save(f"{dest}/{layer_name}.png", optimize=True)
-    solid = Image.open(f"{out}/frontmask.png").convert("L").point(lambda v: 255 if v > 127 else 0)
+        front = alpha_box(cut, pad=2)
+        cut.crop(front).save(f"{dest}/front.png", optimize=True)
+        solid = mask.point(lambda v: 255 if v > 127 else 0)
     meta = json.load(open(f"{out}/meta.json"))
     items = []
     for k in range(meta["count"]):
@@ -88,7 +96,25 @@ if NAME.startswith("harvest-"):
             layer.crop(box).save(f"{dest}/{food}.png", optimize=True)
         seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
         items.append({"food": food, "box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
-    print(json.dumps({"items": items, "pivot": meta["pivot"], "front": pct(boxes["front"]), "rim": pct(boxes["rim"]), "basket": meta["basket"]}))
+    print(json.dumps({"items": items, **({"front": pct(front)} if front else {})}))
+    sys.exit()
+
+if NAME == "basket":
+    out = os.path.join(HERE, "out", "basket")
+    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/garden")
+    basket = Image.open(f"{out}/basket.png")
+    rim = basket.copy()
+    rim.putalpha(ImageChops.multiply(basket.split()[-1], Image.open(f"{out}/rimmask.png").convert("L")))
+    box = alpha_box(basket, pad=2)
+    W, H = basket.size
+    l, t, w, h = json.load(open(f"{out}/meta.json"))["mouth"]
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    mouth = [(l / 100 * W - box[0]) / bw, (t / 100 * H - box[1]) / bh, w / 100 * W / bw, h / 100 * H / bh]
+    for name, layer in (("basket", basket), ("basket-rim", rim)):
+        cut = layer.crop(box)
+        cut.thumbnail((512, 512), Image.LANCZOS)
+        cut.save(f"{dest}/{name}.png", optimize=True)
+    print(json.dumps({"mouth": [round(v * 100, 2) for v in mouth]}))
     sys.exit()
 
 OUT = os.path.join(HERE, "out", NAME)
