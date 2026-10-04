@@ -185,10 +185,11 @@ tools/
                       soup pots, her gardens (an apple tree, a banana
                       plant and an orange tree; a carrot bed, the banana
                       plant and a potato bed — each with its food), her
-                      basket and the four seasons (an island with a tree
-                      with a face, frame by frame as each season comes),
-                      then crops them into layers — not part of the site
-                      build
+                      basket, the four seasons (an island with a tree
+                      with a face, frame by frame as each season comes)
+                      and her year train (the engine and a wagon per
+                      month), then crops them into layers — not part of
+                      the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -219,7 +220,8 @@ public/
                             before the season, 0.png, then one frame per
                             step, 1–4.png; things/: the review's eight
                             things to sort), months/
-                            (the calendar pages), and each course's
+                            (train/: Nova's engine, a wagon per month and a
+                            plain one, all from one camera), and each course's
                             placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
@@ -357,11 +359,19 @@ picture:
   (a tulip, a butterfly, the sun, an ice cream, a leaf, a pumpkin, a
   snowman, a snowflake) into four season boxes, the four seasons in order,
   and two spelled from their picture.
-- **Months of the Year** — three months a lesson. A month has no picture of
-  its own, so the ORDER is what is learned: each month is met on its
-  calendar page (its number big in clay, the band in its season's color),
-  then the three are put in order (**Order**: tap them into numbered
-  spaces), "what comes after…?" is picked, and one name is spelled.
+- **Months of the Year — Nova's year train** — three months a lesson. A
+  month has no picture of its own, so the ORDER is what is learned: each
+  month is a wagon of Nova's train (her gold engine has the friends'
+  face), its number on its side, painted its season's color and carrying
+  that season's things (snow, tulips, ice cream, a pumpkin — the Seasons
+  course's own). Each month is **met** on its wagon, one name is
+  **spelled**, then the child **builds the train**: the engine waits on
+  the track with a numbered space per wagon, and tapping the wagons in
+  order couples them on; the finished train rolls off one side and comes
+  back round from the other. The review is the exam, on plain wagons
+  (the name alone): one month from each lesson onto the train in order,
+  four more into their season's island, "what comes after December?",
+  and one name spelled.
 
 Bloo's courses, still to come, already wear their own clay art — a sun, a
 cloud, an umbrella, a hand, a foot and animals — rendered with the same light
