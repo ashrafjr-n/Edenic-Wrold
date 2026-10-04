@@ -26,8 +26,8 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
-/* Clay numbers (a month's calendar page) — the bold sans from three's own
-   examples. */
+/* Clay numbers (a month's wagon on Nova's year train) — the bold sans from
+   three's own examples. */
 const FONT = await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/helvetiker_bold.typeface.json");
 
 const params = new URLSearchParams(location.search);
@@ -1606,43 +1606,6 @@ const ITEMS = {
     return g;
   },
 
-  // a desk calendar: a page with a red top band, two rings, a grid of days
-  /* A calendar page. `?arg=<1–12>`: that month's page — its number big in
-     clay, the band in its season's color (winter blue, spring green,
-     summer yellow, fall orange). */
-  calendar(month) {
-    const g = new THREE.Group();
-    const page = mesh(new RoundedBoxGeometry(1.1, 1.0, 0.16, 6, 0.08), clay(0xffffff, { clearcoat: 0.5 }));
-    page.position.y = 0.5;
-    g.add(page);
-    const n = Number(month);
-    const season = n ? [PAINT.blue, PAINT.blue, PAINT.green, PAINT.green, PAINT.green, PAINT.yellow, PAINT.yellow, PAINT.yellow, PAINT.orange, PAINT.orange, PAINT.orange, PAINT.blue][n - 1] : 0xee4645;
-    const band = mesh(new RoundedBoxGeometry(1.1, 0.28, 0.18, 6, 0.08), clay(season, { clearcoat: 0.6 }));
-    band.position.y = 0.88;
-    g.add(band);
-    for (const x of [-0.28, 0.28]) {
-      const ring = mesh(new THREE.TorusGeometry(0.07, 0.025, 12, 32), clay(0xb8c1d8, { clearcoat: 0.9, roughness: 0.25 }));
-      ring.position.set(x, 1.04, 0);
-      ring.rotation.y = Math.PI / 2;
-      g.add(ring);
-    }
-    if (n) {
-      const geo = new TextGeometry(String(n), { font: FONT, size: 0.46, depth: 0.08, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 6 });
-      geo.center();
-      const digits = mesh(geo, clay(0x2f2a52, { clearcoat: 0.7 }));
-      digits.position.set(0, 0.42, 0.13);
-      g.add(digits);
-      return g;
-    }
-    const dots = [0x3f86e8, 0x4fbf5a, 0xff8c2e, 0x9257de];
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) {
-      const day = mesh(new RoundedBoxGeometry(0.17, 0.13, 0.04, 2, 0.02), clay(r === 1 && c === 2 ? 0xee4645 : dots[(r + c) % 4], { clearcoat: 0.5 }));
-      day.position.set(-0.36 + c * 0.24, 0.6 - r * 0.19, 0.09);
-      g.add(day);
-    }
-    return g;
-  },
-
   hand() {
     const g = new THREE.Group();
     const skin = clay(0xf6c7a1, { clearcoat: 0.4, roughness: 0.55 });
@@ -2124,8 +2087,9 @@ const GARDENS = {
 
 /* ---------- Nova's seasons: one tree through the year ----------
    `?season=<spring|summer|fall|winter>` — a round clay island, its side in
-   the season's color (the Months calendars' bands), and a tree with a
-   face on it. The island alone is the picture before the season comes;
+   the season's color (its months' wagons on Nova's year train wear it
+   too), and a tree with a face on it. The island alone is the picture
+   before the season comes;
    each of its four `steps` brings one more of it (the grass, the leaves…),
    so the frames add up — every frame one whole render, so whatever comes
    stands in front of or behind the rest as it should. Softer, matter clay
