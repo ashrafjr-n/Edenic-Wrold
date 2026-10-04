@@ -394,6 +394,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       closes the review twice — three plants and one basket, "3 apples ·
       2 oranges · 1 banana", then "1 potato · 3 carrots · 2 bananas". All
       played through headless (360x640 → 1920x1080, no scroll).
+- [x] The exam made prettier (2026-10-04, on request: "the basket out
+      of the trees' card"): Nova's basket stands on the page beside her
+      list (under it on a desktop), rendered on its own and larger; the
+      gardens lost their empty bottom grass; the list is three rows, a
+      full line's speaker turning into a tick; a picked one flies out of
+      the garden over the basket and drops in. Played through headless
+      (360x640 → 1920x1080, both gardens, en/ar/ku, no scroll).
 - [ ] The user checks Fruits → then Seasons and Months get their own new
       structure (Nova's tree; the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
