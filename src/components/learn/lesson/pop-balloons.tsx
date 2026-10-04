@@ -17,7 +17,7 @@ const HINT_AFTER = 2;
 /** Five lanes across the sky, so no two balloons rise on top of each other. */
 const LANES = [11, 30, 50, 70, 89];
 /** The pieces a popped balloon bursts into: where each flies, in % of its box. */
-const SHARDS = [
+export const SHARDS = [
   [-70, -40],
   [70, -45],
   [-85, 25],

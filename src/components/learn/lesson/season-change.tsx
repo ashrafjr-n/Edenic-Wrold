@@ -1,0 +1,145 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import Image from "next/image";
+import { Sparkles } from "lucide-react";
+import { Celebration } from "@/components/ui/celebration";
+import { format } from "@/lib/format-dict";
+import { lessonCue, playCue } from "@/lib/cue";
+import type { SeasonScene } from "@/types/course";
+import { ClayWord } from "./clay-word";
+import { CueButton } from "./cue-button";
+import { SHARDS } from "./pop-balloons";
+
+/** A step spreading over the picture — kept in step with `.season-reveal`. */
+const REVEAL_MS = 900;
+/** The last step is in, then the season is done. */
+const DONE_MS = 500;
+
+/* The picture's width, capped by the height a step has (it stands over the
+   word, so it may not push the page into a scroll): `--ratio` is its w/h. */
+const SCENE_SIZE =
+  "max-w-[min(100%,calc((100svh-27rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(30rem,calc((100svh-42rem)*var(--ratio)))] lg:max-w-[min(40rem,calc((var(--stage-h)-6rem)*var(--ratio)))]";
+
+interface SeasonChangeProps {
+  /** The season, in English. */
+  word: string;
+  scene: SeasonScene;
+  /** "Make it {season}!" — each spot's name for a screen reader. */
+  spotLabel: string;
+  /** "Hear {word}" — the speaker's name. */
+  hearLabel: string;
+  onSolved: () => void;
+}
+
+/**
+ * Make it spring: the season's island and Nova's tree, bare, before the
+ * season comes. One spot glows; tap it and the next part of the season
+ * spreads over the picture from there (the grass, the leaves, the
+ * blossoms…), then the next spot glows. All four in → the whole season is
+ * there, its word is said and it jumps. Nothing can go wrong — the season
+ * is the lesson, so nothing here is chosen.
+ *
+ * Every step is one whole frame (`SEASON_SCENES`), laid over the last and
+ * uncovered by a circle growing from the spot (`.season-reveal`); once it
+ * has spread the one under it goes (two would double the soft edges). All
+ * frames load up front, so none arrives after its spread has played.
+ */
+export function SeasonChange({ word, scene, spotLabel, hearLabel, onSolved }: SeasonChangeProps) {
+  const { frames, spots } = scene;
+  /* How many steps are in, and how many have spread — the next spot only
+     shows once the last one has. */
+  const [brought, setBrought] = useState(0);
+  const [settled, setSettled] = useState(0);
+  const timer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const spreading = settled < brought;
+  const solved = settled >= spots.length;
+  const [x, y] = spots[Math.max(0, brought - 1)];
+  const from = { "--x": `${x}%`, "--y": `${y}%` } as CSSProperties;
+
+  const bring = () => {
+    if (spreading || brought >= spots.length) return;
+    const next = brought + 1;
+    setBrought(next);
+    timer.current = window.setTimeout(() => {
+      setSettled(next);
+      if (next < spots.length) return;
+      void playCue(lessonCue.word(word));
+      timer.current = window.setTimeout(onSolved, DONE_MS);
+    }, REVEAL_MS);
+  };
+
+  return (
+    <div className="card card-clay-white card-bare-lg flex w-full max-w-2xl flex-col items-center gap-3 px-3 py-4 sm:gap-5 sm:px-8 sm:py-6 lg:gap-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+      <div
+        className={`relative w-full [container-type:inline-size] ${SCENE_SIZE}`}
+        style={{ aspectRatio: frames[0].width / frames[0].height, "--ratio": frames[0].width / frames[0].height } as CSSProperties}
+      >
+        {/* Its shadow on the card — the render has none. */}
+        <span aria-hidden className="absolute inset-x-[8%] -bottom-[3%] h-[14%] rounded-[50%] bg-[radial-gradient(closest-side,rgb(var(--shadow-hue)/0.3),transparent)]" />
+        {frames.map((frame, k) => (
+          <Image
+            key={k}
+            src={frame}
+            alt=""
+            fill
+            loading="eager"
+            sizes="(min-width: 1024px) 40rem, (min-width: 640px) 30rem, 92vw"
+            draggable={false}
+            className={`pointer-events-none select-none object-contain ${
+              k === brought || (spreading && k === brought - 1) ? "" : "invisible"
+            } ${spreading && k === brought ? "season-reveal" : ""}`}
+            style={spreading && k === brought ? from : undefined}
+          />
+        ))}
+
+        {/* Where it was tapped: a ring and sparks going out. */}
+        {spreading && (
+          <span key={`burst-${brought}`} aria-hidden className="pointer-events-none absolute z-[3] h-[16cqw] w-[16cqw]" style={{ left: `${x}%`, top: `${y}%`, translate: "-50% -50%" }}>
+            <span className="pop-ring absolute inset-0 rounded-full border-4 border-[var(--page-accent-color)]" />
+            {SHARDS.map(([dx, dy], i) => (
+              <span
+                key={i}
+                className="pop-shard absolute left-1/2 top-1/2 h-[22%] w-[22%] rounded-full bg-[var(--page-accent-color)]"
+                style={{ "--shard-x": `${dx}%`, "--shard-y": `${dy}%` } as CSSProperties}
+              />
+            ))}
+          </span>
+        )}
+
+        {/* The one spot to tap now. */}
+        {!spreading && brought < spots.length && (
+          <button
+            key={brought}
+            type="button"
+            aria-label={spotLabel}
+            onClick={bring}
+            className="anim-pop-in absolute z-[2] h-[15cqw] w-[15cqw] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)]"
+            style={{ left: `${spots[brought][0]}%`, top: `${spots[brought][1]}%` }}
+          >
+            <span className="guide-target block h-full w-full rounded-full">
+              <span
+                className="season-spot clay flex h-full w-full items-center justify-center rounded-full bg-white text-[var(--page-accent-color)]"
+                style={{ "--clay-edge": "var(--page-accent-edge)" } as CSSProperties}
+              >
+                <Sparkles className="h-1/2 w-1/2" strokeWidth={2.5} />
+              </span>
+            </span>
+          </button>
+        )}
+
+        {solved && <Celebration />}
+      </div>
+
+      {/* English in every locale: never mirrored. */}
+      <div dir="ltr" className={`flex items-center justify-center gap-3 sm:gap-4 ${solved ? "anim-jump" : ""}`}>
+        <CueButton cue={lessonCue.word(word)} label={format(hearLabel, { word })} size="lg" />
+        <ClayWord word={word} size="sm" />
+      </div>
+    </div>
+  );
+}

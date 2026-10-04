@@ -3098,6 +3098,63 @@ button:disabled,
   }
 }
 
+/* Make it spring (Nova's Seasons): each step spreads over the picture
+   from the spot that was tapped — the next frame, laid over the last,
+   uncovered by a growing circle (`--x`/`--y`: the spot, % of the picture;
+   150% reaches the far corner from any spot). `REVEAL_MS` in
+   `season-change.tsx` is its length. */
+.season-reveal {
+  animation: season-reveal 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+@keyframes season-reveal {
+  from {
+    clip-path: circle(0% at var(--x) var(--y));
+  }
+  to {
+    clip-path: circle(150% at var(--x) var(--y));
+  }
+}
+
+/* The spot to tap breathes, so it is found at once. */
+.season-spot {
+  animation: season-spot 1.6s ease-in-out infinite;
+}
+
+@keyframes season-spot {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.14;
+  }
+}
+
+/* …and in the task button's demo, on the demos' beat: the first step
+   spreads from the spot just after the finger taps it. */
+.demo-change {
+  animation: demo-change 3.6s ease-out infinite;
+}
+
+@keyframes demo-change {
+  0%,
+  38% {
+    clip-path: circle(0% at var(--x) var(--y));
+    opacity: 1;
+  }
+  62%,
+  84% {
+    clip-path: circle(150% at var(--x) var(--y));
+    opacity: 1;
+  }
+  96%,
+  100% {
+    clip-path: circle(150% at var(--x) var(--y));
+    opacity: 0;
+  }
+}
+
 /* …and in the task button's demo, on the demos' beat: it spreads just
    after the finger taps the pot. */
 .demo-paint {
@@ -3705,6 +3762,9 @@ button:disabled,
   .demo-tick,
   .demo-paint,
   .paint-reveal,
+  .demo-change,
+  .season-reveal,
+  .season-spot,
   .make-whir,
   .make-blend,
   .make-bubble,
