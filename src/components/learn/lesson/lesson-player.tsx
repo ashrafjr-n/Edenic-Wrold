@@ -32,6 +32,7 @@ import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { FillWord } from "./fill-word";
 import { HarvestPick } from "./harvest-pick";
+import { SeasonChange } from "./season-change";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -434,6 +435,17 @@ export function LessonPlayer({
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "fill") {
       body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
+    } else if (q.type === "change") {
+      body = (
+        <SeasonChange
+          key={seed}
+          word={q.word}
+          scene={q.scene}
+          spotLabel={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
+          hearLabel={lines.hearWord}
+          onSolved={onSolved}
+        />
+      );
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
