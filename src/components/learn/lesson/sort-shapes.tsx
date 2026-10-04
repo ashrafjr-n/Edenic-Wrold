@@ -7,7 +7,7 @@ import { format } from "@/lib/format-dict";
 import { shuffle } from "@/lib/seeded";
 import { Celebration } from "@/components/ui/celebration";
 import { isTarget } from "@/lib/target";
-import type { SceneItem, SortBin } from "@/types/course";
+import type { SortBin, Thing } from "@/types/course";
 import { FaceView } from "./face";
 
 /** Two misses on one thing and its box starts to glow. */
@@ -18,10 +18,10 @@ const FLY_MS = 420;
 const DRAG_THRESHOLD = 8;
 
 /** The box a thing belongs in. */
-export const binFor = (bins: SortBin[], item: SceneItem) => bins.find((bin) => isTarget(item, bin.target));
+export const binFor = (bins: SortBin[], item: Thing) => bins.find((bin) => isTarget(item, bin.target));
 
 interface SortShapesProps {
-  items: SceneItem[];
+  items: Thing[];
   /** The four boxes, in a fixed 2x2 order (`SHAPE_BINS`, `colorBin`). */
   bins: SortBin[];
   /** Deals the order the things come in. */

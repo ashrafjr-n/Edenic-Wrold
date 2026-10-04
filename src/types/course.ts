@@ -24,9 +24,10 @@ export type Face =
 /** A box in a scene, as percentages of the scene: left, top, width, height. */
 export type SceneRect = readonly [number, number, number, number];
 
-/** One thing lying in a scene. `shape` is what it IS (a plate is a circle);
-    `null` for things that are no taught shape (a kite). */
-export interface SceneItem {
+/** A thing to tell apart: its picture, and what it is — a Sort's things.
+    `shape` is what it IS (a plate is a circle); `null` for things that are
+    no taught shape (a kite). */
+export interface Thing {
   id: string;
   src: StaticImageData;
   /** English, and the tap target's name. */
@@ -34,8 +35,12 @@ export interface SceneItem {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The group it belongs to, in Nova's scenes. */
+  /** The season it goes with (Nova's Seasons). */
   group?: Group;
+}
+
+/** One thing lying in a scene, and where. */
+export interface SceneItem extends Thing {
   /** Where its picture (shadow included) sits. */
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */
@@ -101,7 +106,7 @@ export type Question =
   /** Find every thing in the scene that is this shape or color. */
   | { type: "find"; ask: Ask; target: Target; scene: Scene }
   /** Put each thing, one at a time, in the box it belongs in. */
-  | { type: "sort"; ask: Ask; items: SceneItem[]; bins: SortBin[] }
+  | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
   /** Read the color word, tap its pot, and the thing is painted — a round
       per color. `pots` are the colors on offer, in order. */
   | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] }
@@ -122,6 +127,11 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
+  /** Make it spring: the season's island before it comes; tap the glowing
+      spot and the next part of it spreads over the picture (the grass, the
+      leaves…) until the whole season is there. Nothing can go wrong — the
+      season is the lesson. */
+  | { type: "change"; ask: Ask; word: string; scene: SeasonScene }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
@@ -156,6 +166,15 @@ export interface Basket {
   src: StaticImageData;
   rim: StaticImageData;
   mouth: SceneRect;
+}
+
+/** A season coming to Nova's tree (`tools/picnic-scene`, `?season=`): the
+    island before it, then a picture per step with everything before it
+    (`frames` is one longer than `spots`), and where each step is tapped in
+    (% of the picture). */
+export interface SeasonScene {
+  frames: readonly StaticImageData[];
+  spots: readonly (readonly [number, number])[];
 }
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
