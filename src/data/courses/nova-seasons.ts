@@ -1,61 +1,56 @@
 import type { StaticImageData } from "next/image";
-import type { ColorId, Face, Group, LessonDef, SceneItem, SortBin } from "@/types/course";
+import type { ColorId, Face, Group, LessonDef, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
-import { seasonPicnic } from "@/data/nova-scenes";
-import flower from "../../../public/assets/learn/art/flower.png";
-import sun from "../../../public/assets/learn/art/sun.png";
-import leaf from "../../../public/assets/learn/art/leaf-orange.png";
-import snowman from "../../../public/assets/learn/pinki/colors/paint/snowman.png";
+import { SEASON_SCENES } from "@/data/nova-scenes";
+import tulip from "../../../public/assets/learn/nova/seasons/things/tulip.png";
+import butterfly from "../../../public/assets/learn/nova/seasons/things/butterfly.png";
+import sun from "../../../public/assets/learn/nova/seasons/things/sun.png";
+import icecream from "../../../public/assets/learn/nova/seasons/things/icecream.png";
+import leaf from "../../../public/assets/learn/nova/seasons/things/maple.png";
+import pumpkin from "../../../public/assets/learn/nova/seasons/things/pumpkin.png";
+import snowman from "../../../public/assets/learn/nova/seasons/things/snowman.png";
+import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflake.png";
 
-type Season = Extract<Group, "spring" | "summer" | "fall" | "winter">;
+type Season = Group;
 
-/** Each season's sign (its picture everywhere) and its clay color — the
-    same colors as the bands on the Months calendars. In order. */
-const SEASONS: Record<Season, { picture: StaticImageData; color: ColorId }> = {
-  spring: { picture: flower, color: "green" },
-  summer: { picture: sun, color: "yellow" },
-  fall: { picture: leaf, color: "orange" },
-  winter: { picture: snowman, color: "blue" },
-};
-const ORDER = Object.keys(SEASONS) as Season[];
+/** Each season's clay color — the band round its island, and the same
+    colors as the bands on the Months calendars. In order. */
+const COLOR_OF: Record<Season, ColorId> = { spring: "green", summer: "yellow", fall: "orange", winter: "blue" };
+const ORDER = Object.keys(COLOR_OF) as Season[];
 
-const face = (season: Season): Face => ({ kind: "picture", src: SEASONS[season].picture, word: season });
+/** A season's picture everywhere: its island with all of the season there. */
+function picture(season: Season): StaticImageData {
+  const { frames } = SEASON_SCENES[season];
+  return frames[frames.length - 1];
+}
 
-/** Two other seasons to choose between: the one before, then the one after. */
-const othersFor = (season: Season): Season[] => {
-  const at = ORDER.indexOf(season);
-  return [ORDER[(at + 3) % 4], ORDER[(at + 1) % 4]];
-};
+const face = (season: Season): Face => ({ kind: "picture", src: picture(season), word: season });
 
 /**
- * One season, one lesson: watch its reel, meet it (its sign and word),
- * spell it, pick it by its word, then find everything that goes with it
- * in the picnic (three of each season's things are there).
+ * One season, one lesson — and every step about IT (the rule since Fruits:
+ * no choosing between things inside a one-thing lesson): watch its reel,
+ * meet it (its picture, its word, its speaker), build its word, then make
+ * it come — tap by tap the season spreads over Nova's tree.
  */
 function seasonLesson(season: Season, n: number): LessonDef {
-  const { picture } = SEASONS[season];
+  const full = picture(season);
   return {
     reel: `/assets/learn/nova/seasons/reels/${n}.mp4`,
-    cover: [picture],
+    cover: [full],
     questions: [
-      { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture },
+      { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture: full },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
-      { type: "pick", ask: { key: "whichSeason", vars: { season } }, word: season, options: [season, ...othersFor(season)].map(face), answer: 0 },
-      { type: "find", ask: { key: "findSeason", vars: { season } }, target: { group: season }, scene: seasonPicnic },
+      { type: "change", ask: { key: "changeSeason", vars: { season } }, word: season, scene: SEASON_SCENES[season] },
     ],
   };
 }
 
-/** One thing out of the picnic, for the review's boxes. */
-function thing(id: string): SceneItem {
-  const item = seasonPicnic.items.find((candidate) => candidate.id === id);
-  if (!item) throw new Error(`No ${id} in the season picnic`);
-  return item;
-}
+/** The review's things, each alone (`render.cjs thing`), and its season. */
+const thing = (word: string, src: StaticImageData, group: Season): Thing => ({ id: word, src, word, shape: null, group });
 
 /** A box per season, in its own clay. */
 const BOXES: SortBin[] = ORDER.map((season) => {
-  const { face: fill, edge, text } = COLORS[SEASONS[season].color];
+  const { face: fill, edge, text } = COLORS[COLOR_OF[season]];
   return { target: { group: season }, word: season, face: face(season), tone: { face: fill, edge, text } };
 });
 
@@ -64,20 +59,30 @@ const BOXES: SortBin[] = ORDER.map((season) => {
     names (`/assets/learn/nova/seasons/reels/<n>.mp4`). */
 export const novaSeasons: LessonDef[] = [
   ...ORDER.map((season, i) => seasonLesson(season, i + 1)),
-  /* The review, no reel: things into their season's box, the four seasons
-     put in order, then two spelled from their sign alone. */
+  /* The review, no reel — its exam, where the seasons are told apart:
+     things into their season's box, the four put in order, then two
+     spelled from their picture alone. */
   {
-    cover: ORDER.map((season) => SEASONS[season].picture),
+    cover: ORDER.map(picture),
     questions: [
       {
         type: "sort",
         ask: { key: "sortSeasons" },
         bins: BOXES,
-        items: [thing("snowman1"), thing("flower1"), thing("orangeleaf1"), thing("icecream1"), thing("flower2"), thing("snowman2"), thing("icecream2"), thing("orangeleaf2")],
+        items: [
+          thing("snowman", snowman, "winter"),
+          thing("tulip", tulip, "spring"),
+          thing("leaf", leaf, "fall"),
+          thing("sun", sun, "summer"),
+          thing("butterfly", butterfly, "spring"),
+          thing("snowflake", snowflake, "winter"),
+          thing("ice cream", icecream, "summer"),
+          thing("pumpkin", pumpkin, "fall"),
+        ],
       },
       { type: "order", ask: { key: "orderSeasons" }, items: ORDER.map(face) },
-      { type: "spell", ask: { key: "spellPicture" }, word: "fall", picture: leaf },
-      { type: "spell", ask: { key: "spellPicture" }, word: "winter", picture: snowman },
+      { type: "spell", ask: { key: "spellPicture" }, word: "fall", picture: picture("fall") },
+      { type: "spell", ask: { key: "spellPicture" }, word: "winter", picture: picture("winter") },
     ],
   },
 ];
