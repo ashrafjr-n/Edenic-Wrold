@@ -17,16 +17,18 @@ const REVEAL_MS = 900;
 /** The last step is in, then the season is done. */
 const DONE_MS = 500;
 
-/* The picture's width, capped by the height a step has (it stands over the
-   word, so it may not push the page into a scroll): `--ratio` is its w/h. */
+/* The picture's width, capped by the height a step has, so it never pushes
+   the page into a scroll: `--ratio` is its w/h. Phone and tablet: over the
+   word; desktop: beside it (the word card's layout), the stage's full
+   height. */
 const SCENE_SIZE =
-  "max-w-[min(100%,calc((100svh-27rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(30rem,calc((100svh-42rem)*var(--ratio)))] lg:max-w-[min(40rem,calc((var(--stage-h)-6rem)*var(--ratio)))]";
+  "max-w-[min(100%,calc((100svh-26rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(30rem,calc((100svh-44rem)*var(--ratio)))] lg:max-w-[min(36rem,calc((var(--stage-h)-2rem)*var(--ratio)))]";
 
 interface SeasonChangeProps {
   /** The season, in English. */
   word: string;
   scene: SeasonScene;
-  /** "Make it {season}!" — each spot's name for a screen reader. */
+  /** "Tap to bring more {season}" — each spot's name for a screen reader. */
   spotLabel: string;
   /** "Hear {word}" — the speaker's name. */
   hearLabel: string;
@@ -74,7 +76,7 @@ export function SeasonChange({ word, scene, spotLabel, hearLabel, onSolved }: Se
   };
 
   return (
-    <div className="card card-clay-white card-bare-lg flex w-full max-w-2xl flex-col items-center gap-3 px-3 py-4 sm:gap-5 sm:px-8 sm:py-6 lg:gap-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+    <div className="card card-clay-white card-bare-lg flex w-full max-w-2xl flex-col items-center gap-3 px-3 py-4 sm:gap-5 sm:px-8 sm:py-6 lg:max-w-4xl lg:flex-row lg:justify-center lg:gap-12 lg:py-2 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
       <div
         className={`relative w-full [container-type:inline-size] ${SCENE_SIZE}`}
         style={{ aspectRatio: frames[0].width / frames[0].height, "--ratio": frames[0].width / frames[0].height } as CSSProperties}
@@ -136,7 +138,7 @@ export function SeasonChange({ word, scene, spotLabel, hearLabel, onSolved }: Se
       </div>
 
       {/* English in every locale: never mirrored. */}
-      <div dir="ltr" className={`flex items-center justify-center gap-3 sm:gap-4 ${solved ? "anim-jump" : ""}`}>
+      <div dir="ltr" className={`flex items-center justify-center gap-3 sm:gap-4 lg:shrink-0 lg:flex-col lg:gap-5 ${solved ? "anim-jump" : ""}`}>
         <CueButton cue={lessonCue.word(word)} label={format(hearLabel, { word })} size="lg" />
         <ClayWord word={word} size="sm" />
       </div>
