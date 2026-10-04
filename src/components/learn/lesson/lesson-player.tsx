@@ -441,7 +441,7 @@ export function LessonPlayer({
           key={seed}
           word={q.word}
           scene={q.scene}
-          spotLabel={format(dict.asks[q.ask.key], q.ask.vars ?? {})}
+          spotLabel={format(lines.seasonSpotAria, { season: q.word })}
           hearLabel={lines.hearWord}
           onSolved={onSolved}
         />

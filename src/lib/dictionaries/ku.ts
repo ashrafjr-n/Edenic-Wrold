@@ -169,6 +169,7 @@ export const ku: Dictionary = {
     dislikeAria: "ئەز حەز ژێ ناکەم",
     potAria: "ڕەنگێ {color}",
     balloonAria: "بالۆنا {color}",
+    seasonSpotAria: "دەست بدە دا {season} پتر بێت",
   },
   asks: {
     whichShape: "{shape} کیژە؟",

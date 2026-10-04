@@ -165,6 +165,7 @@ export const ar: Dictionary = {
     dislikeAria: "لا أحبّه",
     potAria: "طلاء {color}",
     balloonAria: "بالون {color}",
+    seasonSpotAria: "المس ليأتي المزيد من {season}",
   },
   asks: {
     whichShape: "أين {shape}؟",

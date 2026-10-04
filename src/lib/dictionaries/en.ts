@@ -174,6 +174,7 @@ export const en = {
     dislikeAria: "I don't like it",
     potAria: "{color} paint",
     balloonAria: "{color} balloon",
+    seasonSpotAria: "Tap to bring more {season}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
