@@ -13,8 +13,8 @@ import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflak
 
 type Season = Group;
 
-/** Each season's clay color — the band round its island, and the same
-    colors as the bands on the Months calendars. In order. */
+/** Each season's clay color — the band round its island, and the color of
+    its months' wagons on Nova's year train. In order. */
 const COLOR_OF: Record<Season, ColorId> = { spring: "green", summer: "yellow", fall: "orange", winter: "blue" };
 const ORDER = Object.keys(COLOR_OF) as Season[];
 
@@ -48,8 +48,9 @@ function seasonLesson(season: Season, n: number): LessonDef {
 /** The review's things, each alone (`render.cjs thing`), and its season. */
 const thing = (word: string, src: StaticImageData, group: Season): Thing => ({ id: word, src, word, shape: null, group });
 
-/** A box per season, in its own clay. */
-const BOXES: SortBin[] = ORDER.map((season) => {
+/** A box per season, in its own clay, its island on it — the Seasons
+    review's, and the Months review's. */
+export const SEASON_BOXES: SortBin[] = ORDER.map((season) => {
   const { face: fill, edge, text } = COLORS[COLOR_OF[season]];
   return { target: { group: season }, word: season, face: face(season), tone: { face: fill, edge, text } };
 });
@@ -68,7 +69,7 @@ export const novaSeasons: LessonDef[] = [
       {
         type: "sort",
         ask: { key: "sortSeasons" },
-        bins: BOXES,
+        bins: SEASON_BOXES,
         items: [
           thing("snowman", snowman, "winter"),
           thing("tulip", tulip, "spring"),
