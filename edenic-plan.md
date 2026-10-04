@@ -195,7 +195,7 @@ sort boxes, done screen, the course page).
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
-| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
+| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based; reworked 2026-10-04 as Nova's year train: 3 words → spell → build the train; review on plain wagons: the train, months into season islands, after December, spell June) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
 | Bloo | My Body | Eyes & Ears · Nose & Mouth · Hands & Arms · Legs & Feet · Body review |
@@ -239,7 +239,8 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Weather (an option for the Seasons review) |
-| **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
+| **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
+| **Build the train**: Nova's engine on the track, a numbered space per wagon; tap the wagons in order, the train rolls round | built (`train`) | Months |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits |
 | **Make it {season}**: the island starts bare; tap the glowing spot and the next part of the season spreads over it (grass, leaves, blossoms…), four times | built (`change`) | Seasons |
@@ -258,8 +259,11 @@ Months start with a **capital letter** — the first tile is the capital.
 - **The Seasons** (BUILT 2026-10-02, reworked 2026-10-04 — see §5 and
   `learn-courses.md`): the same tree with a face on a clay island, four
   times; each lesson makes its season come on it, step by step.
-- **Months**: three a lesson, long ones on rung 2; Put in order (a month
-  train); sort months into seasons; "When is your birthday?" (visual only).
+- **Months** (BUILT 2026-10-02, reworked 2026-10-04 as Nova's year train —
+  see §5 and `learn-courses.md`): three a lesson, each a wagon in its
+  season's color carrying its season's things; build the train in order;
+  review: sort months into the season islands. "When is your birthday?"
+  (visual only) is still an idea.
 - **Animals**: shadow match (which animal makes this shadow?), find them in a
   farm / safari / sea scene; review: sort animals into their homes.
 - **The Weather**: sun → sunny (the `-y` ending); Dress up Bloo; review:
@@ -413,7 +417,18 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       lesson). Review: Sort eight new things, Order, two picture spells.
       Played through headless (360x640 → 1920x1080, en/ar/ku, dark).
 - [ ] The user checks Seasons → fixes.
-- [ ] Months gets its own new structure (the year train).
+- [x] Months reworked as Nova's year train (2026-10-04, direct request
+      "نفذ" to the plan): every month a wagon of Nova's engine (gold, the
+      friends' face), its number on its side, in its season's color with
+      the Seasons course's things as cargo; lessons are reel → 3 words →
+      spell → **Build the train** (the old text-tile Order and the
+      "after" pick left the lessons). Review on plain wagons (names only):
+      the train (Jan/Apr/Jul/Oct), Feb/May/Aug/Nov into the four season
+      islands, after December, spell June. The 12-wagon "missing wagons"
+      train of the plan did not fit a phone (a wagon ~26px) — four wagons,
+      one per lesson, test the same order. Played through headless
+      (360x640 → 1440x900, en/ar/ku, dark).
+- [ ] The user checks Months → fixes.
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
       My Body.
 
