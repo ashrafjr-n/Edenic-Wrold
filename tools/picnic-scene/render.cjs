@@ -20,6 +20,13 @@
  *
  *   node tools/picnic-scene/render.cjs basket
  *
+ * Nova's seasons — for each season, writes `out/season-<season>/`: the
+ * island and its tree (`frame0`), then one frame per step with
+ * everything before it (`frame1`…`frame4`), and `meta.json` (each step's
+ * spot). Then `crop.py seasons`.
+ *
+ *   node tools/picnic-scene/render.cjs season spring summer fall winter
+ *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -71,6 +78,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     for (const food of specs) {
       const layers = await render(page, `harvest=${food}`);
       const out = path.join(__dirname, "out", `harvest-${food}`);
+      fs.mkdirSync(out, { recursive: true });
+      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+    }
+  } else if (mode === "season") {
+    for (const season of specs) {
+      const layers = await render(page, `season=${season}`);
+      const out = path.join(__dirname, "out", `season-${season}`);
       fs.mkdirSync(out, { recursive: true });
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));

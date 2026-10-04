@@ -52,7 +52,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -2122,6 +2122,397 @@ const GARDENS = {
   },
 };
 
+/* ---------- Nova's seasons: one tree through the year ----------
+   `?season=<spring|summer|fall|winter>` — a round clay island, its side in
+   the season's color (the Months calendars' bands), and a tree with a
+   face on it. The island alone is the picture before the season comes;
+   each of its four `steps` brings one more of it (the grass, the leaves…),
+   so the frames add up — every frame one whole render, so whatever comes
+   stands in front of or behind the rest as it should. Softer, matter clay
+   than the picnics, and the friends' face (eyes with a shine, pink
+   cheeks) on the tree, the sun and the snowman. */
+
+const soft = (color, extra = {}) =>
+  clay(color, { roughness: 0.72, clearcoat: 0.12, clearcoatRoughness: 0.5, sheen: 0.6, sheenRoughness: 0.7, ...extra });
+
+/* Where the soil is — the tree and everything on the island stand on it. */
+const SOIL_Y = 0.8;
+
+/* The friends' face, looking out along +z, on a round surface of radius
+   `round` (each feature sits back on the curve); `k` scales it. */
+function kawaii(k = 1, round = 0) {
+  const g = new THREE.Group();
+  const back = (x) => (round ? Math.sqrt(Math.max(0, round * round - x * x)) - round : 0);
+  const ink = soft(0x33242e, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15 });
+  const shine = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+  const cheek = soft(0xff9cb9, { clearcoat: 0, sheen: 0.2 });
+  for (const s of [-1, 1]) {
+    const x = s * 0.24 * k;
+    const eye = mesh(new THREE.SphereGeometry(0.115 * k, 32, 24), ink);
+    eye.scale.set(0.92, 1.12, 0.55);
+    eye.position.set(x, 0.1 * k, back(x));
+    g.add(eye);
+    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.04 * k, 16, 12), shine);
+    glint.position.set(x - 0.035 * k, 0.15 * k, back(x) + 0.06 * k);
+    g.add(glint);
+    const cx = s * 0.42 * k;
+    const blush = mesh(new THREE.SphereGeometry(0.1 * k, 24, 16), cheek);
+    blush.scale.set(1.25, 0.72, 0.3);
+    blush.position.set(cx, -0.06 * k, back(cx) - 0.005);
+    g.add(blush);
+  }
+  const smile = mesh(new THREE.TorusGeometry(0.09 * k, 0.026 * k, 12, 32, Math.PI), ink);
+  smile.rotation.z = Math.PI;
+  smile.position.set(0, -0.02 * k, back(0) + 0.01);
+  g.add(smile);
+  return g;
+}
+
+/* The tree's branches: [points, thick, thin] — bare in winter, under the
+   leaves the rest of the year. */
+const BRANCHES = [
+  [[[0, 1.65, 0], [-0.62, 2.22, 0.05], [-1.3, 2.78, 0]], 0.26, 0.12],
+  [[[0, 1.7, 0], [0.66, 2.28, 0.05], [1.34, 2.82, 0]], 0.26, 0.12],
+  [[[0, 1.85, 0], [0.08, 2.55, 0], [-0.04, 3.22, -0.05]], 0.24, 0.11],
+  [[[-0.78, 2.4, 0.04], [-0.9, 2.92, 0.05], [-0.8, 3.36, 0]], 0.12, 0.07],
+  [[[0.82, 2.44, 0.04], [0.96, 2.96, 0.05], [0.86, 3.4, 0]], 0.12, 0.07],
+];
+
+/* The crown: [x, y, z, r] — round puffs over the branches. */
+const CROWN = [[0, 3.25, -0.25, 1.15], [-1.02, 2.8, -0.1, 0.86], [1.02, 2.8, -0.1, 0.86], [-0.56, 3.88, -0.35, 0.8], [0.6, 3.83, -0.35, 0.8], [0, 2.52, 0.28, 0.72]];
+
+/* A point on a crown puff's front, `dx`, `dy` from its centre, and which
+   way it faces there. */
+function onCrown([x, y, z, r], dx, dy) {
+  const n = new THREE.Vector3(dx / r, dy / r, Math.sqrt(Math.max(0, 1 - (dx * dx + dy * dy) / (r * r))));
+  return { at: new THREE.Vector3(x + n.x * r, y + n.y * r, z + n.z * r), n };
+}
+
+/* The tree with a face: a chubby trunk, wide at the root, and its bare
+   branches. Its face looks out over the island. */
+function seasonTree() {
+  const g = new THREE.Group();
+  const bark = soft(0xb07b50);
+  g.add(mesh(smoothLathe([[0, -0.05], [1.0, -0.05], [0.76, 0.15], [0.63, 0.5], [0.59, 1.05], [0.53, 1.6], [0.43, 1.98], [0, 2.1]]), bark));
+  for (const [points, r0, r1] of BRANCHES) g.add(taperTube(points, r0, r1, bark));
+  const face = kawaii(1.05, 0.6);
+  face.position.set(0, 0.98, 0.6);
+  g.add(face);
+  return g;
+}
+
+/* The island: a thick round slab in the season's color with the soil on
+   top — the picture before the season comes. */
+/* The island's top: a soft cap a little inside its band. */
+const ISLAND_TOP = [[0, 0.55], [2.92, 0.55], [2.98, 0.66], [2.88, 0.77], [2.6, SOIL_Y], [1.8, SOIL_Y], [0.9, SOIL_Y], [0, SOIL_Y]];
+/* The band in the season's color, and the soil on it — the soil apart, as
+   the first step covers it (`soil` is hidden from then on). */
+function seasonIsland(color) {
+  const group = new THREE.Group();
+  group.add(mesh(smoothLathe([[0, 0], [2.7, 0], [2.98, 0.08], [3.06, 0.3], [3.04, 0.5], [2.96, 0.6], [0, 0.6]]), soft(color)));
+  const soil = mesh(smoothLathe(ISLAND_TOP), soft(0xe4cba7));
+  group.add(soil);
+  return { group, soil };
+}
+
+/* What covers the island instead of the soil: grass (the very same cap,
+   green) or snow (thicker, its lip bulging over the band). */
+function groundCover(color, snow = false) {
+  const profile = snow ? [[0, 0.55], [3.0, 0.55], [3.1, 0.66], [3.02, 0.86], [2.76, 0.98], [0, 0.98]] : ISLAND_TOP;
+  return mesh(smoothLathe(profile), soft(color, snow ? { sheen: 0.9 } : {}));
+}
+
+/* The crown, puff by puff — `colors` go round the puffs. */
+function crown(colors) {
+  const g = new THREE.Group();
+  CROWN.forEach(([x, y, z, r], i) => {
+    const puff = mesh(new THREE.SphereGeometry(r, 64, 48), soft(colors[i % colors.length]));
+    puff.position.set(x, y, z);
+    g.add(puff);
+  });
+  return g;
+}
+
+/* Things dotted over the crown's front, each facing out: [puff, dx, dy]. */
+const ON_CROWN = [[0, -0.45, 0.35], [0, 0.4, 0.5], [0, 0.05, -0.2], [1, -0.3, 0.1], [2, 0.3, 0.05], [3, -0.15, 0.25], [4, 0.2, 0.2], [5, -0.3, -0.05], [5, 0.35, 0.1], [1, 0.15, -0.4], [2, -0.2, -0.38]];
+function dotCrown(make, { lift = 0.05, spots = ON_CROWN, upright = false } = {}) {
+  const g = new THREE.Group();
+  spots.forEach(([puff, dx, dy], i) => {
+    const { at, n } = onCrown(CROWN[puff], dx, dy);
+    const thing = make(i);
+    thing.position.copy(at).addScaledVector(n, lift);
+    /* A blossom faces out; an apple hangs, its stem up. */
+    if (!upright) thing.lookAt(thing.position.clone().add(n));
+    g.add(thing);
+  });
+  return g;
+}
+
+/* A blossom facing +z: five round petals and a yellow heart. */
+function blossom(color = 0xffa6cf) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2 + Math.PI / 2;
+    const petal = mesh(new THREE.SphereGeometry(0.11, 24, 16), soft(color));
+    petal.scale.set(1, 1, 0.4);
+    petal.position.set(Math.cos(a) * 0.11, Math.sin(a) * 0.11, 0);
+    g.add(petal);
+  }
+  const heart = mesh(new THREE.SphereGeometry(0.07, 20, 14), soft(0xffd23a));
+  heart.scale.z = 0.6;
+  heart.position.z = 0.04;
+  g.add(heart);
+  return g;
+}
+
+/* A tulip: a stem, two long leaves and a cup of three petals. */
+function tulip(color) {
+  const g = new THREE.Group();
+  const green = soft(0x5fbf58);
+  g.add(taperTube([[0, 0, 0], [0.03, 0.4, 0], [0, 0.8, 0]], 0.045, 0.04, green));
+  for (const s of [-1, 1]) {
+    const leaf = mesh(new THREE.SphereGeometry(0.1, 24, 16), green);
+    leaf.scale.set(0.7, 3.2, 0.45);
+    leaf.position.set(s * 0.12, 0.3, 0.02);
+    leaf.rotation.z = -s * 0.42;
+    g.add(leaf);
+  }
+  const petal = soft(color);
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2 + Math.PI / 2;
+    const p = mesh(new THREE.SphereGeometry(0.15, 32, 24), petal);
+    p.scale.set(0.82, 1.3, 0.72);
+    p.position.set(Math.cos(a) * 0.075, 0.95, Math.sin(a) * 0.075);
+    g.add(p);
+  }
+  return g;
+}
+
+/* A butterfly facing +z, its wings a little open. */
+function butterfly() {
+  const g = new THREE.Group();
+  const ink = soft(0x5a3d7a);
+  const body = mesh(new THREE.CapsuleGeometry(0.06, 0.4, 8, 16), ink);
+  g.add(body);
+  for (const s of [-1, 1]) {
+    for (const [y, r, color] of [[0.12, 0.26, 0xb98cf0], [-0.15, 0.18, 0xff9cc8]]) {
+      const wing = mesh(new THREE.SphereGeometry(r, 32, 24), soft(color));
+      wing.scale.set(1, 0.85, 0.22);
+      wing.position.set(s * r * 0.95, y, -0.04);
+      wing.rotation.y = s * 0.35;
+      g.add(wing);
+    }
+    const feeler = taperTube([[0, 0.24, 0], [s * 0.06, 0.38, 0.02], [s * 0.13, 0.48, 0.03]], 0.014, 0.014, ink);
+    g.add(feeler);
+    const tip = mesh(new THREE.SphereGeometry(0.035, 12, 8), ink);
+    tip.position.set(s * 0.13, 0.48, 0.03);
+    g.add(tip);
+  }
+  return g;
+}
+
+/* A maple leaf facing +z: five pointed lobes (soft at the edges) and a
+   stem. */
+const MAPLE = [[0, 0.95], [0.16, 0.6], [0.36, 0.72], [0.33, 0.4], [0.74, 0.5], [0.6, 0.22], [0.86, 0.06], [0.46, -0.12], [0.5, -0.36], [0.16, -0.26], [0.04, -0.42]];
+function mapleLeaf(color) {
+  const s = new THREE.Shape();
+  const outline = [...MAPLE, ...MAPLE.slice().reverse().map(([x, y]) => [-x, y])];
+  outline.forEach(([x, y], i) => (i ? s.lineTo(x * 0.5, y * 0.5) : s.moveTo(x * 0.5, y * 0.5)));
+  const geo = new THREE.ExtrudeGeometry(s, { depth: 0.04, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 6, curveSegments: 8 });
+  geo.translate(0, 0, -0.02);
+  const g = new THREE.Group();
+  g.add(mesh(geo, soft(color)));
+  const stem = mesh(new THREE.CapsuleGeometry(0.02, 0.22, 6, 10), soft(0x9a5a2c));
+  stem.position.set(0, -0.3, 0.02);
+  g.add(stem);
+  return g;
+}
+
+/* A pumpkin: eight round ribs, a stem and a curly leaf. */
+function pumpkin() {
+  const g = new THREE.Group();
+  const orange = soft(0xff8a2e);
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    const rib = mesh(new THREE.SphereGeometry(0.4, 48, 32), orange);
+    rib.scale.set(0.62, 0.8, 0.5);
+    rib.position.set(Math.cos(a) * 0.24, 0.32, Math.sin(a) * 0.24);
+    rib.rotation.y = -a;
+    g.add(rib);
+  }
+  g.add(taperTube([[0, 0.55, 0], [0.03, 0.72, 0], [0.1, 0.82, 0]], 0.07, 0.05, soft(0x7a8a3a)));
+  const leaf = mesh(new THREE.SphereGeometry(0.12, 24, 16), soft(0x6cbf58));
+  leaf.scale.set(1.5, 0.3, 0.9);
+  leaf.position.set(-0.16, 0.62, 0.08);
+  leaf.rotation.z = 0.4;
+  g.add(leaf);
+  return g;
+}
+
+/* A snowflake facing +z: three crossed bars, a little V on each arm. */
+function snowflake() {
+  const g = new THREE.Group();
+  const ice = soft(0xeef7ff, { sheen: 0.9 });
+  for (let i = 0; i < 3; i++) {
+    const bar = mesh(new THREE.CapsuleGeometry(0.035, 0.62, 6, 10), ice);
+    bar.rotation.z = (i * Math.PI) / 3;
+    g.add(bar);
+  }
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI) / 3 + Math.PI / 2;
+    for (const s of [-1, 1]) {
+      const barb = mesh(new THREE.CapsuleGeometry(0.026, 0.12, 6, 8), ice);
+      barb.position.set(Math.cos(a) * 0.22 + Math.cos(a + s * 0.9) * 0.07, Math.sin(a) * 0.22 + Math.sin(a + s * 0.9) * 0.07, 0);
+      barb.rotation.z = a + s * 0.9 - Math.PI / 2;
+      g.add(barb);
+    }
+  }
+  const heart = mesh(new THREE.SphereGeometry(0.07, 16, 12), ice);
+  heart.scale.z = 0.6;
+  g.add(heart);
+  return g;
+}
+
+/* Snow lying on the branches, and a cap where they meet. */
+function snowOnBranches() {
+  const g = new THREE.Group();
+  const snow = soft(0xfbfdff, { sheen: 0.9 });
+  const up = new THREE.Vector3(0, 1, 0);
+  for (const [points, r0, r1] of BRANCHES) {
+    const curve = new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)));
+    const tip = mesh(new THREE.SphereGeometry(r1 * 1.55, 24, 16), snow);
+    tip.scale.y = 0.75;
+    tip.position.copy(curve.getPointAt(1)).add(new THREE.Vector3(0, r1 * 0.65, 0));
+    g.add(tip);
+    /* Along a branch that leans out (not an upright one), a ridge of snow
+       on its top side. */
+    if (Math.abs(curve.getTangentAt(0.5).y) > 0.85) continue;
+    const ridge = [0.3, 0.55, 0.8, 1].map((u) => {
+      const along = curve.getTangentAt(u);
+      const n = up.clone().addScaledVector(along, -up.dot(along)).normalize();
+      return curve.getPointAt(u).addScaledVector(n, (r0 + (r1 - r0) * u) * 0.62).toArray();
+    });
+    g.add(taperTube(ridge, r0 * 0.58, r1 * 0.95, snow));
+  }
+  const cap = mesh(new THREE.SphereGeometry(0.44, 32, 24), snow);
+  cap.scale.y = 0.5;
+  cap.position.set(0, 2.05, 0.05);
+  g.add(cap);
+  return g;
+}
+
+/* The snowman, with the friends' cheeks. */
+function snowfriend() {
+  const g = ITEMS.snowman();
+  const cheek = soft(0xff9cb9, { clearcoat: 0, sheen: 0.2 });
+  for (const s of [-1, 1]) {
+    const blush = mesh(new THREE.SphereGeometry(0.06, 20, 14), cheek);
+    blush.scale.set(1.2, 0.7, 0.35);
+    blush.position.set(s * 0.18, 1.74, 0.24);
+    blush.rotation.y = s * 0.6;
+    g.add(blush);
+  }
+  return g;
+}
+
+/* The sun, with the friends' face. */
+function sunfriend() {
+  const g = new THREE.Group();
+  const face = mesh(new THREE.SphereGeometry(0.62, 64, 48), soft(0xffc93a));
+  face.scale.z = 0.6;
+  g.add(face);
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    const ray = mesh(new THREE.CapsuleGeometry(0.11, 0.16, 8, 16), soft(0xffa53a));
+    ray.position.set(Math.cos(a) * 0.86, Math.sin(a) * 0.86, 0);
+    ray.rotation.z = a - Math.PI / 2;
+    g.add(ray);
+  }
+  const look = kawaii(1.05, 0.37 / 0.6);
+  look.position.z = 0.37;
+  g.add(look);
+  return g;
+}
+
+const at = (thing, [x, y, z], scale = 1, turn = [0, 0, 0]) => {
+  thing.position.set(x, y, z);
+  thing.scale.setScalar(scale);
+  thing.rotation.set(...turn);
+  return thing;
+};
+const group = (...things) => {
+  const g = new THREE.Group();
+  g.add(...things);
+  return g;
+};
+
+/* Each season: its band, and its four steps — what comes, and the spot
+   (a point of it, in the world) a child taps to bring it. */
+const SEASON_DEFS = {
+  spring: {
+    band: PAINT.green,
+    steps: [
+      { make: () => groundCover(0xa3e07e), spot: [-1.75, 0.92, 1.55] },
+      { onTree: true, make: () => crown([0xa9e38a, 0x9adb7c]), spot: [-1.02, 2.85, 0.75] },
+      { onTree: true, make: () => dotCrown(() => blossom(), { lift: 0.04 }), spot: [0.55, 4.1, 0.4] },
+      {
+        make: () => group(
+          at(tulip(0xff6f7d), [1.55, SOIL_Y, 1.55], 1.05, [0, 0, 0.08]),
+          at(tulip(0xffd23a), [1.95, SOIL_Y, 1.25], 1.15, [0, 0, -0.05]),
+          at(tulip(0xff8cc6), [2.3, SOIL_Y, 1.6], 0.95, [0, 0, -0.12]),
+          at(butterfly(), [-2.05, 2.55, 1.2], 0.95, [0.1, 0.25, 0.2]),
+        ),
+        spot: [1.95, 2.0, 1.4],
+      },
+    ],
+  },
+  summer: {
+    band: PAINT.yellow,
+    steps: [
+      { make: () => groundCover(0x74cd5c), spot: [-1.75, 0.92, 1.55] },
+      { onTree: true, make: () => crown([0x5cbd57, 0x52b450]), spot: [1.02, 2.85, 0.75] },
+      { onTree: true, make: () => dotCrown(() => group(at(ITEMS.apple(), [0, -0.16, 0], 0.38)), { lift: 0, spots: ON_CROWN.filter((_, i) => i % 2 === 0 || i === 3), upright: true }), spot: [-0.4, 3.7, 0.9] },
+      { make: () => at(sunfriend(), [-2.75, 5.0, 0.6], 0.85), spot: [-2.75, 5.0, 0.6] },
+    ],
+  },
+  fall: {
+    band: PAINT.orange,
+    steps: [
+      { make: () => groundCover(0xc2d36a), spot: [-1.75, 0.92, 1.55] },
+      { onTree: true, make: () => crown([0xff9a3c, 0xf2683a, 0xffc24a]), spot: [1.02, 2.85, 0.75] },
+      {
+        make: () => group(
+          at(mapleLeaf(0xf2683a), [-2.35, 3.2, 0.8], 0.8, [0.2, 0.3, 0.6]),
+          at(mapleLeaf(0xffb43a), [2.4, 2.45, 0.9], 0.75, [-0.2, -0.3, -0.5]),
+          at(mapleLeaf(0xff8a2e), [-1.9, 1.9, 1.3], 0.7, [0.3, 0.2, -0.9]),
+          at(mapleLeaf(0xe8513a), [2.55, 4.1, 0.4], 0.7, [0.1, -0.2, 0.8]),
+          ...[[-1.2, 1.7, 0xf2683a, 0.4], [-0.55, 2.05, 0xffb43a, 2.1], [0.75, 1.85, 0xff8a2e, 1.2], [-2.25, 0.55, 0xe8513a, 2.8], [1.05, 1.15, 0xffb43a, 0.2], [-1.75, 0.8, 0xff8a2e, 3.6]].map(([x, z, c, turn]) =>
+            at(mapleLeaf(c), [x, 0.87, z], 0.62, [-Math.PI / 2, 0, turn]),
+          ),
+        ),
+        spot: [-2.35, 3.2, 0.8],
+      },
+      { make: () => at(pumpkin(), [1.8, 0.8, 1.35], 1.25, [0, -0.3, 0]), spot: [1.8, 1.3, 1.35] },
+    ],
+  },
+  winter: {
+    band: PAINT.blue,
+    steps: [
+      { make: () => groundCover(0xfbfdff, true), spot: [-1.75, 1.08, 1.55] },
+      { onTree: true, make: () => snowOnBranches(), spot: [1.1, 2.75, 0.2] },
+      {
+        make: () => group(
+          ...[[-2.3, 3.6, 0.6, 1.0, 0.2], [2.35, 4.3, 0.3, 0.85, 0.5], [-1.4, 4.85, 0.2, 0.75, 0.9], [1.7, 5.15, 0.3, 0.8, 0.1], [-2.55, 2.1, 0.9, 0.7, 0.7], [0.35, 5.1, 0.1, 0.7, 0.3], [2.6, 3.1, 0.5, 0.6, 0.8]].map(([x, y, z, k, turn]) =>
+            at(snowflake(), [x, y, z], k, [0, 0, turn]),
+          ),
+        ),
+        spot: [-2.3, 3.6, 0.6],
+      },
+      { make: () => at(snowfriend(), [1.8, 0.98, 1.3], 0.98, [0, -0.35, 0]), spot: [1.8, 2.2, 1.3] },
+    ],
+  },
+};
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
@@ -2428,7 +2819,8 @@ function mouthOf(basket) {
 const THING = params.get("thing");
 const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
-const def = THING || HARVEST || BASKET ? null : SCENES[SCENE];
+const SEASON = params.get("season");
+const def = THING || HARVEST || BASKET || SEASON ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -2550,6 +2942,51 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () => ({ mouth: mouthOf(basket) });
+} else if (SEASON) {
+  /* ---------- Nova's seasons: the island, then one frame per step, each
+     with everything before it. The camera is the same for all four, so
+     the four pictures match (`crop.py seasons` cuts them on one box). No
+     ground shadow — the page draws one. ---------- */
+  const season = SEASON_DEFS[SEASON];
+  const island = seasonIsland(season.band);
+  scene.add(island.group);
+  const tree = seasonTree();
+  tree.position.set(0, SOIL_Y, -0.45);
+  scene.add(tree);
+  /* What grows on the tree (and its spot) is in the tree's own frame. */
+  const steps = season.steps.map(({ make, onTree }) => {
+    const thing = make();
+    (onTree ? tree : scene).add(thing);
+    return thing;
+  });
+  catcher.visible = false;
+  renderer.setSize(1000, 1000);
+  const span = 3.95;
+  Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
+  const lift = THREE.MathUtils.degToRad(18);
+  camera.position.set(0, 2.95 + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, 2.95, 0);
+  camera.updateProjectionMatrix();
+  window.renderLayers = () => {
+    renderer.setClearColor(0x000000, 0);
+    const out = {};
+    for (let k = 0; k <= steps.length; k++) {
+      steps.forEach((thing, i) => (thing.visible = i < k));
+      /* Every season's first step is its ground, over the soil. */
+      island.soil.visible = k === 0;
+      out[`frame${k}`] = frame();
+    }
+    return out;
+  };
+  /* Each step's spot, % of the picture. */
+  window.itemsMeta = () => ({
+    spots: season.steps.map(({ spot, onTree }) => {
+      const p = new THREE.Vector3(...spot);
+      if (onTree) tree.localToWorld(p);
+      p.project(camera);
+      return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
+    }),
+  });
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();
