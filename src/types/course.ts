@@ -35,8 +35,11 @@ export interface Thing {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The season it goes with (Nova's Seasons). */
+  /** The season it goes with (Nova's Seasons, and a month's). */
   group?: Group;
+  /** Known by its word alone, which is written on it (a month on a plain
+      wagon) — its picture says nothing. */
+  named?: boolean;
 }
 
 /** One thing lying in a scene, and where. */
@@ -132,6 +135,10 @@ export type Question =
       leaves…) until the whole season is there. Nothing can go wrong — the
       season is the lesson. */
   | { type: "change"; ask: Ask; word: string; scene: SeasonScene }
+  /** Build the train: Nova's engine waits on the track; tap the wagons in
+      order and each couples on behind the last. `wagons` are in the right
+      order. All on → the train goes round and comes back. */
+  | { type: "train"; ask: Ask; engine: StaticImageData; wagons: Wagon[] }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
@@ -175,6 +182,13 @@ export interface Basket {
 export interface SeasonScene {
   frames: readonly StaticImageData[];
   spots: readonly (readonly [number, number])[];
+}
+
+/** A wagon of Nova's year train: its month (English) and its picture —
+    every wagon of one train is cut on one box, so they line up. */
+export interface Wagon {
+  word: string;
+  src: StaticImageData;
 }
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
