@@ -182,10 +182,10 @@ tools/
   picnic-scene/       Renders every clay picture in three.js (headless
                       Chromium): the Find scenes, the paint pots and the
                       things to paint, Nova's blender, juice glasses and
-                      soup pots, and her gardens (an apple tree, a banana
+                      soup pots, her gardens (an apple tree, a banana
                       plant and an orange tree; a carrot bed, the banana
-                      plant and a potato bed — each with its food and one
-                      basket), then crops them into layers — not part of
+                      plant and a potato bed — each with its food) and her
+                      basket, then crops them into layers — not part of
                       the site build
 public/
   hero.webp           Home hero scene
@@ -212,7 +212,7 @@ public/
                             — make/: the review's mixed juice, its glass and
                             the soup, fill/: each food as it grows, to fill
                             its word with, and garden/: the review's two
-                            gardens, in layers), seasons/ (the seasons
+                            gardens, in layers, and her basket), seasons/ (the seasons
                             picnic), months/
                             (the calendar pages), and each course's
                             placeholder reels
@@ -329,13 +329,16 @@ picture:
   her pot from recipes of words alone, asks **"Do you like…?"** (thumbs up
   or down onto two plates — "I like apples." / "I don't like corn." — no
   wrong answer), spells two words from the picture, and ends with an
-  **exam in Nova's garden**: three plants side by side, one basket, and
-  her list — "3 apples · 2 oranges · 1 banana", then "1 potato · 3
-  carrots · 2 bananas". Each plant has more than the list asks for, and the
-  list is never in the plants' order, so every line has to be read and
-  counted. Tap one and it comes off (a vegetable is pulled up out of the
-  soil), flies into the basket and its word pops up where it was, filling
-  a socket on its line; one too many wiggles back on its branch.
+  **exam in Nova's garden**: three plants side by side, and above them
+  (beside them on a desktop) her list — "3 apples · 2 oranges · 1
+  banana", then "1 potato · 3 carrots · 2 bananas" — with her basket
+  standing next to it on the page. Each plant has more than the list asks
+  for, and the list is never in the plants' order, so every line has to
+  be read and counted. Tap one and it comes off (a vegetable is pulled up
+  out of the soil), flies out of the garden and drops into the basket,
+  where it stays; its word pops up where it was and a socket on its line
+  fills. A full line turns its speaker into a green tick; one too many
+  wiggles back on its branch.
 - **The Seasons** — spring (a flower), summer (the sun), fall (an orange
   leaf), winter (a snowman). Meet, spell, pick the season by its word, then
   find everything that goes with it in a picnic of all four. The review
