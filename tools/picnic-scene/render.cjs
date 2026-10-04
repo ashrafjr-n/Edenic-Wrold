@@ -27,6 +27,11 @@
  *
  *   node tools/picnic-scene/render.cjs season spring summer fall winter
  *
+ * Nova's year train — writes `out/train/`: the engine, a plain wagon and
+ * month 1–12's wagons, all from one camera. Then `crop.py train`.
+ *
+ *   node tools/picnic-scene/render.cjs train
+ *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -89,6 +94,13 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+    }
+  } else if (mode === "train") {
+    const out = path.join(__dirname, "out", "train");
+    fs.mkdirSync(out, { recursive: true });
+    for (const what of ["engine", "plain", ...Array.from({ length: 12 }, (_, i) => String(i + 1))]) {
+      const layers = await render(page, `train=${what}`);
+      save(out, what, layers[what]);
     }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
