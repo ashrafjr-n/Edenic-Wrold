@@ -8,11 +8,17 @@
  *
  *   node tools/picnic-scene/render.cjs squares   (picnic | squares | triangles | rectangles | red | yellow | purple | pink | white)
  *
- * Nova's garden — for each food, writes `out/harvest-<food>/`: the garden
- * without the food, a mask of what stands in front of it, each food alone,
- * and `meta.json` (the basket's mouth). Then `crop.py harvest-<food>`.
+ * Nova's garden — for each garden, writes `out/harvest-<garden>/`: the
+ * garden without its food, a mask of what stands in front of it, each food
+ * alone, and `meta.json`. Then `crop.py harvest-<garden>`.
  *
- *   node tools/picnic-scene/render.cjs harvest apple orange carrot
+ *   node tools/picnic-scene/render.cjs harvest fruits vegetables
+ *
+ * Nova's basket alone (it stands beside the garden) — `out/basket/`: the
+ * basket, a mask of its near half and `meta.json` (its mouth). Then
+ * `crop.py basket`.
+ *
+ *   node tools/picnic-scene/render.cjs basket
  *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
@@ -69,6 +75,12 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
+  } else if (mode === "basket") {
+    const layers = await render(page, "basket");
+    const out = path.join(__dirname, "out", "basket");
+    fs.mkdirSync(out, { recursive: true });
+    for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+    fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
   } else {
     const name = mode || "picnic";
     const layers = await render(page, `scene=${name}`);

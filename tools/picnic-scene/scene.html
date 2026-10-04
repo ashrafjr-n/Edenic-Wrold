@@ -52,7 +52,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -2092,14 +2092,14 @@ const GARDENS = {
     basket: [1.85, 1.6, 1.4],
   },
 
-  /* The Fruits review's exams: three plants side by side and ONE basket —
-     wider than a phone's stage (3:2, `size` px, `view` world units
+  /* The Fruits review's exams: three plants side by side (the basket
+     stands beside the garden, `?basket`) — wider than a phone's stage (3:2, `size` px, `view` world units
      across). `foods` holds each kind and where it grows; there are more
      of each than the note asks for, so the child has to count. */
   fruits: {
-    size: [1200, 800],
+    size: [1200, 690],
     view: 9.6,
-    centreY: 1.8,
+    centreY: 2.25,
     lift: 14,
     world: plants([[() => fruitTree(0x63bb59), -3.15, 0.56], [bananaPlant, 0, 0.62], [() => fruitTree(0x4ea957), 3.15, 0.56]]),
     foods: [
@@ -2107,12 +2107,11 @@ const GARDENS = {
       { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
       { food: "orange", scale: 0.96, rot: [0, 0.6, 0], at: [[2.5, 2.45, 1.05], [3.8, 2.4, 1.05], [3.15, 1.3, 1.1]], tilt: [6, -8, 4] },
     ],
-    basket: [0, 3.4, 1.0],
   },
   vegetables: {
-    size: [1200, 800],
+    size: [1200, 690],
     view: 9.4,
-    centreY: 1.8,
+    centreY: 2.25,
     lift: 18,
     world: plants([[bed, -3.05, 0.52], [bananaPlant, 0, 0.62], [bed, 3.05, 0.52]]),
     foods: [
@@ -2120,7 +2119,6 @@ const GARDENS = {
       { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
       { food: "potato", make: potatoPlant, scale: 0.85, rot: [0, 0.25, 0], at: [[2.1, 0.4, 0], [3.05, 0.4, 0], [4.0, 0.4, 0]] },
     ],
-    basket: [0, 3.4, 1.0],
   },
 };
 
@@ -2379,9 +2377,58 @@ function place(group, it) {
   }
 }
 
+/* White where one of `parts` is the nearest thing, black everywhere
+   else: the whole world drawn black (for its depth), then each part again
+   in white, cut at its z, wherever it is the nearest. */
+const black = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false, side: THREE.DoubleSide });
+function maskOf(parts) {
+  renderer.setClearColor(0x000000, 1);
+  scene.overrideMaterial = black;
+  renderer.render(scene, camera);
+  scene.overrideMaterial = null;
+  const layer = new THREE.Scene();
+  for (const [thing, cut] of parts) {
+    thing.updateMatrixWorld(true);
+    const white = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      toneMapped: false,
+      side: THREE.DoubleSide,
+      depthFunc: THREE.LessEqualDepth,
+      clippingPlanes: cut === -Infinity ? [] : [new THREE.Plane(new THREE.Vector3(0, 0, 1), -cut)],
+    });
+    thing.traverse((o) => {
+      if (!o.isMesh) return;
+      const copy = new THREE.Mesh(o.geometry, white);
+      copy.matrixAutoUpdate = false;
+      copy.matrix.copy(o.matrixWorld);
+      layer.add(copy);
+    });
+  }
+  renderer.autoClear = false;
+  renderer.render(layer, camera);
+  renderer.autoClear = true;
+  return renderer.domElement.toDataURL("image/png");
+}
+
+/* A basket's mouth on the picture, % — where what is picked piles up. */
+function mouthOf(basket) {
+  basket.updateMatrixWorld(true);
+  const p = new THREE.Vector3();
+  let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < 96; i++) {
+    const a = (i / 96) * Math.PI * 2;
+    basket.localToWorld(p.set(Math.cos(a) * 0.84, 0.66, Math.sin(a) * 0.84)).project(camera);
+    const x = ((p.x + 1) / 2) * 100;
+    const y = ((1 - p.y) / 2) * 100;
+    [l, t, r, b] = [Math.min(l, x), Math.min(t, y), Math.max(r, x), Math.max(b, y)];
+  }
+  return [l, t, r - l, b - t].map((v) => Math.round(v * 100) / 100);
+}
+
 const THING = params.get("thing");
 const HARVEST = params.get("harvest");
-const def = THING || HARVEST ? null : SCENES[SCENE];
+const BASKET = params.has("basket");
+const def = THING || HARVEST || BASKET ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -2427,16 +2474,19 @@ if (THING) {
   scene.add(world);
   const { group: grown, front = [], far } = garden.world();
   world.add(gardenGround(far, garden.size ? 16 : 6), grown);
-  const [bx, bz, bs] = garden.basket;
-  const basket = ITEMS.basket();
-  basket.scale.setScalar(bs);
-  basket.position.set(bx, 0, bz);
-  world.add(basket);
+  /* A one-food garden has its basket on the grass; the exams' gardens have
+     none — their basket stands beside the garden (`?basket`). */
+  const basket = garden.basket && ITEMS.basket();
+  if (basket) {
+    const [bx, bz, bs] = garden.basket;
+    basket.scale.setScalar(bs);
+    basket.position.set(bx, 0, bz);
+    world.add(basket);
+  }
   /* [thing, z]: the part of the thing nearer than z. In FRONT of the food:
      a bed's near half and the whole basket; over what is piled in the
      basket, its near half (the rim). */
-  const frontParts = [...front, [basket, -Infinity]];
-  const rimParts = [[basket, bz]];
+  const frontParts = basket ? [...front, [basket, -Infinity]] : front;
 
   /* Each kind of food and where it grows — one kind, unless the garden
      lists several. */
@@ -2452,61 +2502,14 @@ if (THING) {
     }),
   );
 
-  /* White where one of `parts` is the nearest thing, black everywhere
-     else: the whole world drawn black (for its depth), then each part again
-     in white, cut at its z, wherever it is the nearest. */
-  const black = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false, side: THREE.DoubleSide });
-  function maskOf(parts) {
-    renderer.setClearColor(0x000000, 1);
-    scene.overrideMaterial = black;
-    renderer.render(scene, camera);
-    scene.overrideMaterial = null;
-    const layer = new THREE.Scene();
-    for (const [thing, cut] of parts) {
-      thing.updateMatrixWorld(true);
-      const white = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        toneMapped: false,
-        side: THREE.DoubleSide,
-        depthFunc: THREE.LessEqualDepth,
-        clippingPlanes: cut === -Infinity ? [] : [new THREE.Plane(new THREE.Vector3(0, 0, 1), -cut)],
-      });
-      thing.traverse((o) => {
-        if (!o.isMesh) return;
-        const copy = new THREE.Mesh(o.geometry, white);
-        copy.matrixAutoUpdate = false;
-        copy.matrix.copy(o.matrixWorld);
-        layer.add(copy);
-      });
-    }
-    renderer.autoClear = false;
-    renderer.render(layer, camera);
-    renderer.autoClear = true;
-    return renderer.domElement.toDataURL("image/png");
-  }
-
-  /* The basket's mouth on the picture, % — where what is picked piles up. */
-  function basketMouth() {
-    const p = new THREE.Vector3();
-    let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
-    for (let i = 0; i < 96; i++) {
-      const a = (i / 96) * Math.PI * 2;
-      p.set(bx + Math.cos(a) * 0.84 * bs, 0.66 * bs, bz + Math.sin(a) * 0.84 * bs).project(camera);
-      const x = ((p.x + 1) / 2) * 100;
-      const y = ((1 - p.y) / 2) * 100;
-      [l, t, r, b] = [Math.min(l, x), Math.min(t, y), Math.max(r, x), Math.max(b, y)];
-    }
-    return [l, t, r - l, b - t].map((v) => Math.round(v * 100) / 100);
-  }
-
   window.renderLayers = () => {
     const out = {};
     renderer.setClearColor(SKY, 1);
     out.all = frame();
     foods.forEach((f) => (f.visible = false));
     out.background = frame();
-    out.frontmask = maskOf(frontParts);
-    out.rimmask = maskOf(rimParts);
+    if (frontParts.length) out.frontmask = maskOf(frontParts);
+    if (basket) out.rimmask = maskOf([[basket, garden.basket[1]]]);
     world.visible = false;
     renderer.setClearColor(0x000000, 0);
     foods.forEach((f, k) => {
@@ -2517,11 +2520,36 @@ if (THING) {
   };
   window.itemsMeta = () => ({
     count: foods.length,
-    basket: basketMouth(),
+    basket: basket ? mouthOf(basket) : null,
     foods: kinds.flatMap((kind) => kind.at.map(() => kind.food)),
     tilt: kinds.flatMap((kind) => kind.tilt ?? kind.at.map(() => 0)),
     pivot: garden.pivot ?? "top",
   });
+} else if (BASKET) {
+  /* ---------- Nova's basket alone — the Fruits review's exams, where it
+     stands beside her garden: the basket (no shadow — the page gives it
+     one, in its shadow hue), a mask of its near
+     half (the rim, over what is piled in it — cut in front of the handle,
+     so all of the pile lies over that) and its mouth ---------- */
+  const basket = ITEMS.basket();
+  scene.add(basket);
+  catcher.visible = false;
+  renderer.setSize(800, 800);
+  renderer.localClippingEnabled = true;
+  const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? 26));
+  const span = 1.25;
+  Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
+  camera.position.set(0, 0.55 + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, 0.55, 0);
+  camera.updateProjectionMatrix();
+  window.renderLayers = () => {
+    renderer.setClearColor(0x000000, 0);
+    const out = { basket: frame() };
+    /* The wicker only — the floor inside lies under the pile. */
+    out.rimmask = maskOf(basket.children.filter((m) => m.geometry.type !== "CircleGeometry").map((m) => [m, 0.1]));
+    return out;
+  };
+  window.itemsMeta = () => ({ mouth: mouthOf(basket) });
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();
