@@ -184,9 +184,11 @@ tools/
                       things to paint, Nova's blender, juice glasses and
                       soup pots, her gardens (an apple tree, a banana
                       plant and an orange tree; a carrot bed, the banana
-                      plant and a potato bed — each with its food) and her
-                      basket, then crops them into layers — not part of
-                      the site build
+                      plant and a potato bed — each with its food), her
+                      basket and the four seasons (an island with a tree
+                      with a face, frame by frame as each season comes),
+                      then crops them into layers — not part of the site
+                      build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -212,8 +214,11 @@ public/
                             — make/: the review's mixed juice, its glass and
                             the soup, fill/: each food as it grows, to fill
                             its word with, and garden/: the review's two
-                            gardens, in layers, and her basket), seasons/ (the seasons
-                            picnic), months/
+                            gardens, in layers, and her basket), seasons/
+                            (spring/, summer/, fall/, winter/: the island
+                            before the season, 0.png, then one frame per
+                            step, 1–4.png; things/: the review's eight
+                            things to sort), months/
                             (the calendar pages), and each course's
                             placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
@@ -339,11 +344,19 @@ picture:
   where it stays; its word pops up where it was and a socket on its line
   fills. A full line turns its speaker into a green tick; one too many
   wiggles back on its branch.
-- **The Seasons** — spring (a flower), summer (the sun), fall (an orange
-  leaf), winter (a snowman). Meet, spell, pick the season by its word, then
-  find everything that goes with it in a picnic of all four. The review
-  sorts things into four season boxes, puts the seasons in order and spells
-  two from their sign.
+- **The Seasons** — spring, summer, fall, winter, one a lesson. Each season
+  is the SAME clay island with a tree that has a face (the friends' eyes and
+  pink cheeks), its band in the season's color: blossoms and tulips in
+  spring, apples and a smiling sun in summer, orange leaves falling and a
+  pumpkin in fall, snow on bare branches and a snowman in winter. The
+  season is **met** and **spelled**, then the child **makes it come**: the
+  island starts bare, one sparkling spot glows, and each tap spreads the
+  next part of the season over it from that spot (the grass, the leaves,
+  the blossoms…) until the whole season is there and its word jumps — no
+  choosing inside the lesson. The review is the exam: eight things
+  (a tulip, a butterfly, the sun, an ice cream, a leaf, a pumpkin, a
+  snowman, a snowflake) into four season boxes, the four seasons in order,
+  and two spelled from their picture.
 - **Months of the Year** — three months a lesson. A month has no picture of
   its own, so the ORDER is what is learned: each month is met on its
   calendar page (its number big in clay, the band in its season's color),
