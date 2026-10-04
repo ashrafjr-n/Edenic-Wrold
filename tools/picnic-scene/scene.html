@@ -2434,6 +2434,17 @@ function sunfriend() {
   return g;
 }
 
+/* The seasons' things alone too — the review's Sort (`render.cjs thing`). */
+Object.assign(ITEMS, {
+  tulip: () => tulip(0xff6f7d),
+  butterfly,
+  maple: () => mapleLeaf(0xf2683a),
+  pumpkin,
+  snowflake,
+  sunfriend,
+  snowfriend,
+});
+
 const at = (thing, [x, y, z], scale = 1, turn = [0, 0, 0]) => {
   thing.position.set(x, y, z);
   thing.scale.setScalar(scale);
