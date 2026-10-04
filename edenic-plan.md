@@ -194,7 +194,7 @@ sort boxes, done screen, the course page).
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
-| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02) |
+| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based) |
 | Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
@@ -238,10 +238,11 @@ Months start with a **capital letter** — the first tile is the capital.
 | Word card and Spell with a picture (rung 4: picture, no word) | Colors | every course |
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
-| **Dress up**: drag things onto the friend | later | Seasons, Weather |
+| **Dress up**: drag things onto the friend | later | Weather (an option for the Seasons review) |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons, Months |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits |
+| **Make it {season}**: the island starts bare; tap the glowing spot and the next part of the season spreads over it (grass, leaves, blossoms…), four times | built (`change`) | Seasons |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
@@ -254,8 +255,9 @@ Months start with a **capital letter** — the first tile is the capital.
   2026-10-03 — see §5 and `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
   basket"), find them on a market stall, sort fruit / vegetable; review: a
   shopping list to read and fill.
-- **The Seasons**: spring, summer, fall, winter + one sign each; Dress up
-  Nova; the same tree four times — tap the winter one.
+- **The Seasons** (BUILT 2026-10-02, reworked 2026-10-04 — see §5 and
+  `learn-courses.md`): the same tree with a face on a clay island, four
+  times; each lesson makes its season come on it, step by step.
 - **Months**: three a lesson, long ones on rung 2; Put in order (a month
   train); sort months into seasons; "When is your birthday?" (visual only).
 - **Animals**: shadow match (which animal makes this shadow?), find them in a
@@ -401,8 +403,17 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       full line's speaker turning into a tick; a picked one flies out of
       the garden over the basket and drops in. Played through headless
       (360x640 → 1920x1080, both gardens, en/ar/ku, no scroll).
-- [ ] The user checks Fruits → then Seasons and Months get their own new
-      structure (Nova's tree; the year train).
+- [x] Seasons reworked (2026-10-04, direct request "video, sound, letters,
+      then one simple useful activity; the 3D pictures make no sense —
+      clearer, like the Edenic friends, clay"): every season is the SAME
+      island with a tree that has the friends' face, rendered frame by
+      frame; lessons are reel → word → spell → **Make it {season}** (tap
+      four glowing spots, the season spreads over the island); the pick
+      and the picnic Find left the lessons (no choosing in a one-thing
+      lesson). Review: Sort eight new things, Order, two picture spells.
+      Played through headless (360x640 → 1920x1080, en/ar/ku, dark).
+- [ ] The user checks Seasons → fixes.
+- [ ] Months gets its own new structure (the year train).
 - [ ] Then, one at a time with a check after each: Animals → The Weather →
       My Body.
 
