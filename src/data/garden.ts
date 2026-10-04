@@ -1,38 +1,37 @@
-import type { Garden } from "@/types/course";
+import type { Basket, Garden } from "@/types/course";
+import basket from "../../public/assets/learn/nova/fruits/garden/basket.png";
+import basketRim from "../../public/assets/learn/nova/fruits/garden/basket-rim.png";
 import fruitsGround from "../../public/assets/learn/nova/fruits/garden/fruits/ground.jpg";
-import fruitsFront from "../../public/assets/learn/nova/fruits/garden/fruits/front.png";
-import fruitsRim from "../../public/assets/learn/nova/fruits/garden/fruits/rim.png";
 import fruitsApple from "../../public/assets/learn/nova/fruits/garden/fruits/apple.png";
 import fruitsBanana from "../../public/assets/learn/nova/fruits/garden/fruits/banana.png";
 import fruitsOrange from "../../public/assets/learn/nova/fruits/garden/fruits/orange.png";
 import vegetablesGround from "../../public/assets/learn/nova/fruits/garden/vegetables/ground.jpg";
 import vegetablesFront from "../../public/assets/learn/nova/fruits/garden/vegetables/front.png";
-import vegetablesRim from "../../public/assets/learn/nova/fruits/garden/vegetables/rim.png";
 import vegetablesCarrot from "../../public/assets/learn/nova/fruits/garden/vegetables/carrot.png";
 import vegetablesBanana from "../../public/assets/learn/nova/fruits/garden/vegetables/banana.png";
 import vegetablesPotato from "../../public/assets/learn/nova/fruits/garden/vegetables/potato.png";
 
 /* Nova's garden — where the Fruits review's exams are picked: three plants
-   side by side and ONE basket, one render each (`tools/picnic-scene`,
-   `render.cjs harvest <garden>`, then `crop.py harvest-<garden>`, whose
-   numbers these are). An apple tree, a banana plant and an orange tree;
-   and a carrot bed, the banana plant and a potato bed. */
+   side by side, one render each (`tools/picnic-scene`, `render.cjs harvest
+   <garden>`, then `crop.py harvest-<garden>`, whose numbers these are). An
+   apple tree, a banana plant and an orange tree; and a carrot bed, the
+   banana plant and a potato bed. Beside both, the one basket
+   (`render.cjs basket`, then `crop.py basket`). */
+
+const BASKET: Basket = { src: basket, rim: basketRim, mouth: [3.66, 25.5, 92.69, 46.03] };
 
 export const GARDENS = {
   fruits: {
     ground: fruitsGround,
     foods: { apple: fruitsApple, banana: fruitsBanana, orange: fruitsOrange },
-    items: [{ food: "apple", box: [4.33, 29.25, 12.17, 15.75], hit: [4.83, 30.0, 11.17, 14.25], tilt: -8 }, { food: "apple", box: [17.92, 30.0, 12.08, 15.75], hit: [18.42, 30.75, 11.08, 14.25], tilt: 6 }, { food: "apple", box: [4.17, 46.62, 12.08, 15.75], hit: [4.67, 47.38, 11.08, 14.25], tilt: 4 }, { food: "apple", box: [17.67, 45.88, 12.17, 15.75], hit: [18.17, 46.62, 11.17, 14.25], tilt: -5 }, { food: "banana", box: [37.83, 42.88, 8.33, 20.5], hit: [38.33, 43.62, 7.33, 19.0], tilt: 14 }, { food: "banana", box: [44.83, 41.5, 8.33, 20.62], hit: [45.33, 42.25, 7.33, 19.12], tilt: 0 }, { food: "banana", box: [51.75, 42.88, 8.42, 20.5], hit: [52.25, 43.62, 7.42, 19.0], tilt: -14 }, { food: "orange", box: [70.5, 27.62, 11.08, 17.5], hit: [71.0, 28.38, 10.08, 16.0], tilt: 6 }, { food: "orange", box: [84.08, 28.38, 11.0, 17.5], hit: [84.58, 29.12, 10.0, 16.0], tilt: -8 }, { food: "orange", box: [77.25, 45.25, 11.08, 17.5], hit: [77.75, 46.0, 10.08, 16.0], tilt: 4 }],
-    front: { src: fruitsFront, box: [40.42, 67.0, 19.17, 25.25] },
-    rim: { src: fruitsRim, box: [40.42, 67.0, 19.17, 25.25] },
-    basket: [41.25, 76.96, 17.5, 6.35],
+    items: [{ food: "apple", box: [4.33, 33.77, 12.17, 18.41], hit: [4.83, 34.64, 11.17, 16.67], tilt: -8 }, { food: "apple", box: [17.92, 34.64, 12.08, 18.41], hit: [18.42, 35.51, 11.08, 16.67], tilt: 6 }, { food: "apple", box: [4.17, 54.06, 12.08, 18.26], hit: [4.67, 54.93, 11.08, 16.52], tilt: 4 }, { food: "apple", box: [17.67, 53.19, 12.17, 18.26], hit: [18.17, 54.06, 11.17, 16.52], tilt: -5 }, { food: "banana", box: [37.83, 49.57, 8.33, 23.91], hit: [38.33, 50.43, 7.33, 22.17], tilt: 14 }, { food: "banana", box: [44.83, 48.12, 8.33, 23.77], hit: [45.33, 48.99, 7.33, 22.03], tilt: 0 }, { food: "banana", box: [51.75, 49.57, 8.42, 23.91], hit: [52.25, 50.43, 7.42, 22.17], tilt: -14 }, { food: "orange", box: [70.5, 31.88, 11.08, 20.43], hit: [71.0, 32.75, 10.08, 18.7], tilt: 6 }, { food: "orange", box: [84.08, 32.75, 11.0, 20.43], hit: [84.58, 33.62, 10.0, 18.7], tilt: -8 }, { food: "orange", box: [77.25, 52.32, 11.08, 20.43], hit: [77.75, 53.19, 10.08, 18.7], tilt: 4 }],
+    basket: BASKET,
   },
   vegetables: {
     ground: vegetablesGround,
     foods: { carrot: vegetablesCarrot, banana: vegetablesBanana, potato: vegetablesPotato },
-    items: [{ food: "carrot", box: [2.75, 47.25, 7.25, 28.62], hit: [3.25, 48.0, 6.25, 20.25], tilt: 0 }, { food: "carrot", box: [10.17, 47.25, 7.25, 28.62], hit: [10.67, 48.0, 6.25, 20.25], tilt: 0 }, { food: "carrot", box: [17.58, 47.25, 7.25, 28.62], hit: [18.08, 48.0, 6.25, 20.25], tilt: 0 }, { food: "carrot", box: [25.08, 47.25, 7.25, 28.62], hit: [25.58, 48.0, 6.25, 20.25], tilt: 0 }, { food: "banana", box: [37.58, 43.62, 8.5, 20.75], hit: [38.08, 44.38, 7.5, 19.25], tilt: 14 }, { food: "banana", box: [44.67, 42.38, 8.58, 20.62], hit: [45.17, 43.12, 7.58, 19.12], tilt: 0 }, { food: "banana", box: [51.83, 43.62, 8.5, 20.75], hit: [52.33, 44.38, 7.5, 19.25], tilt: -14 }, { food: "potato", box: [66.5, 55.88, 11.42, 16.75], hit: [67.0, 56.62, 10.42, 11.88], tilt: 0 }, { food: "potato", box: [76.58, 55.88, 11.5, 16.75], hit: [77.08, 56.62, 10.5, 11.62], tilt: 0 }, { food: "potato", box: [86.67, 55.88, 11.5, 16.75], hit: [87.17, 56.62, 10.5, 11.75], tilt: 0 }],
-    front: { src: vegetablesFront, box: [1.0, 66.75, 98.0, 30.0] },
-    rim: { src: vegetablesRim, box: [40.25, 70.88, 19.5, 25.87] },
-    basket: [41.06, 79.92, 17.87, 8.28],
+    items: [{ food: "carrot", box: [2.75, 54.64, 7.25, 33.33], hit: [3.25, 55.51, 6.25, 23.62], tilt: 0 }, { food: "carrot", box: [10.17, 54.64, 7.25, 33.33], hit: [10.67, 55.51, 6.25, 23.62], tilt: 0 }, { food: "carrot", box: [17.58, 54.64, 7.25, 33.33], hit: [18.08, 55.51, 6.25, 23.62], tilt: 0 }, { food: "carrot", box: [25.08, 54.64, 7.25, 33.33], hit: [25.58, 55.51, 6.25, 23.62], tilt: 0 }, { food: "banana", box: [37.58, 50.58, 8.5, 23.91], hit: [38.08, 51.45, 7.5, 22.17], tilt: 14 }, { food: "banana", box: [44.67, 49.13, 8.58, 23.91], hit: [45.17, 50.0, 7.58, 22.17], tilt: 0 }, { food: "banana", box: [51.83, 50.58, 8.5, 23.91], hit: [52.33, 51.45, 7.5, 22.17], tilt: -14 }, { food: "potato", box: [66.5, 64.64, 11.42, 19.57], hit: [67.0, 65.51, 10.42, 13.91], tilt: 0 }, { food: "potato", box: [76.58, 64.64, 11.5, 19.57], hit: [77.08, 65.51, 10.5, 13.62], tilt: 0 }, { food: "potato", box: [86.67, 64.64, 11.5, 19.57], hit: [87.17, 65.51, 10.5, 13.62], tilt: 0 }],
+    front: { src: vegetablesFront, box: [1.0, 77.39, 98.0, 15.51] },
+    basket: BASKET,
   },
 } satisfies Record<string, Garden>;

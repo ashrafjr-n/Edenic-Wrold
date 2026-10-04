@@ -125,18 +125,17 @@ export type Question =
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
-  /** Pick what Nova's note says (a review's exam): three plants, one
-      basket, and the note — "3 apples, 1 banana, 2 oranges". Tap one and
-      it is picked (pulled up) into the basket, its word popping up where it
-      was; one more than the note says wiggles back. `order` is each line:
-      the English word, its plural and how many. */
+  /** Pick what Nova's note says (a review's exam): three plants, the
+      note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
+      Tap one and it is picked (pulled up) into the basket, its word popping
+      up where it was; one more than the note says wiggles back. `order` is
+      each line: the English word, its plural and how many. */
   | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden };
 
 /** Where the foods grow, to pick them (Nova's Fruits review) — one render
     (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
-    kind of food (all of one kind are alike), what stands in front of them
-    (a bed's near half and the basket) and the basket's near half, which
-    goes over what is piled in it. */
+    kind of food (all of one kind are alike) and what stands in front of
+    them (the beds' near halves) — and the basket they are picked into. */
 export interface Garden {
   ground: StaticImageData;
   /** Each kind of food that grows here, by its English word. */
@@ -145,10 +144,18 @@ export interface Garden {
       tapped (the part not behind the front), and how far it is turned (°,
       about its stem) so they are not all alike. */
   items: { food: string; box: SceneRect; hit: SceneRect; tilt: number }[];
-  front: { src: StaticImageData; box: SceneRect };
-  rim: { src: StaticImageData; box: SceneRect };
-  /** The basket's mouth, where what is picked piles up. */
-  basket: SceneRect;
+  /** None in a garden of trees alone. */
+  front?: { src: StaticImageData; box: SceneRect };
+  basket: Basket;
+}
+
+/** Nova's basket, standing beside her garden (`?basket`): the basket, its
+    near half — which goes over what is piled in it — and its mouth (% of
+    the picture), where that piles up. */
+export interface Basket {
+  src: StaticImageData;
+  rim: StaticImageData;
+  mouth: SceneRect;
 }
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
