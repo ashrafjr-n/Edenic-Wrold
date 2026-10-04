@@ -190,6 +190,7 @@ export const ar: Dictionary = {
     thisMonth: "هذا شهر {month}!",
     orderMonths: "رتّب الأشهر بالترتيب!",
     afterMonth: "ما الشهر الذي يأتي بعد {month}؟",
+    sortMonths: "ضع كل شهر في صندوق فصله!",
     meetThing: "تعرّف على {thing}!",
     makeSoup: "اصنع حساء خضار!",
     makeJuice: "اصنع عصير {thing}!",
@@ -216,6 +217,7 @@ export const ar: Dictionary = {
     fill: "املأ",
     harvest: "اقطف",
     change: "اصنع",
+    train: "صُفّ",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

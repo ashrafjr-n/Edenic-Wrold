@@ -33,6 +33,7 @@ import { LikesPlates } from "./likes-plates";
 import { FillWord } from "./fill-word";
 import { HarvestPick } from "./harvest-pick";
 import { SeasonChange } from "./season-change";
+import { TrainOrder } from "./train-order";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -446,6 +447,8 @@ export function LessonPlayer({
           onSolved={onSolved}
         />
       );
+    } else if (q.type === "train") {
+      body = <TrainOrder key={seed} engine={q.engine} wagons={q.wagons} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {

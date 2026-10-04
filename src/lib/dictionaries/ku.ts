@@ -194,6 +194,7 @@ export const ku: Dictionary = {
     thisMonth: "ئەڤە هەیڤا {month}ە!",
     orderMonths: "هەیڤان ب ڕێزێ ڕیز بکە!",
     afterMonth: "پشتی {month} کیژ هەیڤ دهێت؟",
+    sortMonths: "هەر هەیڤەکێ بکە د سندوقا وەرزێ وێ دا!",
     meetThing: "{thing} بناسە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     makeJuice: "ئاڤا {thing} چێ بکە!",
@@ -220,6 +221,7 @@ export const ku: Dictionary = {
     fill: "تژی بکە",
     harvest: "بچنە",
     change: "چێ بکە",
+    train: "ڕیز بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

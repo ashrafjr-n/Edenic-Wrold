@@ -200,6 +200,7 @@ export const en = {
     thisMonth: "This is {month}!",
     orderMonths: "Put the months in order!",
     afterMonth: "What comes after {month}?",
+    sortMonths: "Put each month in its season's box!",
     meetThing: "Meet the {thing}!",
     makeSoup: "Make a vegetable soup!",
     makeJuice: "Make juice with the {thing}!",
@@ -227,6 +228,7 @@ export const en = {
     fill: "Fill",
     harvest: "Pick",
     change: "Make",
+    train: "Line up",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
