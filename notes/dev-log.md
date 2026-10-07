@@ -65,3 +65,4 @@
 2026-10-02 improve button states
 2026-10-05 tweak memory match timing
 2026-10-07 tweak spell step
+2026-10-07 clean up course backdrop
