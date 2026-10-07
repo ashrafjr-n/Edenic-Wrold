@@ -108,11 +108,10 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   override them — use the `.card-pill` / `.tile-round` modifiers instead.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
-- Course subjects own a second, parallel palette (`--color-subject-*`): Shapes
-  orange, Colors blue; the other courses borrow the `colors`, `numbers` and `letters` tokens
-  until they get their own. It is used on the lesson hub from tablet width up,
-  so the courses read apart at a glance, and it is kept separate from the
-  mascot colors.
+- Course subjects own a second, parallel palette (`--color-subject-*`), kept
+  separate from the mascot colors. A written course wears its friend's color
+  instead — Pinki's are pink, Nova's gold, Bloo's Animals Bloo's blue — and the
+  courses still to come borrow the `colors` and `numbers` tokens until then.
 - Inside a lesson on a desktop nothing wraps the step: no board, no card. The
   step stands on the page ground, so the one thing to play with is the biggest
   thing on screen.
@@ -186,9 +185,11 @@ tools/
                       plant and an orange tree; a carrot bed, the banana
                       plant and a potato bed — each with its food), her
                       basket, the four seasons (an island with a tree
-                      with a face, frame by frame as each season comes)
-                      and her year train (the engine and a wagon per
-                      month), then crops them into layers — not part of
+                      with a face, frame by frame as each season comes),
+                      her year train (the engine and a wagon per month),
+                      and Bloo's animals (a cat, a dog, a cow and a fish
+                      with the friends' face, two coats each) and their
+                      homes, then crops them into layers — not part of
                       the site build
 public/
   hero.webp           Home hero scene
@@ -223,6 +224,11 @@ public/
                             (train/: Nova's engine, a wagon per month and a
                             plain one, all from one camera), and each course's
                             placeholder reels
+  assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
+                            (things/: each animal in two coats, fill/: each
+                            without a shadow, to fill its word with, homes/:
+                            where each lives — the review's boxes) and its
+                            placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -236,10 +242,11 @@ and all are still being iterated on visually.
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
 has two courses — **Shapes** and **Colors** — and Nova three — **Fruits &
 Vegetables**, **The Seasons** and **Months of the Year** — all written. Bloo's
-three (Animals, The Weather, My Body) list their lessons and show "coming
-soon". Every taught word is American English (color, fall, mom). Each
-friend's corner wears one colour: Pinki's is pink, Nova's is gold (back
-button, play buttons, progress bars, banners — with dark ink on the gold).
+**Animals** is written too; The Weather and My Body list their lessons and
+show "coming soon". Every taught word is American English (color, fall,
+mom). Each friend's corner wears one colour: Pinki's is pink, Nova's is gold
+(back button, play buttons, progress bars, banners — with dark ink on the
+gold), and Bloo's Animals is Bloo's blue.
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 white clay card per course (its things piled on it, a play button and a
 progress bar in the course's colour),
@@ -373,9 +380,19 @@ picture:
   four more into their season's island, "what comes after December?",
   and one name spelled.
 
-Bloo's courses, still to come, already wear their own clay art — a sun, a
-cloud, an umbrella, a hand, a foot and animals — rendered with the same light
-and clay.
+Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
+Each is a chibi clay animal with the friends' face (eyes with a shine, pink
+cheeks). The animal is **met** and **spelled**, then its word is **filled**
+with little cats (dogs, cows, fish) — nothing to choose between inside a
+lesson. The review is the exam: eight animals, each in two coats (an
+orange cat and a grey one, a brown dog and a spotty one…), go into their
+homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
+with whose home it is, then "dog" and "fish" are spelled from the picture
+alone.
+
+Bloo's other two courses, still to come, already wear their own clay art —
+a sun, a cloud, an umbrella, a snowman, a hand and a foot — rendered with the
+same light and clay.
 
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
