@@ -7,16 +7,9 @@ import cloud from "../../public/assets/learn/art/cloud.png";
 import umbrella from "../../public/assets/learn/art/umbrella.png";
 import hand from "../../public/assets/learn/art/hand.png";
 import foot from "../../public/assets/learn/art/foot.png";
-import fish from "../../public/assets/learn/pinki/colors/paint/fish.png";
-import duck from "../../public/assets/learn/pinki/colors/paint/duck.png";
-import pig from "../../public/assets/learn/pinki/colors/paint/pig.png";
-import sheep from "../../public/assets/learn/pinki/colors/paint/sheep.png";
-import frog from "../../public/assets/learn/pinki/colors/paint/frog.png";
-import whale from "../../public/assets/learn/pinki/colors/paint/whale.png";
 import snowman from "../../public/assets/learn/pinki/colors/paint/snowman.png";
 
 export const COURSE_ART = {
-  animals: [fish, duck, pig, sheep, frog, whale],
   weather: [sun, cloud, umbrella, snowman],
   body: [hand, foot],
 };
