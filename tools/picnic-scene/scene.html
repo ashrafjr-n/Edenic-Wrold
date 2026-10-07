@@ -26,7 +26,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
-/* Clay numbers (a month's wagon on Nova's year train) — the bold sans from
+/* Clay numbers (the months on Nova's year wheel) — the bold sans from
    three's own examples. */
 const FONT = await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/helvetiker_bold.typeface.json");
 
@@ -52,7 +52,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("grow") || params.has("wheel") || params.has("train") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("grow") || params.has("wheel") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -2111,7 +2111,7 @@ const GARDENS = {
 
 /* ---------- Nova's seasons: one tree through the year ----------
    `?season=<spring|summer|fall|winter>` — a round clay island, its side in
-   the season's color (its months' wagons on Nova's year train wear it
+   the season's color (its months' slices on Nova's year wheel wear it
    too), and a tree with a face on it. The island alone is the picture
    before the season comes;
    each of its four `steps` brings one more of it (the grass, the leaves…),
@@ -2752,126 +2752,6 @@ const GROW_DEFS = {
   potato: potatoGrowth,
 };
 
-/* ---------- Nova's year train (Months) ----------
-   `?train=engine|plain|<1–12>` — Nova's engine (her gold and lilac, the
-   friends' face on its front) and the wagons it pulls: month n's wagon in
-   its season's color, carrying that season's things, its number on its
-   side; or a plain wagon (the review: no season, no number — the page
-   writes the name under it). One fixed camera for all, so they line up at
-   one scale; turned a little, so the engine's face shows. */
-
-const TRAIN_TURN = 0.6;
-const MONTH_SEASON = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "fall", "fall", "fall", "winter"];
-const TRAIN_INK = 0x4b3f72;
-
-/* A wheel on the near (+z) or far side: a soft tyre and a gold hub. */
-function wheel(x, z, r) {
-  const g = new THREE.Group();
-  const tyre = mesh(new THREE.CylinderGeometry(r, r, 0.14, 48), soft(TRAIN_INK));
-  tyre.rotation.x = Math.PI / 2;
-  g.add(tyre);
-  const hub = mesh(new THREE.CylinderGeometry(r * 0.42, r * 0.42, 0.17, 32), soft(0xf7c948));
-  hub.rotation.x = Math.PI / 2;
-  g.add(hub);
-  g.position.set(x, r, z);
-  return g;
-}
-
-/* What each season's wagons carry — the Seasons course's own things. */
-const CARGO = {
-  winter: () => group(
-    ...[[-0.45, 0.2], [0.02, 0.23], [0.46, 0.19]].map(([x, r]) => {
-      const ball = mesh(new THREE.SphereGeometry(r, 32, 24), soft(0xfbfdff, { sheen: 0.9 }));
-      ball.position.set(x, 1.12, 0);
-      return ball;
-    }),
-    at(snowflake(), [0.05, 1.62, 0.12], 0.8),
-  ),
-  spring: () => group(at(tulip(0xff6f7d), [-0.42, 0.95, 0], 0.62), at(tulip(0xffd23a), [0, 0.95, 0.06], 0.72), at(tulip(0xff8cc6), [0.42, 0.95, -0.04], 0.6)),
-  summer: () => group(at(ITEMS.icecream(), [-0.4, 1.0, 0], 0.5, [0, 0, 0.15]), at(ITEMS.apple(), [0.08, 1.06, 0.12], 0.46), at(ITEMS.icecream(), [0.46, 1.0, -0.04], 0.46, [0, 0, -0.2])),
-  fall: () => group(at(pumpkin(), [-0.18, 1.0, 0], 0.62), at(mapleLeaf(0xf2683a), [0.5, 1.38, 0.1], 0.5, [0, 0, -0.35]), at(mapleLeaf(0xffb43a), [-0.62, 1.32, 0.06], 0.46, [0, 0, 0.45])),
-};
-
-/* Nova's engine, its front to −x. */
-function trainEngine() {
-  const g = new THREE.Group();
-  const gold = soft(0xf7c948);
-  const lilac = soft(0x9b86e0);
-  const base = mesh(new RoundedBoxGeometry(2.35, 0.22, 0.9, 4, 0.08), soft(TRAIN_INK));
-  base.position.set(0.02, 0.38, 0);
-  g.add(base);
-  for (const x of [-0.78, -0.08, 0.62]) for (const z of [-0.42, 0.42]) g.add(wheel(x, z, 0.28));
-  const boiler = mesh(new THREE.CylinderGeometry(0.47, 0.47, 1.3, 64), gold);
-  boiler.rotation.z = Math.PI / 2;
-  boiler.position.set(-0.47, 0.95, 0);
-  g.add(boiler);
-  const front = mesh(new THREE.SphereGeometry(0.47, 64, 48), gold);
-  front.scale.x = 0.32;
-  front.position.set(-1.12, 0.95, 0);
-  g.add(front);
-  const look = kawaii(1.05);
-  look.rotation.y = -Math.PI / 2;
-  look.position.set(-1.25, 0.95, 0);
-  g.add(look);
-  const chimney = mesh(smoothLathe([[0, 0], [0.15, 0], [0.15, 0.3], [0.24, 0.48], [0.24, 0.56], [0, 0.56]]), lilac);
-  chimney.position.set(-0.82, 1.32, 0);
-  g.add(chimney);
-  const dome = mesh(new THREE.SphereGeometry(0.19, 32, 24), gold);
-  dome.position.set(-0.28, 1.4, 0);
-  g.add(dome);
-  const cab = mesh(new RoundedBoxGeometry(0.86, 1.08, 0.98, 6, 0.13), gold);
-  cab.position.set(0.62, 1.04, 0);
-  g.add(cab);
-  const roof = mesh(new RoundedBoxGeometry(1.08, 0.15, 1.14, 4, 0.06), lilac);
-  roof.position.set(0.62, 1.64, 0);
-  g.add(roof);
-  const pane = mesh(new RoundedBoxGeometry(0.42, 0.38, 0.05, 4, 0.1), soft(0xdbecfa));
-  pane.position.set(0.62, 1.2, 0.49);
-  g.add(pane);
-  const hook = mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 16), soft(TRAIN_INK));
-  hook.rotation.z = Math.PI / 2;
-  hook.position.set(1.28, 0.42, 0);
-  g.add(hook);
-  return g;
-}
-
-/* A wagon: month n's (its season's color and things, its number on a
-   cream panel on its side), or a plain cream one. */
-function trainWagon(n) {
-  const season = n ? MONTH_SEASON[n - 1] : null;
-  const g = new THREE.Group();
-  const base = mesh(new RoundedBoxGeometry(1.62, 0.18, 0.86, 4, 0.07), soft(TRAIN_INK));
-  base.position.y = 0.38;
-  g.add(base);
-  for (const x of [-0.5, 0.5]) for (const z of [-0.4, 0.4]) g.add(wheel(x, z, 0.25));
-  const color = season ? SEASON_DEFS[season].band : 0xf6efe2;
-  const body = mesh(new RoundedBoxGeometry(1.62, 0.74, 0.96, 6, 0.15), soft(color));
-  body.position.y = 0.84;
-  g.add(body);
-  /* Open at the top: a darker hollow, the cargo standing in it. */
-  const hollow = mesh(new RoundedBoxGeometry(1.36, 0.06, 0.72, 4, 0.03), soft(new THREE.Color(color).multiplyScalar(0.62)));
-  hollow.position.y = 1.19;
-  g.add(hollow);
-  const panel = mesh(new RoundedBoxGeometry(1.14, 0.48, 0.06, 4, 0.1), soft(0xfffaf0, { emissive: 0xfffaf0, emissiveIntensity: 0.35 }));
-  panel.position.set(0, 0.84, 0.47);
-  g.add(panel);
-  if (n) {
-    const geo = new TextGeometry(String(n), { font: FONT, size: 0.34, depth: 0.05, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.015, bevelSegments: 5 });
-    geo.center();
-    const digits = mesh(geo, soft(0x2f2a52, { roughness: 0.4, clearcoat: 0.6 }));
-    digits.position.set(0, 0.84, 0.53);
-    g.add(digits);
-    g.add(CARGO[season]());
-  }
-  for (const x of [-0.88, 0.88]) {
-    const hook = mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 16), soft(TRAIN_INK));
-    hook.rotation.z = Math.PI / 2;
-    hook.position.set(x, 0.42, 0);
-    g.add(hook);
-  }
-  return g;
-}
-
 /* ---------- Bloo's animals ----------
    Chibi, in the friends' style: a big round head with their face, a small
    body, soft matte clay. Each comes in two coats — the lesson's, and a
@@ -3302,6 +3182,7 @@ Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl
    word card); `mark-<m>`: month m raised in plain cream with a gold edge,
    no season (the review — its place in the year, not its color). */
 
+const MONTH_SEASON = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "fall", "fall", "fall", "winter"];
 const WHEEL_IN = 1.0, WHEEL_OUT = 2.75, WHEEL_GAP = THREE.MathUtils.degToRad(1.4);
 const WHEEL_INK = 0x4b3f72;
 
@@ -3655,8 +3536,7 @@ const BASKET = params.has("basket");
 const SEASON = params.get("season");
 const GROW = params.get("grow");
 const WHEEL = params.get("wheel");
-const TRAIN = params.get("train");
-const def = THING || HARVEST || BASKET || SEASON || GROW || WHEEL || TRAIN ? null : SCENES[SCENE];
+const def = THING || HARVEST || BASKET || SEASON || GROW || WHEEL ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -3778,24 +3658,6 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () => ({ mouth: mouthOf(basket) });
-} else if (TRAIN) {
-  /* ---------- Nova's year train: one engine or wagon, from the camera all
-     of them share (`crop.py train` cuts the wagons on one box). ---------- */
-  const thing = TRAIN === "engine" ? trainEngine() : trainWagon(TRAIN === "plain" ? 0 : Number(TRAIN));
-  thing.rotation.y = TRAIN_TURN;
-  scene.add(thing);
-  catcher.visible = false;
-  renderer.setSize(1000, 750);
-  Object.assign(camera, { left: -1.8, right: 1.8, top: 1.35, bottom: -1.35 });
-  const lift = THREE.MathUtils.degToRad(14);
-  camera.position.set(0, 0.95 + Math.sin(lift) * 30, Math.cos(lift) * 30);
-  camera.lookAt(0, 0.95, 0);
-  camera.updateProjectionMatrix();
-  window.renderLayers = () => {
-    renderer.setClearColor(0x000000, 0);
-    return { [TRAIN]: frame() };
-  };
-  window.itemsMeta = () => ({});
 } else if (SEASON) {
   /* ---------- Nova's seasons: the island, then one frame per step, each
      with everything before it. The camera is the same for all four, so
