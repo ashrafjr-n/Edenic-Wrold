@@ -117,8 +117,8 @@ export const en = {
     },
     animals: {
       name: "Animals",
-      description: "Pets, farm, wild and sea animals",
-      items: ["Cat & Dog", "Cow & Sheep", "Lion & Monkey", "Fish & Whale", "Duck & Horse", "Animals review"],
+      description: "Cat, dog, cow and fish — and where they live",
+      items: ["Cat", "Dog", "Cow", "Fish", "Animals review"],
     },
     weather: {
       name: "The Weather",
