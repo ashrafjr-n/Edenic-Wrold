@@ -3102,7 +3102,7 @@ button:disabled,
    from the spot that was tapped — the next frame, laid over the last,
    uncovered by a growing circle (`--x`/`--y`: the spot, % of the picture;
    150% reaches the far corner from any spot). `REVEAL_MS` in
-   `season-change.tsx` is its length. */
+   `reveal-steps.tsx` is its length. */
 .season-reveal {
   animation: season-reveal 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both;
 }

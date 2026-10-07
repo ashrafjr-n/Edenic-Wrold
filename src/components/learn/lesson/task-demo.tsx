@@ -7,7 +7,7 @@ import { MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Maker, PaintRound, Scene, SeasonScene, ShapeId, SortBin, Target, Thing, Wagon } from "@/types/course";
+import type { ColorId, Face, Garden, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing, Wagon } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -36,7 +36,7 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "fill"; word: string; picture: StaticImageData }
-  | { kind: "change"; scene: SeasonScene }
+  | { kind: "change"; scene: RevealScene }
   | { kind: "train"; engine: StaticImageData; wagons: Wagon[]; seed: string }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
@@ -568,7 +568,7 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
 
 /** Make it spring: the island before the season; the finger taps the first
     spot and the first step (the grass, the snow) spreads from it. */
-function ChangeDemo({ scene }: { scene: SeasonScene }) {
+function ChangeDemo({ scene }: { scene: RevealScene }) {
   const { frames, spots } = scene;
   const [x, y] = spots[0];
   return (

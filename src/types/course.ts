@@ -141,7 +141,7 @@ export type Question =
       spot and the next part of it spreads over the picture (the grass, the
       leaves…) until the whole season is there. Nothing can go wrong — the
       season is the lesson. */
-  | { type: "change"; ask: Ask; word: string; scene: SeasonScene }
+  | { type: "change"; ask: Ask; word: string; scene: RevealScene }
   /** Build the train: Nova's engine waits on the track; tap the wagons in
       order and each couples on behind the last. `wagons` are in the right
       order. All on → the train goes round and comes back. */
@@ -182,11 +182,12 @@ export interface Basket {
   mouth: SceneRect;
 }
 
-/** A season coming to Nova's tree (`tools/picnic-scene`, `?season=`): the
-    island before it, then a picture per step with everything before it
-    (`frames` is one longer than `spots`), and where each step is tapped in
-    (% of the picture). */
-export interface SeasonScene {
+/** A picture that comes step by step under a magic button — a season
+    coming to Nova's tree (`tools/picnic-scene`, `?season=`): the picture
+    before it, then one per step with everything before it (`frames` is one
+    longer than `spots`), and where each step is tapped in (% of the
+    picture). */
+export interface RevealScene {
   frames: readonly StaticImageData[];
   spots: readonly (readonly [number, number])[];
 }

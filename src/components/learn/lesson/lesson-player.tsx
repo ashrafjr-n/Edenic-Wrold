@@ -32,7 +32,7 @@ import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { FillWord } from "./fill-word";
 import { HarvestPick } from "./harvest-pick";
-import { SeasonChange } from "./season-change";
+import { RevealSteps } from "./reveal-steps";
 import { TrainOrder } from "./train-order";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
@@ -438,7 +438,7 @@ export function LessonPlayer({
       body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "change") {
       body = (
-        <SeasonChange
+        <RevealSteps
           key={seed}
           word={q.word}
           scene={q.scene}

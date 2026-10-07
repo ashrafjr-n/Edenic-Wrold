@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
 import { lessonCue, playCue } from "@/lib/cue";
-import type { SeasonScene } from "@/types/course";
+import type { RevealScene } from "@/types/course";
 import { ClayWord } from "./clay-word";
 import { SHARDS } from "./pop-balloons";
 
@@ -22,10 +22,10 @@ const DONE_MS = 500;
 const SCENE_SIZE =
   "max-w-[min(100%,calc((100svh-26rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(30rem,calc((100svh-44rem)*var(--ratio)))] lg:max-w-[min(36rem,calc((var(--stage-h)-2rem)*var(--ratio)))]";
 
-interface SeasonChangeProps {
+interface RevealStepsProps {
   /** The season, in English. */
   word: string;
-  scene: SeasonScene;
+  scene: RevealScene;
   /** "Tap to bring more {season}" — each spot's name for a screen reader. */
   spotLabel: string;
   onSolved: () => void;
@@ -44,7 +44,7 @@ interface SeasonChangeProps {
  * has spread the one under it goes (two would double the soft edges). All
  * frames load up front, so none arrives after its spread has played.
  */
-export function SeasonChange({ word, scene, spotLabel, onSolved }: SeasonChangeProps) {
+export function RevealSteps({ word, scene, spotLabel, onSolved }: RevealStepsProps) {
   const { frames, spots } = scene;
   /* How many steps are in, and how many have spread — the next spot only
      shows once the last one has. */
