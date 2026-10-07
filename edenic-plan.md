@@ -193,9 +193,9 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step replaced 2026-10-07: word → spell → **grow it** — the magic button brings the food up from its seed, tap by tap; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
-| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based; reworked 2026-10-04 as Nova's year train: 3 words → spell → build the train; review on plain wagons: the train, months into season islands, after December, spell June) |
+| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02; the train of 2026-10-04 was judged "all bad" and REPLACED 2026-10-07 by Nova's year wheel: 3 words → spell → add the months to the wheel; review: the names in order, months marked on a plain wheel into the season islands, after December, spell June) |
 | Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → fill the word with the animal; review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
 | Bloo | My Body | Eyes & Ears · Nose & Mouth · Hands & Arms · Legs & Feet · Body review |
@@ -240,10 +240,9 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
 | **Dress up**: drag things onto the friend | later | Weather (an option for the Seasons review) |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
-| **Build the train**: Nova's engine on the track, a numbered space per wagon; tap the wagons in order, the train rolls round | built (`train`) | Months |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
-| **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits, Animals |
-| **Make it {season}**: the island starts bare; tap the glowing spot and the next part of the season spreads over it (grass, leaves, blossoms…), four times | built (`change`) | Seasons |
+| **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Animals (Fruits dropped it 2026-10-07: "not suitable") |
+| **The magic button**: the picture starts bare; tap the glowing spot and the next part spreads over it from there — Make it {season} (grass, leaves, blossoms…), Grow it (seed → sprout → young plant → in flower → the food), Add the months (each tap fills the next slice of Nova's year wheel, its name appearing) | built (`change`, `magic` season / grow / year) | Seasons, Fruits, Months |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
 
@@ -253,17 +252,22 @@ Months start with a **capital letter** — the first tile is the capital.
   me. `mom`/`dad` are the easiest first spells. Touch it on a family photo;
   review: put the family in order, oldest → youngest.
 - **Fruits & Vegetables** (BUILT as "Nova's market", 2026-10-02, reworked
-  2026-10-03 — see §5 and `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
+  2026-10-03, its Fill the word replaced by **Grow it** 2026-10-07 — see §5
+  and `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
   basket"), find them on a market stall, sort fruit / vegetable; review: a
   shopping list to read and fill.
 - **The Seasons** (BUILT 2026-10-02, reworked 2026-10-04 — see §5 and
   `learn-courses.md`): the same tree with a face on a clay island, four
   times; each lesson makes its season come on it, step by step.
-- **Months** (BUILT 2026-10-02, reworked 2026-10-04 as Nova's year train —
-  see §5 and `learn-courses.md`): three a lesson, each a wagon in its
-  season's color carrying its season's things; build the train in order;
-  review: sort months into the season islands. "When is your birthday?"
-  (visual only) is still an idea.
+- **Months** (BUILT 2026-10-02; the year train of 2026-10-04 judged "all
+  bad" and replaced 2026-10-07 by **Nova's year wheel** — see §5 and
+  `learn-courses.md`): three a lesson; a round clay wheel like a clock,
+  December at the top, each month a numbered slice that takes its season's
+  color and thing as it comes; the wheel keeps the earlier lessons' months,
+  so the year closes round. Why a wheel: a month's only "picture" is its
+  place in the year, and a circle shows that December runs into January,
+  which a line (the train) could not. "When is your birthday?" (visual
+  only) is still an idea.
 - **Animals** (BUILT 2026-10-07, "simple, like the rest"): cat, dog, cow,
   fish — chibi clay animals with the friends' face; each lesson is reel →
   word → spell → fill the word (the first idea, a Find in a farm/sea
@@ -434,6 +438,23 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       one per lesson, test the same order. Played through headless
       (360x640 → 1440x900, en/ar/ku, dark).
 - [ ] The user checks Months → fixes.
+- [x] The user's verdict on every course's extras (2026-10-07): every
+      lesson opens with video → sound → spell; Shapes, Colors and Seasons'
+      extras are right; Fruits' Fill the word "not suitable"; Months "all
+      bad". Colors already had its sound card (checked in the app). The
+      Seasons magic-button step lost its speaker (on request).
+- [x] **Fruits: Grow it** (2026-10-07, "grow it جميل نفذها"): each food
+      grows on a clay island in four magic-button taps — seed → sprout →
+      young plant → in flower → the food (a root pulled up); eight foods
+      rendered from Nova's existing plants; Fill the word and its fill
+      pictures left Fruits. Played through headless (360x640 → 1440x900,
+      en/ar).
+- [x] **Months: Nova's year wheel** (2026-10-07, "نفذ الي بتشوفو مناسب"):
+      the train, its art and its step deleted; lessons are 3 words →
+      spell → add the months (the magic button on the wheel); review:
+      order, sort (months marked on a plain wheel), after December, spell
+      June. Played through headless (360x640 → 1440x900, en/ar/ku, dark).
+- [ ] The user checks Fruits' Grow it and the Months wheel → fixes.
 - [x] **Animals** built (2026-10-07, "بسيط نفس الباقي"): Bloo's blue; four
       chibi clay animals with the friends' face (two coats each) and their
       four homes rendered; lessons reel → word → spell → fill; review: sort
