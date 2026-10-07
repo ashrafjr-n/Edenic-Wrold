@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-10-03
+> Last updated: 2026-10-07
 
 ---
 
@@ -196,7 +196,7 @@ sort boxes, done screen, the course page).
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03: word → spell → fill the word with the thing; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
 | Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02, order-based; reworked 2026-10-04 as Nova's year train: 3 words → spell → build the train; review on plain wagons: the train, months into season islands, after December, spell June) |
-| Bloo | Animals | Cat & Dog · Cow & Sheep · Lion & Monkey · Fish & Whale · Duck & Horse · Animals review |
+| Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → fill the word with the animal; review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
 | Bloo | My Body | Eyes & Ears · Nose & Mouth · Hands & Arms · Legs & Feet · Body review |
 
@@ -242,7 +242,7 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
 | **Build the train**: Nova's engine on the track, a numbered space per wagon; tap the wagons in order, the train rolls round | built (`train`) | Months |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
-| **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits |
+| **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Fruits, Animals |
 | **Make it {season}**: the island starts bare; tap the glowing spot and the next part of the season spreads over it (grass, leaves, blossoms…), four times | built (`change`) | Seasons |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
@@ -264,8 +264,13 @@ Months start with a **capital letter** — the first tile is the capital.
   season's color carrying its season's things; build the train in order;
   review: sort months into the season islands. "When is your birthday?"
   (visual only) is still an idea.
-- **Animals**: shadow match (which animal makes this shadow?), find them in a
-  farm / safari / sea scene; review: sort animals into their homes.
+- **Animals** (BUILT 2026-10-07, "simple, like the rest"): cat, dog, cow,
+  fish — chibi clay animals with the friends' face; each lesson is reel →
+  word → spell → fill the word (the first idea, a Find in a farm/sea
+  scene, was dropped: finding the cat among others is choosing inside a
+  one-thing lesson). Review: sort the four, each in two coats, into their
+  homes (cat bed, kennel, barn, fishbowl — each box labelled with the
+  animal's word), then spell dog and fish from a picture.
 - **The Weather**: sun → sunny (the `-y` ending); Dress up Bloo; review:
   read "It is windy." and pick its picture.
 - **My Body**: Touch it on Bloo; build a silly monster ("3 eyes, 2 noses");
@@ -429,8 +434,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       one per lesson, test the same order. Played through headless
       (360x640 → 1440x900, en/ar/ku, dark).
 - [ ] The user checks Months → fixes.
-- [ ] Then, one at a time with a check after each: Animals → The Weather →
-      My Body.
+- [x] **Animals** built (2026-10-07, "بسيط نفس الباقي"): Bloo's blue; four
+      chibi clay animals with the friends' face (two coats each) and their
+      four homes rendered; lessons reel → word → spell → fill; review: sort
+      eight into the homes, spell dog and fish from the picture. Played
+      through headless (360x640 → 1440x900, en/ar/ku, dark).
+- [ ] The user checks Animals → fixes.
+- [ ] Then, one at a time with a check after each: The Weather → My Body.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
