@@ -2826,7 +2826,52 @@ function cow(coat = "black") {
   return g;
 }
 
-Object.assign(ITEMS, { cat, dog, cow });
+const FISH_COATS = {
+  orange: { body: 0xff9a3c, fin: 0xffc98a },
+  blue: { body: 0x5aa2ee, fin: 0xa9d3ff },
+};
+
+/* A fish, side on and swimming right: a round, puffy body with the
+   friends' face on its side, a fan tail, a fin on top and one at its side. */
+function fishfriend(coat = "orange") {
+  const { body: bodyColor, fin: finColor } = FISH_COATS[coat];
+  const g = new THREE.Group();
+  const fin = soft(finColor);
+  const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), soft(bodyColor));
+  body.scale.set(1.08, 0.9, 0.86);
+  body.position.y = 0.5;
+  g.add(body);
+  const tailShape = new THREE.Shape();
+  tailShape.moveTo(0, 0);
+  tailShape.quadraticCurveTo(-0.2, 0.42, -0.55, 0.5);
+  tailShape.quadraticCurveTo(-0.38, 0.12, -0.42, 0);
+  tailShape.quadraticCurveTo(-0.38, -0.12, -0.55, -0.5);
+  tailShape.quadraticCurveTo(-0.2, -0.42, 0, 0);
+  const tailGeo = roundedShapeExtrude(tailShape, 0.06, 0.06);
+  tailGeo.translate(0, 0, -0.03);
+  const tail = mesh(tailGeo, fin);
+  tail.position.set(-0.5, 0.5, 0);
+  g.add(tail);
+  const topShape = new THREE.Shape();
+  topShape.moveTo(-0.32, 0);
+  topShape.quadraticCurveTo(-0.2, 0.34, 0.16, 0.22);
+  topShape.quadraticCurveTo(0.22, 0.1, 0.2, 0);
+  topShape.closePath();
+  const topFin = mesh(roundedShapeExtrude(topShape, 0.05, 0.04), fin);
+  topFin.position.set(-0.05, 0.86, -0.025);
+  g.add(topFin);
+  const side = mesh(new THREE.SphereGeometry(0.13, 32, 24), fin);
+  side.scale.set(1.4, 0.7, 0.35);
+  side.position.set(-0.4, 0.3, 0.27);
+  side.rotation.z = 0.5;
+  g.add(side);
+  const face = kawaii(0.7, 0.6);
+  face.position.set(0, 0.52, 0.43);
+  g.add(face);
+  return g;
+}
+
+Object.assign(ITEMS, { cat, dog, cow, fishfriend });
 
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
