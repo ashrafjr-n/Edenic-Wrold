@@ -1724,6 +1724,9 @@ function gardenGround(far = 12, near = 6) {
   return g;
 }
 
+/* A fruit tree's crown: [x, y, z, r] leafy balls. */
+const TREE_PUFFS = [[0, 4.5, -0.7, 1.75], [-1.45, 3.9, -0.3, 1.3], [1.45, 3.9, -0.3, 1.3], [-0.85, 5.35, -0.5, 1.2], [0.9, 5.3, -0.5, 1.2], [-0.9, 3.25, 0.1, 1.05], [0.95, 3.3, 0.05, 1.05], [0, 4.0, 0.2, 1.2]];
+
 /* A round fruit tree: a bent trunk, two branches into a crown of leafy
    balls. Its front is at z ≈ 1.4 — the fruit hangs just in front of it. */
 function fruitTree(leafColor) {
@@ -1734,7 +1737,7 @@ function fruitTree(leafColor) {
   g.add(taperTube([[0, 2.1, 0], [0.55, 2.6, 0.05], [1.15, 3.05, -0.15]], 0.18, 0.09, bark));
   g.add(mesh(smoothLathe([[0, 0], [0.7, 0], [0.52, 0.12], [0.43, 0.42], [0, 0.48]]), bark));
   const leaf = clay(leafColor, { clearcoat: 0.3, clearcoatRoughness: 0.4, roughness: 0.6 });
-  for (const [x, y, z, r] of [[0, 4.5, -0.7, 1.75], [-1.45, 3.9, -0.3, 1.3], [1.45, 3.9, -0.3, 1.3], [-0.85, 5.35, -0.5, 1.2], [0.9, 5.3, -0.5, 1.2], [-0.9, 3.25, 0.1, 1.05], [0.95, 3.3, 0.05, 1.05], [0, 4.0, 0.2, 1.2]]) {
+  for (const [x, y, z, r] of TREE_PUFFS) {
     const ball = mesh(new THREE.SphereGeometry(r, 64, 48), leaf);
     ball.position.set(x, y, z);
     g.add(ball);
@@ -1784,6 +1787,13 @@ function bananaPlant() {
    the beams and up a post. The bunches hang under the beams. */
 function grapeArbour() {
   const g = new THREE.Group();
+  g.add(arbourWood(), vineLeaves(), vineStem());
+  return { group: g };
+}
+
+/* The arbour's wood: two posts and two beams. */
+function arbourWood() {
+  const g = new THREE.Group();
   const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
   for (const x of [-2.65, 2.65]) {
     const post = mesh(new RoundedBoxGeometry(0.34, 6.3, 0.34, 4, 0.08), wood);
@@ -1795,9 +1805,15 @@ function grapeArbour() {
     beam.position.set(0, y, 0);
     g.add(beam);
   }
+  return g;
+}
+
+/* The vine's leaves: flattened balls, a few along each beam and the left
+   post. */
+function vineLeaves() {
+  const g = new THREE.Group();
   const vine = clay(0x5fb85a, { clearcoat: 0.35, roughness: 0.55 });
   const pale = clay(0x7cc860, { clearcoat: 0.35, roughness: 0.55 });
-  /* Leaves: flattened balls, a few along each beam and the left post. */
   const leaves = [
     [-2.4, 6.25, 0.05, 0.42], [-1.75, 6.35, -0.1, 0.36], [-0.95, 6.2, 0.1, 0.4], [-0.25, 6.38, -0.05, 0.34], [0.5, 6.22, 0.1, 0.4], [1.2, 6.36, -0.1, 0.35], [1.95, 6.24, 0.08, 0.4], [2.5, 6.4, -0.05, 0.33],
     [-2.3, 4.1, 0.05, 0.36], [-1.55, 4.2, -0.05, 0.32], [-0.05, 4.12, 0.08, 0.34], [1.5, 4.18, -0.04, 0.33], [2.35, 4.08, 0.06, 0.35],
@@ -1810,9 +1826,11 @@ function grapeArbour() {
     l.rotation.z = (i % 2 ? 1 : -1) * 0.4;
     g.add(l);
   });
-  g.add(taperTube([[-2.7, 0.2, 0.25], [-2.35, 1.4, 0.3], [-2.95, 2.6, 0.3], [-2.4, 3.8, 0.25], [-2.8, 5.0, 0.3], [-2.3, 6.0, 0.25]], 0.06, 0.04, clay(0x7a5a2c)));
-  return { group: g };
+  return g;
 }
+
+/* The vine's stem, winding up the left post. */
+const vineStem = () => taperTube([[-2.7, 0.2, 0.25], [-2.35, 1.4, 0.3], [-2.95, 2.6, 0.3], [-2.4, 3.8, 0.25], [-2.8, 5.0, 0.3], [-2.3, 6.0, 0.25]], 0.06, 0.04, clay(0x7a5a2c));
 
 /* A white picket fence across the garden at `z`. */
 function fence(z) {
@@ -1877,44 +1895,50 @@ function gardenBed(withBack = true) {
 const CORN_STALKS = [[-2.05, 6.6], [0.05, 7.1], [2.1, 6.5]];
 function cornStalks() {
   const g = new THREE.Group();
+  for (const [x, h] of CORN_STALKS) g.add(cornStalk(x, h));
+  return { group: g };
+}
+
+/* One stalk `h` tall at `x`, in its mound: its long leaves (those below its
+   top) and, once grown (`tassel`), its tassel. */
+function cornStalk(x, h, tassel = true) {
+  const g = new THREE.Group();
   const stalk = clay(0x7cc455, { roughness: 0.6, clearcoat: 0.25 });
   const blade = clay(0x67b84f, { roughness: 0.6, clearcoat: 0.3, side: THREE.DoubleSide });
   const earth = clay(0x7d5134, { roughness: 0.95, clearcoat: 0.05, sheen: 0 });
-  for (const [x, h] of CORN_STALKS) {
-    g.add(taperTube([[x, 0, -0.4], [x, h * 0.5, -0.4], [x, h, -0.4]], 0.16, 0.09, stalk));
-    const mound = mesh(new THREE.SphereGeometry(0.6, 32, 16), earth);
-    mound.scale.y = 0.35;
-    mound.position.set(x, 0, -0.4);
-    g.add(mound);
-    /* Long leaves, alternate sides, drooping. */
-    [[1.3, 1], [2.3, -1], [3.4, 1], [4.4, -1], [5.4, 1]].forEach(([y, side], i) => {
-      const base = new THREE.Vector3(x, y, -0.4);
-      const tip = base.clone().add(new THREE.Vector3(side * (1.2 + (i % 2) * 0.3), -0.35, 0.1));
-      const mid = base.clone().add(new THREE.Vector3(side * 0.6, 0.45, 0.05));
-      const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
-      const T = 30, R = 12;
-      const geo = new THREE.TubeGeometry(curve, T, 1, R);
-      const pos = geo.attributes.position;
-      for (let k = 0; k <= T; k++) {
-        const t = k / T;
-        const c = curve.getPointAt(t);
-        const w = 0.16 * Math.sin(Math.PI * Math.min(1, 0.15 + t * 0.9)) + 0.02;
-        for (let j = 0; j <= R; j++) {
-          const idx = k * (R + 1) + j;
-          pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * w, c.y + (pos.getY(idx) - c.y) * w, c.z + (pos.getZ(idx) - c.z) * w * 0.2);
-        }
+  g.add(taperTube([[x, 0, -0.4], [x, h * 0.5, -0.4], [x, h, -0.4]], 0.16, 0.09, stalk));
+  const mound = mesh(new THREE.SphereGeometry(0.6, 32, 16), earth);
+  mound.scale.y = 0.35;
+  mound.position.set(x, 0, -0.4);
+  g.add(mound);
+  /* Long leaves, alternate sides, drooping. */
+  [[1.3, 1], [2.3, -1], [3.4, 1], [4.4, -1], [5.4, 1]].filter(([y]) => y < h - 0.3).forEach(([y, side], i) => {
+    const base = new THREE.Vector3(x, y, -0.4);
+    const tip = base.clone().add(new THREE.Vector3(side * (1.2 + (i % 2) * 0.3), -0.35, 0.1));
+    const mid = base.clone().add(new THREE.Vector3(side * 0.6, 0.45, 0.05));
+    const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
+    const T = 30, R = 12;
+    const geo = new THREE.TubeGeometry(curve, T, 1, R);
+    const pos = geo.attributes.position;
+    for (let k = 0; k <= T; k++) {
+      const t = k / T;
+      const c = curve.getPointAt(t);
+      const w = 0.16 * Math.sin(Math.PI * Math.min(1, 0.15 + t * 0.9)) + 0.02;
+      for (let j = 0; j <= R; j++) {
+        const idx = k * (R + 1) + j;
+        pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * w, c.y + (pos.getY(idx) - c.y) * w, c.z + (pos.getZ(idx) - c.z) * w * 0.2);
       }
-      geo.computeVertexNormals();
-      g.add(mesh(geo, blade));
-    });
-    for (const a of [-0.35, 0, 0.35]) {
-      const tassel = mesh(new THREE.CapsuleGeometry(0.035, 0.45, 6, 10), clay(0xe7c35a, { clearcoat: 0.4 }));
-      tassel.position.set(x + Math.sin(a) * 0.2, h + 0.18, -0.4);
-      tassel.rotation.z = -a;
-      g.add(tassel);
     }
+    geo.computeVertexNormals();
+    g.add(mesh(geo, blade));
+  });
+  for (const a of tassel ? [-0.35, 0, 0.35] : []) {
+    const strand = mesh(new THREE.CapsuleGeometry(0.035, 0.45, 6, 10), clay(0xe7c35a, { clearcoat: 0.4 }));
+    strand.position.set(x + Math.sin(a) * 0.2, h + 0.18, -0.4);
+    strand.rotation.z = -a;
+    g.add(strand);
   }
-  return { group: g };
+  return g;
 }
 
 /* A carrot as it grows: the clay carrot and a fuller top of leaves. */
