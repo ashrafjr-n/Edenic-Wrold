@@ -5,11 +5,9 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
-import { format } from "@/lib/format-dict";
 import { lessonCue, playCue } from "@/lib/cue";
 import type { SeasonScene } from "@/types/course";
 import { ClayWord } from "./clay-word";
-import { CueButton } from "./cue-button";
 import { SHARDS } from "./pop-balloons";
 
 /** A step spreading over the picture — kept in step with `.season-reveal`. */
@@ -30,8 +28,6 @@ interface SeasonChangeProps {
   scene: SeasonScene;
   /** "Tap to bring more {season}" — each spot's name for a screen reader. */
   spotLabel: string;
-  /** "Hear {word}" — the speaker's name. */
-  hearLabel: string;
   onSolved: () => void;
 }
 
@@ -48,7 +44,7 @@ interface SeasonChangeProps {
  * has spread the one under it goes (two would double the soft edges). All
  * frames load up front, so none arrives after its spread has played.
  */
-export function SeasonChange({ word, scene, spotLabel, hearLabel, onSolved }: SeasonChangeProps) {
+export function SeasonChange({ word, scene, spotLabel, onSolved }: SeasonChangeProps) {
   const { frames, spots } = scene;
   /* How many steps are in, and how many have spread — the next spot only
      shows once the last one has. */
@@ -137,9 +133,9 @@ export function SeasonChange({ word, scene, spotLabel, hearLabel, onSolved }: Se
         {solved && <Celebration />}
       </div>
 
-      {/* English in every locale: never mirrored. */}
-      <div dir="ltr" className={`flex items-center justify-center gap-3 sm:gap-4 lg:shrink-0 lg:flex-col lg:gap-5 ${solved ? "anim-jump" : ""}`}>
-        <CueButton cue={lessonCue.word(word)} label={format(hearLabel, { word })} size="lg" />
+      {/* English in every locale: never mirrored. No speaker here — the word
+          card before it is where the word is heard (direct request). */}
+      <div dir="ltr" className={`flex items-center justify-center lg:shrink-0 ${solved ? "anim-jump" : ""}`}>
         <ClayWord word={word} size="sm" />
       </div>
     </div>

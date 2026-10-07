@@ -443,7 +443,6 @@ export function LessonPlayer({
           word={q.word}
           scene={q.scene}
           spotLabel={format(lines.seasonSpotAria, { season: q.word })}
-          hearLabel={lines.hearWord}
           onSolved={onSolved}
         />
       );
