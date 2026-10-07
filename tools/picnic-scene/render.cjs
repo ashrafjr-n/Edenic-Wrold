@@ -109,6 +109,15 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
+  } else if (mode === "wheel") {
+    const out = path.join(__dirname, "out", "wheel");
+    fs.mkdirSync(out, { recursive: true });
+    const months = Array.from({ length: 12 }, (_, i) => i + 1);
+    for (const what of [...[0, ...months].map(String), ...months.map((m) => `only-${m}`), ...[2, 5, 8, 11].map((m) => `mark-${m}`)]) {
+      const layers = await render(page, `wheel=${what}`);
+      save(out, what, layers[what]);
+    }
+    fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
   } else if (mode === "train") {
     const out = path.join(__dirname, "out", "train");
     fs.mkdirSync(out, { recursive: true });
