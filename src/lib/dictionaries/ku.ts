@@ -191,6 +191,7 @@ export const ku: Dictionary = {
     changeSeason: "وەرزێ {season} چێ بکە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
+    sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
     thisMonth: "ئەڤە هەیڤا {month}ە!",
     orderMonths: "هەیڤان ب ڕێزێ ڕیز بکە!",
     afterMonth: "پشتی {month} کیژ هەیڤ دهێت؟",

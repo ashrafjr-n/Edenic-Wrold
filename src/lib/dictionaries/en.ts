@@ -197,6 +197,7 @@ export const en = {
     changeSeason: "Make it {season}!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
+    sortAnimals: "Put each animal in its home!",
     thisMonth: "This is {month}!",
     orderMonths: "Put the months in order!",
     afterMonth: "What comes after {month}?",

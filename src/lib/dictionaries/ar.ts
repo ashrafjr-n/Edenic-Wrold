@@ -187,6 +187,7 @@ export const ar: Dictionary = {
     changeSeason: "اصنع فصل {season}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
+    sortAnimals: "ضع كل حيوان في بيته!",
     thisMonth: "هذا شهر {month}!",
     orderMonths: "رتّب الأشهر بالترتيب!",
     afterMonth: "ما الشهر الذي يأتي بعد {month}؟",
