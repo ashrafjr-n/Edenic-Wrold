@@ -3348,11 +3348,13 @@ function yearWheel(spec) {
     g.add(slice);
     if (marked) g.add(mesh(roundedShapeExtrude(sliceShape(m, 0.12), 0.14, 0.04), soft(0xf2b630)));
     const top = depth + 0.1;
-    if (filled) g.add(at(group(SLICE_THING[season]()), onSlice(m, 1.62, top + 0.1)));
-    const geo = new TextGeometry(String(m), { font: FONT, size: 0.34, depth: 0.05, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.012, bevelSegments: 4 });
+    /* A month alone (its word card, small on a phone) wears a big number. */
+    const big = (kind === "only" || kind === "mark") && m === n;
+    if (filled) g.add(at(group(SLICE_THING[season]()), onSlice(m, big ? 1.45 : 1.62, top + 0.1), big ? 0.85 : 1));
+    const geo = new TextGeometry(String(m), { font: FONT, size: big ? 0.6 : 0.34, depth: 0.05, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.012, bevelSegments: 4 });
     geo.center();
     const digits = mesh(geo, soft(filled || marked ? WHEEL_INK : 0xc9bca4, { roughness: 0.4, clearcoat: 0.6 }));
-    digits.position.set(...onSlice(m, 2.35, top));
+    digits.position.set(...onSlice(m, big ? 2.25 : 2.35, top));
     g.add(digits);
   }
   const hub = mesh(new THREE.SphereGeometry(0.9, 64, 48), soft(0xf7c948));
