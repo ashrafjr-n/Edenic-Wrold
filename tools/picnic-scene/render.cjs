@@ -40,6 +40,14 @@
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
  *
+ * Bloo's animals — each in two coats (`things/`), again without a shadow
+ * for the Fill step (`fill/`), and where each lives (`homes/`, renamed
+ * `home-cat.png` → `cat.png` after cropping):
+ *
+ *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty cow=cow cow-brown=cow:brown fish=fishfriend@float fish-blue=fishfriend:blue@float
+ *   node tools/picnic-scene/render.cjs thing cat=cat@float dog=dog@float cow=cow@float fish=fishfriend@float
+ *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
