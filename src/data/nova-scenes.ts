@@ -1,4 +1,4 @@
-import type { Group, SeasonScene } from "@/types/course";
+import type { Season, SeasonScene } from "@/types/course";
 import spring0 from "../../public/assets/learn/nova/seasons/spring/0.png";
 import spring1 from "../../public/assets/learn/nova/seasons/spring/1.png";
 import spring2 from "../../public/assets/learn/nova/seasons/spring/2.png";
@@ -27,7 +27,7 @@ import winter4 from "../../public/assets/learn/nova/seasons/winter/4.png";
    one box, so the four pictures match. */
 
 /** Each season coming, step by step. */
-export const SEASON_SCENES: Record<Group, SeasonScene> = {
+export const SEASON_SCENES: Record<Season, SeasonScene> = {
   spring: { frames: [spring0, spring1, spring2, spring3, spring4], spots: [[27.71, 79.22], [38.14, 33.35], [60.56, 13.4], [80.56, 62.71]] },
   summer: { frames: [summer0, summer1, summer2, summer3, summer4], spots: [[27.71, 79.22], [67.28, 33.35], [47, 21.63], [13.42, 15.03]] },
   fall: { frames: [fall0, fall1, fall2, fall3, fall4], spots: [[27.71, 79.22], [67.28, 33.35], [19.13, 42.31], [78.42, 72.71]] },

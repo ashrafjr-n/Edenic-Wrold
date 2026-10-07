@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { Face, Group, LessonDef, Question, Thing, Wagon } from "@/types/course";
+import type { Face, LessonDef, Question, Season, Thing, Wagon } from "@/types/course";
 import { SEASON_BOXES } from "@/data/courses/nova-seasons";
 import engine from "../../../public/assets/learn/nova/months/train/engine.png";
 import plain from "../../../public/assets/learn/nova/months/train/wagon.png";
@@ -27,7 +27,7 @@ const MONTHS = [
 const WAGONS: StaticImageData[] = [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12];
 
 /** The season each month is in — its wagon's color. */
-const SEASON_OF: Group[] = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "fall", "fall", "fall", "winter"];
+const SEASON_OF: Season[] = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "fall", "fall", "fall", "winter"];
 
 const wagon = (i: number): Wagon => ({ word: MONTHS[i], src: WAGONS[i] });
 

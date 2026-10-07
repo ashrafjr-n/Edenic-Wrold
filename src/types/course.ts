@@ -6,8 +6,15 @@ export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
 
-/** A set things belong to: the season a thing goes with (Nova's Seasons). */
-export type Group = "spring" | "summer" | "fall" | "winter";
+/** The four seasons Nova's Seasons course teaches, in order. */
+export type Season = "spring" | "summer" | "fall" | "winter";
+
+/** The four animals Bloo's Animals course teaches, in order. */
+export type Animal = "cat" | "dog" | "cow" | "fish";
+
+/** A set things belong to: the season a thing goes with (Nova's Seasons),
+    or the animal it is — whose home it goes in (Bloo's Animals). */
+export type Group = Season | Animal;
 
 /** What a Find looks for, or what a Sort box takes: a shape, a color, or a
     group. */

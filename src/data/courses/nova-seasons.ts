@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { ColorId, Face, Group, LessonDef, SortBin, Thing } from "@/types/course";
+import type { ColorId, Face, LessonDef, Season, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
 import { SEASON_SCENES } from "@/data/nova-scenes";
 import tulip from "../../../public/assets/learn/nova/seasons/things/tulip.png";
@@ -10,8 +10,6 @@ import leaf from "../../../public/assets/learn/nova/seasons/things/maple.png";
 import pumpkin from "../../../public/assets/learn/nova/seasons/things/pumpkin.png";
 import snowman from "../../../public/assets/learn/nova/seasons/things/snowman.png";
 import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflake.png";
-
-type Season = Group;
 
 /** Each season's clay color — the band round its island, and the color of
     its months' wagons on Nova's year train. In order. */
