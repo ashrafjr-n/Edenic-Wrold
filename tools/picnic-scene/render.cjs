@@ -27,6 +27,12 @@
  *
  *   node tools/picnic-scene/render.cjs season spring summer fall winter
  *
+ * Nova's garden (Fruits' "Grow it") — for each food, the same: `out/
+ * grow-<food>/`, the island with the seed's mound (`frame0`), a frame per
+ * tap, `meta.json`. Then `crop.py grow`.
+ *
+ *   node tools/picnic-scene/render.cjs grow apple banana orange grapes carrot broccoli corn potato
+ *
  * Nova's year train — writes `out/train/`: the engine, a plain wagon and
  * month 1–12's wagons, all from one camera. Then `crop.py train`.
  *
@@ -95,10 +101,10 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "season") {
-    for (const season of specs) {
-      const layers = await render(page, `season=${season}`);
-      const out = path.join(__dirname, "out", `season-${season}`);
+  } else if (mode === "season" || mode === "grow") {
+    for (const what of specs) {
+      const layers = await render(page, `${mode}=${what}`);
+      const out = path.join(__dirname, "out", `${mode}-${what}`);
       fs.mkdirSync(out, { recursive: true });
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));

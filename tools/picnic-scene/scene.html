@@ -52,7 +52,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("train") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("grow") || params.has("train") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -2515,6 +2515,243 @@ const SEASON_DEFS = {
   },
 };
 
+/* ---------- Nova's garden: a food growing from its seed ----------
+   `?grow=<food>` — Fruits' "Grow it": the seasons' island with a clay-pot
+   band and bare soil, a seed's mound in it, then the food growing in four
+   taps: its sprout → a young plant → the plant grown (in flower) → the
+   food on it (a root pulled up out of the soil). Each part shows from
+   frame `from` until frame `until` — the frames are whole renders, so a
+   young plant can give way to the grown one. `spots` are where each tap
+   is, in the world. */
+
+const GROW_BAND = 0xe8a06c;
+const GROW_AT = [0, SOIL_Y, -0.3];
+const SPROUT = 1.8;
+/* The first two taps: on the seed's mound, then on its sprout. */
+const SEED_SPOTS = (x = 0, z = 0) => [[x, SOIL_Y + 0.15, z + 0.35], [x, SOIL_Y + 0.62, z + 0.2]];
+
+/* A seedling: a short stem and two round leaves. */
+function sprout() {
+  const g = new THREE.Group();
+  const green = soft(0x6cc65a);
+  g.add(taperTube([[0, 0, 0], [0.02, 0.2, 0], [0, 0.4, 0]], 0.055, 0.045, green));
+  for (const s of [-1, 1]) {
+    const leaf = mesh(new THREE.SphereGeometry(0.16, 24, 16), green);
+    leaf.scale.set(1.45, 0.45, 0.8);
+    leaf.position.set(s * 0.18, 0.46, 0);
+    leaf.rotation.z = s * 0.45;
+    g.add(leaf);
+  }
+  return g;
+}
+
+/* The little mound the seed is planted in. */
+function seedMound() {
+  const mound = mesh(new THREE.SphereGeometry(0.45, 32, 16), soft(0xc9a57c));
+  mound.scale.y = 0.28;
+  return mound;
+}
+
+/* The nearest point of a crown of leafy balls at (x, y). */
+function crownFront(puffs, x, y) {
+  let z = -Infinity;
+  for (const [px, py, pz, r] of puffs) {
+    const d = r * r - (x - px) ** 2 - (y - py) ** 2;
+    if (d > 0) z = Math.max(z, pz + Math.sqrt(d));
+  }
+  return z;
+}
+
+/* Things on the front of a crown, in the plant's own frame (`k` their
+   size there), standing a little out of it. */
+function onCrownFront(puffs, points, make, k, out = 0.05) {
+  return group(...points.map(([x, y], i) => at(make(i), [x, y, crownFront(puffs, x, y) + out], k)));
+}
+
+/* A plant (or part of one) where the food grows, `scale` big — it takes
+   the thing's own position, so a part placed in the plant's frame goes in
+   a `group` first. */
+const planted = (thing, scale, [x, y, z] = GROW_AT) => at(thing, [x, y, z], scale);
+
+/* A point in a planted plant's frame, in the world — for a spot. */
+const plantPoint = ([x, y, z], scale, [ox, oy, oz] = GROW_AT) => [ox + x * scale, oy + y * scale, oz + z * scale];
+
+const BLOSSOM_AT = [[-1.6, 4.2], [-0.8, 4.75], [0.1, 5.65], [0.9, 4.6], [1.7, 4.0], [-1.2, 3.2], [0.2, 3.6], [1.15, 3.0], [-0.3, 4.95], [0.65, 5.7], [-0.95, 5.75], [1.9, 3.3]];
+const FRUIT_AT = [[-1.5, 4.0], [1.45, 4.2], [0, 4.8], [-0.85, 3.1], [0.95, 3.15], [-0.7, 5.45], [0.8, 5.4]];
+
+/* A fruit tree: young, then grown and in flower, then its fruit. */
+function treeGrowth(leaf, flower, fruit, fruitSize) {
+  const S = 0.72, YOUNG = 0.4;
+  return {
+    parts: [
+      { make: () => at(seedMound(), [0, SOIL_Y, 0], 1), from: 0, until: 2 },
+      { make: () => at(sprout(), [0, SOIL_Y, 0], SPROUT), from: 1, until: 2 },
+      { make: () => planted(fruitTree(leaf).group, YOUNG), from: 2, until: 3 },
+      { make: () => planted(fruitTree(leaf).group, S), from: 3 },
+      { make: () => planted(onCrownFront(TREE_PUFFS, BLOSSOM_AT, () => blossom(flower), 1.25), S), from: 3, until: 4 },
+      { make: () => planted(onCrownFront(TREE_PUFFS, FRUIT_AT, fruit, fruitSize), S), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(), plantPoint([0, 4.3, 1.5], YOUNG), plantPoint([0.95, 3.15, 1.6], S)],
+  };
+}
+
+/* A banana plant: young, grown with its purple flower, then a bunch. */
+function bananaGrowth() {
+  const S = 0.82, YOUNG = 0.45;
+  const flower = () => {
+    const bud = mesh(new THREE.SphereGeometry(0.22, 32, 24), soft(0x9c3d6e));
+    bud.scale.set(0.85, 1.35, 0.85);
+    return bud;
+  };
+  const bunch = () => group(
+    ...[[-0.36, 0.05, -0.2, 1.75], [-0.14, 0.12, 0.05, 1.6], [0.1, 0.1, 0.12, 1.45], [0.34, 0.02, -0.05, 1.3], [-0.24, -0.32, 0.12, 1.7], [0.2, -0.34, 0.1, 1.4]].map(([x, y, z, turn]) =>
+      at(ITEMS.banana(), [x, y, z], 0.62, [0, 0, turn]),
+    ),
+    at(flower(), [0, -0.95, 0.05], 1.1),
+  );
+  return {
+    parts: [
+      { make: () => at(seedMound(), [0, SOIL_Y, 0], 1), from: 0, until: 2 },
+      { make: () => at(sprout(), [0, SOIL_Y, 0], SPROUT), from: 1, until: 2 },
+      { make: () => planted(bananaPlant().group, YOUNG), from: 2, until: 3 },
+      { make: () => planted(bananaPlant().group, S), from: 3 },
+      { make: () => planted(group(at(flower(), [0, 2.75, 0.5], 1.7)), S), from: 3, until: 4 },
+      { make: () => planted(group(at(bunch(), [0, 2.75, 0.6], 1)), S), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(), plantPoint([0, 3.4, 0.6], YOUNG), plantPoint([0, 2.6, 0.9], S)],
+  };
+}
+
+/* A vine: its sprout at the arbour's post, then the wood and the stem
+   winding up, then its leaves, then bunches under the beams. */
+function grapeGrowth() {
+  const S = 0.6;
+  const base = plantPoint([-2.65, 0, 0.3], S);
+  return {
+    parts: [
+      { make: () => at(seedMound(), base, 1), from: 0, until: 2 },
+      { make: () => at(sprout(), base, SPROUT), from: 1, until: 2 },
+      { make: () => planted(group(arbourWood(), vineStem()), S), from: 2 },
+      { make: () => planted(vineLeaves(), S), from: 3 },
+      { make: () => planted(group(...[[-1.55, 5.25], [0.05, 5.2], [1.6, 5.25], [-0.8, 3.1], [0.9, 3.05]].map(([x, y]) => at(ITEMS.grapes(), [x, y - 0.95, 0.35], 0.9))), S), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(base[0], base[2] - 0.15), plantPoint([-2.5, 3.0, 0.5], S), plantPoint([0.05, 4.3, 0.8], S)],
+  };
+}
+
+/* A carrot's feathery top. */
+function carrotTop() {
+  const g = new THREE.Group();
+  [-0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75].forEach((a, i) => {
+    const h = 0.55 + (1 - Math.abs(a)) * 0.3;
+    const leaf = mesh(new THREE.CapsuleGeometry(0.05, h, 8, 12), soft(i % 2 ? 0x6cc65a : 0x5fb85a));
+    leaf.position.set(Math.sin(a) * (h / 2 + 0.04), Math.cos(a) * (h / 2 + 0.04), 0);
+    leaf.rotation.z = -a;
+    g.add(leaf);
+  });
+  return g;
+}
+
+/* Under the soil it grows; once its top is big, it is pulled up. */
+function carrotGrowth() {
+  return {
+    parts: [
+      { make: () => at(seedMound(), [0, SOIL_Y, 0], 1), from: 0, until: 2 },
+      { make: () => at(sprout(), [0, SOIL_Y, 0], SPROUT), from: 1, until: 2 },
+      { make: () => at(carrotTop(), [0, SOIL_Y, 0], 1.3), from: 2, until: 3 },
+      { make: () => at(carrotTop(), [0, SOIL_Y, 0], 2.3), from: 3, until: 4 },
+      { make: () => at(carrotPlant(), [0, SOIL_Y + 0.05, 0.3], 1.9, [0, 0, 0.18]), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(), [0, SOIL_Y + 1.2, 0.3], [0, SOIL_Y + 0.45, 0.45]],
+  };
+}
+
+/* A potato's leafy bush. */
+const BUSH = [[0, 0.55, 0, 0.32], [-0.38, 0.4, 0.1, 0.28], [0.38, 0.42, 0.05, 0.28], [-0.2, 0.75, -0.1, 0.26], [0.22, 0.78, -0.05, 0.26], [0, 0.35, 0.3, 0.25], [-0.45, 0.2, -0.15, 0.22], [0.46, 0.22, -0.1, 0.22]];
+function potatoBush() {
+  const g = new THREE.Group();
+  BUSH.forEach(([x, y, z, r], i) => {
+    const leaf = mesh(new THREE.SphereGeometry(r, 32, 24), soft(i % 2 ? 0x6cc65a : 0x5fb85a));
+    leaf.scale.y = 0.8;
+    leaf.position.set(x, y, z);
+    g.add(leaf);
+  });
+  return g;
+}
+
+/* A bush, then in flower, then its potatoes dug up in front of it. */
+function potatoGrowth() {
+  const K = 2.2, at0 = [0, SOIL_Y, -0.3];
+  return {
+    parts: [
+      { make: () => at(seedMound(), [0, SOIL_Y, 0], 1), from: 0, until: 2 },
+      { make: () => at(sprout(), [0, SOIL_Y, 0], SPROUT), from: 1, until: 2 },
+      { make: () => at(potatoBush(), at0, 1.2), from: 2, until: 3 },
+      { make: () => at(potatoBush(), at0, K), from: 3 },
+      { make: () => at(group(...[[-0.2, 1.0, 0.2], [0.26, 1.02, 0.15], [0, 0.82, 0.42], [-0.48, 0.66, 0.3], [0.5, 0.68, 0.26]].map(([x, y, z]) => at(blossom(0xffffff), [x, y, z], 0.32))), at0, K), from: 3 },
+      { make: () => group(...[[-1.1, 1.65, 0.4], [0.05, 1.95, -0.3], [1.1, 1.6, 0.9]].map(([x, z, turn]) => at(ITEMS.potato(), [x, SOIL_Y + 0.32, z], 0.9, [0, turn, 0.2]))), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(), [0, SOIL_Y + 1.2, 0.2], [0, SOIL_Y + 0.5, 1.5]],
+  };
+}
+
+/* A broccoli's rosette of big blue-green leaves. */
+function broccoliLeaves() {
+  const g = new THREE.Group();
+  for (let i = 0; i < 6; i++) {
+    const leaf = new THREE.Group();
+    const blade = mesh(new THREE.SphereGeometry(0.5, 32, 24), soft(i % 2 ? 0x6aad7c : 0x5c9e72));
+    blade.scale.set(0.42, 1, 0.14);
+    blade.position.y = 0.48;
+    leaf.add(blade);
+    leaf.rotation.order = "YXZ";
+    leaf.rotation.y = (i / 6) * Math.PI * 2 + 0.3;
+    leaf.rotation.x = 0.8;
+    g.add(leaf);
+  }
+  return g;
+}
+
+/* Leaves, bigger leaves, then the head in the middle of them. */
+function broccoliGrowth() {
+  return {
+    parts: [
+      { make: () => at(seedMound(), [0, SOIL_Y, 0], 1), from: 0, until: 2 },
+      { make: () => at(sprout(), [0, SOIL_Y, 0], SPROUT), from: 1, until: 2 },
+      { make: () => at(broccoliLeaves(), [0, SOIL_Y, 0], 1.2), from: 2, until: 3 },
+      { make: () => at(broccoliLeaves(), [0, SOIL_Y, 0], 2.1), from: 3 },
+      { make: () => at(ITEMS.broccoli(), [0, SOIL_Y + 0.45, 0.1], 1.8), from: 4 },
+    ],
+    spots: [...SEED_SPOTS(), [0, SOIL_Y + 1.0, 0.4], [0, SOIL_Y + 1.2, 0.5]],
+  };
+}
+
+/* Two stalks: short, then tall with their tassels, then an ear on each. */
+function cornGrowth() {
+  const X = [-0.75, 0.75];
+  return {
+    parts: [
+      { make: () => group(...X.map((x) => at(seedMound(), [x, SOIL_Y, -0.4], 0.8))), from: 0, until: 2 },
+      { make: () => group(...X.map((x) => at(sprout(), [x, SOIL_Y, -0.4], SPROUT))), from: 1, until: 2 },
+      { make: () => at(group(...X.map((x) => cornStalk(x, 2.0, false))), [0, SOIL_Y, 0], 1), from: 2, until: 3 },
+      { make: () => at(group(...X.map((x) => cornStalk(x, 4.6))), [0, SOIL_Y, 0], 1), from: 3 },
+      { make: () => group(...X.map((x) => at(ITEMS.corn(), [x + Math.sign(x) * 0.34, SOIL_Y + 2.5, -0.15], 0.95, [0, 0, -Math.sign(x) * 0.45]))), from: 4 },
+    ],
+    spots: [[0.75, SOIL_Y + 0.15, -0.1], [0.75, SOIL_Y + 0.62, -0.25], [-0.75, SOIL_Y + 1.6, -0.2], [1.05, SOIL_Y + 2.5, 0.1]],
+  };
+}
+
+const GROW_DEFS = {
+  apple: () => treeGrowth(0x63bb59, 0xffa6cf, () => ITEMS.apple(), 0.62),
+  banana: bananaGrowth,
+  orange: () => treeGrowth(0x4fae55, 0xffffff, () => ITEMS.orange(), 0.6),
+  grapes: grapeGrowth,
+  carrot: carrotGrowth,
+  broccoli: broccoliGrowth,
+  corn: cornGrowth,
+  potato: potatoGrowth,
+};
+
 /* ---------- Nova's year train (Months) ----------
    `?train=engine|plain|<1–12>` — Nova's engine (her gold and lilac, the
    friends' face on its front) and the wagons it pulls: month n's wagon in
@@ -3340,8 +3577,9 @@ const THING = params.get("thing");
 const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
 const SEASON = params.get("season");
+const GROW = params.get("grow");
 const TRAIN = params.get("train");
-const def = THING || HARVEST || BASKET || SEASON || TRAIN ? null : SCENES[SCENE];
+const def = THING || HARVEST || BASKET || SEASON || GROW || TRAIN ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -3523,6 +3761,40 @@ if (THING) {
       const p = new THREE.Vector3(...spot);
       if (onTree) tree.localToWorld(p);
       p.project(camera);
+      return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
+    }),
+  });
+} else if (GROW) {
+  /* ---------- Nova's garden: the island, then one frame per tap — the
+     seasons' camera, so the island matches theirs; `crop.py grow` cuts
+     every food's frames on one box. ---------- */
+  const { parts, spots } = GROW_DEFS[GROW]();
+  scene.add(seasonIsland(GROW_BAND).group);
+  const things = parts.map(({ make }) => {
+    const thing = make();
+    scene.add(thing);
+    return thing;
+  });
+  catcher.visible = false;
+  renderer.setSize(1000, 1000);
+  const span = 3.95;
+  Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
+  const lift = THREE.MathUtils.degToRad(18);
+  camera.position.set(0, 2.95 + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, 2.95, 0);
+  camera.updateProjectionMatrix();
+  window.renderLayers = () => {
+    renderer.setClearColor(0x000000, 0);
+    const out = {};
+    for (let k = 0; k <= spots.length; k++) {
+      parts.forEach(({ from, until = Infinity }, i) => (things[i].visible = from <= k && k < until));
+      out[`frame${k}`] = frame();
+    }
+    return out;
+  };
+  window.itemsMeta = () => ({
+    spots: spots.map((spot) => {
+      const p = new THREE.Vector3(...spot).project(camera);
       return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
     }),
   });
