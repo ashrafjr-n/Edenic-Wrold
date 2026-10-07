@@ -2871,7 +2871,165 @@ function fishfriend(coat = "orange") {
   return g;
 }
 
-Object.assign(ITEMS, { cat, dog, cow, fishfriend });
+/* ---------- Where Bloo's animals live — the review's Sort boxes ---------- */
+
+/* A gable: walls `w` wide, `d` deep, `h` tall in `wall`, a triangle on
+   the front and back up to the ridge (`rise` higher) and two roof slabs
+   that overhang a little. Front to +z. */
+function gableHouse(w, d, h, rise, wall, roof) {
+  const g = new THREE.Group();
+  const box = mesh(new RoundedBoxGeometry(w, h, d, 4, 0.05), wall);
+  box.position.y = h / 2;
+  g.add(box);
+  const tri = new THREE.Shape();
+  tri.moveTo(-w / 2, 0); tri.lineTo(w / 2, 0); tri.lineTo(0, rise); tri.closePath();
+  const gable = mesh(new THREE.ExtrudeGeometry(tri, { depth: d - 0.04, bevelEnabled: false }), wall);
+  gable.position.set(0, h - 0.01, -(d - 0.04) / 2);
+  g.add(gable);
+  const slope = Math.atan2(rise, w / 2);
+  const len = Math.hypot(rise, w / 2) + 0.16;
+  for (const s of [-1, 1]) {
+    const slab = mesh(new RoundedBoxGeometry(len, 0.09, d + 0.18, 3, 0.035), roof);
+    slab.rotation.z = -s * slope;
+    slab.position.set(s * (w / 4 + 0.03), h + rise / 2 + 0.05, 0);
+    g.add(slab);
+  }
+  return g;
+}
+
+/* The cat's bed: a deep round bed with a rolled rim, a cushion in it, a
+   paw print on its front and a ball of yarn beside it. */
+function catBed() {
+  const g = new THREE.Group();
+  const lilac = soft(0xb89cf0);
+  g.add(mesh(smoothLathe([[0, 0], [0.6, 0], [0.72, 0.06], [0.76, 0.22], [0.74, 0.4], [0.6, 0.36], [0.56, 0.18], [0, 0.16]]), lilac));
+  const rim = mesh(new THREE.TorusGeometry(0.67, 0.1, 24, 96), soft(0xc9b2f7));
+  rim.rotation.x = Math.PI / 2;
+  rim.position.y = 0.4;
+  g.add(rim);
+  const cushion = mesh(new THREE.SphereGeometry(0.56, 64, 32), soft(0xffb3d4));
+  cushion.scale.set(1, 0.3, 1);
+  cushion.position.y = 0.24;
+  g.add(cushion);
+  const print = soft(0x8a6fd0);
+  const pad = mesh(new THREE.SphereGeometry(0.075, 24, 16), print);
+  pad.scale.set(1.25, 1, 0.35);
+  pad.position.set(0, 0.17, 0.76);
+  g.add(pad);
+  for (const [x, y] of [[-0.1, 0.26], [-0.035, 0.295], [0.035, 0.295], [0.1, 0.26]]) {
+    const toe = mesh(new THREE.SphereGeometry(0.032, 16, 12), print);
+    toe.scale.z = 0.4;
+    toe.position.set(x, y, 0.78 - Math.abs(x) * 0.05);
+    g.add(toe);
+  }
+  const yarn = new THREE.Group();
+  const red = soft(0xf26b6b);
+  yarn.add(mesh(new THREE.SphereGeometry(0.2, 48, 32), red));
+  for (const [rx, rz] of [[0.3, 0], [1.2, 0.5], [0.7, -0.9], [-0.4, 1.4]]) {
+    const wrap = mesh(new THREE.TorusGeometry(0.2, 0.016, 8, 64), soft(0xd84f55));
+    wrap.rotation.set(rx, 0, rz);
+    yarn.add(wrap);
+  }
+  yarn.position.set(0.82, 0.2, 0.42);
+  g.add(yarn);
+  g.add(taperTube([[0.66, 0.08, 0.5], [0.4, 0.02, 0.72], [0.05, 0.02, 0.8], [-0.25, 0.02, 0.86]], 0.018, 0.018, red));
+  return g;
+}
+
+/* The dog's kennel: orange wood, a brown roof, a dark arched door and a
+   bone over it. */
+function kennel() {
+  const g = gableHouse(1.2, 1.0, 0.85, 0.45, soft(0xffb15c), soft(0xa8653a));
+  const arch = new THREE.Shape();
+  arch.moveTo(-0.25, 0); arch.lineTo(-0.25, 0.36); arch.absarc(0, 0.36, 0.25, Math.PI, 0, true); arch.lineTo(0.25, 0); arch.closePath();
+  const door = mesh(new THREE.ExtrudeGeometry(arch, { depth: 0.03, bevelEnabled: false }), soft(0x5a3a2c));
+  door.position.set(0, 0.02, 0.5);
+  g.add(door);
+  const cream = soft(0xfff3dc);
+  const bone = new THREE.Group();
+  const stick = mesh(new THREE.CapsuleGeometry(0.045, 0.24, 8, 16), cream);
+  stick.rotation.z = Math.PI / 2;
+  bone.add(stick);
+  for (const x of [-0.16, 0.16]) for (const y of [-0.045, 0.045]) {
+    const knob = mesh(new THREE.SphereGeometry(0.06, 20, 14), cream);
+    knob.position.set(x, y, 0);
+    bone.add(knob);
+  }
+  bone.position.set(0, 1.03, 0.52);
+  g.add(bone);
+  g.rotation.y = -0.4;
+  return g;
+}
+
+/* The cow's barn: red, a grey roof, a big door with a white X, a loft
+   window. */
+function barn() {
+  const red = soft(0xe8433f);
+  const white = soft(0xfffaf0);
+  const g = gableHouse(1.5, 1.1, 1.0, 0.55, red, soft(0x6e6a7a));
+  const door = mesh(new RoundedBoxGeometry(0.66, 0.66, 0.05, 3, 0.02), soft(0xb8322f));
+  door.position.set(0, 0.34, 0.56);
+  g.add(door);
+  const bar = (w, x, y, turn = 0) => {
+    const b = mesh(new RoundedBoxGeometry(w, 0.06, 0.04, 2, 0.015), white);
+    b.position.set(x, y, 0.6);
+    b.rotation.z = turn;
+    g.add(b);
+  };
+  bar(0.7, 0, 0.67); bar(0.7, 0, 0.02); bar(0.7, -0.32, 0.345, Math.PI / 2); bar(0.7, 0.32, 0.345, Math.PI / 2);
+  bar(0.86, 0, 0.345, Math.PI / 4); bar(0.86, 0, 0.345, -Math.PI / 4);
+  const loft = mesh(new RoundedBoxGeometry(0.28, 0.24, 0.05, 3, 0.02), soft(0x5a3a2c));
+  loft.position.set(0, 1.18, 0.56);
+  g.add(loft);
+  bar(0.34, 0, 1.31); bar(0.34, 0, 1.05); bar(0.3, -0.16, 1.18, Math.PI / 2); bar(0.3, 0.16, 1.18, Math.PI / 2);
+  g.rotation.y = -0.4;
+  return g;
+}
+
+/* The fish's bowl: round glass, water, sand, pebbles and a water plant. */
+function fishbowl() {
+  const g = new THREE.Group();
+  const R = 0.62, OPEN = 0.55, LEVEL = 0.95;
+  const arc = (r, top, steps = 40) => {
+    const from = -Math.PI / 2 + 0.3;
+    return Array.from({ length: steps + 1 }, (_, i) => {
+      const a = from + ((top - from) * i) / steps;
+      return [r * Math.cos(a), R + r * Math.sin(a)];
+    });
+  };
+  const bottom = R + R * Math.sin(-Math.PI / 2 + 0.3);
+  const glass = mesh(lathe([[0, bottom], ...arc(R, Math.PI / 2 - OPEN)], 96), new THREE.MeshPhysicalMaterial({ color: 0xe4f4ff, roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false }));
+  glass.castShadow = false;
+  glass.position.y = -bottom;
+  g.add(glass);
+  const waterTop = Math.PI / 2 - LEVEL;
+  const water = mesh(lathe([[0, bottom + 0.01], ...arc(R - 0.02, waterTop), [0, R + (R - 0.02) * Math.sin(waterTop)]], 96), soft(0x4fb6f7, { transparent: true, opacity: 0.38 }));
+  water.castShadow = false;
+  water.position.y = -bottom;
+  g.add(water);
+  const rimR = R * Math.cos(Math.PI / 2 - OPEN);
+  const rim = mesh(new THREE.TorusGeometry(rimR, 0.035, 16, 96), soft(0xeaf6ff));
+  rim.rotation.x = Math.PI / 2;
+  rim.castShadow = false;
+  rim.position.y = R + R * Math.sin(Math.PI / 2 - OPEN) - bottom;
+  g.add(rim);
+  const sand = mesh(new THREE.SphereGeometry(0.36, 48, 24), soft(0xf5d58a));
+  sand.scale.set(1, 0.3, 1);
+  sand.position.y = 0.12;
+  g.add(sand);
+  for (const [x, z, color] of [[-0.22, 0.2, 0xff8cc6], [0.05, 0.3, 0xffd31a], [0.26, 0.12, 0x9b86e0]]) {
+    const pebble = mesh(new THREE.SphereGeometry(0.07, 20, 14), soft(color));
+    pebble.scale.y = 0.7;
+    pebble.position.set(x, 0.21, z);
+    g.add(pebble);
+  }
+  for (const [x, z, h, sway] of [[-0.12, -0.12, 0.62, 0.08], [0.1, -0.18, 0.5, -0.07], [-0.3, -0.05, 0.42, -0.06]]) {
+    g.add(taperTube([[x, 0.12, z], [x + sway, 0.12 + h * 0.35, z], [x - sway, 0.12 + h * 0.7, z], [x + sway * 0.5, 0.12 + h, z]], 0.045, 0.025, soft(0x34b34a)));
+  }
+  return g;
+}
+
+Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
 
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
