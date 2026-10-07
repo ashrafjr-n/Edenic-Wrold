@@ -224,7 +224,6 @@ export const ar: Dictionary = {
     change: "اصنع",
     grow: "ازرع",
     year: "أضف",
-    train: "صُفّ",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Balloon, Blocks, CalendarPlus, CookingPot, CupSoda, Ear, Eye, Highlighter, ListOrdered, Paintbrush, Pencil, Pointer, Search, Shapes, ShoppingBasket, Sprout, ThumbsUp, TrainFront, WandSparkles, X, type LucideIcon } from "lucide-react";
+import { Balloon, Blocks, CalendarPlus, CookingPot, CupSoda, Ear, Eye, Highlighter, ListOrdered, Paintbrush, Pencil, Pointer, Search, Shapes, ShoppingBasket, Sprout, ThumbsUp, WandSparkles, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
@@ -31,7 +31,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   change: WandSparkles,
   grow: Sprout,
   year: CalendarPlus,
-  train: TrainFront,
 };
 
 interface TaskChipProps {

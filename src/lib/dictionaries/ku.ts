@@ -228,7 +228,6 @@ export const ku: Dictionary = {
     change: "چێ بکە",
     grow: "شین بکە",
     year: "زێدە بکە",
-    train: "ڕیز بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

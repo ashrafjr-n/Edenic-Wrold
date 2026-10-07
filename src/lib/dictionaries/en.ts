@@ -235,7 +235,6 @@ export const en = {
     change: "Make",
     grow: "Grow",
     year: "Add",
-    train: "Line up",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
