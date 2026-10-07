@@ -9,6 +9,7 @@ import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
 import { novaSeasons } from "./nova-seasons";
 import { novaMonths } from "./nova-months";
+import { blooAnimals } from "./bloo-animals";
 
 /** A course whose lessons are not written yet: `count` "coming soon"
     lessons, each wearing one of the course's clay things in turn
@@ -25,7 +26,7 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   fruits: novaFruits,
   seasons: novaSeasons,
   months: novaMonths,
-  animals: comingSoon(6, COURSE_ART.animals),
+  animals: blooAnimals,
   weather: comingSoon(5, COURSE_ART.weather),
   body: comingSoon(5, COURSE_ART.body),
 };
