@@ -159,7 +159,9 @@ src/
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      Fill the word, the review's garden to pick Nova's
+                      Fill the word, the magic button (a season comes, a
+                      food grows, the months fill Nova's year wheel), the
+                      review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
@@ -186,7 +188,8 @@ tools/
                       plant and a potato bed — each with its food), her
                       basket, the four seasons (an island with a tree
                       with a face, frame by frame as each season comes),
-                      her year train (the engine and a wagon per month),
+                      each food growing from its seed on the same island,
+                      her year wheel (twelve slices like a clock),
                       and Bloo's animals (a cat, a dog, a cow and a fish
                       with the friends' face, two coats each) and their
                       homes, then crops them into layers — not part of
@@ -214,16 +217,18 @@ public/
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
                             (things/, props/ — the blender and the soup pot
                             — make/: the review's mixed juice, its glass and
-                            the soup, fill/: each food as it grows, to fill
-                            its word with, and garden/: the review's two
-                            gardens, in layers, and her basket), seasons/
+                            the soup, grow/: each food growing from its
+                            seed, 0.png then one frame per tap, 1–4.png, and
+                            garden/: the review's two gardens, in layers, and
+                            her basket), seasons/
                             (spring/, summer/, fall/, winter/: the island
                             before the season, 0.png, then one frame per
                             step, 1–4.png; things/: the review's eight
                             things to sort), months/
-                            (train/: Nova's engine, a wagon per month and a
-                            plain one, all from one camera), and each course's
-                            placeholder reels
+                            (wheel/: Nova's year wheel with the first k
+                            months in, 0–12.png, each month alone, and the
+                            review's marked months, all from one camera),
+                            and each course's placeholder reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
                             (things/: each animal in two coats, fill/: each
                             without a shadow, to fill its word with, homes/:
@@ -336,9 +341,11 @@ picture:
   carrot, broccoli, corn, potato, one a lesson, and every step of a lesson
   is about its one thing — nothing to choose between. The word is **met**
   (the thing, the word in clay letters, the speaker) and **spelled**; then
-  the child **fills the word**: it stands in big empty letters, and
-  rubbing a letter with a finger fills it with little apples (carrots…)
-  until the whole word is made of the thing. The review makes a **mixed
+  the child **grows it**: Nova's island has a seed in its soil, one
+  sparkling spot glows, and each tap brings the next stage — the sprout,
+  a young plant, the plant grown and in flower, then the food on it (the
+  apples on their tree, the grapes under the vine, a carrot pulled up out
+  of the soil) — so the child sees where each one comes from. The review makes a **mixed
   juice** (a layered one) in Nova's 3D blender and a **vegetable soup** in
   her pot from recipes of words alone, asks **"Do you like…?"** (thumbs up
   or down onto two plates — "I like apples." / "I don't like corn." — no
@@ -366,19 +373,20 @@ picture:
   (a tulip, a butterfly, the sun, an ice cream, a leaf, a pumpkin, a
   snowman, a snowflake) into four season boxes, the four seasons in order,
   and two spelled from their picture.
-- **Months of the Year — Nova's year train** — three months a lesson. A
-  month has no picture of its own, so the ORDER is what is learned: each
-  month is a wagon of Nova's train (her gold engine has the friends'
-  face), its number on its side, painted its season's color and carrying
-  that season's things (snow, tulips, ice cream, a pumpkin — the Seasons
-  course's own). Each month is **met** on its wagon, one name is
-  **spelled**, then the child **builds the train**: the engine waits on
-  the track with a numbered space per wagon, and tapping the wagons in
-  order couples them on; the finished train rolls off one side and comes
-  back round from the other. The review is the exam, on plain wagons
-  (the name alone): one month from each lesson onto the train in order,
-  four more into their season's island, "what comes after December?",
-  and one name spelled.
+- **Months of the Year — Nova's year wheel** — three months a lesson. A
+  month has no picture of its own, so its PLACE in the year is what is
+  learned: Nova's clay wheel is round like a clock (her gold hub has the
+  friends' face), December at the top and the year going clockwise, each
+  month a numbered slice. Each month is **met** on the wheel (its slice
+  alone, painted its season's color with its season's thing — snow,
+  tulips, the sun, a leaf — the Seasons course's own), one name is
+  **spelled**, then the child **adds the months to the year**: one slice
+  glows, a tap fills it and its name appears, three times. The wheel
+  keeps every lesson's months, so by the fourth lesson the whole year is
+  round and December runs into January. The review is the exam: four
+  names in order, four months (marked on a plain wheel, no color) into
+  their season's island, "what comes after December?", and one name
+  spelled.
 
 Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
 Each is a chibi clay animal with the friends' face (eyes with a shine, pink
