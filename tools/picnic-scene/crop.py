@@ -36,6 +36,13 @@ match), at most 800px, into `public/assets/learn/nova/seasons/<season>/
 
     python3 tools/picnic-scene/crop.py seasons
 
+Nova's garden (Fruits' "Grow it") — run after `render.cjs grow <foods>`:
+crops every frame of the eight foods on ONE box (the islands match), at
+most 800px, into `public/assets/learn/nova/fruits/grow/<food>/<k>.png`, and
+prints each tap's spot (% of that box) for `data/nova-grow.ts`.
+
+    python3 tools/picnic-scene/crop.py grow
+
 Nova's year train — run after `render.cjs train`: crops the months'
 wagons (`month-1…12.png`) on ONE box, and the plain wagon (`wagon.png`)
 and the engine each on their own down to the same wheel line, unscaled
@@ -134,6 +141,27 @@ if NAME == "seasons":
             cut.save(f"{dest}/{k}.png", optimize=True)
         meta = json.load(open(os.path.join(HERE, "out", f"season-{s}", "meta.json")))
         spots[s] = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
+    print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
+    sys.exit()
+
+if NAME == "grow":
+    # Every frame of every food on ONE box, so the eight islands match.
+    foods = ["apple", "banana", "orange", "grapes", "carrot", "broccoli", "corn", "potato"]
+    frames = {f: [Image.open(os.path.join(HERE, "out", f"grow-{f}", f"frame{k}.png")) for k in range(5)] for f in foods}
+    boxes = [alpha_box(fr) for fs in frames.values() for fr in fs]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    W, H = frames["apple"][0].size
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    spots = {}
+    for f in foods:
+        dest = os.path.join(ROOT, "public/assets/learn/nova/fruits/grow", f)
+        os.makedirs(dest, exist_ok=True)
+        for k, fr in enumerate(frames[f]):
+            cut = fr.crop(box)
+            cut.thumbnail((800, 800), Image.LANCZOS)
+            cut.save(f"{dest}/{k}.png", optimize=True)
+        meta = json.load(open(os.path.join(HERE, "out", f"grow-{f}", "meta.json")))
+        spots[f] = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
     print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
     sys.exit()
 
