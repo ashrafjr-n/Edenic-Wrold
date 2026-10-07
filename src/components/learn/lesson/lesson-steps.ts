@@ -52,7 +52,9 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "harvest":
       return { kind: "harvest" };
     case "change":
-      return { kind: "change", target: q.word };
+      /* A season is "Make" it, a food "Grow" it, the months "Add" them (no
+         one word — there are three). */
+      return { kind: q.magic === "season" ? "change" : q.magic, target: q.magic === "year" ? undefined : q.word };
     case "train":
       return { kind: "train" };
     case "pick": {

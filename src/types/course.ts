@@ -137,11 +137,12 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
-  /** Make it spring: the season's island before it comes; tap the glowing
-      spot and the next part of it spreads over the picture (the grass, the
-      leaves…) until the whole season is there. Nothing can go wrong — the
-      season is the lesson. */
-  | { type: "change"; ask: Ask; word: string; scene: RevealScene }
+  /** A magic button brings it, step by step: tap the glowing spot and the
+      next part spreads over the picture until it is all there. `magic` is
+      what comes — a season to Nova's tree, a food growing from its seed,
+      the months into Nova's year wheel (each step its own month, `words`).
+      Nothing can go wrong — the thing is the lesson. */
+  | { type: "change"; ask: Ask; magic: Magic; word: string; words?: readonly string[]; scene: RevealScene }
   /** Build the train: Nova's engine waits on the track; tap the wagons in
       order and each couples on behind the last. `wagons` are in the right
       order. All on → the train goes round and comes back. */
@@ -198,6 +199,9 @@ export interface Wagon {
   word: string;
   src: StaticImageData;
 }
+
+/** What a magic button brings (a `change` step). */
+export type Magic = "season" | "grow" | "year";
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";
