@@ -174,7 +174,9 @@ export const en = {
     dislikeAria: "I don't like it",
     potAria: "{color} paint",
     balloonAria: "{color} balloon",
-    seasonSpotAria: "Tap to bring more {season}",
+    seasonSpotAria: "Tap to bring more {word}",
+    growSpotAria: "Tap to help the {word} grow",
+    yearSpotAria: "Tap to bring {word}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -195,6 +197,8 @@ export const en = {
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
     changeSeason: "Make it {season}!",
+    growIt: "Grow the {thing}!",
+    addMonths: "Add the months to Nova's year!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
@@ -229,6 +233,8 @@ export const en = {
     fill: "Fill",
     harvest: "Pick",
     change: "Make",
+    grow: "Grow",
+    year: "Add",
     train: "Line up",
   },
   activities: {

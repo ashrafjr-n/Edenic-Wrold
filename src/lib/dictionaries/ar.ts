@@ -165,7 +165,9 @@ export const ar: Dictionary = {
     dislikeAria: "لا أحبّه",
     potAria: "طلاء {color}",
     balloonAria: "بالون {color}",
-    seasonSpotAria: "المس ليأتي المزيد من {season}",
+    seasonSpotAria: "المس ليأتي المزيد من {word}",
+    growSpotAria: "المس لتساعد {word} على النمو",
+    yearSpotAria: "المس ليأتي {word}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -185,6 +187,8 @@ export const ar: Dictionary = {
     spellPicture: "كوّن كلمة هذه الصورة!",
     thisSeason: "هذا فصل {season}!",
     changeSeason: "اصنع فصل {season}!",
+    growIt: "ازرع {thing}!",
+    addMonths: "أضف الأشهر إلى سنة نوفا!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
     sortAnimals: "ضع كل حيوان في بيته!",
@@ -218,6 +222,8 @@ export const ar: Dictionary = {
     fill: "املأ",
     harvest: "اقطف",
     change: "اصنع",
+    grow: "ازرع",
+    year: "أضف",
     train: "صُفّ",
   },
   activities: {

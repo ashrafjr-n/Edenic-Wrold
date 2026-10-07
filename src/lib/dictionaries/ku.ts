@@ -169,7 +169,9 @@ export const ku: Dictionary = {
     dislikeAria: "ئەز حەز ژێ ناکەم",
     potAria: "ڕەنگێ {color}",
     balloonAria: "بالۆنا {color}",
-    seasonSpotAria: "دەست بدە دا {season} پتر بێت",
+    seasonSpotAria: "دەست بدە دا {word} پتر بێت",
+    growSpotAria: "دەست بدە دا {word} شین ببیت",
+    yearSpotAria: "دەست بدە دا {word} بێت",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -189,6 +191,8 @@ export const ku: Dictionary = {
     spellPicture: "پەیڤا ڤی وێنەی چێ بکە!",
     thisSeason: "ئەڤە وەرزێ {season}ە!",
     changeSeason: "وەرزێ {season} چێ بکە!",
+    growIt: "{thing} شین بکە!",
+    addMonths: "هەیڤان زێدەی سالا Nova بکە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
@@ -222,6 +226,8 @@ export const ku: Dictionary = {
     fill: "تژی بکە",
     harvest: "بچنە",
     change: "چێ بکە",
+    grow: "شین بکە",
+    year: "زێدە بکە",
     train: "ڕیز بکە",
   },
   activities: {
