@@ -1,5 +1,6 @@
 import type { StaticImageData } from "next/image";
 import { GARDENS } from "@/data/garden";
+import { GROW_SCENES } from "@/data/nova-grow";
 import type { Face, LessonDef } from "@/types/course";
 import apple from "../../../public/assets/learn/pinki/colors/paint/apple.png";
 import banana from "../../../public/assets/learn/pinki/colors/paint/banana.png";
@@ -9,39 +10,29 @@ import carrot from "../../../public/assets/learn/pinki/colors/paint/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import corn from "../../../public/assets/learn/nova/fruits/things/corn.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
-import appleFill from "../../../public/assets/learn/nova/fruits/fill/apple.png";
-import bananaFill from "../../../public/assets/learn/nova/fruits/fill/banana.png";
-import orangeFill from "../../../public/assets/learn/nova/fruits/fill/orange.png";
-import grapesFill from "../../../public/assets/learn/nova/fruits/fill/grapes.png";
-import carrotFill from "../../../public/assets/learn/nova/fruits/fill/carrot.png";
-import broccoliFill from "../../../public/assets/learn/nova/fruits/fill/broccoli.png";
-import cornFill from "../../../public/assets/learn/nova/fruits/fill/corn.png";
-import potatoFill from "../../../public/assets/learn/nova/fruits/fill/potato.png";
 import blenderMix from "../../../public/assets/learn/nova/fruits/make/blender-mix.png";
 import glassMix from "../../../public/assets/learn/nova/fruits/make/glass-mix.png";
 import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like apples.", "3
-    apples"), its picture (the Colors course's clay fruit is reused — the
-    same renders) and the small picture its word is filled with (as it
-    grows — a carrot with its leaves; no ground shadow). */
+    apples") and its picture (the Colors course's clay fruit is reused — the
+    same renders). */
 interface Food {
   word: string;
   things: string;
   picture: StaticImageData;
-  fill: StaticImageData;
 }
 
 /** In teaching order: four fruits, then four vegetables. */
 const FOODS: Food[] = [
-  { word: "apple", things: "apples", picture: apple, fill: appleFill },
-  { word: "banana", things: "bananas", picture: banana, fill: bananaFill },
-  { word: "orange", things: "oranges", picture: orange, fill: orangeFill },
-  { word: "grapes", things: "grapes", picture: grapes, fill: grapesFill },
-  { word: "carrot", things: "carrots", picture: carrot, fill: carrotFill },
-  { word: "broccoli", things: "broccoli", picture: broccoli, fill: broccoliFill },
-  { word: "corn", things: "corn", picture: corn, fill: cornFill },
-  { word: "potato", things: "potatoes", picture: potato, fill: potatoFill },
+  { word: "apple", things: "apples", picture: apple },
+  { word: "banana", things: "bananas", picture: banana },
+  { word: "orange", things: "oranges", picture: orange },
+  { word: "grapes", things: "grapes", picture: grapes },
+  { word: "carrot", things: "carrots", picture: carrot },
+  { word: "broccoli", things: "broccoli", picture: broccoli },
+  { word: "corn", things: "corn", picture: corn },
+  { word: "potato", things: "potatoes", picture: potato },
 ];
 
 const food = (word: string): Food => {
@@ -56,20 +47,20 @@ const face = (word: string): Face => ({ kind: "picture", src: food(word).picture
 const line = (word: string, count: number) => ({ word, things: food(word).things, count });
 
 /**
- * Nova's garden — one thing, one lesson, and every step about IT (direct
- * request 2026-10-03: no choosing — the child knows it is the apple
- * lesson): meet it (its picture, its word, its speaker) → build its word →
- * fill the word with it (a word made of apples). Picking from the trees is
- * the review's exam, with several foods to tell apart.
+ * Nova's garden — one thing, one lesson, and every step about IT: meet it
+ * (its picture, its word, its speaker) → build its word → grow it (direct
+ * request 2026-10-07: Nova plants its seed and the child brings it up, tap
+ * by tap, to the food on its plant — where it comes from). Picking from
+ * the trees is the review's exam, with several foods to tell apart.
  */
-function foodLesson({ word, picture, fill }: Food, i: number): LessonDef {
+function foodLesson({ word, picture }: Food, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      { type: "fill", ask: { key: "fillWord", vars: { word } }, word, picture: fill },
+      { type: "change", ask: { key: "growIt", vars: { thing: word } }, magic: "grow", word, scene: GROW_SCENES[word] },
     ],
   };
 }
