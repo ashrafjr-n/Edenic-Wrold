@@ -50,14 +50,6 @@ prints each month's spot (% of that box) for `data/nova-wheel.ts`.
 
     python3 tools/picnic-scene/crop.py wheel
 
-Nova's year train — run after `render.cjs train`: crops the months'
-wagons (`month-1…12.png`) on ONE box, and the plain wagon (`wagon.png`)
-and the engine each on their own down to the same wheel line, unscaled
-(one camera, one scale), into
-`public/assets/learn/nova/months/train/`.
-
-    python3 tools/picnic-scene/crop.py train
-
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`.
@@ -190,27 +182,6 @@ if NAME == "wheel":
     meta = json.load(open(os.path.join(out, "meta.json")))
     spots = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
     print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
-    sys.exit()
-
-if NAME == "train":
-    # The months' wagons on ONE box (all the same size, wheels on one
-    # line); the plain wagon (only ever with its own kind) and the engine
-    # each on their own, down to the same line. One camera, so one scale.
-    out = os.path.join(HERE, "out", "train")
-    dest = os.path.join(ROOT, "public/assets/learn/nova/months/train")
-    os.makedirs(dest, exist_ok=True)
-    layers = {f"month-{n}": Image.open(f"{out}/{n}.png") for n in range(1, 13)}
-    boxes = [alpha_box(layer, pad=2) for layer in layers.values()]
-    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    for name, layer in layers.items():
-        layer.crop(box).save(f"{dest}/{name}.png", optimize=True)
-    sizes = {"month": [box[2] - box[0], box[3] - box[1]]}
-    for name, src in (("wagon", "plain"), ("engine", "engine")):
-        layer = Image.open(f"{out}/{src}.png")
-        b = alpha_box(layer, pad=2)
-        layer.crop((b[0], b[1], b[2], box[3])).save(f"{dest}/{name}.png", optimize=True)
-        sizes[name] = [b[2] - b[0], box[3] - b[1]]
-    print(json.dumps(sizes))
     sys.exit()
 
 if NAME == "basket":

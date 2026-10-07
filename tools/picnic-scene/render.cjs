@@ -33,10 +33,12 @@
  *
  *   node tools/picnic-scene/render.cjs grow apple banana orange grapes carrot broccoli corn potato
  *
- * Nova's year train — writes `out/train/`: the engine, a plain wagon and
- * month 1–12's wagons, all from one camera. Then `crop.py train`.
+ * Nova's year wheel (Months) — writes `out/wheel/`: the wheel with the
+ * first k months in (0–12), each month alone (`only-<m>`), the review's
+ * marked months (`mark-<m>`), all from one camera, and `meta.json` (each
+ * month's spot). Then `crop.py wheel`.
  *
- *   node tools/picnic-scene/render.cjs train
+ *   node tools/picnic-scene/render.cjs wheel
  *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
@@ -118,13 +120,6 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       save(out, what, layers[what]);
     }
     fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
-  } else if (mode === "train") {
-    const out = path.join(__dirname, "out", "train");
-    fs.mkdirSync(out, { recursive: true });
-    for (const what of ["engine", "plain", ...Array.from({ length: 12 }, (_, i) => String(i + 1))]) {
-      const layers = await render(page, `train=${what}`);
-      save(out, what, layers[what]);
-    }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
     const out = path.join(__dirname, "out", "basket");
