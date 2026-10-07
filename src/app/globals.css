@@ -3116,28 +3116,6 @@ button:disabled,
   }
 }
 
-/* Build the train (Nova's Months): all on, the train rolls off to the
-   left and comes back round from the right — the year goes round. Its
-   track clips it (`overflow-hidden` on the row's wrapper). */
-.train-go {
-  animation: train-go 2.6s cubic-bezier(0.45, 0, 0.55, 1) 0.3s both;
-}
-
-@keyframes train-go {
-  0% {
-    translate: 0 0;
-  }
-  45% {
-    translate: -110% 0;
-  }
-  45.01% {
-    translate: 110% 0;
-  }
-  100% {
-    translate: 0 0;
-  }
-}
-
 /* The spot to tap breathes, so it is found at once. */
 .season-spot {
   animation: season-spot 1.6s ease-in-out infinite;
@@ -3787,7 +3765,6 @@ button:disabled,
   .demo-change,
   .season-reveal,
   .season-spot,
-  .train-go,
   .make-whir,
   .make-blend,
   .make-bubble,
