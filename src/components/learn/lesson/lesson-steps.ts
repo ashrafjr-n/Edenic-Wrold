@@ -55,8 +55,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       /* A season is "Make" it, a food "Grow" it, the months "Add" them (no
          one word — there are three). */
       return { kind: q.magic === "season" ? "change" : q.magic, target: q.magic === "year" ? undefined : q.word };
-    case "train":
-      return { kind: "train" };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -98,8 +96,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "change":
       return { kind: "change", scene: q.scene };
-    case "train":
-      return { kind: "train", engine: q.engine, wagons: q.wagons, seed };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:

@@ -44,8 +44,8 @@ export interface Thing {
   color?: ColorId;
   /** The season it goes with (Nova's Seasons, and a month's). */
   group?: Group;
-  /** Known by its word alone, which is written on it (a month on a plain
-      wagon) — its picture says nothing. */
+  /** Known by its word, which is written under it (a month marked on a
+      plain year wheel) — its picture gives its place, not its name. */
   named?: boolean;
 }
 
@@ -143,10 +143,6 @@ export type Question =
       the months into Nova's year wheel (each step its own month, `words`).
       Nothing can go wrong — the thing is the lesson. */
   | { type: "change"; ask: Ask; magic: Magic; word: string; words?: readonly string[]; scene: RevealScene }
-  /** Build the train: Nova's engine waits on the track; tap the wagons in
-      order and each couples on behind the last. `wagons` are in the right
-      order. All on → the train goes round and comes back. */
-  | { type: "train"; ask: Ask; engine: StaticImageData; wagons: Wagon[] }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
@@ -191,13 +187,6 @@ export interface Basket {
 export interface RevealScene {
   frames: readonly StaticImageData[];
   spots: readonly (readonly [number, number])[];
-}
-
-/** A wagon of Nova's year train: its month (English) and its picture —
-    every wagon of one train is cut on one box, so they line up. */
-export interface Wagon {
-  word: string;
-  src: StaticImageData;
 }
 
 /** What a magic button brings (a `change` step). */

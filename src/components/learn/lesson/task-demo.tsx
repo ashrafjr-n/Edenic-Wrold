@@ -7,7 +7,7 @@ import { MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing, Wagon } from "@/types/course";
+import type { ColorId, Face, Garden, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -37,7 +37,6 @@ export type TaskDemoDef =
   | { kind: "like"; face: Face }
   | { kind: "fill"; word: string; picture: StaticImageData }
   | { kind: "change"; scene: RevealScene }
-  | { kind: "train"; engine: StaticImageData; wagons: Wagon[]; seed: string }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
@@ -584,55 +583,6 @@ function ChangeDemo({ scene }: { scene: RevealScene }) {
   );
 }
 
-/** Build the train: the engine and a numbered space per wagon on the
-    rails, the wagons dealt under them as the board deals them; the finger
-    taps the one that comes first and it flies up into the first space.
-    Laid out in % of the square stage, the flight in `cqi` (the stage is
-    square, so `cqi` is its height too); dealt wagons are the spaces' size,
-    so the flown one lands exactly. */
-function TrainDemo({ engine, wagons, seed }: { engine: StaticImageData; wagons: Wagon[]; seed: string }) {
-  const order = shuffle(wagons.map((_, i) => i), seed);
-  const { width, height } = wagons[0].src;
-  const RAIL = 42;
-  const ENGINE_W = 26;
-  /* Each space (and each dealt wagon): its width, and its picture's height. */
-  const slot = (88 - ENGINE_W) / wagons.length;
-  const w = slot * 0.94;
-  const h = (w * height) / width;
-  const at = (j: number) => 50 - (wagons.length * slot) / 2 + j * slot;
-  const first = order.indexOf(0);
-  const fly = { "--fly-x": `${6 + ENGINE_W - at(first)}cqi`, "--fly-y": `${RAIL - h - 56}cqi` } as CSSProperties;
-  return (
-    <div dir="ltr" className="@container relative h-full w-full">
-      <span className="absolute" style={{ left: "6%", width: `${ENGINE_W}%`, top: `${RAIL - (ENGINE_W * engine.height) / engine.width}%`, aspectRatio: `${engine.width} / ${engine.height}` }}>
-        <Image src={engine} alt="" fill sizes="6rem" className="object-contain" />
-      </span>
-      {wagons.map((_, k) => (
-        <span
-          key={k}
-          className="letter-slot absolute flex items-center justify-center text-lg font-bold text-[rgb(var(--shadow-hue)/0.28)]"
-          style={{ left: `${6 + ENGINE_W + k * slot}%`, width: `${w}%`, top: `${RAIL - h * 0.62}%`, height: `${h * 0.58}%` }}
-        >
-          {k + 1}
-        </span>
-      ))}
-      <span className="absolute h-[1.6%] rounded-full bg-[color-mix(in_srgb,var(--page-accent-color)_55%,var(--surface))]" style={{ left: "6%", width: "88%", top: `${RAIL}%` }} />
-      {order.map((index, j) => (
-        <span
-          key={index}
-          className={`absolute ${index === 0 ? "demo-fly z-[1]" : ""}`}
-          style={{ left: `${at(j)}%`, width: `${w}%`, top: "56%", aspectRatio: `${width} / ${height}`, ...(index === 0 ? fly : {}) }}
-        >
-          <Image src={wagons[index].src} alt="" fill sizes="4rem" className="object-contain" />
-        </span>
-      ))}
-      <span className="absolute" style={{ left: `${at(first) + w / 2}%`, top: `${56 + h * 0.6}%` }}>
-        <Finger />
-      </span>
-    </div>
-  );
-}
-
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -664,7 +614,5 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "change":
       return <ChangeDemo scene={demo.scene} />;
-    case "train":
-      return <TrainDemo engine={demo.engine} wagons={demo.wagons} seed={demo.seed} />;
   }
 }
