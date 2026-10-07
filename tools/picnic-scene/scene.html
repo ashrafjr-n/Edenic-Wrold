@@ -2103,8 +2103,9 @@ const soft = (color, extra = {}) =>
 const SOIL_Y = 0.8;
 
 /* The friends' face, looking out along +z, on a round surface of radius
-   `round` (each feature sits back on the curve); `k` scales it. */
-function kawaii(k = 1, round = 0) {
+   `round` (each feature sits back on the curve); `k` scales it. Without
+   its smile for a face that has its own mouth (a dog's, a cow's). */
+function kawaii(k = 1, round = 0, smile = true) {
   const g = new THREE.Group();
   const back = (x) => (round ? Math.sqrt(Math.max(0, round * round - x * x)) - round : 0);
   const ink = soft(0x33242e, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15 });
@@ -2125,10 +2126,12 @@ function kawaii(k = 1, round = 0) {
     blush.position.set(cx, -0.06 * k, back(cx) - 0.005);
     g.add(blush);
   }
-  const smile = mesh(new THREE.TorusGeometry(0.09 * k, 0.026 * k, 12, 32, Math.PI), ink);
-  smile.rotation.z = Math.PI;
-  smile.position.set(0, -0.02 * k, back(0) + 0.01);
-  g.add(smile);
+  if (smile) {
+    const mouth = mesh(new THREE.TorusGeometry(0.09 * k, 0.026 * k, 12, 32, Math.PI), ink);
+    mouth.rotation.z = Math.PI;
+    mouth.position.set(0, -0.02 * k, back(0) + 0.01);
+    g.add(mouth);
+  }
   return g;
 }
 
