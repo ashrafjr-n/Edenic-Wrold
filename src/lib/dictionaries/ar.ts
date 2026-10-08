@@ -158,7 +158,6 @@ export const ar: Dictionary = {
     seasonSpotAria: "المس ليأتي المزيد من {word}",
     cupAria: "الكوب {n}",
     biteAria: "أطعم {word}",
-    wearAria: "ألبِس Bloo {thing}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -190,7 +189,6 @@ export const ar: Dictionary = {
     likeThem: "هل تحبّها؟",
     feedAnimal: "أطعم {thing}!",
     thisWeather: "الجو {weather}!",
-    dressBloo: "جهّز Bloo ليوم {weather}!",
     rainTap: "المس الغيمة لتمطر!",
     sunPush: "ادفع الغيوم بعيدًا لتشرق الشمس!",
     windSwipe: "اسحب إصبعك عبر السماء لتهبّ الريح!",
@@ -217,7 +215,6 @@ export const ar: Dictionary = {
     change: "اصنع",
     cups: "ابحث",
     feed: "أطعم",
-    dress: "ألبِس",
     weather: "اصنع",
   },
   activities: {

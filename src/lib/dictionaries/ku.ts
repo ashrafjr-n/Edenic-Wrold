@@ -162,7 +162,6 @@ export const ku: Dictionary = {
     seasonSpotAria: "دەست بدە دا {word} پتر بێت",
     cupAria: "پەرداخا {n}",
     biteAria: "خوارنێ بدە {word}",
-    wearAria: "{thing} بکە بەر Bloo",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -194,7 +193,6 @@ export const ku: Dictionary = {
     likeThem: "تو حەز ژ وان دکەی؟",
     feedAnimal: "خوارنێ بدە {thing}!",
     thisWeather: "هەوا {weather}ە!",
-    dressBloo: "Bloo بۆ ڕۆژەکا {weather} ئامادە بکە!",
     rainTap: "دەست بدە ئەوری دا باران ببارێت!",
     sunPush: "ئەوران پاڵ بدە دا ڕۆژ دەرکەڤیت!",
     windSwipe: "تبلا خۆ ب سەر ئەسمانی دا ڕاکێشە دا با بێت!",
@@ -221,7 +219,6 @@ export const ku: Dictionary = {
     change: "چێ بکە",
     cups: "بدۆزە",
     feed: "خوارنێ بدە",
-    dress: "ئامادە بکە",
     weather: "چێ بکە",
   },
   activities: {
