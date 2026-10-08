@@ -3431,6 +3431,31 @@ button:disabled,
   }
 }
 
+/* Feed it (`FeedAnimal`): a heart floats up out of the animal's mouth for
+   every bite it eats (the munch itself is WAAPI). The `-50%` centring
+   lives IN the keyframes — an animation owning `translate` drops a
+   utility's. Under reduced motion there is no heart. */
+.feed-heart {
+  animation: feed-heart 0.9s ease-out both;
+}
+
+@keyframes feed-heart {
+  from {
+    translate: -50% -50%;
+    scale: 0.4;
+    opacity: 0;
+  }
+  25% {
+    scale: 1.1;
+    opacity: 1;
+  }
+  to {
+    translate: -50% -260%;
+    scale: 0.9;
+    opacity: 0;
+  }
+}
+
 /* Fill the word (`FillWord`, an SVG): each letter an empty clay outline in
    its own colour — the stroke painted UNDER the fill, so only its outer
    half shows. Lengths are the drawing's own units (the font is 100). The
@@ -3854,7 +3879,8 @@ button:disabled,
 
   .pop-ring,
   .pop-shard,
-  .make-steam {
+  .make-steam,
+  .feed-heart {
     display: none;
   }
 
