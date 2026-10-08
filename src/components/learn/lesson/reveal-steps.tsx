@@ -23,7 +23,7 @@ const SCENE_SIZE =
   "max-w-[min(100%,calc((100svh-26rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(30rem,calc((100svh-44rem)*var(--ratio)))] lg:max-w-[min(36rem,calc((var(--stage-h)-2rem)*var(--ratio)))]";
 
 interface RevealStepsProps {
-  /** What comes, in English: the season, the food. */
+  /** What comes, in English: the season. */
   word: string;
   scene: RevealScene;
   /** The spot's name for a screen reader ("Tap to bring more spring"). */
@@ -33,11 +33,10 @@ interface RevealStepsProps {
 
 /**
  * The magic button: the picture before it comes — the season's island
- * bare, the food's seed in the soil. One spot glows; tap it and the next
- * part spreads over the picture from there (the grass, the sprout…), then
- * the next spot glows. All in → it is all there, its word is said and it
- * jumps. Nothing can go wrong — the thing is the lesson, so nothing is
- * chosen.
+ * bare. One spot glows; tap it and the next part spreads over the picture
+ * from there (the grass, the leaves…), then the next spot glows. All in →
+ * it is all there, its word is said and it jumps. Nothing can go wrong —
+ * the thing is the lesson, so nothing is chosen.
  *
  * Every step is one whole frame (`SEASON_SCENES`), laid over the last and
  * uncovered by a circle growing from the spot (`.season-reveal`); once it

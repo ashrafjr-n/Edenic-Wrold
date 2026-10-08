@@ -135,10 +135,10 @@ export type Question =
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
   /** A magic button brings it, step by step: tap the glowing spot and the
-      next part spreads over the picture until it is all there. `magic` is
-      what comes — a season to Nova's tree, a food growing from its seed.
-      Nothing can go wrong — the thing is the lesson. */
-  | { type: "change"; ask: Ask; magic: Magic; word: string; scene: RevealScene }
+      next part spreads over the picture until it is all there — a season
+      coming to Nova's tree. Nothing can go wrong — the thing is the
+      lesson. */
+  | { type: "change"; ask: Ask; word: string; scene: RevealScene }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
@@ -188,9 +188,6 @@ export interface RevealScene {
   frames: readonly StaticImageData[];
   spots: readonly (readonly [number, number])[];
 }
-
-/** What a magic button brings (a `change` step). */
-export type Magic = "season" | "grow";
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";

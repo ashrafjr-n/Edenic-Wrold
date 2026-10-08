@@ -38,7 +38,7 @@ function seasonLesson(season: Season, n: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture: full },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
-      { type: "change", ask: { key: "changeSeason", vars: { season } }, magic: "season", word: season, scene: SEASON_SCENES[season] },
+      { type: "change", ask: { key: "changeSeason", vars: { season } }, word: season, scene: SEASON_SCENES[season] },
     ],
   };
 }

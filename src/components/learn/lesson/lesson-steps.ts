@@ -54,8 +54,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
     case "harvest":
       return { kind: "harvest" };
     case "change":
-      /* A season is "Make" it, a food "Grow" it. */
-      return { kind: q.magic === "season" ? "change" : q.magic, target: q.word };
+      return { kind: "change", target: q.word };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
