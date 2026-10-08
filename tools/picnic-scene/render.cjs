@@ -33,13 +33,6 @@
  *
  *   node tools/picnic-scene/render.cjs grow apple banana orange grapes carrot broccoli corn potato
  *
- * Nova's year wheel (Months) — writes `out/wheel/`: the wheel with the
- * first k months in (0–12), each month alone (`only-<m>`), the review's
- * marked months (`mark-<m>`), all from one camera, and `meta.json` (each
- * month's spot). Then `crop.py wheel`.
- *
- *   node tools/picnic-scene/render.cjs wheel
- *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -111,15 +104,6 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "wheel") {
-    const out = path.join(__dirname, "out", "wheel");
-    fs.mkdirSync(out, { recursive: true });
-    const months = Array.from({ length: 12 }, (_, i) => i + 1);
-    for (const what of [...[0, ...months].map(String), ...months.map((m) => `only-${m}`), ...[2, 5, 8, 11].map((m) => `mark-${m}`)]) {
-      const layers = await render(page, `wheel=${what}`);
-      save(out, what, layers[what]);
-    }
-    fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
     const out = path.join(__dirname, "out", "basket");

@@ -43,13 +43,6 @@ prints each tap's spot (% of that box) for `data/nova-grow.ts`.
 
     python3 tools/picnic-scene/crop.py grow
 
-Nova's year wheel (Months) — run after `render.cjs wheel`: crops every
-wheel picture (`0…12`: the first k months in, `only-<m>`, `mark-<m>`) on ONE
-box, at most 800px, into `public/assets/learn/nova/months/wheel/`, and
-prints each month's spot (% of that box) for `data/nova-wheel.ts`.
-
-    python3 tools/picnic-scene/crop.py wheel
-
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`.
@@ -161,26 +154,6 @@ if NAME == "grow":
             cut.save(f"{dest}/{k}.png", optimize=True)
         meta = json.load(open(os.path.join(HERE, "out", f"grow-{f}", "meta.json")))
         spots[f] = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
-    print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
-    sys.exit()
-
-if NAME == "wheel":
-    # Every picture of the year wheel on ONE box (the wheel never moves),
-    # so a lesson's frames lie exactly over each other.
-    out = os.path.join(HERE, "out", "wheel")
-    dest = os.path.join(ROOT, "public/assets/learn/nova/months/wheel")
-    os.makedirs(dest, exist_ok=True)
-    layers = {f[:-4]: Image.open(os.path.join(out, f)) for f in sorted(os.listdir(out)) if f.endswith(".png")}
-    boxes = [alpha_box(layer) for layer in layers.values()]
-    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    W, H = next(iter(layers.values())).size
-    bw, bh = box[2] - box[0], box[3] - box[1]
-    for name, layer in layers.items():
-        cut = layer.crop(box)
-        cut.thumbnail((800, 800), Image.LANCZOS)
-        cut.save(f"{dest}/{name}.png", optimize=True)
-    meta = json.load(open(os.path.join(out, "meta.json")))
-    spots = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
     print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
     sys.exit()
 

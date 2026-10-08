@@ -23,12 +23,6 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
-
-/* Clay numbers (the months on Nova's year wheel) — the bold sans from
-   three's own examples. */
-const FONT = await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/helvetiker_bold.typeface.json");
 
 const params = new URLSearchParams(location.search);
 
@@ -52,7 +46,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("grow") || params.has("wheel") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("grow") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -2111,8 +2105,7 @@ const GARDENS = {
 
 /* ---------- Nova's seasons: one tree through the year ----------
    `?season=<spring|summer|fall|winter>` — a round clay island, its side in
-   the season's color (its months' slices on Nova's year wheel wear it
-   too), and a tree with a face on it. The island alone is the picture
+   the season's color, and a tree with a face on it. The island alone is the picture
    before the season comes;
    each of its four `steps` brings one more of it (the grass, the leaves…),
    so the frames add up — every frame one whole render, so whatever comes
@@ -3172,83 +3165,6 @@ function fishbowl() {
 
 Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
 
-/* ---------- Nova's year wheel (Months) ----------
-   `?wheel=<k>|only-<m>|mark-<m>` — a round clay wheel facing us like a
-   clock: twelve slices, December at the top and the year going clockwise,
-   each with its number; Nova's gold hub with the friends' face in the
-   middle. A month that has come is raised and painted its season's color
-   (the Seasons islands' bands) with its season's thing on it. `<k>`: the
-   first k months in (a lesson's frames); `only-<m>`: month m alone (its
-   word card); `mark-<m>`: month m raised in plain cream with a gold edge,
-   no season (the review — its place in the year, not its color). */
-
-const MONTH_SEASON = ["winter", "winter", "spring", "spring", "spring", "summer", "summer", "summer", "fall", "fall", "fall", "winter"];
-const WHEEL_IN = 1.0, WHEEL_OUT = 2.75, WHEEL_GAP = THREE.MathUtils.degToRad(1.4);
-const WHEEL_INK = 0x4b3f72;
-
-/* Month m's middle, as an angle (December at the top, clockwise). */
-const monthAngle = (m) => THREE.MathUtils.degToRad(90 - (m % 12) * 30);
-
-/* A point of month m's slice `r` out from the middle, `z` in front. */
-const onSlice = (m, r, z = 0) => [Math.cos(monthAngle(m)) * r, Math.sin(monthAngle(m)) * r, z];
-
-/* One slice: a ring sector, rounded off. */
-function sliceShape(m, grow = 0) {
-  const a = monthAngle(m), half = Math.PI / 12 - WHEEL_GAP + grow * 0.3;
-  const s = new THREE.Shape();
-  s.absarc(0, 0, WHEEL_OUT + grow, a - half, a + half, false);
-  s.absarc(0, 0, WHEEL_IN - grow, a + half, a - half, true);
-  s.closePath();
-  return s;
-}
-
-/* What a season's month carries on its slice. */
-const SLICE_THING = {
-  winter: () => at(snowflake(), [0, 0, 0], 0.55),
-  spring: () => at(tulip(0xff6f7d), [0, -0.42, 0], 0.82),
-  summer: () => at(sunfriend(), [0, 0, 0], 0.4),
-  fall: () => at(mapleLeaf(0xf2683a), [0, -0.12, 0], 0.66),
-};
-
-function yearWheel(spec) {
-  const [kind, n] = /^\d+$/.test(spec) ? ["upto", Number(spec)] : [spec.split("-")[0], Number(spec.split("-")[1])];
-  const g = new THREE.Group();
-  const base = mesh(new THREE.CylinderGeometry(3.05, 3.05, 0.36, 128), soft(0xfff4e2));
-  base.rotation.x = Math.PI / 2;
-  base.position.z = -0.18;
-  g.add(base);
-  const rim = mesh(new THREE.TorusGeometry(3.05, 0.17, 24, 160), soft(0xf7c948));
-  g.add(rim);
-  for (let m = 1; m <= 12; m++) {
-    const filled = kind === "upto" ? m <= n : kind === "only" && m === n;
-    const marked = kind === "mark" && m === n;
-    const season = MONTH_SEASON[m - 1];
-    const color = filled ? SEASON_DEFS[season].band : marked ? 0xffffff : 0xefe3cc;
-    const depth = filled || marked ? 0.2 : 0.06;
-    const slice = mesh(roundedShapeExtrude(sliceShape(m), depth, 0.05), soft(color));
-    g.add(slice);
-    if (marked) g.add(mesh(roundedShapeExtrude(sliceShape(m, 0.12), 0.14, 0.04), soft(0xf2b630)));
-    const top = depth + 0.1;
-    /* A month alone (its word card, small on a phone) wears a big number. */
-    const big = (kind === "only" || kind === "mark") && m === n;
-    if (filled) g.add(at(group(SLICE_THING[season]()), onSlice(m, big ? 1.45 : 1.62, top + 0.1), big ? 0.85 : 1));
-    const geo = new TextGeometry(String(m), { font: FONT, size: big ? 0.6 : 0.34, depth: 0.05, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.012, bevelSegments: 4 });
-    geo.center();
-    const digits = mesh(geo, soft(filled || marked ? WHEEL_INK : 0xc9bca4, { roughness: 0.4, clearcoat: 0.6 }));
-    digits.position.set(...onSlice(m, big ? 2.25 : 2.35, top));
-    g.add(digits);
-  }
-  const hub = mesh(new THREE.SphereGeometry(0.9, 64, 48), soft(0xf7c948));
-  hub.scale.z = 0.45;
-  hub.position.z = 0.15;
-  g.add(hub);
-  /* The hub is a flat dome — its face sits on a flatter curve. */
-  const look = kawaii(1.05, 2.0);
-  look.position.z = 0.15 + 0.9 * 0.45;
-  g.add(look);
-  return g;
-}
-
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
@@ -3535,8 +3451,7 @@ const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
 const SEASON = params.get("season");
 const GROW = params.get("grow");
-const WHEEL = params.get("wheel");
-const def = THING || HARVEST || BASKET || SEASON || GROW || WHEEL ? null : SCENES[SCENE];
+const def = THING || HARVEST || BASKET || SEASON || GROW ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -3700,29 +3615,6 @@ if (THING) {
       const p = new THREE.Vector3(...spot);
       if (onTree) tree.localToWorld(p);
       p.project(camera);
-      return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
-    }),
-  });
-} else if (WHEEL) {
-  /* ---------- Nova's year wheel, straight on, from the camera every
-     spec shares (`crop.py wheel` cuts them all on one box). ---------- */
-  scene.add(yearWheel(WHEEL));
-  catcher.visible = false;
-  renderer.setSize(1000, 1000);
-  const span = 3.45;
-  Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
-  const lift = THREE.MathUtils.degToRad(8);
-  camera.position.set(0, Math.sin(lift) * 30, Math.cos(lift) * 30);
-  camera.lookAt(0, 0, 0);
-  camera.updateProjectionMatrix();
-  window.renderLayers = () => {
-    renderer.setClearColor(0x000000, 0);
-    return { [WHEEL]: frame() };
-  };
-  /* Each month's slice, % of the picture — where its tap goes. */
-  window.itemsMeta = () => ({
-    spots: Array.from({ length: 12 }, (_, i) => {
-      const p = new THREE.Vector3(...onSlice(i + 1, 1.9, 0.3)).project(camera);
       return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
     }),
   });
