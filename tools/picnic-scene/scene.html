@@ -3405,6 +3405,202 @@ function friendPotatoPlant() {
 
 Object.assign(ITEMS, { fruit: (food) => FRIEND_FOOD[food](), cup });
 
+/* ---------- What Bloo wears for the weather (2026-10-08) ----------
+   Two things a weather, put on Bloo in the Weather lessons' Dress step and
+   sorted into the weathers in the review (`?thing=wear&arg=`): sunglasses
+   and a straw sun hat; an umbrella and a yellow rain hat; a kite and a
+   pinwheel; a woolly hat and a scarf. Velvet clay, no face. Each lies on
+   Bloo's own picture where `data/bloo-wear.ts` puts it, so the glasses and
+   the scarf are seen from the front (`@front`); the hats from a little
+   above, as a hat on a head is. */
+const PIN_TONES = [0xf2564d, 0xffd23a, 0x6bb8f0, 0x63c84e];
+const WEAR = {
+  sunglasses() {
+    const g = new THREE.Group();
+    const frame = velvet(0xff6f9a);
+    const lens = velvet(0x2c2240, { roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, sheen: 0.15 });
+    const shine = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+    for (const s of [-1, 1]) {
+      const rim = mesh(new THREE.TorusGeometry(0.42, 0.08, 24, 72), frame);
+      rim.position.x = s * 0.55;
+      g.add(rim);
+      const glass = mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.07, 72), lens);
+      glass.rotation.x = Math.PI / 2;
+      glass.position.x = s * 0.55;
+      g.add(glass);
+      const glint = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.2, 6, 12), shine);
+      glint.position.set(s * 0.55 - 0.15, 0.13, 0.06);
+      glint.rotation.z = -0.65;
+      g.add(glint);
+    }
+    g.add(taperTube([[-0.17, 0.1, 0], [0, 0.17, 0.03], [0.17, 0.1, 0]], 0.06, 0.06, frame));
+    return g;
+  },
+
+  /* A straw hat: a round crown, a wide brim, a pink band and a daisy. */
+  sunhat() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [1.3, 0], [1.38, 0.05], [1.3, 0.1], [0.66, 0.13], [0.64, 0.46], [0.52, 0.66], [0.26, 0.74], [0, 0.75]]), velvet(0xf3d27c)));
+    const band = mesh(new THREE.CylinderGeometry(0.645, 0.655, 0.16, 72, 1, true), velvet(0xff6f9a));
+    band.position.y = 0.22;
+    g.add(band);
+    const petal = velvet(0xffffff);
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const p = mesh(new THREE.SphereGeometry(0.07, 20, 14), petal);
+      p.scale.set(1.6, 0.8, 0.5);
+      p.position.set(0.32 + Math.cos(a) * 0.1, 0.24 + Math.sin(a) * 0.1, 0.6);
+      p.rotation.z = a;
+      g.add(p);
+    }
+    const middle = mesh(new THREE.SphereGeometry(0.065, 20, 14), velvet(0xffcf3d));
+    middle.position.set(0.32, 0.24, 0.64);
+    g.add(middle);
+    return g;
+  },
+
+  /* A big umbrella: eight panels, red and white, a tip, and a crook. */
+  umbrella() {
+    const g = new THREE.Group();
+    for (let i = 0; i < 8; i++) {
+      const panel = mesh(new THREE.SphereGeometry(1, 12, 24, (i / 8) * Math.PI * 2, Math.PI / 4, 0, Math.PI / 2), velvet(i % 2 ? 0xffffff : 0xf2564d, { side: THREE.DoubleSide }));
+      panel.scale.y = 0.56;
+      panel.position.y = 1.7;
+      g.add(panel);
+    }
+    const tip = mesh(new THREE.SphereGeometry(0.07, 16, 12), velvet(0xffd23a));
+    tip.position.y = 2.3;
+    g.add(tip);
+    const wood = velvet(0x9a5a2c);
+    g.add(taperTube([[0, 1.72, 0], [0, 0.9, 0], [0, 0.18, 0]], 0.045, 0.045, wood));
+    g.add(taperTube([[0, 0.2, 0], [0, 0.04, 0], [0.12, -0.08, 0], [0.26, -0.02, 0], [0.3, 0.12, 0]], 0.05, 0.05, wood));
+    return g;
+  },
+
+  /* A yellow rain hat: a round crown and a brim sloping down all round. */
+  rainhat() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0.12], [0.7, 0.12], [0.94, 0.0], [1.18, -0.1], [1.26, -0.14], [1.22, -0.08], [0.98, 0.06], [0.7, 0.2], [0.68, 0.4], [0.56, 0.62], [0.32, 0.75], [0, 0.78]]), velvet(0xffd23a)));
+    const seam = velvet(0xf2b51f);
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+      const line = new THREE.CatmullRomCurve3([[0.69, 0.22], [0.66, 0.42], [0.55, 0.64], [0.31, 0.77], [0.02, 0.8]].map(([r, y]) => new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r)));
+      g.add(mesh(new THREE.TubeGeometry(line, 32, 0.022, 8), seam));
+    }
+    return g;
+  },
+
+  /* A diamond kite in red and yellow on its two sticks, and a tail of bows. */
+  kite() {
+    const g = new THREE.Group();
+    const top = [0, 0.78], right = [0.55, 0.12], bottom = [0, -0.82], left = [-0.55, 0.12], mid = [0, 0.12];
+    [[top, right, 0xf2564d], [right, bottom, 0xffd23a], [bottom, left, 0xf2564d], [left, top, 0xffd23a]].forEach(([a, b, color]) => {
+      const s = new THREE.Shape();
+      s.moveTo(...mid); s.lineTo(...a); s.lineTo(...b); s.closePath();
+      const panel = mesh(new THREE.ExtrudeGeometry(s, { depth: 0.03, bevelEnabled: true, bevelThickness: 0.025, bevelSize: 0.02, bevelSegments: 4 }), velvet(color));
+      g.add(panel);
+    });
+    const wood = velvet(0x9a5a2c);
+    g.add(taperTube([[0, 0.76, 0.06], [0, -0.8, 0.06]], 0.025, 0.025, wood));
+    g.add(taperTube([[-0.53, 0.12, 0.07], [0.53, 0.12, 0.07]], 0.025, 0.025, wood));
+    const tail = [[0, -0.82, 0.03], [0.14, -1.1, 0.03], [-0.06, -1.42, 0.03], [0.1, -1.75, 0.03], [0.02, -2.0, 0.03]];
+    g.add(taperTube(tail, 0.018, 0.018, velvet(0xffffff)));
+    const curve = new THREE.CatmullRomCurve3(tail.map((p) => new THREE.Vector3(...p)));
+    [0.3, 0.6, 0.88].forEach((u, i) => {
+      const at = curve.getPointAt(u);
+      for (const s of [-1, 1]) {
+        const bow = mesh(new THREE.SphereGeometry(0.08, 20, 14), velvet(i % 2 ? 0x6bb8f0 : 0xff86c2));
+        bow.scale.set(1.3, 0.75, 0.5);
+        bow.position.set(at.x + s * 0.08, at.y, at.z);
+        bow.rotation.z = s * 0.4;
+        g.add(bow);
+      }
+    });
+    return g;
+  },
+
+  /* A pinwheel on its stick: four curled blades and a pin in the middle. */
+  pinwheel() {
+    const g = new THREE.Group();
+    g.add(taperTube([[0, 0, 0], [0.02, 0.7, 0], [0, 1.4, 0]], 0.05, 0.045, velvet(0xf5f0e8)));
+    const head = new THREE.Group();
+    head.position.set(0, 1.45, 0.1);
+    for (let i = 0; i < 4; i++) {
+      const s = new THREE.Shape();
+      s.moveTo(0, 0);
+      s.quadraticCurveTo(0.12, 0.5, 0.06, 0.66);
+      s.quadraticCurveTo(0.34, 0.52, 0.5, 0.2);
+      s.closePath();
+      const blade = mesh(new THREE.ExtrudeGeometry(s, { depth: 0.03, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.025, bevelSegments: 4 }), velvet(PIN_TONES[i]));
+      blade.rotation.z = (i * Math.PI) / 2;
+      head.add(blade);
+    }
+    const pin = mesh(new THREE.SphereGeometry(0.08, 20, 14), velvet(0xffffff));
+    pin.position.z = 0.08;
+    head.add(pin);
+    g.add(head);
+    return g;
+  },
+
+  /* A woolly hat: red, a white cuff turned up and a white pompom. */
+  beanie() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0.98], [0.3, 0.95], [0.55, 0.8], [0.68, 0.52], [0.71, 0.22], [0.71, 0.05]]), velvet(0xf2564d, { side: THREE.DoubleSide })));
+    const rib = velvet(0xd9443d);
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2;
+      const line = new THREE.CatmullRomCurve3([[0.715, 0.24], [0.69, 0.52], [0.56, 0.8], [0.31, 0.95]].map(([r, y]) => new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r)));
+      g.add(mesh(new THREE.TubeGeometry(line, 24, 0.02, 6), rib));
+    }
+    const cuff = mesh(new THREE.TorusGeometry(0.72, 0.13, 24, 96), velvet(0xfdfbf6));
+    cuff.rotation.x = Math.PI / 2;
+    cuff.scale.z = 1.35;
+    cuff.position.y = 0.12;
+    g.add(cuff);
+    const pom = mesh(new THREE.SphereGeometry(0.25, 48, 32), velvet(0xfdfbf6));
+    pom.position.y = 1.12;
+    g.add(pom);
+    return g;
+  },
+
+  /* A striped scarf round an unseen round body (radius 1), seen from the
+     front: the body hides the band's back half, as Bloo's will; its two
+     ends hang down at the front. */
+  scarf() {
+    const g = new THREE.Group();
+    const stripes = [velvet(0xf2564d), velvet(0xfdfbf6)];
+    const Y = -0.5, R = Math.sqrt(1 - Y * Y) + 0.06;
+    for (let i = 0; i < 16; i++) {
+      const arc = mesh(new THREE.TorusGeometry(R, 0.17, 24, 24, Math.PI / 8 + 0.01), stripes[i % 2]);
+      arc.rotation.set(Math.PI / 2, 0, (i * Math.PI) / 8);
+      arc.position.y = Y;
+      g.add(arc);
+    }
+    const knot = mesh(new THREE.SphereGeometry(0.2, 32, 24), stripes[0]);
+    knot.scale.set(1.1, 0.9, 0.7);
+    knot.position.set(-0.32, Y - 0.04, R - 0.02);
+    g.add(knot);
+    [[-0.42, -0.08], [-0.2, 0.12]].forEach(([x, lean], i) => {
+      const end = new THREE.Group();
+      for (let k = 0; k < 4; k++) {
+        const piece = mesh(new RoundedBoxGeometry(0.26, 0.15, 0.08, 3, 0.03), stripes[(k + i) % 2]);
+        piece.position.y = -k * 0.15;
+        end.add(piece);
+      }
+      end.position.set(x, Y - 0.2, R + 0.02 - i * 0.04);
+      end.rotation.z = lean;
+      g.add(end);
+    });
+    /* Drawn first, depth only: whatever of the band is behind it never shows. */
+    const body = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 48), new THREE.MeshBasicMaterial({ colorWrite: false }));
+    body.renderOrder = -1;
+    g.add(body);
+    return g;
+  },
+};
+
+Object.assign(ITEMS, { wear: (what) => WEAR[what]() });
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
@@ -3699,7 +3895,7 @@ if (THING) {
   /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
      and their food): a softer, fuller light — their felt is evenly lit,
      with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food"].includes(THING)) {
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food", "wear", "weather"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
