@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { MAKERS } from "@/data/market";
+import { CUP, MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
@@ -36,6 +36,7 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "fill"; word: string; picture: StaticImageData }
+  | { kind: "cups"; picture: StaticImageData }
   | { kind: "change"; scene: RevealScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
@@ -583,6 +584,37 @@ function ChangeDemo({ scene }: { scene: RevealScene }) {
   );
 }
 
+/** Each demo cup's left edge (% of the stage): `--swap` (60cqi) is the
+    outer two's distance. */
+const DEMO_CUPS = [
+  { left: 6.5, className: "demo-cup-front z-[3]" },
+  { left: 36.5, className: "demo-press z-[2]" },
+  { left: 66.5, className: "demo-cup-back z-[1]" },
+];
+
+/** Cups: the food to find over three cups; the outer two swap places,
+    then the finger taps one. Nothing is ever under a cup here — the demo
+    must never show where the food is (direct request). */
+function CupsDemo({ picture }: { picture: StaticImageData }) {
+  return (
+    <div className="@container relative h-full w-full" style={{ "--swap": "60cqi" } as CSSProperties}>
+      <span className="absolute left-[33%] top-[6%] h-[30%] w-[34%]">
+        <Image src={picture} alt="" fill sizes="6rem" className="object-contain" />
+      </span>
+      {DEMO_CUPS.map(({ left, className }, i) => (
+        <span key={i} className={`absolute top-[52%] h-[30%] w-[27%] ${className}`} style={{ left: `${left}%` }}>
+          <Image src={CUP} alt="" fill sizes="5rem" className="object-contain" />
+          {i === 1 && (
+            <span className="absolute left-1/2 top-1/2">
+              <Finger />
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -610,6 +642,8 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <LikeDemo face={demo.face} />;
     case "fill":
       return <FillDemo word={demo.word} picture={demo.picture} />;
+    case "cups":
+      return <CupsDemo picture={demo.picture} />;
     case "harvest":
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "change":

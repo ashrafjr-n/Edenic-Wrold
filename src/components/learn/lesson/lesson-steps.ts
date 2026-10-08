@@ -93,6 +93,8 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "like", face: q.items[0].face };
     case "fill":
       return { kind: "fill", word: q.word, picture: q.picture };
+    case "cups":
+      return { kind: "cups", picture: q.picture };
     case "harvest":
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "change":

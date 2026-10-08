@@ -3228,6 +3228,69 @@ button:disabled,
   }
 }
 
+/* Nova's cups, in the task button's demo: the outer two swap places
+   (`--swap` apart) before the finger taps — one passes in front, lower
+   and bigger, the other behind — and swap back while it is gone. */
+.demo-cup-front {
+  animation: demo-cup-front 3.6s ease-in-out infinite;
+}
+
+.demo-cup-back {
+  animation: demo-cup-back 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-cup-front {
+  0%,
+  6% {
+    translate: 0 0;
+    scale: 1;
+  }
+  17% {
+    translate: calc(var(--swap) / 2) 8%;
+    scale: 1.1;
+  }
+  28%,
+  86% {
+    translate: var(--swap) 0;
+    scale: 1;
+  }
+  92% {
+    translate: calc(var(--swap) / 2) 8%;
+    scale: 1.1;
+  }
+  98%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes demo-cup-back {
+  0%,
+  6% {
+    translate: 0 0;
+    scale: 1;
+  }
+  17% {
+    translate: calc(var(--swap) / -2) -12%;
+    scale: 0.88;
+  }
+  28%,
+  86% {
+    translate: calc(var(--swap) * -1) 0;
+    scale: 1;
+  }
+  92% {
+    translate: calc(var(--swap) / -2) -12%;
+    scale: 0.88;
+  }
+  98%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
 /* ---------------------------------------------------------------
    Nova's market (Fruits & Vegetables).
    --------------------------------------------------------------- */
@@ -3775,6 +3838,8 @@ button:disabled,
   .demo-pop,
   .demo-fill,
   .demo-rub,
+  .demo-cup-front,
+  .demo-cup-back,
   .fill-hint,
   .fill-in,
   .fill-pop {
