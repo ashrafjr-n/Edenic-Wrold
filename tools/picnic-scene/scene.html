@@ -47,7 +47,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("weathersteps") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -3820,11 +3820,16 @@ const WEATHER_DEFS = {
   }),
 };
 
-ITEMS.weather = (what) => {
-  const { ground, sky } = WEATHER_DEFS[what]();
+/* A weather's hill (scaled down together, so the sky has room) and its
+   sky, as one group. */
+function weatherGroup({ ground = [], sky = [] }) {
   const hill = group(...ground);
   hill.scale.setScalar(0.8);
-  const g = group(hill, ...sky);
+  return group(hill, ...sky);
+}
+
+ITEMS.weather = (what) => {
+  const g = weatherGroup(WEATHER_DEFS[what]());
   /* All four framed alike, whatever is in the sky. */
   const frame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 5.6, 0.1));
   frame.visible = false;
@@ -3832,6 +3837,124 @@ ITEMS.weather = (what) => {
   g.add(frame);
   return g;
 };
+
+/* ---------- Making the weather — the Weather lessons' third step ----------
+   Each weather made by hand in three goes, seen as the pictures above are
+   (`?weathersteps=<weather>`, the same camera): its `states` — the hill
+   before the weather, then after each go, whole renders, as the kite and
+   the leaves move — and its sky on layers of their own (`sky`): the cloud
+   a child taps (rain) or shakes (snow), the cloud that blows (wind), the
+   three clouds pushed off the sun. What the weather sends down or across —
+   drops, flakes, leaves, swirls, sparkles — are single things
+   (`?thing=weatherbit&arg=`). */
+
+/* A cloud with no face — one that is pushed off the sun. */
+function plainCloud(color) {
+  const g = new THREE.Group();
+  const clay_ = velvet(color);
+  for (const [x, y, z, r] of [[0, 0.1, 0.1, 0.6], [-0.66, -0.08, 0, 0.42], [0.68, -0.06, 0, 0.44], [-0.3, 0.36, -0.12, 0.4], [0.34, 0.38, -0.14, 0.42]]) {
+    const puff = mesh(new THREE.SphereGeometry(r, 48, 32), clay_);
+    puff.scale.z = 0.75;
+    puff.position.set(x, y, z);
+    g.add(puff);
+  }
+  return g;
+}
+
+/* The rain's puddles, `k` of their full size. */
+const puddles = (k) =>
+  k === 0
+    ? []
+    : [[-0.4, 1.55, 0.62], [0.95, 1.2, 0.48], [-1.75, 0.95, 0.42]].map(([x, z, r]) => {
+        const puddle = mesh(new THREE.CylinderGeometry(r * k, r * k, 0.04, 48), velvet(0x8fcdfc));
+        puddle.scale.z = 0.62;
+        return onHill(puddle, x, z);
+      });
+
+/* The wind's leaves in the air — the first `n`. */
+const windLeaves = (n) =>
+  [[-1.25, 2.95, 0x78cf5c, 0.5], [0.95, 3.5, 0xffa53a, -0.6], [2.2, 2.35, 0x63c84e, 1.2], [-2.2, 3.4, 0xf2683a, -0.2]]
+    .slice(0, n)
+    .map(([x, y, color, turn]) => at(plumpLeaf(0.32, 0.15, velvet(color)), [x, y, 1.0], 1.45, [0.3, 0.2, turn]));
+
+/* The first snow: white patches on the grass. */
+const snowPatches = () =>
+  [[-1.6, 1.0, 0.42], [0.45, 1.65, 0.36], [1.8, 0.4, 0.4], [-0.6, -1.2, 0.34], [1.1, -0.9, 0.3]].map(([x, z, r]) => {
+    const patch = mesh(new THREE.SphereGeometry(r, 32, 16), velvet(0xfbfdff));
+    patch.scale.y = 0.18;
+    return onHill(patch, x, z);
+  });
+
+const SUNNY_FLOWERS = () =>
+  [[-0.35, 1.7, 0xff86c2], [0.25, 1.95, 0xffffff], [0.75, 1.55, 0xffd23a], [-1.8, 0.9, 0xffffff], [2.0, 0.6, 0xff86c2]].map(([x, z, color]) => onHill(at(hillFlower(color), [0, 0, 0], 1.5), x, z));
+
+const WEATHER_STEPS = {
+  /* Tap the cloud: it rains harder, the puddles grow. */
+  rainy: {
+    states: [0, 0.45, 0.75, 1].map((k) => () => ({ ground: [bloosHill(), ...puddles(k)] })),
+    sky: [() => at(weatherCloud(0xb9cde2), [0.05, 4.2, 0.3], 1.3)],
+  },
+  /* Push the three clouds off the sun. */
+  sunny: {
+    states: [() => ({ ground: [bloosHill(), ...SUNNY_FLOWERS()], sky: [at(weatherSun(), [1.25, 4.05, 0.4], 1.3)] })],
+    sky: [
+      () => at(plainCloud(0xe2e8f1), [0.55, 4.4, 1.3], 1.0),
+      () => at(plainCloud(0xd8e0eb), [2.0, 4.55, 1.3], 0.95),
+      () => at(plainCloud(0xe8edf4), [1.3, 3.55, 1.5], 1.05),
+    ],
+  },
+  /* Swipe across the sky: the tree bends, the leaves fly, the kite goes up. */
+  windy: {
+    states: [0, 1, 2, 3].map((k) => () => ({
+      ground: [
+        bloosHill({ lean: [0, -0.1, -0.18, -0.24][k] }),
+        ...(k < 2 ? [onHill(at(WEAR.kite(), [0, 0.04, 0], 0.62, [-1.25, 0, k ? 0.3 : 0.55]), 1.05, 1.45)] : []),
+      ],
+      sky: [
+        ...windLeaves([0, 2, 3, 4][k]),
+        ...(k === 2 ? [at(WEAR.kite(), [2.15, 3.0, 0.6], 0.66, [0, 0, -0.55])] : []),
+        ...(k === 3 ? [at(WEAR.kite(), [1.85, 4.15, 0.4], 0.72, [0, 0, -0.35])] : []),
+      ],
+    })),
+    sky: [() => at(weatherCloud(0xf4f8ff), [-1.3, 4.2, 0.2], 1.15)],
+  },
+  /* Shake the cloud: snow comes, the hill turns white, then a snowman. */
+  snowy: {
+    states: [
+      () => ({ ground: [bloosHill()] }),
+      () => ({ ground: [bloosHill(), ...snowPatches()] }),
+      () => ({ ground: [bloosHill({ snowy: true })] }),
+      () => ({ ground: [bloosHill({ snowy: true }), onHill(at(weatherSnowman(), [0, 0, 0], 1.45), 0.75, 1.15, -0.25)] }),
+    ],
+    sky: [() => at(weatherCloud(0xe6edf6), [-0.05, 4.25, 0.2], 1.25)],
+  },
+};
+
+/* A clay sparkle: a four-pointed star, yellow. */
+function sparkleStar() {
+  const s = new THREE.Shape();
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + Math.PI / 2;
+    const r = i % 2 ? 0.16 : 0.5;
+    const [x, y] = [Math.cos(a) * r, Math.sin(a) * r];
+    if (i) s.lineTo(x, y);
+    else s.moveTo(x, y);
+  }
+  s.closePath();
+  const geo = new THREE.ExtrudeGeometry(s, { depth: 0.06, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.04, bevelSegments: 6 });
+  geo.center();
+  return mesh(geo, velvet(0xffd23a));
+}
+
+const WEATHER_BITS = {
+  drop: () => raindrop(),
+  flake: () => velvetFlake(),
+  leaf: () => plumpLeaf(0.32, 0.15, velvet(0x78cf5c)),
+  leaf2: () => plumpLeaf(0.32, 0.15, velvet(0xffa53a)),
+  swirl: () => windSwirl(1.6),
+  sparkle: () => sparkleStar(),
+};
+ITEMS.weatherbit = (what) => WEATHER_BITS[what]();
 
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
@@ -4118,7 +4241,8 @@ const THING = params.get("thing");
 const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
 const SEASON = params.get("season");
-const def = THING || HARVEST || BASKET || SEASON ? null : SCENES[SCENE];
+const WEATHERSTEPS = params.get("weathersteps");
+const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -4127,7 +4251,7 @@ if (THING) {
   /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
      and their food): a softer, fuller light — their felt is evenly lit,
      with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food", "wear", "weather"].includes(THING)) {
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food", "wear", "weather", "weatherbit"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
@@ -4254,6 +4378,39 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () => ({ mouth: mouthOf(basket) });
+} else if (WEATHERSTEPS) {
+  /* ---------- Making the weather: each state of the hill, then each thing
+     in its sky alone — one camera for all, the weather pictures' own (the
+     framing `?thing=weather` gets from its unseen box), in the friends'
+     felt light. No ground shadow. ---------- */
+  const def = WEATHER_STEPS[WEATHERSTEPS];
+  catcher.visible = false;
+  sun.intensity = 1.9;
+  sky.intensity = 1.15;
+  scene.environmentIntensity = 0.5;
+  renderer.setSize(800, 800);
+  const span = 5.6 * 0.78;
+  Object.assign(camera, { left: -span, right: span, top: span, bottom: -span });
+  const lift = THREE.MathUtils.degToRad(24);
+  camera.position.set(0, 2.8 + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, 2.8, 0);
+  camera.updateProjectionMatrix();
+  window.renderLayers = () => {
+    renderer.setClearColor(0x000000, 0);
+    const out = {};
+    const shoot = (name, thing) => {
+      scene.add(thing);
+      out[name] = frame();
+      let face = false;
+      thing.traverse((o) => (face ||= Boolean(o.userData.shiny)));
+      if (face) out[`${name}.face`] = shinyMask();
+      scene.remove(thing);
+    };
+    def.states.forEach((make, k) => shoot(`frame${k}`, weatherGroup(make())));
+    def.sky.forEach((make, i) => shoot(`sky${i}`, make()));
+    return out;
+  };
+  window.itemsMeta = () => ({});
 } else if (SEASON) {
   /* ---------- Nova's seasons: the island, then one frame per step, each
      with everything before it. The camera is the same for all four, so
