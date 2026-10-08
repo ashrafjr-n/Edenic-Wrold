@@ -27,12 +27,6 @@
  *
  *   node tools/picnic-scene/render.cjs season spring summer fall winter
  *
- * Nova's garden (Fruits' "Grow it") — for each food, the same: `out/
- * grow-<food>/`, the island with the seed's mound (`frame0`), a frame per
- * tap, `meta.json`. Then `crop.py grow`.
- *
- *   node tools/picnic-scene/render.cjs grow apple banana orange grapes carrot broccoli corn potato
- *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -105,7 +99,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "season" || mode === "grow") {
+  } else if (mode === "season") {
     for (const what of specs) {
       const layers = await render(page, `${mode}=${what}`);
       const out = path.join(__dirname, "out", `${mode}-${what}`);
