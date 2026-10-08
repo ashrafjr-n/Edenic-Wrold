@@ -3179,6 +3179,180 @@ button:disabled,
   }
 }
 
+/* …the weather demos: the first go only — the finger taps the cloud
+   (`.demo-squash`) or shakes it (`.demo-shake`, the finger with it) and the
+   rain or snow starts (`.demo-fall`), pushes one cloud off the sun
+   (`.demo-push`) as the hill brightens (`.demo-dull`), or sweeps across the
+   sky (`.demo-swipe`) and a gust blows (`.demo-gust`); the next frame
+   fades in after it (`.demo-frame-next`). */
+.demo-frame-next {
+  opacity: 0;
+  animation: demo-frame-next 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-frame-next {
+  0%,
+  44% {
+    opacity: 0;
+  }
+  58%,
+  84% {
+    opacity: 1;
+  }
+  96%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.demo-squash {
+  animation: demo-squash 3.6s ease-out infinite;
+}
+
+@keyframes demo-squash {
+  0%,
+  34%,
+  48%,
+  100% {
+    scale: 1 1;
+  }
+  38% {
+    scale: 1.06 0.9;
+  }
+  43% {
+    scale: 0.97 1.05;
+  }
+}
+
+.demo-shake {
+  animation: demo-shake 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-shake {
+  0%,
+  34%,
+  70%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: -7% 0;
+  }
+  46% {
+    translate: 7% 0;
+  }
+  52% {
+    translate: -7% 0;
+  }
+  58% {
+    translate: 7% 0;
+  }
+  64% {
+    translate: 0 0;
+  }
+}
+
+.demo-push {
+  animation: demo-push 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-push {
+  0%,
+  36% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  66%,
+  94% {
+    translate: -55% -18%;
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+.demo-dull {
+  animation: demo-dull 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-dull {
+  0%,
+  44%,
+  96%,
+  100% {
+    filter: brightness(0.86) saturate(0.55);
+  }
+  62%,
+  84% {
+    filter: brightness(0.92) saturate(0.72);
+  }
+}
+
+.demo-swipe {
+  animation: demo-swipe 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-swipe {
+  0%,
+  34% {
+    translate: 0 0;
+  }
+  64%,
+  100% {
+    translate: 62% 0;
+  }
+}
+
+.demo-fall {
+  opacity: 0;
+  animation: demo-fall 3.6s linear infinite;
+}
+
+@keyframes demo-fall {
+  0%,
+  42% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  48%,
+  76% {
+    opacity: 1;
+  }
+  84%,
+  100% {
+    translate: 0 var(--fall);
+    opacity: 0;
+  }
+}
+
+.demo-gust {
+  opacity: 0;
+  animation: demo-gust 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-gust {
+  0%,
+  40% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  46%,
+  76% {
+    opacity: 1;
+  }
+  86%,
+  100% {
+    translate: 70cqi 0;
+    opacity: 0;
+  }
+}
+
 /* …the dress demo: the first thing flies onto Bloo — turned and grown to
    where it goes (`--turn`, `--grow`). Something worn behind him
    (`--behind`, an umbrella or a kite) drops behind him as it lands. */
@@ -4092,6 +4266,14 @@ button:disabled,
   .demo-munch,
   .demo-heart,
   .demo-wear,
+  .demo-frame-next,
+  .demo-squash,
+  .demo-shake,
+  .demo-push,
+  .demo-dull,
+  .demo-swipe,
+  .demo-fall,
+  .demo-gust,
   .wx-frame-in {
     animation: none;
   }
