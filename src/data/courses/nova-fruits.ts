@@ -2,11 +2,11 @@ import type { StaticImageData } from "next/image";
 import { GARDENS } from "@/data/garden";
 import { GROW_SCENES } from "@/data/nova-grow";
 import type { Face, LessonDef } from "@/types/course";
-import apple from "../../../public/assets/learn/pinki/colors/paint/apple.png";
-import banana from "../../../public/assets/learn/pinki/colors/paint/banana.png";
-import orange from "../../../public/assets/learn/pinki/colors/paint/orange.png";
-import grapes from "../../../public/assets/learn/pinki/colors/paint/grapes.png";
-import carrot from "../../../public/assets/learn/pinki/colors/paint/carrot.png";
+import apple from "../../../public/assets/learn/nova/fruits/things/apple.png";
+import banana from "../../../public/assets/learn/nova/fruits/things/banana.png";
+import orange from "../../../public/assets/learn/nova/fruits/things/orange.png";
+import grapes from "../../../public/assets/learn/nova/fruits/things/grapes.png";
+import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import corn from "../../../public/assets/learn/nova/fruits/things/corn.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
@@ -15,8 +15,9 @@ import glassMix from "../../../public/assets/learn/nova/fruits/make/glass-mix.pn
 import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like apples.", "3
-    apples") and its picture (the Colors course's clay fruit is reused — the
-    same renders). */
+    apples") and its picture — in the friends' look: velvet clay with the
+    clay buttons' grain and the friends' face (`render.cjs thing
+    apple=fruit:apple`). */
 interface Food {
   word: string;
   things: string;
