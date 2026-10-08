@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { characters } from "@/data/characters";
@@ -17,6 +18,9 @@ import { format } from "@/lib/format-dict";
 /** Who says hello on each hub. Only Pinki has a talking pose yet; Nova and
     Bloo wave from their portraits until theirs arrive. */
 const hello = { pinki: pinkiSpeak, nova, bloo };
+
+/** The friend's base: narrower than the friend, so they rise well above it. */
+const STAGE = { "--stage-inset": "auto 9% 0 9%" } as CSSProperties;
 
 export function generateStaticParams() {
   return characters.map((character) => ({ character: character.id }));
@@ -79,14 +83,18 @@ export default async function CharacterLearnPage({
           clay card in its own colour (`CourseCard`). */}
       <div className="flex flex-col px-6 sm:hidden">
         <div className="mt-2 flex items-end gap-1">
-          <Image
-            src={hello[character.id]}
-            alt=""
-            sizes="104px"
-            preload
-            className="anim-pop-in w-26 shrink-0"
-            style={{ animationDelay: "0.1s" }}
-          />
+          {/* The friend stands on a round clay base in their colour — the
+              friend picker's look. */}
+          <span className="art-stage art-stage--round w-28 shrink-0" style={STAGE}>
+            <Image
+              src={hello[character.id]}
+              alt=""
+              sizes="112px"
+              preload
+              className="anim-pop-in w-full"
+              style={{ animationDelay: "0.1s" }}
+            />
+          </span>
           <div
             dir={dirFor(dict.locale)}
             className="hub-bubble card card-clay-white speech-clay anim-pop-in relative mb-5 min-w-0 flex-1 px-5 py-4"
@@ -123,14 +131,19 @@ export default async function CharacterLearnPage({
           courses stacked on the right, each taking half the height. */}
       <div className="mx-auto hidden w-full max-w-7xl flex-1 flex-col px-8 pt-4 sm:flex lg:grid lg:h-[calc(100svh-13rem)] lg:min-h-[32rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-10 lg:pt-6 xl:gap-14 xl:px-12">
         <section className="flex items-end gap-5 lg:flex-col-reverse lg:items-center lg:justify-center lg:gap-3">
-          <Image
-            src={hello[character.id]}
-            alt=""
-            sizes="(min-width: 1024px) 18rem, 11rem"
-            preload
-            className="anim-pop-in w-44 shrink-0 lg:w-[min(18rem,32svh)] lg:[@media(max-height:820px)]:w-[25svh]"
-            style={{ animationDelay: "0.1s" }}
-          />
+          <span
+            className="art-stage art-stage--round w-44 shrink-0 lg:w-[min(18rem,32svh)] lg:[@media(max-height:820px)]:w-[25svh]"
+            style={STAGE}
+          >
+            <Image
+              src={hello[character.id]}
+              alt=""
+              sizes="(min-width: 1024px) 18rem, 11rem"
+              preload
+              className="anim-pop-in w-full"
+              style={{ animationDelay: "0.1s" }}
+            />
+          </span>
           <div
             dir={dir}
             className="hub-bubble hub-bubble--wide card card-clay-white speech-clay anim-pop-in relative mb-8 min-w-0 flex-1 px-8 py-6 lg:mb-0 lg:w-full lg:flex-none lg:text-center"
