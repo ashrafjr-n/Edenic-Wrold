@@ -3179,6 +3179,95 @@ button:disabled,
   }
 }
 
+/* …the dress demo: the first thing flies onto Bloo — turned and grown to
+   where it goes (`--turn`, `--grow`). Something worn behind him
+   (`--behind`, an umbrella or a kite) drops behind him as it lands. */
+.demo-wear {
+  animation: demo-wear 3.6s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
+}
+
+.demo-wear--behind {
+  animation-name: demo-wear-behind;
+}
+
+@keyframes demo-wear {
+  0%,
+  38% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 1;
+  }
+  56%,
+  84% {
+    translate: var(--fly-x) var(--fly-y);
+    rotate: var(--turn);
+    scale: var(--grow);
+    opacity: 1;
+  }
+  94% {
+    translate: var(--fly-x) var(--fly-y);
+    rotate: var(--turn);
+    scale: var(--grow);
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+@keyframes demo-wear-behind {
+  0%,
+  38% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 1;
+    z-index: 3;
+  }
+  55% {
+    z-index: 3;
+  }
+  56%,
+  84% {
+    translate: var(--fly-x) var(--fly-y);
+    rotate: var(--turn);
+    scale: var(--grow);
+    opacity: 1;
+    z-index: 0;
+  }
+  94% {
+    translate: var(--fly-x) var(--fly-y);
+    rotate: var(--turn);
+    scale: var(--grow);
+    opacity: 0;
+    z-index: 0;
+  }
+  95% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 0;
+    z-index: 3;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    opacity: 1;
+    z-index: 3;
+  }
+}
+
 /* …the feed demo: the first bite flies into the animal's mouth, shrinking
    as it goes in, and is gone; the animal munches and a heart floats up.
    The heart's `-50%` centring is its resting `translate` too, so under
@@ -3907,7 +3996,8 @@ button:disabled,
   .demo-cup-back,
   .demo-bite,
   .demo-munch,
-  .demo-heart {
+  .demo-heart,
+  .demo-wear {
     animation: none;
   }
 
