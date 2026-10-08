@@ -3179,6 +3179,88 @@ button:disabled,
   }
 }
 
+/* …the feed demo: the first bite flies into the animal's mouth, shrinking
+   as it goes in, and is gone; the animal munches and a heart floats up.
+   The heart's `-50%` centring is its resting `translate` too, so under
+   reduced motion it sits on the mouth. */
+.demo-bite {
+  animation: demo-bite 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes demo-bite {
+  0%,
+  38% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  54% {
+    translate: var(--fly-x) var(--fly-y);
+    scale: 0.35;
+    opacity: 1;
+  }
+  58%,
+  94% {
+    translate: var(--fly-x) var(--fly-y);
+    scale: 0.2;
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.demo-munch {
+  transform-origin: 50% 100%;
+  animation: demo-munch 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-munch {
+  0%,
+  55%,
+  70%,
+  100% {
+    scale: 1 1;
+  }
+  59% {
+    scale: 1.06 0.92;
+  }
+  64% {
+    scale: 0.97 1.04;
+  }
+}
+
+.demo-heart {
+  translate: -50% -50%;
+  animation: demo-heart 3.6s ease-out infinite;
+}
+
+@keyframes demo-heart {
+  0%,
+  56% {
+    translate: -50% -50%;
+    scale: 0.4;
+    opacity: 0;
+  }
+  62% {
+    scale: 1.1;
+    opacity: 1;
+  }
+  84%,
+  100% {
+    translate: -50% -230%;
+    scale: 0.9;
+    opacity: 0;
+  }
+}
+
 /* …the fill demo: the first letter fills from the left as the finger
    rubs across it (`.demo-rub` carries the finger, zig-zagging over the
    letter's box — its own width, so the % are the letter's). */
@@ -3865,6 +3947,9 @@ button:disabled,
   .demo-rub,
   .demo-cup-front,
   .demo-cup-back,
+  .demo-bite,
+  .demo-munch,
+  .demo-heart,
   .fill-hint,
   .fill-in,
   .fill-pop {
