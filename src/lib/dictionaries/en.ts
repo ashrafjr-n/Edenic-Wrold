@@ -166,6 +166,7 @@ export const en = {
     balloonAria: "{color} balloon",
     seasonSpotAria: "Tap to bring more {word}",
     growSpotAria: "Tap to help the {word} grow",
+    cupAria: "Cup {n}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -187,6 +188,7 @@ export const en = {
     thisSeason: "This is {season}!",
     changeSeason: "Make it {season}!",
     growIt: "Grow the {thing}!",
+    findUnderCup: "Watch the cups and find the {thing}!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
@@ -218,6 +220,7 @@ export const en = {
     harvest: "Pick",
     change: "Make",
     grow: "Grow",
+    cups: "Find",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

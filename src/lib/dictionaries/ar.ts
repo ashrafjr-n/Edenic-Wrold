@@ -157,6 +157,7 @@ export const ar: Dictionary = {
     balloonAria: "بالون {color}",
     seasonSpotAria: "المس ليأتي المزيد من {word}",
     growSpotAria: "المس لتساعد {word} على النمو",
+    cupAria: "الكوب {n}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -177,6 +178,7 @@ export const ar: Dictionary = {
     thisSeason: "هذا فصل {season}!",
     changeSeason: "اصنع فصل {season}!",
     growIt: "ازرع {thing}!",
+    findUnderCup: "راقب الأكواب واعثر على {thing}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
     sortAnimals: "ضع كل حيوان في بيته!",
@@ -207,6 +209,7 @@ export const ar: Dictionary = {
     harvest: "اقطف",
     change: "اصنع",
     grow: "ازرع",
+    cups: "ابحث",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",
