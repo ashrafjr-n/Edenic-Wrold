@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-10-07
+> Last updated: 2026-10-08
 
 ---
 
@@ -10,11 +10,12 @@
 Learn is for children aged **5–9**. Numbers 1–9 and the alphabet are gone, because
 children this age already know them.
 
-Three friends, three courses each (decided 2026-10-02):
+Three friends, two courses each (decided 2026-10-02; Months of the Year and
+My Body removed 2026-10-08, direct request):
 
 - **Pinki**: Shapes · Colors (My Family cancelled 2026-10-02 — rethink from the videos)
-- **Nova**: Fruits & Vegetables · The Seasons · Months of the Year
-- **Bloo**: Animals · The Weather · My Body
+- **Nova**: Fruits & Vegetables · The Seasons
+- **Bloo**: Animals · The Weather
 
 **The focus, in order:** (1) every lesson opens with a **video**; (2) **English
 spelling** — a child of 5–9 learns to write every word they meet, in a way that
@@ -132,15 +133,14 @@ gets stuck.
 of each lesson, Pinki shows how once. A child who can't read yet must still
 understand every question.
 
-## 5. The courses (release 1: 9 courses)
+## 5. The courses (release 1: 6 courses)
 
 Decided 2026-10-02: **American English** everywhere a word is taught (color,
 fall, mom — the most widespread spelling), **1–2 new words per lesson**, and
 the courses are built ONE AT A TIME: build → the user checks → fix → next.
-Order: Colors → Fruits & Vegetables → The Seasons → Months →
-Animals → The Weather → My Body. Words come from the Cambridge Pre A1
-Starters list where the topic has one (months and seasons are A2 words — the
-hardest, so they come last in Nova's set).
+Order: Colors → Fruits & Vegetables → The Seasons → Animals → The Weather.
+Words come from the Cambridge Pre A1 Starters list where the topic has one
+(seasons are A2 words — the hardest, so they come last in Nova's set).
 
 ### Pinki · Shapes — one shape per lesson (BUILT)
 | # | Lesson | Steps |
@@ -189,16 +189,19 @@ sort boxes, done screen, the course page).
   one keeps its paint, its word in its color and a tick. Back from a
   finished lesson, the next pot fills with paint as its lock springs off.
 
-### The other seven (lesson titles provisional until each is built)
+### The other four (lesson titles provisional until each is built)
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step replaced 2026-10-07: word → spell → **grow it** — the magic button brings the food up from its seed, tap by tap; review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
-| Nova | Months of the Year | January–March · April–June · July–September · October–December · Months review (built 2026-10-02; the train of 2026-10-04 was judged "all bad" and REPLACED 2026-10-07 by Nova's year wheel: 3 words → spell → add the months to the wheel; review: the names in order, months marked on a plain wheel into the season islands, after December, spell June) |
 | Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → fill the word with the animal; review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
-| Bloo | My Body | Eyes & Ears · Nose & Mouth · Hands & Arms · Legs & Feet · Body review |
+
+**Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
+Year (its year wheel, its art and its strings — in git history, `months wheel
+V1.0–V2.5`) and Bloo's My Body (never written: its "coming soon" lessons,
+strings and the hand/foot art).
 
 ## 6. How every course is built
 
@@ -222,12 +225,10 @@ about 3 minutes.
 | Rung | What the child does | Used for |
 | --- | --- | --- |
 | 1 | Spell with only the word's letters, the word shown (today's Spell) | every first meeting |
-| 2 | A few letters already placed, fill the gaps | long words: `February`, `September`, `grandfather` |
+| 2 | A few letters already placed, fill the gaps | long words |
 | 3 | The word's letters + 2 decoy letters | later reviews |
 | 4 | Picture only, word hidden — spell from memory | review lessons |
 | 5 | Type it on the keyboard (desktop already has this) | ages 8–9 / desktop |
-
-Months start with a **capital letter** — the first tile is the capital.
 
 ### 6.3 Activity library (reuse first, few new pieces)
 
@@ -242,9 +243,10 @@ Months start with a **capital letter** — the first tile is the capital.
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | **Fill the word**: rub each empty letter and it fills with small pictures of the thing | built (`fill`) | Animals (Fruits dropped it 2026-10-07: "not suitable") |
-| **The magic button**: the picture starts bare; tap the glowing spot and the next part spreads over it from there — Make it {season} (grass, leaves, blossoms…), Grow it (seed → sprout → young plant → in flower → the food), Add the months (each tap fills the next slice of Nova's year wheel, its name appearing) | built (`change`, `magic` season / grow / year) | Seasons, Fruits, Months |
+| **The magic button**: the picture starts bare; tap the glowing spot and the next part spreads over it from there — Make it {season} (grass, leaves, blossoms…) | built (`change`) | Seasons (Fruits' Grow it and Months' wheel went with them, 2026-10-08) |
+| **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
-| **Touch it**: tap a part on one big picture | later (Find on one picture) | My Body, My Family |
+| **Touch it**: tap a part on one big picture | later (Find on one picture) | My Family |
 
 ### 6.4 The other courses, in short (detailed when each is built)
 
@@ -252,22 +254,14 @@ Months start with a **capital letter** — the first tile is the capital.
   me. `mom`/`dad` are the easiest first spells. Touch it on a family photo;
   review: put the family in order, oldest → youngest.
 - **Fruits & Vegetables** (BUILT as "Nova's market", 2026-10-02, reworked
-  2026-10-03, its Fill the word replaced by **Grow it** 2026-10-07 — see §5
-  and `learn-courses.md`; what follows was the first idea): Count into a basket ("Put 3 bananas in the
+  2026-10-03, its Fill the word replaced by Grow it 2026-10-07, and Grow it
+  by **Nova's cups** 2026-10-08 — see §5 and `learn-courses.md`; what
+  follows was the first idea): Count into a basket ("Put 3 bananas in the
   basket"), find them on a market stall, sort fruit / vegetable; review: a
   shopping list to read and fill.
 - **The Seasons** (BUILT 2026-10-02, reworked 2026-10-04 — see §5 and
   `learn-courses.md`): the same tree with a face on a clay island, four
   times; each lesson makes its season come on it, step by step.
-- **Months** (BUILT 2026-10-02; the year train of 2026-10-04 judged "all
-  bad" and replaced 2026-10-07 by **Nova's year wheel** — see §5 and
-  `learn-courses.md`): three a lesson; a round clay wheel like a clock,
-  December at the top, each month a numbered slice that takes its season's
-  color and thing as it comes; the wheel keeps the earlier lessons' months,
-  so the year closes round. Why a wheel: a month's only "picture" is its
-  place in the year, and a circle shows that December runs into January,
-  which a line (the train) could not. "When is your birthday?" (visual
-  only) is still an idea.
 - **Animals** (BUILT 2026-10-07, "simple, like the rest"): cat, dog, cow,
   fish — chibi clay animals with the friends' face; each lesson is reel →
   word → spell → fill the word (the first idea, a Find in a farm/sea
@@ -277,8 +271,6 @@ Months start with a **capital letter** — the first tile is the capital.
   animal's word), then spell dog and fish from a picture.
 - **The Weather**: sun → sunny (the `-y` ending); Dress up Bloo; review:
   read "It is windy." and pick its picture.
-- **My Body**: Touch it on Bloo; build a silly monster ("3 eyes, 2 noses");
-  review: label the body.
 
 Sources: Cambridge Pre A1 Starters wordlist (cambridgeenglish.org);
 retrieval/spaced practice in child word learning (PMC8084525, PMC11087082);
@@ -437,7 +429,7 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       train of the plan did not fit a phone (a wagon ~26px) — four wagons,
       one per lesson, test the same order. Played through headless
       (360x640 → 1440x900, en/ar/ku, dark).
-- [ ] The user checks Months → fixes.
+- [x] The user checks Months → closed: Months removed 2026-10-08.
 - [x] The user's verdict on every course's extras (2026-10-07): every
       lesson opens with video → sound → spell; Shapes, Colors and Seasons'
       extras are right; Fruits' Fill the word "not suitable"; Months "all
@@ -454,14 +446,26 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       spell → add the months (the magic button on the wheel); review:
       order, sort (months marked on a plain wheel), after December, spell
       June. Played through headless (360x640 → 1440x900, en/ar/ku, dark).
-- [ ] The user checks Fruits' Grow it and the Months wheel → fixes.
+- [x] The user checked Fruits' Grow it and the Months wheel (2026-10-08):
+      Months and Bloo's My Body removed entirely; Grow it replaced (below).
 - [x] **Animals** built (2026-10-07, "بسيط نفس الباقي"): Bloo's blue; four
       chibi clay animals with the friends' face (two coats each) and their
       four homes rendered; lessons reel → word → spell → fill; review: sort
       eight into the homes, spell dog and fish from the picture. Played
       through headless (360x640 → 1440x900, en/ar/ku, dark).
 - [ ] The user checks Animals → fixes.
-- [ ] Then, one at a time with a check after each: The Weather → My Body.
+- [x] **Fruits: Nova's cups + the friends' look** (2026-10-08, direct
+      request): the third step is a cups game — the food under one of
+      three cups (a random one every round), the cups swap at a medium
+      speed, tap the right one; a miss shows where it went and starts the
+      round again, a little slower; the task button's demo never shows
+      where the food is. Grow it, its 40 frames and its render mode
+      deleted. The eight foods re-rendered the friends' way (chubby velvet
+      clay, the buttons' grain, the friends' face — their own files, the
+      Colors course keeps its paint pictures) and the review's two gardens
+      re-rendered with them. Played through headless (360x640 → 1440x900).
+- [ ] The user checks Fruits' cups and the new fruit → fixes.
+- [ ] Then: The Weather, with a check after it.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
