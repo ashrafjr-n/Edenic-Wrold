@@ -103,11 +103,6 @@ export const ar: Dictionary = {
       description: "الربيع والصيف والخريف والشتاء",
       items: ["الربيع", "الصيف", "الخريف", "الشتاء", "مراجعة الفصول"],
     },
-    months: {
-      name: "أشهر السنة",
-      description: "اثنا عشر شهرًا في سنة واحدة",
-      items: ["من يناير إلى مارس", "من أبريل إلى يونيو", "من يوليو إلى سبتمبر", "من أكتوبر إلى ديسمبر", "مراجعة الأشهر"],
-    },
     animals: {
       name: "الحيوانات",
       description: "القطة والكلب والبقرة والسمكة، وأين يعيش كلٌّ منها",
@@ -167,7 +162,6 @@ export const ar: Dictionary = {
     balloonAria: "بالون {color}",
     seasonSpotAria: "المس ليأتي المزيد من {word}",
     growSpotAria: "المس لتساعد {word} على النمو",
-    yearSpotAria: "المس ليأتي {word}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -188,14 +182,9 @@ export const ar: Dictionary = {
     thisSeason: "هذا فصل {season}!",
     changeSeason: "اصنع فصل {season}!",
     growIt: "ازرع {thing}!",
-    addMonths: "أضف الأشهر إلى سنة نوفا!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
     sortAnimals: "ضع كل حيوان في بيته!",
-    thisMonth: "هذا شهر {month}!",
-    orderMonths: "رتّب الأشهر بالترتيب!",
-    afterMonth: "ما الشهر الذي يأتي بعد {month}؟",
-    sortMonths: "ضع كل شهر في صندوق فصله!",
     meetThing: "تعرّف على {thing}!",
     makeSoup: "اصنع حساء خضار!",
     makeJuice: "اصنع عصير {thing}!",
@@ -223,7 +212,6 @@ export const ar: Dictionary = {
     harvest: "اقطف",
     change: "اصنع",
     grow: "ازرع",
-    year: "أضف",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

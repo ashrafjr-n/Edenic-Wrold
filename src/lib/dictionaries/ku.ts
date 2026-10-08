@@ -107,11 +107,6 @@ export const ku: Dictionary = {
       description: "بهار، هاڤین، پاییز و زڤستان",
       items: ["بهار", "هاڤین", "پاییز", "زڤستان", "دووبارەکرنا وەرزان"],
     },
-    months: {
-      name: "هەیڤێن سالێ",
-      description: "دوازدە هەیڤ، ئێک سالا مەزن",
-      items: ["ژ کانوونا دووێ هەتا ئادارێ", "ژ نیسانێ هەتا حوزەیرانێ", "ژ تیرمەهێ هەتا ئەیلوولێ", "ژ چریا ئێکێ هەتا کانوونا ئێکێ", "دووبارەکرنا هەیڤان"],
-    },
     animals: {
       name: "گیانەوەر",
       description: "پشیک، سەگ، چێل و ماسی، و ل کیرێ دژین",
@@ -171,7 +166,6 @@ export const ku: Dictionary = {
     balloonAria: "بالۆنا {color}",
     seasonSpotAria: "دەست بدە دا {word} پتر بێت",
     growSpotAria: "دەست بدە دا {word} شین ببیت",
-    yearSpotAria: "دەست بدە دا {word} بێت",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -192,14 +186,9 @@ export const ku: Dictionary = {
     thisSeason: "ئەڤە وەرزێ {season}ە!",
     changeSeason: "وەرزێ {season} چێ بکە!",
     growIt: "{thing} شین بکە!",
-    addMonths: "هەیڤان زێدەی سالا Nova بکە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
-    thisMonth: "ئەڤە هەیڤا {month}ە!",
-    orderMonths: "هەیڤان ب ڕێزێ ڕیز بکە!",
-    afterMonth: "پشتی {month} کیژ هەیڤ دهێت؟",
-    sortMonths: "هەر هەیڤەکێ بکە د سندوقا وەرزێ وێ دا!",
     meetThing: "{thing} بناسە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     makeJuice: "ئاڤا {thing} چێ بکە!",
@@ -227,7 +216,6 @@ export const ku: Dictionary = {
     harvest: "بچنە",
     change: "چێ بکە",
     grow: "شین بکە",
-    year: "زێدە بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

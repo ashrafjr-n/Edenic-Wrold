@@ -110,11 +110,6 @@ export const en = {
       description: "Spring, summer, fall and winter",
       items: ["Spring", "Summer", "Fall", "Winter", "Seasons review"],
     },
-    months: {
-      name: "Months of the Year",
-      description: "Twelve months, one big year",
-      items: ["January to March", "April to June", "July to September", "October to December", "Months review"],
-    },
     animals: {
       name: "Animals",
       description: "Cat, dog, cow and fish — and where they live",
@@ -176,7 +171,6 @@ export const en = {
     balloonAria: "{color} balloon",
     seasonSpotAria: "Tap to bring more {word}",
     growSpotAria: "Tap to help the {word} grow",
-    yearSpotAria: "Tap to bring {word}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -198,14 +192,9 @@ export const en = {
     thisSeason: "This is {season}!",
     changeSeason: "Make it {season}!",
     growIt: "Grow the {thing}!",
-    addMonths: "Add the months to Nova's year!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
-    thisMonth: "This is {month}!",
-    orderMonths: "Put the months in order!",
-    afterMonth: "What comes after {month}?",
-    sortMonths: "Put each month in its season's box!",
     meetThing: "Meet the {thing}!",
     makeSoup: "Make a vegetable soup!",
     makeJuice: "Make juice with the {thing}!",
@@ -234,7 +223,6 @@ export const en = {
     harvest: "Pick",
     change: "Make",
     grow: "Grow",
-    year: "Add",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
