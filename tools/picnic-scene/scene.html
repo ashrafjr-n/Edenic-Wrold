@@ -2476,9 +2476,12 @@ const SEASON_DEFS = {
 };
 
 /* ---------- Bloo's animals ----------
-   Chibi, in the friends' style: a big round head with their face, a small
-   body, soft matte clay. Each comes in two coats — the lesson's, and a
-   second one for the review's Sort (a cat is a cat in any color). */
+   Chibi, in the friends' look (remade 2026-10-08, like Nova's fruits): a
+   big round head with the friends' own face (`friendFace` — the dog's and
+   the cow's smile sits on their muzzle), a small body, velvet clay; the
+   grain is laid on after cropping (`crop.py things … --grain`). Each comes
+   in two coats — the lesson's, and a second one for the review's Sort (a
+   cat is a cat in any color). */
 
 const HEAD_Y = 1.22, HEAD_R = 0.56;
 
@@ -2523,13 +2526,13 @@ const CAT_COATS = {
    its side, three stripes on its forehead. */
 function cat(coat = "orange") {
   const { fur: furColor, light: lightColor, stripe } = CAT_COATS[coat];
-  const fur = soft(furColor), light = soft(lightColor);
+  const fur = velvet(furColor), light = velvet(lightColor);
   const g = sittingBody(fur, light);
   const head = mesh(new THREE.SphereGeometry(HEAD_R, 64, 48), fur);
   head.scale.set(1.08, 0.94, 1);
   head.position.y = HEAD_Y;
   g.add(head);
-  const pink = soft(0xffa3bf);
+  const pink = velvet(0xffa3bf);
   for (const s of [-1, 1]) {
     const ear = mesh(new THREE.ConeGeometry(0.24, 0.44, 32), fur);
     ear.scale.z = 0.7;
@@ -2542,29 +2545,27 @@ function cat(coat = "orange") {
     inner.rotation.z = -s * 0.36;
     g.add(inner);
     for (const [dy, turn] of [[0.02, 0.12], [-0.06, -0.08]]) {
-      const whisker = mesh(new THREE.CapsuleGeometry(0.012, 0.3, 4, 8), soft(0x8a7a80));
+      const whisker = mesh(new THREE.CapsuleGeometry(0.014, 0.3, 4, 8), velvet(0x8a7a80));
       whisker.rotation.z = Math.PI / 2 + s * turn;
-      whisker.position.set(s * 0.7, HEAD_Y - 0.08 + dy, 0.24);
+      whisker.position.set(s * 0.7, HEAD_Y - 0.1 + dy, 0.24);
       g.add(whisker);
     }
   }
   for (const x of [-0.12, 0, 0.12]) {
     const { at: [px, py, pz], tilt: [rx, ry] } = onHead(x, 0.38, -0.02);
-    const mark = mesh(new THREE.SphereGeometry(0.06, 16, 12), soft(stripe));
+    const mark = mesh(new THREE.SphereGeometry(0.06, 16, 12), velvet(stripe));
     mark.scale.set(0.55, 1.5, 0.35);
     mark.position.set(px, py, pz);
     mark.rotation.set(rx, ry, 0);
     g.add(mark);
   }
-  const face = kawaii(0.9, HEAD_R);
-  face.position.set(0, HEAD_Y - 0.04, HEAD_R);
-  g.add(face);
-  const nose = mesh(new THREE.SphereGeometry(0.045, 16, 12), pink);
-  nose.scale.set(1.3, 0.8, 0.8);
-  nose.position.set(0, HEAD_Y - 0.005, HEAD_R + 0.005);
+  /* A little pink nose, just over the smile. */
+  const nose = mesh(new THREE.SphereGeometry(0.04, 24, 16), pink);
+  nose.scale.set(1.35, 0.8, 0.8);
+  nose.position.set(0, HEAD_Y - 0.055, 0.545);
   g.add(nose);
   g.add(taperTube([[0.28, 0.12, -0.38], [0.62, 0.16, -0.28], [0.8, 0.45, -0.05], [0.72, 0.82, 0.08]], 0.1, 0.08, fur));
-  return g;
+  return friendFace(g, [head], 0, HEAD_Y + 0.02, 0.92, { eyes: 0.23, cheeks: 0.4 });
 }
 
 const DOG_COATS = {
@@ -2572,54 +2573,47 @@ const DOG_COATS = {
   spotty: { fur: 0xfaf6ef, light: 0xfffdf8, ear: 0x7a5038, patch: 0x7a5038 },
 };
 
-/* A dog: floppy ears, a pale muzzle with a big black nose, a smile and
-   its tongue out, a short tail up. The spotty one has a patch round an
-   eye. */
+/* A dog: floppy ears, a pale muzzle with a big black nose and the
+   friends' open smile under it, a short tail up. The spotty one has a
+   patch round an eye. */
 function dog(coat = "brown") {
   const { fur: furColor, light: lightColor, ear: earColor, patch } = DOG_COATS[coat];
-  const fur = soft(furColor), light = soft(lightColor), ink = soft(0x33242e, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15 });
+  const fur = velvet(furColor), light = velvet(lightColor);
   const g = sittingBody(fur, light);
   const head = mesh(new THREE.SphereGeometry(HEAD_R, 64, 48), fur);
   head.scale.set(1.05, 0.95, 1);
   head.position.y = HEAD_Y;
   g.add(head);
   for (const s of [-1, 1]) {
-    const ear = mesh(new THREE.SphereGeometry(0.22, 32, 24), soft(earColor));
+    const ear = mesh(new THREE.SphereGeometry(0.22, 32, 24), velvet(earColor));
     ear.scale.set(0.55, 1.25, 0.45);
     ear.position.set(s * 0.52, HEAD_Y + 0.08, 0.06);
     ear.rotation.z = s * 0.35;
     g.add(ear);
   }
+  /* The face is painted on the head — and on the patch, which stands out
+     over it round the eye. */
+  const skin = [head];
   if (patch) {
-    const { at, tilt: [rx, ry] } = onHead(0.22, 0.13, -0.02);
-    const spot = mesh(new THREE.SphereGeometry(0.17, 32, 24), soft(patch));
+    const { at, tilt: [rx, ry] } = onHead(0.21, 0.16, -0.02);
+    const spot = mesh(new THREE.SphereGeometry(0.17, 32, 24), velvet(patch));
     spot.scale.set(1, 1.1, 0.35);
     spot.position.set(...at);
     spot.rotation.set(rx, ry, 0);
     g.add(spot);
+    skin.push(spot);
   }
-  const face = kawaii(0.9, HEAD_R, false);
-  face.position.set(0, HEAD_Y + 0.02, HEAD_R);
-  g.add(face);
   const muzzle = mesh(new THREE.SphereGeometry(0.24, 48, 32), light);
   muzzle.scale.set(1.3, 0.85, 0.7);
   muzzle.position.set(0, HEAD_Y - 0.17, 0.45);
   g.add(muzzle);
-  const nose = mesh(new THREE.SphereGeometry(0.08, 32, 24), ink);
+  const nose = mesh(new THREE.SphereGeometry(0.08, 32, 24), velvet(0x33242e, { roughness: 0.4, clearcoat: 0.7, clearcoatRoughness: 0.2, sheen: 0.2 }));
   nose.scale.set(1.4, 1, 0.9);
   nose.position.set(0, HEAD_Y - 0.08, 0.6);
   g.add(nose);
-  for (const s of [-1, 1]) {
-    const mouth = mesh(new THREE.TorusGeometry(0.065, 0.018, 12, 32, Math.PI), ink);
-    mouth.rotation.z = Math.PI;
-    mouth.position.set(s * 0.065, HEAD_Y - 0.15, 0.615);
-    g.add(mouth);
-  }
-  const tongue = mesh(new THREE.SphereGeometry(0.06, 24, 16), soft(0xff7f9e));
-  tongue.scale.set(1, 1.15, 0.5);
-  tongue.position.set(0, HEAD_Y - 0.24, 0.6);
-  g.add(tongue);
   g.add(taperTube([[0.3, 0.22, -0.36], [0.52, 0.42, -0.4], [0.6, 0.72, -0.3]], 0.09, 0.06, fur));
+  friendFace(g, skin, 0, HEAD_Y + 0.08, 0.9, { eyes: 0.23, cheeks: 0.4, mouth: false });
+  g.add(shiny(paint([muzzle], 0, HEAD_Y - 0.225, 0.2, 0.155, MOUTH_PAINT)));
   return g;
 }
 
@@ -2638,11 +2632,12 @@ function patchOn(c, r, scale, dir, size, material) {
   return spot;
 }
 
-/* A cow: white with patches, a wide pink muzzle, two little horns, ears
-   out to the sides, a bell under its chin, a tail with a tuft. */
+/* A cow: white with patches, a wide pink muzzle with the friends' open
+   smile on it, two little horns, ears out to the sides, a bell under its
+   chin, a tail with a tuft. */
 function cow(coat = "black") {
   const { fur: furColor, patch: patchColor } = COW_COATS[coat];
-  const fur = soft(furColor), patch = soft(patchColor), ink = soft(0x33242e, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15 });
+  const fur = velvet(furColor), patch = velvet(patchColor);
   const g = sittingBody(fur, fur);
   for (const dir of [[0.85, 0.25, 0.45], [-0.8, -0.1, 0.55], [-0.3, 0.75, 0.3]]) g.add(patchOn([0, 0.5, -0.05], 0.5, [1, 1.05, 0.9], dir, 0.2, patch));
   g.add(patchOn([0.38, 0.22, 0], 0.25, [0.9, 0.85, 1.1], [0.5, 0.4, 0.75], 0.14, patch));
@@ -2650,9 +2645,10 @@ function cow(coat = "black") {
   head.scale.set(1.12, 0.95, 1);
   head.position.y = HEAD_Y;
   g.add(head);
-  g.add(patchOn([0, HEAD_Y, 0], HEAD_R, [1.12, 0.95, 1], [-0.45, 0.55, 0.7], 0.2, patch));
+  /* Up by its ear, clear of the painted eyes. */
+  g.add(patchOn([0, HEAD_Y, 0], HEAD_R, [1.12, 0.95, 1], [-0.62, 0.62, 0.3], 0.2, patch));
   for (const s of [-1, 1]) {
-    const horn = mesh(new THREE.ConeGeometry(0.08, 0.26, 32), soft(0xfff1d2));
+    const horn = mesh(new THREE.ConeGeometry(0.08, 0.26, 32), velvet(0xfff1d2));
     horn.position.set(s * 0.26, HEAD_Y + 0.55, 0);
     horn.rotation.z = -s * 0.32;
     g.add(horn);
@@ -2662,24 +2658,17 @@ function cow(coat = "black") {
     ear.rotation.z = -s * 0.35;
     g.add(ear);
   }
-  const face = kawaii(0.9, HEAD_R, false);
-  face.position.set(0, HEAD_Y + 0.06, HEAD_R);
-  g.add(face);
-  const muzzle = mesh(new THREE.SphereGeometry(0.27, 48, 32), soft(0xffb8c8));
+  const muzzle = mesh(new THREE.SphereGeometry(0.27, 48, 32), velvet(0xffb8c8));
   muzzle.scale.set(1.45, 0.82, 0.72);
   muzzle.position.set(0, HEAD_Y - 0.18, 0.43);
   g.add(muzzle);
   for (const s of [-1, 1]) {
-    const nostril = mesh(new THREE.SphereGeometry(0.045, 16, 12), soft(0xd8607e));
+    const nostril = mesh(new THREE.SphereGeometry(0.045, 16, 12), velvet(0xd8607e));
     nostril.scale.set(0.8, 1.2, 0.5);
-    nostril.position.set(s * 0.12, HEAD_Y - 0.13, 0.6);
+    nostril.position.set(s * 0.12, HEAD_Y - 0.11, 0.6);
     g.add(nostril);
   }
-  const mouth = mesh(new THREE.TorusGeometry(0.08, 0.02, 12, 32, Math.PI), ink);
-  mouth.rotation.z = Math.PI;
-  mouth.position.set(0, HEAD_Y - 0.2, 0.632);
-  g.add(mouth);
-  const bell = mesh(new THREE.SphereGeometry(0.1, 32, 24), soft(0xf7c948, { roughness: 0.35, clearcoat: 0.8, metalness: 0.2 }));
+  const bell = mesh(new THREE.SphereGeometry(0.1, 32, 24), velvet(0xf7c948, { roughness: 0.35, clearcoat: 0.8, metalness: 0.2, sheen: 0.3 }));
   bell.position.set(0, 0.74, 0.4);
   g.add(bell);
   g.add(taperTube([[0.3, 0.2, -0.36], [0.6, 0.25, -0.3], [0.72, 0.5, -0.15]], 0.04, 0.035, fur));
@@ -2687,6 +2676,8 @@ function cow(coat = "black") {
   tuft.scale.set(0.9, 1.3, 0.9);
   tuft.position.set(0.73, 0.58, -0.14);
   g.add(tuft);
+  friendFace(g, [head], 0, HEAD_Y + 0.13, 0.9, { eyes: 0.23, cheeks: 0.42, mouth: false });
+  g.add(shiny(paint([muzzle], 0, HEAD_Y - 0.25, 0.22, 0.17, MOUTH_PAINT)));
   return g;
 }
 
@@ -2700,8 +2691,8 @@ const FISH_COATS = {
 function fishfriend(coat = "orange") {
   const { body: bodyColor, fin: finColor } = FISH_COATS[coat];
   const g = new THREE.Group();
-  const fin = soft(finColor);
-  const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), soft(bodyColor));
+  const fin = velvet(finColor);
+  const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), velvet(bodyColor));
   body.scale.set(1.08, 0.9, 0.86);
   body.position.y = 0.5;
   g.add(body);
@@ -2729,10 +2720,7 @@ function fishfriend(coat = "orange") {
   side.position.set(-0.4, 0.3, 0.27);
   side.rotation.z = 0.5;
   g.add(side);
-  const face = kawaii(0.7, 0.6);
-  face.position.set(0, 0.52, 0.43);
-  g.add(face);
-  return g;
+  return friendFace(g, [body], 0.06, 0.52, 0.8, { eyes: 0.23, cheeks: 0.4 });
 }
 
 /* ---------- Where Bloo's animals live — the review's Sort boxes ---------- */
@@ -3050,14 +3038,15 @@ function paint(onto, x, y, w, h, material) {
 
 /* The friends' face on the front of `onto` (meshes of `g`), its middle at
    (cx, cy), `k` its size. `g` must still stand where it was made — the
-   decals are worked out in the world and added to it. */
-function friendFace(g, onto, cx, cy, k = 1, { eyes = 0.22, cheeks = 0.37 } = {}) {
+   decals are worked out in the world and added to it. Without its smile
+   (`mouth: false`) for a face whose mouth goes elsewhere — on a muzzle. */
+function friendFace(g, onto, cx, cy, k = 1, { eyes = 0.22, cheeks = 0.37, mouth = true } = {}) {
   g.updateMatrixWorld(true);
   for (const s of [-1, 1]) {
     g.add(paint(onto, cx + s * cheeks * k, cy - 0.11 * k, 0.24 * k, 0.15 * k, CHEEK_PAINT));
     g.add(shiny(paint(onto, cx + s * eyes * k, cy + 0.06 * k, 0.245 * k, 0.275 * k, EYE_PAINT)));
   }
-  g.add(shiny(paint(onto, cx, cy - 0.15 * k, 0.23 * k, 0.18 * k, MOUTH_PAINT)));
+  if (mouth) g.add(shiny(paint(onto, cx, cy - 0.15 * k, 0.23 * k, 0.18 * k, MOUTH_PAINT)));
   return g;
 }
 
@@ -3625,9 +3614,10 @@ if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
   const arg = params.get("arg");
   const group = ITEMS[THING](arg ?? undefined);
-  /* The friends' look (Nova's fruits, her cup): a softer, fuller light —
-     their felt is evenly lit, with no hard dark side. */
-  if (THING === "fruit" || THING === "cup") {
+  /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
+     and their food): a softer, fuller light — their felt is evenly lit,
+     with no hard dark side. */
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
