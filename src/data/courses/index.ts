@@ -1,7 +1,6 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef, Question } from "@/types/course";
-import { COURSE_ART } from "@/data/course-art";
 import { COLORS, EMPTY_POT } from "@/data/colors";
 import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
@@ -9,13 +8,7 @@ import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
 import { novaSeasons } from "./nova-seasons";
 import { blooAnimals } from "./bloo-animals";
-
-/** A course whose lessons are not written yet: `count` "coming soon"
-    lessons, each wearing one of the course's clay things in turn
-    (`data/course-art.ts`). Titles live in `dict.lessons[id].items`; what
-    goes in each lesson is `edenic-plan.md` §5–§6. */
-const comingSoon = (count: number, art: readonly StaticImageData[]): LessonDef[] =>
-  Array.from({ length: count }, (_, i) => ({ cover: [art[i % art.length]], questions: [] }));
+import { blooWeather } from "./bloo-weather";
 
 /** Every course's lessons, by course id. A course's `totalItems` is the
     length of its list here. */
@@ -25,7 +18,7 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   fruits: novaFruits,
   seasons: novaSeasons,
   animals: blooAnimals,
-  weather: comingSoon(5, COURSE_ART.weather),
+  weather: blooWeather,
 };
 
 /** A course's pictures, for its card and banner: every lesson's cover, each

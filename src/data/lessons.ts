@@ -39,6 +39,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   ],
   bloo: [
     course("animals", "bloo", "/assets/friends/bloo.png"),
-    course("weather", "colors", "/assets/friends/bloo.png"),
+    course("weather", "bloo", "/assets/friends/bloo.png"),
   ],
 };
