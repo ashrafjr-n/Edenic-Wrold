@@ -9,51 +9,54 @@ import cow from "../../../public/assets/learn/bloo/animals/things/cow.png";
 import cowBrown from "../../../public/assets/learn/bloo/animals/things/cow-brown.png";
 import fish from "../../../public/assets/learn/bloo/animals/things/fish.png";
 import fishBlue from "../../../public/assets/learn/bloo/animals/things/fish-blue.png";
-import catFill from "../../../public/assets/learn/bloo/animals/fill/cat.png";
-import dogFill from "../../../public/assets/learn/bloo/animals/fill/dog.png";
-import cowFill from "../../../public/assets/learn/bloo/animals/fill/cow.png";
-import fishFill from "../../../public/assets/learn/bloo/animals/fill/fish.png";
+import milk from "../../../public/assets/learn/bloo/animals/food/milk.png";
+import bone from "../../../public/assets/learn/bloo/animals/food/bone.png";
+import grass from "../../../public/assets/learn/bloo/animals/food/grass.png";
+import pellets from "../../../public/assets/learn/bloo/animals/food/pellets.png";
 import catHome from "../../../public/assets/learn/bloo/animals/homes/cat.png";
 import dogHome from "../../../public/assets/learn/bloo/animals/homes/dog.png";
 import cowHome from "../../../public/assets/learn/bloo/animals/homes/cow.png";
 import fishHome from "../../../public/assets/learn/bloo/animals/homes/fish.png";
 
 /** One animal to learn: its picture (the lesson's coat), a second coat for
-    the review (a cat is a cat in any color), the small picture its word is
-    filled with (no ground shadow), where it lives, and that home's box
-    color in the review. */
+    the review (a cat is a cat in any color), a bite of what it eats and
+    where its mouth is on its picture (%, measured off the render's face
+    mask) for the Feed step, where it lives, and that home's box color in
+    the review. */
 interface Pet {
   picture: StaticImageData;
   other: StaticImageData;
-  fill: StaticImageData;
+  food: StaticImageData;
+  mouth: readonly [number, number];
   home: StaticImageData;
   box: ColorId;
 }
 
 /** In teaching order. */
 const ANIMALS: Record<Animal, Pet> = {
-  cat: { picture: cat, other: catGrey, fill: catFill, home: catHome, box: "purple" },
-  dog: { picture: dog, other: dogSpotty, fill: dogFill, home: dogHome, box: "orange" },
-  cow: { picture: cow, other: cowBrown, fill: cowFill, home: cowHome, box: "red" },
-  fish: { picture: fish, other: fishBlue, fill: fishFill, home: fishHome, box: "blue" },
+  cat: { picture: cat, other: catGrey, food: milk, mouth: [39, 49], home: catHome, box: "purple" },
+  dog: { picture: dog, other: dogSpotty, food: bone, mouth: [36, 53], home: dogHome, box: "orange" },
+  cow: { picture: cow, other: cowBrown, food: grass, mouth: [38, 56], home: cowHome, box: "red" },
+  fish: { picture: fish, other: fishBlue, food: pellets, mouth: [70, 76], home: fishHome, box: "blue" },
 };
 const ORDER = Object.keys(ANIMALS) as Animal[];
 
 /**
  * Bloo's animals — one animal, one lesson, and every step about IT (the
  * Fruits rule: no choosing inside a one-thing lesson): meet it (its
- * picture, its word, its speaker) → build its word → fill the word with
- * it. Telling the four apart is the review's.
+ * picture, its word, its speaker) → build its word → feed it (its own
+ * food, a bite at a time — something you DO with an animal). Telling the
+ * four apart is the review's.
  */
 function animalLesson(animal: Animal, i: number): LessonDef {
-  const { picture, fill } = ANIMALS[animal];
+  const { picture, food, mouth } = ANIMALS[animal];
   return {
     reel: `/assets/learn/bloo/animals/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture },
       { type: "spell", ask: { key: "spell", vars: { word: animal } }, word: animal },
-      { type: "fill", ask: { key: "fillWord", vars: { word: animal } }, word: animal, picture: fill },
+      { type: "feed", ask: { key: "feedAnimal", vars: { thing: animal } }, word: animal, picture, food, mouth },
     ],
   };
 }
