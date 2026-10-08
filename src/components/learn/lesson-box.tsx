@@ -38,9 +38,10 @@ const SPRING_DELAY = 0.9;
  * A course's lessons as a box of things — one cell per lesson (a paint pot
  * per color, a thing per shape), the review last, across the full width. A
  * cell is EMPTY (grey clay or its picture greyed, a padlock, "?") until its
- * lesson opens; the open one shows its picture, a ring in its own color and
- * a "Start" bubble; a learned one keeps its picture, its word and a green
- * tick. Collecting them is the progress — no map: the lessons have no
+ * lesson opens; the open one shows its picture on a base in its own color
+ * and a "Start" bubble; a learned one keeps its picture, its word and a green
+ * tick — each standing on a clay base in its state's colour (`.art-stage`).
+ * Collecting them is the progress — no map: the lessons have no
  * "road" between them, they fill a box.
  *
  * Coming back after lessons have opened, the next one's padlock springs
@@ -82,8 +83,18 @@ export function LessonBox({ titles, stops, characterId, lessonId, basePath, tone
         const springing = i === unlocking;
         const review = stop.review === true;
 
+        /* The thing stands on a clay base and rises above it; the base's
+           colour says where the lesson is: the next one in its colour, a
+           learned one pale, a locked one dormant lavender. */
+        const hue = stop.ring ?? tone.face;
+        const tint = locked
+          ? "color-mix(in srgb, var(--color-locked-dark) 45%, var(--surface))"
+          : `color-mix(in srgb, ${hue} ${isNext ? 45 : 20}%, var(--surface))`;
         const art = (
-          <span className={`flex items-center justify-center ${review ? "gap-[4%]" : ""} ${wide ? "min-h-0 w-full flex-1" : "w-full"}`}>
+          <span
+            className={`art-stage flex items-center justify-center ${review ? "gap-[4%]" : ""} ${wide ? "min-h-0 w-full flex-1" : "w-full"}`}
+            style={{ "--stage-tint": tint, "--stage-inset": review ? "45% 0 -6% 0" : "45% 4% -6% 4%" } as Vars}
+          >
             {stop.pictures.map((picture) => (
               <span key={picture.src} className={`relative block aspect-square ${review ? "h-full max-h-20 w-[22%]" : wide ? "h-full max-w-[78%]" : "w-[66%]"}`}>
                 {/* Under it, what a locked cell shows: the blank (an empty
@@ -164,7 +175,6 @@ export function LessonBox({ titles, stops, characterId, lessonId, basePath, tone
         } ${springing ? "anim-jump" : "anim-rise-in"} ${locked ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"}`;
         const style: Vars = {
           animationDelay: springing ? `${SPRING_DELAY + 0.2}s` : `${0.1 + i * 0.05}s`,
-          ...(isNext ? { outline: `4px solid ${stop.ring ?? tone.face}`, outlineOffset: "3px" } : {}),
         };
 
         return locked ? (
