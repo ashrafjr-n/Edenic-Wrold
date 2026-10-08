@@ -211,7 +211,7 @@ export function CupsGame({ word, picture, cupAria, onSolved, onMiss }: CupsGameP
               />
               {/* The food — drawn only while a cup over it is up. */}
               {cup === under && (
-                <span className={`absolute bottom-0 left-[19%] block h-[64%] w-[62%] ${shown ? "" : "invisible"}`}>
+                <span className={`absolute bottom-0 left-[16%] block h-[66%] w-[68%] ${shown ? "" : "invisible"}`}>
                   <span className={`relative block h-full w-full ${phase === "solved" ? "anim-jump" : ""}`}>
                     <Image src={picture} alt="" fill loading="eager" sizes="(min-width: 1024px) 8rem, 20vw" draggable={false} className="pointer-events-none select-none object-contain object-bottom" />
                   </span>
