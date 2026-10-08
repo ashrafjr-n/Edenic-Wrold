@@ -201,6 +201,10 @@ export const en = {
     feedAnimal: "Feed the {thing}!",
     thisWeather: "It is {weather}!",
     dressBloo: "Get Bloo ready for a {weather} day!",
+    rainTap: "Tap the cloud to make it rainy!",
+    sunPush: "Push the clouds away to make it sunny!",
+    windSwipe: "Swipe across the sky to make it windy!",
+    snowShake: "Shake the cloud to make it snowy!",
     sortWeather: "Put each thing in its weather's box!",
     whichWeather: "Which one is {weather}?",
     pickList: "Pick the things on Nova's list!",
@@ -225,6 +229,7 @@ export const en = {
     cups: "Find",
     feed: "Feed",
     dress: "Dress",
+    weather: "Make",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

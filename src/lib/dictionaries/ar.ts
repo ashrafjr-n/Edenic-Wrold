@@ -191,6 +191,10 @@ export const ar: Dictionary = {
     feedAnimal: "أطعم {thing}!",
     thisWeather: "الجو {weather}!",
     dressBloo: "جهّز Bloo ليوم {weather}!",
+    rainTap: "المس الغيمة لتمطر!",
+    sunPush: "ادفع الغيوم بعيدًا لتشرق الشمس!",
+    windSwipe: "اسحب إصبعك عبر السماء لتهبّ الريح!",
+    snowShake: "هزّ الغيمة ليتساقط الثلج!",
     sortWeather: "ضع كل شيء في صندوق طقسه!",
     whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
@@ -214,6 +218,7 @@ export const ar: Dictionary = {
     cups: "ابحث",
     feed: "أطعم",
     dress: "ألبِس",
+    weather: "اصنع",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

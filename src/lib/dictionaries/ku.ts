@@ -195,6 +195,10 @@ export const ku: Dictionary = {
     feedAnimal: "خوارنێ بدە {thing}!",
     thisWeather: "هەوا {weather}ە!",
     dressBloo: "Bloo بۆ ڕۆژەکا {weather} ئامادە بکە!",
+    rainTap: "دەست بدە ئەوری دا باران ببارێت!",
+    sunPush: "ئەوران پاڵ بدە دا ڕۆژ دەرکەڤیت!",
+    windSwipe: "تبلا خۆ ب سەر ئەسمانی دا ڕاکێشە دا با بێت!",
+    snowShake: "ئەوری بهەژینە دا بەفر ببارێت!",
     sortWeather: "هەر تشتەکی بکە د سندوقا هەوایێ وی دا!",
     whichWeather: "{weather} کیژە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
@@ -218,6 +222,7 @@ export const ku: Dictionary = {
     cups: "بدۆزە",
     feed: "خوارنێ بدە",
     dress: "ئامادە بکە",
+    weather: "چێ بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",
