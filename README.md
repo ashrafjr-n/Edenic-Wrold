@@ -2,8 +2,8 @@
 
 An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
 **Nova**, and **Bloo** — teach their own courses: Pinki shapes and colors;
-Nova fruits and vegetables, the seasons and the months; Bloo animals,
-the weather and the body. A course is a short run of lessons the child opens one
+Nova fruits and vegetables and the seasons; Bloo animals and the weather. A
+course is a short run of lessons the child opens one
 after another, each starting with a video and centred on spelling the English
 words it teaches.
 
@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (three each; all three friends are open) |
+| `/learn/[character]` | That friend's courses: the friend says hello, then one big clay card per course (two each; all three friends are open) |
 | `/learn/[character]/[lesson]` | A course: a banner and its lessons, unlocked one at a time — a box of things (one cell per lesson) for every course; a Continue button to the next one |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
@@ -111,7 +111,7 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - Course subjects own a second, parallel palette (`--color-subject-*`), kept
   separate from the mascot colors. A written course wears its friend's color
   instead — Pinki's are pink, Nova's gold, Bloo's Animals Bloo's blue — and the
-  courses still to come borrow the `colors` and `numbers` tokens until then.
+  course still to come (The Weather) borrows the `colors` token until then.
 - Inside a lesson on a desktop nothing wraps the step: no board, no card. The
   step stands on the page ground, so the one thing to play with is the biggest
   thing on screen.
@@ -159,8 +159,8 @@ src/
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      Fill the word, the magic button (a season comes, a
-                      food grows, the months fill Nova's year wheel), the
+                      Fill the word, the magic button (a season comes),
+                      Nova's cups (find the food under one of three), the
                       review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
@@ -188,12 +188,12 @@ tools/
                       plant and a potato bed — each with its food), her
                       basket, the four seasons (an island with a tree
                       with a face, frame by frame as each season comes),
-                      each food growing from its seed on the same island,
-                      her year wheel (twelve slices like a clock),
-                      and Bloo's animals (a cat, a dog, a cow and a fish
-                      with the friends' face, two coats each) and their
-                      homes, then crops them into layers — not part of
-                      the site build
+                      Nova's eight foods in the friends' look (chubby
+                      velvet clay with the buttons' grain and the
+                      friends' face) and her cup, and Bloo's animals (a
+                      cat, a dog, a cow and a fish with the friends'
+                      face, two coats each) and their homes, then crops
+                      them into layers — not part of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -215,20 +215,16 @@ public/
                             reels. All pictures are rendered by
                             tools/picnic-scene — none come from outside)
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
-                            (things/, props/ — the blender and the soup pot
-                            — make/: the review's mixed juice, its glass and
-                            the soup, grow/: each food growing from its
-                            seed, 0.png then one frame per tap, 1–4.png, and
-                            garden/: the review's two gardens, in layers, and
-                            her basket), seasons/
+                            (things/: the eight foods in the friends' look,
+                            props/: the blender, the soup pot and Nova's
+                            cup, make/: the review's mixed juice, its glass
+                            and the soup, and garden/: the review's two
+                            gardens, in layers, and her basket), seasons/
                             (spring/, summer/, fall/, winter/: the island
                             before the season, 0.png, then one frame per
                             step, 1–4.png; things/: the review's eight
-                            things to sort), months/
-                            (wheel/: Nova's year wheel with the first k
-                            months in, 0–12.png, each month alone, and the
-                            review's marked months, all from one camera),
-                            and each course's placeholder reels
+                            things to sort), and each course's placeholder
+                            reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
                             (things/: each animal in two coats, fill/: each
                             without a shadow, to fill its word with, homes/:
@@ -245,10 +241,11 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-has two courses — **Shapes** and **Colors** — and Nova three — **Fruits &
-Vegetables**, **The Seasons** and **Months of the Year** — all written. Bloo's
-**Animals** is written too; The Weather and My Body list their lessons and
-show "coming soon". Every taught word is American English (color, fall,
+has two courses — **Shapes** and **Colors** — and Nova two — **Fruits &
+Vegetables** and **The Seasons** — all written. Bloo's **Animals** is
+written too; **The Weather** lists its lessons and shows "coming soon".
+Months of the Year and My Body were removed on request. Every taught word
+is American English (color, fall,
 mom). Each friend's corner wears one colour: Pinki's is pink, Nova's is gold
 (back button, play buttons, progress bars, banners — with dark ink on the
 gold), and Bloo's Animals is Bloo's blue.
@@ -339,13 +336,19 @@ picture:
 
 - **Fruits & Vegetables — Nova's garden**: apple, banana, orange, grapes,
   carrot, broccoli, corn, potato, one a lesson, and every step of a lesson
-  is about its one thing — nothing to choose between. The word is **met**
-  (the thing, the word in clay letters, the speaker) and **spelled**; then
-  the child **grows it**: Nova's island has a seed in its soil, one
-  sparkling spot glows, and each tap brings the next stage — the sprout,
-  a young plant, the plant grown and in flower, then the food on it (the
-  apples on their tree, the grapes under the vine, a carrot pulled up out
-  of the soil) — so the child sees where each one comes from. The review makes a **mixed
+  is about its one thing — nothing to choose between. Every food is drawn
+  the friends' way: chubby, soft velvety clay with the same grain as the
+  clay buttons, and the friends' face (big eyes with a purple iris, a
+  shine and a little gold heart, pink cheeks, an open smile). The word is
+  **met** (the thing, the word in clay letters, the speaker) and
+  **spelled**; then come **Nova's cups**: the food sits under one of
+  three polka-dot cups — a different one, at random, every time — the cup
+  comes down over it, the cups swap places at a medium speed, and the
+  child taps the cup it is under. Found, the cup lifts on it, it jumps and
+  the confetti flies. A wrong cup lifts empty and shakes, the right one
+  shows where the food went, and the round starts again; each miss makes
+  the next round a little slower. The task button's demo shows the cups
+  swapping and a tap — never where the food is. The review makes a **mixed
   juice** (a layered one) in Nova's 3D blender and a **vegetable soup** in
   her pot from recipes of words alone, asks **"Do you like…?"** (thumbs up
   or down onto two plates — "I like apples." / "I don't like corn." — no
@@ -373,20 +376,6 @@ picture:
   (a tulip, a butterfly, the sun, an ice cream, a leaf, a pumpkin, a
   snowman, a snowflake) into four season boxes, the four seasons in order,
   and two spelled from their picture.
-- **Months of the Year — Nova's year wheel** — three months a lesson. A
-  month has no picture of its own, so its PLACE in the year is what is
-  learned: Nova's clay wheel is round like a clock (her gold hub has the
-  friends' face), December at the top and the year going clockwise, each
-  month a numbered slice. Each month is **met** on the wheel (its slice
-  alone, painted its season's color with its season's thing — snow,
-  tulips, the sun, a leaf — the Seasons course's own), one name is
-  **spelled**, then the child **adds the months to the year**: one slice
-  glows, a tap fills it and its name appears, three times. The wheel
-  keeps every lesson's months, so by the fourth lesson the whole year is
-  round and December runs into January. The review is the exam: four
-  names in order, four months (marked on a plain wheel, no color) into
-  their season's island, "what comes after December?", and one name
-  spelled.
 
 Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
 Each is a chibi clay animal with the friends' face (eyes with a shine, pink
@@ -398,9 +387,9 @@ homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
 alone.
 
-Bloo's other two courses, still to come, already wear their own clay art —
-a sun, a cloud, an umbrella, a snowman, a hand and a foot — rendered with the
-same light and clay.
+Bloo's other course, The Weather, still to come, already wears its own clay
+art — a sun, a cloud, an umbrella and a snowman — rendered with the same
+light and clay.
 
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
@@ -459,7 +448,7 @@ eventual plan.
 
 Planned, in order:
 
-1. The other courses' lessons, one at a time, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
+1. The Weather's lessons, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
 2. Every course's real reels, then voice for every taught word, once the content is done
 3. The trail itself — the path, the stage pages, and progress along it
 4. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
