@@ -1,7 +1,7 @@
 /** A course. The route segment too: `/learn/pinki/shapes`. */
 export type LessonId =
   | "shapes" | "colors"
-  | "fruits" | "seasons" | "months"
+  | "fruits" | "seasons"
   | "animals" | "weather" | "body";
 
 /** A course's own colour world (its cards, banner, path and buttons).

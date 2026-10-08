@@ -36,7 +36,6 @@ export const lessonsByCharacter: Record<CharacterId, Lesson[]> = {
   nova: [
     course("fruits", "nova", "/assets/friends/nova.png"),
     course("seasons", "nova", "/assets/friends/nova.png"),
-    course("months", "nova", "/assets/friends/nova.png"),
   ],
   bloo: [
     course("animals", "bloo", "/assets/friends/bloo.png"),

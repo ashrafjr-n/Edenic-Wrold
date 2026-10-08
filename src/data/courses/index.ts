@@ -8,7 +8,6 @@ import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
 import { novaSeasons } from "./nova-seasons";
-import { novaMonths } from "./nova-months";
 import { blooAnimals } from "./bloo-animals";
 
 /** A course whose lessons are not written yet: `count` "coming soon"
@@ -25,7 +24,6 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   colors: pinkiColors,
   fruits: novaFruits,
   seasons: novaSeasons,
-  months: novaMonths,
   animals: blooAnimals,
   weather: comingSoon(5, COURSE_ART.weather),
   body: comingSoon(5, COURSE_ART.body),
@@ -54,9 +52,8 @@ export interface BoxStop {
 
 /** A course's lessons as box cells, read off each lesson's own "meet the
     word" step (its word card) — the review (no such step) wears its covers across a row;
-    a lesson not written yet (no such step, one cover), or one that meets
-    several words (three months), is a plain cell under its title. A color
-    still to learn is an empty pot. */
+    a lesson not written yet (no such step, one cover) is a plain cell
+    under its title. A color still to learn is an empty pot. */
 export function courseStops(id: LessonId): BoxStop[] {
   const blank = id === "colors" ? EMPTY_POT : undefined;
   return courseLessons[id].map(({ cover, questions }) => {
