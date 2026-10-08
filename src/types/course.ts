@@ -12,9 +12,13 @@ export type Season = "spring" | "summer" | "fall" | "winter";
 /** The four animals Bloo's Animals course teaches, in order. */
 export type Animal = "cat" | "dog" | "cow" | "fish";
 
+/** The four weathers Bloo's Weather course teaches, in order. */
+export type Weather = "sunny" | "rainy" | "windy" | "snowy";
+
 /** A set things belong to: the season a thing goes with (Nova's Seasons),
-    or the animal it is — whose home it goes in (Bloo's Animals). */
-export type Group = Season | Animal;
+    the animal it is — whose home it goes in (Bloo's Animals) — or the
+    weather it is worn in (Bloo's Weather). */
+export type Group = Season | Animal | Weather;
 
 /** What a Find looks for, or what a Sort box takes: a shape, a color, or a
     group. */
@@ -42,8 +46,25 @@ export interface Thing {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The season it goes with (Nova's Seasons), or the animal it is. */
+  /** The season it goes with (Nova's Seasons), the animal it is, or the
+      weather it is worn in. */
   group?: Group;
+}
+
+/** Something Bloo wears for a weather (the Dress step): its picture — the
+    same one waits beside him and lies on him — and where it lies on his
+    own picture: its middle (x, y) and its width, in % of his picture, how
+    far it is turned (°, clockwise), and its layer — behind him (an
+    umbrella, a kite), on his head under his horns (a hat), or in front. A
+    kite has its string too, from (x, y) to (x, y) — his hand. */
+export interface Wear {
+  /** English — its name, for a screen reader. */
+  word: string;
+  src: StaticImageData;
+  at: readonly [number, number, number];
+  turn: number;
+  layer: "behind" | "head" | "front";
+  string?: readonly [number, number, number, number];
 }
 
 /** One thing lying in a scene, and where. */
