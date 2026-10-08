@@ -196,7 +196,7 @@ sort boxes, done screen, the course page).
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
 | Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → **feed it** since 2026-10-08 — three bites of its own food, dragged or tapped into its mouth; Fill the word, its step from 2026-10-07, was replaced. The animals, their homes and their food are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
-| Bloo | The Weather | Sunny · Rainy · Cloudy & Windy · Snowy · Weather review |
+| Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **dress Bloo** for it — two things of that weather onto Bloo's own picture, then the weather comes over him. Each weather is the same place, Bloo's hill, under it. Review: sort the eight things into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
 Year (its year wheel, its art and its strings — in git history, `months wheel
@@ -239,7 +239,7 @@ about 3 minutes.
 | Word card and Spell with a picture (rung 4: picture, no word) | Colors | every course |
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
-| **Dress up**: drag things onto the friend | later | Weather (an option for the Seasons review) |
+| **Dress Bloo**: what a weather needs waits at his feet; drag or tap each and it goes on him (a hat under his horns, an umbrella or a kite string into his raised hand), then the weather comes | built (`dress`) | Weather |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | ~~Fill the word~~: rub each empty letter and it fills with small pictures of the thing | removed 2026-10-08 | Fruits dropped it 2026-10-07 ("not suitable"), Animals 2026-10-08 — its last course |
@@ -273,8 +273,19 @@ about 3 minutes.
   lesson. Review: sort the four, each in two coats, into their
   homes (cat bed, kennel, barn, fishbowl — each box labelled with the
   animal's word), then spell dog and fish from a picture.
-- **The Weather**: sun → sunny (the `-y` ending); Dress up Bloo; review:
-  read "It is windy." and pick its picture.
+- **The Weather** (BUILT 2026-10-08, on request "weather الان" to the plan
+  of the same day): sunny, rainy, windy, snowy — all four end in `-y`.
+  Each is ONE place, Bloo's hill (his blue-roofed house, a round tree),
+  under the weather (the Seasons rule: the difference between the
+  pictures IS the weather). Each lesson is reel → word ("It is sunny!") →
+  spell → **dress Bloo**: his own picture, two things of that weather at
+  his feet (sunglasses + sun hat, umbrella + rain hat, kite + pinwheel,
+  scarf + winter hat) — no choosing, all of it is this weather's — then
+  rain, snow, wind or sunshine comes over him. Review: sort the eight
+  things into four weather boxes (three hats to tell apart), read
+  "rainy" and "windy" and pick their pictures, spell sunny and snowy from
+  the picture. Bloo on a step bends "no friend on the steps": he is the
+  one being dressed, not a coach (flagged with the plan).
 
 Sources: Cambridge Pre A1 Starters wordlist (cambridgeenglish.org);
 retrieval/spaced practice in child word learning (PMC8084525, PMC11087082);
@@ -486,7 +497,15 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       (360x640 → 1440x900, en/ar/ku, dark), the Feed step by tap, drag
       and keyboard.
 - [ ] The user checks Animals' Feed it and the new animals → fixes.
-- [ ] Then: The Weather, with a check after it.
+- [x] **The Weather** (2026-10-08, "weather الان"): four lessons + the
+      review (above). Art: Bloo's hill under each weather and the eight
+      things he wears, rendered the friends' way; his horns cut out of his
+      own picture so a hat sits under them; where each thing lies fitted
+      on his picture. The Dress step and its demo; the weather comes as
+      falling, drifting or twinkling icons. The "coming soon" Weather and
+      its borrowed art (`data/course-art.ts`, `learn/art/`) deleted. All
+      five played through headless (360x640 → 1440x900, en/ar/ku, dark).
+- [ ] The user checks The Weather → fixes.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
