@@ -1600,41 +1600,6 @@ const ITEMS = {
     return g;
   },
 
-  hand() {
-    const g = new THREE.Group();
-    const skin = clay(0xf6c7a1, { clearcoat: 0.4, roughness: 0.55 });
-    const palm = mesh(new THREE.SphereGeometry(0.36, 48, 32), skin);
-    palm.scale.set(1, 1.05, 0.45);
-    palm.position.y = 0.5;
-    g.add(palm);
-    [[-0.24, 0.42], [-0.08, 0.5], [0.08, 0.5], [0.23, 0.44]].forEach(([x, len]) => {
-      const finger = mesh(new THREE.CapsuleGeometry(0.075, len, 8, 16), skin);
-      finger.position.set(x, 0.84 + len / 2 - 0.05, 0);
-      finger.rotation.z = -x * 0.35;
-      g.add(finger);
-    });
-    const thumb = mesh(new THREE.CapsuleGeometry(0.08, 0.3, 8, 16), skin);
-    thumb.position.set(-0.4, 0.55, 0.02);
-    thumb.rotation.z = 0.9;
-    g.add(thumb);
-    return g;
-  },
-
-  foot() {
-    const g = new THREE.Group();
-    const skin = clay(0xf6c7a1, { clearcoat: 0.4, roughness: 0.55 });
-    const sole = mesh(new THREE.SphereGeometry(0.4, 48, 32), skin);
-    sole.scale.set(0.75, 0.32, 1.3);
-    sole.position.y = 0.13;
-    g.add(sole);
-    [[-0.2, 0.11], [-0.07, 0.085], [0.04, 0.075], [0.14, 0.068], [0.23, 0.06]].forEach(([x, r], i) => {
-      const toe = mesh(new THREE.SphereGeometry(r, 24, 16), skin);
-      toe.position.set(x, 0.18, 0.5 - Math.abs(x + 0.03) * 0.35 - i * 0.01);
-      g.add(toe);
-    });
-    return g;
-  },
-
   ant() {
     const g = new THREE.Group();
     const black = clay(0x2e2b35, { clearcoat: 0.9, clearcoatRoughness: 0.15, roughness: 0.3 });
