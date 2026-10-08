@@ -3601,6 +3601,238 @@ const WEAR = {
 
 Object.assign(ITEMS, { wear: (what) => WEAR[what]() });
 
+/* ---------- Bloo's weather (2026-10-08) ----------
+   ONE place in all four pictures — Bloo's hill: a round hill on a band of
+   Bloo's blue, his little house (a blue roof) and a round tree — under the
+   weather, so the difference between the pictures IS the weather (the
+   Seasons rule): the sun and flowers; a rain cloud, its drops and puddles;
+   a cloud blowing, swirls of wind, the tree bent, leaves flying and a
+   kite; snow over everything, a snowman and snowflakes. The friends' look:
+   velvet clay, the grain (`crop.py weather`) and the friends' face on the
+   sun, the clouds and the snowman. `?thing=weather&arg=<weather>`; an
+   unseen box gives all four the same frame. */
+const HILL = [[0, 1.1], [1.0, 1.06], [2.0, 0.92], [2.6, 0.72], [2.78, 0.52]];
+/* How high the hill's top is at (x, z). */
+function hillY(x, z) {
+  const r = Math.hypot(x, z);
+  for (let i = 1; i < HILL.length; i++) {
+    const [r0, y0] = HILL[i - 1], [r1, y1] = HILL[i];
+    if (r <= r1) return y0 + ((y1 - y0) * (r - r0)) / (r1 - r0);
+  }
+  return HILL[HILL.length - 1][1];
+}
+const onHill = (thing, x, z, turn = 0) => {
+  thing.position.set(x, hillY(x, z), z);
+  thing.rotation.y = turn;
+  return thing;
+};
+
+/* The hill: Bloo's blue band, its grassy (or snowy) top, his house and a
+   tree. `lean` bends the tree in the wind. */
+function bloosHill({ snowy = false, lean = 0 } = {}) {
+  const g = new THREE.Group();
+  g.add(mesh(smoothLathe([[0, 0], [2.48, 0], [2.74, 0.1], [2.82, 0.3], [2.76, 0.46], [0, 0.46]]), velvet(0x6bb8f0)));
+  g.add(mesh(smoothLathe([[0, 0.4], [2.72, 0.4], [2.8, 0.52], [2.6, 0.72], [2.0, 0.92], [1.0, 1.06], [0, 1.1]]), velvet(snowy ? 0xfbfdff : 0x78cf5c)));
+  /* His house: cream walls, a blue roof, a round door, a yellow window. */
+  const house = gableHouse(1.0, 0.84, 0.7, 0.46, velvet(0xfdf3e3), velvet(0x4f9fe6));
+  const door = mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.04, 40), velvet(0x3b6fb8));
+  door.rotation.x = Math.PI / 2;
+  door.scale.z = 1.35;
+  door.position.set(-0.18, 0.24, 0.43);
+  house.add(door);
+  const window_ = mesh(new RoundedBoxGeometry(0.24, 0.22, 0.04, 3, 0.04), velvet(0xffd86b));
+  window_.position.set(0.22, 0.42, 0.43);
+  house.add(window_);
+  if (snowy) {
+    for (const s of [-1, 1]) {
+      const cap = mesh(new RoundedBoxGeometry(0.72, 0.1, 1.06, 3, 0.05), velvet(0xfbfdff));
+      cap.rotation.z = -s * Math.atan2(0.46, 0.5);
+      cap.position.set(s * 0.27, 0.7 + 0.29, 0);
+      house.add(cap);
+    }
+  }
+  g.add(onHill(house, -1.1, -0.35, 0.4));
+  /* The tree: a trunk and three round puffs. */
+  const tree = new THREE.Group();
+  tree.add(taperTube([[0, 0, 0], [0.02, 0.5, 0], [0, 1.0, 0]], 0.13, 0.09, velvet(0x9a5a2c)));
+  for (const [x, y, r, color] of [[0, 1.42, 0.52, 0x5cbd57], [-0.36, 1.12, 0.36, 0x6cc85a], [0.36, 1.14, 0.38, 0x52b450]]) {
+    const puff = mesh(new THREE.SphereGeometry(r, 48, 32), velvet(color));
+    puff.position.set(x, y, 0);
+    tree.add(puff);
+    if (snowy) {
+      const snow = mesh(new THREE.SphereGeometry(r * 0.94, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2.6), velvet(0xfbfdff));
+      snow.position.set(x, y + r * 0.12, 0);
+      tree.add(snow);
+    }
+  }
+  tree.rotation.z = lean;
+  g.add(onHill(tree, 1.3, -0.5));
+  return g;
+}
+
+/* A daisy facing +z, on a short stem. */
+function hillFlower(petals) {
+  const g = new THREE.Group();
+  g.add(taperTube([[0, 0, 0], [0.02, 0.18, 0], [0, 0.34, 0]], 0.025, 0.022, velvet(0x4fb444)));
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const p = mesh(new THREE.SphereGeometry(0.06, 20, 14), velvet(petals));
+    p.scale.set(1.6, 0.8, 0.5);
+    p.position.set(Math.cos(a) * 0.09, 0.38 + Math.sin(a) * 0.09, 0);
+    p.rotation.z = a;
+    g.add(p);
+  }
+  const middle = mesh(new THREE.SphereGeometry(0.06, 20, 14), velvet(0xffcf3d));
+  middle.position.set(0, 0.38, 0.03);
+  g.add(middle);
+  return g;
+}
+
+/* The sun with the friends' face. */
+function weatherSun() {
+  const g = new THREE.Group();
+  const disc = mesh(new THREE.SphereGeometry(0.66, 64, 48), velvet(0xffcd3c));
+  disc.scale.z = 0.55;
+  g.add(disc);
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    const ray = mesh(new THREE.CapsuleGeometry(0.11, 0.18, 8, 16), velvet(0xffa53a));
+    ray.position.set(Math.cos(a) * 0.92, Math.sin(a) * 0.92, 0);
+    ray.rotation.z = a - Math.PI / 2;
+    g.add(ray);
+  }
+  return friendFace(g, [disc], 0, 0.02, 0.95);
+}
+
+/* A cloud of round puffs in `color`, with the friends' face on the big
+   front one. */
+function weatherCloud(color) {
+  const g = new THREE.Group();
+  const clay_ = velvet(color);
+  let front;
+  for (const [x, y, z, r] of [[0, 0.1, 0.12, 0.62], [-0.7, -0.08, 0, 0.44], [0.72, -0.06, 0, 0.46], [-0.34, 0.38, -0.12, 0.42], [0.36, 0.4, -0.14, 0.44], [-1.08, -0.2, -0.06, 0.28], [1.1, -0.18, -0.06, 0.3]]) {
+    const puff = mesh(new THREE.SphereGeometry(r, 48, 32), clay_);
+    puff.scale.z = 0.75;
+    puff.position.set(x, y, z);
+    g.add(puff);
+    front ??= puff;
+  }
+  return friendFace(g, [front], 0, 0.06, 0.82);
+}
+
+/* A raindrop, its point up. */
+function raindrop() {
+  return mesh(smoothLathe([[0, 0], [0.07, 0.02], [0.1, 0.09], [0.08, 0.17], [0.03, 0.26], [0, 0.3]]), velvet(0x5aa8f0));
+}
+
+/* A snowflake facing +z, in velvet. */
+function velvetFlake() {
+  const g = new THREE.Group();
+  const ice = velvet(0xf3f9ff);
+  for (let i = 0; i < 3; i++) {
+    const bar = mesh(new THREE.CapsuleGeometry(0.04, 0.6, 6, 10), ice);
+    bar.rotation.z = (i * Math.PI) / 3;
+    g.add(bar);
+  }
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI) / 3 + Math.PI / 2;
+    for (const s of [-1, 1]) {
+      const barb = mesh(new THREE.CapsuleGeometry(0.03, 0.12, 6, 8), ice);
+      barb.position.set(Math.cos(a) * 0.22 + Math.cos(a + s * 0.9) * 0.07, Math.sin(a) * 0.22 + Math.sin(a + s * 0.9) * 0.07, 0);
+      barb.rotation.z = a + s * 0.9 - Math.PI / 2;
+      g.add(barb);
+    }
+  }
+  return g;
+}
+
+/* A snowman with the friends' face and a carrot nose. */
+function weatherSnowman() {
+  const g = new THREE.Group();
+  const snow = velvet(0xfbfdff);
+  const body = mesh(new THREE.SphereGeometry(0.42, 48, 32), snow);
+  body.position.y = 0.38;
+  g.add(body);
+  const head = mesh(new THREE.SphereGeometry(0.3, 48, 32), snow);
+  head.position.y = 0.98;
+  g.add(head);
+  for (const s of [-1, 1]) g.add(taperTube([[s * 0.36, 0.55, 0], [s * 0.56, 0.72, 0], [s * 0.66, 0.86, 0]], 0.025, 0.018, velvet(0x9a5a2c)));
+  const scarf = mesh(new THREE.TorusGeometry(0.26, 0.07, 16, 48), velvet(0x6bb8f0));
+  scarf.rotation.x = Math.PI / 2;
+  scarf.position.y = 0.74;
+  g.add(scarf);
+  friendFace(g, [head], 0, 1.0, 0.62, { eyes: 0.24, cheeks: 0.42, mouth: false });
+  const nose = mesh(new THREE.ConeGeometry(0.05, 0.22, 20), velvet(0xff8b34));
+  nose.rotation.x = Math.PI / 2;
+  nose.position.set(0, 0.96, 0.36);
+  g.add(nose);
+  return g;
+}
+
+/* A swirl of wind: a long soft line that curls at its end. */
+function windSwirl(length) {
+  const pts = [[0, 0, 0], [length * 0.35, 0.08, 0], [length * 0.7, 0, 0], [length * 0.92, 0.14, 0], [length * 0.86, 0.3, 0], [length * 0.72, 0.24, 0]];
+  return taperTube(pts, 0.075, 0.05, velvet(0xd6ebff));
+}
+
+/* Each weather: what stands on the hill (`ground`, all of it scaled down
+   together, so the hill leaves the sky room) and what is in the sky — big,
+   so a weather reads even on a review box. */
+const WEATHER_DEFS = {
+  sunny: () => ({
+    ground: [
+      bloosHill(),
+      ...[[-0.35, 1.7, 0xff86c2], [0.25, 1.95, 0xffffff], [0.75, 1.55, 0xffd23a], [-1.8, 0.9, 0xffffff], [2.0, 0.6, 0xff86c2]].map(([x, z, color]) => onHill(at(hillFlower(color), [0, 0, 0], 1.5), x, z)),
+    ],
+    sky: [at(weatherSun(), [1.25, 4.05, 0.4], 1.3)],
+  }),
+  rainy: () => ({
+    ground: [
+      bloosHill(),
+      ...[[-0.4, 1.55, 0.62], [0.95, 1.2, 0.48], [-1.75, 0.95, 0.42]].map(([x, z, r]) => {
+        const puddle = mesh(new THREE.CylinderGeometry(r, r, 0.04, 48), velvet(0x8fcdfc));
+        puddle.scale.z = 0.62;
+        return onHill(puddle, x, z);
+      }),
+    ],
+    sky: [
+      at(weatherCloud(0xb9cde2), [0.05, 4.2, 0.3], 1.3),
+      ...[[-1.45, 3.05], [-0.75, 2.45], [0.05, 2.95], [0.8, 2.35], [1.55, 2.95], [-1.15, 1.75], [1.35, 1.65], [0.35, 1.6], [-0.4, 1.95]].map(([x, y]) => at(raindrop(), [x, y, 1.0], 1.6)),
+    ],
+  }),
+  windy: () => ({
+    ground: [bloosHill({ lean: -0.24 })],
+    sky: [
+      at(weatherCloud(0xf4f8ff), [-1.3, 4.2, 0.2], 1.15),
+      at(windSwirl(2.3), [-0.5, 3.35, 0.9], 1.0),
+      at(windSwirl(1.9), [-0.2, 2.6, 1.0], 1.0),
+      at(windSwirl(1.7), [-2.5, 2.1, 1.0], 1.0),
+      at(WEAR.kite(), [1.85, 4.15, 0.4], 0.72, [0, 0, -0.35]),
+      ...[[-1.25, 2.95, 0x78cf5c, 0.5], [0.95, 3.5, 0xffa53a, -0.6], [2.2, 2.35, 0x63c84e, 1.2], [-2.2, 3.4, 0xf2683a, -0.2]].map(([x, y, color, turn]) => at(plumpLeaf(0.32, 0.15, velvet(color)), [x, y, 1.0], 1.45, [0.3, 0.2, turn])),
+    ],
+  }),
+  snowy: () => ({
+    ground: [bloosHill({ snowy: true }), onHill(at(weatherSnowman(), [0, 0, 0], 1.45), 0.75, 1.15, -0.25)],
+    sky: [
+      at(weatherCloud(0xe6edf6), [-0.05, 4.25, 0.2], 1.25),
+      ...[[-1.6, 2.95, 1.05], [-0.55, 2.4, 0.85], [1.45, 3.05, 1.0], [2.25, 2.1, 0.8], [-2.3, 1.95, 0.85], [0.5, 2.85, 0.75]].map(([x, y, k]) => at(velvetFlake(), [x, y, 1.0], k, [0, 0, x])),
+    ],
+  }),
+};
+
+ITEMS.weather = (what) => {
+  const { ground, sky } = WEATHER_DEFS[what]();
+  const hill = group(...ground);
+  hill.scale.setScalar(0.8);
+  const g = group(hill, ...sky);
+  /* All four framed alike, whatever is in the sky. */
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 5.6, 0.1));
+  frame.visible = false;
+  frame.position.set(0, 2.8, 0);
+  g.add(frame);
+  return g;
+};
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
