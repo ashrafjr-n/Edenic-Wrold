@@ -51,11 +51,10 @@
  *   node tools/picnic-scene/render.cjs thing apple=fruit:apple banana=fruit:banana orange=fruit:orange grapes=fruit:grapes carrot=fruit:carrot broccoli=fruit:broccoli corn=fruit:corn potato=fruit:potato
  *   node tools/picnic-scene/render.cjs thing cup=cup@float
  *
- * Bloo's weather — what he wears (`wear/`, cropped with `--grain`; the
- * glasses, the umbrella, the kite, the pinwheel and the scarf seen from
- * straight ahead, as they lie on his picture) and the four weathers on his
- * hill (then `crop.py weather`, which crops all four on one box; his horns
- * come from his own picture, `crop.py horns`):
+ * Bloo's weather — what a child needs for each, the review's things to
+ * sort (`wear/`, cropped with `--grain`; some seen from straight ahead)
+ * and the four weathers on his hill (then `crop.py weather`, which crops
+ * all four on one box):
  *
  *   node tools/picnic-scene/render.cjs thing sunglasses=wear:sunglasses@float@front sunhat=wear:sunhat@float umbrella=wear:umbrella@float@front rainhat=wear:rainhat@float kite=wear:kite@float@front pinwheel=wear:pinwheel@float@front beanie=wear:beanie@float scarf=wear:scarf@float@front
  *   node tools/picnic-scene/render.cjs thing weather-sunny=weather:sunny@float weather-rainy=weather:rainy@float weather-windy=weather:windy@float weather-snowy=weather:snowy@float

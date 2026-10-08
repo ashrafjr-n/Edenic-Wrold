@@ -52,14 +52,6 @@ for all of a weather, into `public/assets/learn/bloo/weather/make/
 
     python3 tools/picnic-scene/crop.py weathersteps
 
-Bloo's horns — cut out of his own picture (`public/assets/friends/bloo.png`,
-the same size) into `public/assets/learn/bloo/weather/bloo-horns.png`, to lie
-over the hats he is given in the Weather lessons, so his horns come through
-them: inside each horn's outline, every pixel with far more red than blue
-(gold and its shine — never his blue felt).
-
-    python3 tools/picnic-scene/crop.py horns
-
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
@@ -75,7 +67,7 @@ import os
 import sys
 import zlib
 import numpy as np
-from PIL import Image, ImageChops, ImageDraw, ImageFilter
+from PIL import Image, ImageChops
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.join(HERE, "../..")
@@ -144,26 +136,6 @@ if NAME == "weathersteps":
                 l, t, r, b = cut.split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
                 sky.setdefault(w, []).append([round(l / cut.width * 100, 2), round(t / cut.height * 100, 2), round((r - l) / cut.width * 100, 2), round((b - t) / cut.height * 100, 2)])
     print(json.dumps({"size": [box[2] - box[0], box[3] - box[1]], "sky": sky}))
-    sys.exit()
-
-# Each horn's outline, % of Bloo's picture — drawn a little wide.
-HORNS = [[(27, 5), (34, 0), (42, 4), (47, 13), (44, 19), (36, 21), (28, 19)], [(75, 21), (83, 14), (93, 14), (96, 20), (92, 33), (85, 33), (78, 28)]]
-
-if NAME == "horns":
-    bloo = Image.open(os.path.join(ROOT, "public/assets/friends/bloo.png")).convert("RGBA")
-    W, H = bloo.size
-    px = np.asarray(bloo).astype(np.float32) / 255
-    gold = np.clip((px[..., 0] - px[..., 2] - 0.04) / 0.1, 0, 1)
-    region = Image.new("L", (W, H), 0)
-    draw = ImageDraw.Draw(region)
-    for poly in HORNS:
-        draw.polygon([(x / 100 * W, y / 100 * H) for x, y in poly], fill=255)
-    region = np.asarray(region.filter(ImageFilter.GaussianBlur(1))).astype(np.float32) / 255
-    px[..., 3] *= region * gold
-    px[px[..., 3] < 1 / 255] = 0  # nothing kept under what is not there: a far smaller file
-    dest = os.path.join(ROOT, "public/assets/learn/bloo/weather")
-    os.makedirs(dest, exist_ok=True)
-    Image.fromarray((px * 255 + 0.5).astype(np.uint8), "RGBA").save(os.path.join(dest, "bloo-horns.png"), optimize=True)
     sys.exit()
 
 if NAME == "things":
