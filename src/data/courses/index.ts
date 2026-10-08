@@ -26,7 +26,6 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   seasons: novaSeasons,
   animals: blooAnimals,
   weather: comingSoon(5, COURSE_ART.weather),
-  body: comingSoon(5, COURSE_ART.body),
 };
 
 /** A course's pictures, for its card and banner: every lesson's cover, each

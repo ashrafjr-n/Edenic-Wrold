@@ -2,7 +2,7 @@
 export type LessonId =
   | "shapes" | "colors"
   | "fruits" | "seasons"
-  | "animals" | "weather" | "body";
+  | "animals" | "weather";
 
 /** A course's own colour world (its cards, banner, path and buttons).
     Deliberately independent of the character's accent: the hue says what
