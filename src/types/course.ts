@@ -142,6 +142,10 @@ export type Question =
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
+  /** Nova's cups: the thing (`picture`) goes under one of three cups, they
+      swap places, and the child taps the one it is under — one miss and
+      the round starts again, the thing under a new cup. */
+  | { type: "cups"; ask: Ask; word: string; picture: StaticImageData }
   /** Pick what Nova's note says (a review's exam): three plants, the
       note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
       Tap one and it is picked (pulled up) into the basket, its word popping
