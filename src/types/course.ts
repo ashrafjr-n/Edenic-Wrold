@@ -205,6 +205,22 @@ export interface Basket {
   mouth: SceneRect;
 }
 
+/** How a weather is made by hand (Bloo's Weather lessons). */
+export type Gesture = "tap" | "push" | "swipe" | "shake";
+
+/** A weather made by hand (`tools/picnic-scene`, `?weathersteps=`): Bloo's
+    hill before the weather and after each go (`frames`, all on one box —
+    the sun has one: its clouds go instead), what is in its sky as layers of
+    their own the same size (`sky` — the cloud to tap or shake, the clouds
+    to push off the sun) with where each is (`box`, % of the picture), and
+    what the weather sends down or across (`bits`: drops, flakes, swirls and
+    leaves, sparkles). */
+export interface WeatherScene {
+  frames: readonly StaticImageData[];
+  sky: readonly { src: StaticImageData; box: SceneRect }[];
+  bits: readonly StaticImageData[];
+}
+
 /** A picture that comes step by step under a magic button — a season
     coming to Nova's tree (`tools/picnic-scene`, `?season=`): the picture
     before it, then one per step with everything before it (`frames` is one
