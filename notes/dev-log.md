@@ -66,3 +66,4 @@
 2026-10-05 tweak memory match timing
 2026-10-07 tweak spell step
 2026-10-07 clean up course backdrop
+2026-10-08 adjust card spacing
