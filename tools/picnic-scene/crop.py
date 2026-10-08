@@ -19,7 +19,7 @@ not behind the front) and the front's box — paste them into
 `data/garden.ts`. `dest` defaults to
 `public/assets/learn/nova/fruits/garden`.
 
-    python3 tools/picnic-scene/crop.py harvest-fruits
+    python3 tools/picnic-scene/crop.py harvest-fruits --grain
 
 Nova's basket — run after `render.cjs basket`: writes the basket
 (`basket.png`) and its near half, which goes over what is piled in it
@@ -107,7 +107,8 @@ def pct(r):
 if NAME.startswith("harvest-"):
     garden = NAME[len("harvest-"):]
     out = os.path.join(HERE, "out", NAME)
-    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/garden", garden)
+    where = [a for a in sys.argv[2:] if not a.startswith("--")]
+    dest = os.path.join(ROOT, where[0] if where else "public/assets/learn/nova/fruits/garden", garden)
     os.makedirs(dest, exist_ok=True)
     ground = Image.open(f"{out}/background.png").convert("RGB")
     W, H = ground.size
@@ -130,7 +131,10 @@ if NAME.startswith("harvest-"):
         box = alpha_box(layer)
         # One picture per food — all of one kind are alike.
         if food not in meta["foods"][:k]:
-            layer.crop(box).save(f"{dest}/{food}.png", optimize=True)
+            cut = layer.crop(box)
+            if "--grain" in sys.argv:
+                cut = grain(cut, zlib.crc32(food.encode()))
+            cut.save(f"{dest}/{food}.png", optimize=True)
         seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
         items.append({"food": food, "box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
     print(json.dumps({"items": items, **({"front": pct(front)} if front else {})}))

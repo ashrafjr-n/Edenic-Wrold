@@ -2051,9 +2051,9 @@ const GARDENS = {
     lift: 14,
     world: plants([[() => fruitTree(0x63bb59), -3.15, 0.56], [bananaPlant, 0, 0.62], [() => fruitTree(0x4ea957), 3.15, 0.56]]),
     foods: [
-      { food: "apple", scale: 0.84, rot: [0, 0.35, 0], at: [[-3.8, 2.5, 1.05], [-2.5, 2.45, 1.05], [-3.82, 1.35, 1.05], [-2.52, 1.4, 1.05]], tilt: [-8, 6, 4, -5] },
-      { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
-      { food: "orange", scale: 0.96, rot: [0, 0.6, 0], at: [[2.5, 2.45, 1.05], [3.8, 2.4, 1.05], [3.15, 1.3, 1.1]], tilt: [6, -8, 4] },
+      { food: "apple", make: () => FRIEND_FOOD.apple(), scale: 0.72, at: [[-3.8, 2.45, 1.05], [-2.5, 2.4, 1.05], [-3.82, 1.25, 1.05], [-2.52, 1.3, 1.05]], tilt: [-8, 6, 4, -5] },
+      { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
+      { food: "orange", make: () => FRIEND_FOOD.orange(), scale: 0.84, at: [[2.5, 2.4, 1.05], [3.8, 2.35, 1.05], [3.15, 1.25, 1.1]], tilt: [6, -8, 4] },
     ],
   },
   vegetables: {
@@ -2063,9 +2063,9 @@ const GARDENS = {
     lift: 18,
     world: plants([[bed, -3.05, 0.52], [bananaPlant, 0, 0.62], [bed, 3.05, 0.52]]),
     foods: [
-      { food: "carrot", make: carrotPlant, scale: 1.0, at: [[-4.1, 0.15, 0], [-3.4, 0.15, 0], [-2.7, 0.15, 0], [-2.0, 0.15, 0]] },
-      { food: "banana", scale: 0.74, rot: [0, 0, Math.PI / 2], at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
-      { food: "potato", make: potatoPlant, scale: 0.85, rot: [0, 0.25, 0], at: [[2.1, 0.4, 0], [3.05, 0.4, 0], [4.0, 0.4, 0]] },
+      { food: "carrot", make: () => FRIEND_FOOD.carrot(), scale: 0.85, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
+      { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
+      { food: "potato", make: friendPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
     ],
   },
 };
@@ -3150,8 +3150,12 @@ const FRIEND_FOOD = {
     return friendFace(g, [body], 0, 0.55, 1);
   },
 
-  banana() {
+  /* `hang`: turned upright, as it hangs on its plant (the exam gardens) —
+     its face painted on after the turn, so it stays upright too. */
+  banana(hang = false) {
     const g = new THREE.Group();
+    const fruit = new THREE.Group();
+    g.add(fruit);
     const curve = new THREE.CatmullRomCurve3([[-0.8, 0.66], [-0.46, 0.27], [0, 0.15], [0.46, 0.27], [0.8, 0.66]].map(([x, y]) => new THREE.Vector3(x, y, 0)));
     const T = 128, R = 32, r = 0.27;
     const geo = new THREE.TubeGeometry(curve, T, r, R);
@@ -3166,16 +3170,18 @@ const FRIEND_FOOD = {
     }
     geo.computeVertexNormals();
     const body = mesh(geo, velvet(0xffd84e));
-    g.add(body);
+    fruit.add(body);
     const tip = mesh(new THREE.SphereGeometry(0.05, 16, 12), velvet(0x7a5230));
     tip.position.copy(curve.getPoint(0));
-    g.add(tip);
+    fruit.add(tip);
     const stalk = mesh(new THREE.CapsuleGeometry(0.065, 0.16, 8, 16), velvet(0x9fb04a));
     const end = curve.getPoint(1);
     stalk.position.set(end.x + 0.05, end.y + 0.1, 0);
     stalk.rotation.z = -0.55;
-    g.add(stalk);
-    return friendFace(g, [body], 0, 0.2, 0.92);
+    fruit.add(stalk);
+    if (!hang) return friendFace(g, [body], 0, 0.2, 0.92);
+    fruit.rotation.z = Math.PI / 2;
+    return friendFace(g, [body], -0.15, 0.02, 0.58, { eyes: 0.2, cheeks: 0.3 });
   },
 
   orange() {
@@ -3306,6 +3312,23 @@ function cup() {
   g.add(knob);
   g.updateMatrixWorld(true);
   for (const [x, y] of [[0, 0.62], [-0.3, 0.36], [0.3, 0.36], [-0.27, 0.86], [0.27, 0.86], [-0.48, 0.62], [0.48, 0.62]]) g.add(paint([g.children[0]], x, y, 0.15, 0.15, SPOT_PAINT));
+  return g;
+}
+
+/* A potato as it is dug up: Nova's potato with a sprout of leaves on top. */
+function friendPotatoPlant() {
+  const g = FRIEND_FOOD.potato();
+  const green = velvet(LEAF_GREEN);
+  const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.3, 8, 12), green);
+  stem.position.set(0, 0.86, -0.05);
+  g.add(stem);
+  for (const [a, y] of [[-0.9, 0.94], [0.9, 0.98], [-0.35, 1.1], [0.4, 1.13]]) {
+    const leaf = mesh(new THREE.SphereGeometry(0.12, 24, 12), green);
+    leaf.scale.set(1.5, 0.4, 0.8);
+    leaf.position.set(Math.sin(a) * 0.16, y, -0.05);
+    leaf.rotation.z = a * 0.6;
+    g.add(leaf);
+  }
   return g;
 }
 
