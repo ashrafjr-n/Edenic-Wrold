@@ -168,6 +168,10 @@ export type Question =
       front of it — drag or tap each one and it flies into its `mouth` (%
       of the picture). Nothing can go wrong — all the food is its own. */
   | { type: "feed"; ask: Ask; word: string; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
+  /** Dress Bloo for the weather: what he wears for it (`wear`, two things)
+      waits beside him — drag or tap each and it goes on him. Nothing can
+      go wrong — all of it is this weather's; then the weather comes. */
+  | { type: "dress"; ask: Ask; word: Weather; wear: readonly Wear[] }
   /** Pick what Nova's note says (a review's exam): three plants, the
       note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
       Tap one and it is picked (pulled up) into the basket, its word popping
