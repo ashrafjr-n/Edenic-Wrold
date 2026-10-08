@@ -2883,7 +2883,87 @@ function fishbowl() {
   return g;
 }
 
-Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
+/* ---------- What Bloo's animals eat — the Feed step ----------
+   Fed one bite at a time into the animal's mouth (`?thing=food&arg=`): a
+   bone for the dog, a little bottle of milk for the cat, a tuft of grass
+   for the cow, a pinch of fish food for the fish. Velvet clay, and no face
+   — they get eaten. */
+const ANIMAL_FOOD = {
+  bone() {
+    const g = new THREE.Group();
+    const cream = velvet(0xfff0d4);
+    const shaft = mesh(new THREE.CapsuleGeometry(0.15, 0.62, 12, 32), cream);
+    shaft.rotation.z = Math.PI / 2;
+    g.add(shaft);
+    for (const x of [-0.46, 0.46]) for (const y of [-0.14, 0.14]) {
+      const knob = mesh(new THREE.SphereGeometry(0.2, 40, 28), cream);
+      knob.position.set(x, y, 0);
+      g.add(knob);
+    }
+    g.rotation.z = 0.32;
+    return g;
+  },
+
+  /* A chubby bottle of milk with a pale blue cap and band. */
+  milk() {
+    const g = new THREE.Group();
+    g.add(mesh(smoothLathe([[0, 0], [0.3, 0], [0.37, 0.06], [0.39, 0.5], [0.34, 0.74], [0.21, 0.88], [0.18, 0.97], [0, 0.97]]), velvet(0xfffdf6)));
+    const blue = velvet(0x72b8ff);
+    const cap = mesh(smoothLathe([[0, 0], [0.22, 0], [0.245, 0.04], [0.245, 0.13], [0.21, 0.18], [0, 0.185]]), blue);
+    cap.position.y = 0.93;
+    g.add(cap);
+    const band = mesh(new THREE.CylinderGeometry(0.396, 0.396, 0.22, 64, 1, true), blue);
+    band.position.y = 0.3;
+    g.add(band);
+    return g;
+  },
+
+  /* A tuft of fat grass blades with a daisy in it. */
+  grass() {
+    const g = new THREE.Group();
+    const greens = [velvet(0x63c84e), velvet(0x8bdb60), velvet(0x4fb444)];
+    [[-0.34, 0.6, -0.5], [-0.2, 0.82, -0.25], [-0.05, 0.98, -0.05], [0.12, 0.9, 0.2], [0.3, 0.66, 0.45], [-0.12, 0.7, -0.15], [0.05, 0.74, 0.1]].forEach(([x, h, lean], i) =>
+      g.add(taperTube([[x * 0.35, 0, 0], [x * 0.7, h * 0.5, 0.04], [x + lean * 0.3, h, 0]], 0.085, 0.02, greens[i % 3])),
+    );
+    const daisy = new THREE.Group();
+    daisy.add(taperTube([[0.06, 0, 0.06], [0.16, 0.36, 0.08], [0.22, 0.7, 0.1]], 0.03, 0.025, greens[2]));
+    const petal = velvet(0xffffff);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const p = mesh(new THREE.SphereGeometry(0.06, 20, 14), petal);
+      p.scale.set(1.7, 0.75, 0.5);
+      p.position.set(0.22 + Math.cos(a) * 0.1, 0.74 + Math.sin(a) * 0.1, 0.12);
+      p.rotation.z = a;
+      daisy.add(p);
+    }
+    const middle = mesh(new THREE.SphereGeometry(0.06, 24, 16), velvet(0xffcf3d));
+    middle.scale.z = 0.7;
+    middle.position.set(0.22, 0.74, 0.15);
+    daisy.add(middle);
+    g.add(daisy);
+    return g;
+  },
+
+  /* A little heap of fish food: small pellets, orange, red and brown. */
+  pellets() {
+    const g = new THREE.Group();
+    const colors = [0xff8a3d, 0xe8524a, 0xb8743f, 0xffb347];
+    let i = 0;
+    for (const [y, r, n] of [[0.08, 0.36, 9], [0.08, 0.16, 4], [0.24, 0.24, 6], [0.38, 0.1, 3], [0.5, 0, 1]]) {
+      for (let k = 0; k < n; k++) {
+        const a = (k / n) * Math.PI * 2 + y * 7;
+        const bit = mesh(new THREE.SphereGeometry(0.085, 24, 18), velvet(colors[i++ % colors.length]));
+        bit.scale.set(1.15, 0.8, 1);
+        bit.position.set(Math.cos(a) * r, y, Math.sin(a) * r * 0.8);
+        bit.rotation.z = a;
+        g.add(bit);
+      }
+    }
+    return g;
+  },
+};
+
+Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl, food: (what) => ANIMAL_FOOD[what]() });
 
 /* ---------- Nova's fruits, the friends' way (2026-10-08) ----------
    The Fruits course's eight foods remade in the friends' look (direct
