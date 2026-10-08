@@ -43,6 +43,15 @@ boxes and picks), at most 640px, with the grain, into
 
     python3 tools/picnic-scene/crop.py weather
 
+Making the weather — run after `render.cjs weathersteps sunny rainy windy
+snowy`: crops every frame and sky layer of the four on ONE box (the
+frames of a weather cross-fade, its sky lies over them), with one grain
+for all of a weather, into `public/assets/learn/bloo/weather/make/
+<weather>/`, and prints each sky layer's box (% of that box) for
+`data/bloo-skies.ts`.
+
+    python3 tools/picnic-scene/crop.py weathersteps
+
 Bloo's horns — cut out of his own picture (`public/assets/friends/bloo.png`,
 the same size) into `public/assets/learn/bloo/weather/bloo-horns.png`, to lie
 over the hats he is given in the Weather lessons, so his horns come through
@@ -112,6 +121,29 @@ if NAME == "weather":
         face = os.path.join(HERE, "out", "things", f"weather-{w}.face.png")
         keep = Image.open(face).crop(box).resize(cut.size, Image.LANCZOS) if os.path.exists(face) else None
         grain(cut, zlib.crc32(w.encode()), keep).save(os.path.join(dest, f"{w}.png"), optimize=True)
+    sys.exit()
+
+if NAME == "weathersteps":
+    weathers = ["sunny", "rainy", "windy", "snowy"]
+    outs = {w: os.path.join(HERE, "out", f"weathersteps-{w}") for w in weathers}
+    names = {w: sorted(n[:-4] for n in os.listdir(o) if n.endswith(".png") and not n.endswith(".face.png")) for w, o in outs.items()}
+    boxes = [alpha_box(Image.open(os.path.join(outs[w], f"{n}.png"))) for w in weathers for n in names[w]]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    sky = {}
+    for w in weathers:
+        dest = os.path.join(ROOT, "public/assets/learn/bloo/weather/make", w)
+        os.makedirs(dest, exist_ok=True)
+        for n in names[w]:
+            cut = Image.open(os.path.join(outs[w], f"{n}.png")).crop(box)
+            cut.thumbnail((640, 640), Image.LANCZOS)
+            face = os.path.join(outs[w], f"{n}.face.png")
+            keep = Image.open(face).crop(box).resize(cut.size, Image.LANCZOS) if os.path.exists(face) else None
+            # One grain for all of a weather: its frames cross-fade without the grain jumping.
+            grain(cut, zlib.crc32(w.encode()), keep).save(os.path.join(dest, f"{n}.png"), optimize=True)
+            if n.startswith("sky"):
+                l, t, r, b = cut.split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
+                sky.setdefault(w, []).append([round(l / cut.width * 100, 2), round(t / cut.height * 100, 2), round((r - l) / cut.width * 100, 2), round((b - t) / cut.height * 100, 2)])
+    print(json.dumps({"size": [box[2] - box[0], box[3] - box[1]], "sky": sky}))
     sys.exit()
 
 # Each horn's outline, % of Bloo's picture — drawn a little wide.

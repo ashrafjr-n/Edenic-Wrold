@@ -60,6 +60,17 @@
  *   node tools/picnic-scene/render.cjs thing sunglasses=wear:sunglasses@float@front sunhat=wear:sunhat@float umbrella=wear:umbrella@float@front rainhat=wear:rainhat@float kite=wear:kite@float@front pinwheel=wear:pinwheel@float@front beanie=wear:beanie@float scarf=wear:scarf@float@front
  *   node tools/picnic-scene/render.cjs thing weather-sunny=weather:sunny@float weather-rainy=weather:rainy@float weather-windy=weather:windy@float weather-snowy=weather:snowy@float
  *
+ * Making the weather (the Weather lessons' third step) — for each weather,
+ * writes `out/weathersteps-<weather>/`: the hill before the weather and
+ * after each go (`frame0`…`frame3`; sunny has one, its sun under the
+ * clouds) and each thing in its sky alone (`sky0`…), all on the weather
+ * pictures' camera. Then `crop.py weathersteps`. And what the weather
+ * sends down or across, as single things (`crop.py things
+ * public/assets/learn/bloo/weather/bits … --grain`):
+ *
+ *   node tools/picnic-scene/render.cjs weathersteps sunny rainy windy snowy
+ *   node tools/picnic-scene/render.cjs thing drop=weatherbit:drop@float@front flake=weatherbit:flake@float@front leaf=weatherbit:leaf@float@front leaf2=weatherbit:leaf2@float@front swirl=weatherbit:swirl@float@front sparkle=weatherbit:sparkle@float@front
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
@@ -110,7 +121,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "season") {
+  } else if (mode === "season" || mode === "weathersteps") {
     for (const what of specs) {
       const layers = await render(page, `${mode}=${what}`);
       const out = path.join(__dirname, "out", `${mode}-${what}`);
