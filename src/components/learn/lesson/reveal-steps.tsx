@@ -25,29 +25,26 @@ const SCENE_SIZE =
 interface RevealStepsProps {
   /** What comes, in English: the season, the food. */
   word: string;
-  /** Or one word per step (the months filling the year): each shows under
-      the picture, and is said, as its step comes in. */
-  words?: readonly string[];
   scene: RevealScene;
-  /** Each spot's name for a screen reader ("Tap to bring more spring"). */
-  spotLabels: readonly string[];
+  /** The spot's name for a screen reader ("Tap to bring more spring"). */
+  spotLabel: string;
   onSolved: () => void;
 }
 
 /**
  * The magic button: the picture before it comes — the season's island
- * bare, the food's seed in the soil, Nova's year wheel with its next months
- * empty. One spot glows; tap it and the next part spreads over the picture
- * from there (the grass, the sprout, the month's slice…), then the next
- * spot glows. All in → it is all there, its word is said and it jumps.
- * Nothing can go wrong — the thing is the lesson, so nothing is chosen.
+ * bare, the food's seed in the soil. One spot glows; tap it and the next
+ * part spreads over the picture from there (the grass, the sprout…), then
+ * the next spot glows. All in → it is all there, its word is said and it
+ * jumps. Nothing can go wrong — the thing is the lesson, so nothing is
+ * chosen.
  *
  * Every step is one whole frame (`SEASON_SCENES`), laid over the last and
  * uncovered by a circle growing from the spot (`.season-reveal`); once it
  * has spread the one under it goes (two would double the soft edges). All
  * frames load up front, so none arrives after its spread has played.
  */
-export function RevealSteps({ word, words, scene, spotLabels, onSolved }: RevealStepsProps) {
+export function RevealSteps({ word, scene, spotLabel, onSolved }: RevealStepsProps) {
   const { frames, spots } = scene;
   /* How many steps are in, and how many have spread — the next spot only
      shows once the last one has. */
@@ -68,9 +65,8 @@ export function RevealSteps({ word, words, scene, spotLabels, onSolved }: Reveal
     setBrought(next);
     timer.current = window.setTimeout(() => {
       setSettled(next);
-      if (words) void playCue(lessonCue.word(words[next - 1]));
       if (next < spots.length) return;
-      if (!words) void playCue(lessonCue.word(word));
+      void playCue(lessonCue.word(word));
       timer.current = window.setTimeout(onSolved, DONE_MS);
     }, REVEAL_MS);
   };
@@ -118,7 +114,7 @@ export function RevealSteps({ word, words, scene, spotLabels, onSolved }: Reveal
           <button
             key={brought}
             type="button"
-            aria-label={spotLabels[brought]}
+            aria-label={spotLabel}
             onClick={bring}
             className="anim-pop-in absolute z-[2] h-[15cqw] w-[15cqw] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)]"
             style={{ left: `${spots[brought][0]}%`, top: `${spots[brought][1]}%` }}
@@ -140,14 +136,7 @@ export function RevealSteps({ word, words, scene, spotLabels, onSolved }: Reveal
       {/* English in every locale: never mirrored. No speaker here — the word
           card before it is where the word is heard (direct request). */}
       <div dir="ltr" className={`flex items-center justify-center lg:shrink-0 ${solved ? "anim-jump" : ""}`}>
-        {words ? (
-          /* The month just come in; before the first, its place is kept. */
-          <span key={settled} className={settled ? "anim-pop-in" : "invisible"}>
-            <ClayWord word={words[Math.max(0, settled - 1)]} size="sm" />
-          </span>
-        ) : (
-          <ClayWord word={word} size="sm" />
-        )}
+        <ClayWord word={word} size="sm" />
       </div>
     </div>
   );

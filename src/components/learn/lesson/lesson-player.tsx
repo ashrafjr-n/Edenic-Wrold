@@ -38,7 +38,7 @@ import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
 
 /** Each magic button's spot, for a screen reader: "Tap to bring more spring". */
-const SPOT_ARIA = { season: "seasonSpotAria", grow: "growSpotAria", year: "yearSpotAria" } as const;
+const SPOT_ARIA = { season: "seasonSpotAria", grow: "growSpotAria" } as const;
 
 /* Green is every "Next" (direct request); the course's own colour (Pinki's
    pink, for her courses) is every other way onward (Your turn, Help, the
@@ -443,9 +443,8 @@ export function LessonPlayer({
         <RevealSteps
           key={seed}
           word={q.word}
-          words={q.words}
           scene={q.scene}
-          spotLabels={q.scene.spots.map((_, i) => format(lines[SPOT_ARIA[q.magic]], { word: q.words?.[i] ?? q.word }))}
+          spotLabel={format(lines[SPOT_ARIA[q.magic]], { word: q.word })}
           onSolved={onSolved}
         />
       );

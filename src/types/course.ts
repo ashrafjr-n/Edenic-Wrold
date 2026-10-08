@@ -139,10 +139,9 @@ export type Question =
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
   /** A magic button brings it, step by step: tap the glowing spot and the
       next part spreads over the picture until it is all there. `magic` is
-      what comes — a season to Nova's tree, a food growing from its seed,
-      the months into Nova's year wheel (each step its own month, `words`).
+      what comes — a season to Nova's tree, a food growing from its seed.
       Nothing can go wrong — the thing is the lesson. */
-  | { type: "change"; ask: Ask; magic: Magic; word: string; words?: readonly string[]; scene: RevealScene }
+  | { type: "change"; ask: Ask; magic: Magic; word: string; scene: RevealScene }
   /** The word in big empty letters: rub each one with a finger and it
       fills with small `picture`s of the thing — a word made of apples. */
   | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
@@ -190,7 +189,7 @@ export interface RevealScene {
 }
 
 /** What a magic button brings (a `change` step). */
-export type Magic = "season" | "grow" | "year";
+export type Magic = "season" | "grow";
 
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";
