@@ -35,6 +35,7 @@ import { RevealSteps } from "./reveal-steps";
 import { CupsGame } from "./cups-game";
 import { FeedAnimal } from "./feed-animal";
 import { DressBloo } from "./dress-bloo";
+import { MakeWeather } from "./make-weather";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -439,6 +440,8 @@ export function LessonPlayer({
       body = <CupsGame key={seed} word={q.word} picture={q.picture} cupAria={lines.cupAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} food={q.food} mouth={q.mouth} biteAria={lines.biteAria} onSolved={onSolved} />;
+    } else if (q.type === "weather") {
+      body = <MakeWeather key={seed} word={q.word} gesture={q.gesture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} onSolved={onSolved} />;
     } else if (q.type === "dress") {
       body = <DressBloo key={seed} word={q.word} wear={q.wear} wearAria={lines.wearAria} onSolved={onSolved} />;
     } else if (q.type === "change") {

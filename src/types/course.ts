@@ -168,6 +168,11 @@ export type Question =
       front of it — drag or tap each one and it flies into its `mouth` (%
       of the picture). Nothing can go wrong — all the food is its own. */
   | { type: "feed"; ask: Ask; word: string; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
+  /** Make the weather by hand, in three goes, on Bloo's hill: tap the
+      cloud (rain), push the clouds off the sun, swipe across the sky
+      (wind), shake the cloud (snow). Nothing can go wrong — the weather is
+      the lesson. */
+  | { type: "weather"; ask: Ask; word: Weather; gesture: Gesture; scene: WeatherScene }
   /** Dress Bloo for the weather: what he wears for it (`wear`, two things)
       waits beside him — drag or tap each and it goes on him. Nothing can
       go wrong — all of it is this weather's; then the weather comes. */
