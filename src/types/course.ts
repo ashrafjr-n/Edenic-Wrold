@@ -146,6 +146,10 @@ export type Question =
       swap places, and the child taps the one it is under — one miss and
       the round starts again, the thing under a new cup. */
   | { type: "cups"; ask: Ask; word: string; picture: StaticImageData }
+  /** Feed it: the animal (`picture`) and three bites of its `food` in
+      front of it — drag or tap each one and it flies into its `mouth` (%
+      of the picture). Nothing can go wrong — all the food is its own. */
+  | { type: "feed"; ask: Ask; word: string; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
   /** Pick what Nova's note says (a review's exam): three plants, the
       note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
       Tap one and it is picked (pulled up) into the basket, its word popping

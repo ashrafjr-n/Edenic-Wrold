@@ -51,6 +51,8 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "fill", target: q.word };
     case "cups":
       return { kind: "cups", target: q.word };
+    case "feed":
+      return { kind: "feed", target: q.word };
     case "harvest":
       return { kind: "harvest" };
     case "change":
@@ -94,6 +96,8 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "fill", word: q.word, picture: q.picture };
     case "cups":
       return { kind: "cups", picture: q.picture };
+    case "feed":
+      return { kind: "feed", picture: q.picture, food: q.food, mouth: q.mouth };
     case "harvest":
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "change":

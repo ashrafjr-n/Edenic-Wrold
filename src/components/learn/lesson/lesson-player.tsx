@@ -34,6 +34,7 @@ import { FillWord } from "./fill-word";
 import { HarvestPick } from "./harvest-pick";
 import { RevealSteps } from "./reveal-steps";
 import { CupsGame } from "./cups-game";
+import { FeedAnimal } from "./feed-animal";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -438,6 +439,8 @@ export function LessonPlayer({
       body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "cups") {
       body = <CupsGame key={seed} word={q.word} picture={q.picture} cupAria={lines.cupAria} onSolved={onSolved} onMiss={onMiss} />;
+    } else if (q.type === "feed") {
+      body = <FeedAnimal key={seed} word={q.word} picture={q.picture} food={q.food} mouth={q.mouth} biteAria={lines.biteAria} onSolved={onSolved} />;
     } else if (q.type === "change") {
       body = (
         <RevealSteps
