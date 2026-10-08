@@ -159,9 +159,9 @@ src/
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      Fill the word, the magic button (a season comes),
-                      Nova's cups (find the food under one of three), the
-                      review's garden to pick Nova's
+                      the magic button (a season comes), Nova's cups (find
+                      the food under one of three), feeding an animal its
+                      food a bite at a time, the review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
@@ -190,10 +190,10 @@ tools/
                       with a face, frame by frame as each season comes),
                       Nova's eight foods in the friends' look (chubby
                       velvet clay with the buttons' grain and the
-                      friends' face) and her cup, and Bloo's animals (a
-                      cat, a dog, a cow and a fish with the friends'
-                      face, two coats each) and their homes, then crops
-                      them into layers — not part of the site build
+                      friends' face) and her cup, and Bloo's animals in
+                      the same look (a cat, a dog, a cow and a fish, two
+                      coats each), their homes and what each eats, then
+                      crops them into layers — not part of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -226,10 +226,11 @@ public/
                             things to sort), and each course's placeholder
                             reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
-                            (things/: each animal in two coats, fill/: each
-                            without a shadow, to fill its word with, homes/:
-                            where each lives — the review's boxes) and its
-                            placeholder reels
+                            (things/: each animal in two coats, in the
+                            friends' look, food/: a bite of what each eats —
+                            a bottle of milk, a bone, a tuft of grass, fish
+                            food — homes/: where each lives, the review's
+                            boxes) and its placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -378,10 +379,16 @@ picture:
   and two spelled from their picture.
 
 Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
-Each is a chibi clay animal with the friends' face (eyes with a shine, pink
-cheeks). The animal is **met** and **spelled**, then its word is **filled**
-with little cats (dogs, cows, fish) — nothing to choose between inside a
-lesson. The review is the exam: eight animals, each in two coats (an
+Each is a chibi animal drawn the friends' way, like Nova's foods: soft
+velvety clay with the buttons' grain and the friends' face (big eyes with a
+purple iris and a little gold heart, pink cheeks, an open smile — on the
+dog's and the cow's muzzle). The animal is **met** and **spelled**, then the
+child **feeds it**: three bites of its own food lie in front of it (a
+bottle of milk for the cat, a bone for the dog, a tuft of grass for the
+cow, fish food for the fish). Drag one onto the animal, or tap it, and it
+flies into its mouth; the animal munches and a heart floats up, and after
+the third its word is said and it jumps — nothing to choose between inside
+a lesson. The review is the exam: eight animals, each in two coats (an
 orange cat and a grey one, a brown dog and a spotty one…), go into their
 homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
