@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Balloon, Blocks, CookingPot, CupSoda, Ear, Eye, Highlighter, ListOrdered, Paintbrush, Pencil, Pointer, Search, Shapes, ShoppingBasket, Shuffle, ThumbsUp, Utensils, WandSparkles, X, type LucideIcon } from "lucide-react";
+import { Balloon, Blocks, CookingPot, CupSoda, Ear, Eye, ListOrdered, Paintbrush, Pencil, Pointer, Search, Shapes, ShoppingBasket, Shuffle, ThumbsUp, Utensils, WandSparkles, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
@@ -26,7 +26,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   cook: CookingPot,
   juice: CupSoda,
   like: ThumbsUp,
-  fill: Highlighter,
   harvest: ShoppingBasket,
   change: WandSparkles,
   cups: Shuffle,
