@@ -115,7 +115,7 @@ export const ku: Dictionary = {
     weather: {
       name: "کەش و هەوا",
       description: "ڕۆژ، باران، با، بەفر",
-      items: ["ڕۆژ", "باران", "ئەور و با", "بەفر", "دووبارەکرنا کەش و هەوایێ"],
+      items: ["ڕۆژ", "باران", "با", "بەفر", "دووبارەکرنا کەش و هەوایێ"],
     },
   },
   characterHub: {
@@ -162,6 +162,7 @@ export const ku: Dictionary = {
     seasonSpotAria: "دەست بدە دا {word} پتر بێت",
     cupAria: "پەرداخا {n}",
     biteAria: "خوارنێ بدە {word}",
+    wearAria: "{thing} بکە بەر Bloo",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -192,6 +193,10 @@ export const ku: Dictionary = {
     mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     feedAnimal: "خوارنێ بدە {thing}!",
+    thisWeather: "هەوا {weather}ە!",
+    dressBloo: "Bloo بۆ ڕۆژەکا {weather} ئامادە بکە!",
+    sortWeather: "هەر تشتەکی بکە د سندوقا هەوایێ وی دا!",
+    whichWeather: "{weather} کیژە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
   },
   tasks: {
@@ -212,6 +217,7 @@ export const ku: Dictionary = {
     change: "چێ بکە",
     cups: "بدۆزە",
     feed: "خوارنێ بدە",
+    dress: "ئامادە بکە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

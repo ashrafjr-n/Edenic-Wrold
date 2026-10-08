@@ -118,7 +118,7 @@ export const en = {
     weather: {
       name: "The Weather",
       description: "Sunny, rainy, windy, snowy",
-      items: ["Sunny", "Rainy", "Cloudy & Windy", "Snowy", "Weather review"],
+      items: ["Sunny", "Rainy", "Windy", "Snowy", "Weather review"],
     },
   },
   characterHub: {
@@ -167,6 +167,7 @@ export const en = {
     seasonSpotAria: "Tap to bring more {word}",
     cupAria: "Cup {n}",
     biteAria: "Feed the {word}",
+    wearAria: "Put the {thing} on Bloo",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -198,6 +199,10 @@ export const en = {
     mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
     feedAnimal: "Feed the {thing}!",
+    thisWeather: "It is {weather}!",
+    dressBloo: "Get Bloo ready for a {weather} day!",
+    sortWeather: "Put each thing in its weather's box!",
+    whichWeather: "Which one is {weather}?",
     pickList: "Pick the things on Nova's list!",
   },
   /** The task chip's one verb per kind of step. */
@@ -219,6 +224,7 @@ export const en = {
     change: "Make",
     cups: "Find",
     feed: "Feed",
+    dress: "Dress",
   },
   activities: {
     puzzleTitle: "Puzzle Time",

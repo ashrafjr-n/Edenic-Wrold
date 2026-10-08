@@ -111,7 +111,7 @@ export const ar: Dictionary = {
     weather: {
       name: "الطقس",
       description: "مشمس، ماطر، عاصف، مثلج",
-      items: ["مشمس", "ماطر", "غائم وعاصف", "مثلج", "مراجعة الطقس"],
+      items: ["مشمس", "ماطر", "عاصف", "مثلج", "مراجعة الطقس"],
     },
   },
   characterHub: {
@@ -158,6 +158,7 @@ export const ar: Dictionary = {
     seasonSpotAria: "المس ليأتي المزيد من {word}",
     cupAria: "الكوب {n}",
     biteAria: "أطعم {word}",
+    wearAria: "ألبِس Bloo {thing}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -188,6 +189,10 @@ export const ar: Dictionary = {
     mixJuice: "اصنع عصير فواكه!",
     likeThem: "هل تحبّها؟",
     feedAnimal: "أطعم {thing}!",
+    thisWeather: "الجو {weather}!",
+    dressBloo: "جهّز Bloo ليوم {weather}!",
+    sortWeather: "ضع كل شيء في صندوق طقسه!",
+    whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
   },
   tasks: {
@@ -208,6 +213,7 @@ export const ar: Dictionary = {
     change: "اصنع",
     cups: "ابحث",
     feed: "أطعم",
+    dress: "ألبِس",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",
