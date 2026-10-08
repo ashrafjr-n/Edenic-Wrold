@@ -36,6 +36,21 @@ match), at most 800px, into `public/assets/learn/nova/seasons/<season>/
 
     python3 tools/picnic-scene/crop.py seasons
 
+Bloo's weather — run after `render.cjs thing weather-sunny=weather:sunny@float
+…` (all four): crops the four pictures on ONE box (they match — the review's
+boxes and picks), at most 640px, with the grain, into
+`public/assets/learn/bloo/weather/scenes/<weather>.png`.
+
+    python3 tools/picnic-scene/crop.py weather
+
+Bloo's horns — cut out of his own picture (`public/assets/friends/bloo.png`,
+the same size) into `public/assets/learn/bloo/weather/bloo-horns.png`, to lie
+over the hats he is given in the Weather lessons, so his horns come through
+them: inside each horn's outline, every pixel with far more red than blue
+(gold and its shine — never his blue felt).
+
+    python3 tools/picnic-scene/crop.py horns
+
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
@@ -51,7 +66,7 @@ import os
 import sys
 import zlib
 import numpy as np
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.join(HERE, "../..")
@@ -83,6 +98,41 @@ def grain(img, seed, keep=None):
     px[..., :3] = mixed
     return Image.fromarray((np.clip(px, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA")
 
+
+if NAME == "weather":
+    weathers = ["sunny", "rainy", "windy", "snowy"]
+    dest = os.path.join(ROOT, "public/assets/learn/bloo/weather/scenes")
+    os.makedirs(dest, exist_ok=True)
+    layers = {w: Image.open(os.path.join(HERE, "out", "things", f"weather-{w}.png")) for w in weathers}
+    boxes = [alpha_box(layer) for layer in layers.values()]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    for w, layer in layers.items():
+        cut = layer.crop(box)
+        cut.thumbnail((640, 640), Image.LANCZOS)
+        face = os.path.join(HERE, "out", "things", f"weather-{w}.face.png")
+        keep = Image.open(face).crop(box).resize(cut.size, Image.LANCZOS) if os.path.exists(face) else None
+        grain(cut, zlib.crc32(w.encode()), keep).save(os.path.join(dest, f"{w}.png"), optimize=True)
+    sys.exit()
+
+# Each horn's outline, % of Bloo's picture — drawn a little wide.
+HORNS = [[(27, 5), (34, 0), (42, 4), (47, 13), (44, 19), (36, 21), (28, 19)], [(75, 21), (83, 14), (93, 14), (96, 20), (92, 33), (85, 33), (78, 28)]]
+
+if NAME == "horns":
+    bloo = Image.open(os.path.join(ROOT, "public/assets/friends/bloo.png")).convert("RGBA")
+    W, H = bloo.size
+    px = np.asarray(bloo).astype(np.float32) / 255
+    gold = np.clip((px[..., 0] - px[..., 2] - 0.04) / 0.1, 0, 1)
+    region = Image.new("L", (W, H), 0)
+    draw = ImageDraw.Draw(region)
+    for poly in HORNS:
+        draw.polygon([(x / 100 * W, y / 100 * H) for x, y in poly], fill=255)
+    region = np.asarray(region.filter(ImageFilter.GaussianBlur(1))).astype(np.float32) / 255
+    px[..., 3] *= region * gold
+    px[px[..., 3] < 1 / 255] = 0  # nothing kept under what is not there: a far smaller file
+    dest = os.path.join(ROOT, "public/assets/learn/bloo/weather")
+    os.makedirs(dest, exist_ok=True)
+    Image.fromarray((px * 255 + 0.5).astype(np.uint8), "RGBA").save(os.path.join(dest, "bloo-horns.png"), optimize=True)
+    sys.exit()
 
 if NAME == "things":
     dest = os.path.join(ROOT, sys.argv[2])
