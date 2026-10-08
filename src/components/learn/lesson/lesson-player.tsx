@@ -30,7 +30,6 @@ import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
-import { FillWord } from "./fill-word";
 import { HarvestPick } from "./harvest-pick";
 import { RevealSteps } from "./reveal-steps";
 import { CupsGame } from "./cups-game";
@@ -435,8 +434,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "likes") {
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
-    } else if (q.type === "fill") {
-      body = <FillWord key={seed} word={q.word} picture={q.picture} letterAria={lines.letterAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "cups") {
       body = <CupsGame key={seed} word={q.word} picture={q.picture} cupAria={lines.cupAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "feed") {

@@ -1,4 +1,3 @@
-import { useId } from "react";
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Heart, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
@@ -16,7 +15,6 @@ import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
 import { wordOf } from "./list-note";
-import { FillPattern } from "./fill-word";
 import { lineOf } from "./harvest-pick";
 
 /** What a step's task button shows: how the step is played — only its first
@@ -35,7 +33,6 @@ export type TaskDemoDef =
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
-  | { kind: "fill"; word: string; picture: StaticImageData }
   | { kind: "cups"; picture: StaticImageData }
   | { kind: "feed"; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
   | { kind: "change"; scene: RevealScene }
@@ -443,57 +440,6 @@ function LikeDemo({ face }: { face: Face }) {
   );
 }
 
-/** How wide each letter of the fill demo stands — even, so the first one's
-    place is known without measuring the font. */
-const FILL_CELL = 66;
-
-/** Fill: the word in empty clay letters; the finger rubs the FIRST one back
-    and forth and the thing's small pictures fill it in behind the finger.
-    The other letters stay empty. */
-function FillDemo({ word, picture }: { word: string; picture: StaticImageData }) {
-  const patternId = `demofill${useId().replace(/[^\w-]/g, "")}`;
-  const tones = letterTones(word);
-  const width = word.length * FILL_CELL + 24;
-  const first = { left: `${(12 / width) * 100}%`, width: `${(FILL_CELL / width) * 100}%` };
-  const centre = (i: number) => 12 + FILL_CELL * (i + 0.5);
-  return (
-    <div dir="ltr" className="flex h-full w-full items-center justify-center">
-      <span className="relative block w-[92%]" style={{ aspectRatio: `${width} / 140` }}>
-        <svg viewBox={`0 0 ${width} 140`} className="absolute inset-0 h-full w-full overflow-visible font-bold" aria-hidden>
-          {[...word].map((char, i) => (
-            <text
-              key={i}
-              x={centre(i)}
-              y={102}
-              fontSize={100}
-              textAnchor="middle"
-              className="fill-outline"
-              style={{ fill: `color-mix(in srgb, ${tones[i].face} 18%, var(--surface))`, stroke: tones[i].face }}
-            >
-              {char}
-            </text>
-          ))}
-        </svg>
-        <span className="demo-fill absolute top-0 h-full" style={first}>
-          <svg viewBox={`12 0 ${FILL_CELL} 140`} className="h-full w-full overflow-visible font-bold" aria-hidden>
-            <defs>
-              <FillPattern id={patternId} picture={picture} />
-            </defs>
-            <text x={centre(0)} y={102} fontSize={100} textAnchor="middle" fill={`url(#${patternId})`}>
-              {word[0]}
-            </text>
-          </svg>
-        </span>
-        <span className="demo-rub absolute top-0 h-full" style={first}>
-          <span className="absolute left-1/2 top-[58%]">
-            <Finger />
-          </span>
-        </span>
-      </span>
-    </div>
-  );
-}
-
 /** Pick (a review's exam): the note's first line and the basket over the
     garden; the finger taps one of its food and it flies up into the
     basket — behind the basket's front, so it goes IN — as the line's
@@ -683,8 +629,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
-    case "fill":
-      return <FillDemo word={demo.word} picture={demo.picture} />;
     case "cups":
       return <CupsDemo picture={demo.picture} />;
     case "feed":

@@ -139,9 +139,6 @@ export type Question =
       coming to Nova's tree. Nothing can go wrong — the thing is the
       lesson. */
   | { type: "change"; ask: Ask; word: string; scene: RevealScene }
-  /** The word in big empty letters: rub each one with a finger and it
-      fills with small `picture`s of the thing — a word made of apples. */
-  | { type: "fill"; ask: Ask; word: string; picture: StaticImageData }
   /** Nova's cups: the thing (`picture`) goes under one of three cups, they
       swap places, and the child taps the one it is under — one miss and
       the round starts again, the thing under a new cup. */

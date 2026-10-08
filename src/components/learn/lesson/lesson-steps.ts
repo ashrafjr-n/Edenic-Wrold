@@ -47,8 +47,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: q.into === "blender" ? "juice" : "cook", target: q.list.length === 1 ? q.list[0] : undefined };
     case "likes":
       return { kind: "like" };
-    case "fill":
-      return { kind: "fill", target: q.word };
     case "cups":
       return { kind: "cups", target: q.word };
     case "feed":
@@ -92,8 +90,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "make", list: q.list, stall: q.stall, into: q.into, seed };
     case "likes":
       return { kind: "like", face: q.items[0].face };
-    case "fill":
-      return { kind: "fill", word: q.word, picture: q.picture };
     case "cups":
       return { kind: "cups", picture: q.picture };
     case "feed":
