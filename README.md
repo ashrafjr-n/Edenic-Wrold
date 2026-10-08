@@ -160,8 +160,8 @@ src/
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
                       the magic button (a season comes), Nova's cups (find
                       the food under one of three), feeding an animal its
-                      food a bite at a time, dressing Bloo for the
-                      weather, the review's garden to pick Nova's
+                      food a bite at a time, making the weather by
+                      hand, the review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
@@ -193,9 +193,11 @@ tools/
                       friends' face) and her cup, and Bloo's animals in
                       the same look (a cat, a dog, a cow and a fish, two
                       coats each), their homes and what each eats, and
-                      Bloo's weather (his hill under each weather, and
-                      what he wears for each), then crops them into
-                      layers — not part of the site build
+                      Bloo's weather (his hill under each weather, step
+                      by step as it is made, with its sky on layers of
+                      its own; what falls or blows; what a child needs
+                      for each), then crops them into layers — not part
+                      of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -233,10 +235,12 @@ public/
                             a bottle of milk, a bone, a tuft of grass, fish
                             food — homes/: where each lives, the review's
                             boxes) and its placeholder reels; weather/
-                            (scenes/: his hill under each weather, wear/:
-                            what he wears for each, bloo-horns.png: his
-                            horns cut out of his own picture, to lie over
-                            a hat) and its placeholder reels
+                            (scenes/: his hill under each weather, make/:
+                            each weather step by step and its sky as
+                            layers of their own, bits/: the drops, flakes,
+                            leaves, swirls and sparkles, wear/: what a child
+                            needs for each, the review's things) and its
+                            placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -406,16 +410,19 @@ his little blue-roofed house and a round tree — under that weather: a
 smiling sun and flowers; a rain cloud, its drops and puddles; a cloud
 blowing, swirls of wind, the tree bending and a kite; snow over
 everything, a snowman and snowflakes. The weather is **met** and
-**spelled**, then the child **gets Bloo ready for it**: Bloo himself stands
-there, and what he needs for that weather waits at his feet — sunglasses
-and a sun hat; an umbrella and a rain hat; a kite and a pinwheel; a scarf
-and a winter hat. Drag each onto him, or tap it, and it goes on (a hat sits
-under his gold horns, the umbrella's crook and the kite's string end in
-his raised hand), and once he is ready his weather comes over him: rain
-or snow falls, the wind blows, the sun twinkles. The review is the exam:
-all eight things go into the four weathers' boxes (three of them are
-hats), the child reads "rainy" and "windy" and taps their pictures, then
-spells "sunny" and "snowy" from the picture alone.
+**spelled**, then the child **makes it by hand**, in three goes, each
+weather its own way: tap the cloud and it rains — harder each time, the
+puddles growing; push the three clouds off the sun and the hill
+brightens until the sun sparkles; swipe across the sky and the wind
+blows — the tree bends, leaves fly and the kite goes up; shake the cloud
+and it snows until the hill is white and a snowman stands on it. A tap
+works too, so nobody gets stuck, and the task button shows the gesture.
+The review is the exam: eight things a child needs for the weather
+(sunglasses and a sun hat, an umbrella and a rain hat, a kite and a
+pinwheel, a scarf and a winter hat) go into the four weathers' boxes —
+three of them are hats — then the child reads "rainy" and "windy" and
+taps their pictures, and spells "sunny" and "snowy" from the picture
+alone.
 
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
