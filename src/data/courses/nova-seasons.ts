@@ -11,8 +11,8 @@ import pumpkin from "../../../public/assets/learn/nova/seasons/things/pumpkin.pn
 import snowman from "../../../public/assets/learn/nova/seasons/things/snowman.png";
 import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflake.png";
 
-/** Each season's clay color — the band round its island, and the color of
-    its months' wagons on Nova's year train. In order. */
+/** Each season's clay color — the band round its island and its review
+    box. In order. */
 const COLOR_OF: Record<Season, ColorId> = { spring: "green", summer: "yellow", fall: "orange", winter: "blue" };
 const ORDER = Object.keys(COLOR_OF) as Season[];
 
@@ -46,9 +46,8 @@ function seasonLesson(season: Season, n: number): LessonDef {
 /** The review's things, each alone (`render.cjs thing`), and its season. */
 const thing = (word: string, src: StaticImageData, group: Season): Thing => ({ id: word, src, word, shape: null, group });
 
-/** A box per season, in its own clay, its island on it — the Seasons
-    review's, and the Months review's. */
-export const SEASON_BOXES: SortBin[] = ORDER.map((season) => {
+/** A box per season, in its own clay, its island on it — the review's. */
+const SEASON_BOXES: SortBin[] = ORDER.map((season) => {
   const { face: fill, edge, text } = COLORS[COLOR_OF[season]];
   return { target: { group: season }, word: season, face: face(season), tone: { face: fill, edge, text } };
 });
