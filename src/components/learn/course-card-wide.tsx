@@ -4,6 +4,7 @@ import { Lock, Play } from "lucide-react";
 import { courseCovers } from "@/data/courses";
 import { CourseArt } from "@/components/learn/course-art";
 import { CourseProgress } from "@/components/learn/course-progress";
+import { stageTint } from "@/components/learn/course-card";
 import type { Lesson } from "@/types/lesson";
 
 interface CourseCardWideProps {
@@ -34,7 +35,13 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
 
   /* White clay like every course card (direct request 2026-10-02); the
      course's colour is in its play button and progress bar. */
-  const style: ClayVars = { animationDelay: `${0.25 + index * 0.12}s` };
+  /* The pile stands on a clay base in the course's colour (`.art-stage`,
+     on `CourseArt` itself), its things rising above it. */
+  const style: ClayVars = {
+    animationDelay: `${0.25 + index * 0.12}s`,
+    "--stage-inset": "50% 4% 10% 4%",
+    "--stage-tint": stageTint(theme.accent, locked),
+  };
   const play: ClayVars = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
 
   const body = (
@@ -42,7 +49,7 @@ export function CourseCardWide({ lesson, characterId, name, description, count, 
       <CourseArt
         images={courseCovers(id)}
         width={420}
-        className={`mx-auto my-auto aspect-square w-full shrink-0 lg:aspect-auto lg:h-full lg:w-[40%] ${locked ? "path-art-locked" : ""}`}
+        className={`art-stage mx-auto my-auto aspect-square w-full shrink-0 lg:aspect-auto lg:h-full lg:w-[40%] ${locked ? "path-art-locked" : ""}`}
       />
       <div className="flex flex-col gap-4 lg:min-w-0 lg:flex-1 lg:justify-center lg:gap-3">
         <div dir={dir} className="min-w-0">
