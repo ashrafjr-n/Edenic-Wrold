@@ -19,6 +19,13 @@ interface CourseCardProps {
 
 type ClayVars = CSSProperties & Record<`--${string}`, string>;
 
+/** A course's clay base: its colour, pale; dormant lavender when locked. */
+export function stageTint(accent: string, locked: boolean) {
+  return locked
+    ? "color-mix(in srgb, var(--color-locked-dark) 45%, var(--surface))"
+    : `color-mix(in srgb, ${accent} 22%, var(--surface))`;
+}
+
 /**
  * One course on a character's hub (phone): a big clay card in the course's
  * colour with its things piled on top, then its name, a round play button
@@ -33,17 +40,22 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
      and its progress bar. */
   const style: ClayVars = { animationDelay: `${0.25 + index * 0.12}s` };
   const play: ClayVars = { backgroundColor: theme.accent, "--clay-edge": theme.accentDark };
+  const stage: ClayVars = { "--stage-inset": "42% 0 0 0", "--stage-tint": stageTint(theme.accent, locked) };
 
   const body = (
     <>
-      <CourseArt
-        images={courseCovers(id)}
-        width={250}
-        className={`mx-auto -mt-3 mb-2 aspect-[2/1] w-[70%] ${locked ? "path-art-locked" : ""}`}
-      />
+      {/* The course's things stand on a clay base in its colour and rise
+          above it — the friend picker's look. */}
+      <div className="art-stage -mt-3 mb-3" style={stage}>
+        <CourseArt
+          images={courseCovers(id)}
+          width={250}
+          className={`mx-auto aspect-[2/1] w-[70%] ${locked ? "path-art-locked" : ""}`}
+        />
+      </div>
       <div className="flex items-center gap-3">
         <div dir={dir} className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-tight text-[var(--color-ink)]">
+          <h2 className="text-[1.75rem] font-bold leading-tight text-[var(--color-ink)]">
             {name}
           </h2>
           <p className="mt-0.5 truncate text-sm text-[var(--color-ink-soft)]">
