@@ -79,7 +79,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           (`LessonBox`). */}
       <div className="flex w-full flex-1 flex-col px-6 sm:hidden">
         <section
-          className="card clay anim-pop-in relative mt-6 flex items-center gap-2 py-5 pl-5 pr-2"
+          className="card clay anim-pop-in relative mt-10 flex items-center gap-2 py-5 pl-5 pr-2"
           style={
             {
               backgroundColor: tone.face,
@@ -104,7 +104,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
               className="mt-3.5"
             />
           </div>
-          <CourseArt images={courseCovers(lesson.id)} width={128} className="-my-6 h-32 w-32 shrink-0" />
+          {/* The course's things stand on the banner and rise above its top
+              edge, bigger than the banner could hold. */}
+          <CourseArt images={courseCovers(lesson.id)} width={144} className="-mb-4 -mt-16 h-36 w-36 shrink-0 self-start" />
         </section>
 
         <div className="mt-7">{lessons("phone")}</div>
@@ -115,7 +117,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           pile of things, the box at tablet size (`size="tablet"`). */}
       <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex lg:hidden">
         <section
-          className="card clay anim-pop-in relative mt-8 flex items-center gap-6 py-8 pl-8 pr-4"
+          className="card clay anim-pop-in relative mt-20 flex items-center gap-6 py-8 pl-8 pr-4"
           style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
         >
           <div dir={dir} className="min-w-0 flex-1">
@@ -124,7 +126,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <p className="mt-2 text-balance text-lg leading-snug opacity-90">{course.description}</p>
             <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
           </div>
-          <CourseArt images={courseCovers(lesson.id)} width={224} className="-my-12 h-56 w-56 shrink-0" />
+          <CourseArt images={courseCovers(lesson.id)} width={240} className="-mb-6 -mt-24 h-60 w-60 shrink-0 self-start" />
         </section>
 
         <div className="mt-4">
@@ -163,7 +165,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             className="card clay anim-pop-in flex min-h-0 flex-1 flex-col p-7"
             style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
           >
-            <CourseArt images={courseCovers(lesson.id)} width={300} className="mx-auto min-h-0 w-full flex-1" />
+            <CourseArt images={courseCovers(lesson.id)} width={300} className="mx-auto -mt-10 min-h-0 w-full flex-1" />
             <div dir={dir} className="mt-4">
               <p className="text-sm font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
               <h1 className="clay-title mt-1 text-4xl font-bold leading-tight xl:text-5xl">{course.name}</h1>
