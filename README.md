@@ -109,9 +109,8 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
 - Course subjects own a second, parallel palette (`--color-subject-*`), kept
-  separate from the mascot colors. A written course wears its friend's color
-  instead — Pinki's are pink, Nova's gold, Bloo's Animals Bloo's blue — and the
-  course still to come (The Weather) borrows the `colors` token until then.
+  separate from the mascot colors. Every course wears its friend's color
+  instead — Pinki's are pink, Nova's gold, Bloo's Bloo's blue.
 - Inside a lesson on a desktop nothing wraps the step: no board, no card. The
   step stands on the page ground, so the one thing to play with is the biggest
   thing on screen.
@@ -161,7 +160,8 @@ src/
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
                       the magic button (a season comes), Nova's cups (find
                       the food under one of three), feeding an animal its
-                      food a bite at a time, the review's garden to pick Nova's
+                      food a bite at a time, dressing Bloo for the
+                      weather, the review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
@@ -192,8 +192,10 @@ tools/
                       velvet clay with the buttons' grain and the
                       friends' face) and her cup, and Bloo's animals in
                       the same look (a cat, a dog, a cow and a fish, two
-                      coats each), their homes and what each eats, then
-                      crops them into layers — not part of the site build
+                      coats each), their homes and what each eats, and
+                      Bloo's weather (his hill under each weather, and
+                      what he wears for each), then crops them into
+                      layers — not part of the site build
 public/
   hero.webp           Home hero scene
   edenic-logo.png     Logo (imported statically, never referenced by path)
@@ -230,7 +232,11 @@ public/
                             friends' look, food/: a bite of what each eats —
                             a bottle of milk, a bone, a tuft of grass, fish
                             food — homes/: where each lives, the review's
-                            boxes) and its placeholder reels
+                            boxes) and its placeholder reels; weather/
+                            (scenes/: his hill under each weather, wear/:
+                            what he wears for each, bloo-horns.png: his
+                            horns cut out of his own picture, to lie over
+                            a hat) and its placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
@@ -243,13 +249,13 @@ and all are still being iterated on visually.
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
 has two courses — **Shapes** and **Colors** — and Nova two — **Fruits &
-Vegetables** and **The Seasons** — all written. Bloo's **Animals** is
-written too; **The Weather** lists its lessons and shows "coming soon".
-Months of the Year and My Body were removed on request. Every taught word
+Vegetables** and **The Seasons** — and Bloo two — **Animals** and **The
+Weather**: all six are written. Months of the Year and My Body were removed
+on request. Every taught word
 is American English (color, fall,
 mom). Each friend's corner wears one colour: Pinki's is pink, Nova's is gold
 (back button, play buttons, progress bars, banners — with dark ink on the
-gold), and Bloo's Animals is Bloo's blue.
+gold), and Bloo's is Bloo's blue.
 Their pages are real. On a phone, the hub is Pinki saying hello above one big
 white clay card per course (its things piled on it, a play button and a
 progress bar in the course's colour),
@@ -394,22 +400,33 @@ homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
 alone.
 
-Bloo's other course, The Weather, still to come, already wears its own clay
-art — a sun, a cloud, an umbrella and a snowman — rendered with the same
-light and clay.
+Bloo's **The Weather** is the same rhythm: sunny, rainy, windy, snowy, one
+a lesson. Each weather is a picture of the same place — Bloo's hill, with
+his little blue-roofed house and a round tree — under that weather: a
+smiling sun and flowers; a rain cloud, its drops and puddles; a cloud
+blowing, swirls of wind, the tree bending and a kite; snow over
+everything, a snowman and snowflakes. The weather is **met** and
+**spelled**, then the child **gets Bloo ready for it**: Bloo himself stands
+there, and what he needs for that weather waits at his feet — sunglasses
+and a sun hat; an umbrella and a rain hat; a kite and a pinwheel; a scarf
+and a winter hat. Drag each onto him, or tap it, and it goes on (a hat sits
+under his gold horns, the umbrella's crook and the kite's string end in
+his raised hand), and once he is ready his weather comes over him: rain
+or snow falls, the wind blows, the sun twinkles. The review is the exam:
+all eight things go into the four weathers' boxes (three of them are
+hats), the child reads "rainy" and "windy" and taps their pictures, then
+spells "sunny" and "snowy" from the picture alone.
 
 Every course page is a **box of things**, not a path: Colors is one
 paint pot per color, empty grey clay with a padlock until its lesson opens,
 filled with its paint (and its word in that color) once learned; Shapes is
 the same box with one thing per shape (greyed until it opens). Coming back to
 the course page after lessons have opened, the next cell colours in as its
-padlock springs off. Courses still to be written use the
-same box, one plain cell per lesson.
+padlock springs off.
 
 Picks (tap the right tile) show the answer once on the first question. A wrong
 answer only wiggles; after two, the right one glows, so nobody gets stuck.
-Finishing a lesson opens the next. A lesson that is not written yet shows
-its friend saying it is on its way. The shapes
+Finishing a lesson opens the next. The shapes
 are drawn from their own tracing outlines until their clay pictures arrive. Audio is designed
 for but not recorded: every button that will play a sound already calls
 `lib/cue.ts`.
@@ -455,10 +472,9 @@ eventual plan.
 
 Planned, in order:
 
-1. The Weather's lessons, on the Shapes and Colors pattern (`edenic-plan.md` §5–§6)
-2. Every course's real reels, then voice for every taught word, once the content is done
-3. The trail itself — the path, the stage pages, and progress along it
-4. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
+1. Every course's real reels, then voice for every taught word, once the content is done
+2. The trail itself — the path, the stage pages, and progress along it
+3. Accounts, and the profile the "Join Edenic World" button and the Profile tab lead to
 
 Audio narration is deliberately out of scope for the MVP, but the experience is
 built around where it will go.
