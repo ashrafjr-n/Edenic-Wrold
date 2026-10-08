@@ -1,6 +1,5 @@
 import type { StaticImageData } from "next/image";
 import { GARDENS } from "@/data/garden";
-import { GROW_SCENES } from "@/data/nova-grow";
 import type { Face, LessonDef } from "@/types/course";
 import apple from "../../../public/assets/learn/nova/fruits/things/apple.png";
 import banana from "../../../public/assets/learn/nova/fruits/things/banana.png";
@@ -49,10 +48,11 @@ const line = (word: string, count: number) => ({ word, things: food(word).things
 
 /**
  * Nova's garden — one thing, one lesson, and every step about IT: meet it
- * (its picture, its word, its speaker) → build its word → grow it (direct
- * request 2026-10-07: Nova plants its seed and the child brings it up, tap
- * by tap, to the food on its plant — where it comes from). Picking from
- * the trees is the review's exam, with several foods to tell apart.
+ * (its picture, its word, its speaker) → build its word → Nova's cups
+ * (direct request 2026-10-08, replacing Grow it): it goes under one of
+ * three cups, they swap, and the child finds it — the same one thing,
+ * watched closely. Picking from the trees is the review's exam, with
+ * several foods to tell apart.
  */
 function foodLesson({ word, picture }: Food, i: number): LessonDef {
   return {
@@ -61,7 +61,7 @@ function foodLesson({ word, picture }: Food, i: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      { type: "change", ask: { key: "growIt", vars: { thing: word } }, magic: "grow", word, scene: GROW_SCENES[word] },
+      { type: "cups", ask: { key: "findUnderCup", vars: { thing: word } }, word, picture },
     ],
   };
 }
