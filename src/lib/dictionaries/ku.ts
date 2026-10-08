@@ -161,6 +161,7 @@ export const ku: Dictionary = {
     balloonAria: "بالۆنا {color}",
     seasonSpotAria: "دەست بدە دا {word} پتر بێت",
     cupAria: "پەرداخا {n}",
+    biteAria: "خوارنێ بدە {word}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -191,6 +192,7 @@ export const ku: Dictionary = {
     mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     fillWord: "پەیڤا {word} ب تبلا خۆ تژی بکە!",
+    feedAnimal: "خوارنێ بدە {thing}!",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
   },
   tasks: {
@@ -211,6 +213,7 @@ export const ku: Dictionary = {
     harvest: "بچنە",
     change: "چێ بکە",
     cups: "بدۆزە",
+    feed: "خوارنێ بدە",
   },
   activities: {
     puzzleTitle: "دەمێ چێکرنا وێنەیان",

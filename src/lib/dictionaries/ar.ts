@@ -157,6 +157,7 @@ export const ar: Dictionary = {
     balloonAria: "بالون {color}",
     seasonSpotAria: "المس ليأتي المزيد من {word}",
     cupAria: "الكوب {n}",
+    biteAria: "أطعم {word}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -187,6 +188,7 @@ export const ar: Dictionary = {
     mixJuice: "اصنع عصير فواكه!",
     likeThem: "هل تحبّها؟",
     fillWord: "املأ كلمة {word} بإصبعك!",
+    feedAnimal: "أطعم {thing}!",
     pickList: "اقطف ما في قائمة نوفا!",
   },
   tasks: {
@@ -207,6 +209,7 @@ export const ar: Dictionary = {
     harvest: "اقطف",
     change: "اصنع",
     cups: "ابحث",
+    feed: "أطعم",
   },
   activities: {
     puzzleTitle: "وقت تركيب الصور",

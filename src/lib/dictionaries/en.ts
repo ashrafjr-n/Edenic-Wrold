@@ -166,6 +166,7 @@ export const en = {
     balloonAria: "{color} balloon",
     seasonSpotAria: "Tap to bring more {word}",
     cupAria: "Cup {n}",
+    biteAria: "Feed the {word}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -197,6 +198,7 @@ export const en = {
     mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
     fillWord: "Fill the word {word} with your finger!",
+    feedAnimal: "Feed the {thing}!",
     pickList: "Pick the things on Nova's list!",
   },
   /** The task chip's one verb per kind of step. */
@@ -218,6 +220,7 @@ export const en = {
     harvest: "Pick",
     change: "Make",
     cups: "Find",
+    feed: "Feed",
   },
   activities: {
     puzzleTitle: "Puzzle Time",
