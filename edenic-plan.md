@@ -196,7 +196,7 @@ sort boxes, done screen, the course page).
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
 | Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → **feed it** since 2026-10-08 — three bites of its own food, dragged or tapped into its mouth; Fill the word, its step from 2026-10-07, was replaced. The animals, their homes and their food are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
-| Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **dress Bloo** for it — two things of that weather onto Bloo's own picture, then the weather comes over him. Each weather is the same place, Bloo's hill, under it. Review: sort the eight things into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
+| Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
 Year (its year wheel, its art and its strings — in git history, `months wheel
@@ -239,7 +239,8 @@ about 3 minutes.
 | Word card and Spell with a picture (rung 4: picture, no word) | Colors | every course |
 | **Paint**: read the word, tap its pot, the paint spreads | Colors (new) | Colors |
 | **Mix**: a Pick of pots — red + yellow = ? | Colors (Pick) | Colors |
-| **Dress Bloo**: what a weather needs waits at his feet; drag or tap each and it goes on him (a hat under his horns, an umbrella or a kite string into his raised hand), then the weather comes | built (`dress`) | Weather |
+| ~~Dress Bloo~~: what a weather needs onto Bloo's own picture | removed 2026-10-08 (the same day — not liked) | — |
+| **Make the weather by hand**: three goes on Bloo's hill, each weather its own gesture — tap the cloud (rain), push the clouds off the sun, swipe the sky (wind), shake the cloud (snow); a tap always works too | built (`weather`) | Weather |
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | ~~Fill the word~~: rub each empty letter and it fills with small pictures of the thing | removed 2026-10-08 | Fruits dropped it 2026-10-07 ("not suitable"), Animals 2026-10-08 — its last course |
@@ -278,14 +279,16 @@ about 3 minutes.
   Each is ONE place, Bloo's hill (his blue-roofed house, a round tree),
   under the weather (the Seasons rule: the difference between the
   pictures IS the weather). Each lesson is reel → word ("It is sunny!") →
-  spell → **dress Bloo**: his own picture, two things of that weather at
-  his feet (sunglasses + sun hat, umbrella + rain hat, kite + pinwheel,
-  scarf + winter hat) — no choosing, all of it is this weather's — then
-  rain, snow, wind or sunshine comes over him. Review: sort the eight
-  things into four weather boxes (three hats to tell apart), read
-  "rainy" and "windy" and pick their pictures, spell sunny and snowy from
-  the picture. Bloo on a step bends "no friend on the steps": he is the
-  one being dressed, not a coach (flagged with the plan).
+  spell → **make it by hand** (2026-10-08, the user's pick after Dress
+  Bloo — "not really liked"): three goes, each weather its own gesture —
+  tap the cloud and it rains harder (puddles grow), push the three clouds
+  off the sun (the hill brightens), swipe across the sky (the tree bends,
+  leaves and the kite fly), shake the cloud (snow until the hill is white
+  and a snowman stands). Close to the Seasons' magic button, which the
+  user was told and chose anyway ("نفذ هاي اشوف"). Review: sort eight
+  things a child needs for the weather into four weather boxes (three hats
+  to tell apart), read "rainy" and "windy" and pick their pictures, spell
+  sunny and snowy from the picture.
 
 Sources: Cambridge Pre A1 Starters wordlist (cambridgeenglish.org);
 retrieval/spaced practice in child word learning (PMC8084525, PMC11087082);
@@ -505,7 +508,17 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       falling, drifting or twinkling icons. The "coming soon" Weather and
       its borrowed art (`data/course-art.ts`, `learn/art/`) deleted. All
       five played through headless (360x640 → 1440x900, en/ar/ku, dark).
-- [ ] The user checks The Weather → fixes.
+- [x] The user checks The Weather (2026-10-08): "not really liked" →
+      four options offered (catch the weather, make it by hand, Vehicles,
+      Toys); the user chose **make it by hand** ("نفذ هاي اشوف"). Built
+      the same day: each weather's hill rendered step by step with its
+      sky on layers of its own (`render.cjs weathersteps`), the drops,
+      flakes, leaves, swirls and sparkles; the step (`weather`) and its
+      gesture demo. Dress Bloo deleted (its step, demo, strings, CSS, the
+      horns cut-out); his eight things stay as the review's. All five
+      played through headless with the real gestures and with taps
+      (360x640 → 1440x900, en/ar/ku, dark).
+- [ ] The user checks the weather made by hand → fixes.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
