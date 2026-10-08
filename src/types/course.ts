@@ -173,10 +173,6 @@ export type Question =
       (wind), shake the cloud (snow). Nothing can go wrong — the weather is
       the lesson. */
   | { type: "weather"; ask: Ask; word: Weather; gesture: Gesture; scene: WeatherScene }
-  /** Dress Bloo for the weather: what he wears for it (`wear`, two things)
-      waits beside him — drag or tap each and it goes on him. Nothing can
-      go wrong — all of it is this weather's; then the weather comes. */
-  | { type: "dress"; ask: Ask; word: Weather; wear: readonly Wear[] }
   /** Pick what Nova's note says (a review's exam): three plants, the
       note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
       Tap one and it is picked (pulled up) into the basket, its word popping
