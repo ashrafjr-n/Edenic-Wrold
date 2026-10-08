@@ -46,7 +46,7 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
     <>
       {/* The course's things stand on a clay base in its colour and rise
           above it — the friend picker's look. */}
-      <div className="art-stage -mt-3 mb-3" style={stage}>
+      <div className="art-stage -mt-3 mb-2" style={stage}>
         <CourseArt
           images={courseCovers(id)}
           width={250}
@@ -55,7 +55,7 @@ export function CourseCard({ lesson, characterId, name, description, ariaLabel, 
       </div>
       <div className="flex items-center gap-3">
         <div dir={dir} className="min-w-0 flex-1">
-          <h2 className="text-[1.75rem] font-bold leading-tight text-[var(--color-ink)]">
+          <h2 className="text-2xl font-bold leading-tight text-[var(--color-ink)]">
             {name}
           </h2>
           <p className="mt-0.5 truncate text-sm text-[var(--color-ink-soft)]">
