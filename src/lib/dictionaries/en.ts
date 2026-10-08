@@ -120,11 +120,6 @@ export const en = {
       description: "Sunny, rainy, windy, snowy",
       items: ["Sunny", "Rainy", "Cloudy & Windy", "Snowy", "Weather review"],
     },
-    body: {
-      name: "My Body",
-      description: "Head, hands, feet and more",
-      items: ["Eyes & Ears", "Nose & Mouth", "Hands & Arms", "Legs & Feet", "Body review"],
-    },
   },
   characterHub: {
     backToLearn: "Back to Learn",
