@@ -3353,95 +3353,6 @@ button:disabled,
   }
 }
 
-/* …the dress demo: the first thing flies onto Bloo — turned and grown to
-   where it goes (`--turn`, `--grow`). Something worn behind him
-   (`--behind`, an umbrella or a kite) drops behind him as it lands. */
-.demo-wear {
-  animation: demo-wear 3.6s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
-}
-
-.demo-wear--behind {
-  animation-name: demo-wear-behind;
-}
-
-@keyframes demo-wear {
-  0%,
-  38% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 1;
-  }
-  56%,
-  84% {
-    translate: var(--fly-x) var(--fly-y);
-    rotate: var(--turn);
-    scale: var(--grow);
-    opacity: 1;
-  }
-  94% {
-    translate: var(--fly-x) var(--fly-y);
-    rotate: var(--turn);
-    scale: var(--grow);
-    opacity: 0;
-  }
-  95% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 0;
-  }
-  100% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 1;
-  }
-}
-
-@keyframes demo-wear-behind {
-  0%,
-  38% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 1;
-    z-index: 3;
-  }
-  55% {
-    z-index: 3;
-  }
-  56%,
-  84% {
-    translate: var(--fly-x) var(--fly-y);
-    rotate: var(--turn);
-    scale: var(--grow);
-    opacity: 1;
-    z-index: 0;
-  }
-  94% {
-    translate: var(--fly-x) var(--fly-y);
-    rotate: var(--turn);
-    scale: var(--grow);
-    opacity: 0;
-    z-index: 0;
-  }
-  95% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 0;
-    z-index: 3;
-  }
-  100% {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-    opacity: 1;
-    z-index: 3;
-  }
-}
-
 /* …the feed demo: the first bite flies into the animal's mouth, shrinking
    as it goes in, and is gone; the animal munches and a heart floats up.
    The heart's `-50%` centring is its resting `translate` too, so under
@@ -3752,52 +3663,8 @@ button:disabled,
   }
 }
 
-/* Dress Bloo (`DressBloo`): once he is ready, his weather comes over him —
-   rain or snow falls (`.wx-fall`), the wind blows across (`.wx-drift`), the
-   sun twinkles (`.wx-twinkle`). Each bit starts at its own spot and time.
-   Under reduced motion there is none. */
-.wx-fall {
-  opacity: 0;
-  animation: wx-fall 1.7s ease-in infinite;
-}
-
-@keyframes wx-fall {
-  from {
-    translate: 0 -12cqi;
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  to {
-    translate: 2cqi 34cqi;
-    opacity: 0;
-  }
-}
-
-.wx-drift {
-  opacity: 0;
-  animation: wx-drift 2s ease-in-out infinite;
-}
-
-@keyframes wx-drift {
-  from {
-    translate: -14cqi 0;
-    opacity: 0;
-  }
-  25%,
-  70% {
-    opacity: 1;
-  }
-  to {
-    translate: 26cqi -3cqi;
-    opacity: 0;
-  }
-}
-
+/* Sparkles twinkle round the sun once its clouds are gone (`MakeWeather`,
+   below). */
 .wx-twinkle {
   opacity: 0;
   animation: wx-twinkle 1.5s ease-in-out infinite;
@@ -4265,7 +4132,6 @@ button:disabled,
   .demo-bite,
   .demo-munch,
   .demo-heart,
-  .demo-wear,
   .demo-frame-next,
   .demo-squash,
   .demo-shake,
@@ -4288,8 +4154,6 @@ button:disabled,
   .pop-shard,
   .make-steam,
   .feed-heart,
-  .wx-fall,
-  .wx-drift,
   .wx-twinkle,
   .wx-rain,
   .wx-snow,

@@ -1,13 +1,12 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Heart, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
-import { BLOO } from "@/data/bloo-wear";
 import { COLORS } from "@/data/colors";
 import { CUP, MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing, Wear, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, Gesture, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -36,7 +35,6 @@ export type TaskDemoDef =
   | { kind: "like"; face: Face }
   | { kind: "cups"; picture: StaticImageData }
   | { kind: "feed"; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
-  | { kind: "dress"; wear: Wear }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
   | { kind: "change"; scene: RevealScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
@@ -607,61 +605,6 @@ function FeedDemo({ picture, food, mouth }: { picture: StaticImageData; food: St
   );
 }
 
-/** Where the dress demo puts Bloo (% of the stage): `DEMO_BLOO` wide at
-    `DEMO_BLOO_LEFT`, and the thing waiting in a `DEMO_TILE` square at his
-    feet, on his left. */
-const DEMO_BLOO = 52;
-const DEMO_BLOO_LEFT = 30;
-const DEMO_TILE = 22;
-
-/** Dress: Bloo and the first thing he wears, waiting at his feet; the
-    finger taps it and it flies onto him — turned and grown to where it
-    goes, behind him (an umbrella), under his horns (a hat) or in front. */
-function DressDemo({ wear }: { wear: Wear }) {
-  const bloo = { w: DEMO_BLOO, h: (DEMO_BLOO * BLOO.picture.height) / BLOO.picture.width };
-  const [x, y, w] = wear.at;
-  const tw = (w * bloo.w) / 100;
-  const th = (tw * wear.src.height) / wear.src.width;
-  const turn = (wear.turn * Math.PI) / 180;
-  const above = (Math.abs(tw * Math.sin(turn)) + Math.abs(th * Math.cos(turn))) / 2 - (y * bloo.h) / 100;
-  const top = Math.min(97 - bloo.h, Math.max(4, above + 3));
-  const tile = { left: 3, top: top + bloo.h - DEMO_TILE };
-  const aspect = wear.src.width / wear.src.height;
-  const inner = DEMO_TILE * 0.8;
-  const dw = aspect >= 1 ? inner : inner * aspect;
-  const dh = aspect >= 1 ? inner / aspect : inner;
-  const from = { x: tile.left + DEMO_TILE / 2, y: tile.top + DEMO_TILE / 2 };
-  const to = { x: DEMO_BLOO_LEFT + (x * bloo.w) / 100, y: top + (y * bloo.h) / 100 };
-  const fly = {
-    "--fly-x": `${((to.x - from.x) / dw) * 100}%`,
-    "--fly-y": `${((to.y - from.y) / dh) * 100}%`,
-    "--turn": `${wear.turn}deg`,
-    "--grow": `${tw / dw}`,
-  } as CSSProperties;
-  const blooBox = { left: `${DEMO_BLOO_LEFT}%`, top: `${top}%`, width: `${bloo.w}%`, height: `${bloo.h}%` };
-  return (
-    <div className="relative h-full w-full">
-      <span className="absolute z-[1]" style={blooBox}>
-        <Image src={BLOO.picture} alt="" fill sizes="12rem" className="object-contain" />
-      </span>
-      <span className="absolute z-[3]" style={blooBox}>
-        <Image src={BLOO.horns} alt="" fill sizes="12rem" className="object-contain" />
-      </span>
-      <span className="card card-clay-white absolute" style={{ left: `${tile.left}%`, top: `${tile.top}%`, width: `${DEMO_TILE}%`, height: `${DEMO_TILE}%` }}>
-        <span className="absolute left-1/2 top-1/2">
-          <Finger />
-        </span>
-      </span>
-      <span
-        className={`demo-wear absolute ${wear.layer === "behind" ? "demo-wear--behind" : wear.layer === "head" ? "z-[2]" : "z-[4]"}`}
-        style={{ left: `${from.x - dw / 2}%`, top: `${from.y - dh / 2}%`, width: `${dw}%`, height: `${dh}%`, ...fly }}
-      >
-        <Image src={wear.src} alt="" fill sizes="6rem" className="object-contain" />
-      </span>
-    </div>
-  );
-}
-
 /** Make the weather: the hill before it and the first go — the finger taps
     the cloud (rain starts), shakes it (snow starts), pushes one cloud off
     the sun (the hill brightens) or sweeps across the sky (a gust blows);
@@ -761,8 +704,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <CupsDemo picture={demo.picture} />;
     case "feed":
       return <FeedDemo picture={demo.picture} food={demo.food} mouth={demo.mouth} />;
-    case "dress":
-      return <DressDemo wear={demo.wear} />;
     case "weather":
       return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
