@@ -3643,6 +3643,100 @@ button:disabled,
   }
 }
 
+/* Make the weather (`MakeWeather`): each go's frame fades in over the last
+   (`.wx-frame-in`, in step with `FADE_MS`); rain falls quick and straight
+   from the cloud (`.wx-rain`), snow drifts down swaying (`.wx-snow`) — both
+   `--fall` long (cqi); a swipe's gust sweeps its swirls and leaves across
+   (`.wx-gust`, `--dir` 1 or −1) and, once the wind is there, a breeze
+   keeps blowing (`.wx-breeze`); sparkles twinkle round the sun
+   (`.wx-twinkle`). Under reduced motion there are no bits — the frames
+   just change. */
+.wx-frame-in {
+  animation: wx-frame-in 0.7s ease-out both;
+}
+
+@keyframes wx-frame-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.wx-rain {
+  opacity: 0;
+  animation: wx-rain 0.95s linear infinite;
+}
+
+@keyframes wx-rain {
+  from {
+    translate: 0 0;
+    opacity: 0;
+  }
+  12%,
+  85% {
+    opacity: 1;
+  }
+  to {
+    translate: 0 var(--fall);
+    opacity: 0;
+  }
+}
+
+.wx-snow {
+  opacity: 0;
+  animation: wx-snow 2.6s ease-in-out infinite;
+}
+
+@keyframes wx-snow {
+  from {
+    translate: 0 0;
+    rotate: 0deg;
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  35% {
+    translate: 2cqi calc(var(--fall) * 0.33);
+  }
+  65% {
+    translate: -2cqi calc(var(--fall) * 0.66);
+  }
+  to {
+    translate: 1cqi var(--fall);
+    rotate: 160deg;
+    opacity: 0;
+  }
+}
+
+.wx-gust {
+  opacity: 0;
+  animation: wx-gust 1.3s ease-in-out both;
+}
+
+.wx-breeze {
+  opacity: 0;
+  animation: wx-gust 2.8s ease-in-out infinite;
+}
+
+@keyframes wx-gust {
+  from {
+    translate: 0 0;
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+  50% {
+    translate: calc(var(--dir) * 62cqi) -2cqi;
+  }
+  to {
+    translate: calc(var(--dir) * 125cqi) 1cqi;
+    opacity: 0;
+  }
+}
+
 /* Pick them (`HarvestPick`): the word pops up where a food was picked and
    floats off. Its `-50%` centring lives IN the keyframes — an animation
    owning `translate` drops a utility's. Under reduced motion it only
@@ -3997,7 +4091,8 @@ button:disabled,
   .demo-bite,
   .demo-munch,
   .demo-heart,
-  .demo-wear {
+  .demo-wear,
+  .wx-frame-in {
     animation: none;
   }
 
@@ -4013,7 +4108,11 @@ button:disabled,
   .feed-heart,
   .wx-fall,
   .wx-drift,
-  .wx-twinkle {
+  .wx-twinkle,
+  .wx-rain,
+  .wx-snow,
+  .wx-gust,
+  .wx-breeze {
     display: none;
   }
 
