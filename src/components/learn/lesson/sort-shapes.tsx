@@ -144,19 +144,7 @@ export function SortShapes({ items, bins, seed, binAria, onSolved, onMiss }: Sor
             className={`relative z-10 h-[82%] w-[82%] touch-none select-none ${drag?.moved ? "cursor-grabbing" : "cursor-grab"} ${shake > 0 ? "anim-wiggle" : "anim-pop-in"}`}
             style={drag?.moved ? { translate: `${drag.dx}px ${drag.dy}px`, scale: "1.1" } : undefined}
           >
-            {current.named ? (
-              /* Known by its name alone: written under its picture. */
-              <span className="pointer-events-none flex h-full w-full flex-col items-center justify-center gap-1">
-                <span className="relative block w-full flex-1">
-                  <Image src={current.src} alt="" fill sizes="(min-width: 1024px) 13rem, 8rem" draggable={false} className="object-contain" />
-                </span>
-                <span dir="ltr" className="text-lg font-bold leading-none text-[var(--color-ink)] lg:text-3xl">
-                  {current.word}
-                </span>
-              </span>
-            ) : (
-              <Image src={current.src} alt={current.word} fill sizes="(min-width: 1024px) 13rem, 8rem" draggable={false} className="pointer-events-none object-contain" />
-            )}
+            <Image src={current.src} alt={current.word} fill sizes="(min-width: 1024px) 13rem, 8rem" draggable={false} className="pointer-events-none object-contain" />
           </div>
         )}
       </div>

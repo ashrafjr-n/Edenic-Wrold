@@ -42,11 +42,8 @@ export interface Thing {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The season it goes with (Nova's Seasons, and a month's). */
+  /** The season it goes with (Nova's Seasons), or the animal it is. */
   group?: Group;
-  /** Known by its word, which is written under it (a month marked on a
-      plain year wheel) — its picture gives its place, not its name. */
-  named?: boolean;
 }
 
 /** One thing lying in a scene, and where. */
