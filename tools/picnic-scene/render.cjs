@@ -49,6 +49,13 @@
  *   node tools/picnic-scene/render.cjs thing cat=cat@float dog=dog@float cow=cow@float fish=fishfriend@float
  *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
  *
+ * Nova's fruits, the friends' way (velvet clay, the friends' face) and her
+ * cup — a thing with a face also writes `<file>.face.png` (where its glossy
+ * eyes and mouth are), which `crop.py things … --grain` keeps grain off:
+ *
+ *   node tools/picnic-scene/render.cjs thing apple=fruit:apple banana=fruit:banana orange=fruit:orange grapes=fruit:grapes carrot=fruit:carrot broccoli=fruit:broccoli corn=fruit:corn potato=fruit:potato
+ *   node tools/picnic-scene/render.cjs thing cup=cup@float
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
@@ -87,6 +94,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
+      /* A thing with a face: where its eyes and mouth are (`crop.py --grain`). */
+      if (layers.face) save(out, `${file}.face`, layers.face);
     }
   } else if (mode === "harvest") {
     for (const food of specs) {

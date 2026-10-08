@@ -45,13 +45,17 @@ prints each tap's spot (% of that box) for `data/nova-grow.ts`.
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
-into `dest`.
+into `dest`. `--grain` lays the clay buttons' grain over each (Nova's
+fruits and her cup, the friends' look).
 
     python3 tools/picnic-scene/crop.py things public/assets/learn/pinki/colors/pots red blue
+    python3 tools/picnic-scene/crop.py things public/assets/learn/nova/fruits/things apple --grain
 """
 import json
 import os
 import sys
+import zlib
+import numpy as np
 from PIL import Image, ImageChops
 
 HERE = os.path.dirname(__file__)
@@ -66,13 +70,38 @@ def alpha_box(layer, threshold=6, pad=6):
     return (max(0, box[0] - pad), max(0, box[1] - pad), min(w, box[2] + pad), min(h, box[3] + pad))
 
 
+def grain(img, seed, keep=None):
+    """The `--noise` the clay buttons wear (`globals.css`): grey noise of
+    ~2px grains, blended `overlay` — midtones move, black (the shadow)
+    stays black. None where `keep` is white (a face's glossy eyes and
+    mouth). Seeded, so a re-crop gives the same picture."""
+    rng = np.random.default_rng(seed)
+    w, h = img.size
+    coarse = Image.fromarray(rng.normal(0, 1, (h // 2 + 1, w // 2 + 1)).astype(np.float32), "F").resize((w, h), Image.BICUBIC)
+    noise = 0.7 * np.asarray(coarse) + 0.45 * rng.normal(0, 1, (h, w))
+    if keep is not None:
+        noise = noise * (1 - np.asarray(keep.convert("L")).astype(np.float32) / 255)
+    layer = np.clip(0.5 + 0.065 * noise, 0, 1)[..., None]
+    px = np.asarray(img.convert("RGBA")).astype(np.float32) / 255
+    base = px[..., :3]
+    mixed = np.where(base < 0.5, 2 * base * layer, 1 - 2 * (1 - base) * (1 - layer))
+    px[..., :3] = mixed
+    return Image.fromarray((np.clip(px, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA")
+
+
 if NAME == "things":
     dest = os.path.join(ROOT, sys.argv[2])
     os.makedirs(dest, exist_ok=True)
-    for name in sys.argv[3:]:
+    names = [a for a in sys.argv[3:] if not a.startswith("--")]
+    for name in names:
         layer = Image.open(os.path.join(HERE, "out", "things", f"{name}.png"))
-        thing = layer.crop(alpha_box(layer))
+        box = alpha_box(layer)
+        thing = layer.crop(box)
         thing.thumbnail((512, 512), Image.LANCZOS)
+        if "--grain" in sys.argv:
+            face = os.path.join(HERE, "out", "things", f"{name}.face.png")
+            keep = Image.open(face).crop(box).resize(thing.size, Image.LANCZOS) if os.path.exists(face) else None
+            thing = grain(thing, zlib.crc32(name.encode()), keep)
         thing.save(os.path.join(dest, f"{name}.png"), optimize=True)
     sys.exit()
 
