@@ -3489,6 +3489,71 @@ button:disabled,
   }
 }
 
+/* Dress Bloo (`DressBloo`): once he is ready, his weather comes over him —
+   rain or snow falls (`.wx-fall`), the wind blows across (`.wx-drift`), the
+   sun twinkles (`.wx-twinkle`). Each bit starts at its own spot and time.
+   Under reduced motion there is none. */
+.wx-fall {
+  opacity: 0;
+  animation: wx-fall 1.7s ease-in infinite;
+}
+
+@keyframes wx-fall {
+  from {
+    translate: 0 -12cqi;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  to {
+    translate: 2cqi 34cqi;
+    opacity: 0;
+  }
+}
+
+.wx-drift {
+  opacity: 0;
+  animation: wx-drift 2s ease-in-out infinite;
+}
+
+@keyframes wx-drift {
+  from {
+    translate: -14cqi 0;
+    opacity: 0;
+  }
+  25%,
+  70% {
+    opacity: 1;
+  }
+  to {
+    translate: 26cqi -3cqi;
+    opacity: 0;
+  }
+}
+
+.wx-twinkle {
+  opacity: 0;
+  animation: wx-twinkle 1.5s ease-in-out infinite;
+}
+
+@keyframes wx-twinkle {
+  0%,
+  100% {
+    scale: 0.2;
+    rotate: 0deg;
+    opacity: 0;
+  }
+  45% {
+    scale: 1.15;
+    rotate: 45deg;
+    opacity: 1;
+  }
+}
+
 /* Pick them (`HarvestPick`): the word pops up where a food was picked and
    floats off. Its `-50%` centring lives IN the keyframes — an animation
    owning `translate` drops a utility's. Under reduced motion it only
@@ -3855,7 +3920,10 @@ button:disabled,
   .pop-ring,
   .pop-shard,
   .make-steam,
-  .feed-heart {
+  .feed-heart,
+  .wx-fall,
+  .wx-drift,
+  .wx-twinkle {
     display: none;
   }
 
