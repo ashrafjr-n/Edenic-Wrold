@@ -23,6 +23,7 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
 const params = new URLSearchParams(location.search);
 
@@ -64,7 +65,8 @@ const tilt = THREE.MathUtils.degToRad(72);
 camera.position.set(0, Math.sin(tilt) * 30, Math.cos(tilt) * 30);
 camera.lookAt(0, 0, 0);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0xb9d4f5, 0.75));
+const sky = new THREE.HemisphereLight(0xffffff, 0xb9d4f5, 0.75);
+scene.add(sky);
 const sun = new THREE.DirectionalLight(0xfff1dd, 2.6);
 sun.position.set(-5, 12, 6);
 sun.castShadow = true;
@@ -3130,6 +3132,422 @@ function fishbowl() {
 
 Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
 
+/* ---------- Nova's fruits, the friends' way (2026-10-08) ----------
+   The Fruits course's eight foods remade in the friends' look (direct
+   request: "prettier, clay, a little noise, childlike, not too real — like
+   the characters and the buttons"): chubby shapes, matte velvety clay (no
+   gloss, a soft sheen at the edges like the friends' felt) and the
+   friends' own face — big eyes with a purple iris, a white shine and a
+   little gold heart, pink cheeks, an open smile. The grain is added after
+   cropping (`crop.py things … --grain`), the overlay the clay buttons
+   wear. `?thing=fruit&arg=<food>`; and Nova's cup (`?thing=cup`), the one
+   the cups game hides a food under — no face, so the three are alike. */
+
+const velvet = (color, extra = {}) =>
+  new THREE.MeshPhysicalMaterial({
+    color,
+    roughness: 0.88,
+    metalness: 0,
+    specularIntensity: 0.35,
+    sheen: 0.9,
+    sheenRoughness: 0.45,
+    sheenColor: new THREE.Color(color).lerp(new THREE.Color(0xffffff), 0.6),
+    ...extra,
+  });
+
+/* A face part, painted on a canvas. */
+function painted(w, h, draw) {
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  draw(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+
+function heart(x, cx, cy, s) {
+  x.beginPath();
+  x.moveTo(cx, cy + s * 0.9);
+  x.bezierCurveTo(cx - s * 1.5, cy - s * 0.1, cx - s * 0.6, cy - s * 1.2, cx, cy - s * 0.35);
+  x.bezierCurveTo(cx + s * 0.6, cy - s * 1.2, cx + s * 1.5, cy - s * 0.1, cx, cy + s * 0.9);
+  x.fill();
+}
+
+/* The friends' eye: a dark rim, a purple iris that lightens downwards, a
+   big shine, a small one and a little gold heart. */
+const EYE = painted(256, 256, (x) => {
+  x.fillStyle = "#24152f";
+  x.beginPath();
+  x.ellipse(128, 128, 110, 124, 0, 0, Math.PI * 2);
+  x.fill();
+  const iris = x.createLinearGradient(0, 30, 0, 236);
+  iris.addColorStop(0, "#2a0c44");
+  iris.addColorStop(0.5, "#5a239a");
+  iris.addColorStop(1, "#b27ff0");
+  x.fillStyle = iris;
+  x.beginPath();
+  x.ellipse(128, 136, 94, 104, 0, 0, Math.PI * 2);
+  x.fill();
+  x.fillStyle = "#fff";
+  x.beginPath();
+  x.ellipse(88, 82, 36, 38, 0, 0, Math.PI * 2);
+  x.fill();
+  x.beginPath();
+  x.arc(172, 168, 14, 0, Math.PI * 2);
+  x.fill();
+  x.fillStyle = "#ffd447";
+  heart(x, 128, 196, 17);
+});
+
+/* An open smile: a dark mouth, a pink tongue and one little tooth. */
+const MOUTH = painted(256, 200, (x) => {
+  x.fillStyle = "#7b1b36";
+  x.beginPath();
+  x.moveTo(30, 44);
+  x.quadraticCurveTo(128, 70, 226, 44);
+  x.bezierCurveTo(232, 150, 182, 192, 128, 192);
+  x.bezierCurveTo(74, 192, 24, 150, 30, 44);
+  x.fill();
+  x.save();
+  x.clip();
+  x.fillStyle = "#ff7e95";
+  x.beginPath();
+  x.ellipse(128, 204, 80, 62, 0, 0, Math.PI * 2);
+  x.fill();
+  x.restore();
+  x.fillStyle = "#fff";
+  x.beginPath();
+  x.moveTo(66, 50);
+  x.quadraticCurveTo(84, 58, 100, 59);
+  x.quadraticCurveTo(90, 74, 84, 86);
+  x.quadraticCurveTo(74, 66, 66, 50);
+  x.fill();
+});
+
+const CHEEK = painted(128, 128, (x) => {
+  const blush = x.createRadialGradient(64, 64, 4, 64, 64, 62);
+  blush.addColorStop(0, "rgba(255, 112, 158, 0.85)");
+  blush.addColorStop(0.55, "rgba(255, 130, 170, 0.45)");
+  blush.addColorStop(1, "rgba(255, 140, 180, 0)");
+  x.fillStyle = blush;
+  x.fillRect(0, 0, 128, 128);
+});
+
+/* A potato's eye: a soft brown dot. */
+const DOT = painted(64, 64, (x) => {
+  const dot = x.createRadialGradient(32, 32, 2, 32, 32, 30);
+  dot.addColorStop(0, "rgba(150, 96, 52, 0.95)");
+  dot.addColorStop(0.6, "rgba(160, 104, 58, 0.7)");
+  dot.addColorStop(1, "rgba(170, 112, 64, 0)");
+  x.fillStyle = dot;
+  x.fillRect(0, 0, 64, 64);
+});
+
+/* A carrot's line: a short curved stroke, a deeper orange. */
+const LINE = painted(128, 64, (x) => {
+  x.strokeStyle = "rgba(214, 98, 28, 0.85)";
+  x.lineWidth = 10;
+  x.lineCap = "round";
+  x.beginPath();
+  x.moveTo(14, 22);
+  x.quadraticCurveTo(64, 46, 114, 22);
+  x.stroke();
+});
+
+/* A cup's dot: plain cream. */
+const SPOT = painted(64, 64, (x) => {
+  x.fillStyle = "#fff4dc";
+  x.beginPath();
+  x.arc(32, 32, 30, 0, Math.PI * 2);
+  x.fill();
+});
+
+const decal = (map, extra = {}) =>
+  new THREE.MeshPhysicalMaterial({ map, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, roughness: 0.8, ...extra });
+const EYE_PAINT = decal(EYE, { roughness: 0.4, clearcoat: 0.35, clearcoatRoughness: 0.35 });
+const MOUTH_PAINT = decal(MOUTH, { roughness: 0.55 });
+const CHEEK_PAINT = decal(CHEEK, { roughness: 0.9 });
+const DOT_PAINT = decal(DOT, { roughness: 0.9 });
+const LINE_PAINT = decal(LINE, { roughness: 0.9 });
+const SPOT_PAINT = decal(SPOT, { roughness: 0.88 });
+
+/* Paint `material` onto whichever of `onto` a ray from the front meets at
+   (x, y): a decal of w × h, following the surface it lands on. */
+const facing = new THREE.Raycaster();
+function paint(onto, x, y, w, h, material) {
+  facing.set(new THREE.Vector3(x, y, 20), new THREE.Vector3(0, 0, -1));
+  const hit = facing.intersectObjects(onto, false)[0];
+  if (!hit) throw new Error(`nothing to paint at ${x}, ${y}`);
+  const part = new THREE.Mesh(new DecalGeometry(hit.object, hit.point, new THREE.Euler(0, 0, 0), new THREE.Vector3(w, h, Math.max(w, h) * 1.6)), material);
+  part.renderOrder = 1;
+  return part;
+}
+
+/* The friends' face on the front of `onto` (meshes of `g`), its middle at
+   (cx, cy), `k` its size. `g` must still stand where it was made — the
+   decals are worked out in the world and added to it. */
+function friendFace(g, onto, cx, cy, k = 1, { eyes = 0.22, cheeks = 0.37 } = {}) {
+  g.updateMatrixWorld(true);
+  for (const s of [-1, 1]) {
+    g.add(paint(onto, cx + s * cheeks * k, cy - 0.11 * k, 0.24 * k, 0.15 * k, CHEEK_PAINT));
+    g.add(shiny(paint(onto, cx + s * eyes * k, cy + 0.06 * k, 0.245 * k, 0.275 * k, EYE_PAINT)));
+  }
+  g.add(shiny(paint(onto, cx, cy - 0.15 * k, 0.23 * k, 0.18 * k, MOUTH_PAINT)));
+  return g;
+}
+
+/* The eyes and the mouth are glossy, not felt: `crop.py --grain` keeps
+   its grain off them (the `face` mask). */
+const shiny = (part) => {
+  part.userData.shiny = true;
+  return part;
+};
+
+/* White where the eyes and mouth are, black elsewhere — they are on the
+   thing's front, so drawn alone (each as a white cut-out of its own
+   painting) they show exactly where they will be. */
+const cutouts = new Map();
+function cutout(map) {
+  if (!cutouts.has(map)) {
+    const c = document.createElement("canvas");
+    c.width = map.image.width;
+    c.height = map.image.height;
+    const x = c.getContext("2d");
+    x.drawImage(map.image, 0, 0);
+    x.globalCompositeOperation = "source-in";
+    x.fillStyle = "#fff";
+    x.fillRect(0, 0, c.width, c.height);
+    cutouts.set(map, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, toneMapped: false }));
+  }
+  return cutouts.get(map);
+}
+function shinyMask() {
+  const shown = new Map();
+  scene.traverse((o) => {
+    if (o.isMesh) shown.set(o, [o.visible, o.material]);
+  });
+  for (const o of shown.keys()) {
+    o.visible = Boolean(o.userData.shiny);
+    if (o.visible) o.material = cutout(o.material.map);
+  }
+  renderer.setClearColor(0x000000, 1);
+  const url = frame();
+  renderer.setClearColor(0x000000, 0);
+  for (const [o, [visible, material]] of shown) {
+    o.visible = visible;
+    o.material = material;
+  }
+  return url;
+}
+
+/* A plump leaf, lying along +x from its stalk end. */
+function plumpLeaf(length, width, material) {
+  const s = new THREE.Shape();
+  s.moveTo(0, 0);
+  s.quadraticCurveTo(length * 0.42, width, length, 0);
+  s.quadraticCurveTo(length * 0.42, -width, 0, 0);
+  const geo = new THREE.ExtrudeGeometry(s, { depth: 0.02, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 8, curveSegments: 40 });
+  geo.translate(0, 0, -0.01);
+  return mesh(geo, material);
+}
+
+/* Push every vertex of `geo` out along its normal by `f(vertex)`. */
+function swell(geo, f) {
+  geo.computeVertexNormals();
+  const pos = geo.attributes.position;
+  const nor = geo.attributes.normal;
+  const v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const d = f(v);
+    pos.setXYZ(i, v.x + nor.getX(i) * d, v.y + nor.getY(i) * d, v.z + nor.getZ(i) * d);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+const LEAF_GREEN = 0x78cf5c;
+const STALK = 0x8d5a36;
+
+const FRIEND_FOOD = {
+  apple() {
+    const g = new THREE.Group();
+    const body = mesh(smoothLathe([[0, 0.07], [0.18, 0.0], [0.38, 0.05], [0.55, 0.22], [0.64, 0.48], [0.64, 0.76], [0.55, 0.98], [0.36, 1.09], [0.16, 1.03], [0, 0.93]]), velvet(0xf2564d));
+    g.add(body);
+    const stem = mesh(new THREE.CapsuleGeometry(0.05, 0.16, 8, 16), velvet(STALK));
+    stem.position.set(0.02, 1.06, 0);
+    stem.rotation.z = -0.3;
+    g.add(stem);
+    const leaf = plumpLeaf(0.36, 0.17, velvet(LEAF_GREEN));
+    leaf.position.set(0.06, 1.12, 0);
+    leaf.rotation.set(-0.9, 0.2, 0.45);
+    g.add(leaf);
+    return friendFace(g, [body], 0, 0.55, 1);
+  },
+
+  banana() {
+    const g = new THREE.Group();
+    const curve = new THREE.CatmullRomCurve3([[-0.8, 0.66], [-0.46, 0.27], [0, 0.15], [0.46, 0.27], [0.8, 0.66]].map(([x, y]) => new THREE.Vector3(x, y, 0)));
+    const T = 128, R = 32, r = 0.27;
+    const geo = new THREE.TubeGeometry(curve, T, r, R);
+    const pos = geo.attributes.position;
+    for (let i = 0; i <= T; i++) {
+      const c = curve.getPoint(i / T);
+      const k = Math.max(0.03, Math.sin(Math.PI * (i / T)) ** 0.5);
+      for (let j = 0; j <= R; j++) {
+        const idx = i * (R + 1) + j;
+        pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * k, c.y + (pos.getY(idx) - c.y) * k, c.z + (pos.getZ(idx) - c.z) * k);
+      }
+    }
+    geo.computeVertexNormals();
+    const body = mesh(geo, velvet(0xffd84e));
+    g.add(body);
+    const tip = mesh(new THREE.SphereGeometry(0.05, 16, 12), velvet(0x7a5230));
+    tip.position.copy(curve.getPoint(0));
+    g.add(tip);
+    const stalk = mesh(new THREE.CapsuleGeometry(0.065, 0.16, 8, 16), velvet(0x9fb04a));
+    const end = curve.getPoint(1);
+    stalk.position.set(end.x + 0.05, end.y + 0.1, 0);
+    stalk.rotation.z = -0.55;
+    g.add(stalk);
+    return friendFace(g, [body], 0, 0.2, 0.92);
+  },
+
+  orange() {
+    const g = new THREE.Group();
+    const body = mesh(new THREE.SphereGeometry(0.6, 96, 64), velvet(0xffa13b));
+    body.scale.y = 0.93;
+    body.position.y = 0.56;
+    g.add(body);
+    const stem = mesh(new THREE.CapsuleGeometry(0.045, 0.08, 8, 16), velvet(0x6b8a38));
+    stem.position.set(0, 1.12, 0);
+    g.add(stem);
+    const leaf = plumpLeaf(0.34, 0.16, velvet(LEAF_GREEN));
+    leaf.position.set(0.02, 1.13, 0);
+    leaf.rotation.set(-1.0, 0.25, 0.3);
+    g.add(leaf);
+    return friendFace(g, [body], 0, 0.52, 1.05);
+  },
+
+  grapes() {
+    const g = new THREE.Group();
+    const purple = velvet(0x9a5fe0);
+    const grapes = [
+      [-0.42, 1.08, -0.06, 0.2], [0, 1.13, -0.04, 0.21], [0.42, 1.08, -0.06, 0.2],
+      [-0.21, 0.86, 0.1, 0.23], [0.21, 0.86, 0.1, 0.23],
+      [-0.44, 0.66, -0.06, 0.19], [0, 0.62, 0.14, 0.22], [0.44, 0.66, -0.06, 0.19],
+      [-0.22, 0.4, 0.02, 0.2], [0.22, 0.4, 0.02, 0.2],
+      [0, 0.19, -0.02, 0.18],
+    ].map(([x, y, z, r]) => {
+      const grape = mesh(new THREE.SphereGeometry(r, 48, 32), purple);
+      grape.position.set(x, y, z);
+      g.add(grape);
+      return grape;
+    });
+    const stem = mesh(new THREE.CapsuleGeometry(0.045, 0.2, 8, 16), velvet(STALK));
+    stem.position.set(0, 1.38, -0.04);
+    g.add(stem);
+    const leaf = plumpLeaf(0.4, 0.2, velvet(LEAF_GREEN));
+    leaf.position.set(0.03, 1.42, -0.04);
+    leaf.rotation.set(-0.8, 0.2, 0.35);
+    g.add(leaf);
+    /* The face across the bunch: an eye on each of the two front grapes,
+       the smile on the one under them. */
+    return friendFace(g, grapes, 0, 0.76, 1.05, { eyes: 0.2, cheeks: 0.33 });
+  },
+
+  carrot() {
+    const g = new THREE.Group();
+    const body = mesh(smoothLathe([[0, 0.0], [0.07, 0.03], [0.17, 0.24], [0.28, 0.54], [0.35, 0.83], [0.36, 1.0], [0.29, 1.11], [0.13, 1.16], [0, 1.17]]), velvet(0xff8b34));
+    g.add(body);
+    const leaf = velvet(LEAF_GREEN);
+    for (const [a, h] of [[-0.45, 0.34], [0, 0.42], [0.45, 0.34]]) {
+      const tuft = mesh(new THREE.SphereGeometry(1, 32, 20), leaf);
+      tuft.scale.set(0.1, h, 0.08);
+      tuft.position.set(Math.sin(a) * (h * 0.95), 1.12 + Math.cos(a) * (h * 0.95), 0);
+      tuft.rotation.z = -a;
+      g.add(tuft);
+    }
+    g.updateMatrixWorld(true);
+    for (const [x, y] of [[-0.2, 0.5], [0.18, 0.36], [-0.12, 0.22]]) g.add(paint([body], x, y, 0.15, 0.075, LINE_PAINT));
+    return friendFace(g, [body], 0, 0.8, 0.82);
+  },
+
+  broccoli() {
+    const g = new THREE.Group();
+    const stem = mesh(smoothLathe([[0, 0], [0.3, 0.0], [0.34, 0.06], [0.31, 0.34], [0.32, 0.56], [0.42, 0.7], [0, 0.72]]), velvet(0xaadd88));
+    g.add(stem);
+    const floret = velvet(0x4fb24b);
+    for (const [x, y, z, r] of [[0, 1.06, -0.02, 0.34], [-0.37, 0.94, 0.0, 0.28], [0.37, 0.94, 0.0, 0.28], [-0.2, 1.24, -0.06, 0.26], [0.2, 1.25, -0.06, 0.26], [0, 0.88, 0.18, 0.27], [-0.52, 0.74, -0.06, 0.2], [0.52, 0.74, -0.06, 0.2]]) {
+      const puff = mesh(new THREE.SphereGeometry(r, 48, 32), floret);
+      puff.position.set(x, y, z);
+      g.add(puff);
+    }
+    return friendFace(g, [stem], 0, 0.34, 0.74);
+  },
+
+  corn() {
+    const g = new THREE.Group();
+    /* The cob, its kernels raised from one surface — the face lies over
+       them. Its seam is turned to the back. */
+    const cob = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0.0], [0.17, 0.03], [0.27, 0.14], [0.31, 0.36], [0.31, 0.74], [0.27, 1.0], [0.17, 1.15], [0, 1.2]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(160), 200);
+    swell(cob, (v) => {
+      if (v.y < 0.08 || v.y > 1.12) return 0;
+      const row = v.y / 0.088;
+      const col = ((Math.atan2(v.z, v.x) / (Math.PI * 2)) * 18 + (Math.floor(row) % 2) * 0.5 + 18) % 1;
+      const d = ((col - 0.5) / 0.47) ** 2 + ((row % 1 - 0.5) / 0.47) ** 2;
+      return 0.026 * Math.sqrt(Math.max(0, 1 - d));
+    });
+    const body = mesh(cob, velvet(0xffd23e));
+    body.rotation.y = Math.PI;
+    g.add(body);
+    const skin = new THREE.Mesh(new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0.0], [0.2, 0.03], [0.3, 0.14], [0.338, 0.36], [0.338, 0.74], [0.3, 1.0], [0.2, 1.15], [0, 1.2]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(80), 96));
+    const husk = velvet(LEAF_GREEN);
+    for (const [turn, lean, len] of [[-0.55, 0.32, 0.84], [0.55, -0.32, 0.84], [Math.PI, 0, 0.7]]) {
+      const leaf = plumpLeaf(len, 0.2, husk);
+      leaf.rotation.set(0, turn, Math.PI / 2 + lean);
+      leaf.position.set(Math.sin(turn) * 0.22, 0.02, Math.cos(turn) * 0.22);
+      g.add(leaf);
+    }
+    return friendFace(g, [skin], 0, 0.74, 0.66);
+  },
+
+  potato() {
+    const g = new THREE.Group();
+    const geo = new THREE.SphereGeometry(0.5, 128, 96);
+    swell(geo, (v) => 0.03 * Math.sin(v.x * 7 + 1) * Math.cos(v.y * 6) + 0.02 * Math.sin(v.z * 9));
+    const body = mesh(geo, velvet(0xdba268));
+    body.scale.set(1.32, 0.82, 0.98);
+    body.position.y = 0.41;
+    g.add(body);
+    g.updateMatrixWorld(true);
+    for (const [x, y] of [[-0.5, 0.6], [0.52, 0.56], [-0.44, 0.26], [0.47, 0.3]]) g.add(paint([body], x, y, 0.08, 0.06, DOT_PAINT));
+    return friendFace(g, [body], 0, 0.42, 0.92);
+  },
+};
+
+/* Nova's cup, upside down: gold clay with a cream lip and a knob on top. */
+function cup() {
+  const g = new THREE.Group();
+  g.add(mesh(smoothLathe([[0, 0.12], [0.58, 0.12], [0.6, 0.16], [0.57, 0.36], [0.46, 1.0], [0.41, 1.1], [0.28, 1.15], [0, 1.16]]), velvet(0xf6c445)));
+  const cream = velvet(0xfff1d6);
+  const lip = mesh(new THREE.TorusGeometry(0.585, 0.085, 32, 128), cream);
+  lip.rotation.x = Math.PI / 2;
+  lip.position.y = 0.1;
+  g.add(lip);
+  const knob = mesh(new THREE.SphereGeometry(0.13, 48, 32), cream);
+  knob.scale.y = 0.8;
+  knob.position.y = 1.2;
+  g.add(knob);
+  g.updateMatrixWorld(true);
+  for (const [x, y] of [[0, 0.62], [-0.3, 0.36], [0.3, 0.36], [-0.27, 0.86], [0.27, 0.86], [-0.48, 0.62], [0.48, 0.62]]) g.add(paint([g.children[0]], x, y, 0.15, 0.15, SPOT_PAINT));
+  return g;
+}
+
+Object.assign(ITEMS, { fruit: (food) => FRIEND_FOOD[food](), cup });
+
 /* ---------- The scenes: a blanket, and where each thing lies ----------
    `at` is [x, surface height, z]; things at z ≈ 3.15 lie on the grass
    below the blanket, out at the sides — the tray of sockets floats
@@ -3422,6 +3840,13 @@ if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
   const arg = params.get("arg");
   const group = ITEMS[THING](arg ?? undefined);
+  /* The friends' look (Nova's fruits, her cup): a softer, fuller light —
+     their felt is evenly lit, with no hard dark side. */
+  if (THING === "fruit" || THING === "cup") {
+    sun.intensity = 1.9;
+    sky.intensity = 1.15;
+    scene.environmentIntensity = 0.5;
+  }
   scene.add(group);
   catcher.position.y = 0.001;
   /* `?shadow=0`: a thing that floats (a balloon) casts no ground shadow. */
@@ -3439,7 +3864,13 @@ if (THING) {
   camera.lookAt(centre);
   camera.updateProjectionMatrix();
   renderer.setClearColor(0x000000, 0);
-  window.renderLayers = () => ({ [THING]: frame() });
+  window.renderLayers = () => {
+    const out = { [THING]: frame() };
+    let face = false;
+    group.traverse((o) => (face ||= Boolean(o.userData.shiny)));
+    if (face) out.face = shinyMask();
+    return out;
+  };
   window.itemsMeta = () => ({});
 } else if (HARVEST) {
   /* ---------- Nova's garden: the world, the five foods, and what stands
