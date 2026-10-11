@@ -68,3 +68,4 @@
 2026-10-07 clean up course backdrop
 2026-10-08 adjust card spacing
 2026-10-08 polish tracing board
+2026-10-11 simplify memory match timing
