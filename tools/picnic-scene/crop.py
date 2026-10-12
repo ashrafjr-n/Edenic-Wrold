@@ -43,6 +43,11 @@ boxes and picks), at most 640px, with the grain, into
 
     python3 tools/picnic-scene/crop.py weather
 
+Bloo's animals at home — run after `render.cjs thing world-cat=animalWorld:cat@float
+…` (all four): the same, into `public/assets/learn/bloo/animals/worlds/<animal>.png`.
+
+    python3 tools/picnic-scene/crop.py animals
+
 Making the weather — run after `render.cjs weathersteps sunny rainy windy
 snowy`: crops every frame and sky layer of the four on ONE box (the
 frames of a weather cross-fade, its sky lies over them), with one grain
@@ -100,20 +105,28 @@ def grain(img, seed, keep=None):
     return Image.fromarray((np.clip(px, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA")
 
 
-if NAME == "weather":
-    weathers = ["sunny", "rainy", "windy", "snowy"]
-    dest = os.path.join(ROOT, "public/assets/learn/bloo/weather/scenes")
+def one_box(prefix, names, dest):
+    """`out/things/<prefix>-<name>.png` for every name, cut on ONE box (they
+    match), at most 640px, with the grain, into `dest/<name>.png`."""
+    dest = os.path.join(ROOT, dest)
     os.makedirs(dest, exist_ok=True)
-    layers = {w: Image.open(os.path.join(HERE, "out", "things", f"weather-{w}.png")) for w in weathers}
+    layers = {n: Image.open(os.path.join(HERE, "out", "things", f"{prefix}-{n}.png")) for n in names}
     boxes = [alpha_box(layer) for layer in layers.values()]
     box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    for w, layer in layers.items():
+    for n, layer in layers.items():
         cut = layer.crop(box)
         cut.thumbnail((640, 640), Image.LANCZOS)
-        face = os.path.join(HERE, "out", "things", f"weather-{w}.face.png")
+        face = os.path.join(HERE, "out", "things", f"{prefix}-{n}.face.png")
         keep = Image.open(face).crop(box).resize(cut.size, Image.LANCZOS) if os.path.exists(face) else None
-        grain(cut, zlib.crc32(w.encode()), keep).save(os.path.join(dest, f"{w}.png"), optimize=True)
+        grain(cut, zlib.crc32(n.encode()), keep).save(os.path.join(dest, f"{n}.png"), optimize=True)
     sys.exit()
+
+
+if NAME == "weather":
+    one_box("weather", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/scenes")
+
+if NAME == "animals":
+    one_box("world", ["cat", "dog", "cow", "fish"], "public/assets/learn/bloo/animals/worlds")
 
 if NAME == "weathersteps":
     weathers = ["sunny", "rainy", "windy", "snowy"]
