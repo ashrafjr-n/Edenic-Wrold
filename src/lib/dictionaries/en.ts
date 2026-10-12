@@ -103,7 +103,7 @@ export const en = {
     fruits: {
       name: "Fruits & Vegetables",
       description: "Yummy things to eat and how to spell them",
-      items: ["Apple", "Banana", "Orange", "Grapes", "Carrot", "Broccoli", "Corn", "Potato", "Market review"],
+      items: ["Apple", "Banana", "Orange", "Grapes", "Carrot", "Broccoli", "Corn", "Potato", "Tomato", "Pepper", "Market review"],
     },
     seasons: {
       name: "The Seasons",
