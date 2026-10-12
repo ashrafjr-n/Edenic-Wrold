@@ -270,7 +270,7 @@ export function MakeFood({ list, stall, full, seed, itemAria, hearLabel, onSolve
           preload
           sizes="(min-width: 1024px) 22rem, 12rem"
           className={`select-none object-contain ${phase === "full" ? "make-fill-out" : "opacity-0"}`}
-          style={{ "--fill-from": `${top + height}%`, "--fill-at": `${left + width / 2}% ${top + height / 2}%` } as CSSProperties}
+          style={{ "--fill-at": `${left + width / 2}% ${top + height / 2}%` } as CSSProperties}
         />
         {phase !== "full" && (
           <div className="pointer-events-none absolute flex items-end justify-center" style={place(inside)}>
