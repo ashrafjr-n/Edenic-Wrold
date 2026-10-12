@@ -158,10 +158,8 @@ src/
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
-                      the magic button (a season comes), Nova's cups (find
-                      the food under one of three), feeding an animal its
-                      food a bite at a time, making the weather by
-                      hand, the review's garden to pick Nova's
+                      Nova's cups (find the food under one of three),
+                      making the weather by hand, the review's garden to pick Nova's
                       list from, her blender and soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
@@ -187,7 +185,7 @@ tools/
                       plant and an orange tree; a carrot bed, the banana
                       plant and a potato bed — each with its food), her
                       basket, the four seasons (an island with a tree
-                      with a face, frame by frame as each season comes),
+                      with a face, under each season),
                       Nova's eight foods in the friends' look (chubby
                       velvet clay with the buttons' grain and the
                       friends' face) and her cup, and Bloo's animals in
@@ -225,10 +223,8 @@ public/
                             cup, make/: the review's mixed juice, its glass
                             and the soup, and garden/: the review's two
                             gardens, in layers, and her basket), seasons/
-                            (spring/, summer/, fall/, winter/: the island
-                            before the season, 0.png, then one frame per
-                            step, 1–4.png; things/: the review's eight
-                            things to sort), and each course's placeholder
+                            (scenes/: the island under each season;
+                            things/: the review's eight things to sort), and each course's placeholder
                             reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
                             (things/: each animal in two coats, in the
@@ -272,7 +268,7 @@ Continue, and the lesson's own buttons — with green kept for "Next". Tablets a
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
 big course cards; a course's box of lessons fills a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
-the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs across the top (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
+the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs beside the back button (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
 pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
@@ -382,11 +378,8 @@ picture:
   pink cheeks), its band in the season's color: blossoms and tulips in
   spring, apples and a smiling sun in summer, orange leaves falling and a
   pumpkin in fall, snow on bare branches and a snowman in winter. The
-  season is **met** and **spelled**, then the child **makes it come**: the
-  island starts bare, one sparkling spot glows, and each tap spreads the
-  next part of the season over it from that spot (the grass, the leaves,
-  the blossoms…) until the whole season is there and its word jumps — no
-  choosing inside the lesson. The review is the exam: eight things
+  season is **met** and **spelled** — no choosing inside the lesson. The
+  review is the exam: eight things
   (a tulip, a butterfly, the sun, an ice cream, a leaf, a pumpkin, a
   snowman, a snowflake) into four season boxes, the four seasons in order,
   and two spelled from their picture.
@@ -398,13 +391,8 @@ purple iris and a little gold heart, pink cheeks, an open smile — on the
 dog's and the cow's muzzle). It is met at home, the way the weather is
 seen: on Bloo's round hill, the cat by its bed, the dog by its kennel, the
 cow by its barn, the fish bobbing up out of a pond. The animal is **met**
-and **spelled**, then the
-child **feeds it**: three bites of its own food lie in front of it (a
-bottle of milk for the cat, a bone for the dog, a tuft of grass for the
-cow, fish food for the fish). Drag one onto the animal, or tap it, and it
-flies into its mouth; the animal munches and a heart floats up, and after
-the third its word is said and it jumps — nothing to choose between inside
-a lesson. The review is the exam: eight animals, each in two coats (an
+and **spelled** — nothing to choose between inside a lesson. The review is
+the exam: eight animals, each in two coats (an
 orange cat and a grey one, a brown dog and a spotty one…), go into their
 homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
