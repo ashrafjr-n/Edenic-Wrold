@@ -3627,12 +3627,18 @@ const onHill = (thing, x, z, turn = 0) => {
   return thing;
 };
 
+/* The round hill alone: Bloo's blue band and its top in `top`. */
+function hillBase(top) {
+  const g = new THREE.Group();
+  g.add(mesh(smoothLathe([[0, 0], [2.48, 0], [2.74, 0.1], [2.82, 0.3], [2.76, 0.46], [0, 0.46]]), velvet(0x6bb8f0)));
+  g.add(mesh(smoothLathe([[0, 0.4], [2.72, 0.4], [2.8, 0.52], [2.6, 0.72], [2.0, 0.92], [1.0, 1.06], [0, 1.1]]), velvet(top)));
+  return g;
+}
+
 /* The hill: Bloo's blue band, its grassy (or snowy) top, his house and a
    tree. `lean` bends the tree in the wind. */
 function bloosHill({ snowy = false, lean = 0 } = {}) {
-  const g = new THREE.Group();
-  g.add(mesh(smoothLathe([[0, 0], [2.48, 0], [2.74, 0.1], [2.82, 0.3], [2.76, 0.46], [0, 0.46]]), velvet(0x6bb8f0)));
-  g.add(mesh(smoothLathe([[0, 0.4], [2.72, 0.4], [2.8, 0.52], [2.6, 0.72], [2.0, 0.92], [1.0, 1.06], [0, 1.1]]), velvet(snowy ? 0xfbfdff : 0x78cf5c)));
+  const g = hillBase(snowy ? 0xfbfdff : 0x78cf5c);
   /* His house: cream walls, a blue roof, a round door, a yellow window. */
   const house = gableHouse(1.0, 0.84, 0.7, 0.46, velvet(0xfdf3e3), velvet(0x4f9fe6));
   const door = mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.04, 40), velvet(0x3b6fb8));
