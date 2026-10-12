@@ -4,7 +4,7 @@ import { COLORS } from "@/data/colors";
 import cat from "../../../public/assets/learn/bloo/animals/things/cat.png";
 import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-grey.png";
 import dog from "../../../public/assets/learn/bloo/animals/things/dog.png";
-import dogSpotty from "../../../public/assets/learn/bloo/animals/things/dog-spotty.png";
+import dogGolden from "../../../public/assets/learn/bloo/animals/things/dog-golden.png";
 import cow from "../../../public/assets/learn/bloo/animals/things/cow.png";
 import cowBrown from "../../../public/assets/learn/bloo/animals/things/cow-brown.png";
 import fish from "../../../public/assets/learn/bloo/animals/things/fish.png";
@@ -33,7 +33,7 @@ interface Pet {
 /** In teaching order. */
 const ANIMALS: Record<Animal, Pet> = {
   cat: { picture: cat, world: catWorld, other: catGrey, home: catHome, box: "purple" },
-  dog: { picture: dog, world: dogWorld, other: dogSpotty, home: dogHome, box: "orange" },
+  dog: { picture: dog, world: dogWorld, other: dogGolden, home: dogHome, box: "orange" },
   cow: { picture: cow, world: cowWorld, other: cowBrown, home: cowHome, box: "red" },
   fish: { picture: fish, world: fishWorld, other: fishBlue, home: fishHome, box: "blue" },
 };
@@ -92,7 +92,7 @@ export const blooAnimals: LessonDef[] = [
           thing("fish", "other"), thing("dog", "picture"), thing("cow", "other"), thing("cat", "picture"),
         ],
       },
-      { type: "spell", ask: { key: "spellPicture" }, word: "dog", picture: dogSpotty },
+      { type: "spell", ask: { key: "spellPicture" }, word: "dog", picture: dogGolden },
       { type: "spell", ask: { key: "spellPicture" }, word: "fish", picture: fishBlue },
     ],
   },
