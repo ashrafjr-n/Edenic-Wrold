@@ -2065,7 +2065,7 @@ const GARDENS = {
     foods: [
       { food: "carrot", make: () => videoCarrot(0), scale: 0.62, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
       { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
-      { food: "potato", make: friendPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
+      { food: "potato", make: videoPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
     ],
   },
 };
@@ -3309,23 +3309,6 @@ function cup() {
   return g;
 }
 
-/* A potato as it is dug up: Nova's potato with a sprout of leaves on top. */
-function friendPotatoPlant() {
-  const g = FRIEND_FOOD.potato();
-  const green = velvet(LEAF_GREEN);
-  const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.3, 8, 12), green);
-  stem.position.set(0, 0.86, -0.05);
-  g.add(stem);
-  for (const [a, y] of [[-0.9, 0.94], [0.9, 0.98], [-0.35, 1.1], [0.4, 1.13]]) {
-    const leaf = mesh(new THREE.SphereGeometry(0.12, 24, 12), green);
-    leaf.scale.set(1.5, 0.4, 0.8);
-    leaf.position.set(Math.sin(a) * 0.16, y, -0.05);
-    leaf.rotation.z = a * 0.6;
-    g.add(leaf);
-  }
-  return g;
-}
-
 Object.assign(ITEMS, { fruit: (food) => FRIEND_FOOD[food](), cup });
 
 /* ---------- What a child needs for the weather (2026-10-08) ----------
@@ -4430,6 +4413,25 @@ function videoPotato() {
   });
   const g = group(mesh(geo, satin({ roughness: 0.6, clearcoat: 0.14, sheen: 0.12 })));
   g.rotation.set(0.25, -0.35, 0.12);
+  return g;
+}
+
+/* The same potato growing in Nova's potato bed: lying on the soil, a
+   little sprout of leaves on top. */
+function videoPotatoPlant() {
+  const g = new THREE.Group();
+  const potato = videoPotato();
+  potato.rotation.set(0, -0.2, 0);
+  potato.position.y = 0.44;
+  g.add(potato);
+  const green = satin({ roughness: 0.55 });
+  const leafG = new THREE.Color(0x5f9e36);
+  g.add(tintAll(taperTube([[0, 0.8, -0.05], [0.01, 0.96, -0.05], [0, 1.08, -0.05]], 0.035, 0.03, green), () => [leafG.clone(), 0]));
+  for (const [a, y] of [[-0.9, 0.98], [0.9, 1.02], [-0.35, 1.12], [0.4, 1.15]]) {
+    const leaf = bake(new THREE.SphereGeometry(0.12, 24, 12), { scale: [1.5, 0.4, 0.8], at: [Math.sin(a) * 0.16, y, -0.05], rot: [0, 0, a * 0.6] });
+    tint(leaf, () => [leafG.clone().lerp(new THREE.Color(0x86bd4c), 0.3), 0]);
+    g.add(mesh(leaf, green));
+  }
   return g;
 }
 
