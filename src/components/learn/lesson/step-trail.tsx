@@ -14,7 +14,7 @@ interface StepTrailProps {
 }
 
 /**
- * The desktop's lesson steps, in the middle of the back row: a small disc
+ * The desktop's lesson steps, beside the back button: a small disc
  * per step, joined by a line. Done steps are ticked in the course colour,
  * the current one is its round task button (the how-to), the ones to come
  * show their icon, faded.
