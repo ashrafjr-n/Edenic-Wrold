@@ -4266,23 +4266,30 @@ function furMaterial(h, len, density) {
     shader.uniforms.uLen = { value: len };
     shader.uniforms.uDensity = { value: density };
     shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nattribute float fur;\nuniform float uH;\nuniform float uLen;\nvarying vec3 vObj;\nvarying float vFur;")
-      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;\nvFur = fur;\ntransformed += objectNormal * uLen * uH * fur;");
+      .replace("#include <common>", "#include <common>\nattribute float fur;\nuniform float uH;\nuniform float uLen;\nvarying vec3 vObj;\nvarying vec3 vObjN;\nvarying float vFur;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;\nvObjN = normalize(objectNormal);\nvFur = fur;\ntransformed += objectNormal * uLen * uH * fur;");
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nuniform float uH;\nuniform float uDensity;\nvarying vec3 vObj;\nvarying float vFur;\nfloat furHash(vec3 c) { return fract(sin(dot(c, vec3(127.1, 311.7, 74.7))) * 43758.5453); }")
+      .replace("#include <common>", "#include <common>\nuniform float uH;\nuniform float uDensity;\nvarying vec3 vObj;\nvarying vec3 vObjN;\nvarying float vFur;\nfloat furHash(vec3 c) { return fract(sin(dot(c, vec3(127.1, 311.7, 74.7))) * 43758.5453); }")
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
         if (uH > 0.0) {
           if (vFur < 0.05) discard;
-          vec3 cell = floor(vObj * uDensity);
-          vec3 f = fract(vObj * uDensity) - 0.5;
+          /* The root's cell, turned off the axes (no grid lines), each
+             strand off its cell's middle; a strand is a column along the
+             normal, so every shell finds the same ones. */
+          vec3 q = mat3(0.8, 0.36, -0.48, -0.48, 0.8, -0.36, 0.36, 0.48, 0.8) * vObj * uDensity;
+          vec3 cell = floor(q);
           float n = furHash(cell);
+          vec3 off = vec3(furHash(cell + 11.0), furHash(cell + 23.0), furHash(cell + 37.0)) - 0.5;
+          vec3 f = fract(q) - 0.5 - off * 0.5;
+          vec3 qn = normalize(mat3(0.8, 0.36, -0.48, -0.48, 0.8, -0.36, 0.36, 0.48, 0.8) * vObjN);
+          vec3 across = f - dot(f, qn) * qn;
           /* Strands of a few lengths, thinner towards their tips. */
-          if (uH > 0.35 + 0.65 * n) discard;
-          if (length(f.xy + f.yz * 0.5) > 0.62 * (1.0 - uH * 0.85)) discard;
+          if (uH > 0.45 + 0.55 * n) discard;
+          if (length(across) > 0.58 * (1.0 - uH * 0.75)) discard;
         }
-        diffuseColor.rgb *= mix(0.74, 1.08, uH);`,
+        diffuseColor.rgb *= mix(0.86, 1.05, uH);`,
       );
   };
   m.customProgramCacheKey = () => key;
@@ -4291,7 +4298,7 @@ function furMaterial(h, len, density) {
 }
 
 /* A furry part: its skin and its shells, one group. */
-function furry(geo, { len = 0.05, density = 95 } = {}) {
+function furry(geo, { len = 0.032, density = 150 } = {}) {
   const g = new THREE.Group();
   const skin = mesh(geo, furMaterial(0, len, density));
   g.add(skin);
@@ -4305,6 +4312,157 @@ function furry(geo, { len = 0.05, density = 95 } = {}) {
 
 /* Smooth satin clay for the videos' vegetables, coloured per vertex. */
 const satin = (extra = {}) => new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.48, clearcoat: 0.18, clearcoatRoughness: 0.45, sheen: 0.35, sheenRoughness: 0.5, sheenColor: 0xffffff, ...extra });
+
+/* The videos' eye: a dark glossy dome, deep navy lightening a little at
+   its bottom, a big white shine up on the left and a small one down on
+   the right — unlit, so they stay white. On the front of an ellipsoid. */
+const EYE_DARK = painted(512, 256, (x) => {
+  /* A sphere's map: the front is the middle of the strip. The pupil, a
+     slate iris round it, lighter at the bottom, a dark rim. */
+  x.fillStyle = "#0b0a18";
+  x.fillRect(0, 0, 512, 256);
+  const iris = x.createRadialGradient(384, 140, 10, 384, 128, 92);
+  iris.addColorStop(0, "#07060f");
+  iris.addColorStop(0.42, "#120f24");
+  iris.addColorStop(0.7, "#3b3560");
+  iris.addColorStop(0.9, "#5d5588");
+  iris.addColorStop(1, "#0b0a18");
+  x.fillStyle = iris;
+  x.beginPath();
+  x.ellipse(384, 128, 92, 110, 0, 0, Math.PI * 2);
+  x.fill();
+});
+function videoEye(r) {
+  const g = new THREE.Group();
+  const ball = mesh(new THREE.SphereGeometry(r, 48, 32), new THREE.MeshPhysicalMaterial({ map: EYE_DARK, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }));
+  ball.scale.set(1, 1.1, 0.75);
+  g.add(shiny(ball));
+  const glint = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+  for (const [x, y, k] of [[-0.34, 0.36, 0.3], [0.38, -0.3, 0.12], [0.12, 0.46, 0.08]]) {
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(r * k, 24, 16), glint);
+    dot.scale.z = 0.4;
+    dot.position.set(x * r, y * r, r * 0.6);
+    g.add(shiny(dot));
+  }
+  return g;
+}
+
+/* Where the front of an ellipsoid (centre `c`, radii `r`) is at (x, y). */
+function frontOf(c, r, x, y, out = 0) {
+  const u = (x - c[0]) / r[0], v = (y - c[1]) / r[1];
+  return c[2] + (r[2] + out) * Math.sqrt(Math.max(0, 1 - u * u - v * v));
+}
+
+const near = (p, q, r) => Math.max(0, 1 - p.distanceTo(new THREE.Vector3(...q)) / r);
+const smooth = (t) => t * t * (3 - 2 * t);
+
+/* The videos' puppy: a big round head, sky blue with a white blaze down
+   to a white muzzle, big pink cheeks, floppy blue ears, two little pink
+   brows, a small pink nose and an open little mouth; a chubby sitting
+   body, blue round the back, a white fluffy chest, running into pink
+   paws and feet. */
+const PUP = { blue: new THREE.Color(0x8fd0f2), white: new THREE.Color(0xfbf8f6), pink: new THREE.Color(0xf7b4c8), blush: new THREE.Color(0xf68fb0) };
+const PUP_HEAD_C = [0, 1.62, 0.02], PUP_HEAD_R = [0.92, 0.72, 0.76];
+
+function videoDog() {
+  const g = new THREE.Group();
+  const { blue, white, pink, blush } = PUP;
+  const eyes = [[-0.29, 1.54], [0.29, 1.54]];
+  const eyeAt = eyes.map(([x, y]) => [x, y, frontOf(PUP_HEAD_C, PUP_HEAD_R, x, y)]);
+  const nose = [0, 1.36, frontOf(PUP_HEAD_C, PUP_HEAD_R, 0, 1.36) + 0.12];
+  const mouth = [0, 1.22, frontOf(PUP_HEAD_C, PUP_HEAD_R, 0, 1.22) + 0.06];
+  /* Short round the face's features, so they are not lost in it. */
+  const furAt = (p) => {
+    let f = 1;
+    for (const e of eyeAt) f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...e)) / 0.24)));
+    f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...nose)) / 0.16)), smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...mouth)) / 0.16)));
+    return f;
+  };
+  const mix = (a, b, t) => a.clone().lerp(b, Math.min(1, Math.max(0, t)));
+
+  /* The head: blue, a white blaze widening down to the muzzle, pink cheeks,
+     two pink brows. */
+  const head = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: PUP_HEAD_R, at: PUP_HEAD_C }), (p) => {
+    /* White: a blaze down the forehead, then the whole face under the
+       eyes; blue round the top, the sides and the back. */
+    const down = Math.max(0, 2.05 - p.y);
+    const faceW = p.y > 1.6 ? 0.07 + down * 0.25 : 0.2 + (1.6 - p.y) * 2.2;
+    let c = mix(white, blue, smooth(Math.min(1, Math.max(0, (Math.abs(p.x) - faceW) / 0.18))));
+    c = mix(c, blue, smooth(Math.min(1, Math.max(0, (0.32 - p.z) / 0.3))));
+    for (const s of [-1, 1]) {
+      c = mix(c, blush, smooth(near(p, [s * 0.55, 1.33, 0.55], 0.36)));
+      c = mix(c, pink, smooth(near(p, [s * 0.3, 1.86, frontOf(PUP_HEAD_C, PUP_HEAD_R, s * 0.3, 1.86)], 0.1)));
+    }
+    return [c, furAt(p)];
+  });
+  g.add(furry(head));
+
+  /* Chubby cheeks, puffing out at the face's lower sides: pink in the
+     middle, white round it. */
+  for (const s of [-1, 1]) {
+    const at = [s * 0.46, 1.3, 0.36];
+    const cheek = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.38, 0.3, 0.34], at }), (p) => [mix(white, blush, smooth(near(p, [s * 0.56, 1.3, 0.62], 0.36))), furAt(p)]);
+    g.add(furry(cheek));
+  }
+
+  /* The muzzle: two little white pads under the nose. */
+  for (const s of [-1, 1]) {
+    const pad = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.17, 0.13, 0.12], at: [s * 0.11, 1.3, frontOf(PUP_HEAD_C, PUP_HEAD_R, s * 0.11, 1.3) - 0.03] }), (p) => [white.clone(), Math.min(0.5, furAt(p))]);
+    g.add(furry(pad, { len: 0.03 }));
+  }
+
+  /* The ears: soft, folded down at the head's top corners. */
+  for (const s of [-1, 1]) {
+    /* From the head's top corner, hanging down beside the cheek. */
+    const ear = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.25, 0.44, 0.14], at: [s * 0.86, 1.66, 0.04], rot: [0.12, s * 0.2, s * 0.5] }), () => [blue.clone(), 1]);
+    g.add(furry(ear));
+  }
+
+  /* The body, sitting: blue round the back, a white chest, pink below. */
+  const body = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: [0.66, 0.68, 0.58], at: [0, 0.62, -0.02] }), (p) => {
+    let c = mix(blue, white, smooth(Math.min(1, Math.max(0, (p.z - 0.2) / 0.25 - Math.abs(p.x) * 1.6 + 0.6))));
+    c = mix(c, pink, smooth(Math.min(1, Math.max(0, (0.3 - p.y) / 0.25))));
+    return [c, 1];
+  });
+  g.add(furry(body, { len: 0.06 }));
+  /* A fluffy bib under the chin. */
+  const bib = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.3, 0.2], at: [0, 0.98, 0.46] }), () => [white.clone(), 1]);
+  g.add(furry(bib, { len: 0.07 }));
+
+  /* The haunches and feet, pink, and two round front paws. */
+  for (const s of [-1, 1]) {
+    const haunch = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.3, 0.27, 0.34], at: [s * 0.5, 0.27, 0.06] }), (p) => [mix(blue, pink, (0.5 - p.y) * 2.6), 1]);
+    g.add(furry(haunch));
+    const foot = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.2, 0.13, 0.26], at: [s * 0.6, 0.11, 0.24] }), () => [pink.clone(), 1]);
+    g.add(furry(foot, { len: 0.035 }));
+    const paw = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.2, 0.16, 0.23], at: [s * 0.24, 0.14, 0.56] }), () => [pink.clone(), 1]);
+    g.add(furry(paw, { len: 0.04 }));
+  }
+
+  /* The face: big dark eyes, a pink nose, a little open mouth. */
+  for (const e of eyeAt) {
+    const eye = videoEye(0.16);
+    eye.position.set(e[0], e[1], e[2] - 0.03);
+    eye.rotation.y = e[0] * 0.5;
+    g.add(eye);
+  }
+  const noseBall = mesh(new THREE.SphereGeometry(0.075, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0xf28aa8, roughness: 0.3, clearcoat: 0.6 }));
+  noseBall.scale.set(1.25, 0.8, 0.75);
+  noseBall.position.set(...nose);
+  g.add(shiny(noseBall));
+  const lip = mesh(new THREE.SphereGeometry(0.1, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0x8a2a43, roughness: 0.5 }));
+  lip.scale.set(1.1, 0.72, 0.5);
+  lip.position.set(...mouth);
+  g.add(shiny(lip));
+  const tongue = mesh(new THREE.SphereGeometry(0.068, 24, 16), new THREE.MeshPhysicalMaterial({ color: 0xff7f9a, roughness: 0.45 }));
+  tongue.scale.set(1.15, 0.55, 0.5);
+  tongue.position.set(mouth[0], mouth[1] - 0.03, mouth[2] + 0.025);
+  g.add(shiny(tongue));
+  return g;
+}
+
+const VIDEO_THINGS = { dog: videoDog };
+ITEMS.video = (what) => VIDEO_THINGS[what]();
 
 /* A see-through floor that only shows shadows, for the item layers. */
 const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
@@ -4389,10 +4547,24 @@ if (THING) {
   /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
      and their food): a softer, fuller light — their felt is evenly lit,
      with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "wear", "weather", "weatherbit", "animalWorld"].includes(THING)) {
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "wear", "weather", "weatherbit", "animalWorld", "video"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
+  }
+  /* The videos' light: warm and soft from the front, a pink sky, a blue
+     ground, and a rim of light from behind that the fur catches. */
+  if (THING === "video") {
+    sun.color.set(0xfff0e4);
+    sun.intensity = 1.7;
+    sun.position.set(-3, 8, 10);
+    sky.color.set(0xfff0f6);
+    sky.groundColor.set(0xc8d4ff);
+    sky.intensity = 1.35;
+    scene.environmentIntensity = 0.55;
+    const rim = new THREE.DirectionalLight(0xffe6f2, 1.6);
+    rim.position.set(4, 6, -8);
+    scene.add(rim);
   }
   scene.add(group);
   catcher.position.y = 0.001;
@@ -4404,7 +4576,10 @@ if (THING) {
   const size = box.getSize(new THREE.Vector3());
   const span = Math.max(size.x, size.y, size.z) * 0.78;
   const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (["pot", "soupPot"].includes(THING) ? 32 : 24)));
-  /* `?lift=` for a thing best seen from higher up (a leaf, a foot). */
+  /* `?lift=` for a thing best seen from higher up (a leaf, a foot).
+     `?px=2` draws it at twice the pixels — fur's strands need it, and the
+     crop scales it down smooth. */
+  renderer.setPixelRatio(Number(params.get("px") ?? 1));
   renderer.setSize(800, 800);
   camera.left = -span; camera.right = span; camera.top = span; camera.bottom = -span;
   camera.position.set(centre.x, centre.y + Math.sin(lift) * 30, centre.z + Math.cos(lift) * 30);
