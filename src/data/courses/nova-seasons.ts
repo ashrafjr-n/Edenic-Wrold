@@ -1,7 +1,10 @@
 import type { StaticImageData } from "next/image";
 import type { ColorId, Face, LessonDef, Season, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
-import { SEASON_SCENES } from "@/data/nova-scenes";
+import spring from "../../../public/assets/learn/nova/seasons/scenes/spring.png";
+import summer from "../../../public/assets/learn/nova/seasons/scenes/summer.png";
+import fall from "../../../public/assets/learn/nova/seasons/scenes/fall.png";
+import winter from "../../../public/assets/learn/nova/seasons/scenes/winter.png";
 import tulip from "../../../public/assets/learn/nova/seasons/things/tulip.png";
 import butterfly from "../../../public/assets/learn/nova/seasons/things/butterfly.png";
 import sun from "../../../public/assets/learn/nova/seasons/things/sun.png";
@@ -16,19 +19,19 @@ import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflak
 const COLOR_OF: Record<Season, ColorId> = { spring: "green", summer: "yellow", fall: "orange", winter: "blue" };
 const ORDER = Object.keys(COLOR_OF) as Season[];
 
-/** A season's picture everywhere: its island with all of the season there. */
-function picture(season: Season): StaticImageData {
-  const { frames } = SEASON_SCENES[season];
-  return frames[frames.length - 1];
-}
+/** A season's picture everywhere: its island with all of the season there
+    (`render.cjs season` → `crop.py seasons`; the four cut on one box, so
+    they match). */
+const PICTURES: Record<Season, StaticImageData> = { spring, summer, fall, winter };
+const picture = (season: Season) => PICTURES[season];
 
 const face = (season: Season): Face => ({ kind: "picture", src: picture(season), word: season });
 
 /**
  * One season, one lesson — and every step about IT (the rule since Fruits:
  * no choosing between things inside a one-thing lesson): watch its reel,
- * meet it (its picture, its word, its speaker), build its word, then make
- * it come — tap by tap the season spreads over Nova's tree.
+ * meet it (its picture, its word, its speaker), build its word. (Make it
+ * come, the third step, was removed 2026-10-12.)
  */
 function seasonLesson(season: Season, n: number): LessonDef {
   const full = picture(season);
@@ -38,7 +41,6 @@ function seasonLesson(season: Season, n: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture: full },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
-      { type: "change", ask: { key: "changeSeason", vars: { season } }, word: season, scene: SEASON_SCENES[season] },
     ],
   };
 }
