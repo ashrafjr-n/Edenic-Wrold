@@ -6,7 +6,7 @@ import { CUP, MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, Maker, PaintRound, Scene, RevealScene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, Gesture, Maker, PaintRound, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -35,7 +35,6 @@ export type TaskDemoDef =
   | { kind: "like"; face: Face }
   | { kind: "cups"; picture: StaticImageData }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
-  | { kind: "change"; scene: RevealScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
@@ -513,24 +512,6 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
   );
 }
 
-/** Make it spring: the island before the season; the finger taps the first
-    spot and the first step (the grass, the snow) spreads from it. */
-function ChangeDemo({ scene }: { scene: RevealScene }) {
-  const { frames, spots } = scene;
-  const [x, y] = spots[0];
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="relative w-full" style={{ aspectRatio: frames[0].width / frames[0].height }}>
-        <Image src={frames[0]} alt="" fill sizes="18rem" className="object-contain" />
-        <Image src={frames[1]} alt="" fill sizes="18rem" className="demo-change object-contain" style={{ "--x": `${x}%`, "--y": `${y}%` } as CSSProperties} />
-        <span className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
-          <Finger />
-        </span>
-      </div>
-    </div>
-  );
-}
-
 /** Each demo cup's left edge (% of the stage): `--swap` (60cqi) is the
     outer two's distance. */
 const DEMO_CUPS = [
@@ -663,7 +644,5 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
-    case "change":
-      return <ChangeDemo scene={demo.scene} />;
   }
 }
