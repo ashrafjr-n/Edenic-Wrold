@@ -2883,53 +2883,6 @@ function fishbowl() {
   return g;
 }
 
-/* ---------- What Bloo's animals eat — on their hills ----------
-   The dog's bone and the cow's tuft of grass, by them in `ANIMAL_WORLDS`
-   (the Feed step that also had the cat's milk and the fish's food was
-   removed 2026-10-12). Velvet clay, no face. */
-const ANIMAL_FOOD = {
-  bone() {
-    const g = new THREE.Group();
-    const cream = velvet(0xfff0d4);
-    const shaft = mesh(new THREE.CapsuleGeometry(0.15, 0.62, 12, 32), cream);
-    shaft.rotation.z = Math.PI / 2;
-    g.add(shaft);
-    for (const x of [-0.46, 0.46]) for (const y of [-0.14, 0.14]) {
-      const knob = mesh(new THREE.SphereGeometry(0.2, 40, 28), cream);
-      knob.position.set(x, y, 0);
-      g.add(knob);
-    }
-    g.rotation.z = 0.32;
-    return g;
-  },
-
-  /* A tuft of fat grass blades with a daisy in it. */
-  grass() {
-    const g = new THREE.Group();
-    const greens = [velvet(0x63c84e), velvet(0x8bdb60), velvet(0x4fb444)];
-    [[-0.34, 0.6, -0.5], [-0.2, 0.82, -0.25], [-0.05, 0.98, -0.05], [0.12, 0.9, 0.2], [0.3, 0.66, 0.45], [-0.12, 0.7, -0.15], [0.05, 0.74, 0.1]].forEach(([x, h, lean], i) =>
-      g.add(taperTube([[x * 0.35, 0, 0], [x * 0.7, h * 0.5, 0.04], [x + lean * 0.3, h, 0]], 0.085, 0.02, greens[i % 3])),
-    );
-    const daisy = new THREE.Group();
-    daisy.add(taperTube([[0.06, 0, 0.06], [0.16, 0.36, 0.08], [0.22, 0.7, 0.1]], 0.03, 0.025, greens[2]));
-    const petal = velvet(0xffffff);
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      const p = mesh(new THREE.SphereGeometry(0.06, 20, 14), petal);
-      p.scale.set(1.7, 0.75, 0.5);
-      p.position.set(0.22 + Math.cos(a) * 0.1, 0.74 + Math.sin(a) * 0.1, 0.12);
-      p.rotation.z = a;
-      daisy.add(p);
-    }
-    const middle = mesh(new THREE.SphereGeometry(0.06, 24, 16), velvet(0xffcf3d));
-    middle.scale.z = 0.7;
-    middle.position.set(0.22, 0.74, 0.15);
-    daisy.add(middle);
-    g.add(daisy);
-    return g;
-  },
-};
-
 Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
 
 /* ---------- Nova's fruits, the friends' way (2026-10-08) ----------
@@ -3814,81 +3767,6 @@ ITEMS.weather = (what) => {
   return g;
 };
 
-/* ---------- Bloo's animals at home (2026-10-12) ----------
-   The weather's look for the animals' word cards and the course's covers
-   (direct request: "more like the weather"): each animal on Bloo's round
-   hill, big at the front, its home behind it — the cat by its bed, the
-   dog by its kennel, the cow by its barn, the fish in a pond. The friends'
-   look, as the weather's; `?thing=animalWorld&arg=<animal>`, an unseen box
-   gives all four the same frame (`crop.py animals` crops them on one). */
-/* The animal on its hill — `?bare` leaves it out, for a picture of the
-   animal to stand in its place (the videos' own, cut out of a still). */
-const animalOf = (thing) => {
-  thing.userData.animal = true;
-  return thing;
-};
-/* The hill's grass: the friends' bright green, or in the videos' warm
-   light (`?warm`) their soft pastel one. */
-const animalGrass = () => (params.has("warm") ? 0xa8d98e : 0x78cf5c);
-const flowersOnHill = (spots) => spots.map(([x, z, color]) => onHill(at(hillFlower(color), [0, 0, 0], 1.4), x, z));
-
-const ANIMAL_WORLDS = {
-  cat: () => [
-    hillBase(animalGrass()),
-    onHill(at(catBed(), [0, 0, 0], 1.25), -1.1, -0.75, 0.35),
-    animalOf(onHill(at(cat(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
-    ...flowersOnHill([[-1.7, 0.9, 0xff86c2], [-0.75, 1.6, 0xffffff], [1.95, -0.3, 0xffd23a]]),
-  ],
-  dog: () => [
-    hillBase(animalGrass()),
-    onHill(group(at(kennel(), [0, 0, 0], 1.15)), -1.1, -0.95, 0.35),
-    animalOf(onHill(at(dog(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
-    onHill(group(at(ANIMAL_FOOD.bone(), [0, 0.09, 0], 0.42, [-Math.PI / 2, 0, 0.5])), -0.85, 1.35),
-    ...flowersOnHill([[-1.8, 0.6, 0xffffff], [1.95, -0.3, 0xff86c2]]),
-  ],
-  cow: () => [
-    hillBase(animalGrass()),
-    onHill(group(at(barn(), [0, 0, 0], 1.0)), -1.05, -1.05, 0.35),
-    animalOf(onHill(at(cow(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
-    onHill(at(ANIMAL_FOOD.grass(), [0, 0, 0], 0.55), -0.95, 1.3),
-    ...flowersOnHill([[-1.85, 0.5, 0xffd23a], [1.95, -0.3, 0xffffff], [-0.2, 1.85, 0xff86c2]]),
-  ],
-  /* A pond on the hill: the fish bobs up out of it, half in the water. */
-  fish: () => {
-    const water = mesh(new THREE.CylinderGeometry(1.95, 1.95, 0.06, 96), velvet(0x5fb8f5));
-    water.position.y = 1.13;
-    const ripple = mesh(new THREE.TorusGeometry(0.95, 0.035, 16, 96), velvet(0xa9dcff));
-    ripple.rotation.x = Math.PI / 2;
-    ripple.scale.set(1, 0.8, 1);
-    ripple.position.set(0.15, 1.17, 0.6);
-    const pads = [[-1.35, 0.95, 0.4, 0xffffff], [1.4, 0.75, 0.34, 0xff86c2], [-0.6, -1.2, 0.3, 0]].map(([x, z, r, flower]) => {
-      const pad = group(mesh(new THREE.CylinderGeometry(r, r, 0.05, 48, 1, false, 0.5, Math.PI * 2 - 0.8), velvet(0x5cbd57)));
-      if (flower) pad.add(at(hillFlower(flower), [0, -0.3, 0], 0.9, [-Math.PI / 2 + 0.6, 0, 0]));
-      return at(pad, [x, 1.18, z], 1, [0, x, 0]);
-    });
-    const bubbles = [[1.05, 3.2, 0.12], [1.3, 3.65, 0.09], [1.0, 4.0, 0.07]].map(([x, y, r]) => at(mesh(new THREE.SphereGeometry(r, 32, 24), velvet(0xd6efff)), [x, y, 0.4]));
-    return [
-      hillBase(animalGrass()),
-      water,
-      ripple,
-      ...pads,
-      animalOf(at(fishfriend(), [0.15, 0.78, 0.6], 1.9, [0, -0.2, 0])),
-      ...bubbles,
-      ...flowersOnHill([[-2.35, 0.5, 0xffd23a], [2.3, 0.8, 0xffffff]]),
-    ];
-  },
-};
-
-ITEMS.animalWorld = (what) => {
-  const g = group(...ANIMAL_WORLDS[what]().filter((thing) => !(params.has("bare") && thing.userData.animal)));
-  g.scale.setScalar(0.8);
-  /* All four framed alike, whatever stands on the hill. */
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 4.2, 0.1));
-  frame.visible = false;
-  frame.position.set(0, 2.0, 0);
-  return group(g, frame);
-};
-
 /* ---------- Making the weather — the Weather lessons' third step ----------
    Each weather made by hand in three goes, seen as the pictures above are
    (`?weathersteps=<weather>`, the same camera): its `states` — the hill
@@ -4602,15 +4480,14 @@ if (THING) {
   /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
      and their food): a softer, fuller light — their felt is evenly lit,
      with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "wear", "weather", "weatherbit", "animalWorld", "video"].includes(THING)) {
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "wear", "weather", "weatherbit", "video"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
   }
   /* The videos' light: warm and soft from the front, a pink sky, a blue
-     ground, and a rim of light from behind that the fur catches. `?warm`
-     gives it to anything else (a world a still is stood in). */
-  if (THING === "video" || params.has("warm")) {
+     ground, and a rim of light from behind that the fur catches. */
+  if (THING === "video") {
     sun.color.set(0xfff0e4);
     sun.intensity = 1.7;
     sun.position.set(-3, 8, 10);
