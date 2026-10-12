@@ -194,8 +194,8 @@ sort boxes, done screen, the course page).
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
-| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell → make the season come on Nova's tree island; review: sort eight things into four season boxes, order the four, two picture spells) |
-| Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell → **feed it** since 2026-10-08 — three bites of its own food, dragged or tapped into its mouth; Fill the word, its step from 2026-10-07, was replaced. The animals, their homes and their food are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
+| Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
+| Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
@@ -244,8 +244,8 @@ about 3 minutes.
 | **Put in order**: tap them in order into numbered spaces | built (`order`) | Seasons review |
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | ~~Fill the word~~: rub each empty letter and it fills with small pictures of the thing | removed 2026-10-08 | Fruits dropped it 2026-10-07 ("not suitable"), Animals 2026-10-08 — its last course |
-| **Feed it**: three bites of the animal's own food lie in front of it (milk, a bone, grass, fish food); drag one onto it or tap it and it flies into its mouth — it munches, a heart floats up | built (`feed`) | Animals |
-| **The magic button**: the picture starts bare; tap the glowing spot and the next part spreads over it from there — Make it {season} (grass, leaves, blossoms…) | built (`change`) | Seasons (Fruits' Grow it and Months' wheel went with them, 2026-10-08) |
+| ~~Feed it~~: three bites of the animal's own food dragged or tapped into its mouth | removed 2026-10-12 | Animals — "empty talk": no goal |
+| ~~The magic button~~: the picture starts bare; each tap on the glowing spot spreads the next part of the season over it | removed 2026-10-12 | Seasons, its last course (Fruits' Grow it and Months' wheel went 2026-10-08) |
 | **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
 | **Touch it**: tap a part on one big picture | later (Find on one picture) | My Family |
@@ -263,13 +263,13 @@ about 3 minutes.
   shopping list to read and fill.
 - **The Seasons** (BUILT 2026-10-02, reworked 2026-10-04 — see §5 and
   `learn-courses.md`): the same tree with a face on a clay island, four
-  times; each lesson makes its season come on it, step by step.
+  times; each lesson is reel → word → spell (making the season come on
+  it, step by step, was removed 2026-10-12).
 - **Animals** (BUILT 2026-10-07, "simple, like the rest"; reworked
   2026-10-08): cat, dog, cow, fish — chibi animals in the friends' look
   (velvet clay, the grain, the friends' face); each lesson is reel → word →
-  spell → **feed it** (its own food, a bite at a time — something you DO
-  with an animal; it replaced Fill the word, which the user had called "not
-  suitable" for Fruits). The first idea, a Find in a farm/sea scene, was
+  spell (Feed it, its third step from 2026-10-08, was removed 2026-10-12:
+  "a cat you give milk to is empty talk — simple, but with a goal"). The first idea, a Find in a farm/sea scene, was
   dropped: finding the cat among others is choosing inside a one-thing
   lesson. Review: sort the four, each in two coats, into their
   homes (cat bed, kennel, barn, fishbowl — each box labelled with the
@@ -519,6 +519,15 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       played through headless with the real gestures and with taps
       (360x640 → 1440x900, en/ar/ku, dark).
 - [ ] The user checks the weather made by hand → fixes.
+- [x] **The weather's Skip** (2026-10-12): Skip on the make-it-by-hand step
+      makes the weather itself, calmly, then Next.
+- [x] **The animals at home** (2026-10-12): each animal on Bloo's hill by
+      its home, the weather's look — the word cards and the covers.
+- [x] **Animals and Seasons: the third step removed** (2026-10-12): Feed it
+      and Make it come, with their components, demos, strings, CSS and
+      pictures; the lessons are reel → word → spell.
+- [x] **The task button beside the back button** (2026-10-12), top left at
+      every width; on a desktop the step trail starts there.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
