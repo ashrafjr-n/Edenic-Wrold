@@ -31,7 +31,6 @@ import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
-import { RevealSteps } from "./reveal-steps";
 import { CupsGame } from "./cups-game";
 import { MakeWeather, type MakeWeatherHandle } from "./make-weather";
 import { LessonDone } from "./lesson-done";
@@ -458,16 +457,6 @@ export function LessonPlayer({
           <SkipForward className="h-5 w-5 fill-current" strokeWidth={2} />
           <span dir={dir}>{lines.skip}</span>
         </Button3D>
-      );
-    } else if (q.type === "change") {
-      body = (
-        <RevealSteps
-          key={seed}
-          word={q.word}
-          scene={q.scene}
-          spotLabel={format(lines.seasonSpotAria, { word: q.word })}
-          onSolved={onSolved}
-        />
       );
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;

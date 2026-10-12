@@ -139,11 +139,6 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
-  /** A magic button brings it, step by step: tap the glowing spot and the
-      next part spreads over the picture until it is all there — a season
-      coming to Nova's tree. Nothing can go wrong — the thing is the
-      lesson. */
-  | { type: "change"; ask: Ask; word: string; scene: RevealScene }
   /** Nova's cups: the thing (`picture`) goes under one of three cups, they
       swap places, and the child taps the one it is under — one miss and
       the round starts again, the thing under a new cup. */
