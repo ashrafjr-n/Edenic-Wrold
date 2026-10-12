@@ -3353,88 +3353,6 @@ button:disabled,
   }
 }
 
-/* …the feed demo: the first bite flies into the animal's mouth, shrinking
-   as it goes in, and is gone; the animal munches and a heart floats up.
-   The heart's `-50%` centring is its resting `translate` too, so under
-   reduced motion it sits on the mouth. */
-.demo-bite {
-  animation: demo-bite 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-@keyframes demo-bite {
-  0%,
-  38% {
-    translate: 0 0;
-    scale: 1;
-    opacity: 1;
-  }
-  54% {
-    translate: var(--fly-x) var(--fly-y);
-    scale: 0.35;
-    opacity: 1;
-  }
-  58%,
-  94% {
-    translate: var(--fly-x) var(--fly-y);
-    scale: 0.2;
-    opacity: 0;
-  }
-  95% {
-    translate: 0 0;
-    scale: 1;
-    opacity: 0;
-  }
-  100% {
-    translate: 0 0;
-    scale: 1;
-    opacity: 1;
-  }
-}
-
-.demo-munch {
-  transform-origin: 50% 100%;
-  animation: demo-munch 3.6s ease-in-out infinite;
-}
-
-@keyframes demo-munch {
-  0%,
-  55%,
-  70%,
-  100% {
-    scale: 1 1;
-  }
-  59% {
-    scale: 1.06 0.92;
-  }
-  64% {
-    scale: 0.97 1.04;
-  }
-}
-
-.demo-heart {
-  translate: -50% -50%;
-  animation: demo-heart 3.6s ease-out infinite;
-}
-
-@keyframes demo-heart {
-  0%,
-  56% {
-    translate: -50% -50%;
-    scale: 0.4;
-    opacity: 0;
-  }
-  62% {
-    scale: 1.1;
-    opacity: 1;
-  }
-  84%,
-  100% {
-    translate: -50% -230%;
-    scale: 0.9;
-    opacity: 0;
-  }
-}
-
 /* Nova's cups, in the task button's demo: the outer two swap places
    (`--swap` apart) before the finger taps — one passes in front, lower
    and bigger, the other behind — and swap back while it is gone. */
@@ -3634,31 +3552,6 @@ button:disabled,
   to {
     translate: -50% -150%;
     scale: 1.5;
-    opacity: 0;
-  }
-}
-
-/* Feed it (`FeedAnimal`): a heart floats up out of the animal's mouth for
-   every bite it eats (the munch itself is WAAPI). The `-50%` centring
-   lives IN the keyframes — an animation owning `translate` drops a
-   utility's. Under reduced motion there is no heart. */
-.feed-heart {
-  animation: feed-heart 0.9s ease-out both;
-}
-
-@keyframes feed-heart {
-  from {
-    translate: -50% -50%;
-    scale: 0.4;
-    opacity: 0;
-  }
-  25% {
-    scale: 1.1;
-    opacity: 1;
-  }
-  to {
-    translate: -50% -260%;
-    scale: 0.9;
     opacity: 0;
   }
 }
@@ -4129,9 +4022,6 @@ button:disabled,
   .demo-pop,
   .demo-cup-front,
   .demo-cup-back,
-  .demo-bite,
-  .demo-munch,
-  .demo-heart,
   .demo-frame-next,
   .demo-squash,
   .demo-shake,
@@ -4153,7 +4043,6 @@ button:disabled,
   .pop-ring,
   .pop-shard,
   .make-steam,
-  .feed-heart,
   .wx-twinkle,
   .wx-rain,
   .wx-snow,
