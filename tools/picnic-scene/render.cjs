@@ -31,7 +31,8 @@
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
  * seen from higher up; `@front`: seen from straight ahead; `@hd`: twice the
- * pixels, for fur). Then
+ * pixels, for fur; `@warm`: the videos' light; `@bare`: an animal's world
+ * without its animal, for `stand.py`). Then
  * `crop.py things <dest>`.
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
