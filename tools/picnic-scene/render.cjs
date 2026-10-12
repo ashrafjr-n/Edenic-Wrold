@@ -21,9 +21,9 @@
  *   node tools/picnic-scene/render.cjs basket
  *
  * Nova's seasons — for each season, writes `out/season-<season>/`: the
- * island and its tree (`frame0`), then one frame per step with
- * everything before it (`frame1`…`frame4`), and `meta.json` (each step's
- * spot). Then `crop.py seasons`.
+ * island and its tree (`frame0`), then the season coming over it step by
+ * step (`frame1`…`frame4`, the last the whole season). Then `crop.py
+ * seasons`, which keeps the last.
  *
  *   node tools/picnic-scene/render.cjs season spring summer fall winter
  *
