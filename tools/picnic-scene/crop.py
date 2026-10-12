@@ -60,12 +60,11 @@ for all of a weather, into `public/assets/learn/bloo/weather/make/
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
-friends' look: Nova's fruits and her cup; Bloo's animals, their homes and
-their food).
+friends' look: Nova's fruits and her cup; Bloo's animals and their
+homes).
 
     python3 tools/picnic-scene/crop.py things public/assets/learn/pinki/colors/pots red blue
     python3 tools/picnic-scene/crop.py things public/assets/learn/nova/fruits/things apple --grain
-    python3 tools/picnic-scene/crop.py things public/assets/learn/bloo/animals/food bone milk grass pellets --grain
 """
 import json
 import os

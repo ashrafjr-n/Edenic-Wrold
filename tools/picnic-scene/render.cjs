@@ -36,13 +36,11 @@
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
  *
  * Bloo's animals, the friends' way too (velvet clay, the friends' face) —
- * each in two coats (`things/`), where each lives (`homes/`, renamed
- * `home-cat.png` → `cat.png` after cropping) and what each eats, a bite at
- * a time in the Feed step (`food/`); all three cropped with `--grain`:
+ * each in two coats (`things/`) and where each lives (`homes/`, renamed
+ * `home-cat.png` → `cat.png` after cropping); both cropped with `--grain`:
  *
  *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty cow=cow cow-brown=cow:brown fish=fishfriend@float fish-blue=fishfriend:blue@float
  *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
- *   node tools/picnic-scene/render.cjs thing bone=food:bone@float milk=food:milk@float grass=food:grass@float pellets=food:pellets@float
  *
  * And each animal at home on Bloo's hill, the weather's look — the word
  * cards and the course's covers (then `crop.py animals`, one box for all
