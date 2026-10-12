@@ -2,7 +2,7 @@
 
 An educational web app for children aged 5–9. Three brand mascots — **Pinki**,
 **Nova**, and **Bloo** — teach their own courses: Pinki shapes and colors;
-Nova fruits and vegetables and the seasons; Bloo animals and the weather. A
+Nova vegetables and the seasons; Bloo animals and the weather. A
 course is a short run of lessons the child opens one
 after another, each starting with a video and centred on spelling the English
 words it teaches.
@@ -160,7 +160,7 @@ src/
                       spelling board, Find, Sort, Paint, Pop, Pick, Order,
                       Nova's cups (find the food under one of three),
                       making the weather by hand, the review's garden to pick Nova's
-                      list from, her blender and soup pot, the "Do you
+                      list from, her soup pot, the "Do you
                       like…?" plates, the done screen, and the pieces they
                       are built from
     activities/       The Play page's cards, plus the puzzle and
@@ -180,15 +180,12 @@ src/
 tools/
   picnic-scene/       Renders every clay picture in three.js (headless
                       Chromium): the Find scenes, the paint pots and the
-                      things to paint, Nova's blender, juice glasses and
-                      soup pots, her gardens (an apple tree, a banana
-                      plant and an orange tree; a carrot bed, the banana
-                      plant and a potato bed — each with its food), her
+                      things to paint, Nova's soup pot, her garden (a
+                      carrot bed, a tomato plant and a potato bed — each
+                      with its food), her
                       basket, the four seasons (an island with a tree
                       with a face, under each season),
-                      Nova's ten foods (the fruits and the corn in the
-                      friends' look: chubby velvet clay with the buttons'
-                      grain and the friends' face; the carrot, broccoli,
+                      Nova's five vegetables (the carrot, broccoli,
                       potato, tomato and pepper — and the Seasons'
                       pumpkin — in the videos' look: smooth satin clay, no
                       face) and her cup, and Bloo's animals in the
@@ -221,11 +218,10 @@ public/
                             reels. All pictures are rendered by
                             tools/picnic-scene — none come from outside)
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
-                            (things/: the ten foods,
-                            props/: the blender, the soup pot and Nova's
-                            cup, make/: the review's mixed juice, its glass
-                            and the soup, and garden/: the review's two
-                            gardens, in layers, and her basket), seasons/
+                            (things/: the five vegetables,
+                            props/: the soup pot and Nova's cup, make/: the
+                            review's soup, and garden/: the review's
+                            garden, in layers, and her basket), seasons/
                             (scenes/: the island under each season;
                             things/: the review's eight things to sort), and each course's placeholder
                             reels
@@ -250,8 +246,8 @@ and all are still being iterated on visually.
 
 **Learn is being rebuilt for children aged 5–9.** The old Numbers (1–9) and
 Letters (A–Z) lessons were removed: children this age already know them. Pinki
-has two courses — **Shapes** and **Colors** — and Nova two — **Fruits &
-Vegetables** and **The Seasons** — and Bloo two — **Animals** and **The
+has two courses — **Shapes** and **Colors** — and Nova two — **Vegetables**
+and **The Seasons** — and Bloo two — **Animals** and **The
 Weather**: all six are written. Months of the Year and My Body were removed
 on request. Every taught word
 is American English (color, fall,
@@ -343,15 +339,12 @@ and spells two colors from the pot alone, with no word on screen.
 Nova's courses teach one thing per lesson, because the word has to BE the
 picture:
 
-- **Fruits & Vegetables — Nova's garden**: apple, banana, orange, grapes,
-  carrot, broccoli, corn, potato, then tomato and pepper (new with the
-  course videos: the reel, the word and its spelling only), one a lesson, and every step of a lesson
-  is about its one thing — nothing to choose between. The fruits and the
-  corn are drawn the friends' way: chubby, soft velvety clay with the same
-  grain as the clay buttons, and the friends' face (big eyes with a purple
-  iris, a shine and a little gold heart, pink cheeks, an open smile); the
-  other vegetables as the course videos draw them — smooth satin clay, true
-  to life, no face, the same grain. The word is
+- **Vegetables — Nova's garden**: carrot, broccoli, potato, then tomato
+  and pepper (new with the course videos: the reel, the word and its
+  spelling only) — only what the course videos show, one a lesson, and
+  every step of a lesson is about its one thing — nothing to choose
+  between. Every vegetable is drawn as the course videos draw it: smooth
+  satin clay, true to life, no face, with the clay buttons' grain. The word is
   **met** (the thing, the word in clay letters, the speaker) and
   **spelled**; then come **Nova's cups**: the food sits under one of
   three polka-dot cups — a different one, at random, every time — the cup
@@ -360,21 +353,21 @@ picture:
   the confetti flies. A wrong cup lifts empty and shakes, the right one
   shows where the food went, and the round starts again; each miss makes
   the next round a little slower. The task button's demo shows the cups
-  swapping and a tap — never where the food is. The review makes a **mixed
-  juice** (a layered one) in Nova's 3D blender and a **vegetable soup** in
-  her pot from recipes of words alone, asks **"Do you like…?"** (thumbs up
-  or down onto two plates — "I like apples." / "I don't like corn." — no
-  wrong answer), spells two words from the picture, and ends with an
-  **exam in Nova's garden**: three plants side by side, and above them
-  (beside them on a desktop) her list — "3 apples · 2 oranges · 1
-  banana", then "1 potato · 3 carrots · 2 bananas" — with her basket
+  swapping and a tap — never where the food is. The review makes a
+  **vegetable soup** in Nova's 3D pot from a recipe of words alone, asks
+  **"Do you like…?"** (thumbs up or down onto two plates — "I like
+  tomatoes." / "I don't like peppers." — no wrong answer), spells two words
+  from the picture, and ends with an **exam in Nova's garden**, twice: a
+  carrot bed, a tomato plant and a potato bed side by side, and above them
+  (beside them on a desktop) her list — "1 potato · 3 carrots · 2
+  tomatoes", then "3 tomatoes · 2 potatoes · 1 carrot" — with her basket
   standing next to it on the page. Each plant has more than the list asks
   for, and the list is never in the plants' order, so every line has to
   be read and counted. Tap one and it comes off (a vegetable is pulled up
   out of the soil), flies out of the garden and drops into the basket,
   where it stays; its word pops up where it was and a socket on its line
   fills. A full line turns its speaker into a green tick; one too many
-  wiggles back on its branch.
+  wiggles back on its plant.
 - **The Seasons** — spring, summer, fall, winter, one a lesson. Each season
   is the SAME clay island with a tree that has a face (the friends' eyes and
   pink cheeks), its band in the season's color: blossoms and tulips in
