@@ -3821,26 +3821,32 @@ ITEMS.weather = (what) => {
    dog by its kennel, the cow by its barn, the fish in a pond. The friends'
    look, as the weather's; `?thing=animalWorld&arg=<animal>`, an unseen box
    gives all four the same frame (`crop.py animals` crops them on one). */
+/* The animal on its hill — `?bare` leaves it out, for a picture of the
+   animal to stand in its place (the videos' own, cut out of a still). */
+const animalOf = (thing) => {
+  thing.userData.animal = true;
+  return thing;
+};
 const flowersOnHill = (spots) => spots.map(([x, z, color]) => onHill(at(hillFlower(color), [0, 0, 0], 1.4), x, z));
 
 const ANIMAL_WORLDS = {
   cat: () => [
     hillBase(0x78cf5c),
     onHill(at(catBed(), [0, 0, 0], 1.25), -1.1, -0.75, 0.35),
-    onHill(at(cat(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3),
+    animalOf(onHill(at(cat(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
     ...flowersOnHill([[-1.7, 0.9, 0xff86c2], [-0.75, 1.6, 0xffffff], [1.95, -0.3, 0xffd23a]]),
   ],
   dog: () => [
     hillBase(0x78cf5c),
     onHill(group(at(kennel(), [0, 0, 0], 1.15)), -1.1, -0.95, 0.35),
-    onHill(at(dog(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3),
+    animalOf(onHill(at(dog(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
     onHill(group(at(ANIMAL_FOOD.bone(), [0, 0.09, 0], 0.42, [-Math.PI / 2, 0, 0.5])), -0.85, 1.35),
     ...flowersOnHill([[-1.8, 0.6, 0xffffff], [1.95, -0.3, 0xff86c2]]),
   ],
   cow: () => [
     hillBase(0x78cf5c),
     onHill(group(at(barn(), [0, 0, 0], 1.0)), -1.05, -1.05, 0.35),
-    onHill(at(cow(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3),
+    animalOf(onHill(at(cow(), [0, 0, 0], 1.7), 0.5, 0.85, -0.3)),
     onHill(at(ANIMAL_FOOD.grass(), [0, 0, 0], 0.55), -0.95, 1.3),
     ...flowersOnHill([[-1.85, 0.5, 0xffd23a], [1.95, -0.3, 0xffffff], [-0.2, 1.85, 0xff86c2]]),
   ],
@@ -3863,7 +3869,7 @@ const ANIMAL_WORLDS = {
       water,
       ripple,
       ...pads,
-      at(fishfriend(), [0.15, 0.78, 0.6], 1.9, [0, -0.2, 0]),
+      animalOf(at(fishfriend(), [0.15, 0.78, 0.6], 1.9, [0, -0.2, 0])),
       ...bubbles,
       ...flowersOnHill([[-2.35, 0.5, 0xffd23a], [2.3, 0.8, 0xffffff]]),
     ];
@@ -3871,7 +3877,7 @@ const ANIMAL_WORLDS = {
 };
 
 ITEMS.animalWorld = (what) => {
-  const g = group(...ANIMAL_WORLDS[what]());
+  const g = group(...ANIMAL_WORLDS[what]().filter((thing) => !(params.has("bare") && thing.userData.animal)));
   g.scale.setScalar(0.8);
   /* All four framed alike, whatever stands on the hill. */
   const frame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 4.2, 0.1));
