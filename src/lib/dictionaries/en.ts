@@ -101,9 +101,9 @@ export const en = {
       items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White", "Color review"],
     },
     fruits: {
-      name: "Fruits & Vegetables",
+      name: "Vegetables",
       description: "Yummy things to eat and how to spell them",
-      items: ["Apple", "Banana", "Orange", "Grapes", "Carrot", "Broccoli", "Corn", "Potato", "Tomato", "Pepper", "Market review"],
+      items: ["Carrot", "Broccoli", "Potato", "Tomato", "Pepper", "Market review"],
     },
     seasons: {
       name: "The Seasons",
@@ -192,7 +192,6 @@ export const en = {
     makeSoup: "Make a vegetable soup!",
     makeJuice: "Make juice with the {thing}!",
     cookSoup: "Make soup with the {thing}!",
-    mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
     rainTap: "Tap the cloud to make it rainy!",
@@ -216,7 +215,6 @@ export const en = {
     pop: "Pop",
     order: "Line up",
     cook: "Cook",
-    juice: "Blend",
     like: "Like?",
     harvest: "Pick",
     cups: "Find",
