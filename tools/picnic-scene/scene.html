@@ -4362,37 +4362,35 @@ const smooth = (t) => t * t * (3 - 2 * t);
    body, blue round the back, a white fluffy chest, running into pink
    paws and feet. */
 const PUP = { blue: new THREE.Color(0x8fd0f2), white: new THREE.Color(0xfbf8f6), pink: new THREE.Color(0xf7b4c8), blush: new THREE.Color(0xf68fb0) };
-const PUP_HEAD_C = [0, 1.62, 0.02], PUP_HEAD_R = [0.92, 0.72, 0.76];
+/* The head's middle; everything on the face is placed from it. */
+const PUP_Y = 1.52;
+const PUP_HEAD_C = [0, PUP_Y, 0.02], PUP_HEAD_R = [0.86, 0.7, 0.78];
 
 function videoDog() {
   const g = new THREE.Group();
   const { blue, white, pink, blush } = PUP;
-  const eyes = [[-0.29, 1.54], [0.29, 1.54]];
-  const eyeAt = eyes.map(([x, y]) => [x, y, frontOf(PUP_HEAD_C, PUP_HEAD_R, x, y)]);
-  const nose = [0, 1.36, frontOf(PUP_HEAD_C, PUP_HEAD_R, 0, 1.36) + 0.12];
-  const mouth = [0, 1.22, frontOf(PUP_HEAD_C, PUP_HEAD_R, 0, 1.22) + 0.06];
+  const Y = PUP_Y;
+  const on = (x, y, out = 0) => frontOf(PUP_HEAD_C, PUP_HEAD_R, x, y, out);
+  const eyeAt = [-1, 1].map((s) => [s * 0.27, Y - 0.1, on(s * 0.27, Y - 0.1)]);
+  const nose = [0, Y - 0.27, on(0, Y - 0.27) + 0.13];
+  const mouth = [0, Y - 0.4, on(0, Y - 0.4) + 0.08];
   /* Short round the face's features, so they are not lost in it. */
   const furAt = (p) => {
     let f = 1;
-    for (const e of eyeAt) f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...e)) / 0.24)));
-    f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...nose)) / 0.16)), smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...mouth)) / 0.16)));
+    for (const e of eyeAt) f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...e)) / 0.21)));
+    f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...nose)) / 0.15)), smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...mouth)) / 0.15)));
     return f;
   };
   const mix = (a, b, t) => a.clone().lerp(b, Math.min(1, Math.max(0, t)));
 
-  /* The head: blue, a white blaze widening down to the muzzle, pink cheeks,
-     two pink brows. */
+  /* The head: a white blaze down the forehead, then the whole face under
+     the eyes; blue round the top, the sides and the back; pink brows. */
   const head = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: PUP_HEAD_R, at: PUP_HEAD_C }), (p) => {
-    /* White: a blaze down the forehead, then the whole face under the
-       eyes; blue round the top, the sides and the back. */
-    const down = Math.max(0, 2.05 - p.y);
-    const faceW = p.y > 1.6 ? 0.07 + down * 0.25 : 0.2 + (1.6 - p.y) * 2.2;
+    const up = p.y - Y;
+    const faceW = up > 0 ? 0.1 + Math.max(0, 0.42 - up) * 0.45 : 0.29 - up * 2.4;
     let c = mix(white, blue, smooth(Math.min(1, Math.max(0, (Math.abs(p.x) - faceW) / 0.18))));
-    c = mix(c, blue, smooth(Math.min(1, Math.max(0, (0.32 - p.z) / 0.3))));
-    for (const s of [-1, 1]) {
-      c = mix(c, blush, smooth(near(p, [s * 0.55, 1.33, 0.55], 0.36)));
-      c = mix(c, pink, smooth(near(p, [s * 0.3, 1.86, frontOf(PUP_HEAD_C, PUP_HEAD_R, s * 0.3, 1.86)], 0.1)));
-    }
+    c = mix(c, blue, smooth(Math.min(1, Math.max(0, (0.34 - p.z) / 0.3))));
+    for (const s of [-1, 1]) c = mix(c, blush, smooth(near(p, [s * 0.3, Y + 0.17, on(s * 0.3, Y + 0.17)], 0.12)));
     return [c, furAt(p)];
   });
   g.add(furry(head));
@@ -4400,63 +4398,70 @@ function videoDog() {
   /* Chubby cheeks, puffing out at the face's lower sides: pink in the
      middle, white round it. */
   for (const s of [-1, 1]) {
-    const at = [s * 0.46, 1.3, 0.36];
-    const cheek = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.38, 0.3, 0.34], at }), (p) => [mix(white, blush, smooth(near(p, [s * 0.56, 1.3, 0.62], 0.36))), furAt(p)]);
+    const cheek = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.29, 0.33], at: [s * 0.43, Y - 0.3, 0.42] }), (p) => [mix(white, blush, smooth(near(p, [s * 0.52, Y - 0.3, 0.68], 0.34))), furAt(p)]);
     g.add(furry(cheek));
   }
 
   /* The muzzle: two little white pads under the nose. */
   for (const s of [-1, 1]) {
-    const pad = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.17, 0.13, 0.12], at: [s * 0.11, 1.3, frontOf(PUP_HEAD_C, PUP_HEAD_R, s * 0.11, 1.3) - 0.03] }), (p) => [white.clone(), Math.min(0.5, furAt(p))]);
+    const pad = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.16, 0.12, 0.12], at: [s * 0.1, Y - 0.34, on(s * 0.1, Y - 0.34) - 0.02] }), (p) => [white.clone(), Math.min(0.5, furAt(p))]);
     g.add(furry(pad, { len: 0.03 }));
   }
 
-  /* The ears: soft, folded down at the head's top corners. */
+  /* The ears: from the head's top corners, hanging down beside it. */
   for (const s of [-1, 1]) {
-    /* From the head's top corner, hanging down beside the cheek. */
-    const ear = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.25, 0.44, 0.14], at: [s * 0.86, 1.66, 0.04], rot: [0.12, s * 0.2, s * 0.5] }), () => [blue.clone(), 1]);
+    /* A flap from the head's top corner, out a little and folding down —
+       a deeper blue at its root, where it meets the head. */
+    const root = [s * 0.66, Y + 0.44, 0.02];
+    const ear = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.2, 0.33, 0.12], at: [s * 0.88, Y + 0.24, 0.06], rot: [0.25, s * 0.25, s * 0.95] }), (p) => [mix(blue, blue.clone().multiplyScalar(0.84), smooth(near(p, root, 0.3))), 1]);
     g.add(furry(ear));
   }
 
-  /* The body, sitting: blue round the back, a white chest, pink below. */
-  const body = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: [0.66, 0.68, 0.58], at: [0, 0.62, -0.02] }), (p) => {
+  /* The body, sitting, short under the big head: blue round the back, a
+     white chest, pink below. */
+  const body = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: [0.62, 0.62, 0.54], at: [0, 0.62, -0.04] }), (p) => {
     let c = mix(blue, white, smooth(Math.min(1, Math.max(0, (p.z - 0.2) / 0.25 - Math.abs(p.x) * 1.6 + 0.6))));
     c = mix(c, pink, smooth(Math.min(1, Math.max(0, (0.3 - p.y) / 0.25))));
     return [c, 1];
   });
-  g.add(furry(body, { len: 0.06 }));
+  g.add(furry(body, { len: 0.045 }));
   /* A fluffy bib under the chin. */
-  const bib = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.3, 0.2], at: [0, 0.98, 0.46] }), () => [white.clone(), 1]);
-  g.add(furry(bib, { len: 0.07 }));
+  const bib = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.3, 0.2], at: [0, 0.9, 0.42] }), () => [white.clone(), 1]);
+  g.add(furry(bib, { len: 0.05 }));
 
   /* The haunches and feet, pink, and two round front paws. */
   for (const s of [-1, 1]) {
-    const haunch = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.3, 0.27, 0.34], at: [s * 0.5, 0.27, 0.06] }), (p) => [mix(blue, pink, (0.5 - p.y) * 2.6), 1]);
+    const haunch = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.29, 0.25, 0.32], at: [s * 0.48, 0.25, 0.06] }), (p) => [mix(blue, pink, (0.46 - p.y) * 2.6), 1]);
     g.add(furry(haunch));
-    const foot = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.2, 0.13, 0.26], at: [s * 0.6, 0.11, 0.24] }), () => [pink.clone(), 1]);
-    g.add(furry(foot, { len: 0.035 }));
-    const paw = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.2, 0.16, 0.23], at: [s * 0.24, 0.14, 0.56] }), () => [pink.clone(), 1]);
-    g.add(furry(paw, { len: 0.04 }));
+    const foot = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.19, 0.12, 0.24], at: [s * 0.58, 0.1, 0.24] }), () => [pink.clone(), 1]);
+    g.add(furry(foot, { len: 0.03 }));
+    /* A front leg down from the chest, white running into a pink paw. */
+    const leg = new THREE.CapsuleGeometry(0.15, 0.42, 16, 32);
+    bake(leg, { at: [s * 0.24, 0.38, 0.42], rot: [0.12, 0, s * -0.04] });
+    tint(leg, (p) => [mix(white, pink, (0.36 - p.y) * 3.2), 1]);
+    g.add(furry(leg, { len: 0.035 }));
+    const paw = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.19, 0.13, 0.22], at: [s * 0.25, 0.12, 0.5] }), () => [pink.clone(), 1]);
+    g.add(furry(paw, { len: 0.03 }));
   }
 
-  /* The face: big dark eyes, a pink nose, a little open mouth. */
+  /* The face: dark glossy eyes, a pink nose, a little open mouth. */
   for (const e of eyeAt) {
-    const eye = videoEye(0.16);
+    const eye = videoEye(0.125);
     eye.position.set(e[0], e[1], e[2] - 0.03);
     eye.rotation.y = e[0] * 0.5;
     g.add(eye);
   }
-  const noseBall = mesh(new THREE.SphereGeometry(0.075, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0xf28aa8, roughness: 0.3, clearcoat: 0.6 }));
+  const noseBall = mesh(new THREE.SphereGeometry(0.065, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0xf28aa8, roughness: 0.3, clearcoat: 0.6 }));
   noseBall.scale.set(1.25, 0.8, 0.75);
   noseBall.position.set(...nose);
   g.add(shiny(noseBall));
-  const lip = mesh(new THREE.SphereGeometry(0.1, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0x8a2a43, roughness: 0.5 }));
+  const lip = mesh(new THREE.SphereGeometry(0.085, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0x8a2a43, roughness: 0.5 }));
   lip.scale.set(1.1, 0.72, 0.5);
   lip.position.set(...mouth);
   g.add(shiny(lip));
-  const tongue = mesh(new THREE.SphereGeometry(0.068, 24, 16), new THREE.MeshPhysicalMaterial({ color: 0xff7f9a, roughness: 0.45 }));
+  const tongue = mesh(new THREE.SphereGeometry(0.058, 24, 16), new THREE.MeshPhysicalMaterial({ color: 0xff7f9a, roughness: 0.45 }));
   tongue.scale.set(1.15, 0.55, 0.5);
-  tongue.position.set(mouth[0], mouth[1] - 0.03, mouth[2] + 0.025);
+  tongue.position.set(mouth[0], mouth[1] - 0.026, mouth[2] + 0.022);
   g.add(shiny(tongue));
   return g;
 }
