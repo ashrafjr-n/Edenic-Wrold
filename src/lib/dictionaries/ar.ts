@@ -155,7 +155,6 @@ export const ar: Dictionary = {
     dislikeAria: "لا أحبّه",
     potAria: "طلاء {color}",
     balloonAria: "بالون {color}",
-    seasonSpotAria: "المس ليأتي المزيد من {word}",
     cupAria: "الكوب {n}",
   },
   asks: {
@@ -175,7 +174,6 @@ export const ar: Dictionary = {
     popColor: "فرقع البالونات {color}!",
     spellPicture: "كوّن كلمة هذه الصورة!",
     thisSeason: "هذا فصل {season}!",
-    changeSeason: "اصنع فصل {season}!",
     findUnderCup: "راقب الأكواب واعثر على {thing}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
@@ -210,7 +208,6 @@ export const ar: Dictionary = {
     juice: "اعصر",
     like: "تحبّه؟",
     harvest: "اقطف",
-    change: "اصنع",
     cups: "ابحث",
     weather: "اصنع",
   },

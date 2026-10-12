@@ -164,7 +164,6 @@ export const en = {
     dislikeAria: "I don't like it",
     potAria: "{color} paint",
     balloonAria: "{color} balloon",
-    seasonSpotAria: "Tap to bring more {word}",
     cupAria: "Cup {n}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
@@ -185,7 +184,6 @@ export const en = {
     popColor: "Pop the {color} balloons!",
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
-    changeSeason: "Make it {season}!",
     findUnderCup: "Watch the cups and find the {thing}!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
@@ -221,7 +219,6 @@ export const en = {
     juice: "Blend",
     like: "Like?",
     harvest: "Pick",
-    change: "Make",
     cups: "Find",
     weather: "Make",
   },
