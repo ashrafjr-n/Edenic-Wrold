@@ -3110,7 +3110,10 @@ const shiny = (part) => {
    thing's front, so drawn alone (each as a white cut-out of its own
    painting) they show exactly where they will be. */
 const cutouts = new Map();
+const WHITE_CUT = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
 function cutout(map) {
+  /* A shiny part with no painting (the videos' 3D eyes) is white all over. */
+  if (!map) return WHITE_CUT;
   if (!cutouts.has(map)) {
     const c = document.createElement("canvas");
     c.width = map.image.width;
@@ -4206,6 +4209,102 @@ const COLOR_OF = {
 };
 
 function frame() { renderer.render(scene, camera); return renderer.domElement.toDataURL("image/png"); }
+
+/* ---------- The videos' look (2026-10-12) ----------
+   The things as the course videos draw them (direct request: "the same
+   style as the videos" — their stills in `public/things-in-videos/`):
+   the animals plush — short dense fur, pastel blue, white and pink
+   running into each other, big dark glossy eyes, blush cheeks, a little
+   pink nose; the vegetables smooth satin clay, true to life, no face.
+   The grain stays (`crop.py things … --grain`).
+
+   Fur is shell fur: a furry part is drawn again `FUR_SHELLS` times, each
+   shell a little further out along its normals with thinner strands — a
+   strand is a hashed 3D cell (no UV seams), its root darker than its tip.
+   Colours are per vertex (`tint`), so one part can run from a blue back
+   to a white chest; `fur` per vertex (0–1) shortens it round the eyes,
+   the nose and the mouth. */
+
+const FUR_SHELLS = 30;
+
+/* `geo` with a part's own scale, turn and place baked in — shells push out
+   along true normals only when the mesh itself is not scaled. */
+function bake(geo, { scale = [1, 1, 1], at = [0, 0, 0], rot = [0, 0, 0] } = {}) {
+  const m = new THREE.Matrix4().compose(new THREE.Vector3(...at), new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot)), new THREE.Vector3(...scale));
+  geo.applyMatrix4(m);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+/* Colour and fur length per vertex: `paint(p, n)` → [THREE.Color, fur 0–1]
+   at the point `p` (the thing's own space) with normal `n`. */
+function tint(geo, paint) {
+  const pos = geo.attributes.position, nor = geo.attributes.normal;
+  const colors = new Float32Array(pos.count * 3), fur = new Float32Array(pos.count);
+  const p = new THREE.Vector3(), n = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    p.fromBufferAttribute(pos, i);
+    n.fromBufferAttribute(nor, i);
+    const [c, f] = paint(p, n);
+    colors.set([c.r, c.g, c.b], i * 3);
+    fur[i] = f;
+  }
+  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute("fur", new THREE.BufferAttribute(fur, 1));
+  return geo;
+}
+
+/* One material per shell (all furry parts share them): `h` 0 is the skin,
+   1 the tips. `len` is the fur's length, `density` strands per unit. */
+const furMats = new Map();
+function furMaterial(h, len, density) {
+  const key = `${h}|${len}|${density}`;
+  if (furMats.has(key)) return furMats.get(key);
+  const m = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.9, sheen: 0.7, sheenRoughness: 0.5, sheenColor: 0xffffff, specularIntensity: 0.25 });
+  m.onBeforeCompile = (shader) => {
+    shader.uniforms.uH = { value: h };
+    shader.uniforms.uLen = { value: len };
+    shader.uniforms.uDensity = { value: density };
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nattribute float fur;\nuniform float uH;\nuniform float uLen;\nvarying vec3 vObj;\nvarying float vFur;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;\nvFur = fur;\ntransformed += objectNormal * uLen * uH * fur;");
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform float uH;\nuniform float uDensity;\nvarying vec3 vObj;\nvarying float vFur;\nfloat furHash(vec3 c) { return fract(sin(dot(c, vec3(127.1, 311.7, 74.7))) * 43758.5453); }")
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        if (uH > 0.0) {
+          if (vFur < 0.05) discard;
+          vec3 cell = floor(vObj * uDensity);
+          vec3 f = fract(vObj * uDensity) - 0.5;
+          float n = furHash(cell);
+          /* Strands of a few lengths, thinner towards their tips. */
+          if (uH > 0.35 + 0.65 * n) discard;
+          if (length(f.xy + f.yz * 0.5) > 0.62 * (1.0 - uH * 0.85)) discard;
+        }
+        diffuseColor.rgb *= mix(0.74, 1.08, uH);`,
+      );
+  };
+  m.customProgramCacheKey = () => key;
+  furMats.set(key, m);
+  return m;
+}
+
+/* A furry part: its skin and its shells, one group. */
+function furry(geo, { len = 0.05, density = 95 } = {}) {
+  const g = new THREE.Group();
+  const skin = mesh(geo, furMaterial(0, len, density));
+  g.add(skin);
+  for (let k = 1; k <= FUR_SHELLS; k++) {
+    const shell = new THREE.Mesh(geo, furMaterial(k / FUR_SHELLS, len, density));
+    shell.receiveShadow = true;
+    g.add(shell);
+  }
+  return g;
+}
+
+/* Smooth satin clay for the videos' vegetables, coloured per vertex. */
+const satin = (extra = {}) => new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.48, clearcoat: 0.18, clearcoatRoughness: 0.45, sheen: 0.35, sheenRoughness: 0.5, sheenColor: 0xffffff, ...extra });
 
 /* A see-through floor that only shows shadows, for the item layers. */
 const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
