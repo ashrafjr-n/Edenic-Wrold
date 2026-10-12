@@ -2883,11 +2883,10 @@ function fishbowl() {
   return g;
 }
 
-/* ---------- What Bloo's animals eat — the Feed step ----------
-   Fed one bite at a time into the animal's mouth (`?thing=food&arg=`): a
-   bone for the dog, a little bottle of milk for the cat, a tuft of grass
-   for the cow, a pinch of fish food for the fish. Velvet clay, and no face
-   — they get eaten. */
+/* ---------- What Bloo's animals eat — on their hills ----------
+   The dog's bone and the cow's tuft of grass, by them in `ANIMAL_WORLDS`
+   (the Feed step that also had the cat's milk and the fish's food was
+   removed 2026-10-12). Velvet clay, no face. */
 const ANIMAL_FOOD = {
   bone() {
     const g = new THREE.Group();
@@ -2901,20 +2900,6 @@ const ANIMAL_FOOD = {
       g.add(knob);
     }
     g.rotation.z = 0.32;
-    return g;
-  },
-
-  /* A chubby bottle of milk with a pale blue cap and band. */
-  milk() {
-    const g = new THREE.Group();
-    g.add(mesh(smoothLathe([[0, 0], [0.3, 0], [0.37, 0.06], [0.39, 0.5], [0.34, 0.74], [0.21, 0.88], [0.18, 0.97], [0, 0.97]]), velvet(0xfffdf6)));
-    const blue = velvet(0x72b8ff);
-    const cap = mesh(smoothLathe([[0, 0], [0.22, 0], [0.245, 0.04], [0.245, 0.13], [0.21, 0.18], [0, 0.185]]), blue);
-    cap.position.y = 0.93;
-    g.add(cap);
-    const band = mesh(new THREE.CylinderGeometry(0.396, 0.396, 0.22, 64, 1, true), blue);
-    band.position.y = 0.3;
-    g.add(band);
     return g;
   },
 
@@ -2943,27 +2928,9 @@ const ANIMAL_FOOD = {
     g.add(daisy);
     return g;
   },
-
-  /* A little heap of fish food: small pellets, orange, red and brown. */
-  pellets() {
-    const g = new THREE.Group();
-    const colors = [0xff8a3d, 0xe8524a, 0xb8743f, 0xffb347];
-    let i = 0;
-    for (const [y, r, n] of [[0.08, 0.36, 9], [0.08, 0.16, 4], [0.24, 0.24, 6], [0.38, 0.1, 3], [0.5, 0, 1]]) {
-      for (let k = 0; k < n; k++) {
-        const a = (k / n) * Math.PI * 2 + y * 7;
-        const bit = mesh(new THREE.SphereGeometry(0.085, 24, 18), velvet(colors[i++ % colors.length]));
-        bit.scale.set(1.15, 0.8, 1);
-        bit.position.set(Math.cos(a) * r, y, Math.sin(a) * r * 0.8);
-        bit.rotation.z = a;
-        g.add(bit);
-      }
-    }
-    return g;
-  },
 };
 
-Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl, food: (what) => ANIMAL_FOOD[what]() });
+Object.assign(ITEMS, { cat, dog, cow, fishfriend, catBed, kennel, barn, fishbowl });
 
 /* ---------- Nova's fruits, the friends' way (2026-10-08) ----------
    The Fruits course's eight foods remade in the friends' look (direct
@@ -4323,7 +4290,7 @@ if (THING) {
   /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
      and their food): a softer, fuller light — their felt is evenly lit,
      with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "food", "wear", "weather", "weatherbit", "animalWorld"].includes(THING)) {
+  if (["fruit", "cup", "cat", "dog", "cow", "fishfriend", "catBed", "kennel", "barn", "fishbowl", "wear", "weather", "weatherbit", "animalWorld"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
