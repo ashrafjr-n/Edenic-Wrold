@@ -207,17 +207,9 @@ const BLANKETS = {
   },
 };
 
-/* ---------- Nova's juices and soups ---------- */
+/* ---------- Nova's soups ---------- */
 
-/* What each comes out as: a juice's colors bottom to top (a mix is layered,
-   one band per fruit in it), a soup's color and the pieces floating in it. */
-const JUICES = {
-  apple: [0xf6b844],
-  banana: [0xf8e38f],
-  orange: [0xff9b2f],
-  grapes: [0x8f45b8],
-  mix: [0xff9b2f, 0xf6b844, 0xf8e38f],
-};
+/* What each soup comes out as: its color and the pieces floating in it. */
 const SOUPS = {
   carrot: { color: 0xf28a30, pieces: ["coin", "coin", "coin", "coin", "leaf", "leaf"] },
   broccoli: { color: 0x9ccb5c, pieces: ["floret", "floret", "floret", "floret", "floret"] },
@@ -246,28 +238,6 @@ const PIECES = {
     return leaf;
   },
 };
-
-/* Glass: pale, clear and glossy — the page shows through it. */
-const glassy = () =>
-  new THREE.MeshPhysicalMaterial({ color: 0xf2fbff, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.04, transparent: true, opacity: 0.17, side: THREE.DoubleSide, depthWrite: false });
-
-/* A juice filling a glass from `y0` to `y1`, one band per color, each band
-   just inside the wall (`wall(y)` is the inside radius at height y). */
-function pour(colors, y0, y1, wall) {
-  const g = new THREE.Group();
-  const step = (y1 - y0) / colors.length;
-  colors.forEach((color, i) => {
-    const a = y0 + i * step, b = a + step;
-    /* A cylinder, not a lathe: its caps keep their own normals, so two
-       bands meet in a clean line instead of a dark rounded seam. */
-    const band = mesh(new THREE.CylinderGeometry(wall(b) - 0.004, wall(a) - 0.004, b - a, 96), clay(color, { roughness: 0.25, clearcoat: 0.9, clearcoatRoughness: 0.1, emissive: color, emissiveIntensity: 0.14 }));
-    band.position.y = (a + b) / 2;
-    /* Lit as if the glass were not there — its shadow would grey the juice. */
-    band.receiveShadow = false;
-    g.add(band);
-  });
-  return g;
-}
 
 /* ---------- The things ---------- */
 const ITEMS = {
@@ -1417,77 +1387,6 @@ const ITEMS = {
     return g;
   },
 
-  // Nova's blender: a teal clay base with a dial, a glass jar with its
-  // blades, a lid. `?arg=<juice>`: the jar full of that juice (the same
-  // camera, so the full render lies exactly over the empty one).
-  blender(juice) {
-    const g = new THREE.Group();
-    const teal = clay(0x4fc3b4, { clearcoat: 0.75, clearcoatRoughness: 0.2 });
-    g.add(mesh(smoothLathe([[0, 0], [0.62, 0], [0.67, 0.06], [0.63, 0.46], [0.54, 0.6], [0, 0.6]]), teal));
-    const dial = mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.08, 48), clay(0xffffff, { clearcoat: 0.8 }));
-    dial.rotation.x = Math.PI / 2;
-    dial.position.set(0, 0.3, 0.62);
-    g.add(dial);
-    const knob = mesh(new RoundedBoxGeometry(0.05, 0.16, 0.05, 3, 0.02), clay(0x2e2b35));
-    knob.position.set(0, 0.32, 0.67);
-    knob.rotation.z = -0.5;
-    g.add(knob);
-    for (const [x, color] of [[-0.34, 0xf7c948], [0.34, 0xff86c2]]) {
-      const button = mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.06, 32), clay(color, { clearcoat: 0.8 }));
-      button.rotation.x = Math.PI / 2;
-      button.position.set(x, 0.26, 0.56);
-      g.add(button);
-    }
-    const collar = mesh(new THREE.CylinderGeometry(0.47, 0.5, 0.12, 64), teal);
-    collar.position.y = 0.66;
-    g.add(collar);
-    /* The jar: thin walls, flaring a little to the top. */
-    const wall = (y) => 0.4 + ((y - 0.74) / (1.9 - 0.74)) * 0.11;
-    const blade = clay(0xc9ced8, { clearcoat: 0.9, roughness: 0.3 });
-    const hub = mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 24), blade);
-    hub.position.y = 0.8;
-    g.add(hub);
-    for (const a of [0.3, 0.3 + Math.PI / 2]) {
-      const arm = mesh(new RoundedBoxGeometry(0.46, 0.025, 0.08, 2, 0.01), blade);
-      arm.position.y = 0.84;
-      arm.rotation.y = a;
-      g.add(arm);
-    }
-    if (juice) g.add(pour(JUICES[juice], 0.745, 1.72, wall));
-    g.add(mesh(lathe([[0, 0.7], [0.4, 0.7], [0.44, 0.74], [0.55, 1.9], [0.56, 1.95], [0.515, 1.95], [0.51, 1.9], [0.4, 0.74], [0, 0.74]], 128), glassy()));
-    const handle = mesh(new THREE.TorusGeometry(0.3, 0.065, 16, 48, Math.PI), teal);
-    handle.rotation.z = -Math.PI / 2;
-    handle.position.set(0.49, 1.32, 0);
-    g.add(handle);
-    const lid = mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.12, 64), teal);
-    lid.position.y = 2.0;
-    g.add(lid);
-    const cap = mesh(new THREE.CylinderGeometry(0.15, 0.17, 0.12, 32), clay(0xf7c948, { clearcoat: 0.8 }));
-    cap.position.y = 2.12;
-    g.add(cap);
-    return g;
-  },
-
-  // a glass of juice with a pink straw, and the fruit it was made of
-  // beside it. `?arg=<juice>`.
-  glass(juice = "orange") {
-    const g = new THREE.Group();
-    const wall = (y) => 0.335 + ((y - 0.12) / (1.05 - 0.12)) * 0.05;
-    g.add(pour(JUICES[juice], 0.121, 0.86, wall));
-    const straw = mesh(new THREE.CapsuleGeometry(0.04, 0.95, 8, 16), clay(0xff86c2, { clearcoat: 0.7 }));
-    straw.position.set(0.14, 1.0, -0.06);
-    straw.rotation.z = -0.3;
-    g.add(straw);
-    g.add(mesh(lathe([[0, 0], [0.33, 0], [0.36, 0.04], [0.42, 1.05], [0.385, 1.05], [0.335, 0.12], [0, 0.12]], 96), glassy()));
-    if (juice !== "mix") {
-      const fruit = ITEMS[juice]();
-      fruit.scale.setScalar(0.5);
-      fruit.position.set(-0.62, 0, 0.32);
-      g.add(fruit);
-    }
-    return g;
-  },
-
   basketball() {
     const g = new THREE.Group();
     const ball = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(0xf07a2a, { clearcoat: 0.3, roughness: 0.6 }));
@@ -2075,18 +1974,6 @@ const GARDENS = {
      stands beside the garden, `?basket`) — wider than a phone's stage (3:2, `size` px, `view` world units
      across). `foods` holds each kind and where it grows; there are more
      of each than the note asks for, so the child has to count. */
-  fruits: {
-    size: [1200, 690],
-    view: 9.6,
-    centreY: 2.25,
-    lift: 14,
-    world: plants([[() => fruitTree(0x63bb59), -3.15, 0.56], [bananaPlant, 0, 0.62], [() => fruitTree(0x4ea957), 3.15, 0.56]]),
-    foods: [
-      { food: "apple", make: () => FRIEND_FOOD.apple(), scale: 0.72, at: [[-3.8, 2.45, 1.05], [-2.5, 2.4, 1.05], [-3.82, 1.25, 1.05], [-2.52, 1.3, 1.05]], tilt: [-8, 6, 4, -5] },
-      { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
-      { food: "orange", make: () => FRIEND_FOOD.orange(), scale: 0.84, at: [[2.5, 2.4, 1.05], [3.8, 2.35, 1.05], [3.15, 1.25, 1.1]], tilt: [6, -8, 4] },
-    ],
-  },
   vegetables: {
     size: [1200, 690],
     view: 9.4,
