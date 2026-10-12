@@ -9,21 +9,28 @@ import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import corn from "../../../public/assets/learn/nova/fruits/things/corn.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
+import tomato from "../../../public/assets/learn/nova/fruits/things/tomato.png";
+import pepper from "../../../public/assets/learn/nova/fruits/things/pepper.png";
 import blenderMix from "../../../public/assets/learn/nova/fruits/make/blender-mix.png";
 import glassMix from "../../../public/assets/learn/nova/fruits/make/glass-mix.png";
 import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like apples.", "3
-    apples") and its picture — in the friends' look: velvet clay with the
-    clay buttons' grain and the friends' face (`render.cjs thing
-    apple=fruit:apple`). */
+    apples") and its picture — in the friends' look (velvet clay, the clay
+    buttons' grain, the friends' face: `render.cjs thing apple=fruit:apple`)
+    or, since 2026-10-12, the videos' (smooth satin clay, no face, the
+    grain kept: `video:carrot`). `core`: a lesson of the videos' new things
+    — the reel, its word, its spelling, and nothing after (direct request
+    2026-10-12). */
 interface Food {
   word: string;
   things: string;
   picture: StaticImageData;
+  core?: true;
 }
 
-/** In teaching order: four fruits, then four vegetables. */
+/** In teaching order: four fruits, four vegetables, then the two the
+    videos added. */
 const FOODS: Food[] = [
   { word: "apple", things: "apples", picture: apple },
   { word: "banana", things: "bananas", picture: banana },
@@ -33,6 +40,8 @@ const FOODS: Food[] = [
   { word: "broccoli", things: "broccoli", picture: broccoli },
   { word: "corn", things: "corn", picture: corn },
   { word: "potato", things: "potatoes", picture: potato },
+  { word: "tomato", things: "tomatoes", picture: tomato, core: true },
+  { word: "pepper", things: "peppers", picture: pepper, core: true },
 ];
 
 const food = (word: string): Food => {
@@ -54,14 +63,14 @@ const line = (word: string, count: number) => ({ word, things: food(word).things
  * watched closely. Picking from the trees is the review's exam, with
  * several foods to tell apart.
  */
-function foodLesson({ word, picture }: Food, i: number): LessonDef {
+function foodLesson({ word, picture, core }: Food, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      { type: "cups", ask: { key: "findUnderCup", vars: { thing: word } }, word, picture },
+      ...(core ? [] : [{ type: "cups" as const, ask: { key: "findUnderCup" as const, vars: { thing: word } }, word, picture }]),
     ],
   };
 }
