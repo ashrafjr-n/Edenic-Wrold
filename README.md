@@ -186,14 +186,15 @@ tools/
                       plant and a potato bed — each with its food), her
                       basket, the four seasons (an island with a tree
                       with a face, under each season),
-                      Nova's eight foods in the friends' look (chubby
-                      velvet clay with the buttons' grain and the
-                      friends' face — the carrot already in the videos'
-                      look: smooth satin clay, no face) and her cup, and
-                      Bloo's animals in the same look (a cat, a dog, a cow
-                      and a fish, two coats each, and each at home on
-                      Bloo's hill — the dog is its video's own), their
-                      homes, and
+                      Nova's ten foods (the fruits and the corn in the
+                      friends' look: chubby velvet clay with the buttons'
+                      grain and the friends' face; the carrot, broccoli,
+                      potato, tomato and pepper — and the Seasons'
+                      pumpkin — in the videos' look: smooth satin clay, no
+                      face) and her cup, and Bloo's animals in the
+                      friends' look (a cat, a dog, a cow and a fish, two
+                      coats each, each on its own — the dog is its
+                      video's own), their homes, and
                       Bloo's weather (his hill under each weather, step
                       by step as it is made, with its sky on layers of
                       its own; what falls or blows; what a child needs
@@ -220,7 +221,7 @@ public/
                             reels. All pictures are rendered by
                             tools/picnic-scene — none come from outside)
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
-                            (things/: the eight foods in the friends' look,
+                            (things/: the ten foods,
                             props/: the blender, the soup pot and Nova's
                             cup, make/: the review's mixed juice, its glass
                             and the soup, and garden/: the review's two
@@ -229,13 +230,9 @@ public/
                             things/: the review's eight things to sort), and each course's placeholder
                             reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
-                            (things/: each animal in two coats, in the
-                            friends' look, food/: a bite of what each eats —
-                            a bottle of milk, a bone, a tuft of grass, fish
-                            food — homes/: where each lives, the review's
-                            boxes, worlds/: each animal at home on Bloo's
-                            hill, the word cards and covers) and its
-                            placeholder reels; weather/
+                            (things/: each animal in two coats, on its own,
+                            homes/: where each lives, the review's boxes)
+                            and its placeholder reels; weather/
                             (scenes/: his hill under each weather, make/:
                             each weather step by step and its sky as
                             layers of their own, bits/: the drops, flakes,
@@ -270,12 +267,12 @@ Continue, and the lesson's own buttons — with green kept for "Next". Tablets a
 the screen: on the hub, Pinki greets the child beside an "Up next" card and
 big course cards; a course's box of lessons fills a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
-the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs beside the back button (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
+the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs at the far right of the back row (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
 pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
-Rectangle, then a Shape review. Every step has a round **task button** beside
-the back button (no progress bar on a phone or tablet): a clay circle with the step's icon.
+Rectangle, then a Shape review. Every step has a round **task button** at the
+far right, on the back button's line (no progress bar on a phone or tablet): a clay circle with the step's icon.
 It is silent; tapping it opens a popup with a close button that plays a short
 loop of how the step is done — only the first move, never the whole answer.
 On a desktop the same button is the current stop of the step trail.
@@ -347,11 +344,14 @@ Nova's courses teach one thing per lesson, because the word has to BE the
 picture:
 
 - **Fruits & Vegetables — Nova's garden**: apple, banana, orange, grapes,
-  carrot, broccoli, corn, potato, one a lesson, and every step of a lesson
-  is about its one thing — nothing to choose between. Every food is drawn
-  the friends' way: chubby, soft velvety clay with the same grain as the
-  clay buttons, and the friends' face (big eyes with a purple iris, a
-  shine and a little gold heart, pink cheeks, an open smile). The word is
+  carrot, broccoli, corn, potato, then tomato and pepper (new with the
+  course videos: the reel, the word and its spelling only), one a lesson, and every step of a lesson
+  is about its one thing — nothing to choose between. The fruits and the
+  corn are drawn the friends' way: chubby, soft velvety clay with the same
+  grain as the clay buttons, and the friends' face (big eyes with a purple
+  iris, a shine and a little gold heart, pink cheeks, an open smile); the
+  other vegetables as the course videos draw them — smooth satin clay, true
+  to life, no face, the same grain. The word is
   **met** (the thing, the word in clay letters, the speaker) and
   **spelled**; then come **Nova's cups**: the food sits under one of
   three polka-dot cups — a different one, at random, every time — the cup
@@ -392,11 +392,10 @@ velvety clay with the buttons' grain and the friends' face (big eyes with a
 purple iris and a little gold heart, pink cheeks, an open smile — on the
 dog's and the cow's muzzle). The art is moving to the look of the course
 videos, one thing at a time: the dog is already the video's own puppy — a
-fluffy blue-and-pink one, cut out of its video and stood on the 3D hill —
-and Nova's carrot is the videos' smooth, faceless clay carrot. It is met
-at home, the way the weather is
-seen: on Bloo's round hill, the cat by its bed, the dog by its kennel, the
-cow by its barn, the fish bobbing up out of a pond. The animal is **met**
+fluffy blue-and-pink one, cut out of its video —
+and Nova's carrot, broccoli, potato, tomato and pepper are the videos'
+smooth, faceless clay. Each animal is shown on its own, with no scene
+behind it. The animal is **met**
 and **spelled** — nothing to choose between inside a lesson. The review is
 the exam: eight animals, each in two coats (an
 orange cat and a grey one, a blue dog and a caramel one…), go into their
