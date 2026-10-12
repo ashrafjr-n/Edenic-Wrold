@@ -528,6 +528,14 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       pictures; the lessons are reel → word → spell.
 - [x] **The task button beside the back button** (2026-10-12), top left at
       every width; on a desktop the step trail starts there.
+- [x] **The videos' look, first two** (2026-10-12): the dog is its video's
+      own puppy (cut out of the still, stood on the 3D hill; a caramel
+      recolour as the review's second coat), the carrot the videos'
+      faceless satin clay (its picture and Nova's carrot bed).
+- [ ] The videos' look for the rest with a still (cat, fish, potato,
+      broccoli, pumpkin, the sun), then the new lessons (elephant, mouse,
+      bird, parrot, turtle, gecko, tomato, pepper) — each new thing a
+      lesson: video → listen → spell.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
