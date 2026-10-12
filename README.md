@@ -188,10 +188,12 @@ tools/
                       with a face, under each season),
                       Nova's eight foods in the friends' look (chubby
                       velvet clay with the buttons' grain and the
-                      friends' face) and her cup, and Bloo's animals in
-                      the same look (a cat, a dog, a cow and a fish, two
-                      coats each, and each at home on Bloo's hill), their
-                      homes and what each eats, and
+                      friends' face — the carrot already in the videos'
+                      look: smooth satin clay, no face) and her cup, and
+                      Bloo's animals in the same look (a cat, a dog, a cow
+                      and a fish, two coats each, and each at home on
+                      Bloo's hill — the dog is its video's own), their
+                      homes, and
                       Bloo's weather (his hill under each weather, step
                       by step as it is made, with its sky on layers of
                       its own; what falls or blows; what a child needs
@@ -388,12 +390,16 @@ Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
 Each is a chibi animal drawn the friends' way, like Nova's foods: soft
 velvety clay with the buttons' grain and the friends' face (big eyes with a
 purple iris and a little gold heart, pink cheeks, an open smile — on the
-dog's and the cow's muzzle). It is met at home, the way the weather is
+dog's and the cow's muzzle). The art is moving to the look of the course
+videos, one thing at a time: the dog is already the video's own puppy — a
+fluffy blue-and-pink one, cut out of its video and stood on the 3D hill —
+and Nova's carrot is the videos' smooth, faceless clay carrot. It is met
+at home, the way the weather is
 seen: on Bloo's round hill, the cat by its bed, the dog by its kennel, the
 cow by its barn, the fish bobbing up out of a pond. The animal is **met**
 and **spelled** — nothing to choose between inside a lesson. The review is
 the exam: eight animals, each in two coats (an
-orange cat and a grey one, a brown dog and a spotty one…), go into their
+orange cat and a grey one, a blue dog and a caramel one…), go into their
 homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
 alone.
