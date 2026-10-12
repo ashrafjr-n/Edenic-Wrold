@@ -75,6 +75,13 @@
  *   node tools/picnic-scene/render.cjs weathersteps sunny rainy windy snowy
  *   node tools/picnic-scene/render.cjs thing drop=weatherbit:drop@float@front flake=weatherbit:flake@float@front leaf=weatherbit:leaf@float@front leaf2=weatherbit:leaf2@float@front swirl=weatherbit:swirl@float@front sparkle=weatherbit:sparkle@float@front
  *
+ * The videos' look (2026-10-12, a first pair for the user to judge, side
+ * by side with the videos' stills): plush animals in shell fur and smooth
+ * satin vegetables with no face, in the videos' warm light — `@hd`, for
+ * the fur. Cropped with `--grain` like the rest:
+ *
+ *   node tools/picnic-scene/render.cjs thing vdog=video:dog@front@hd vcarrot=video:carrot@hd@float
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
