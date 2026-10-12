@@ -192,7 +192,8 @@ tools/
                       velvet clay with the buttons' grain and the
                       friends' face) and her cup, and Bloo's animals in
                       the same look (a cat, a dog, a cow and a fish, two
-                      coats each), their homes and what each eats, and
+                      coats each, and each at home on Bloo's hill), their
+                      homes and what each eats, and
                       Bloo's weather (his hill under each weather, step
                       by step as it is made, with its sky on layers of
                       its own; what falls or blows; what a child needs
@@ -234,7 +235,9 @@ public/
                             friends' look, food/: a bite of what each eats —
                             a bottle of milk, a bone, a tuft of grass, fish
                             food — homes/: where each lives, the review's
-                            boxes) and its placeholder reels; weather/
+                            boxes, worlds/: each animal at home on Bloo's
+                            hill, the word cards and covers) and its
+                            placeholder reels; weather/
                             (scenes/: his hill under each weather, make/:
                             each weather step by step and its sky as
                             layers of their own, bits/: the drops, flakes,
@@ -392,7 +395,10 @@ Bloo's **Animals** is the same rhythm: cat, dog, cow, fish, one a lesson.
 Each is a chibi animal drawn the friends' way, like Nova's foods: soft
 velvety clay with the buttons' grain and the friends' face (big eyes with a
 purple iris and a little gold heart, pink cheeks, an open smile — on the
-dog's and the cow's muzzle). The animal is **met** and **spelled**, then the
+dog's and the cow's muzzle). It is met at home, the way the weather is
+seen: on Bloo's round hill, the cat by its bed, the dog by its kennel, the
+cow by its barn, the fish bobbing up out of a pond. The animal is **met**
+and **spelled**, then the
 child **feeds it**: three bites of its own food lie in front of it (a
 bottle of milk for the cat, a bone for the dog, a tuft of grass for the
 cow, fish food for the fish). Drag one onto the animal, or tap it, and it
