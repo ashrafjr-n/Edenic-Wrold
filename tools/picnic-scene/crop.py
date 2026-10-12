@@ -29,10 +29,9 @@ of that box).
     python3 tools/picnic-scene/crop.py basket
 
 Nova's seasons — run after `render.cjs season spring summer fall winter`:
-crops every frame of the four seasons on ONE box (the four pictures
-match), at most 800px, into `public/assets/learn/nova/seasons/<season>/
-<k>.png`, and prints each step's spot (% of that box) for
-`data/nova-scenes.ts`.
+crops each season's whole picture (its last frame) on ONE box (the four
+pictures match), at most 800px, into `public/assets/learn/nova/seasons/
+scenes/<season>.png`.
 
     python3 tools/picnic-scene/crop.py seasons
 
@@ -209,25 +208,19 @@ if NAME.startswith("harvest-"):
     sys.exit()
 
 if NAME == "seasons":
-    # Every frame of every season on ONE box, so the four pictures match
-    # (same size, the island in the same place).
+    # Each season's whole picture (its last frame), all four on ONE box —
+    # the box of every frame, as when the frames were the lesson's third
+    # step — so the four match (same size, the island in the same place).
     seasons = ["spring", "summer", "fall", "winter"]
     frames = {s: [Image.open(os.path.join(HERE, "out", f"season-{s}", f"frame{k}.png")) for k in range(5)] for s in seasons}
     boxes = [alpha_box(f) for fs in frames.values() for f in fs]
     box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    W, H = frames["spring"][0].size
-    bw, bh = box[2] - box[0], box[3] - box[1]
-    spots = {}
+    dest = os.path.join(ROOT, "public/assets/learn/nova/seasons/scenes")
+    os.makedirs(dest, exist_ok=True)
     for s in seasons:
-        dest = os.path.join(ROOT, "public/assets/learn/nova/seasons", s)
-        os.makedirs(dest, exist_ok=True)
-        for k, f in enumerate(frames[s]):
-            cut = f.crop(box)
-            cut.thumbnail((800, 800), Image.LANCZOS)
-            cut.save(f"{dest}/{k}.png", optimize=True)
-        meta = json.load(open(os.path.join(HERE, "out", f"season-{s}", "meta.json")))
-        spots[s] = [[round((x / 100 * W - box[0]) / bw * 100, 2), round((y / 100 * H - box[1]) / bh * 100, 2)] for x, y in meta["spots"]]
-    print(json.dumps({"ratio": round(bw / bh, 4), "spots": spots}))
+        cut = frames[s][-1].crop(box)
+        cut.thumbnail((800, 800), Image.LANCZOS)
+        cut.save(f"{dest}/{s}.png", optimize=True)
     sys.exit()
 
 if NAME == "basket":
