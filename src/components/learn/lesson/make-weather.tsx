@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent, Ref } from "react";
 import Image from "next/image";
 import { Celebration } from "@/components/ui/celebration";
 import { lessonCue, playCue } from "@/lib/cue";
@@ -15,6 +15,9 @@ const GOES = 3;
 const FADE_MS = 700;
 /** The weather is all there, then the step is solved. */
 const DONE_MS = 900;
+/** Skipped: the gap between the goes it then makes by itself — slow
+    enough to watch the weather come. */
+const AUTO_GAP_MS = 1400;
 /** Below this the finger never really moved — a tap. */
 const DRAG_THRESHOLD = 8;
 /** A cloud pushed this far (% of the picture's width) goes. */
@@ -63,6 +66,12 @@ interface Drag {
   shift: number;
 }
 
+export interface MakeWeatherHandle {
+  /** The child skips: the rest of the goes play by themselves, then the
+      step is solved as if made by hand. */
+  skip: () => void;
+}
+
 interface MakeWeatherProps {
   /** The weather, in English. */
   word: Weather;
@@ -72,6 +81,7 @@ interface MakeWeatherProps {
       screen reader. */
   label: string;
   onSolved: () => void;
+  ref?: Ref<MakeWeatherHandle>;
 }
 
 /**
@@ -82,25 +92,31 @@ interface MakeWeatherProps {
  * — the tree bends, the leaves and the kite go up; shake the cloud and it
  * snows until the hill is white and a snowman stands on it. A tap does the
  * go too (nobody gets stuck); the task button's demo shows the gesture.
- * Nothing can go wrong — the weather is the lesson.
+ * Nothing can go wrong — the weather is the lesson. Skip (the lesson's
+ * button, direct request 2026-10-12) hides the controls and makes the rest
+ * of the goes itself, calmly, the same way a tap would.
  *
  * The hill is a frame per go, the newest fading in over the last (the sun
  * has one, dulled under its clouds); what is in the sky lies over it on
  * layers of its own, the same size, so a cloud can be moved; the weather's
  * bits are its own pictures, falling or sweeping by CSS.
  */
-export function MakeWeather({ word, gesture, scene, label, onSolved }: MakeWeatherProps) {
+export function MakeWeather({ word, gesture, scene, label, onSolved, ref }: MakeWeatherProps) {
   const { frames, sky, bits } = scene;
   const [done, setDone] = useState(0);
   const [fading, setFading] = useState(false);
   const [gone, setGone] = useState<number[]>([]);
   const [gust, setGust] = useState({ n: 0, dir: 1 });
   const [drag, setDrag] = useState<Drag | null>(null);
+  /* Skipped: the goes are playing by themselves. */
+  const [auto, setAuto] = useState(false);
   const sceneRef = useRef<HTMLDivElement>(null);
   const cloudRefs = useRef<(HTMLSpanElement | null)[]>([]);
   /* What a gesture reads — gestures outrun renders. */
   const goes = useRef(0);
   const busy = useRef(false);
+  /* The sun's clouds already pushed off — what a skip pushes next. */
+  const pushed = useRef<number[]>([]);
   /* A drag ends in a click on the same control — that click is not a tap. */
   const dragged = useRef(false);
   const timers = useRef<number[]>([]);
@@ -172,6 +188,7 @@ export function MakeWeather({ word, gesture, scene, label, onSolved }: MakeWeath
       ],
       { duration: 650, easing: "ease-in", fill: "forwards" },
     );
+    pushed.current.push(i);
     setGone((last) => [...last, i]);
   };
 
@@ -237,6 +254,24 @@ export function MakeWeather({ word, gesture, scene, label, onSolved }: MakeWeath
       pushAway(index, (l + w / 2 < 50 ? -1 : 1) * 30, -8);
     }
   };
+
+  /* Skipped: a go as a tap makes it (the next cloud off the sun), then the
+     next one after a gap — a go still fading is waited out. */
+  const autoGo = () => {
+    if (goes.current >= GOES) return;
+    if (!busy.current) press(gesture === "push" ? sky.findIndex((_, i) => !pushed.current.includes(i)) : 0)();
+    after(AUTO_GAP_MS, autoGo);
+  };
+
+  useImperativeHandle(ref, () => ({
+    skip: () => {
+      if (auto) return;
+      setAuto(true);
+      setDrag(null);
+      dragged.current = false;
+      autoGo();
+    },
+  }));
 
   /* Where a cloud is, while the finger has it. */
   const held = (i: number): CSSProperties | undefined => {
@@ -333,13 +368,14 @@ export function MakeWeather({ word, gesture, scene, label, onSolved }: MakeWeath
           ))}
 
         {/* The wind's: a swipe anywhere on the picture. */}
-        {gesture === "swipe" && !full && (
+        {gesture === "swipe" && !full && !auto && (
           <div aria-hidden className="absolute inset-0 z-[4] touch-none" onPointerDown={onPointerDown(-1)} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => setDrag(null)} />
         )}
 
         {/* The clouds to tap, shake or push — for a swipe, only a keyboard's
             way in (a finger swipes the picture under it). */}
         {!full &&
+          !auto &&
           sky.map(({ box }, i) =>
             gone.includes(i) ? null : (
               <button
