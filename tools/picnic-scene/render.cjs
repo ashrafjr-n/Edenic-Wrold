@@ -44,6 +44,12 @@
  *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
  *   node tools/picnic-scene/render.cjs thing bone=food:bone@float milk=food:milk@float grass=food:grass@float pellets=food:pellets@float
  *
+ * And each animal at home on Bloo's hill, the weather's look — the word
+ * cards and the course's covers (then `crop.py animals`, one box for all
+ * four, into `worlds/`):
+ *
+ *   node tools/picnic-scene/render.cjs thing world-cat=animalWorld:cat@float world-dog=animalWorld:dog@float world-cow=animalWorld:cow@float world-fish=animalWorld:fish@float
+ *
  * Nova's fruits, the friends' way (velvet clay, the friends' face) and her
  * cup — a thing with a face also writes `<file>.face.png` (where its glossy
  * eyes and mouth are), which `crop.py things … --grain` keeps grain off:
