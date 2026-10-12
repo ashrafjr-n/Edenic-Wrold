@@ -223,7 +223,9 @@ const SOUPS = {
   broccoli: { color: 0x9ccb5c, pieces: ["floret", "floret", "floret", "floret", "floret"] },
   corn: { color: 0xf6d661, pieces: ["kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "leaf"] },
   potato: { color: 0xeedcae, pieces: ["cube", "cube", "cube", "cube", "leaf", "leaf"] },
-  mix: { color: 0xf3ad5e, pieces: ["coin", "cube", "kernel", "coin", "cube", "kernel", "kernel", "leaf"] },
+  /* Nova's vegetable soup: carrot, potato and broccoli (the corn went
+     2026-10-12). */
+  mix: { color: 0xf3ad5e, pieces: ["coin", "cube", "floret", "coin", "cube", "floret", "coin", "leaf"] },
 };
 const PIECES = {
   coin: () => mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.035, 32), clay(0xe0661a, { clearcoat: 0.5 })),
