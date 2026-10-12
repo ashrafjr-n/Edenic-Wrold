@@ -2,11 +2,11 @@ import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { CUP, MAKERS } from "@/data/market";
+import { CUP, POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, Maker, PaintRound, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, Gesture, PaintRound, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -31,7 +31,7 @@ export type TaskDemoDef =
   | { kind: "paint"; round: PaintRound; pots: ColorId[] }
   | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
-  | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
+  | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "cups"; picture: StaticImageData }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
@@ -357,16 +357,16 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
   );
 }
 
-/** Make: the word, three things beside the blender (or the pot) as the
-    board deals them; the finger takes the one the word names and it flies
-    into the jar (the pot's mouth). Laid out in % of the square stage: the
-    tiles are 25% wide at 5% left, 25/51/77% top; the blender is 58% wide
-    at 38% left, as tall as its picture makes it. */
-function MakeDemo({ list, stall, into, seed }: { list: string[]; stall: Face[]; into: Maker; seed: string }) {
+/** Make: the word, three things beside the pot as the board deals them;
+    the finger takes the one the word names and it flies into the pot's
+    mouth. Laid out in % of the square stage: the tiles are 25% wide at 5%
+    left, 25/51/77% top; the pot is 58% wide at 38% left, as tall as its
+    picture makes it. */
+function MakeDemo({ list, stall, seed }: { list: string[]; stall: Face[]; seed: string }) {
   const word = list[0];
   const answer = stall.findIndex((face) => wordOf(face) === word);
   const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
-  const { empty, inside } = MAKERS[into];
+  const { empty, inside } = POT;
   const [left, top, width, height] = inside;
   const boxW = 58;
   const boxH = (boxW * empty.height) / empty.width;
@@ -635,7 +635,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "make":
-      return <MakeDemo list={demo.list} stall={demo.stall} into={demo.into} seed={demo.seed} />;
+      return <MakeDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
     case "cups":

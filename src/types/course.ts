@@ -129,12 +129,11 @@ export type Question =
       line. `items` are in the right order. */
   | { type: "order"; ask: Ask; items: Face[] }
   /** Make it: what goes in (`list` — the English word, or a recipe of a
-      few), Nova's blender (or her soup pot) and the things beside it. Drag
-      or tap each one in; once all are in, it whirs (or bubbles) and fills.
-      `full` is the blender or pot full — rendered from the same camera as
-      the empty one, so it lies exactly over it — and `serve` what it
-      pours out (a glass of juice). */
-  | { type: "make"; ask: Ask; list: string[]; stall: Face[]; into: Maker; full: StaticImageData; serve?: StaticImageData }
+      few), Nova's soup pot and the things beside it. Drag or tap each one
+      in; once all are in, it bubbles and fills. `full` is the pot full —
+      rendered from the same camera as the empty one, so it lies exactly
+      over it. */
+  | { type: "make"; ask: Ask; list: string[]; stall: Face[]; full: StaticImageData }
   /** Do you like it? One thing at a time, thumbs up or down, onto the "I
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
@@ -196,9 +195,6 @@ export interface WeatherScene {
   sky: readonly { src: StaticImageData; box: SceneRect }[];
   bits: readonly StaticImageData[];
 }
-
-/** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
-export type Maker = "blender" | "pot";
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
