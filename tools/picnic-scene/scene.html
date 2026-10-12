@@ -4317,19 +4317,19 @@ const satin = (extra = {}) => new THREE.MeshPhysicalMaterial({ vertexColors: tru
    its bottom, a big white shine up on the left and a small one down on
    the right — unlit, so they stay white. On the front of an ellipsoid. */
 const EYE_DARK = painted(512, 256, (x) => {
-  /* A sphere's map: the front is the middle of the strip. The pupil, a
-     slate iris round it, lighter at the bottom, a dark rim. */
+  /* A sphere's map: its front (+z) is a quarter of the way along. The
+     pupil, a warm slate iris round it, lighter at the bottom, a dark rim. */
   x.fillStyle = "#0b0a18";
   x.fillRect(0, 0, 512, 256);
-  const iris = x.createRadialGradient(384, 140, 10, 384, 128, 92);
+  const iris = x.createRadialGradient(128, 142, 8, 128, 128, 86);
   iris.addColorStop(0, "#07060f");
   iris.addColorStop(0.42, "#120f24");
-  iris.addColorStop(0.7, "#3b3560");
-  iris.addColorStop(0.9, "#5d5588");
+  iris.addColorStop(0.68, "#3e3056");
+  iris.addColorStop(0.9, "#6a5578");
   iris.addColorStop(1, "#0b0a18");
   x.fillStyle = iris;
   x.beginPath();
-  x.ellipse(384, 128, 92, 110, 0, 0, Math.PI * 2);
+  x.ellipse(128, 128, 86, 104, 0, 0, Math.PI * 2);
   x.fill();
 });
 function videoEye(r) {
