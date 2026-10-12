@@ -1,17 +1,22 @@
 """Stands a video still's cut-out (`cut.py`) where the 3D animal stood in
-its world, and makes the animal alone. `with.png` / `bare.png` are the
-world rendered with and without its animal, in the videos' light — the
+its world, and makes the animal alone — both as renders, so `crop.py`
+cuts them as it cuts the rest. `with.png` / `bare.png` are the world drawn
+with and without its animal (`@hd`, in the videos' light) — the
 difference between them is where it stood:
 
-    node tools/picnic-scene/render.cjs thing world-dog=animalWorld:dog@float@hd@warm wbare-dog=animalWorld:dog@float@hd@bare@warm
-    /tmp/cutenv/bin/python -I tools/picnic-scene/stand.py out/cut/dog.png out/things/world-dog.png out/things/wbare-dog.png <world.png> <thing.png> 0.86
+    node tools/picnic-scene/render.cjs thing wwith-dog=animalWorld:dog@float@hd@warm wbare-dog=animalWorld:dog@float@hd@bare@warm
+    /tmp/cutenv/bin/python -I tools/picnic-scene/stand.py out/cut/dog.png out/things/wwith-dog.png out/things/wbare-dog.png out/things/world-dog.png out/things/dog.png 0.86
+    python3 tools/picnic-scene/crop.py animals
+    python3 tools/picnic-scene/crop.py things public/assets/learn/bloo/animals/things dog --grain
 
 The cut-out's soft edge still carries the still's background: it is taken
-back out (`decontaminate`). Both get a soft contact shadow in the site's
-shadow hue and the clay buttons' grain (`crop.py`'s, the same recipe);
-the world is cut to its pixels at most 640px, the thing at most 512px.
-`scale` sizes the still to the 3D animal's height."""
-import sys, zlib
+back out (`decontaminate`), and the matte's faint floor zeroed. Both get
+a soft contact shadow in the site's shadow hue; the world comes out at
+the 1x renders' size (800px, so `crop.py animals` cuts all four worlds on
+one box), the thing at 1000px tall. `scale` sizes the still to the 3D
+animal's height. A stale `<name>.face.png` from the 3D animal is removed —
+it would keep the grain off where its eyes were."""
+import os, sys
 import numpy as np
 from PIL import Image, ImageFilter, ImageDraw
 
@@ -34,17 +39,6 @@ def decontaminate(img):
     out = np.concatenate([np.clip(fg, 0, 1), a], 2)
     return Image.fromarray((out * 255 + 0.5).astype(np.uint8), "RGBA")
 
-def grain(img, seed):
-    rng = np.random.default_rng(seed)
-    w, h = img.size
-    coarse = Image.fromarray(rng.normal(0, 1, (h // 2 + 1, w // 2 + 1)).astype(np.float32), "F").resize((w, h), Image.BICUBIC)
-    noise = 0.7 * np.asarray(coarse) + 0.45 * rng.normal(0, 1, (h, w))
-    layer = np.clip(0.5 + 0.065 * noise, 0, 1)[..., None]
-    px = np.asarray(img.convert("RGBA")).astype(np.float32) / 255
-    base = px[..., :3]
-    px[..., :3] = np.where(base < 0.5, 2 * base * layer, 1 - 2 * (1 - base) * (1 - layer))
-    return Image.fromarray((np.clip(px, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA")
-
 def shadow(size, w, h, opacity):
     """A soft contact shadow, a tint of the site's shadow hue."""
     s = Image.new("L", size, 0)
@@ -65,26 +59,24 @@ ys, xs = np.nonzero(diff)
 l, t, r, b = xs.min(), ys.min(), xs.max(), ys.max()
 h = int((b - t) * SCALE)
 w = int(cut.width * h / cut.height)
-dog = cut.resize((w, h), Image.LANCZOS)
 cx = (l + r) // 2
 world = bare.copy()
 sh = shadow((int(w * 1.4), int(w * 0.5)), w * 0.92, w * 0.16, 0.42)
 world.alpha_composite(sh, (cx - sh.width // 2, b - sh.height // 2 - int(h * 0.01)))
-world.alpha_composite(dog, (cx - w // 2, b - h))
-box = world.getchannel("A").point(lambda v: 255 if v > 6 else 0).getbbox()
-world = world.crop(box)
-world.thumbnail((640, 640), Image.LANCZOS)
-grain(world, zlib.crc32(out_world.encode())).save(out_world, optimize=True)
+world.alpha_composite(cut.resize((w, h), Image.LANCZOS), (cx - w // 2, b - h))
+world.resize((800, 800), Image.LANCZOS).save(out_world)
 
-# The thing alone: the dog over its own soft shadow, at most 512px.
+# The thing alone: the animal over its own soft shadow.
 H = 1000
-dog = cut.resize((int(cut.width * H / cut.height), H), Image.LANCZOS)
-pad = int(dog.width * 0.2)
-canvas = Image.new("RGBA", (dog.width + 2 * pad, H + int(dog.width * 0.12)), (0, 0, 0, 0))
-sh = shadow((int(dog.width * 1.3), int(dog.width * 0.4)), dog.width * 0.9, dog.width * 0.14, 0.36)
+alone = cut.resize((int(cut.width * H / cut.height), H), Image.LANCZOS)
+pad = int(alone.width * 0.2)
+canvas = Image.new("RGBA", (alone.width + 2 * pad, H + int(alone.width * 0.12)), (0, 0, 0, 0))
+sh = shadow((int(alone.width * 1.3), int(alone.width * 0.4)), alone.width * 0.9, alone.width * 0.14, 0.36)
 canvas.alpha_composite(sh, (canvas.width // 2 - sh.width // 2, H - sh.height // 2 - 6))
-canvas.alpha_composite(dog, (pad, 0))
-canvas = canvas.crop(canvas.getchannel("A").point(lambda v: 255 if v > 6 else 0).getbbox())
-canvas.thumbnail((512, 512), Image.LANCZOS)
-grain(canvas, zlib.crc32(out_thing.encode())).save(out_thing, optimize=True)
-print("3D dog box", (l, t, r, b), "world", world.size, "thing", canvas.size)
+canvas.alpha_composite(alone, (pad, 0))
+canvas.save(out_thing)
+for out in (out_world, out_thing):
+    face = out.replace(".png", ".face.png")
+    if os.path.exists(face):
+        os.remove(face)
+print("3D animal at", (l, t, r, b), "->", out_world, out_thing)
