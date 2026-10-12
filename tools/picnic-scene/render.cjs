@@ -31,8 +31,7 @@
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
  * seen from higher up; `@front`: seen from straight ahead; `@hd`: twice the
- * pixels, for fur; `@warm`: the videos' light; `@bare`: an animal's world
- * without its animal, for `stand.py`). Then
+ * pixels, for fur). Then
  * `crop.py things <dest>`.
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
@@ -43,12 +42,6 @@
  *
  *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty cow=cow cow-brown=cow:brown fish=fishfriend@float fish-blue=fishfriend:blue@float
  *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
- *
- * And each animal at home on Bloo's hill, the weather's look — the word
- * cards and the course's covers (then `crop.py animals`, one box for all
- * four, into `worlds/`):
- *
- *   node tools/picnic-scene/render.cjs thing world-cat=animalWorld:cat@float world-dog=animalWorld:dog@float world-cow=animalWorld:cow@float world-fish=animalWorld:fish@float
  *
  * Nova's fruits, the friends' way (velvet clay, the friends' face) and her
  * cup — a thing with a face also writes `<file>.face.png` (where its glossy
@@ -120,8 +113,6 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         ...(flags.includes("top") ? { lift: "58" } : {}),
         ...(flags.includes("front") ? { lift: "6" } : {}),
         ...(flags.includes("hd") ? { px: "2" } : {}),
-        ...(flags.includes("bare") ? { bare: "1" } : {}),
-        ...(flags.includes("warm") ? { warm: "1" } : {}),
       });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
