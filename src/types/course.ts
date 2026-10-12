@@ -148,10 +148,6 @@ export type Question =
       swap places, and the child taps the one it is under — one miss and
       the round starts again, the thing under a new cup. */
   | { type: "cups"; ask: Ask; word: string; picture: StaticImageData }
-  /** Feed it: the animal (`picture`) and three bites of its `food` in
-      front of it — drag or tap each one and it flies into its `mouth` (%
-      of the picture). Nothing can go wrong — all the food is its own. */
-  | { type: "feed"; ask: Ask; word: string; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
   /** Make the weather by hand, in three goes, on Bloo's hill: tap the
       cloud (rain), push the clouds off the sun, swipe across the sky
       (wind), shake the cloud (snow). Nothing can go wrong — the weather is

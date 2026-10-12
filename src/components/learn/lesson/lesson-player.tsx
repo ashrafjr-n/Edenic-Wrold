@@ -33,7 +33,6 @@ import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
 import { RevealSteps } from "./reveal-steps";
 import { CupsGame } from "./cups-game";
-import { FeedAnimal } from "./feed-animal";
 import { MakeWeather, type MakeWeatherHandle } from "./make-weather";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
@@ -441,8 +440,6 @@ export function LessonPlayer({
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
     } else if (q.type === "cups") {
       body = <CupsGame key={seed} word={q.word} picture={q.picture} cupAria={lines.cupAria} onSolved={onSolved} onMiss={onMiss} />;
-    } else if (q.type === "feed") {
-      body = <FeedAnimal key={seed} word={q.word} picture={q.picture} food={q.food} mouth={q.mouth} biteAria={lines.biteAria} onSolved={onSolved} />;
     } else if (q.type === "weather") {
       body = (
         <MakeWeather key={seed} ref={weather} word={q.word} gesture={q.gesture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} onSolved={onSolved} />
