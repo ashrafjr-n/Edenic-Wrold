@@ -42,11 +42,6 @@ boxes and picks), at most 640px, with the grain, into
 
     python3 tools/picnic-scene/crop.py weather
 
-Bloo's animals at home — run after `render.cjs thing world-cat=animalWorld:cat@float
-…` (all four): the same, into `public/assets/learn/bloo/animals/worlds/<animal>.png`.
-
-    python3 tools/picnic-scene/crop.py animals
-
 Making the weather — run after `render.cjs weathersteps sunny rainy windy
 snowy`: crops every frame and sky layer of the four on ONE box (the
 frames of a weather cross-fade, its sky lies over them), with one grain
@@ -122,9 +117,6 @@ def one_box(prefix, names, dest):
 
 if NAME == "weather":
     one_box("weather", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/scenes")
-
-if NAME == "animals":
-    one_box("world", ["cat", "dog", "cow", "fish"], "public/assets/learn/bloo/animals/worlds")
 
 if NAME == "weathersteps":
     weathers = ["sunny", "rainy", "windy", "snowy"]
