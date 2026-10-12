@@ -2063,7 +2063,7 @@ const GARDENS = {
     lift: 18,
     world: plants([[bed, -3.05, 0.52], [bananaPlant, 0, 0.62], [bed, 3.05, 0.52]]),
     foods: [
-      { food: "carrot", make: () => FRIEND_FOOD.carrot(), scale: 0.85, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
+      { food: "carrot", make: () => videoCarrot(0), scale: 0.62, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
       { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
       { food: "potato", make: friendPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
     ],
@@ -4477,8 +4477,9 @@ function videoDog() {
 
 /* The videos' carrot: fat at its rounded shoulder, tapering to a blunt
    round tip, curved grooves across its front (deeper orange in them),
-   smooth satin clay; a fan of short, chubby olive leaves on top. No face. */
-function videoCarrot() {
+   smooth satin clay; a fan of short, chubby olive leaves on top. No face.
+   Leaning `tilt` alone; upright in Nova's carrot bed. */
+function videoCarrot(tilt = -0.32) {
   const g = new THREE.Group();
   const geo = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0], [0.08, 0.02], [0.18, 0.13], [0.3, 0.42], [0.4, 0.82], [0.47, 1.17], [0.49, 1.38], [0.44, 1.53], [0.28, 1.62], [0, 1.65]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(220), 180);
   /* Each groove: its height, the way it faces and how far round it goes. */
@@ -4511,11 +4512,11 @@ function videoCarrot() {
     tint(leaf, (v) => [olive[i % 2].clone().lerp(new THREE.Color(0xc3c76a), Math.max(0, (v.y - 1.75) * 1.4)), 0]);
     g.add(mesh(leaf, satin({ roughness: 0.55 })));
   });
-  g.rotation.z = -0.32;
+  g.rotation.z = tilt;
   return g;
 }
 
-const VIDEO_THINGS = { dog: videoDog, carrot: videoCarrot };
+const VIDEO_THINGS = { dog: videoDog, carrot: () => videoCarrot() };
 ITEMS.video = (what) => VIDEO_THINGS[what]();
 
 /* A see-through floor that only shows shadows, for the item layers. */
