@@ -1706,6 +1706,35 @@ function fruitTree(leafColor) {
   return { group: g };
 }
 
+/* A tomato plant: a vine winding up a wooden stake, leaves all the way up
+   — the tomatoes (the videos' own) hang on it as the garden's foods. */
+function tomatoPlant() {
+  const g = new THREE.Group();
+  g.add(taperTube([[0, 0, -0.25], [0, 1.6, -0.25], [0, 3.1, -0.25]], 0.09, 0.07, clay(0xa0703f, { roughness: 0.8, clearcoat: 0.1 })));
+  const vine = clay(0x5a9a3a, { roughness: 0.6, clearcoat: 0.2 });
+  const turns = Array.from({ length: 13 }, (_, i) => {
+    const t = i / 12;
+    return [Math.sin(t * 9) * 0.22, 0.05 + t * 3.0, -0.25 + Math.cos(t * 9) * 0.22];
+  });
+  g.add(taperTube(turns, 0.1, 0.06, vine));
+  const leaf = clay(0x5fbf58, { clearcoat: 0.35, roughness: 0.55 });
+  const light = clay(0x7fd06a, { clearcoat: 0.35, roughness: 0.55 });
+  /* Leaves out to both sides, facing the front (a leaf lies along +x:
+     0 sends it right, π left), rising up the vine, each with a smaller
+     one beside it. */
+  for (let i = 0; i < 16; i++) {
+    const side = i % 2 ? Math.PI : 0;
+    const y = 0.35 + i * 0.18;
+    for (const [len, w, lift] of [[1.05, 0.46, 0.45], [0.6, 0.28, -0.15]]) {
+      const l = plumpLeaf(len, w, (i + (len < 1 ? 1 : 0)) % 2 ? light : leaf);
+      l.position.set(0, y, -0.15);
+      l.rotation.set(0.25, side + (i % 4 < 2 ? 0.25 : -0.25), lift);
+      g.add(l);
+    }
+  }
+  return { group: g };
+}
+
 /* A banana plant: a thick soft stem and a crown of long leaves, a dark
    knob under them where the bunch hangs from. */
 function bananaPlant() {
@@ -2061,10 +2090,10 @@ const GARDENS = {
     view: 9.4,
     centreY: 2.25,
     lift: 18,
-    world: plants([[bed, -3.05, 0.52], [bananaPlant, 0, 0.62], [bed, 3.05, 0.52]]),
+    world: plants([[bed, -3.05, 0.52], [tomatoPlant, 0, 0.62], [bed, 3.05, 0.52]]),
     foods: [
       { food: "carrot", make: () => videoCarrot(0), scale: 0.62, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
-      { food: "banana", make: () => FRIEND_FOOD.banana(true), scale: 0.74, at: [[-0.45, 1.75, 0.75], [0.22, 1.85, 0.8], [0.89, 1.75, 0.75]], tilt: [14, 0, -14] },
+      { food: "tomato", make: () => videoTomato(), scale: 0.42, at: [[-0.55, 1.62, 0.7], [0.5, 1.48, 0.7], [-0.4, 0.92, 0.75], [0.52, 0.8, 0.75]], tilt: [-6, 5, 7, -4] },
       { food: "potato", make: videoPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
     ],
   },
