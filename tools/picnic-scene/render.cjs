@@ -76,6 +76,13 @@
  *
  *   node tools/picnic-scene/render.cjs thing vdog=video:dog@front@hd vcarrot=video:carrot@hd@float
  *
+ * On the site (the dog is the video's own instead — `cut.py`): Nova's
+ * vegetables into `nova/fruits/things` and the pumpkin into
+ * `nova/seasons/things` (`crop.py things <dest> … --grain`); her carrot and
+ * potato beds come with `render.cjs harvest vegetables`:
+ *
+ *   node tools/picnic-scene/render.cjs thing carrot=video:carrot@hd@float potato=video:potato@hd@float broccoli=video:broccoli@hd@float tomato=video:tomato@hd@float pepper=video:pepper@hd@float pumpkin=video:pumpkin@hd@float
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
