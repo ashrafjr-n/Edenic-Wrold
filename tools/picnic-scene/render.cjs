@@ -119,6 +119,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         ...(flags.includes("top") ? { lift: "58" } : {}),
         ...(flags.includes("front") ? { lift: "6" } : {}),
         ...(flags.includes("hd") ? { px: "2" } : {}),
+        ...(flags.includes("bare") ? { bare: "1" } : {}),
+        ...(flags.includes("warm") ? { warm: "1" } : {}),
       });
       const layers = await render(page, query.toString());
       save(out, file, layers[thing]);
