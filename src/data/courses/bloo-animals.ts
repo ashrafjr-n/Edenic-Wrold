@@ -13,18 +13,13 @@ import catHome from "../../../public/assets/learn/bloo/animals/homes/cat.png";
 import dogHome from "../../../public/assets/learn/bloo/animals/homes/dog.png";
 import cowHome from "../../../public/assets/learn/bloo/animals/homes/cow.png";
 import fishHome from "../../../public/assets/learn/bloo/animals/homes/fish.png";
-import catWorld from "../../../public/assets/learn/bloo/animals/worlds/cat.png";
-import dogWorld from "../../../public/assets/learn/bloo/animals/worlds/dog.png";
-import cowWorld from "../../../public/assets/learn/bloo/animals/worlds/cow.png";
-import fishWorld from "../../../public/assets/learn/bloo/animals/worlds/fish.png";
 
-/** One animal to learn: its picture (the lesson's coat), the same animal at
-    home on Bloo's hill (the word card and the covers — the weather's look),
-    a second coat for the review (a cat is a cat in any color), where it
-    lives, and that home's box color in the review. */
+/** One animal to learn: its picture (the lesson's coat — the animal on its
+    own, no world behind it, direct request 2026-10-12), a second coat for
+    the review (a cat is a cat in any color), where it lives, and that
+    home's box color in the review. */
 interface Pet {
   picture: StaticImageData;
-  world: StaticImageData;
   other: StaticImageData;
   home: StaticImageData;
   box: ColorId;
@@ -32,10 +27,10 @@ interface Pet {
 
 /** In teaching order. */
 const ANIMALS: Record<Animal, Pet> = {
-  cat: { picture: cat, world: catWorld, other: catGrey, home: catHome, box: "purple" },
-  dog: { picture: dog, world: dogWorld, other: dogGolden, home: dogHome, box: "orange" },
-  cow: { picture: cow, world: cowWorld, other: cowBrown, home: cowHome, box: "red" },
-  fish: { picture: fish, world: fishWorld, other: fishBlue, home: fishHome, box: "blue" },
+  cat: { picture: cat, other: catGrey, home: catHome, box: "purple" },
+  dog: { picture: dog, other: dogGolden, home: dogHome, box: "orange" },
+  cow: { picture: cow, other: cowBrown, home: cowHome, box: "red" },
+  fish: { picture: fish, other: fishBlue, home: fishHome, box: "blue" },
 };
 const ORDER = Object.keys(ANIMALS) as Animal[];
 
@@ -46,12 +41,12 @@ const ORDER = Object.keys(ANIMALS) as Animal[];
  * apart is the review's. (Feed it, the third step, was removed 2026-10-12.)
  */
 function animalLesson(animal: Animal, i: number): LessonDef {
-  const { world } = ANIMALS[animal];
+  const { picture } = ANIMALS[animal];
   return {
     reel: `/assets/learn/bloo/animals/reels/${i + 1}.mp4`,
-    cover: [world],
+    cover: [picture],
     questions: [
-      { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture: world },
+      { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture },
       { type: "spell", ask: { key: "spell", vars: { word: animal } }, word: animal },
     ],
   };
@@ -81,7 +76,7 @@ export const blooAnimals: LessonDef[] = [
      (each box says whose it is), then two words spelled from the picture
      alone — in the coat the lessons did not show. */
   {
-    cover: ORDER.map((animal) => ANIMALS[animal].world),
+    cover: ORDER.map((animal) => ANIMALS[animal].picture),
     questions: [
       {
         type: "sort",
