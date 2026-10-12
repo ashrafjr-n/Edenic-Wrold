@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Market review (built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
+| Nova | Fruits & Vegetables | Apple · Banana · Orange · Grapes · Carrot · Broccoli · Corn · Potato · Tomato · Pepper · Market review (built 2026-10-02; tomato and pepper added 2026-10-12 from the videos — reel → word → spell only; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
 | Bloo | Animals | Cat · Dog · Cow · Fish · Animals review (built 2026-10-07, one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
@@ -526,16 +526,23 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 - [x] **Animals and Seasons: the third step removed** (2026-10-12): Feed it
       and Make it come, with their components, demos, strings, CSS and
       pictures; the lessons are reel → word → spell.
-- [x] **The task button beside the back button** (2026-10-12), top left at
-      every width; on a desktop the step trail starts there.
+- [x] **The task button at the far right** (2026-10-12, after a few hours
+      beside the back button), on the back button's line at every width; on
+      a desktop the step trail ends there.
 - [x] **The videos' look, first two** (2026-10-12): the dog is its video's
       own puppy (cut out of the still, stood on the 3D hill; a caramel
       recolour as the review's second coat), the carrot the videos'
       faceless satin clay (its picture and Nova's carrot bed).
-- [ ] The videos' look for the rest with a still (cat, fish, potato,
-      broccoli, pumpkin, the sun), then the new lessons (elephant, mouse,
-      bird, parrot, turtle, gecko, tomato, pepper) — each new thing a
-      lesson: video → listen → spell.
+- [x] **The videos' vegetables** (2026-10-12): potato, broccoli and the
+      Seasons' pumpkin restyled (no face; the pumpkin without the video's
+      carved lantern face), the potato bed re-rendered; tomato and pepper
+      added as Fruits lessons 9 and 10 (reel → word → spell), the review
+      now lesson 11. The animals are shown on their own (the worlds
+      deleted).
+- [ ] The videos' look for the rest with a still (cat, fish, the sun, the
+      weather's clouds and snowman), then the new animal lessons
+      (elephant, mouse, bird, parrot, turtle, gecko) — each a lesson:
+      video → listen → spell.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
