@@ -515,15 +515,14 @@ export function LessonPlayer({
 
   return (
     <>
-      {/* The chrome row: out to the course, and what to do on this step.
-          Phone and tablet: the round task button, centred between the back
-          button and a spacer of its own width. Desktop: the lesson's steps
-          as a trail in the middle of the page, the current one being that
-          same round button. */}
+      {/* The chrome row: out to the course, and what to do on this step —
+          both at the top left, side by side (direct request 2026-10-12;
+          it was in the middle). Phone and tablet: the round task button
+          beside the back button. Desktop: the lesson's steps as a trail
+          beside it, the current one being that same round button. */}
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
-        <div className="flex min-w-0 flex-1 justify-center lg:hidden">{task}</div>
-        <span aria-hidden className="h-12 w-12 shrink-0 sm:h-14 sm:w-14 lg:hidden" />
-        <div className="hidden lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2">
+        <div className="flex min-w-0 flex-1 justify-start lg:hidden">{task}</div>
+        <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-start">
           <StepTrail kinds={kinds} at={at} current={current} tone={courseTone} />
         </div>
       </BackRow>
