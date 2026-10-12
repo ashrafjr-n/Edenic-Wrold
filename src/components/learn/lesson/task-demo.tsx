@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Heart, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
+import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { CUP, MAKERS } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
@@ -34,7 +34,6 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; into: Maker; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "cups"; picture: StaticImageData }
-  | { kind: "feed"; picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
   | { kind: "change"; scene: RevealScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
@@ -563,48 +562,6 @@ function CupsDemo({ picture }: { picture: StaticImageData }) {
   );
 }
 
-/** Where the feed demo's bites lie (% of the stage): `DEMO_BITE` wide,
-    in a row at `DEMO_ROW`, under the animal. */
-const DEMO_BITE = 20;
-const DEMO_ROW = 74;
-const DEMO_BITES = [12, 40, 68];
-
-/** Feed: the animal over its food; the finger taps the first bite and it
-    flies into the animal's mouth — the animal munches, a heart floats up.
-    The other two bites stay where they are. Laid out in % of the square
-    stage: the animal 60% wide, standing on the line 70% down. */
-function FeedDemo({ picture, food, mouth }: { picture: StaticImageData; food: StaticImageData; mouth: readonly [number, number] }) {
-  const animalH = (60 * picture.height) / picture.width;
-  const top = Math.max(3, 70 - animalH);
-  const target = { x: 20 + (60 * mouth[0]) / 100, y: top + (animalH * mouth[1]) / 100 };
-  const fly = {
-    "--fly-x": `${((target.x - (DEMO_BITES[0] + DEMO_BITE / 2)) / DEMO_BITE) * 100}%`,
-    "--fly-y": `${((target.y - (DEMO_ROW + DEMO_BITE / 2)) / DEMO_BITE) * 100}%`,
-  } as CSSProperties;
-  return (
-    <div className="relative h-full w-full">
-      <span className="demo-munch absolute left-[20%] w-[60%]" style={{ top: `${top}%`, height: `${animalH}%` }}>
-        <Image src={picture} alt="" fill sizes="12rem" className="object-contain" />
-      </span>
-      <span className="demo-heart absolute z-[2] h-[12%] w-[12%] text-[var(--accent)]" style={{ left: `${target.x}%`, top: `${target.y}%` }}>
-        <Heart className="h-full w-full fill-current" strokeWidth={1.5} />
-      </span>
-      {DEMO_BITES.map((left, i) => (
-        <span key={left} className="absolute" style={{ left: `${left}%`, top: `${DEMO_ROW}%`, width: `${DEMO_BITE}%`, height: `${DEMO_BITE}%` }}>
-          <span className={`absolute inset-0 z-[1] ${i === 0 ? "demo-bite" : ""}`} style={i === 0 ? fly : undefined}>
-            <Image src={food} alt="" fill sizes="4rem" className="object-contain" />
-          </span>
-          {i === 0 && (
-            <span className="absolute left-1/2 top-1/2">
-              <Finger />
-            </span>
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 /** Make the weather: the hill before it and the first go — the finger taps
     the cloud (rain starts), shakes it (snow starts), pushes one cloud off
     the sun (the hill brightens) or sweeps across the sky (a gust blows);
@@ -702,8 +659,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <LikeDemo face={demo.face} />;
     case "cups":
       return <CupsDemo picture={demo.picture} />;
-    case "feed":
-      return <FeedDemo picture={demo.picture} food={demo.food} mouth={demo.mouth} />;
     case "weather":
       return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
