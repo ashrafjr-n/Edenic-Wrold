@@ -417,6 +417,8 @@ brightens until the sun sparkles; swipe across the sky and the wind
 blows — the tree bends, leaves fly and the kite goes up; shake the cloud
 and it snows until the hill is white and a snowman stands on it. A tap
 works too, so nobody gets stuck, and the task button shows the gesture.
+A child who would rather not can press Skip: the weather then makes itself,
+slowly, in front of them, and Next appears once it is done.
 The review is the exam: eight things a child needs for the weather
 (sunglasses and a sun hat, an umbrella and a rain hat, a kite and a
 pinwheel, a scarf and a winter hat) go into the four weathers' boxes —
