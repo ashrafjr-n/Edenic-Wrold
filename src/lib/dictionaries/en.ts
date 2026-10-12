@@ -166,7 +166,6 @@ export const en = {
     balloonAria: "{color} balloon",
     seasonSpotAria: "Tap to bring more {word}",
     cupAria: "Cup {n}",
-    biteAria: "Feed the {word}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -197,7 +196,6 @@ export const en = {
     cookSoup: "Make soup with the {thing}!",
     mixJuice: "Make a fruit juice!",
     likeThem: "Do you like them?",
-    feedAnimal: "Feed the {thing}!",
     thisWeather: "It is {weather}!",
     rainTap: "Tap the cloud to make it rainy!",
     sunPush: "Push the clouds away to make it sunny!",
@@ -225,7 +223,6 @@ export const en = {
     harvest: "Pick",
     change: "Make",
     cups: "Find",
-    feed: "Feed",
     weather: "Make",
   },
   activities: {

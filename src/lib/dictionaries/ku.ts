@@ -161,7 +161,6 @@ export const ku: Dictionary = {
     balloonAria: "بالۆنا {color}",
     seasonSpotAria: "دەست بدە دا {word} پتر بێت",
     cupAria: "پەرداخا {n}",
-    biteAria: "خوارنێ بدە {word}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -191,7 +190,6 @@ export const ku: Dictionary = {
     cookSoup: "شۆربەیا {thing} چێ بکە!",
     mixJuice: "ئاڤا فێقیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
-    feedAnimal: "خوارنێ بدە {thing}!",
     thisWeather: "هەوا {weather}ە!",
     rainTap: "دەست بدە ئەوری دا باران ببارێت!",
     sunPush: "ئەوران پاڵ بدە دا ڕۆژ دەرکەڤیت!",
@@ -218,7 +216,6 @@ export const ku: Dictionary = {
     harvest: "بچنە",
     change: "چێ بکە",
     cups: "بدۆزە",
-    feed: "خوارنێ بدە",
     weather: "چێ بکە",
   },
   activities: {
