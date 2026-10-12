@@ -197,16 +197,6 @@ export interface WeatherScene {
   bits: readonly StaticImageData[];
 }
 
-/** A picture that comes step by step under a magic button — a season
-    coming to Nova's tree (`tools/picnic-scene`, `?season=`): the picture
-    before it, then one per step with everything before it (`frames` is one
-    longer than `spots`), and where each step is tapped in (% of the
-    picture). */
-export interface RevealScene {
-  frames: readonly StaticImageData[];
-  spots: readonly (readonly [number, number])[];
-}
-
 /** What a Make fills: Nova's blender (a juice) or her soup pot (a soup). */
 export type Maker = "blender" | "pot";
 
