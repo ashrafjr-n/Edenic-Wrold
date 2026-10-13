@@ -6,6 +6,8 @@ import { courseLessons } from "@/data/courses";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { LessonPlayer } from "@/components/learn/lesson/lesson-player";
+import { CourseBackdrop } from "@/components/learn/lesson/course-backdrop";
+import { BACKDROPS } from "@/data/backdrops";
 import { getDictionary, getLocale } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -49,13 +51,15 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
   const title = course.items[n - 1];
   const def = courseLessons[lesson.id][n - 1];
   const dir = dirFor(locale);
+  const backdrop = BACKDROPS[lesson.id];
 
   if (def.questions.length > 0) {
     return (
       /* `overflow-x-clip`, never `-hidden`: `hidden` makes `<main>` a scroll
-         container and breaks the back row's `sticky`. */
+         container and breaks the back row's `sticky`. `isolate`: the
+         course's backdrop sits under the steps, above the body's ground. */
       <main
-        className="relative flex flex-1 flex-col overflow-x-clip pb-4 lg:pb-0"
+        className="relative isolate flex flex-1 flex-col overflow-x-clip pb-4 lg:pb-0"
         style={characterAccent(character)}
       >
         <LessonPlayer
@@ -74,6 +78,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           dict={dict}
           dir={dir}
         />
+        {backdrop && <CourseBackdrop backdrop={backdrop} />}
       </main>
     );
   }
