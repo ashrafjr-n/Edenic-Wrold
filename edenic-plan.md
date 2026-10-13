@@ -603,8 +603,9 @@ Before calling Learn done (easy to forget):
       Animals), so old numbers point at the wrong lesson — bump the store's
       version and reset or move it.
 - [ ] Known: the word card scrolls 18px at 360x640 (every course).
-- [ ] `code hygiene` — dead 3D builders (the old fruits, cat, dog, fish),
-      `GARDENS`' single-food gardens, `public/things-in-videos/` deleted.
+- [x] `code hygiene` (2026-10-13) — dead CSS, an unreachable colour
+      branch, ~950 lines of dead render builders (output proven identical).
+- [ ] `public/things-in-videos/` deleted — the user's call (untracked).
 - [ ] A production build and a real phone/tablet run (never done yet):
       load time, no console errors, sound and video on iOS Safari.
 - [ ] Accessibility pass: keyboard through every step, screen-reader
