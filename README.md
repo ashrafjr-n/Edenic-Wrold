@@ -89,6 +89,12 @@ there:
 Claymorphism with a sky blue and a bubblegum pink as the two hero colors: soft
 rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
 
+- Every lesson plays in its course's world: a soft, blurred clay scene behind
+  its steps, washed toward the ground (and dimmed at night) so the step stays
+  what the eye goes to, in a frame for each screen orientation. The world is
+  the course's (Pinki's picnic meadow, Nova's garden, the videos' pastel path…)
+  and what is in it is the lesson's own — circles in the circle lesson, red
+  things and a red easel in the red one, carrots growing in the carrot one.
 - The page ground is a very pale blue — close to white, but never actually white.
   White cards sit on top of it, and that narrow contrast is what gives them their
   lift, so card shadows are tuned to carry it.
@@ -217,7 +223,8 @@ public/
                             the circles' picnic, then squares/, triangles/
                             and rectangles/; colors/ holds the ten paint
                             pots, the things to paint (grey and painted),
-                            the five color picnics and the same placeholder
+                            the five color picnics, backdrop/ (each lesson's
+                            blurred world) and the same placeholder
                             reels. All pictures are rendered by
                             tools/picnic-scene — none come from outside)
   assets/learn/nova/        Nova's courses, rendered the same way: fruits/
@@ -226,18 +233,20 @@ public/
                             review's soup, and garden/: the review's
                             garden, in layers, and her basket), seasons/
                             (scenes/: the island under each season;
-                            things/: the review's eight things to sort), and each course's placeholder
+                            things/: the review's eight things to sort), and each course's
+                            backdrop/ (each lesson's blurred world) and placeholder
                             reels
   assets/learn/bloo/        Bloo's Animals, rendered the same way: animals/
-                            (things/: each animal on its own — the four the review sorts in two coats,
+                            (things/: each animal on its own — the three the review sorts in two coats,
                             homes/: where each lives, the review's boxes)
                             and its placeholder reels; weather/
                             (scenes/: his hill under each weather, make/:
                             each weather step by step and its sky as
                             layers of their own, bits/: the drops, flakes,
                             leaves, swirls and sparkles, wear/: what a child
-                            needs for each, the review's things) and its
-                            placeholder reels
+                            needs for each, the review's things); each
+                            course's backdrop/ (each lesson's blurred world)
+                            and its placeholder reels
   assets/play/              The fifteen puzzle pictures, the Memory Match
                             scene, the trail cloud and Nova's trail poses
 ```
