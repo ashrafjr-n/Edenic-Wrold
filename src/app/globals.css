@@ -2290,6 +2290,30 @@ button:disabled,
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* `CourseBackdrop`: the course's blurred world, the frame for the screen's
+   orientation, washed toward the ground (pale by day, dark at night) so
+   the step stays what the eye goes to. */
+.course-backdrop {
+  background: var(--backdrop-portrait) center / cover no-repeat;
+}
+
+@media (orientation: landscape) {
+  .course-backdrop {
+    background-image: var(--backdrop-landscape);
+  }
+}
+
+.course-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--background) 40%, transparent);
+}
+
+[data-theme="dark"] .course-backdrop::after {
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+}
+
 .anim-fade-up {
   animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
