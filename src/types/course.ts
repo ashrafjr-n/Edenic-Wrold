@@ -9,7 +9,7 @@ export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" 
 /** The four seasons Nova's Seasons course teaches, in order. */
 export type Season = "spring" | "summer" | "fall" | "winter";
 
-/** The four animals Bloo's Animals course teaches, in order. */
+/** The four animals of Bloo's review Sort (each has a home), in order. */
 export type Animal = "cat" | "dog" | "cow" | "fish";
 
 /** The four weathers Bloo's Weather course teaches, in order. */
@@ -109,8 +109,9 @@ export type Question =
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the
-      English word in clay letters — a color word in its own `color`. */
-  | { type: "word"; ask: Ask; word: string; shape?: ShapeId; picture?: StaticImageData; color?: ColorId }
+      English word in clay letters — a color word in its own `color`. A
+      `tilt` picture (the videos' own animal) leans toward the finger. */
+  | { type: "word"; ask: Ask; word: string; shape?: ShapeId; picture?: StaticImageData; color?: ColorId; tilt?: boolean }
   /** Build the word from its shuffled letters, by tap or drag. With a
       `picture`, the picture is shown INSTEAD of the word — spell it from
       memory. */
