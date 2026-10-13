@@ -350,6 +350,7 @@ export function LessonPlayer({
           word={q.word}
           shape={q.shape}
           picture={q.picture}
+          tilt={q.tilt}
           tone={q.color && COLORS[q.color].letter}
           cue={lessonCue.word(q.word)}
           label={format(lines.hearWord, { word: q.word })}

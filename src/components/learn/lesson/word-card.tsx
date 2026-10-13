@@ -3,6 +3,7 @@ import type { ShapeId } from "@/types/course";
 import { CueButton } from "./cue-button";
 import { ClayWord, type LetterTone } from "./clay-word";
 import { FaceView } from "./face";
+import { TiltPicture } from "./tilt-picture";
 
 interface WordCardProps {
   word: string;
@@ -10,6 +11,8 @@ interface WordCardProps {
   shape?: ShapeId;
   /** Or a picture of what it names — a color's paint pot. */
   picture?: StaticImageData;
+  /** The picture leans toward the finger (`TiltPicture`). */
+  tilt?: boolean;
   /** One tone for all its letters — a color word in its own color. */
   tone?: LetterTone;
   /** The word's own clip — `lessonCue.word`. */
@@ -24,7 +27,7 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, tone, cue, label }: WordCardProps) {
+export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordCardProps) {
   return (
     /* Desktop: side by side — the shape big on the left, the speaker above
        the word on the right. The two wrappers are `contents` below `lg`, so
@@ -38,7 +41,11 @@ export function WordCard({ word, shape, picture, tone, cue, label }: WordCardPro
           className="anim-pop-in relative flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]"
           style={{ animationDelay: "0.05s" }}
         >
-          {picture ? (
+          {picture && tilt ? (
+            <TiltPicture>
+              <Image src={picture} alt="" fill preload sizes="(min-width: 1024px) 15rem, 10rem" draggable={false} className="pointer-events-none select-none object-contain" />
+            </TiltPicture>
+          ) : picture ? (
             <Image src={picture} alt="" fill preload sizes="(min-width: 1024px) 15rem, 10rem" className="object-contain" />
           ) : (
             shape && <FaceView face={{ kind: "shape", shape }} size="tile" />
