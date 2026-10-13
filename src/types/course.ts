@@ -9,8 +9,8 @@ export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" 
 /** The four seasons Nova's Seasons course teaches, in order. */
 export type Season = "spring" | "summer" | "fall" | "winter";
 
-/** The four animals of Bloo's review Sort (each has a home), in order. */
-export type Animal = "cat" | "dog" | "cow" | "fish";
+/** The three animals of Bloo's review Sort (each has a home), in order. */
+export type Animal = "cat" | "dog" | "fish";
 
 /** The four weathers Bloo's Weather course teaches, in order. */
 export type Weather = "sunny" | "rainy" | "windy" | "snowy";
