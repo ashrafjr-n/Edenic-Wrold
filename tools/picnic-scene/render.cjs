@@ -12,7 +12,7 @@
  * garden without its food, a mask of what stands in front of it, each food
  * alone, and `meta.json`. Then `crop.py harvest-<garden>`.
  *
- *   node tools/picnic-scene/render.cjs harvest fruits vegetables
+ *   node tools/picnic-scene/render.cjs harvest vegetables
  *
  * Nova's basket alone (it stands beside the garden) — `out/basket/`: the
  * basket, a mask of its near half and `meta.json` (its mouth). Then
@@ -31,23 +31,18 @@
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
  * seen from higher up; `@front`: seen from straight ahead; `@hd`: twice the
- * pixels, for fur). Then
+ * pixels, for fine detail — the videos' vegetables). Then
  * `crop.py things <dest>`.
  *
  *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
  *
- * Bloo's animals, the friends' way too (velvet clay, the friends' face) —
- * each in two coats (`things/`) and where each lives (`homes/`, renamed
- * `home-cat.png` → `cat.png` after cropping); both cropped with `--grain`:
+ * Where Bloo's animals live (`homes/`, renamed `home-cat.png` → `cat.png`
+ * after cropping; the animals themselves are the videos' own — `cut.py`)
+ * and Nova's cup, the friends' way (velvet clay), cropped with `--grain` —
+ * a thing with a face also writes `<file>.face.png` (where its glossy eyes
+ * and mouth are), which `crop.py things … --grain` keeps grain off:
  *
- *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty fish=fishfriend@float fish-blue=fishfriend:blue@float
  *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-fish=fishbowl
- *
- * Nova's fruits, the friends' way (velvet clay, the friends' face) and her
- * cup — a thing with a face also writes `<file>.face.png` (where its glossy
- * eyes and mouth are), which `crop.py things … --grain` keeps grain off:
- *
- *   node tools/picnic-scene/render.cjs thing apple=fruit:apple banana=fruit:banana orange=fruit:orange grapes=fruit:grapes carrot=fruit:carrot broccoli=fruit:broccoli corn=fruit:corn potato=fruit:potato
  *   node tools/picnic-scene/render.cjs thing cup=cup@float
  *
  * Bloo's weather — what a child needs for each, the review's things to
@@ -69,14 +64,8 @@
  *   node tools/picnic-scene/render.cjs weathersteps sunny rainy windy snowy
  *   node tools/picnic-scene/render.cjs thing drop=weatherbit:drop@float@front flake=weatherbit:flake@float@front leaf=weatherbit:leaf@float@front leaf2=weatherbit:leaf2@float@front swirl=weatherbit:swirl@float@front sparkle=weatherbit:sparkle@float@front
  *
- * The videos' look (2026-10-12, a first pair for the user to judge, side
- * by side with the videos' stills): plush animals in shell fur and smooth
- * satin vegetables with no face, in the videos' warm light — `@hd`, for
- * the fur. Cropped with `--grain` like the rest:
- *
- *   node tools/picnic-scene/render.cjs thing vdog=video:dog@front@hd vcarrot=video:carrot@hd@float
- *
- * On the site (the dog is the video's own instead — `cut.py`): Nova's
+ * The videos' look (2026-10-12): smooth satin vegetables with no face, in
+ * the videos' warm light, cropped with `--grain` like the rest — Nova's
  * vegetables into `nova/fruits/things` and the pumpkin into
  * `nova/seasons/things` (`crop.py things <dest> … --grain`); her carrot and
  * potato beds come with `render.cjs harvest vegetables`:
