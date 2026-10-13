@@ -210,6 +210,8 @@ public/
                             reels (shapes/reels/1–4.mp4 are placeholders cut
                             from Big Buck Bunny, CC BY 3.0 Blender Foundation,
                             until the real reels replace them by name;
+                            shapes/backdrop/ the blurred picnic meadow behind
+                            its lessons, portrait and landscape;
                             shapes/find/ holds the rendered Find scenes:
                             the circles' picnic, then squares/, triangles/
                             and rectangles/; colors/ holds the ten paint
@@ -267,7 +269,11 @@ the step. On a desktop a lesson is an open stage: no board and no cards — the 
 pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
-Rectangle, then a Shape review. Every step has a round **task button** at the
+Rectangle, then a Shape review. Its lessons play in Pinki's picnic meadow — a
+soft, blurred clay world behind every step (the pink blanket, a basket and a
+ball at the edges, trees, a kite and clouds far off), in the frame that fits
+the screen's orientation and dimmed at night, quiet enough that the step
+stays what the eye goes to. Every step has a round **task button** at the
 far right, on the back button's line (no progress bar on a phone or tablet): a clay circle with the step's icon.
 It is silent; tapping it opens a popup with a close button that plays a short
 loop of how the step is done — only the first move, never the whole answer.
