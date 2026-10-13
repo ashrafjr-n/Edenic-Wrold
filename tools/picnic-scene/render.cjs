@@ -40,8 +40,8 @@
  * each in two coats (`things/`) and where each lives (`homes/`, renamed
  * `home-cat.png` → `cat.png` after cropping); both cropped with `--grain`:
  *
- *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty cow=cow cow-brown=cow:brown fish=fishfriend@float fish-blue=fishfriend:blue@float
- *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-cow=barn home-fish=fishbowl
+ *   node tools/picnic-scene/render.cjs thing cat=cat cat-grey=cat:grey dog=dog dog-spotty=dog:spotty fish=fishfriend@float fish-blue=fishfriend:blue@float
+ *   node tools/picnic-scene/render.cjs thing home-cat=catBed home-dog=kennel home-fish=fishbowl
  *
  * Nova's fruits, the friends' way (velvet clay, the friends' face) and her
  * cup — a thing with a face also writes `<file>.face.png` (where its glossy
