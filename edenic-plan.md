@@ -195,7 +195,7 @@ sort boxes, done screen, the course page).
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell only; built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
-| Bloo | Animals | Cat · Dog · Cow · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, and every animal but the cow cut out of its video's still, its picture leaning toward the finger on the word card; one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
+| Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
@@ -266,13 +266,14 @@ about 3 minutes.
   times; each lesson is reel → word → spell (making the season come on
   it, step by step, was removed 2026-10-12).
 - **Animals** (BUILT 2026-10-07, "simple, like the rest"; reworked
-  2026-10-08): cat, dog, cow, fish — chibi animals in the friends' look
-  (velvet clay, the grain, the friends' face); each lesson is reel → word →
+  2026-10-08): cat, dog, fish, and since 2026-10-13 elephant, mouse,
+  bird, parrot, turtle, gecko — each the course video's own animal, cut
+  out of its still (the cow, with no still, removed 2026-10-13); each lesson is reel → word →
   spell (Feed it, its third step from 2026-10-08, was removed 2026-10-12:
   "a cat you give milk to is empty talk — simple, but with a goal"). The first idea, a Find in a farm/sea scene, was
   dropped: finding the cat among others is choosing inside a one-thing
-  lesson. Review: sort the four, each in two coats, into their
-  homes (cat bed, kennel, barn, fishbowl — each box labelled with the
+  lesson. Review: sort the three, each in two coats, into their
+  homes (cat bed, kennel, fishbowl — each box labelled with the
   animal's word), then spell dog and fish from a picture.
 - **The Weather** (BUILT 2026-10-08, on request "weather الان" to the plan
   of the same day): sunny, rainy, windy, snowy — all four end in `-y`.
@@ -552,6 +553,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       review now lesson 11; on every Animals word card the picture leans
       toward the finger (`TiltPicture`). The 3D model step (TRELLIS) was
       dropped by the user; the real video clips come later.
+- [x] **The cow removed** (2026-10-13, direct request: "remove the animal
+      with no picture, like the cow"): its lesson, both coats, the barn,
+      its reel and its 3D builders; the review sorts six into three homes
+      (an odd last box spans the row).
 - [ ] The sun, the weather's clouds and the snowman from their stills.
 
 ### Phase 6 — Reels, sound, finish
