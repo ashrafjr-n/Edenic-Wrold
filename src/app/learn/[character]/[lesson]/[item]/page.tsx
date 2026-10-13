@@ -51,7 +51,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
   const title = course.items[n - 1];
   const def = courseLessons[lesson.id][n - 1];
   const dir = dirFor(locale);
-  const backdrop = BACKDROPS[lesson.id];
+  const backdrop = BACKDROPS[lesson.id]?.[n - 1];
 
   if (def.questions.length > 0) {
     return (
