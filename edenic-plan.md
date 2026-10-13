@@ -568,9 +568,18 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       every step of every Shapes lesson. The user: "very nice — but make it
       mean something: circles in the circle lesson" → one meadow per
       lesson, everything in it that lesson's shape (the review: all four).
-- [ ] The other five, one at a time, if the user likes it: Colors (a
-      painter's corner), Vegetables (Nova's garden), Seasons (the island),
-      Animals (the videos' pastel path), Weather (Bloo's hill).
+- [x] **The other five courses** (2026-10-13, "now the same for the rest
+      of the lessons"): one world per course, everything in it the
+      lesson's — Colors: Pinki's meadow, an easel, the blanket, things,
+      pot, balloons and flowers in the lesson's color (the review: all ten
+      pots and a rainbow); Vegetables: Nova's garden, a soil bed growing
+      the lesson's food and her basket full of it; Seasons: the meadow in
+      the season (blossom, apples and the sun, pumpkins and leaves, snow, a
+      bare tree and a snowman); Animals: the videos' pastel world and path
+      with where the animal lives (cat bed, kennel, pond, watering hole,
+      cheese and hay, nest and birdhouse, palms, rocks); Weather: the
+      meadow under the weather with what a child wears for it. All 42
+      lessons checked: each fetches its own backdrop, no errors.
 
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
