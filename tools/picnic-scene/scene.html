@@ -211,18 +211,13 @@ const BLANKETS = {
 
 /* What each soup comes out as: its color and the pieces floating in it. */
 const SOUPS = {
-  carrot: { color: 0xf28a30, pieces: ["coin", "coin", "coin", "coin", "leaf", "leaf"] },
-  broccoli: { color: 0x9ccb5c, pieces: ["floret", "floret", "floret", "floret", "floret"] },
-  corn: { color: 0xf6d661, pieces: ["kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "kernel", "leaf"] },
-  potato: { color: 0xeedcae, pieces: ["cube", "cube", "cube", "cube", "leaf", "leaf"] },
-  /* Nova's vegetable soup: carrot, potato and broccoli (the corn went
-     2026-10-12). */
+  /* Nova's vegetable soup: carrot, potato and broccoli (the corn and the
+     one-vegetable soups went 2026-10-12). */
   mix: { color: 0xf3ad5e, pieces: ["coin", "cube", "floret", "coin", "cube", "floret", "coin", "leaf"] },
 };
 const PIECES = {
   coin: () => mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.035, 32), clay(0xe0661a, { clearcoat: 0.5 })),
   cube: () => mesh(new RoundedBoxGeometry(0.13, 0.08, 0.13, 3, 0.03), clay(0xf3e2b4, { roughness: 0.7 })),
-  kernel: () => mesh(new THREE.SphereGeometry(0.045, 20, 12), clay(0xffc928, { clearcoat: 0.7 })),
   floret() {
     const f = new THREE.Group();
     for (const [x, z] of [[0, 0], [0.06, 0.03], [-0.04, 0.05]]) {
@@ -1266,65 +1261,6 @@ const ITEMS = {
     return g;
   },
 
-  // an ear of corn: a cob of round kernels in rows, two husk leaves
-  corn() {
-    const g = new THREE.Group();
-    const cob = new THREE.Group();
-    cob.add(mesh(new THREE.CapsuleGeometry(0.2, 0.62, 12, 32), clay(0xf2b520, { clearcoat: 0.5 })));
-    const kernel = clay(0xffd23a, { clearcoat: 0.8, clearcoatRoughness: 0.2, roughness: 0.4 });
-    for (let row = 0; row < 9; row++) {
-      const y = -0.36 + row * 0.09;
-      const r = 0.2 * Math.sqrt(Math.max(0.2, 1 - Math.pow(Math.max(0, Math.abs(y) - 0.24) / 0.2, 2)));
-      for (let k = 0; k < 12; k++) {
-        const a = (k / 12) * Math.PI * 2 + (row % 2) * 0.26;
-        const bump = mesh(new THREE.SphereGeometry(0.05, 12, 8), kernel);
-        bump.position.set(Math.cos(a) * r, y, Math.sin(a) * r);
-        bump.scale.set(1, 0.85, 1);
-        cob.add(bump);
-      }
-    }
-    cob.position.y = 0.58;
-    g.add(cob);
-    const husk = clay(0x7cc860, { clearcoat: 0.5 });
-    for (const s of [-1, 1]) {
-      const leaf = mesh(new THREE.SphereGeometry(0.2, 32, 16), husk);
-      leaf.scale.set(0.55, 1.9, 0.35);
-      leaf.position.set(s * 0.15, 0.36, 0.08);
-      leaf.rotation.z = -s * 0.35;
-      g.add(leaf);
-    }
-    return g;
-  },
-
-  // a potato: a lumpy oval with a few eyes
-  potato() {
-    const g = new THREE.Group();
-    const geo = new THREE.SphereGeometry(0.42, 96, 64);
-    const pos = geo.attributes.position;
-    const v = new THREE.Vector3();
-    for (let i = 0; i < pos.count; i++) {
-      v.fromBufferAttribute(pos, i);
-      const n = 1 + 0.06 * Math.sin(v.x * 9) * Math.cos(v.y * 7) + 0.04 * Math.sin(v.z * 11 + 1);
-      v.multiplyScalar(n);
-      pos.setXYZ(i, v.x, v.y, v.z);
-    }
-    geo.computeVertexNormals();
-    const body = mesh(geo, clay(0xc28a52, { clearcoat: 0.3, roughness: 0.7 }));
-    body.scale.set(1.35, 0.78, 0.95);
-    body.position.y = 0.33;
-    g.add(body);
-    // eyes scattered over it, small, so they read as a potato's, not a face
-    body.updateMatrixWorld(true);
-    for (const [yaw, pitch] of [[-0.9, 0.35], [-0.35, 0.05], [0.25, 0.55], [0.7, 0.15], [1.2, 0.45], [-1.4, 0.1], [0.05, -0.25], [0.95, -0.2]]) {
-      const local = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)).multiplyScalar(0.42);
-      const eye = mesh(new THREE.SphereGeometry(0.026, 12, 8), clay(0x9a6634, { roughness: 0.9 }));
-      eye.position.copy(local.applyMatrix4(body.matrixWorld));
-      eye.scale.set(1, 0.6, 1);
-      g.add(eye);
-    }
-    return g;
-  },
-
   /* ---------- My Market (Nova · Fruits & Vegetables) ---------- */
 
   // a woven basket with a handle
@@ -1586,27 +1522,6 @@ function gardenGround(far = 12, near = 6) {
   return g;
 }
 
-/* A fruit tree's crown: [x, y, z, r] leafy balls. */
-const TREE_PUFFS = [[0, 4.5, -0.7, 1.75], [-1.45, 3.9, -0.3, 1.3], [1.45, 3.9, -0.3, 1.3], [-0.85, 5.35, -0.5, 1.2], [0.9, 5.3, -0.5, 1.2], [-0.9, 3.25, 0.1, 1.05], [0.95, 3.3, 0.05, 1.05], [0, 4.0, 0.2, 1.2]];
-
-/* A round fruit tree: a bent trunk, two branches into a crown of leafy
-   balls. Its front is at z ≈ 1.4 — the fruit hangs just in front of it. */
-function fruitTree(leafColor) {
-  const g = new THREE.Group();
-  const bark = clay(0xa0703f, { roughness: 0.75, clearcoat: 0.2 });
-  g.add(taperTube([[0, 0, 0], [0.08, 0.9, 0], [-0.05, 1.8, 0], [0.02, 2.8, -0.2]], 0.42, 0.26, bark));
-  g.add(taperTube([[0, 1.8, 0], [-0.6, 2.4, 0.05], [-1.2, 2.85, -0.15]], 0.2, 0.1, bark));
-  g.add(taperTube([[0, 2.1, 0], [0.55, 2.6, 0.05], [1.15, 3.05, -0.15]], 0.18, 0.09, bark));
-  g.add(mesh(smoothLathe([[0, 0], [0.7, 0], [0.52, 0.12], [0.43, 0.42], [0, 0.48]]), bark));
-  const leaf = clay(leafColor, { clearcoat: 0.3, clearcoatRoughness: 0.4, roughness: 0.6 });
-  for (const [x, y, z, r] of TREE_PUFFS) {
-    const ball = mesh(new THREE.SphereGeometry(r, 64, 48), leaf);
-    ball.position.set(x, y, z);
-    g.add(ball);
-  }
-  return { group: g };
-}
-
 /* A tomato plant: a vine winding up a wooden stake, leaves all the way up
    — the tomatoes (the videos' own) hang on it as the garden's foods. */
 function tomatoPlant() {
@@ -1636,125 +1551,11 @@ function tomatoPlant() {
   return { group: g };
 }
 
-/* A banana plant: a thick soft stem and a crown of long leaves, a dark
-   knob under them where the bunch hangs from. */
-function bananaPlant() {
-  const g = new THREE.Group();
-  g.add(taperTube([[0, 0, 0], [0.05, 1.6, 0], [0, 3.4, -0.1]], 0.4, 0.3, clay(0x9fae5a, { roughness: 0.7, clearcoat: 0.2 })));
-  const leaf = clay(0x5fbf58, { clearcoat: 0.35, roughness: 0.55, side: THREE.DoubleSide });
-  const light = clay(0x7fd06a, { clearcoat: 0.35, roughness: 0.55, side: THREE.DoubleSide });
-  /* [angle from straight up, length, droop, z] — leaves fan out of the top. */
-  for (const [a, len, droop, z, k] of [[-1.25, 2.6, 0.35, -0.3, 0], [-0.7, 2.5, 0.25, -0.5, 1], [-0.2, 2.2, 0.1, -0.7, 0], [0.3, 2.3, 0.15, -0.6, 1], [0.8, 2.6, 0.3, -0.4, 0], [1.3, 2.5, 0.4, -0.2, 1], [-1.6, 2.2, 0.5, 0.1, 1], [1.65, 2.1, 0.5, 0.15, 0]]) {
-    const dir = new THREE.Vector3(Math.sin(a), Math.cos(a), 0);
-    const base = new THREE.Vector3(0, 3.3, z);
-    const mid = base.clone().addScaledVector(dir, len * 0.55).add(new THREE.Vector3(0, 0.25, 0));
-    const tip = base.clone().addScaledVector(dir, len).add(new THREE.Vector3(0, -droop * len, 0));
-    const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
-    /* A flat blade along the curve: a tube squashed flat, widest midway. */
-    const T = 40, R = 16;
-    const geo = new THREE.TubeGeometry(curve, T, 1, R);
-    const pos = geo.attributes.position;
-    for (let i = 0; i <= T; i++) {
-      const t = i / T;
-      const c = curve.getPointAt(t);
-      const w = 0.55 * Math.sin(Math.PI * Math.min(1, t * 1.05)) ** 0.7 + 0.03;
-      for (let j = 0; j <= R; j++) {
-        const idx = i * (R + 1) + j;
-        const off = new THREE.Vector3(pos.getX(idx) - c.x, pos.getY(idx) - c.y, pos.getZ(idx) - c.z);
-        /* Wide across the screen-facing side, thin front to back. */
-        pos.setXYZ(idx, c.x + off.x * w, c.y + off.y * w, c.z + off.z * w * 0.12);
-      }
-    }
-    geo.computeVertexNormals();
-    g.add(mesh(geo, k ? light : leaf));
-  }
-  const knob = mesh(new THREE.SphereGeometry(0.22, 32, 24), clay(0x7a4a2c));
-  knob.position.set(0, 3.2, 0.35);
-  g.add(knob);
-  return { group: g };
-}
-
-/* A wooden arbour under a vine: two posts, two beams, vine leaves along
-   the beams and up a post. The bunches hang under the beams. */
-function grapeArbour() {
-  const g = new THREE.Group();
-  g.add(arbourWood(), vineLeaves(), vineStem());
-  return { group: g };
-}
-
-/* The arbour's wood: two posts and two beams. */
-function arbourWood() {
-  const g = new THREE.Group();
-  const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
-  for (const x of [-2.65, 2.65]) {
-    const post = mesh(new RoundedBoxGeometry(0.34, 6.3, 0.34, 4, 0.08), wood);
-    post.position.set(x, 3.15, -0.2);
-    g.add(post);
-  }
-  for (const y of [6.0, 3.85]) {
-    const beam = mesh(new RoundedBoxGeometry(6.0, 0.3, 0.34, 4, 0.08), wood);
-    beam.position.set(0, y, 0);
-    g.add(beam);
-  }
-  return g;
-}
-
-/* The vine's leaves: flattened balls, a few along each beam and the left
-   post. */
-function vineLeaves() {
-  const g = new THREE.Group();
-  const vine = clay(0x5fb85a, { clearcoat: 0.35, roughness: 0.55 });
-  const pale = clay(0x7cc860, { clearcoat: 0.35, roughness: 0.55 });
-  const leaves = [
-    [-2.4, 6.25, 0.05, 0.42], [-1.75, 6.35, -0.1, 0.36], [-0.95, 6.2, 0.1, 0.4], [-0.25, 6.38, -0.05, 0.34], [0.5, 6.22, 0.1, 0.4], [1.2, 6.36, -0.1, 0.35], [1.95, 6.24, 0.08, 0.4], [2.5, 6.4, -0.05, 0.33],
-    [-2.3, 4.1, 0.05, 0.36], [-1.55, 4.2, -0.05, 0.32], [-0.05, 4.12, 0.08, 0.34], [1.5, 4.18, -0.04, 0.33], [2.35, 4.08, 0.06, 0.35],
-    [-2.85, 5.1, 0.1, 0.33], [-2.45, 2.7, 0.12, 0.32], [-2.9, 1.6, 0.1, 0.3],
-  ];
-  leaves.forEach(([x, y, z, r], i) => {
-    const l = mesh(new THREE.SphereGeometry(r, 32, 20), i % 3 ? vine : pale);
-    l.scale.set(1.25, 0.95, 0.35);
-    l.position.set(x, y, z);
-    l.rotation.z = (i % 2 ? 1 : -1) * 0.4;
-    g.add(l);
-  });
-  return g;
-}
-
-/* The vine's stem, winding up the left post. */
-const vineStem = () => taperTube([[-2.7, 0.2, 0.25], [-2.35, 1.4, 0.3], [-2.95, 2.6, 0.3], [-2.4, 3.8, 0.25], [-2.8, 5.0, 0.3], [-2.3, 6.0, 0.25]], 0.06, 0.04, clay(0x7a5a2c));
-
-/* A white picket fence across the garden at `z`. */
-function fence(z) {
-  const g = new THREE.Group();
-  const paint = clay(0xf6f1e7, { roughness: 0.6, clearcoat: 0.3 });
-  for (let x = -3.4; x <= 3.4; x += 0.56) {
-    const picket = mesh(new THREE.CapsuleGeometry(0.13, 1.05, 6, 16), paint);
-    picket.scale.z = 0.45;
-    picket.position.set(x, 0.66, z);
-    g.add(picket);
-  }
-  for (const y of [0.4, 0.95]) {
-    const rail = mesh(new RoundedBoxGeometry(7.2, 0.12, 0.08, 3, 0.04), paint);
-    rail.position.set(0, y, z - 0.1);
-    g.add(rail);
-  }
-  return g;
-}
-
 /* A raised bed of soil in wooden planks, its near half standing in front
-   of the vegetables in it (so they can be pulled up out of it); a fence
-   and the sun behind (`withBack` — not when it is one of several). */
+   of the vegetables in it (so they can be pulled up out of it). */
 const SOIL_TOP = 1.15;
-function gardenBed(withBack = true) {
+function gardenBed() {
   const g = new THREE.Group();
-  const back = new THREE.Group();
-  if (withBack) {
-    back.add(fence(-2.4));
-    const sun = ITEMS.sun();
-    sun.scale.setScalar(0.95);
-    sun.position.set(1.95, 1.2, -7.6);
-    back.add(sun);
-  }
   const wood = clay(0xc28a4c, { roughness: 0.7, clearcoat: 0.25 });
   for (const z of [-0.95, 0.95]) {
     const plank = mesh(new RoundedBoxGeometry(5.9, 1.3, 0.22, 4, 0.07), wood);
@@ -1776,94 +1577,8 @@ function gardenBed(withBack = true) {
     clump.position.set((rand() - 0.5) * 5.2, SOIL_TOP, (rand() - 0.5) * 1.5);
     g.add(clump);
   }
-  const all = new THREE.Group();
-  all.add(back, g);
-  return { group: all, front: [[g, 0]], far: 7 };
+  return { group: g, front: [[g, 0]], far: 7 };
 }
-
-/* Corn: three tall stalks with long leaves and a tassel each, standing in
-   little mounds. The ears grow on them. [x, height] */
-const CORN_STALKS = [[-2.05, 6.6], [0.05, 7.1], [2.1, 6.5]];
-function cornStalks() {
-  const g = new THREE.Group();
-  for (const [x, h] of CORN_STALKS) g.add(cornStalk(x, h));
-  return { group: g };
-}
-
-/* One stalk `h` tall at `x`, in its mound: its long leaves (those below its
-   top) and, once grown (`tassel`), its tassel. */
-function cornStalk(x, h, tassel = true) {
-  const g = new THREE.Group();
-  const stalk = clay(0x7cc455, { roughness: 0.6, clearcoat: 0.25 });
-  const blade = clay(0x67b84f, { roughness: 0.6, clearcoat: 0.3, side: THREE.DoubleSide });
-  const earth = clay(0x7d5134, { roughness: 0.95, clearcoat: 0.05, sheen: 0 });
-  g.add(taperTube([[x, 0, -0.4], [x, h * 0.5, -0.4], [x, h, -0.4]], 0.16, 0.09, stalk));
-  const mound = mesh(new THREE.SphereGeometry(0.6, 32, 16), earth);
-  mound.scale.y = 0.35;
-  mound.position.set(x, 0, -0.4);
-  g.add(mound);
-  /* Long leaves, alternate sides, drooping. */
-  [[1.3, 1], [2.3, -1], [3.4, 1], [4.4, -1], [5.4, 1]].filter(([y]) => y < h - 0.3).forEach(([y, side], i) => {
-    const base = new THREE.Vector3(x, y, -0.4);
-    const tip = base.clone().add(new THREE.Vector3(side * (1.2 + (i % 2) * 0.3), -0.35, 0.1));
-    const mid = base.clone().add(new THREE.Vector3(side * 0.6, 0.45, 0.05));
-    const curve = new THREE.QuadraticBezierCurve3(base, mid, tip);
-    const T = 30, R = 12;
-    const geo = new THREE.TubeGeometry(curve, T, 1, R);
-    const pos = geo.attributes.position;
-    for (let k = 0; k <= T; k++) {
-      const t = k / T;
-      const c = curve.getPointAt(t);
-      const w = 0.16 * Math.sin(Math.PI * Math.min(1, 0.15 + t * 0.9)) + 0.02;
-      for (let j = 0; j <= R; j++) {
-        const idx = k * (R + 1) + j;
-        pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * w, c.y + (pos.getY(idx) - c.y) * w, c.z + (pos.getZ(idx) - c.z) * w * 0.2);
-      }
-    }
-    geo.computeVertexNormals();
-    g.add(mesh(geo, blade));
-  });
-  for (const a of tassel ? [-0.35, 0, 0.35] : []) {
-    const strand = mesh(new THREE.CapsuleGeometry(0.035, 0.45, 6, 10), clay(0xe7c35a, { clearcoat: 0.4 }));
-    strand.position.set(x + Math.sin(a) * 0.2, h + 0.18, -0.4);
-    strand.rotation.z = -a;
-    g.add(strand);
-  }
-  return g;
-}
-
-/* A carrot as it grows: the clay carrot and a fuller top of leaves. */
-function carrotPlant() {
-  const g = ITEMS.carrot();
-  for (const [a, h] of [[-0.6, 0.5], [-0.2, 0.62], [0.2, 0.6], [0.6, 0.48]]) {
-    const leaf = mesh(new THREE.CapsuleGeometry(0.04, h, 8, 12), clay(0x5fb85a, { clearcoat: 0.5 }));
-    leaf.position.set(Math.sin(a) * 0.2, 1.12 + (h / 2) * Math.cos(a), -0.04);
-    leaf.rotation.z = -a;
-    g.add(leaf);
-  }
-  return g;
-}
-
-/* A potato as it grows: the clay potato and a little sprout of leaves on
-   top, where it is pulled from. */
-function potatoPlant() {
-  const g = ITEMS.potato();
-  const green = clay(0x5fb85a, { clearcoat: 0.5 });
-  const stem = mesh(new THREE.CapsuleGeometry(0.035, 0.32, 8, 12), green);
-  stem.position.set(0, 0.78, 0);
-  g.add(stem);
-  for (const [a, y] of [[-0.9, 0.86], [0.9, 0.9], [-0.35, 1.02], [0.4, 1.05]]) {
-    const leaf = mesh(new THREE.SphereGeometry(0.12, 24, 12), green);
-    leaf.scale.set(1.5, 0.4, 0.8);
-    leaf.position.set(Math.sin(a) * 0.16, y, 0);
-    leaf.rotation.z = a * 0.6;
-    g.add(leaf);
-  }
-  return g;
-}
-
-/* Along a bed: five spots, the food stood `bury` deep in the soil. */
-const inBed = (bury) => [-2.1, -1.05, 0, 1.05, 2.1].map((x) => [x, SOIL_TOP - bury, 0]);
 
 /* Several plants in one garden, side by side: `[maker, x, scale]` each.
    What stands in front of the food (a bed's near half) is cut at its own
@@ -1882,8 +1597,6 @@ function plants(list) {
     return { group, front };
   };
 }
-/* One bed of several: no fence or sun of its own. */
-const bed = () => gardenBed(false);
 
 /* What grows where. `centreY` is the height the camera looks at (`lift`°
    down — higher over a bed, to see into it); `at` the
@@ -1891,95 +1604,12 @@ const bed = () => gardenBed(false);
    `tilt` turns each food (°, about its top) where the picture is shown —
    the renders are all one food, alike. */
 const GARDENS = {
-  apple: {
-    centreY: 3.0,
-    world: () => fruitTree(0x63bb59),
-    food: "apple",
-    scale: 0.95,
-    rot: [0, 0.35, 0],
-    at: [[-1.2, 4.65, 1.75], [1.2, 4.6, 1.75], [-1.95, 3.4, 1.75], [0, 3.45, 1.75], [1.95, 3.35, 1.75]],
-    tilt: [-8, 6, 4, -5, 9],
-    basket: [1.85, 1.5, 1.4],
-  },
-  orange: {
-    centreY: 3.0,
-    world: () => fruitTree(0x4ea957),
-    food: "orange",
-    scale: 1.12,
-    rot: [0, 0.6, 0],
-    at: [[-1.2, 4.6, 1.75], [1.2, 4.55, 1.75], [-1.95, 3.35, 1.75], [0, 3.4, 1.75], [1.95, 3.3, 1.75]],
-    tilt: [6, -8, -4, 7, -6],
-    basket: [1.85, 1.5, 1.4],
-  },
-  banana: {
-    centreY: 3.0,
-    world: bananaPlant,
-    food: "banana",
-    scale: 0.9,
-    rot: [0, 0, Math.PI / 2],
-    at: [[-0.95, 2.16, 0.9], [-0.15, 2.26, 1.0], [0.65, 2.31, 1.1], [1.45, 2.26, 1.0], [2.25, 2.16, 0.9]],
-    tilt: [22, 11, 0, -11, -22],
-    basket: [1.85, 1.6, 1.4],
-  },
-  grapes: {
-    centreY: 3.15,
-    world: grapeArbour,
-    food: "grapes",
-    scale: 0.82,
-    at: [[-1.55, 4.7, 0.45], [0, 4.7, 0.45], [1.55, 4.7, 0.45], [-0.8, 2.55, 0.45], [0.8, 2.55, 0.45]],
-    tilt: [5, -4, 6, -6, 4],
-    basket: [1.85, 1.6, 1.4],
-  },
-  carrot: {
-    centreY: 2.65,
-    lift: 24,
-    world: gardenBed,
-    make: carrotPlant,
-    scale: 1.6,
-    at: inBed(1.05),
-    basket: [1.9, 3.1, 1.25],
-  },
-  potato: {
-    centreY: 2.65,
-    lift: 24,
-    world: gardenBed,
-    make: potatoPlant,
-    scale: 1.0,
-    rot: [0, 0.25, 0],
-    at: inBed(0.42),
-    basket: [1.9, 3.1, 1.25],
-  },
-  broccoli: {
-    centreY: 2.65,
-    lift: 24,
-    world: gardenBed,
-    food: "broccoli",
-    scale: 1.32,
-    rot: [0, 0.4, 0],
-    at: inBed(0.55),
-    basket: [1.9, 3.1, 1.25],
-  },
-  corn: {
-    centreY: 3.2,
-    world: cornStalks,
-    food: "corn",
-    scale: 0.95,
-    at: [[-1.63, 2.3, 0.3], [-2.47, 3.8, 0.3], [0.47, 3.1, 0.3], [-0.37, 4.5, 0.3], [1.68, 2.6, 0.3]],
-    tilt: [18, -18, 18, -18, -18],
-    pivot: "bottom",
-    basket: [1.85, 1.6, 1.4],
-  },
-
-  /* The Fruits review's exams: three plants side by side (the basket
-     stands beside the garden, `?basket`) — wider than a phone's stage (3:2, `size` px, `view` world units
-     across). `foods` holds each kind and where it grows; there are more
-     of each than the note asks for, so the child has to count. */
   vegetables: {
     size: [1200, 690],
     view: 9.4,
     centreY: 2.25,
     lift: 18,
-    world: plants([[bed, -3.05, 0.52], [tomatoPlant, 0, 0.62], [bed, 3.05, 0.52]]),
+    world: plants([[gardenBed, -3.05, 0.52], [tomatoPlant, 0, 0.62], [gardenBed, 3.05, 0.52]]),
     foods: [
       { food: "carrot", make: () => videoCarrot(0), scale: 0.62, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
       { food: "tomato", make: () => videoTomato(), scale: 0.42, at: [[-0.55, 1.62, 0.7], [0.5, 1.48, 0.7], [-0.4, 0.92, 0.75], [0.52, 0.8, 0.75]], tilt: [-6, 5, 7, -4] },
@@ -2393,190 +2023,6 @@ const SEASON_DEFS = {
   },
 };
 
-/* ---------- Bloo's animals ----------
-   Chibi, in the friends' look (remade 2026-10-08, like Nova's fruits): a
-   big round head with the friends' own face (`friendFace` — the dog's
-   smile sits on its muzzle), a small body, velvet clay; the
-   grain is laid on after cropping (`crop.py things … --grain`). Each comes
-   in two coats — the lesson's, and a second one for the review's Sort (a
-   cat is a cat in any color). */
-
-const HEAD_Y = 1.22, HEAD_R = 0.56;
-
-/* A sitting body under the head: a round body, a pale belly, two front
-   paws and two haunches. */
-function sittingBody(fur, light, paws = light) {
-  const g = new THREE.Group();
-  const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), fur);
-  body.scale.set(1, 1.05, 0.9);
-  body.position.set(0, 0.5, -0.05);
-  g.add(body);
-  const belly = mesh(new THREE.SphereGeometry(0.32, 48, 32), light);
-  belly.scale.set(1, 1.2, 0.45);
-  belly.position.set(0, 0.5, 0.31);
-  g.add(belly);
-  for (const s of [-1, 1]) {
-    const paw = mesh(new THREE.SphereGeometry(0.14, 32, 24), paws);
-    paw.scale.set(1, 0.75, 1.25);
-    paw.position.set(s * 0.2, 0.1, 0.36);
-    g.add(paw);
-    const haunch = mesh(new THREE.SphereGeometry(0.25, 32, 24), fur);
-    haunch.scale.set(0.9, 0.85, 1.1);
-    haunch.position.set(s * 0.38, 0.22, 0);
-    g.add(haunch);
-  }
-  return g;
-}
-
-/* A point on the head's front, `x` across and `y` up from its centre, and
-   the tilt that lays a flat thing on the curve there. */
-function onHead(x, y, out = 0) {
-  const r = HEAD_R + out;
-  return { at: [x, HEAD_Y + y, Math.sqrt(Math.max(0, r * r - x * x - y * y))], tilt: [-Math.asin(y / r), Math.asin(x / r)] };
-}
-
-const CAT_COATS = {
-  orange: { fur: 0xffa94d, light: 0xfff1e0, stripe: 0xec8a2f },
-  grey: { fur: 0xaeacbd, light: 0xf5f3f8, stripe: 0x8d8aa0 },
-};
-
-/* A cat: pointed ears, whiskers, a little pink nose, a tail curled up
-   its side, three stripes on its forehead. */
-function cat(coat = "orange") {
-  const { fur: furColor, light: lightColor, stripe } = CAT_COATS[coat];
-  const fur = velvet(furColor), light = velvet(lightColor);
-  const g = sittingBody(fur, light);
-  const head = mesh(new THREE.SphereGeometry(HEAD_R, 64, 48), fur);
-  head.scale.set(1.08, 0.94, 1);
-  head.position.y = HEAD_Y;
-  g.add(head);
-  const pink = velvet(0xffa3bf);
-  for (const s of [-1, 1]) {
-    const ear = mesh(new THREE.ConeGeometry(0.24, 0.44, 32), fur);
-    ear.scale.z = 0.7;
-    ear.position.set(s * 0.33, HEAD_Y + 0.46, 0);
-    ear.rotation.z = -s * 0.36;
-    g.add(ear);
-    const inner = mesh(new THREE.ConeGeometry(0.14, 0.28, 32), pink);
-    inner.scale.z = 0.4;
-    inner.position.set(s * 0.32, HEAD_Y + 0.44, 0.1);
-    inner.rotation.z = -s * 0.36;
-    g.add(inner);
-    for (const [dy, turn] of [[0.02, 0.12], [-0.06, -0.08]]) {
-      const whisker = mesh(new THREE.CapsuleGeometry(0.014, 0.3, 4, 8), velvet(0x8a7a80));
-      whisker.rotation.z = Math.PI / 2 + s * turn;
-      whisker.position.set(s * 0.7, HEAD_Y - 0.1 + dy, 0.24);
-      g.add(whisker);
-    }
-  }
-  for (const x of [-0.12, 0, 0.12]) {
-    const { at: [px, py, pz], tilt: [rx, ry] } = onHead(x, 0.38, -0.02);
-    const mark = mesh(new THREE.SphereGeometry(0.06, 16, 12), velvet(stripe));
-    mark.scale.set(0.55, 1.5, 0.35);
-    mark.position.set(px, py, pz);
-    mark.rotation.set(rx, ry, 0);
-    g.add(mark);
-  }
-  /* A little pink nose, just over the smile. */
-  const nose = mesh(new THREE.SphereGeometry(0.04, 24, 16), pink);
-  nose.scale.set(1.35, 0.8, 0.8);
-  nose.position.set(0, HEAD_Y - 0.055, 0.545);
-  g.add(nose);
-  g.add(taperTube([[0.28, 0.12, -0.38], [0.62, 0.16, -0.28], [0.8, 0.45, -0.05], [0.72, 0.82, 0.08]], 0.1, 0.08, fur));
-  return friendFace(g, [head], 0, HEAD_Y + 0.02, 0.92, { eyes: 0.23, cheeks: 0.4 });
-}
-
-const DOG_COATS = {
-  brown: { fur: 0xd39a62, light: 0xfbe9d2, ear: 0x8f5a36 },
-  spotty: { fur: 0xfaf6ef, light: 0xfffdf8, ear: 0x7a5038, patch: 0x7a5038 },
-};
-
-/* A dog: floppy ears, a pale muzzle with a big black nose and the
-   friends' open smile under it, a short tail up. The spotty one has a
-   patch round an eye. */
-function dog(coat = "brown") {
-  const { fur: furColor, light: lightColor, ear: earColor, patch } = DOG_COATS[coat];
-  const fur = velvet(furColor), light = velvet(lightColor);
-  const g = sittingBody(fur, light);
-  const head = mesh(new THREE.SphereGeometry(HEAD_R, 64, 48), fur);
-  head.scale.set(1.05, 0.95, 1);
-  head.position.y = HEAD_Y;
-  g.add(head);
-  for (const s of [-1, 1]) {
-    const ear = mesh(new THREE.SphereGeometry(0.22, 32, 24), velvet(earColor));
-    ear.scale.set(0.55, 1.25, 0.45);
-    ear.position.set(s * 0.52, HEAD_Y + 0.08, 0.06);
-    ear.rotation.z = s * 0.35;
-    g.add(ear);
-  }
-  /* The face is painted on the head — and on the patch, which stands out
-     over it round the eye. */
-  const skin = [head];
-  if (patch) {
-    const { at, tilt: [rx, ry] } = onHead(0.21, 0.16, -0.02);
-    const spot = mesh(new THREE.SphereGeometry(0.17, 32, 24), velvet(patch));
-    spot.scale.set(1, 1.1, 0.35);
-    spot.position.set(...at);
-    spot.rotation.set(rx, ry, 0);
-    g.add(spot);
-    skin.push(spot);
-  }
-  const muzzle = mesh(new THREE.SphereGeometry(0.24, 48, 32), light);
-  muzzle.scale.set(1.3, 0.85, 0.7);
-  muzzle.position.set(0, HEAD_Y - 0.17, 0.45);
-  g.add(muzzle);
-  const nose = mesh(new THREE.SphereGeometry(0.08, 32, 24), velvet(0x33242e, { roughness: 0.4, clearcoat: 0.7, clearcoatRoughness: 0.2, sheen: 0.2 }));
-  nose.scale.set(1.4, 1, 0.9);
-  nose.position.set(0, HEAD_Y - 0.08, 0.6);
-  g.add(nose);
-  g.add(taperTube([[0.3, 0.22, -0.36], [0.52, 0.42, -0.4], [0.6, 0.72, -0.3]], 0.09, 0.06, fur));
-  friendFace(g, skin, 0, HEAD_Y + 0.08, 0.9, { eyes: 0.23, cheeks: 0.4, mouth: false });
-  g.add(shiny(paint([muzzle], 0, HEAD_Y - 0.225, 0.2, 0.155, MOUTH_PAINT)));
-  return g;
-}
-
-const FISH_COATS = {
-  orange: { body: 0xff9a3c, fin: 0xffc98a },
-  blue: { body: 0x5aa2ee, fin: 0xa9d3ff },
-};
-
-/* A fish, side on and swimming right: a round, puffy body with the
-   friends' face on its side, a fan tail, a fin on top and one at its side. */
-function fishfriend(coat = "orange") {
-  const { body: bodyColor, fin: finColor } = FISH_COATS[coat];
-  const g = new THREE.Group();
-  const fin = velvet(finColor);
-  const body = mesh(new THREE.SphereGeometry(0.5, 64, 48), velvet(bodyColor));
-  body.scale.set(1.08, 0.9, 0.86);
-  body.position.y = 0.5;
-  g.add(body);
-  const tailShape = new THREE.Shape();
-  tailShape.moveTo(0, 0);
-  tailShape.quadraticCurveTo(-0.2, 0.42, -0.55, 0.5);
-  tailShape.quadraticCurveTo(-0.38, 0.12, -0.42, 0);
-  tailShape.quadraticCurveTo(-0.38, -0.12, -0.55, -0.5);
-  tailShape.quadraticCurveTo(-0.2, -0.42, 0, 0);
-  const tailGeo = roundedShapeExtrude(tailShape, 0.06, 0.06);
-  tailGeo.translate(0, 0, -0.03);
-  const tail = mesh(tailGeo, fin);
-  tail.position.set(-0.5, 0.5, 0);
-  g.add(tail);
-  const topShape = new THREE.Shape();
-  topShape.moveTo(-0.32, 0);
-  topShape.quadraticCurveTo(-0.2, 0.34, 0.16, 0.22);
-  topShape.quadraticCurveTo(0.22, 0.1, 0.2, 0);
-  topShape.closePath();
-  const topFin = mesh(roundedShapeExtrude(topShape, 0.05, 0.04), fin);
-  topFin.position.set(-0.05, 0.86, -0.025);
-  g.add(topFin);
-  const side = mesh(new THREE.SphereGeometry(0.13, 32, 24), fin);
-  side.scale.set(1.4, 0.7, 0.35);
-  side.position.set(-0.4, 0.3, 0.27);
-  side.rotation.z = 0.5;
-  g.add(side);
-  return friendFace(g, [body], 0.06, 0.52, 0.8, { eyes: 0.23, cheeks: 0.4 });
-}
-
 /* ---------- Where Bloo's animals live — the review's Sort boxes ----------
    Velvet clay like the animals (2026-10-08) — only the fishbowl's glass
    and water stay see-through. */
@@ -2712,7 +2158,7 @@ function fishbowl() {
   return g;
 }
 
-Object.assign(ITEMS, { cat, dog, fishfriend, catBed, kennel, fishbowl });
+Object.assign(ITEMS, { catBed, kennel, fishbowl });
 
 /* ---------- Nova's fruits, the friends' way (2026-10-08) ----------
    The Fruits course's eight foods remade in the friends' look (direct
@@ -2817,16 +2263,6 @@ const CHEEK = painted(128, 128, (x) => {
   x.fillRect(0, 0, 128, 128);
 });
 
-/* A potato's eye: a soft brown dot. */
-const DOT = painted(64, 64, (x) => {
-  const dot = x.createRadialGradient(32, 32, 2, 32, 32, 30);
-  dot.addColorStop(0, "rgba(150, 96, 52, 0.95)");
-  dot.addColorStop(0.6, "rgba(160, 104, 58, 0.7)");
-  dot.addColorStop(1, "rgba(170, 112, 64, 0)");
-  x.fillStyle = dot;
-  x.fillRect(0, 0, 64, 64);
-});
-
 /* A carrot's line: a short curved stroke, a deeper orange. */
 const LINE = painted(128, 64, (x) => {
   x.strokeStyle = "rgba(214, 98, 28, 0.85)";
@@ -2851,7 +2287,6 @@ const decal = (map, extra = {}) =>
 const EYE_PAINT = decal(EYE, { roughness: 0.4, clearcoat: 0.35, clearcoatRoughness: 0.35 });
 const MOUTH_PAINT = decal(MOUTH, { roughness: 0.55 });
 const CHEEK_PAINT = decal(CHEEK, { roughness: 0.9 });
-const DOT_PAINT = decal(DOT, { roughness: 0.9 });
 const LINE_PAINT = decal(LINE, { roughness: 0.9 });
 const SPOT_PAINT = decal(SPOT, { roughness: 0.88 });
 
@@ -2954,171 +2389,6 @@ function swell(geo, f) {
   return geo;
 }
 
-const LEAF_GREEN = 0x78cf5c;
-const STALK = 0x8d5a36;
-
-const FRIEND_FOOD = {
-  apple() {
-    const g = new THREE.Group();
-    const body = mesh(smoothLathe([[0, 0.07], [0.18, 0.0], [0.38, 0.05], [0.55, 0.22], [0.64, 0.48], [0.64, 0.76], [0.55, 0.98], [0.36, 1.09], [0.16, 1.03], [0, 0.93]]), velvet(0xf2564d));
-    g.add(body);
-    const stem = mesh(new THREE.CapsuleGeometry(0.05, 0.16, 8, 16), velvet(STALK));
-    stem.position.set(0.02, 1.06, 0);
-    stem.rotation.z = -0.3;
-    g.add(stem);
-    const leaf = plumpLeaf(0.36, 0.17, velvet(LEAF_GREEN));
-    leaf.position.set(0.06, 1.12, 0);
-    leaf.rotation.set(-0.9, 0.2, 0.45);
-    g.add(leaf);
-    return friendFace(g, [body], 0, 0.55, 1);
-  },
-
-  /* `hang`: turned upright, as it hangs on its plant (the exam gardens) —
-     its face painted on after the turn, so it stays upright too. */
-  banana(hang = false) {
-    const g = new THREE.Group();
-    const fruit = new THREE.Group();
-    g.add(fruit);
-    const curve = new THREE.CatmullRomCurve3([[-0.8, 0.66], [-0.46, 0.27], [0, 0.15], [0.46, 0.27], [0.8, 0.66]].map(([x, y]) => new THREE.Vector3(x, y, 0)));
-    const T = 128, R = 32, r = 0.27;
-    const geo = new THREE.TubeGeometry(curve, T, r, R);
-    const pos = geo.attributes.position;
-    for (let i = 0; i <= T; i++) {
-      const c = curve.getPoint(i / T);
-      const k = Math.max(0.03, Math.sin(Math.PI * (i / T)) ** 0.5);
-      for (let j = 0; j <= R; j++) {
-        const idx = i * (R + 1) + j;
-        pos.setXYZ(idx, c.x + (pos.getX(idx) - c.x) * k, c.y + (pos.getY(idx) - c.y) * k, c.z + (pos.getZ(idx) - c.z) * k);
-      }
-    }
-    geo.computeVertexNormals();
-    const body = mesh(geo, velvet(0xffd84e));
-    fruit.add(body);
-    const tip = mesh(new THREE.SphereGeometry(0.05, 16, 12), velvet(0x7a5230));
-    tip.position.copy(curve.getPoint(0));
-    fruit.add(tip);
-    const stalk = mesh(new THREE.CapsuleGeometry(0.065, 0.16, 8, 16), velvet(0x9fb04a));
-    const end = curve.getPoint(1);
-    stalk.position.set(end.x + 0.05, end.y + 0.1, 0);
-    stalk.rotation.z = -0.55;
-    fruit.add(stalk);
-    if (!hang) return friendFace(g, [body], 0, 0.2, 0.92);
-    fruit.rotation.z = Math.PI / 2;
-    return friendFace(g, [body], -0.15, 0.02, 0.58, { eyes: 0.2, cheeks: 0.3 });
-  },
-
-  orange() {
-    const g = new THREE.Group();
-    const body = mesh(new THREE.SphereGeometry(0.6, 96, 64), velvet(0xffa13b));
-    body.scale.y = 0.93;
-    body.position.y = 0.56;
-    g.add(body);
-    const stem = mesh(new THREE.CapsuleGeometry(0.045, 0.08, 8, 16), velvet(0x6b8a38));
-    stem.position.set(0, 1.12, 0);
-    g.add(stem);
-    const leaf = plumpLeaf(0.34, 0.16, velvet(LEAF_GREEN));
-    leaf.position.set(0.02, 1.13, 0);
-    leaf.rotation.set(-1.0, 0.25, 0.3);
-    g.add(leaf);
-    return friendFace(g, [body], 0, 0.52, 1.05);
-  },
-
-  grapes() {
-    const g = new THREE.Group();
-    const purple = velvet(0x9a5fe0);
-    const grapes = [
-      [-0.42, 1.08, -0.06, 0.2], [0, 1.13, -0.04, 0.21], [0.42, 1.08, -0.06, 0.2],
-      [-0.21, 0.86, 0.1, 0.23], [0.21, 0.86, 0.1, 0.23],
-      [-0.44, 0.66, -0.06, 0.19], [0, 0.62, 0.14, 0.22], [0.44, 0.66, -0.06, 0.19],
-      [-0.22, 0.4, 0.02, 0.2], [0.22, 0.4, 0.02, 0.2],
-      [0, 0.19, -0.02, 0.18],
-    ].map(([x, y, z, r]) => {
-      const grape = mesh(new THREE.SphereGeometry(r, 48, 32), purple);
-      grape.position.set(x, y, z);
-      g.add(grape);
-      return grape;
-    });
-    const stem = mesh(new THREE.CapsuleGeometry(0.045, 0.2, 8, 16), velvet(STALK));
-    stem.position.set(0, 1.38, -0.04);
-    g.add(stem);
-    const leaf = plumpLeaf(0.4, 0.2, velvet(LEAF_GREEN));
-    leaf.position.set(0.03, 1.42, -0.04);
-    leaf.rotation.set(-0.8, 0.2, 0.35);
-    g.add(leaf);
-    /* The face across the bunch: an eye on each of the two front grapes,
-       the smile on the one under them. */
-    return friendFace(g, grapes, 0, 0.76, 1.05, { eyes: 0.2, cheeks: 0.33 });
-  },
-
-  carrot() {
-    const g = new THREE.Group();
-    const body = mesh(smoothLathe([[0, 0.0], [0.07, 0.03], [0.17, 0.24], [0.28, 0.54], [0.35, 0.83], [0.36, 1.0], [0.29, 1.11], [0.13, 1.16], [0, 1.17]]), velvet(0xff8b34));
-    g.add(body);
-    const leaf = velvet(LEAF_GREEN);
-    for (const [a, h] of [[-0.45, 0.34], [0, 0.42], [0.45, 0.34]]) {
-      const tuft = mesh(new THREE.SphereGeometry(1, 32, 20), leaf);
-      tuft.scale.set(0.1, h, 0.08);
-      tuft.position.set(Math.sin(a) * (h * 0.95), 1.12 + Math.cos(a) * (h * 0.95), 0);
-      tuft.rotation.z = -a;
-      g.add(tuft);
-    }
-    g.updateMatrixWorld(true);
-    for (const [x, y] of [[-0.2, 0.5], [0.18, 0.36], [-0.12, 0.22]]) g.add(paint([body], x, y, 0.15, 0.075, LINE_PAINT));
-    return friendFace(g, [body], 0, 0.8, 0.82);
-  },
-
-  broccoli() {
-    const g = new THREE.Group();
-    const stem = mesh(smoothLathe([[0, 0], [0.3, 0.0], [0.34, 0.06], [0.31, 0.34], [0.32, 0.56], [0.42, 0.7], [0, 0.72]]), velvet(0xaadd88));
-    g.add(stem);
-    const floret = velvet(0x4fb24b);
-    for (const [x, y, z, r] of [[0, 1.06, -0.02, 0.34], [-0.37, 0.94, 0.0, 0.28], [0.37, 0.94, 0.0, 0.28], [-0.2, 1.24, -0.06, 0.26], [0.2, 1.25, -0.06, 0.26], [0, 0.88, 0.18, 0.27], [-0.52, 0.74, -0.06, 0.2], [0.52, 0.74, -0.06, 0.2]]) {
-      const puff = mesh(new THREE.SphereGeometry(r, 48, 32), floret);
-      puff.position.set(x, y, z);
-      g.add(puff);
-    }
-    return friendFace(g, [stem], 0, 0.34, 0.74);
-  },
-
-  corn() {
-    const g = new THREE.Group();
-    /* The cob, its kernels raised from one surface — the face lies over
-       them. Its seam is turned to the back. */
-    const cob = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0.0], [0.17, 0.03], [0.27, 0.14], [0.31, 0.36], [0.31, 0.74], [0.27, 1.0], [0.17, 1.15], [0, 1.2]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(160), 200);
-    swell(cob, (v) => {
-      if (v.y < 0.08 || v.y > 1.12) return 0;
-      const row = v.y / 0.088;
-      const col = ((Math.atan2(v.z, v.x) / (Math.PI * 2)) * 18 + (Math.floor(row) % 2) * 0.5 + 18) % 1;
-      const d = ((col - 0.5) / 0.47) ** 2 + ((row % 1 - 0.5) / 0.47) ** 2;
-      return 0.026 * Math.sqrt(Math.max(0, 1 - d));
-    });
-    const body = mesh(cob, velvet(0xffd23e));
-    body.rotation.y = Math.PI;
-    g.add(body);
-    const skin = new THREE.Mesh(new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0.0], [0.2, 0.03], [0.3, 0.14], [0.338, 0.36], [0.338, 0.74], [0.3, 1.0], [0.2, 1.15], [0, 1.2]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(80), 96));
-    const husk = velvet(LEAF_GREEN);
-    for (const [turn, lean, len] of [[-0.55, 0.32, 0.84], [0.55, -0.32, 0.84], [Math.PI, 0, 0.7]]) {
-      const leaf = plumpLeaf(len, 0.2, husk);
-      leaf.rotation.set(0, turn, Math.PI / 2 + lean);
-      leaf.position.set(Math.sin(turn) * 0.22, 0.02, Math.cos(turn) * 0.22);
-      g.add(leaf);
-    }
-    return friendFace(g, [skin], 0, 0.74, 0.66);
-  },
-
-  potato() {
-    const g = new THREE.Group();
-    const geo = new THREE.SphereGeometry(0.5, 128, 96);
-    swell(geo, (v) => 0.03 * Math.sin(v.x * 7 + 1) * Math.cos(v.y * 6) + 0.02 * Math.sin(v.z * 9));
-    const body = mesh(geo, velvet(0xdba268));
-    body.scale.set(1.32, 0.82, 0.98);
-    body.position.y = 0.41;
-    g.add(body);
-    g.updateMatrixWorld(true);
-    for (const [x, y] of [[-0.5, 0.6], [0.52, 0.56], [-0.44, 0.26], [0.47, 0.3]]) g.add(paint([body], x, y, 0.08, 0.06, DOT_PAINT));
-    return friendFace(g, [body], 0, 0.42, 0.92);
-  },
-};
 
 /* Nova's cup, upside down: gold clay with a cream lip and a knob on top. */
 function cup() {
@@ -3138,7 +2408,7 @@ function cup() {
   return g;
 }
 
-Object.assign(ITEMS, { fruit: (food) => FRIEND_FOOD[food](), cup });
+Object.assign(ITEMS, { cup });
 
 /* ---------- What a child needs for the weather (2026-10-08) ----------
    Two things a weather, sorted into the weathers in the Weather review
@@ -3912,22 +3182,12 @@ function frame() { renderer.render(scene, camera); return renderer.domElement.to
 /* ---------- The videos' look (2026-10-12) ----------
    The things as the course videos draw them (direct request: "the same
    style as the videos" — their stills in `public/things-in-videos/`):
-   the animals plush — short dense fur, pastel blue, white and pink
-   running into each other, big dark glossy eyes, blush cheeks, a little
-   pink nose; the vegetables smooth satin clay, true to life, no face.
-   The grain stays (`crop.py things … --grain`).
+   the vegetables smooth satin clay, true to life, no face, coloured per
+   vertex (`tint`). The grain stays (`crop.py things … --grain`). The
+   animals are the videos' own, cut out of the stills (`cut.py`) — the
+   shell-fur 3D puppy that came first went 2026-10-13. */
 
-   Fur is shell fur: a furry part is drawn again `FUR_SHELLS` times, each
-   shell a little further out along its normals with thinner strands — a
-   strand is a hashed 3D cell (no UV seams), its root darker than its tip.
-   Colours are per vertex (`tint`), so one part can run from a blue back
-   to a white chest; `fur` per vertex (0–1) shortens it round the eyes,
-   the nose and the mouth. */
-
-const FUR_SHELLS = 30;
-
-/* `geo` with a part's own scale, turn and place baked in — shells push out
-   along true normals only when the mesh itself is not scaled. */
+/* `geo` with a part's own scale, turn and place baked in. */
 function bake(geo, { scale = [1, 1, 1], at = [0, 0, 0], rot = [0, 0, 0] } = {}) {
   const m = new THREE.Matrix4().compose(new THREE.Vector3(...at), new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot)), new THREE.Vector3(...scale));
   geo.applyMatrix4(m);
@@ -3935,235 +3195,26 @@ function bake(geo, { scale = [1, 1, 1], at = [0, 0, 0], rot = [0, 0, 0] } = {}) 
   return geo;
 }
 
-/* Colour and fur length per vertex: `paint(p, n)` → [THREE.Color, fur 0–1]
-   at the point `p` (the thing's own space) with normal `n`. */
+/* Colour per vertex: `paint(p, n)` → [THREE.Color, …] at the point `p`
+   (the thing's own space) with normal `n`. */
 function tint(geo, paint) {
   const pos = geo.attributes.position, nor = geo.attributes.normal;
-  const colors = new Float32Array(pos.count * 3), fur = new Float32Array(pos.count);
+  const colors = new Float32Array(pos.count * 3);
   const p = new THREE.Vector3(), n = new THREE.Vector3();
   for (let i = 0; i < pos.count; i++) {
     p.fromBufferAttribute(pos, i);
     n.fromBufferAttribute(nor, i);
-    const [c, f] = paint(p, n);
+    const [c] = paint(p, n);
     colors.set([c.r, c.g, c.b], i * 3);
-    fur[i] = f;
   }
   geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-  geo.setAttribute("fur", new THREE.BufferAttribute(fur, 1));
   return geo;
-}
-
-/* One material per shell (all furry parts share them): `h` 0 is the skin,
-   1 the tips. `len` is the fur's length, `density` strands per unit. */
-const furMats = new Map();
-function furMaterial(h, len, density) {
-  const key = `${h}|${len}|${density}`;
-  if (furMats.has(key)) return furMats.get(key);
-  const m = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.9, sheen: 0.7, sheenRoughness: 0.5, sheenColor: 0xffffff, specularIntensity: 0.25 });
-  m.onBeforeCompile = (shader) => {
-    shader.uniforms.uH = { value: h };
-    shader.uniforms.uLen = { value: len };
-    shader.uniforms.uDensity = { value: density };
-    shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nattribute float fur;\nuniform float uH;\nuniform float uLen;\nvarying vec3 vObj;\nvarying vec3 vObjN;\nvarying float vFur;")
-      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;\nvObjN = normalize(objectNormal);\nvFur = fur;\ntransformed += objectNormal * uLen * uH * fur;");
-    shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nuniform float uH;\nuniform float uDensity;\nvarying vec3 vObj;\nvarying vec3 vObjN;\nvarying float vFur;\nfloat furHash(vec3 c) { return fract(sin(dot(c, vec3(127.1, 311.7, 74.7))) * 43758.5453); }")
-      .replace(
-        "#include <color_fragment>",
-        `#include <color_fragment>
-        if (uH > 0.0) {
-          if (vFur < 0.05) discard;
-          /* The root's cell, turned off the axes (no grid lines), each
-             strand off its cell's middle; a strand is a column along the
-             normal, so every shell finds the same ones. */
-          vec3 q = mat3(0.8, 0.36, -0.48, -0.48, 0.8, -0.36, 0.36, 0.48, 0.8) * vObj * uDensity;
-          vec3 cell = floor(q);
-          float n = furHash(cell);
-          vec3 off = vec3(furHash(cell + 11.0), furHash(cell + 23.0), furHash(cell + 37.0)) - 0.5;
-          vec3 f = fract(q) - 0.5 - off * 0.5;
-          vec3 qn = normalize(mat3(0.8, 0.36, -0.48, -0.48, 0.8, -0.36, 0.36, 0.48, 0.8) * vObjN);
-          vec3 across = f - dot(f, qn) * qn;
-          /* Strands of a few lengths, thinner towards their tips. */
-          if (uH > 0.45 + 0.55 * n) discard;
-          if (length(across) > 0.58 * (1.0 - uH * 0.75)) discard;
-        }
-        diffuseColor.rgb *= mix(0.86, 1.05, uH);`,
-      );
-  };
-  m.customProgramCacheKey = () => key;
-  furMats.set(key, m);
-  return m;
-}
-
-/* A furry part: its skin and its shells, one group. */
-function furry(geo, { len = 0.032, density = 150 } = {}) {
-  const g = new THREE.Group();
-  const skin = mesh(geo, furMaterial(0, len, density));
-  g.add(skin);
-  for (let k = 1; k <= FUR_SHELLS; k++) {
-    const shell = new THREE.Mesh(geo, furMaterial(k / FUR_SHELLS, len, density));
-    shell.receiveShadow = true;
-    g.add(shell);
-  }
-  return g;
 }
 
 /* Smooth satin clay for the videos' vegetables, coloured per vertex. */
 const satin = (extra = {}) => new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.48, clearcoat: 0.18, clearcoatRoughness: 0.45, sheen: 0.35, sheenRoughness: 0.5, sheenColor: 0xffffff, ...extra });
 
-/* The videos' eye: a dark glossy dome, deep navy lightening a little at
-   its bottom, a big white shine up on the left and a small one down on
-   the right — unlit, so they stay white. On the front of an ellipsoid. */
-const EYE_DARK = painted(512, 256, (x) => {
-  /* A sphere's map: its front (+z) is a quarter of the way along. The
-     pupil, a warm slate iris round it, lighter at the bottom, a dark rim. */
-  x.fillStyle = "#0b0a18";
-  x.fillRect(0, 0, 512, 256);
-  const iris = x.createRadialGradient(128, 142, 8, 128, 128, 86);
-  iris.addColorStop(0, "#07060f");
-  iris.addColorStop(0.42, "#120f24");
-  iris.addColorStop(0.68, "#3e3056");
-  iris.addColorStop(0.9, "#6a5578");
-  iris.addColorStop(1, "#0b0a18");
-  x.fillStyle = iris;
-  x.beginPath();
-  x.ellipse(128, 128, 86, 104, 0, 0, Math.PI * 2);
-  x.fill();
-});
-function videoEye(r) {
-  const g = new THREE.Group();
-  const ball = mesh(new THREE.SphereGeometry(r, 48, 32), new THREE.MeshPhysicalMaterial({ map: EYE_DARK, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }));
-  ball.scale.set(1, 1.1, 0.75);
-  g.add(shiny(ball));
-  const glint = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
-  for (const [x, y, k] of [[-0.34, 0.36, 0.3], [0.38, -0.3, 0.12], [0.12, 0.46, 0.08]]) {
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(r * k, 24, 16), glint);
-    dot.scale.z = 0.4;
-    dot.position.set(x * r, y * r, r * 0.6);
-    g.add(shiny(dot));
-  }
-  return g;
-}
-
-/* Where the front of an ellipsoid (centre `c`, radii `r`) is at (x, y). */
-function frontOf(c, r, x, y, out = 0) {
-  const u = (x - c[0]) / r[0], v = (y - c[1]) / r[1];
-  return c[2] + (r[2] + out) * Math.sqrt(Math.max(0, 1 - u * u - v * v));
-}
-
-const near = (p, q, r) => Math.max(0, 1 - p.distanceTo(new THREE.Vector3(...q)) / r);
 const smooth = (t) => t * t * (3 - 2 * t);
-
-/* The videos' puppy: a big round head, sky blue with a white blaze down
-   to a white muzzle, big pink cheeks, floppy blue ears, two little pink
-   brows, a small pink nose and an open little mouth; a chubby sitting
-   body, blue round the back, a white fluffy chest, running into pink
-   paws and feet. */
-const PUP = { blue: new THREE.Color(0x8fd0f2), white: new THREE.Color(0xfbf8f6), pink: new THREE.Color(0xf7b4c8), blush: new THREE.Color(0xf68fb0) };
-/* The head's middle; everything on the face is placed from it. */
-const PUP_Y = 1.52;
-const PUP_HEAD_C = [0, PUP_Y, 0.02], PUP_HEAD_R = [0.86, 0.7, 0.78];
-
-function videoDog() {
-  const g = new THREE.Group();
-  const { blue, white, pink, blush } = PUP;
-  const Y = PUP_Y;
-  const on = (x, y, out = 0) => frontOf(PUP_HEAD_C, PUP_HEAD_R, x, y, out);
-  const eyeAt = [-1, 1].map((s) => [s * 0.27, Y - 0.1, on(s * 0.27, Y - 0.1)]);
-  const nose = [0, Y - 0.27, on(0, Y - 0.27) + 0.13];
-  const mouth = [0, Y - 0.4, on(0, Y - 0.4) + 0.08];
-  /* Short round the face's features, so they are not lost in it. */
-  const furAt = (p) => {
-    let f = 1;
-    for (const e of eyeAt) f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...e)) / 0.21)));
-    f = Math.min(f, smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...nose)) / 0.15)), smooth(Math.min(1, p.distanceTo(new THREE.Vector3(...mouth)) / 0.15)));
-    return f;
-  };
-  const mix = (a, b, t) => a.clone().lerp(b, Math.min(1, Math.max(0, t)));
-
-  /* The head: a white blaze down the forehead, then the whole face under
-     the eyes; blue round the top, the sides and the back; pink brows. */
-  const head = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: PUP_HEAD_R, at: PUP_HEAD_C }), (p) => {
-    const up = p.y - Y;
-    const faceW = up > 0 ? 0.1 + Math.max(0, 0.42 - up) * 0.45 : 0.29 - up * 2.4;
-    let c = mix(white, blue, smooth(Math.min(1, Math.max(0, (Math.abs(p.x) - faceW) / 0.18))));
-    c = mix(c, blue, smooth(Math.min(1, Math.max(0, (0.34 - p.z) / 0.3))));
-    for (const s of [-1, 1]) c = mix(c, blush, smooth(near(p, [s * 0.3, Y + 0.17, on(s * 0.3, Y + 0.17)], 0.12)));
-    return [c, furAt(p)];
-  });
-  g.add(furry(head));
-
-  /* Chubby cheeks, puffing out at the face's lower sides: pink in the
-     middle, white round it. */
-  for (const s of [-1, 1]) {
-    const cheek = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.29, 0.33], at: [s * 0.43, Y - 0.3, 0.42] }), (p) => [mix(white, blush, smooth(near(p, [s * 0.52, Y - 0.3, 0.68], 0.34))), furAt(p)]);
-    g.add(furry(cheek));
-  }
-
-  /* The muzzle: two little white pads under the nose. */
-  for (const s of [-1, 1]) {
-    const pad = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.16, 0.12, 0.12], at: [s * 0.1, Y - 0.34, on(s * 0.1, Y - 0.34) - 0.02] }), (p) => [white.clone(), Math.min(0.5, furAt(p))]);
-    g.add(furry(pad, { len: 0.03 }));
-  }
-
-  /* The ears: from the head's top corners, hanging down beside it. */
-  for (const s of [-1, 1]) {
-    /* A flap from the head's top corner, out a little and folding down —
-       a deeper blue at its root, where it meets the head. */
-    const root = [s * 0.66, Y + 0.44, 0.02];
-    const ear = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.2, 0.33, 0.12], at: [s * 0.88, Y + 0.24, 0.06], rot: [0.25, s * 0.25, s * 0.95] }), (p) => [mix(blue, blue.clone().multiplyScalar(0.84), smooth(near(p, root, 0.3))), 1]);
-    g.add(furry(ear));
-  }
-
-  /* The body, sitting, short under the big head: blue round the back, a
-     white chest, pink below. */
-  const body = tint(bake(new THREE.SphereGeometry(1, 96, 64), { scale: [0.62, 0.62, 0.54], at: [0, 0.62, -0.04] }), (p) => {
-    let c = mix(blue, white, smooth(Math.min(1, Math.max(0, (p.z - 0.2) / 0.25 - Math.abs(p.x) * 1.6 + 0.6))));
-    c = mix(c, pink, smooth(Math.min(1, Math.max(0, (0.3 - p.y) / 0.25))));
-    return [c, 1];
-  });
-  g.add(furry(body, { len: 0.045 }));
-  /* A fluffy bib under the chin. */
-  const bib = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.36, 0.3, 0.2], at: [0, 0.9, 0.42] }), () => [white.clone(), 1]);
-  g.add(furry(bib, { len: 0.05 }));
-
-  /* The haunches and feet, pink, and two round front paws. */
-  for (const s of [-1, 1]) {
-    const haunch = tint(bake(new THREE.SphereGeometry(1, 64, 48), { scale: [0.29, 0.25, 0.32], at: [s * 0.48, 0.25, 0.06] }), (p) => [mix(blue, pink, (0.46 - p.y) * 2.6), 1]);
-    g.add(furry(haunch));
-    const foot = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.19, 0.12, 0.24], at: [s * 0.58, 0.1, 0.24] }), () => [pink.clone(), 1]);
-    g.add(furry(foot, { len: 0.03 }));
-    /* A front leg down from the chest, white running into a pink paw. */
-    const leg = new THREE.CapsuleGeometry(0.15, 0.42, 16, 32);
-    bake(leg, { at: [s * 0.24, 0.38, 0.42], rot: [0.12, 0, s * -0.04] });
-    tint(leg, (p) => [mix(white, pink, (0.36 - p.y) * 3.2), 1]);
-    g.add(furry(leg, { len: 0.035 }));
-    const paw = tint(bake(new THREE.SphereGeometry(1, 48, 32), { scale: [0.19, 0.13, 0.22], at: [s * 0.25, 0.12, 0.5] }), () => [pink.clone(), 1]);
-    g.add(furry(paw, { len: 0.03 }));
-  }
-
-  /* The face: dark glossy eyes, a pink nose, a little open mouth. */
-  for (const e of eyeAt) {
-    const eye = videoEye(0.125);
-    eye.position.set(e[0], e[1], e[2] - 0.03);
-    eye.rotation.y = e[0] * 0.5;
-    g.add(eye);
-  }
-  const noseBall = mesh(new THREE.SphereGeometry(0.065, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0xf28aa8, roughness: 0.3, clearcoat: 0.6 }));
-  noseBall.scale.set(1.25, 0.8, 0.75);
-  noseBall.position.set(...nose);
-  g.add(shiny(noseBall));
-  const lip = mesh(new THREE.SphereGeometry(0.085, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0x8a2a43, roughness: 0.5 }));
-  lip.scale.set(1.1, 0.72, 0.5);
-  lip.position.set(...mouth);
-  g.add(shiny(lip));
-  const tongue = mesh(new THREE.SphereGeometry(0.058, 24, 16), new THREE.MeshPhysicalMaterial({ color: 0xff7f9a, roughness: 0.45 }));
-  tongue.scale.set(1.15, 0.55, 0.5);
-  tongue.position.set(mouth[0], mouth[1] - 0.026, mouth[2] + 0.022);
-  g.add(shiny(tongue));
-  return g;
-}
 
 /* The videos' carrot: fat at its rounded shoulder, tapering to a blunt
    round tip, curved grooves across its front (deeper orange in them),
@@ -4388,7 +3439,6 @@ function videoPepper(color = "red") {
 }
 
 const VIDEO_THINGS = {
-  dog: videoDog,
   carrot: () => videoCarrot(),
   potato: videoPotato,
   broccoli: videoBroccoli,
@@ -4480,10 +3530,10 @@ if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
   const arg = params.get("arg");
   const group = ITEMS[THING](arg ?? undefined);
-  /* The friends' look (Nova's fruits and cup; Bloo's animals, their homes
-     and their food): a softer, fuller light — their felt is evenly lit,
-     with no hard dark side. */
-  if (["fruit", "cup", "cat", "dog", "fishfriend", "catBed", "kennel", "fishbowl", "wear", "weather", "weatherbit", "video"].includes(THING)) {
+  /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
+     what is worn for it; the videos' vegetables): a softer, fuller light —
+     their felt is evenly lit, with no hard dark side. */
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "weatherbit", "video"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
@@ -4513,7 +3563,7 @@ if (THING) {
   const span = Math.max(size.x, size.y, size.z) * 0.78;
   const lift = THREE.MathUtils.degToRad(Number(params.get("lift") ?? (["pot", "soupPot"].includes(THING) ? 32 : 24)));
   /* `?lift=` for a thing best seen from higher up (a leaf, a foot).
-     `?px=2` draws it at twice the pixels — fur's strands need it, and the
+     `?px=2` draws it at twice the pixels — the videos' fine detail needs it, and the
      crop scales it down smooth. */
   renderer.setPixelRatio(Number(params.get("px") ?? 1));
   renderer.setSize(800, 800);
