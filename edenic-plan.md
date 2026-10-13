@@ -565,7 +565,9 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       washed and the same through the whole course): rendered in
       `tools/picnic-scene` (`render.cjs backdrop shapes` → `crop.py
       backdrop`), a portrait and a landscape frame, ~23 KB each; behind
-      every step of every Shapes lesson. For the user to judge.
+      every step of every Shapes lesson. The user: "very nice — but make it
+      mean something: circles in the circle lesson" → one meadow per
+      lesson, everything in it that lesson's shape (the review: all four).
 - [ ] The other five, one at a time, if the user likes it: Colors (a
       painter's corner), Vegetables (Nova's garden), Seasons (the island),
       Animals (the videos' pastel path), Weather (Bloo's hill).
