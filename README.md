@@ -189,8 +189,8 @@ tools/
                       potato, tomato and pepper — and the Seasons'
                       pumpkin — in the videos' look: smooth satin clay, no
                       face) and her cup, and Bloo's ten animals, each on
-                      its own (all but the cow cut out of their videos;
-                      the cat, dog, cow and fish in a second coat too),
+                      its own, cut out of their videos (the cat, dog
+                      and fish in a second coat too),
                       their homes, and
                       Bloo's weather (his hill under each weather, step
                       by step as it is made, with its sky on layers of
@@ -379,19 +379,19 @@ picture:
   snowman, a snowflake) into four season boxes, the four seasons in order,
   and two spelled from their picture.
 
-Bloo's **Animals** is the same rhythm, one animal a lesson: cat, dog, cow,
-fish, elephant, mouse, bird, parrot, turtle, gecko. Every animal but the
-cow is the course video's own — the fluffy blue puppy, the blue-and-pink
-cat, the goldfish and the rest, cut out of their videos — so the child
-meets the very animal the video showed; the cow is still a chibi drawn the
-friends' way. Each is shown on its own, with no scene behind it, and on the
+Bloo's **Animals** is the same rhythm, one animal a lesson: cat, dog,
+fish, elephant, mouse, bird, parrot, turtle, gecko. Every animal is the
+course video's own — the fluffy blue puppy, the blue-and-pink cat, the
+goldfish and the rest, cut out of their videos — so the child meets the
+very animal the video showed; an animal the videos do not show has no
+lesson. Each is shown on its own, with no scene behind it, and on the
 word card it leans toward the child's finger as if it were round. Nova's
 carrot, broccoli, potato, tomato and pepper are the videos' smooth,
 faceless clay. The animal is **met** and **spelled** — nothing to choose
-between inside a lesson. The review is the exam: the first four, each in
+between inside a lesson. The review is the exam: the first three, each in
 two coats (a blue cat and a grey one, a blue dog and a caramel one, an
 orange fish and a blue one…), go into their
-homes — a cat bed, a kennel, a red barn, a fishbowl — each box labelled
+homes — a cat bed, a kennel, a fishbowl — each box labelled
 with whose home it is, then "dog" and "fish" are spelled from the picture
 alone.
 
