@@ -2,7 +2,8 @@
 dog in any colour): its blue becomes `colour`, keeping each pixel's light
 and shade — mixed in, never a hue turned part way (that passes through
 green where blue meets pink). Its pinks, whites and dark eyes stay.
-Usage: coat.py in.png out.png [hex colour]"""
+An animal that is not blue names its own coat's hue (the orange fish: 30).
+Usage: coat.py in.png out.png [hex colour] [hue°]"""
 import sys
 import numpy as np
 from PIL import Image
@@ -15,9 +16,10 @@ px = np.asarray(img).astype(np.float32) / 255
 rgb = px[..., :3]
 hsv = np.asarray(img.convert("RGB").convert("HSV")).astype(np.float32) / 255
 h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
-# How blue each pixel is: its hue near 205°, coloured enough to have one,
+hue = float(sys.argv[4]) if len(sys.argv) > 4 else 205
+# How blue each pixel is: its hue near `hue`, coloured enough to have one,
 # light enough not to be an eye.
-d = np.abs(((h - 205 / 360) + 0.5) % 1 - 0.5) * 360
+d = np.abs(((h - hue / 360) + 0.5) % 1 - 0.5) * 360
 blue = np.clip((54 - d) / 12, 0, 1) * np.clip((s - 0.04) / 0.06, 0, 1) * np.clip((v - 0.4) / 0.15, 0, 1)
 # The coat's light and shade: each pixel's lightness against the blue's own.
 lum = rgb @ np.array([0.3, 0.59, 0.11], np.float32)
