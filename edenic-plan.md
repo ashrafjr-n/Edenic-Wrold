@@ -581,9 +581,34 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       meadow under the weather with what a child wears for it. All 42
       lessons checked: each fetches its own backdrop, no errors.
 
-### Phase 6 — Reels, sound, finish
-- [ ] Every course's reels replace the placeholders (same file names).
-- [ ] Audio: every taught word recorded (§7), `playCue` wired.
+### Phase 6 — Finish Learn (the user's list, 2026-10-13)
+1. [ ] **Polish the activities' elements** — small design details in the
+       steps (letters, tiles, buttons, boxes), one course at a time; the
+       Spell's faint dashed slots over the backdrops on a desktop.
+2. [ ] **Redesign the course page** — the page that shows a course's
+       lessons (`LessonBox`), phone and wide.
+3. [ ] **Audio** — every taught word and line recorded (§7), `playCue`
+       wired (`lib/cue.ts`, howler.js — a new dependency, ask first); one
+       tap starts sound (iOS blocks autoplay); a mute switch.
+4. [ ] **Videos** — every lesson's real reel in place of the placeholder
+       (same file names); compressed (H.264 MP4, a poster frame); decide
+       where they are hosted (the repo is no place for big files).
+
+Before calling Learn done (easy to forget):
+- [ ] The user's open checks of each course (Colors, Seasons, Vegetables'
+      cups, Animals, Weather — the items above), or close them.
+- [ ] The sun, clouds and snowman from their stills — still wanted?
+- [ ] A native speaker checks every Kurdish (Badini) string; Arabic too.
+- [ ] Saved progress: lessons were added and removed (Vegetables,
+      Animals), so old numbers point at the wrong lesson — bump the store's
+      version and reset or move it.
+- [ ] Known: the word card scrolls 18px at 360x640 (every course).
+- [ ] `code hygiene` — dead 3D builders (the old fruits, cat, dog, fish),
+      `GARDENS`' single-food gardens, `public/things-in-videos/` deleted.
+- [ ] A production build and a real phone/tablet run (never done yet):
+      load time, no console errors, sound and video on iOS Safari.
+- [ ] Accessibility pass: keyboard through every step, screen-reader
+      labels, reduced motion.
 - [ ] Test with one child aged 5–6 and one aged 8–9; fix what it shows.
 - [ ] Final docs pass.
 
