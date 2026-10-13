@@ -180,8 +180,7 @@ export function TrailIntro({ dict }: { dict: Dictionary }) {
               geometry became one line of reuse.
 
               **The tail is two shrinking clay discs stepping out of the
-              bubble's RIGHT edge, biased low** — the direction
-              `.speech-bubble--left`'s triangle pointed, because Nova stands
+              bubble's RIGHT edge, biased low** — towards Nova, who stands
               to the right of the bubble at every width and in every locale
               (the layout never mirrors). They are the same three classes as
               the bubble plus `.card-pill`, so they are literally the same
