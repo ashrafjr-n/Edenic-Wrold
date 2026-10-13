@@ -211,7 +211,8 @@ public/
                             from Big Buck Bunny, CC BY 3.0 Blender Foundation,
                             until the real reels replace them by name;
                             shapes/backdrop/ the blurred picnic meadow behind
-                            its lessons, portrait and landscape;
+                            each lesson (circle/, square/, triangle/,
+                            rectangle/, review/ — portrait and landscape);
                             shapes/find/ holds the rendered Find scenes:
                             the circles' picnic, then squares/, triangles/
                             and rectangles/; colors/ holds the ten paint
@@ -270,10 +271,13 @@ pages have a Start / Continue / Next Lesson button.
 
 **Shapes is fully written: one shape per lesson** — Circle, Square, Triangle,
 Rectangle, then a Shape review. Its lessons play in Pinki's picnic meadow — a
-soft, blurred clay world behind every step (the pink blanket, a basket and a
-ball at the edges, trees, a kite and clouds far off), in the frame that fits
-the screen's orientation and dimmed at night, quiet enough that the step
-stays what the eye goes to. Every step has a round **task button** at the
+soft, blurred clay world behind every step — and in each lesson everything in
+the meadow is that lesson's shape: a round blanket, plates, balloons and the
+sun for the circle; a checked blanket, gift boxes and box hedges for the
+square; pizza, pine trees, bunting and a tent for the triangle; a striped
+blanket, books, tall hedges and a fence for the rectangle; all four in the
+review. It comes in the frame that fits the screen's orientation, dimmed at
+night, quiet enough that the step stays what the eye goes to. Every step has a round **task button** at the
 far right, on the back button's line (no progress bar on a phone or tablet): a clay circle with the step's icon.
 It is silent; tapping it opens a popup with a close button that plays a short
 loop of how the step is done — only the first move, never the whole answer.
