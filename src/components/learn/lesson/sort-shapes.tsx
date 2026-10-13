@@ -149,13 +149,14 @@ export function SortShapes({ items, bins, seed, binAria, onSolved, onMiss }: Sor
         )}
       </div>
 
-      {/* The four boxes. The glow goes on a wrapper — the box has a fill. */}
+      {/* The boxes, two a row — an odd last one (Animals' three homes) takes
+          the whole row. The glow goes on a wrapper — the box has a fill. */}
       <div className="grid w-full grid-cols-2 gap-3 lg:flex-1 lg:gap-4">
         {bins.map(({ target, word, face: picture, tone: { face, edge, text } }, i) => {
           const inside = sorted.filter((item) => isTarget(item, target));
           const jumping = done || received?.word === word;
           return (
-            <span key={word} className={`relative block ${hinted === word ? "guide-target" : ""}`}>
+            <span key={word} className={`relative block last:odd:col-span-2 ${hinted === word ? "guide-target" : ""}`}>
               <button
                 key={jumping ? `${word}.${done ? "done" : received?.n}` : word}
                 ref={(el) => {
