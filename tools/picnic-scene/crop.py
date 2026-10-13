@@ -19,7 +19,7 @@ not behind the front) and the front's box — paste them into
 `data/garden.ts`. `dest` defaults to
 `public/assets/learn/nova/fruits/garden`.
 
-    python3 tools/picnic-scene/crop.py harvest-fruits --grain
+    python3 tools/picnic-scene/crop.py harvest-vegetables --grain
 
 Nova's basket — run after `render.cjs basket`: writes the basket
 (`basket.png`) and its near half, which goes over what is piled in it
@@ -60,11 +60,11 @@ writes them as JPEGs, 1280px on the long side, into `dest`.
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
-friends' look: Nova's fruits and her cup; Bloo's animals and their
-homes).
+friends' look and the videos': Nova's vegetables and her cup; Bloo's
+animals and their homes).
 
     python3 tools/picnic-scene/crop.py things public/assets/learn/pinki/colors/pots red blue
-    python3 tools/picnic-scene/crop.py things public/assets/learn/nova/fruits/things apple --grain
+    python3 tools/picnic-scene/crop.py things public/assets/learn/nova/fruits/things carrot --grain
 """
 import json
 import os
