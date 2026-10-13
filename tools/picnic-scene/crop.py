@@ -51,11 +51,11 @@ for all of a weather, into `public/assets/learn/bloo/weather/make/
 
     python3 tools/picnic-scene/crop.py weathersteps
 
-A course's backdrop — run after `render.cjs backdrop <course>`: blurs both
+A lesson's backdrop — run after `render.cjs backdrop <name>`: blurs both
 frames (the world stays known, never sharp enough to pull the eye) and
 writes them as JPEGs, 1280px on the long side, into `dest`.
 
-    python3 tools/picnic-scene/crop.py backdrop shapes public/assets/learn/pinki/shapes/backdrop
+    python3 tools/picnic-scene/crop.py backdrop circle public/assets/learn/pinki/shapes/backdrop/circle
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
@@ -206,10 +206,10 @@ if NAME.startswith("harvest-"):
     sys.exit()
 
 if NAME == "backdrop":
-    course, dest = sys.argv[2], os.path.join(ROOT, sys.argv[3])
+    name, dest = sys.argv[2], os.path.join(ROOT, sys.argv[3])
     os.makedirs(dest, exist_ok=True)
     for frame in ("portrait", "landscape"):
-        img = Image.open(os.path.join(HERE, "out", f"backdrop-{course}", f"{frame}.png")).convert("RGB")
+        img = Image.open(os.path.join(HERE, "out", f"backdrop-{name}", f"{frame}.png")).convert("RGB")
         img.thumbnail((1280, 1280), Image.LANCZOS)
         img.filter(ImageFilter.GaussianBlur(max(img.size) * 0.009)).save(f"{dest}/{frame}.jpg", quality=82, optimize=True, progressive=True)
     sys.exit()
