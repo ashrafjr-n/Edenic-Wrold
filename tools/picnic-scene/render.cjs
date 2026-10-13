@@ -83,6 +83,12 @@
  *
  *   node tools/picnic-scene/render.cjs thing carrot=video:carrot@hd@float potato=video:potato@hd@float broccoli=video:broccoli@hd@float tomato=video:tomato@hd@float pepper=video:pepper@hd@float pumpkin=video:pumpkin@hd@float
  *
+ * A course's backdrop (2026-10-13) — its world behind every step, in both
+ * frames (`out/backdrop-<course>/portrait.png`, `landscape.png`). Then
+ * `crop.py backdrop <course>`, which blurs them:
+ *
+ *   node tools/picnic-scene/render.cjs backdrop shapes
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
@@ -141,6 +147,12 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+    }
+  } else if (mode === "backdrop") {
+    for (const course of specs) {
+      const out = path.join(__dirname, "out", `backdrop-${course}`);
+      fs.mkdirSync(out, { recursive: true });
+      for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${course}&frame=${frame}`)).backdrop);
     }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
