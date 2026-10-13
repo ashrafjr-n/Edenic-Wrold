@@ -4712,8 +4712,10 @@ if (THING) {
      and everything in it the lesson's shape (the user: "in the circle
      lesson, circles in the background"): the blanket, what is on it, the
      trees, what is in the sky and at the near right. The middle stays
-     quiet grass and sky for the step.
-     `?backdrop=<circle|square|triangle|rectangle|review>&frame=portrait|landscape`. ---------- */
+     quiet grass and sky for the step. The other courses' worlds follow
+     the same plan below (`WORLDS`), each lesson's things its own.
+     `?backdrop=<circle|square|triangle|rectangle|review>` (Shapes) or
+     `<colors|veg|seasons|animals|weather>-<lesson>`, `&frame=portrait|landscape`. ---------- */
   const portrait = params.get("frame") === "portrait";
   const [w, h] = portrait ? [900, 1600] : [1600, 900];
   renderer.setSize(w, h);
@@ -4724,7 +4726,7 @@ if (THING) {
   catcher.visible = false;
   Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14 });
   const leafy = (color = 0x7cc66a) => clay(color, { clearcoat: 0.15, roughness: 0.75 });
-  const at = (thing, x, y, z, k = 1) => {
+  const put = (thing, x, y, z, k = 1) => {
     thing.scale.setScalar(k);
     thing.position.set(x, y, z);
     scene.add(thing);
@@ -4844,8 +4846,8 @@ if (THING) {
         const disc = mesh(new THREE.SphereGeometry(2.4, 64, 48), clay(0xffd45e, { emissive: 0xffc93a, emissiveIntensity: 0.5 }));
         disc.scale.z = 0.4;
         disc.castShadow = false;
-        at(disc, portrait ? -3.2 : -3.5, portrait ? 9.4 : 5.2, -22);
-        for (const [color, x, y] of portrait ? [["pink", 1.2, 4.6], ["blue", 1.9, 5.1], ["yellow", 1.6, 4.1]] : [["pink", 3.4, 2.4], ["blue", 4.2, 2.9], ["yellow", 3.8, 1.9]]) at(ITEMS.balloon(color), x, y, -3, 0.9);
+        put(disc, portrait ? -3.2 : -3.5, portrait ? 9.4 : 5.2, -22);
+        for (const [color, x, y] of portrait ? [["pink", 1.2, 4.6], ["blue", 1.9, 5.1], ["yellow", 1.6, 4.1]] : [["pink", 3.4, 2.4], ["blue", 4.2, 2.9], ["yellow", 3.8, 1.9]]) put(ITEMS.balloon(color), x, y, -3, 0.9);
       },
     },
     square: {
@@ -4884,7 +4886,7 @@ if (THING) {
         const side = new THREE.Shape(); side.moveTo(-1.6, 0); side.lineTo(1.6, 0); side.lineTo(0, 2.4); side.closePath();
         const tent = mesh(roundedShapeExtrude(side, 3.2, 0.08), clay(0xf9c06b, { clearcoat: 0.2, roughness: 0.7 }));
         tent.rotation.y = -0.6;
-        at(tent, portrait ? 4.5 : 8.5, 0, -11);
+        put(tent, portrait ? 4.5 : 8.5, 0, -11);
       },
     },
     rectangle: {
@@ -4896,11 +4898,11 @@ if (THING) {
         const wood = clay(0xfff3e2, { clearcoat: 0.1, roughness: 0.8 });
         for (let x = -16; x <= 16; x += 0.9) {
           const board = mesh(new RoundedBoxGeometry(0.6, 1.5, 0.12, 3, 0.04), wood);
-          at(board, x, 0.75, -9);
+          put(board, x, 0.75, -9);
         }
         for (const y of [0.45, 1.1]) {
           const rail = mesh(new RoundedBoxGeometry(33, 0.18, 0.1, 2, 0.04), wood);
-          at(rail, 0, y, -9.12);
+          put(rail, 0, y, -9.12);
         }
       },
     },
@@ -4911,42 +4913,518 @@ if (THING) {
       sky() {},
     },
   };
-  const lesson = LESSONS[BACKDROP];
+  /* Where things stand in each frame: the near left and near right (in
+     every frame at its own edges), four spots far off at the sides, and
+     the sky's left and right. */
+  const NL = portrait ? [-1.9, 5.6] : [-3.6, 3.0];
+  const NR = portrait ? [1.5, 6.2] : [3.6, 3.6];
+  const FAR = [[-9, -12, 1.4], [-13, -18, 1.2], [10, -14, 1.5], [15, -22, 1.2]];
+  const SKY_L = portrait ? [-1.8, 5.4, -3] : [-3.4, 3.2, -3];
+  const SKY_R = portrait ? [1.6, 5.0, -3] : [3.8, 2.8, -3];
+  /* Stand a thing on `y` (its lowest point there), wherever it is built. */
+  const stand = (thing, x, y, z, k = 1, turnY = 0) => {
+    thing.scale.multiplyScalar(k);
+    thing.rotation.y += turnY;
+    thing.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(thing);
+    thing.position.set(x, y - box.min.y, z);
+    return thing;
+  };
+  const many = (make, spots) => spots.map((spot) => put(make(), ...spot));
 
-  const grass = mesh(new THREE.PlaneGeometry(200, 200), turf(0x9ad67c));
-  grass.rotation.x = -Math.PI / 2;
-  grass.castShadow = false;
-  scene.add(grass);
-  // soft hills along the horizon
-  for (const [x, z, r, sy, color] of [[-14, -40, 16, 0.32, 0xb4e39b], [10, -46, 20, 0.28, 0xa9dd8f], [32, -38, 14, 0.36, 0xbde6a6], [-34, -44, 18, 0.3, 0xa9dd8f]]) {
-    const hill = mesh(new THREE.SphereGeometry(r, 64, 32), turf(color));
-    hill.scale.y = sy;
-    hill.position.set(x, 0, z);
-    scene.add(hill);
+  /* The meadow every world shares: sky, grass, hills on the horizon,
+     clouds and a few flowers. */
+  function meadow({ sky = 0xcfe6fb, grass = 0x9ad67c, hills = [0xb4e39b, 0xa9dd8f, 0xbde6a6, 0xa9dd8f], cloud = 0xffffff, flowers = [0xff9ec8, 0xffffff, 0xffd45e] } = {}) {
+    scene.background = new THREE.Color(sky);
+    const ground = mesh(new THREE.PlaneGeometry(200, 200), turf(grass));
+    ground.rotation.x = -Math.PI / 2;
+    ground.castShadow = false;
+    scene.add(ground);
+    [[-14, -40, 16, 0.32], [10, -46, 20, 0.28], [32, -38, 14, 0.36], [-34, -44, 18, 0.3]].forEach(([x, z, r, sy], i) => {
+      const hill = mesh(new THREE.SphereGeometry(r, 64, 32), turf(hills[i % hills.length]));
+      hill.scale.y = sy;
+      hill.position.set(x, 0, z);
+      scene.add(hill);
+    });
+    if (cloud !== null) {
+      for (const [x, y, z, k] of portrait ? [[-7, 7.5, -20, 3.2], [8, 9, -26, 3.8], [1, 11, -30, 2.6]] : [[-6, 5.4, -20, 3.2], [9, 6.2, -26, 3.8], [1.5, 7.4, -30, 2.6]]) {
+        const c = ITEMS.cloud();
+        // lit from inside a little: a cloud's underside read as storm grey
+        c.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.material.color.set(cloud); o.material.emissive.set(cloud); o.material.emissiveIntensity = 0.45; } });
+        put(c, x, y, z, k);
+      }
+    }
+    if (flowers) [[3.5, 1], [-1.5, -2], [6.5, -1], [-6.5, -3], [1.2, 3.5], [-3.8, 7.2], [4.2, 6.8]].forEach(([x, z], i) => put(hillFlower(flowers[i % flowers.length]), x, 0, z, 1.6));
   }
-  // the trees far off at the sides
-  [[-9, -12, 1.4], [-13, -18, 1.2], [10, -14, 1.5], [15, -22, 1.2]].forEach(([x, z, k], i) => at(TREES[lesson.trees[i]](), x, 0, z, k));
-  // clouds
-  for (const [x, y, z, k] of portrait ? [[-7, 7.5, -20, 3.2], [8, 9, -26, 3.8], [1, 11, -30, 2.6]] : [[-6, 5.4, -20, 3.2], [9, 6.2, -26, 3.8], [1.5, 7.4, -30, 2.6]]) {
-    const c = ITEMS.cloud();
-    // lit from inside a little: a cloud's underside read as storm grey
-    c.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.material.emissive.set(0xffffff); o.material.emissiveIntensity = 0.45; } });
-    at(c, x, y, z, k);
+
+  /* A round tree, its crown in `colors`, `dots` scattered over its front
+     (blossoms, apples) and an optional `lean` (the wind). */
+  function roundTree(colors = [0x7cc66a], { dots = null, lean = 0, snow = false } = {}) {
+    const g = new THREE.Group();
+    g.add(trunk(2.2));
+    [[0, 2.9, 1.25], [-0.8, 2.4, 0.85], [0.85, 2.45, 0.9], [0.1, 3.6, 0.8]].forEach(([cx, cy, cr], i) => {
+      const puff = mesh(new THREE.SphereGeometry(cr, 48, 32), leafy(colors[i % colors.length]));
+      puff.position.set(cx, cy, 0);
+      g.add(puff);
+      if (snow) {
+        const cap = mesh(new THREE.SphereGeometry(cr * 0.82, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2.6), clay(0xffffff, { roughness: 0.7 }));
+        cap.position.set(cx, cy + cr * 0.32, 0);
+        g.add(cap);
+      }
+    });
+    if (dots) for (const [dx, dy] of [[-0.5, 3.1], [0.4, 3.4], [0.9, 2.5], [-0.9, 2.3], [0.1, 2.6], [-0.2, 3.9], [0.6, 3.0]]) {
+      const dot = mesh(new THREE.SphereGeometry(0.17, 24, 16), clay(dots, { clearcoat: 0.5 }));
+      dot.position.set(dx, dy, 1.0);
+      g.add(dot);
+    }
+    g.rotation.z = lean;
+    return g;
   }
-  lesson.sky();
-  // the picnic at the near left
-  const picnic = new THREE.Group();
-  picnic.add(BLANKET[BACKDROP]());
-  for (const [name, x, z, k, rotY] of lesson.picnic) {
-    const thing = ITEMS[name]();
-    place(thing, { at: [x, ON_BLANKET, z], scale: k, rotY });
-    picnic.add(thing);
+  /* A bare winter tree: a trunk, four branches, snow along them. */
+  function bareTree() {
+    const g = new THREE.Group();
+    const bark = clay(0xa47a58, { roughness: 0.8, clearcoat: 0.1 });
+    g.add(taperTube([[0, 0, 0], [0.05, 1.6, 0], [0, 3.0, 0]], 0.3, 0.18, bark));
+    for (const [x, y] of [[-1.2, 3.6], [1.1, 3.4], [-0.5, 4.2], [0.6, 4.3]]) {
+      g.add(taperTube([[0, 2.2, 0], [x * 0.5, (2.2 + y) / 2, 0], [x, y, 0]], 0.14, 0.06, bark));
+      const snow = mesh(new THREE.SphereGeometry(0.22, 24, 16), clay(0xffffff, { roughness: 0.7 }));
+      snow.scale.set(1.4, 0.6, 1);
+      snow.position.set(x, y + 0.12, 0);
+      g.add(snow);
+    }
+    return g;
   }
-  picnic.rotation.y = 0.45;
-  at(picnic, portrait ? -1.9 : -3.6, 0, portrait ? 5.6 : 3.0, 0.85);
-  at(lesson.near(), portrait ? 1.5 : 3.6, 0, portrait ? 6.2 : 3.6, 0.9);
-  // a few flowers in the grass
-  for (const [x, z, c] of [[3.5, 1, 0xff9ec8], [-1.5, -2, 0xffffff], [6.5, -1, 0xffd45e], [-6.5, -3, 0xff9ec8], [1.2, 3.5, 0xffffff], [-3.8, 7.2, 0xffd45e], [4.2, 6.8, 0xff9ec8]]) at(hillFlower(c), x, 0, z, 1.6);
+  /* A palm: a curved trunk of rings and a crown of long leaves. */
+  function palmTree() {
+    const g = new THREE.Group();
+    for (let i = 0; i < 9; i++) {
+      const ring = mesh(new THREE.CylinderGeometry(0.24, 0.3, 0.42, 24), clay(0xc9a27a, { roughness: 0.8 }));
+      ring.position.set(Math.sin(i * 0.16) * 0.9, 0.21 + i * 0.4, 0);
+      g.add(ring);
+    }
+    for (let k = 0; k < 7; k++) {
+      const a = (k / 7) * Math.PI * 2;
+      const leaf = mesh(new THREE.SphereGeometry(0.5, 32, 16), leafy(0x5fbf6a));
+      leaf.scale.set(3.2, 0.25, 0.9);
+      leaf.position.set(0.9 + Math.cos(a) * 1.3, 3.8 - 0.35, Math.sin(a) * 1.3);
+      leaf.rotation.set(0, -a, -0.35);
+      g.add(leaf);
+    }
+    return g;
+  }
+  /* An acacia: a thin trunk and a wide flat crown (the elephant's). */
+  function flatTree() {
+    const g = new THREE.Group();
+    g.add(taperTube([[0, 0, 0], [0.2, 1.6, 0], [0, 3.0, 0]], 0.26, 0.16, clay(0xb98a5e, { roughness: 0.8 })));
+    const top = mesh(new THREE.SphereGeometry(1.6, 48, 24), leafy(0x8ccf6e));
+    top.scale.set(1.9, 0.38, 1.3);
+    top.position.y = 3.3;
+    g.add(top);
+    return g;
+  }
+  const trees = (makers) => FAR.forEach(([x, z, k], i) => put(makers[i % makers.length](), x, 0, z, k));
+
+  /* A blanket of one color, a paler border inside it. */
+  function plainBlanket(color, border = 0xffffff) {
+    const g = new THREE.Group();
+    g.add(mesh(new RoundedBoxGeometry(5.7, BH, 4.8, 6, 0.06), blanketCloth(color)));
+    const inner = mesh(new RoundedBoxGeometry(5.1, 0.02, 4.2, 4, 0.01), clay(border, { clearcoat: 0.05, roughness: 0.9, transparent: true, opacity: 0.35 }));
+    inner.position.y = BH / 2 + 0.01;
+    g.add(inner);
+    g.position.y = BH / 2;
+    return g;
+  }
+  /* A picnic at the near left: a blanket and things stood on it
+     ([thing, x, z, scale, turn] in the blanket's own coordinates). */
+  function picnicAt(blanket, things, k = 0.85) {
+    const g = new THREE.Group();
+    g.add(blanket);
+    for (const [thing, x, z, s = 1, turn = 0] of things) g.add(stand(thing, x, ON_BLANKET, z, s, turn));
+    g.rotation.y = 0.45;
+    return put(g, NL[0], 0, NL[1], k);
+  }
+
+  /* ---------- Colors: Pinki's meadow with a painter's easel; in each
+     lesson the blanket, what is on it, the pots, the balloons and the
+     flowers are the lesson's color (the review: all ten, a rainbow). */
+  const COLOR_THINGS = {
+    red: ["apple", "strawberry", "cherries", "ladybug"], blue: ["fish", "whale", "mug", "ball"], yellow: ["banana", "lemon", "star", "duck"],
+    green: ["pear", "frog", "leaf", "broccoli"], orange: ["orange", "carrot", "basketball"], purple: ["grapes", "eggplant", "book", "gift"],
+    pink: ["donut", "icecream", "cupcake", "pig"], brown: ["cookie", "chocolate", "teddy", "acorn"], black: ["hat", "tire", "bowling", "ant"],
+    white: ["egg", "sheep", "milk", "snowman"],
+  };
+  const colorThing = (name, color) => (name === "fish" || name === "ball" ? ITEMS[name](PAINT.blue) : name === "book" || name === "gift" ? ITEMS[name](PAINT.purple) : ITEMS[name]());
+  /* An easel with a canvas, painted `color` (the review: a rainbow of
+     stripes). */
+  function easel(colors) {
+    const g = new THREE.Group();
+    const wood = clay(0xc98f55, { roughness: 0.7, clearcoat: 0.2 });
+    for (const [x, z, tz] of [[-0.55, 0.15, 0.12], [0.55, 0.15, -0.12], [0, -0.45, 0]]) {
+      const leg = mesh(new THREE.CapsuleGeometry(0.06, 2.6, 8, 16), wood);
+      leg.position.set(x * 0.85, 1.3, z);
+      leg.rotation.set(z < 0 ? -0.22 : 0.08, 0, tz);
+      g.add(leg);
+    }
+    const canvas = mesh(new RoundedBoxGeometry(1.5, 1.2, 0.08, 4, 0.03), clay(0xfffaf2, { roughness: 0.8 }));
+    canvas.position.set(0, 1.9, 0.22);
+    g.add(canvas);
+    colors.forEach((color, i) => {
+      const paint = mesh(new RoundedBoxGeometry(1.3, 1.0 / colors.length, 0.02, 2, 0.01), clay(color, { clearcoat: 0.5 }));
+      paint.position.set(0, 1.9 + 0.5 - (i + 0.5) / colors.length, 0.27);
+      g.add(paint);
+    });
+    return g;
+  }
+  function rainbow() {
+    const g = new THREE.Group();
+    ["red", "orange", "yellow", "green", "blue", "purple"].forEach((c, i) => {
+      const band = mesh(new THREE.TorusGeometry(7 - i * 0.42, 0.22, 16, 96, Math.PI), clay(PAINT[c], { emissive: PAINT[c], emissiveIntensity: 0.25 }));
+      band.scale.z = 0.4;
+      band.castShadow = false;
+      g.add(band);
+    });
+    return g;
+  }
+  function colorsWorld(color) {
+    const all = color === "review";
+    const tone = all ? null : PAINT[color];
+    meadow({ flowers: all ? [PAINT.red, PAINT.yellow, PAINT.blue, PAINT.pink] : [tone] });
+    trees([() => roundTree()]);
+    const things = all
+      ? [["red", -1.6, -1.2], ["blue", -0.5, -1.3], ["yellow", 0.6, -1.2], ["green", 1.7, -1.2], ["orange", -1.6, 0], ["purple", 1.7, 0], ["pink", -1.6, 1.2], ["brown", -0.5, 1.3], ["black", 0.6, 1.3], ["white", 1.7, 1.2]].map(([c, x, z]) => [ITEMS.pot(c), x, z, 0.75])
+      : [[ITEMS.pot(color), 0, 0, 0.9], ...COLOR_THINGS[color].map((name, i) => [colorThing(name, color), [-1.5, 1.5, -1.4, 1.4][i], [-1.1, -1.0, 1.1, 1.2][i], 0.9])];
+    picnicAt(all ? plainBlanket(0xfff3dc, 0xcfe6fb) : plainBlanket(tone, color === "white" ? 0xcfe6fb : 0xffffff), things);
+    put(easel(all ? ["red", "orange", "yellow", "green", "blue", "purple"].map((c) => PAINT[c]) : [tone]), NR[0], 0, NR[1], 0.95).rotation.y = -0.35;
+    if (all) put(rainbow(), 0, portrait ? 5.5 : 1.0, -24, portrait ? 1.3 : 1.6);
+    else many(() => ITEMS.balloon(color), [[SKY_R[0], SKY_R[1], SKY_R[2], 0.9], [SKY_R[0] + 0.8, SKY_R[1] + 0.6, SKY_R[2], 0.9], [SKY_R[0] + 0.4, SKY_R[1] - 0.5, SKY_R[2], 0.9]]);
+  }
+
+  /* ---------- Vegetables: Nova's garden — a picket fence across the
+     field, a soil bed at the near left growing the lesson's vegetable,
+     Nova's basket full of it at the near right (the review: all five). */
+  function soilBed(plants) {
+    const g = new THREE.Group();
+    const earth = clay(0x8a5a3a, { roughness: 0.95, clearcoat: 0.05, sheen: 0 });
+    const bed = mesh(new RoundedBoxGeometry(5.2, 0.34, 2.8, 6, 0.15), earth);
+    bed.position.y = 0.17;
+    g.add(bed);
+    for (let i = 0; i < 40; i++) {
+      const clump = mesh(new THREE.SphereGeometry(0.1 + rand() * 0.08, 16, 10), earth);
+      clump.scale.y = 0.5;
+      clump.position.set((rand() - 0.5) * 4.8, 0.34, (rand() - 0.5) * 2.4);
+      g.add(clump);
+    }
+    // `sink`: how deep it grows in the soil (a carrot shows its top and leaves)
+    for (const [make, x, z, k, sink = 0] of plants) g.add(stand(make(), x, 0.3 - sink * k, z, k));
+    return g;
+  }
+  const VEG = {
+    carrot: { plant: () => videoCarrot(0), k: 0.75, sink: 1.15, loose: () => videoCarrot(-0.5) },
+    broccoli: { plant: () => videoBroccoli(), k: 0.75, loose: () => videoBroccoli() },
+    potato: { plant: () => videoPotatoPlant(), k: 0.9, loose: () => videoPotato() },
+    tomato: {
+      plant: () => {
+        const g = new THREE.Group();
+        g.add(at(tomatoPlant().group, [0, 0, 0], 0.62));
+        for (const [x, y, z] of [[-0.55, 1.62, 0.7], [0.5, 1.48, 0.7], [-0.4, 0.92, 0.75], [0.52, 0.8, 0.75]]) g.add(at(videoTomato(), [x, y, z], 0.42));
+        return g;
+      },
+      k: 0.9,
+      loose: () => videoTomato(),
+    },
+    pepper: {
+      plant: () => {
+        const g = new THREE.Group();
+        for (const [x, y, r] of [[0, 0.7, 0.6], [-0.45, 0.5, 0.45], [0.45, 0.52, 0.45]]) {
+          const bush = mesh(new THREE.SphereGeometry(r, 32, 24), leafy(0x5aa646));
+          bush.position.set(x, y, 0);
+          g.add(bush);
+        }
+        for (const [x, y, c] of [[-0.35, 0.55, "red"], [0.3, 0.75, "green"], [0.05, 0.35, "red"]]) g.add(at(videoPepper(c), [x, y - 0.25, 0.55], 0.45));
+        return g;
+      },
+      k: 1.1,
+      loose: () => videoPepper("red"),
+    },
+  };
+  function picketFence(z) {
+    const paint = clay(0xf6f1e7, { roughness: 0.6, clearcoat: 0.3 });
+    for (let x = -18; x <= 18; x += 0.6) put(mesh(new THREE.CapsuleGeometry(0.13, 1.05, 6, 16), paint), x, 0.66, z).scale.z = 0.45;
+    for (const y of [0.4, 0.95]) put(mesh(new RoundedBoxGeometry(37, 0.12, 0.08, 3, 0.04), paint), 0, y, z - 0.1);
+  }
+  function vegetablesWorld(food) {
+    const foods = food === "review" ? ["carrot", "tomato", "potato", "broccoli", "pepper"] : [food, food, food, food, food];
+    meadow({ sky: 0xd8ebfb, flowers: [0xffd45e, 0xffffff] });
+    trees([() => roundTree()]);
+    picketFence(-7);
+    put(ITEMS.sun(), portrait ? -3.4 : -5.5, portrait ? 9.5 : 6.0, -24, 2.4);
+    const spots = [[-1.6, -0.6], [0, -0.7], [1.6, -0.6], [-0.8, 0.7], [0.8, 0.7]];
+    const bed = soilBed(spots.map(([x, z], i) => [VEG[foods[i]].plant, x, z, VEG[foods[i]].k, VEG[foods[i]].sink]));
+    bed.rotation.y = 0.35;
+    put(bed, NL[0], 0, NL[1], 0.85);
+    const basket = ITEMS.basket();
+    [[-0.3, 0.6, -0.2], [0.3, 0.62, 0.1], [0, 0.75, 0.3], [-0.2, 0.8, 0.05]].forEach(([x, y, z], i) => basket.add(at(VEG[foods[(i + 1) % foods.length]].loose(), [x, y, z], 0.34, [0, i, 0])));
+    put(basket, NR[0], 0, NR[1], 0.85);
+  }
+
+  /* ---------- Seasons: the meadow in the lesson's season — its grass, its
+     trees, what lies about and what is in the sky (the review: one tree
+     of each season). */
+  const SEASON_TREES = {
+    spring: () => roundTree([0xa9e38a, 0x9adb7c], { dots: 0xffa6cf }),
+    summer: () => roundTree([0x5cbd57, 0x52b450], { dots: 0xee4645 }),
+    fall: () => roundTree([0xff9a3c, 0xf2683a, 0xffc24a]),
+    winter: () => bareTree(),
+  };
+  function seasonsWorld(season) {
+    const SKIES = { spring: 0xd6ecfb, summer: 0xbfe1fb, fall: 0xe6e6ee, winter: 0xe4edf6, review: 0xcfe6fb };
+    const GRASS = { spring: 0xa3e07e, summer: 0x74cd5c, fall: 0xc2d36a, winter: 0xfbfdff, review: 0x9ad67c };
+    const winter = season === "winter";
+    meadow({ sky: SKIES[season], grass: GRASS[season], hills: winter ? [0xf4f8fc, 0xeef4fa] : undefined, flowers: { spring: [0xff8cc6, 0xffd23a, 0xff6f7d], summer: [0xffd45e, 0xffffff], fall: [0xffb43a], winter: null, review: [0xff9ec8, 0xffffff] }[season] });
+    trees(season === "review" ? [SEASON_TREES.spring, SEASON_TREES.fall, SEASON_TREES.summer, SEASON_TREES.winter] : [SEASON_TREES[season]]);
+    const [lx, lz] = NL, [rx, rz] = NR;
+    const sky = (make, spots) => spots.forEach(([dx, dy, k, turn]) => put(make(), SKY_R[0] + dx, SKY_R[1] + dy, SKY_R[2], k).rotation.set(0, 0, turn));
+    if (season === "spring") {
+      [[0, 0, 0xff6f7d], [0.7, 0.3, 0xffd23a], [-0.6, 0.4, 0xff8cc6], [0.2, 0.9, 0xff8cc6], [-0.3, -0.5, 0xffd23a], [0.9, -0.4, 0xff6f7d]].forEach(([dx, dz, c]) => put(tulip(c), lx + dx, 0, lz + dz, 1.4));
+      sky(butterfly, [[0, 0, 1.2, 0.2], [-1.0, 0.8, 1.0, -0.3]]);
+      [[0, 0, 0xff8cc6], [0.6, 0.4, 0xffffff], [-0.5, 0.5, 0xff6f7d]].forEach(([dx, dz, c]) => put(tulip(c), rx + dx, 0, rz + dz, 1.3));
+    } else if (season === "summer") {
+      picnicAt(plainBlanket(0xffd45e), [[ITEMS.icecream(), -1.0, -0.5, 1.1], [ITEMS.icecream(), 0.2, 0.6, 1.0, 0.5], [WEAR.sunhat(), 1.2, -0.6, 0.8], [WEAR.sunglasses(), -0.9, 1.1, 0.6]]);
+      put(ITEMS.ball(), rx, 0, rz, 0.9);
+      put(sunfriend(), portrait ? -2.4 : -4.2, portrait ? 7.4 : 4.6, -10, 1.8);
+    } else if (season === "fall") {
+      [[0, 0, 1.25], [0.9, 0.5, 0.95], [-0.8, 0.6, 1.0]].forEach(([dx, dz, k]) => put(pumpkin(), lx + dx, 0, lz + dz, k).rotation.y = dx);
+      const colors = [0xf2683a, 0xffb43a, 0xff8a2e, 0xe8513a];
+      for (let i = 0; i < 26; i++) put(mapleLeaf(colors[i % 4]), rx + (rand() - 0.5) * 2.4, 0.06 + rand() * 0.25, rz + (rand() - 0.5) * 1.6, 0.6).rotation.set(-Math.PI / 2 + (rand() - 0.5) * 0.6, 0, rand() * 6);
+      for (let i = 0; i < 18; i++) put(mapleLeaf(colors[i % 4]), (rand() - 0.5) * 12, 0.04, (rand() - 0.2) * 8, 0.55).rotation.set(-Math.PI / 2, 0, rand() * 6);
+      sky(() => mapleLeaf(0xff8a2e), [[0, 0, 0.7, 0.6], [-1.2, 0.8, 0.6, -0.5], [0.9, 1.1, 0.6, 1.4]]);
+    } else if (season === "winter") {
+      put(snowfriend(), lx, 0.1, lz, 0.95).rotation.y = 0.35;
+      sky(snowflake, [[0, 0, 0.8, 0.2], [-1.2, 0.9, 0.7, 0.6], [0.8, 1.2, 0.6, 1.0], [-0.4, -0.7, 0.6, 0.4]]);
+      sky(snowflake, [[-(SKY_R[0] - SKY_L[0]), 0.4, 0.8, 0.3], [-(SKY_R[0] - SKY_L[0]) + 0.9, -0.4, 0.6, 0.8]]);
+      for (const [dx, dz, r] of [[0, 0, 0.9], [0.8, 0.4, 0.6], [-0.6, 0.5, 0.5]]) put(mesh(new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), clay(0xffffff, { roughness: 0.7 })), rx + dx, 0, rz + dz).scale.y = 0.6;
+    } else {
+      put(pumpkin(), lx, 0, lz, 1.2);
+      [[0.9, 0.3, 0xff6f7d], [1.4, -0.2, 0xffd23a]].forEach(([dx, dz, c]) => put(tulip(c), lx + dx, 0, lz + dz, 1.3));
+      put(snowfriend(), rx, 0, rz, 0.8).rotation.y = -0.35;
+      put(sunfriend(), portrait ? -2.4 : -4.2, portrait ? 7.4 : 4.6, -10, 1.5);
+    }
+  }
+
+  /* ---------- Animals: the videos' pastel world — a pink-lilac sky,
+     pastel grass and trees, a path of pastel stones — and where the
+     lesson's animal lives at the near left and right (the review: the
+     three homes it sorts into). */
+  const PASTEL = [0xffc9de, 0xd9c9f5, 0xc4ecd9, 0xffe0c2, 0xcfe4fb];
+  const pastelTree = () => roundTree([0xa6e3b4, 0xffc4dc, 0xc9b8f2, 0xa6e3b4]);
+  function stonePath() {
+    for (let i = 0; i < 260; i++) {
+      const z = 9 - i * 0.12 - (i * i) / 900;
+      if (z < -40) break;
+      const width = 0.9 + (9 - z) * 0.01;
+      const x = (rand() - 0.5) * width * 2;
+      // half-way to the grass: a path to walk on, not a thing to look at
+      const tone = new THREE.Color(PASTEL[i % PASTEL.length]).lerp(new THREE.Color(0xbfe8b0), 0.45);
+      const stone = mesh(new THREE.SphereGeometry(0.26, 24, 12), clay(tone, { roughness: 0.7, clearcoat: 0.15 }));
+      stone.scale.set(1.2, 0.3, 0.9);
+      stone.castShadow = false;
+      put(stone, x, 0.02, z);
+    }
+  }
+  function pond(r = 1.6) {
+    const g = new THREE.Group();
+    const water = mesh(new THREE.CylinderGeometry(r, r, 0.06, 64), clay(0x8fcdfc, { clearcoat: 0.9, clearcoatRoughness: 0.1, roughness: 0.2 }));
+    water.position.y = 0.03;
+    water.scale.z = 0.7;
+    g.add(water);
+    for (let k = 0; k < 9; k++) {
+      const a = (k / 9) * Math.PI * 2;
+      const rock = mesh(new THREE.SphereGeometry(0.22 + (k % 3) * 0.05, 24, 12), clay(PASTEL[k % PASTEL.length], { roughness: 0.6 }));
+      rock.scale.y = 0.55;
+      rock.position.set(Math.cos(a) * r, 0.08, Math.sin(a) * r * 0.7);
+      g.add(rock);
+    }
+    for (const [x, z] of [[-0.5, 0.2], [0.6, -0.3]]) {
+      const pad = mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.03, 32, 1, false, 0.3, Math.PI * 1.8), leafy(0x6cc46a));
+      pad.position.set(x * r * 0.6, 0.08, z * r * 0.6);
+      g.add(pad);
+    }
+    return g;
+  }
+  function yarn(color) {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.SphereGeometry(0.42, 32, 24), clay(color, { roughness: 0.8 })));
+    for (let k = 0; k < 4; k++) {
+      const wrap = mesh(new THREE.TorusGeometry(0.42, 0.025, 8, 64), clay(color, { roughness: 0.8 }));
+      wrap.rotation.set(k * 0.8, k * 0.5, 0);
+      g.add(wrap);
+    }
+    g.children.forEach((c) => (c.position.y = 0.42));
+    return g;
+  }
+  function bone() {
+    const g = new THREE.Group();
+    const white = clay(0xfff8ec, { roughness: 0.6 });
+    const bar = mesh(new THREE.CapsuleGeometry(0.12, 0.8, 8, 16), white);
+    bar.rotation.z = Math.PI / 2;
+    g.add(bar);
+    for (const x of [-0.5, 0.5]) for (const z of [-0.11, 0.11]) {
+      const knob = mesh(new THREE.SphereGeometry(0.15, 24, 16), white);
+      knob.position.set(x, 0, z);
+      g.add(knob);
+    }
+    g.position.y = 0.15;
+    return group(g);
+  }
+  function boulders(n = 5) {
+    const g = new THREE.Group();
+    for (let k = 0; k < n; k++) {
+      const r = 0.7 + (k % 3) * 0.3;
+      const rock = mesh(new THREE.SphereGeometry(r, 48, 32), clay(PASTEL[k % PASTEL.length], { roughness: 0.7, clearcoat: 0.15 }));
+      rock.scale.y = 0.75;
+      rock.position.set((k - n / 2) * 0.9, r * 0.55, (k % 2) * -0.7);
+      g.add(rock);
+    }
+    return g;
+  }
+  function birdhouse() {
+    const g = new THREE.Group();
+    const pole = mesh(new THREE.CylinderGeometry(0.08, 0.1, 2.4, 16), clay(0xc98f55));
+    pole.position.y = 1.2;
+    g.add(pole);
+    const house = gableHouse(0.9, 0.8, 0.8, 0.45, clay(0xffc9de, { roughness: 0.6 }), clay(0xc9b8f2, { roughness: 0.6 }));
+    house.position.y = 2.4;
+    g.add(house);
+    const hole = mesh(new THREE.CircleGeometry(0.16, 32), clay(0x5a3a5a));
+    hole.position.set(0, 2.8, 0.42);
+    g.add(hole);
+    return g;
+  }
+  function nest() {
+    const g = new THREE.Group();
+    const twigs = mesh(new THREE.TorusGeometry(0.55, 0.22, 16, 48), clay(0xb98a5e, { roughness: 0.9 }));
+    twigs.rotation.x = Math.PI / 2;
+    twigs.position.y = 0.22;
+    g.add(twigs);
+    for (const [x, z] of [[-0.18, 0], [0.18, 0.05], [0, -0.18]]) {
+      const egg = mesh(new THREE.SphereGeometry(0.17, 24, 16), clay(0xbfe3fb, { clearcoat: 0.6 }));
+      egg.scale.y = 1.3;
+      egg.position.set(x, 0.3, z);
+      g.add(egg);
+    }
+    return g;
+  }
+  function hayBale() {
+    const bale = mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.1, 48), clay(0xf2d27a, { roughness: 0.9 }));
+    bale.rotation.z = Math.PI / 2;
+    bale.position.y = 0.7;
+    return group(bale);
+  }
+  function grassTuft() {
+    const g = new THREE.Group();
+    for (let k = 0; k < 7; k++) g.add(taperTube([[0, 0, 0], [(k - 3) * 0.08, 0.6, 0], [(k - 3) * 0.2, 1.3 + (k % 3) * 0.2, 0.05]], 0.06, 0.015, leafy(0x8ccf6e)));
+    return g;
+  }
+  function animalsWorld(animal) {
+    meadow({ sky: 0xf4e1f0, grass: 0xbfe8b0, hills: [0xcdeec0, 0xd8f0c8, 0xc6ebc0, 0xd8f0c8], flowers: [0xffc4dc, 0xffffff, 0xd9c9f5] });
+    stonePath();
+    const T = { parrot: palmTree, elephant: flatTree }[animal] ?? pastelTree;
+    trees([T]);
+    const L = (thing, k = 1, turn = 0.3) => (put(thing, NL[0], 0, NL[1], k).rotation.y = turn);
+    const R = (thing, k = 1, turn = -0.3) => (put(thing, NR[0], 0, NR[1], k).rotation.y = turn);
+    if (animal === "cat") { L(catBed(), 1.5); R(yarn(0xffc4dc)); put(yarn(0xcfe4fb), NR[0] - 1.0, 0, NR[1] - 0.6, 0.8); }
+    if (animal === "dog") { L(kennel(), 1.3); R(bone(), 1.6); put(ITEMS.ball(), NR[0] - 1.2, 0, NR[1] - 0.8, 0.6); }
+    if (animal === "fish") { L(pond(1.8)); R(fishbowl(), 1.3, 0); }
+    if (animal === "elephant") { L(pond(2.2)); R(grassTuft(), 1.4); put(grassTuft(), NR[0] - 0.9, 0, NR[1] - 0.5, 1.1); }
+    if (animal === "mouse") {
+      L(group(stand(ITEMS.cheese(), -0.5, 0, 0, 1.4), stand(ITEMS.cheese(), 0.6, 0, 0.3, 1.1, 1.2)), 1);
+      R(hayBale(), 1.1);
+      const barn = gableHouse(3, 2.4, 2, 1.2, clay(0xf4a3b8, { roughness: 0.6 }), clay(0xc9b8f2, { roughness: 0.6 }));
+      put(barn, portrait ? 4 : 7.5, 0, -10, 1).rotation.y = -0.5;
+    }
+    if (animal === "bird") { L(nest(), 1.4); R(birdhouse(), 0.75, -0.4); }
+    if (animal === "parrot") { L(group(...[[0, 0, 0xff6f9a], [0.6, 0.4, 0xffd23a], [-0.6, 0.5, 0xff8a3c]].map(([x, z, c]) => at(hillFlower(c), [x, 0, z], 2.6)))); R(palmTree(), 0.55); }
+    if (animal === "turtle") { L(pond(1.9)); R(boulders(3), 0.6); }
+    if (animal === "gecko") { L(boulders(5), 0.8); R(boulders(3), 0.7); }
+    if (animal === "review") { L(group(at(catBed(), [-1.0, 0, 0], 1.2), at(kennel(), [1.2, 0, -0.4], 1.0))); R(fishbowl(), 1.3, 0); }
+  }
+
+  /* ---------- Weather: the meadow under the lesson's weather — its sky,
+     what falls or blows, and what a child wears for it (the review: a
+     little of each). */
+  function weatherWorld(weather) {
+    const rain = weather === "rainy", snow = weather === "snowy", wind = weather === "windy";
+    meadow({
+      sky: { sunny: 0xbfe3fb, rainy: 0xc8d2de, windy: 0xcfe6fb, snowy: 0xe2eaf3, review: 0xcfe6fb }[weather],
+      grass: snow ? 0xfbfdff : rain ? 0x8cc77a : 0x9ad67c,
+      hills: snow ? [0xf4f8fc, 0xeef4fa] : undefined,
+      cloud: weather === "sunny" ? null : rain ? 0xc9d3df : 0xffffff,
+      flowers: snow ? null : [0xff9ec8, 0xffffff, 0xffd45e],
+    });
+    trees([() => (snow ? roundTree([0xe9f1f8], { snow: true }) : roundTree([0x7cc66a], { lean: wind ? -0.22 : 0 }))]);
+    const L = (thing, k = 1, turn = 0.3) => (put(thing, NL[0], 0, NL[1], k).rotation.y = turn);
+    const R = (thing, k = 1, turn = -0.3) => (put(thing, NR[0], 0, NR[1], k).rotation.y = turn);
+    const skyAt = (dx, dy) => [SKY_R[0] + dx, SKY_R[1] + dy, SKY_R[2]];
+    if (weather === "sunny") {
+      put(weatherSun(), portrait ? -1.8 : -3.8, portrait ? 6.6 : 4.4, -6, 2.0);
+      picnicAt(plainBlanket(0x8cc4f2), [[WEAR.sunglasses(), -0.8, -0.4, 0.7], [WEAR.sunhat(), 0.9, 0.2, 0.9]]);
+      R(ITEMS.ball(), 1.0);
+    }
+    if (rain) {
+      put(weatherCloud(0xb9cde2), ...skyAt(-0.6, 0.8), 1.5);
+      put(weatherCloud(0xc9d6e4), SKY_L[0], SKY_L[1] + 0.8, SKY_L[2], 1.2);
+      for (let i = 0; i < 46; i++) put(raindrop(), (rand() - 0.5) * (portrait ? 7 : 14), 0.6 + rand() * (portrait ? 6 : 4), -2 - rand() * 6, 1.4);
+      for (const [x, z, r] of [[NR[0], NR[1], 0.9], [NR[0] - 1.6, NR[1] - 1.2, 0.6], [0.4, 1.8, 0.7], [-2.5, -1.5, 0.8]]) {
+        const puddle = mesh(new THREE.CylinderGeometry(r, r, 0.04, 48), velvet(0x8fcdfc));
+        puddle.scale.z = 0.62;
+        put(puddle, x, 0.02, z);
+      }
+      L(WEAR.umbrella(), 1.1, 0);
+      put(WEAR.rainhat(), NL[0] + 1.4, 0, NL[1] - 0.6, 0.75);
+    }
+    if (wind) {
+      put(WEAR.kite(), ...skyAt(0.2, 0.8), 1.3).rotation.set(0, 0, -0.35);
+      [[-1.0, 0.0, 2.3], [-1.6, -0.9, 1.9], [0.0, -1.5, 1.7]].forEach(([dx, dy, len]) => put(windSwirl(len), SKY_L[0] + dx + 1, SKY_L[1] + dy, SKY_L[2] + 1, 1.0));
+      [[0x78cf5c, 0.5], [0xffa53a, -0.6], [0x63c84e, 1.2], [0xf2683a, -0.2], [0xffa53a, 0.9]].forEach(([c, turn], i) => put(plumpLeaf(0.32, 0.15, velvet(c)), (i - 2) * (portrait ? 0.9 : 1.8), 2.2 + (i % 2) * 1.1, -1, 1.6).rotation.set(0.3, 0.2, turn));
+      L(WEAR.pinwheel(), 0.9, 0);
+      R(WEAR.scarf(), 0.7);
+    }
+    if (snow) {
+      L(weatherSnowman(), 1.1, 0.3);
+      for (let i = 0; i < 30; i++) put(velvetFlake(), (rand() - 0.5) * (portrait ? 7 : 14), 0.8 + rand() * (portrait ? 6 : 4), -2 - rand() * 6, 0.7 + rand() * 0.4).rotation.z = rand() * 3;
+      R(WEAR.beanie(), 0.7);
+      put(WEAR.scarf(), NR[0] - 1.3, 0, NR[1] - 0.6, 0.6);
+    }
+    if (weather === "review") {
+      put(weatherSun(), SKY_L[0], SKY_L[1] + 0.6, SKY_L[2], 1.3);
+      put(weatherCloud(0xc9d6e4), ...skyAt(0, 0.6), 1.2);
+      for (const [dx, dy] of [[-0.4, -0.5], [0.2, -0.9], [0.6, -0.4]]) put(raindrop(), ...skyAt(dx, dy), 1.4);
+      L(WEAR.umbrella(), 1.0, 0);
+      R(weatherSnowman(), 0.9);
+    }
+  }
+
+  const WORLDS = { colors: colorsWorld, veg: vegetablesWorld, seasons: seasonsWorld, animals: animalsWorld, weather: weatherWorld };
+  const [course, which] = BACKDROP.includes("-") ? BACKDROP.split("-") : ["shapes", BACKDROP];
+  if (course === "shapes") {
+    const lesson = LESSONS[which];
+    meadow();
+    FAR.forEach(([x, z, k], i) => put(TREES[lesson.trees[i]](), x, 0, z, k));
+    lesson.sky();
+    // the picnic at the near left
+    const picnic = new THREE.Group();
+    picnic.add(BLANKET[which]());
+    for (const [name, x, z, k, rotY] of lesson.picnic) {
+      const thing = ITEMS[name]();
+      place(thing, { at: [x, ON_BLANKET, z], scale: k, rotY });
+      picnic.add(thing);
+    }
+    picnic.rotation.y = 0.45;
+    put(picnic, NL[0], 0, NL[1], 0.85);
+    put(lesson.near(), NR[0], 0, NR[1], 0.9);
+  } else {
+    WORLDS[course](which);
+  }
   window.renderLayers = () => {
     renderer.render(scene, view);
     return { backdrop: renderer.domElement.toDataURL("image/png") };
