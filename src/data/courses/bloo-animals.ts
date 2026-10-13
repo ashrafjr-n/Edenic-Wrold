@@ -9,13 +9,20 @@ import cow from "../../../public/assets/learn/bloo/animals/things/cow.png";
 import cowBrown from "../../../public/assets/learn/bloo/animals/things/cow-brown.png";
 import fish from "../../../public/assets/learn/bloo/animals/things/fish.png";
 import fishBlue from "../../../public/assets/learn/bloo/animals/things/fish-blue.png";
+import elephant from "../../../public/assets/learn/bloo/animals/things/elephant.png";
+import mouse from "../../../public/assets/learn/bloo/animals/things/mouse.png";
+import bird from "../../../public/assets/learn/bloo/animals/things/bird.png";
+import parrot from "../../../public/assets/learn/bloo/animals/things/parrot.png";
+import turtle from "../../../public/assets/learn/bloo/animals/things/turtle.png";
+import gecko from "../../../public/assets/learn/bloo/animals/things/gecko.png";
 import catHome from "../../../public/assets/learn/bloo/animals/homes/cat.png";
 import dogHome from "../../../public/assets/learn/bloo/animals/homes/dog.png";
 import cowHome from "../../../public/assets/learn/bloo/animals/homes/cow.png";
 import fishHome from "../../../public/assets/learn/bloo/animals/homes/fish.png";
 
 /** One animal to learn: its picture (the lesson's coat — the animal on its
-    own, no world behind it, direct request 2026-10-12), a second coat for
+    own, no world behind it, direct request 2026-10-12; the cat, dog and
+    fish cut out of their videos' stills), a second coat for
     the review (a cat is a cat in any color), where it lives, and that
     home's box color in the review. */
 interface Pet {
@@ -34,19 +41,25 @@ const ANIMALS: Record<Animal, Pet> = {
 };
 const ORDER = Object.keys(ANIMALS) as Animal[];
 
+/** The videos' other animals (2026-10-13), cut out of their stills: a
+    lesson each, after the four — not in the review's Sort (no home). */
+const MORE: Record<string, StaticImageData> = { elephant, mouse, bird, parrot, turtle, gecko };
+
+/** Every lesson's animal and picture, in teaching order. */
+const TAUGHT: [string, StaticImageData][] = [...ORDER.map((animal): [string, StaticImageData] => [animal, ANIMALS[animal].picture]), ...Object.entries(MORE)];
+
 /**
  * Bloo's animals — one animal, one lesson, and every step about IT (the
  * Fruits rule: no choosing inside a one-thing lesson): meet it (its
  * picture, its word, its speaker) → build its word. Telling the four
  * apart is the review's. (Feed it, the third step, was removed 2026-10-12.)
  */
-function animalLesson(animal: Animal, i: number): LessonDef {
-  const { picture } = ANIMALS[animal];
+function animalLesson([animal, picture]: [string, StaticImageData], i: number): LessonDef {
   return {
     reel: `/assets/learn/bloo/animals/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
-      { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture },
+      { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture, tilt: true },
       { type: "spell", ask: { key: "spell", vars: { word: animal } }, word: animal },
     ],
   };
@@ -71,7 +84,7 @@ const thing = (animal: Animal, coat: "picture" | "other"): Thing => ({
     are placeholders until the real clips replace them under the same names
     (`/assets/learn/bloo/animals/reels/<n>.mp4`). */
 export const blooAnimals: LessonDef[] = [
-  ...ORDER.map(animalLesson),
+  ...TAUGHT.map(animalLesson),
   /* The review, no reel: the four animals in both coats into their homes
      (each box says whose it is), then two words spelled from the picture
      alone — in the coat the lessons did not show. */
