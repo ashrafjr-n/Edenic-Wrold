@@ -112,8 +112,8 @@ export const en = {
     },
     animals: {
       name: "Animals",
-      description: "Cat, dog, cow and fish — and where they live",
-      items: ["Cat", "Dog", "Cow", "Fish", "Animals review"],
+      description: "Cat, dog, fish, elephant and more",
+      items: ["Cat", "Dog", "Cow", "Fish", "Elephant", "Mouse", "Bird", "Parrot", "Turtle", "Gecko", "Animals review"],
     },
     weather: {
       name: "The Weather",
