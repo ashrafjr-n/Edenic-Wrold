@@ -51,6 +51,12 @@ for all of a weather, into `public/assets/learn/bloo/weather/make/
 
     python3 tools/picnic-scene/crop.py weathersteps
 
+A course's backdrop — run after `render.cjs backdrop <course>`: blurs both
+frames (the world stays known, never sharp enough to pull the eye) and
+writes them as JPEGs, 1280px on the long side, into `dest`.
+
+    python3 tools/picnic-scene/crop.py backdrop shapes public/assets/learn/pinki/shapes/backdrop
+
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
@@ -65,7 +71,7 @@ import os
 import sys
 import zlib
 import numpy as np
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageFilter
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.join(HERE, "../..")
@@ -197,6 +203,15 @@ if NAME.startswith("harvest-"):
         seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
         items.append({"food": food, "box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
     print(json.dumps({"items": items, **({"front": pct(front)} if front else {})}))
+    sys.exit()
+
+if NAME == "backdrop":
+    course, dest = sys.argv[2], os.path.join(ROOT, sys.argv[3])
+    os.makedirs(dest, exist_ok=True)
+    for frame in ("portrait", "landscape"):
+        img = Image.open(os.path.join(HERE, "out", f"backdrop-{course}", f"{frame}.png")).convert("RGB")
+        img.thumbnail((1280, 1280), Image.LANCZOS)
+        img.filter(ImageFilter.GaussianBlur(max(img.size) * 0.009)).save(f"{dest}/{frame}.jpg", quality=82, optimize=True, progressive=True)
     sys.exit()
 
 if NAME == "seasons":
