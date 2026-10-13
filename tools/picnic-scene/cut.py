@@ -14,6 +14,10 @@ own with `onnxruntime numpy pillow`, and the model (BiRefNet-general,
     /tmp/cutenv/bin/python -I tools/picnic-scene/cut.py /tmp/birefnet/birefnet-general.onnx still.png tools/picnic-scene/out/things/dog.png
     python3 tools/picnic-scene/crop.py things public/assets/learn/bloo/animals/things dog --grain
 
+A neighbour the matte takes in too (the cat's pink friend): name it as a
+polygon in the still's pixels, `x,y x,y …` after the paths, and it is
+dropped from the cut.
+
 The cut-out's soft edge still carries the still's background: it is taken
 back out (`decontaminate`), and the matte's faint floor zeroed (it drew a
 pale box round the thing). `coat.py` gives it a second coat.
@@ -22,9 +26,10 @@ import os
 import sys
 import numpy as np
 import onnxruntime as ort
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 model, src, dst = sys.argv[1:4]
+drop = [tuple(map(float, p.split(","))) for p in sys.argv[4:]]
 
 
 def matte(img):
@@ -68,7 +73,12 @@ def shadow(size, w, h, opacity):
 
 still = Image.open(src).convert("RGB")
 cut = still.copy()
-cut.putalpha(matte(still))
+alpha = matte(still)
+if drop:
+    keep = Image.new("L", still.size, 255)
+    ImageDraw.Draw(keep).polygon(drop, fill=0)
+    alpha = ImageChops.multiply(alpha, keep.filter(ImageFilter.GaussianBlur(2)))
+cut.putalpha(alpha)
 cut = decontaminate(cut)
 cut = cut.crop(cut.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox())
 
