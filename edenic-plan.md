@@ -559,6 +559,17 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       (an odd last box spans the row).
 - [ ] The sun, the weather's clouds and the snowman from their stills.
 
+### Phase 5b — Course worlds (design)
+- [x] **Shapes: Pinki's picnic meadow** (2026-10-13, after research — busy
+      surroundings cost young children attention, so the world is blurred,
+      washed and the same through the whole course): rendered in
+      `tools/picnic-scene` (`render.cjs backdrop shapes` → `crop.py
+      backdrop`), a portrait and a landscape frame, ~23 KB each; behind
+      every step of every Shapes lesson. For the user to judge.
+- [ ] The other five, one at a time, if the user likes it: Colors (a
+      painter's corner), Vegetables (Nova's garden), Seasons (the island),
+      Animals (the videos' pastel path), Weather (Bloo's hill).
+
 ### Phase 6 — Reels, sound, finish
 - [ ] Every course's reels replace the placeholders (same file names).
 - [ ] Audio: every taught word recorded (§7), `playCue` wired.
