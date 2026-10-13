@@ -4473,7 +4473,8 @@ const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
 const SEASON = params.get("season");
 const WEATHERSTEPS = params.get("weathersteps");
-const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS ? null : SCENES[SCENE];
+const BACKDROP = params.get("backdrop");
+const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS || BACKDROP ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -4704,6 +4705,92 @@ if (THING) {
       return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
     }),
   });
+} else if (BACKDROP) {
+  /* ---------- A course's backdrop (2026-10-13): its world behind every
+     step, rendered sharp here and blurred by `crop.py backdrop`. Shapes:
+     Pinki's picnic meadow — the pink blanket with its basket and things at
+     the near left, a ball at the near right, trees and hills far off, a
+     kite and clouds in the sky; the middle stays quiet grass and sky for
+     the step. `?backdrop=shapes&frame=portrait|landscape`. ---------- */
+  const portrait = params.get("frame") === "portrait";
+  const [w, h] = portrait ? [900, 1600] : [1600, 900];
+  renderer.setSize(w, h);
+  scene.background = new THREE.Color(0xcfe6fb);
+  const view = new THREE.PerspectiveCamera(portrait ? 62 : 38, w / h, 0.1, 200);
+  view.position.set(0, portrait ? 2.4 : 2.0, 10);
+  view.lookAt(0, portrait ? 1.0 : 1.5, 0);
+  catcher.visible = false;
+  Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14 });
+
+  const grass = mesh(new THREE.PlaneGeometry(200, 200), turf(0x9ad67c));
+  grass.rotation.x = -Math.PI / 2;
+  grass.castShadow = false;
+  scene.add(grass);
+  // soft hills along the horizon
+  for (const [x, z, r, sy, color] of [[-14, -40, 16, 0.32, 0xb4e39b], [10, -46, 20, 0.28, 0xa9dd8f], [32, -38, 14, 0.36, 0xbde6a6], [-34, -44, 18, 0.3, 0xa9dd8f]]) {
+    const hill = mesh(new THREE.SphereGeometry(r, 64, 32), turf(color));
+    hill.scale.y = sy;
+    hill.position.set(x, 0, z);
+    scene.add(hill);
+  }
+  // round trees far off at the sides
+  const tree = (x, z, k) => {
+    const g = new THREE.Group();
+    const trunk = mesh(new THREE.CylinderGeometry(0.22, 0.3, 2.2, 24), clay(0xb98a5e, { clearcoat: 0.1, roughness: 0.8 }));
+    trunk.position.y = 1.1;
+    g.add(trunk);
+    for (const [cx, cy, cr] of [[0, 2.9, 1.25], [-0.8, 2.4, 0.85], [0.85, 2.45, 0.9], [0.1, 3.6, 0.8]]) {
+      const puff = mesh(new THREE.SphereGeometry(cr, 48, 32), clay(0x7cc66a, { clearcoat: 0.15, roughness: 0.75 }));
+      puff.position.set(cx, cy, 0);
+      g.add(puff);
+    }
+    g.scale.setScalar(k);
+    g.position.set(x, 0, z);
+    scene.add(g);
+  };
+  tree(-9, -12, 1.4); tree(-13, -18, 1.2); tree(10, -14, 1.5); tree(15, -22, 1.2);
+  // clouds and a kite in the sky
+  for (const [x, y, z, k] of portrait ? [[-7, 7.5, -20, 3.2], [8, 9, -26, 3.8], [1, 11, -30, 2.6]] : [[-6, 5.4, -20, 3.2], [9, 6.2, -26, 3.8], [1.5, 7.4, -30, 2.6]]) {
+    const c = ITEMS.cloud();
+    // lit from inside a little: a cloud's underside read as storm grey
+    c.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.material.emissive.set(0xffffff); o.material.emissiveIntensity = 0.45; } });
+    c.scale.setScalar(k);
+    c.position.set(x, y, z);
+    scene.add(c);
+  }
+  const kite = ITEMS.kite();
+  kite.rotation.set(Math.PI / 2 - 0.2, 0, 0.35);
+  kite.scale.setScalar(0.9);
+  kite.position.set(portrait ? 1.6 : 3.0, portrait ? 7.2 : 3.6, -3);
+  scene.add(kite);
+  // the picnic at the near left: the blanket, the basket and a few things on it
+  const picnic = new THREE.Group();
+  picnic.add(BLANKETS.pinkStripes());
+  for (const [name, x, z, k, rotY] of [["basket", 1.4, -1.1, 0.9, 0], ["plate", -0.9, -1.0, 1, 0], ["donut", 0.2, 0.6, 1, 0.4], ["cookie", -1.3, 0.9, 1, 0], ["cheese", 1.5, 1.1, 0.8, -0.4]]) {
+    const thing = ITEMS[name]();
+    place(thing, { at: [x, ON_BLANKET, z], scale: k, rotY });
+    picnic.add(thing);
+  }
+  picnic.rotation.y = 0.45;
+  picnic.scale.setScalar(0.85);
+  picnic.position.set(portrait ? -1.9 : -3.6, 0, portrait ? 5.6 : 3.0);
+  scene.add(picnic);
+  const ball = ITEMS.ball();
+  ball.scale.setScalar(0.9);
+  ball.position.set(portrait ? 1.5 : 3.6, 0, portrait ? 6.2 : 3.6);
+  scene.add(ball);
+  // a few flowers in the grass
+  for (const [x, z, c] of [[3.5, 1, 0xff9ec8], [-1.5, -2, 0xffffff], [6.5, -1, 0xffd45e], [-6.5, -3, 0xff9ec8], [1.2, 3.5, 0xffffff], [-3.8, 7.2, 0xffd45e], [4.2, 6.8, 0xff9ec8]]) {
+    const f = hillFlower(c);
+    f.scale.setScalar(1.6);
+    f.position.set(x, 0, z);
+    scene.add(f);
+  }
+  window.renderLayers = () => {
+    renderer.render(scene, view);
+    return { backdrop: renderer.domElement.toDataURL("image/png") };
+  };
+  window.itemsMeta = () => ({});
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();
