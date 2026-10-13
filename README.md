@@ -114,9 +114,9 @@ rounded shapes, generous radii, wide low-contrast shadows and pale pastel fills.
   override them — use the `.card-pill` / `.tile-round` modifiers instead.
 - The palette is sampled from the character artwork itself. Each mascot owns a
   color: Pinki → pink, Nova → lavender, Bloo → blue.
-- Course subjects own a second, parallel palette (`--color-subject-*`), kept
-  separate from the mascot colors. Every course wears its friend's color
-  instead — Pinki's are pink, Nova's gold, Bloo's Bloo's blue.
+- Every course wears its friend's color — Pinki's are pink, Nova's gold,
+  Bloo's Bloo's blue. The older subject tones (`--color-subject-*`) are only
+  borrowed now, by the puzzles' stages and the clay word.
 - Inside a lesson on a desktop nothing wraps the step: no board, no card. The
   step stands on the page ground, so the one thing to play with is the biggest
   thing on screen.
