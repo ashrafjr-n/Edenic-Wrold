@@ -180,15 +180,12 @@
 
 
   /* ---------------------------------------------------------------
-     Lesson subjects own a hue each, from `sm` up: Numbers pink, Letters
-     violet, Colors blue, Shapes amber. Deliberately their own tokens and
-     NOT the character tokens above — a lesson's color says what the lesson
-     is about, and every character's hub uses the same four. Same separation
-     as `--color-head-*`: the values sit in the family, the tokens don't.
+     The old lesson subjects' hues — Letters violet, Colors blue, Shapes
+     amber — kept as tones: the puzzles' stages borrow all three, the
+     clay word its amber. Deliberately NOT the character tokens above.
+     Same separation as `--color-head-*`: the values sit in the family,
+     the tokens don't.
      --------------------------------------------------------------- */
-  --color-subject-numbers: #f76fa8;
-  --color-subject-numbers-dark: #c94a7e;
-
   --color-subject-letters: #9b7ce8;
   --color-subject-letters-dark: #6845b8;
 
@@ -525,19 +522,6 @@ bdi {
     inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 24%),
     0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
-}
-
-/* Pinki's bubble took `.card-clay-white`'s two insets so it reads as the same
-   material as every board it sits beside — which means it inherits the same
-   dark-mode problem, and needs the same answer. Its own outer shadow layers
-   differ from `.card-clay-white`'s, so the stack is restated in full rather
-   than reused: a `box-shadow` cannot be partially overridden. */
-[data-theme="dark"] .speech-bubble {
-  box-shadow:
-    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
-    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
-    0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
-    0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
 }
 
 /* `.btn3d--clay-white` reads its face from `--surface` too, but every place
@@ -1915,176 +1899,6 @@ button:disabled,
   }
 }
 
-
-/* ---------------------------------------------------------------
-   The number journey.
-
-   Pinki teaches, so she needs a voice: a white clay bubble with a tail
-   pointing at her. She sits beside the bubble from `sm` up and above it on a
-   phone, so the tail moves too.
-   --------------------------------------------------------------- */
-.speech-bubble {
-  position: relative;
-  background: var(--surface);
-  /* Was 1.5rem, then 1.1rem. The radius is not a taste setting here — it is
-     what decides how much STRAIGHT edge is left for the tail to stand on.
-     A one-line bubble is 44px tall on a phone and 52px on a desktop, so a
-     1.1rem (17.6px) radius left only 8.8px and 16.8px of flat border
-     respectively, against a tail 20px tall: the triangle's base ran past the
-     corner tangent, where the border has already curved away, and a wedge of
-     page showed between the two. It read as a stray "<" glued beside the
-     bubble rather than a tail growing out of it — reported on exactly the
-     one-line lines ("This is Number 1!") while the two-line ones ("A little
-     flag... then straight down!") looked right, because those are tall
-     enough to have the flat edge to spare.
-
-     0.8rem (12.8px) leaves 18.4px of flat edge on the shortest bubble the
-     site renders, which is what the tail below is sized against. Still well
-     clear of the semicircle clamp that 1.5rem hit. **Change this and the tail
-     sizes together, or re-check the shortest bubble.** */
-  border-radius: 0.8rem;
-  /* An outline in the SPEAKER's own identity colour — not a tinted fill (that
-     was tried, and removed, as a page-background match; see the numbers
-     journey notes in CLAUDE.md). A thin ring is what makes the bubble read as
-     a cartoon speech bubble belonging to the character beside it, rather than
-     a generic white card that happens to sit near them.
-
-     **The default lives in the `var()` FALLBACK, never as a declaration on
-     this class** — and that is the bug this shipped with for one round.
-     `--bubble-ink: var(--color-pinki)` declared here is a value set ON the
-     bubble itself, which beats anything an ancestor inherits down, so the
-     trail's Nova override silently did nothing and her bubble stayed pink.
-     A fallback applies only when nobody up the tree has set it, which is
-     exactly the rule wanted. It is the identity token
-     (`--color-pinki`/`--color-nova`), never `--accent`: recolouring a mascot
-     must never recolour the brand, and vice versa. */
-  border: 2px solid var(--bubble-ink, var(--color-pinki));
-  /* **The two insets are what make it clay rather than a flat outlined box.**
-     Every other surface in the numbers journey is `.card .card-clay-white` —
-     inner top highlight, inner bottom shade, wide tinted drop shadow — and
-     the bubble was the one thing on those screens still reading as a plain
-     panel with a ring drawn on it. Same recipe, at the same values, so it
-     belongs to the same material; the outline stays, because that is what
-     ties the bubble to the character beside it. */
-  box-shadow:
-    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
-    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
-    0 18px 38px -16px rgb(var(--shadow-hue) / 34%),
-    0 4px 12px -6px rgb(var(--shadow-hue) / 20%);
-}
-
-/* The tail is TWO stacked CSS border-triangles, not a clipped box: a bigger
-   pink one behind (`::before`) and a smaller white one in front (`::after`),
-   both anchored at the EXACT SAME flush edge (`left: 100%` / `right: 100%` /
-   `top: 100%` depending on direction) rather than at independently-offset
-   boxes. That single shared anchor is what actually matters here — an
-   earlier version built the tail from two clipped boxes positioned at
-   slightly different depths (their own offset AND their own width both
-   varied independently), so the smaller white layer's base sat shallower
-   than the bigger pink layer's base and never fully covered it: a strip of
-   solid pink showed at the base, right where the tail meets the bubble's own
-   fill, reading as a separate arrow-shaped piece glued on rather than one
-   continuous bubble. Anchoring both layers at the same edge and varying only
-   how far each REACHES (not where either one starts) means the smaller
-   layer's base always sits exactly on top of the bigger one's — no strip of
-   pink can ever show through. Each layer is `width:0; height:0` with one
-   colored border and the adjacent two transparent, the standard CSS
-   triangle technique — no `clip-path`, no SVG. */
-.speech-bubble::before,
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  translate: 0 -50%;
-  right: 100%;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-color: transparent;
-}
-
-/* Points LEFT (portrait sits to the bubble's left): the colored side is the
-   RIGHT border — a border-triangle always points away from its transparent
-   sides, toward the one side left uncolored. */
-.speech-bubble::before {
-  border-width: 0.55rem 0.9rem 0.55rem 0;
-  border-right-color: var(--bubble-ink, var(--color-pinki));
-}
-
-.speech-bubble::after {
-  border-width: 0.42rem 0.72rem 0.42rem 0;
-  border-right-color: var(--surface);
-}
-
-@media (width < 40rem) {
-  /* Portrait stacks ABOVE the bubble here, so the tail points UP instead —
-     colored BOTTOM border, anchored flush with the bubble's own top edge. */
-  .speech-bubble::before,
-  .speech-bubble::after {
-    top: auto;
-    right: auto;
-    bottom: 100%;
-    left: 50%;
-    translate: -50% 0;
-  }
-
-  .speech-bubble::before {
-    border-width: 0 0.55rem 0.9rem 0.55rem;
-    border-right-color: transparent;
-    border-bottom-color: var(--bubble-ink, var(--color-pinki));
-  }
-
-  .speech-bubble::after {
-    border-width: 0 0.42rem 0.72rem 0.42rem;
-    border-right-color: transparent;
-    border-bottom-color: var(--surface);
-  }
-}
-
-/* The bubble when Pinki stands to its RIGHT rather than its left — the
-   journey's `lead` stages, where she is life size against the right edge and
-   the bubble sits in the column her crop leaves free. The tail has to point
-   at her, so it flips to the other side and stays there at every width: she
-   is beside the bubble on a phone here, not above it.
-
-   Points RIGHT: colored LEFT border, anchored flush with the bubble's own
-   right edge (`left: 100%`).
-
-   **Anchored toward the BOTTOM of the bubble, not its vertical center.** She
-   stands lower than the bubble, so a tail centred on the bubble's full
-   height pointed out level with its middle — over her head, not at her face —
-   on every stage whose line runs to two lines. Anchoring lower keeps the
-   tail close to where her face actually is regardless of how tall the
-   bubble grows.
-
-   **...but never so low that the base leaves the straight edge.** A flat 66%
-   put the triangle's bottom corner past the bottom-left corner's tangent on
-   every ONE-LINE bubble, where the border has already curved inward — so the
-   tail hung with a visible wedge of page between it and the bubble and read
-   as a detached "<". `min()` keeps the 66% bias on a bubble tall enough to
-   afford it and pins the tail flush against the end of the flat run on one
-   that isn't: `100% - 1.35rem` is the radius (0.8rem) plus the tail's own
-   half-height (0.55rem), i.e. the lowest centre whose base still lands on
-   straight border. Both numbers are the ones set above — move either and
-   this has to move with it. */
-.speech-bubble--left::before,
-.speech-bubble--left::after {
-  top: min(66%, 100% - 1.35rem);
-  right: auto;
-  left: 100%;
-  translate: 0 -50%;
-  border-color: transparent;
-}
-
-.speech-bubble--left::before {
-  border-width: 0.55rem 0 0.55rem 0.9rem;
-  border-left-color: var(--bubble-ink, var(--color-pinki));
-}
-
-.speech-bubble--left::after {
-  border-width: 0.42rem 0 0.42rem 0.72rem;
-  border-left-color: var(--surface);
-}
 
 /* ---------------------------------------------------------------
    "Watch me draw it."
@@ -4355,37 +4169,6 @@ button:disabled,
   }
 }
 
-/* A stop squashes under a finger. */
-.path-stop {
-  transition: scale 0.15s ease;
-}
-
-.path-stop:active {
-  scale: 0.94;
-}
-
-/* The next stop breathes a ring of its own colour, so it is found first. */
-.path-next::after {
-  content: "";
-  position: absolute;
-  inset: -0.5rem;
-  border-radius: 9999px;
-  border: 0.3rem solid var(--path-ring);
-  animation: path-ring 2.2s ease-out infinite;
-  pointer-events: none;
-}
-
-@keyframes path-ring {
-  from {
-    opacity: 0.6;
-    scale: 0.92;
-  }
-  to {
-    opacity: 0;
-    scale: 1.3;
-  }
-}
-
 /* "Start" above the next stop, with a tail pointing down at it. */
 .path-bubble::after {
   content: "";
@@ -4398,43 +4181,6 @@ button:disabled,
   background: inherit;
   translate: -50% 0;
   rotate: 45deg;
-}
-
-/* The walk from a finished stop to the next (`LessonPath`'s `advanceFrom`):
-   the stop settles to its finished size and the new stretch of track draws
-   on from the top. */
-.path-disc {
-  transition:
-    width 0.45s cubic-bezier(0.34, 1.4, 0.5, 1),
-    height 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
-}
-
-.path-draw {
-  animation: path-draw 1s cubic-bezier(0.45, 0, 0.3, 1) both;
-}
-
-/* Across a desktop board the track runs left to right, so it draws on
-   from the left. */
-.path-draw--x {
-  animation-name: path-draw-x;
-}
-
-@keyframes path-draw-x {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes path-draw {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
 }
 
 /* A locked stop still shows what is coming, only quieter. */
@@ -4466,9 +4212,7 @@ button:disabled,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .path-next::after,
-  .path-lock-off,
-  .path-draw {
+  .path-lock-off {
     animation: none;
   }
 
