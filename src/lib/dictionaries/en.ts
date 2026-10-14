@@ -91,13 +91,13 @@ export const en = {
   },
   lessons: {
     shapes: {
-      name: "Learn Shapes",
-      description: "Circles, squares, triangles and more",
+      name: "Shapes",
+      description: "Circles, squares and triangles",
       items: ["Circle", "Square", "Triangle", "Rectangle", "Shape review"],
     },
     colors: {
-      name: "Learn Colors",
-      description: "Red, blue, yellow and every color around you",
+      name: "Colors",
+      description: "Red, blue, yellow and more",
       items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White", "Color review"],
     },
     fruits: {
