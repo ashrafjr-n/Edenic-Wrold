@@ -1,5 +1,6 @@
 import { ViewTransition } from "react";
 import Image from "next/image";
+import { WallPreload } from "@/components/learn/classroom/wall-preload";
 import wallPortrait from "../../../../public/assets/learn/pinki/classroom/portrait.jpg";
 import wallLandscape from "../../../../public/assets/learn/pinki/classroom/landscape.jpg";
 import deskPortrait from "../../../../public/assets/learn/pinki/classroom/portrait-desk.png";
@@ -16,7 +17,8 @@ interface ClassroomBackdropProps {
  * class's drawings, a little out of focus, and the child's own desk in the
  * front, more so (`tools/picnic-scene`, `render.cjs classroom pinki`). A
  * portrait and a landscape frame, the one that fits the screen shown — the
- * other is never fetched (lazy and `display: none`).
+ * other is never fetched (lazy and `display: none`) — and preloaded, so the
+ * room is there with the page, not a moment after.
  *
  * The wall is ONE view transition (`pinki-wall`) on the hub and on a course
  * page, so going in to a course zooms it, and coming back zooms it out; the
@@ -28,11 +30,12 @@ interface ClassroomBackdropProps {
 export function ClassroomBackdrop({ zoomed = false }: ClassroomBackdropProps) {
   return (
     <div className="class-room" aria-hidden>
+      <WallPreload portrait={wallPortrait} landscape={wallLandscape} />
       <ViewTransition name="pinki-wall" share="class-morph" default="none">
         <div className="class-wall">
           <div className={`class-wall-view ${zoomed ? "class-wall-view--zoomed" : ""}`}>
-            <Image src={wallPortrait} alt="" fill sizes="100vw" quality={80} className="object-cover landscape:hidden" />
-            <Image src={wallLandscape} alt="" fill sizes="100vw" quality={80} className="object-cover portrait:hidden" />
+            <Image src={wallPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+            <Image src={wallLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
           </div>
         </div>
       </ViewTransition>
