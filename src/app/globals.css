@@ -4233,9 +4233,11 @@ button:disabled,
    transitions: the board zooms up into a course, the wall with it, Pinki
    and the desk leave the picture.
    --------------------------------------------------------------- */
+/* `clip`, never `hidden` (the back row is sticky): Pinki stands behind the
+   desk with her feet past the page's bottom edge, which must not scroll. */
 .class-page {
   isolation: isolate;
-  overflow-x: clip;
+  overflow: clip;
 }
 
 .class-room {
@@ -4594,13 +4596,13 @@ button:disabled,
   top: 23.7%;
   width: 120%;
   transform-origin: 88% 50%;
-  rotate: var(--aim-0);
+  rotate: var(--aim, var(--aim-0));
   transition: rotate 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
   animation: class-pointer-up 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 1.2s backwards;
 }
 
 .class-pinki[data-aim="1"] .class-pointer {
-  rotate: var(--aim-1);
+  rotate: var(--aim, var(--aim-1));
 }
 
 @keyframes class-pointer-up {
@@ -4670,11 +4672,11 @@ button:disabled,
   }
 
   .chalk-panel {
-    min-height: min(13rem, 24svh);
+    min-height: min(13rem, 19svh);
   }
 
   .chalk-panel-art {
-    width: min(12rem, 22svh);
+    width: min(12rem, 17svh);
   }
 
   .class-pinki {
@@ -4683,6 +4685,27 @@ button:disabled,
     right: 0;
     bottom: -7.5rem;
     width: 25%;
+  }
+}
+
+/* A short desktop (720–760px tall): the descriptions go, so both courses
+   and Pinki fit without scrolling. */
+@media (width >= 64rem) and (height < 48rem) {
+  .class-hub {
+    padding-bottom: 5rem;
+  }
+
+  .class-hello {
+    padding-top: 1rem;
+  }
+
+  .class-panels {
+    gap: 0.9rem;
+    padding-bottom: 1.4rem;
+  }
+
+  .chalk-panel-desc {
+    display: none;
   }
 }
 
