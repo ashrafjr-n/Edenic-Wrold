@@ -599,9 +599,9 @@ Before calling Learn done (easy to forget):
       cups, Animals, Weather — the items above), or close them.
 - [ ] The sun, clouds and snowman from their stills — still wanted?
 - [ ] A native speaker checks every Kurdish (Badini) string; Arabic too.
-- [ ] Saved progress: lessons were added and removed (Vegetables,
-      Animals), so old numbers point at the wrong lesson — bump the store's
-      version and reset or move it.
+- [x] Saved progress (2026-10-14): the store is `version: 1`; its
+      `migrate` drops every v0 course key (lessons were renumbered) and
+      keeps `puzzle.*` / `memory.*`.
 - [ ] Known: the word card scrolls 18px at 360x640 (every course).
 - [x] `code hygiene` (2026-10-13) — dead CSS, an unreachable colour
       branch, ~950 lines of dead render builders (output proven identical).
