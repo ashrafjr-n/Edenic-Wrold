@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her classroom**: her chalkboard with a chalk-drawn panel per course and Pinki beside it, her stick raised to the board. Nova and Bloo say hello above one big clay card per course |
+| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her classroom**: her chalkboard with a square paper card per course, side by side, and Pinki beside it, her stick raised to the board. Nova and Bloo say hello above one big clay card per course |
 | `/learn/[character]/[lesson]` | A course: its lessons, unlocked one at a time, with a Continue button to the next one. Pinki's: her board up close, a chalk box per lesson. Nova's and Bloo's: a banner over a box of things (one cell per lesson) |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
@@ -162,7 +162,7 @@ src/
                       course's box of lessons, their progress bar and
                       Continue button
     learn/classroom/  Pinki's classroom: the room, her chalkboard, the
-                      hub's course panels, a course's lessons on the board
+                      hub's course cards, a course's lessons on the board
     learn/lesson/     The lesson player: the task button and its how-to
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
@@ -217,8 +217,8 @@ public/
   assets/learn/pinki/classroom/ Pinki's classroom: the wall and the child's
                             desk (portrait and landscape), rendered by
                             tools/picnic-scene, and the board's chalk —
-                            the boxes' frames, the grain, the arrow, the
-                            eraser's smudges (chalk.py)
+                            the boxes' frames, the grain, the eraser's
+                            smudges (chalk.py)
   assets/learn/pinki/       Course card art (placeholders until the course
                             art arrives), then each course's pictures and
                             reels (shapes/reels/1–4.mp4 are placeholders cut
@@ -275,19 +275,19 @@ mom). Each friend's corner wears one colour: Pinki's is pink, Nova's is gold
 (back button, play buttons, progress bars, banners — with dark ink on the
 gold), and Bloo's is Bloo's blue.
 Their pages are real. **Pinki's corner is her classroom.** The child sits at
-their desk in front of a pink wall hung with the class's crayon drawings
-(shapes, colors, one of Pinki) under shape bunting, all softly out of focus.
+their desk in front of a pink wall, seen straight on and in sharp focus:
+shape bunting, the class's crayon drawings, a "Small Steps, Big Dreams"
+poster and, on a wide screen, a sunny window with a plant and a globe.
 Her hub is her chalkboard, under a wooden "Pinki's Class" sign: a clean
-slate in a slim wood frame, her hello in chalk, and a box per course
-holding only what a child needs — the course's one 3D thing (a tower of
-toy blocks for Shapes, a painter's palette for Colors), a short name, a few
-words, a progress bar ("2/5") and one button (Start, Continue or Play
-again); the next course's box is drawn in pink chalk and glows, a yellow
-chalk arrow at its button — with
-Pinki beside it, her stick raised to the board. A moment after the room
-settles, and whenever she is tapped, she says which lesson is next ("Let's
-learn Triangle!"); once every lesson is learned she celebrates instead, the
-board says "You learned it all!" and confetti flies. Walking in, the camera
+slate in a slim wood frame with a square paper card per course stuck on it
+side by side — the course's name on a pink clay tag, its one 3D thing (a
+tower of toy blocks for Shapes, a painter's palette for Colors), a progress
+bar ("2/5") and one button (Start, Continue or Play again). A card never
+lists its lessons; those wait inside the course. The next course's card
+glows pink. Chalk stars and hearts sit round the cards, and "You can do it!"
+is chalked under them. Pinki stands at the board's right, her stick raised
+to it, and jumps when tapped. Once every lesson is learned she celebrates
+instead, the board says "You learned it all!" and confetti flies. Walking in, the camera
 eases toward the board. Tapping a course zooms the board up to fill the
 screen as Pinki steps out of the picture: that is the course page, a chalk
 box per lesson under "2 of 5 learned", its thing held up by a clay magnet (learned ones show the stars they earned, of 3 — stars appear only where they mean something, and ones earned since the last visit fly in; the next one glowing with "Start", the
