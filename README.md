@@ -277,15 +277,17 @@ gold), and Bloo's is Bloo's blue.
 Their pages are real. **Pinki's corner is her classroom.** The child sits at
 their desk in front of a pink wall hung with the class's crayon drawings
 (shapes, colors, one of Pinki) under shape bunting, all softly out of focus.
-Her hub is her chalkboard, under a wooden "Pinki's Class" sign: a slate
-wiped with the eraser on its tray, her hello written in grainy chalk, and a
-box per course drawn in chalk — its things stuck on, its name, a chalk star
-per lesson, filled pink once learned; the next course's box is drawn in
-pink chalk and glows, a yellow chalk arrow drawn down at its button — with
+Her hub is her chalkboard, under a wooden "Pinki's Class" sign: a clean
+slate in a slim wood frame, her hello in chalk, and a box per course
+holding only what a child needs — the course's one 3D thing (a tower of
+toy blocks for Shapes, a painter's palette for Colors), a short name, a few
+words, a progress bar ("2/5") and one button (Start, Continue or Play
+again); the next course's box is drawn in pink chalk and glows, a yellow
+chalk arrow at its button — with
 Pinki beside it, her stick raised to the board; she jumps when tapped. Walking in, the camera
 eases toward the board. Tapping a course zooms the board up to fill the
 screen as Pinki steps out of the picture: that is the course page, a chalk
-box per lesson, its thing held up by a clay magnet (learned ones ticked, the next one glowing with "Start", the
+box per lesson, its thing held up by a clay magnet (learned ones show the stars they earned, of 3 — stars appear only where they mean something; the next one glowing with "Start", the
 rest dashed, their words a "?"). Nova's and Bloo's hubs are still the friend
 saying hello above one big white clay card per course, and their course
 page is a banner over its lessons. Everything in Pinki's courses
