@@ -58,8 +58,8 @@ writes them as JPEGs, 1280px on the long side, into `dest`.
     python3 tools/picnic-scene/crop.py backdrop circle public/assets/learn/pinki/shapes/backdrop/circle
 
 Pinki's classroom — run after `render.cjs classroom pinki`: the wall,
-sharp with a vignette (`<frame>.jpg`), and the child's desk, blurred
-(`<frame>-desk.png`, cropped to it), both frames, into
+sharp with a vignette (`<frame>.jpg`), and the chairs and desk in front,
+blurred (`<frame>-desk.png`, the whole frame), both frames, into
 `public/assets/learn/pinki/classroom/`.
 
     python3 tools/picnic-scene/crop.py classroom pinki
@@ -215,8 +215,8 @@ if NAME.startswith("harvest-"):
 if NAME == "classroom":
     # Pinki's classroom, both frames: the wall SHARP (2026-10-14, direct
     # request: its poster's words are read) with a soft vignette, as a
-    # JPEG; the child's desk in front out of focus, as a PNG over it. At
-    # most 1600px on the long side.
+    # JPEG; the chairs and desk in front out of focus, as a PNG over it
+    # (the whole frame). At most 1600px on the long side.
     who = sys.argv[2] if len(sys.argv) > 2 else "pinki"
     out = os.path.join(HERE, "out", f"classroom-{who}")
     dest = os.path.join(ROOT, f"public/assets/learn/{who}/classroom")
@@ -230,12 +230,19 @@ if NAME == "classroom":
         shade = (1 - 0.16 * np.clip(d - 0.45, 0, 1) ** 1.6)[..., None]
         px = np.asarray(back).astype(np.float32) * shade
         Image.fromarray(np.clip(px, 0, 255).astype(np.uint8)).save(f"{dest}/{frame}.jpg", quality=84, optimize=True, progressive=True)
+        # The whole frame, not cropped: the page lays it over the wall the
+        # same way (cover), so the chairs stand where they were rendered.
         front = Image.open(f"{out}/{frame}-front.png").convert("RGBA")
         front.thumbnail((1600, 1600), Image.LANCZOS)
-        front = front.filter(ImageFilter.GaussianBlur(max(front.size) * 0.006))
-        top = alpha_box(front, threshold=4, pad=0)[1]
-        front.crop((0, top, front.width, front.height)).save(f"{dest}/{frame}-desk.png", optimize=True)
-        print(frame, "desk from", round(top / front.height * 100, 2), "% down")
+        # Blurred premultiplied, so the clear (black) pixels round the
+        # chairs never bleed a dark rim into them.
+        px = np.asarray(front).astype(np.float32) / 255
+        a = px[..., 3:]
+        blur = lambda ch: np.asarray(Image.fromarray((ch * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(max(front.size) * 0.006))).astype(np.float32) / 255
+        alpha = blur(a[..., 0])
+        rgb = np.stack([blur(px[..., c] * a[..., 0]) for c in range(3)], -1) / np.maximum(alpha, 1 / 255)[..., None]
+        out_px = np.concatenate([np.clip(rgb, 0, 1), alpha[..., None]], -1)
+        Image.fromarray((out_px * 255).round().astype(np.uint8), "RGBA").save(f"{dest}/{frame}-desk.png", optimize=True)
     sys.exit()
 
 if NAME == "backdrop":
