@@ -4186,28 +4186,112 @@ if (THING) {
     [["rainbow", 6.95, 6.05, 0.62, 0.04], ["house", 6.95, 4.35, 0.62, -0.05]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
   }
 
-  /* The child's desk, in front: wood, a notebook, a pencil, crayons. */
+  /* The class in front of the camera (2026-10-14, from the user's
+     picture): chair backs in clay with a star cut in, the corner of a desk
+     with a pencil cup and books — `crop.py classroom` blurs them, the
+     camera's focus on the board. Kept low, where the page has no board. */
   const desk = new THREE.Group();
-  const DZ = portrait ? 8.6 : 9.2, DY = portrait ? 2.45 : 2.2;
-  desk.add(at(box(40, 0.5, 3.2, matte(0xd9a36b, { roughness: 0.6 }), 0.2), 0, DY, DZ));
-  const book = box(2.2, 0.12, 1.6, matte(0xff86c2), 0.05);
-  desk.add(at(book, portrait ? -2.2 : -3.2, DY + 0.31, DZ - 0.4));
-  book.rotation.y = 0.15;
-  const pages = box(2.05, 0.1, 1.5, matte(0xfffdf7), 0.03);
-  desk.add(at(pages, portrait ? -2.2 : -3.2, DY + 0.4, DZ - 0.4));
-  pages.rotation.y = 0.15;
-  ["#ee4645", "#3f86e8", "#ffd31a", "#4fbf5a"].forEach((c, i) => {
-    const crayon = new THREE.Group();
-    const body = mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.9, 24), clay(new THREE.Color(c), { clearcoat: 0.4 }));
-    body.rotation.z = Math.PI / 2;
-    crayon.add(body);
-    const tip = mesh(new THREE.ConeGeometry(0.09, 0.22, 24), clay(new THREE.Color(c), { clearcoat: 0.4 }));
-    tip.rotation.z = -Math.PI / 2;
-    tip.position.x = 0.56;
-    crayon.add(tip);
-    crayon.rotation.y = 0.5 - i * 0.25;
-    desk.add(at(crayon, (portrait ? 1.4 : 2.6) + i * 0.32, DY + 0.34, DZ - 0.6 + i * 0.15));
-  });
+  const starShape = (r, inner = 0.45) => {
+    const st = new THREE.Shape();
+    for (let k = 0; k < 10; k++) {
+      const a = Math.PI / 2 + (k * Math.PI) / 5, rr = k % 2 ? r * inner : r;
+      k ? st.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : st.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    st.closePath();
+    return st;
+  };
+  /* A chair's back: a soft rounded slab on two posts, a star pressed in. */
+  const chairAt = (color, starColor, x, y, z, wd = 1.5, ht = 0.95, turn = 0) => {
+    const g = new THREE.Group();
+    const r = 0.32;
+    const sh = new THREE.Shape();
+    sh.moveTo(-wd / 2, -ht / 2);
+    sh.lineTo(wd / 2, -ht / 2);
+    sh.lineTo(wd / 2, ht / 2 - r);
+    sh.quadraticCurveTo(wd / 2, ht / 2, wd / 2 - r, ht / 2);
+    sh.lineTo(-wd / 2 + r, ht / 2);
+    sh.quadraticCurveTo(-wd / 2, ht / 2, -wd / 2, ht / 2 - r);
+    sh.closePath();
+    const back = mesh(roundedShapeExtrude(sh, 0.12, 0.06), clay(color, { clearcoat: 0.25, roughness: 0.55, sheen: 0.4 }));
+    g.add(back);
+    /* High on the back: the camera sees only the chair's top. */
+    const st = mesh(roundedShapeExtrude(starShape(ht * 0.21), 0.04, 0.03), clay(starColor, { clearcoat: 0.3 }));
+    st.position.set(0, ht * 0.16, 0.17);
+    g.add(st);
+    for (const side of [-1, 1]) {
+      const post = mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.4, 16), clay(color, { clearcoat: 0.25 }));
+      post.position.set(side * wd * 0.36, -ht / 2 - 1.2, 0.05);
+      g.add(post);
+    }
+    g.position.set(x, y, z);
+    g.rotation.y = turn;
+    desk.add(g);
+    return g;
+  };
+  /* A desk's corner: a light wood top, its thickness showing. */
+  const deskAt = (x, y, z, wd, dp) => {
+    const top = box(wd, 0.16, dp, matte(0xe9bd85, { roughness: 0.6 }), 0.06);
+    top.position.set(x, y, z);
+    desk.add(top);
+  };
+  /* A pencil cup (blue, a yellow star on it) full of pencils. */
+  const pencilCup = (x, y, z, k = 1) => {
+    const g = new THREE.Group();
+    const cup = mesh(new THREE.CylinderGeometry(0.3, 0.27, 0.62, 48), clay(0x6aa6f0, { clearcoat: 0.35 }));
+    cup.position.y = 0.31;
+    g.add(cup);
+    const st = mesh(roundedShapeExtrude(starShape(0.13), 0.02, 0.015), clay(0xffd23a, { clearcoat: 0.4 }));
+    st.position.set(0, 0.31, 0.29);
+    g.add(st);
+    [[0xffc93a, -0.12, 0.18], [0xf776ac, 0.02, -0.05], [0x9257de, 0.13, -0.2], [0x5cc56b, -0.02, 0.08]].forEach(([c, px, tilt], i) => {
+      const pencil = new THREE.Group();
+      const body = mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 6), clay(c, { clearcoat: 0.3 }));
+      pencil.add(body);
+      const wood = mesh(new THREE.ConeGeometry(0.05, 0.14, 6), matte(0xf3d3a6));
+      wood.position.y = 0.52;
+      pencil.add(wood);
+      pencil.position.set(px, 0.62 + 0.2 + i * 0.03, (i % 2 ? -0.06 : 0.05));
+      pencil.rotation.z = tilt;
+      g.add(pencil);
+    });
+    g.position.set(x, y, z);
+    g.scale.setScalar(k);
+    desk.add(g);
+  };
+  /* Two books lying on the desk, the top one purple. */
+  const books = (x, y, z, turn) => {
+    const g = new THREE.Group();
+    [[0xff86c2, 0.0, 0], [0x9257de, 0.15, 0.12]].forEach(([c, h, t]) => {
+      const cover = box(1.0, 0.13, 0.72, clay(c, { clearcoat: 0.3 }), 0.04);
+      cover.position.set(0, h + 0.065, 0);
+      cover.rotation.y = t;
+      g.add(cover);
+      const pages = box(0.94, 0.09, 0.66, matte(0xfffaf0), 0.02);
+      pages.position.set(0.03, h + 0.065, 0);
+      pages.rotation.y = t;
+      g.add(pages);
+    });
+    g.position.set(x, y, z);
+    g.rotation.y = turn;
+    desk.add(g);
+  };
+  if (portrait) {
+    // a phone: over its bottom bar, under Pinki's feet — the blue chair at
+    // the left, the pink one under Pinki, a desk's corner at the right (no
+    // cup: it would stand in front of her)
+    chairAt(0x5b7fe6, 0xaec4ff, -1.15, 3.35, 9.0, 1.3, 0.85, 0.12);
+    deskAt(1.3, 3.1, 8.6, 1.9, 1.4);
+    chairAt(0xf28ab8, 0xffd3e6, 0.25, 3.15, 9.6, 1.2, 0.8, -0.05);
+  } else {
+    // the blue chair at the bottom left, the pink one under the board's
+    // right, a desk at the right with the cup and the books
+    chairAt(0x5b7fe6, 0xaec4ff, -2.15, 2.3, 9.0, 1.45, 0.95, 0.18);
+    deskAt(-2.6, 2.2, 8.2, 2.0, 1.4);
+    chairAt(0xf28ab8, 0xffd3e6, 0.3, 2.33, 9.1, 1.35, 0.9, -0.08);
+    deskAt(2.2, 2.35, 8.4, 2.6, 1.5);
+    books(1.55, 2.43, 8.35, 0.2);
+    pencilCup(2.55, 2.43, 8.3, 0.68);
+  }
   scene.add(desk);
 
   const shot = () => { renderer.render(scene, view); return renderer.domElement.toDataURL("image/png"); };
