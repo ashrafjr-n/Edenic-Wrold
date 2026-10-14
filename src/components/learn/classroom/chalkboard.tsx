@@ -3,19 +3,17 @@ import chalkFrame from "../../../../public/assets/learn/pinki/classroom/chalk-fr
 import chalkFramePink from "../../../../public/assets/learn/pinki/classroom/chalk-frame-pink.png";
 import chalkFrameDashed from "../../../../public/assets/learn/pinki/classroom/chalk-frame-dashed.png";
 import chalkGrain from "../../../../public/assets/learn/pinki/classroom/chalk-grain.png";
-import chalkArrow from "../../../../public/assets/learn/pinki/classroom/chalk-arrow.png";
 import chalkSmudge from "../../../../public/assets/learn/pinki/classroom/chalk-smudge.png";
 
 /* The chalk (`tools/picnic-scene/chalk.py`) — the boxes drawn on the board,
-   the grain over what is written on it, the arrow at the next course, the
-   eraser's smudges — handed down as custom properties, so the stylesheet
-   reads the hashed (cache-busted) files. */
+   the grain over what is written on it, the eraser's smudges — handed
+   down as custom properties, so the stylesheet reads the hashed
+   (cache-busted) files. */
 const CHALK = {
   "--chalk-frame": `url(${chalkFrame.src})`,
   "--chalk-frame-pink": `url(${chalkFramePink.src})`,
   "--chalk-frame-dashed": `url(${chalkFrameDashed.src})`,
   "--chalk-grain": `url(${chalkGrain.src})`,
-  "--chalk-arrow": `url(${chalkArrow.src})`,
   "--chalk-smudge": `url(${chalkSmudge.src})`,
 } as CSSProperties;
 
