@@ -83,6 +83,12 @@
  *
  *   node tools/picnic-scene/render.cjs house pinki
  *
+ * Pinki's classroom (2026-10-14) — her hub's and course pages' room, in
+ * both frames, the wall (`<frame>-back.png`) and the child's desk in front
+ * (`<frame>-front.png`), then `crop.py classroom`:
+ *
+ *   node tools/picnic-scene/render.cjs classroom pinki
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
@@ -141,6 +147,15 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+    }
+  } else if (mode === "classroom") {
+    for (const who of specs) {
+      const out = path.join(__dirname, "out", `classroom-${who}`);
+      fs.mkdirSync(out, { recursive: true });
+      for (const frame of ["portrait", "landscape"]) {
+        const layers = await render(page, `classroom=${who}&frame=${frame}`);
+        for (const [layer, url] of Object.entries(layers)) save(out, `${frame}-${layer}`, url);
+      }
     }
   } else if (mode === "house") {
     for (const who of specs) {
