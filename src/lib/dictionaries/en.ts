@@ -132,8 +132,8 @@ export const en = {
     /** What a course's box is announced as, by where the child is in it. */
     continueLesson: "Continue {name}",
     replayLesson: "Play {name} again",
-    /** Pinki, when tapped: the lesson to play next. */
-    letsLearn: "Let's learn {name}!",
+    /** Chalked on Pinki's board, under the course cards. */
+    youCanDoIt: "You can do it!",
     /** On the board once every lesson of the friend's is learned. */
     allDone: "You learned it all! Well done!",
     /** A course's board: how far along it is. */
