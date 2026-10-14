@@ -4222,295 +4222,771 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   Pinki's house — her hub (2026-10-14).
+   Pinki's classroom — her hub and her course pages (2026-10-14).
 
-   ONE grid for every width: her greeting, the house, the next lesson's
-   button stacked on a phone and tablet; on a desktop the greeting and the
-   button beside the house, the pair centred on it.
-
-   The house is a picture with everything that changes laid over it at %
-   boxes (`data/pinki-house.ts`): a link per room, a reward per lesson —
-   earned, a ghost, or the glowing next one — and a sign per room. It is a
-   size container, so the signs' text scales with it.
+   The room is a rendered picture (`ClassroomBackdrop`): the wall, a little
+   out of focus, under everything, and the child's desk in front of
+   everything (pointer-events off). The board is the page's own
+   (`Chalkboard`): a slate in a clay wood frame, written on in chalk, so it
+   is sharp in every language. On the hub Pinki stands beside it with her
+   pointer; a course page is the same board up close. Both are view
+   transitions: the board zooms up into a course, the wall with it, Pinki
+   and the desk leave the picture.
    --------------------------------------------------------------- */
-.house-hub {
-  grid-template-areas: "bubble" "stage" "cta";
-  align-content: center;
+.class-page {
+  isolation: isolate;
+  overflow-x: clip;
 }
 
-@media (width >= 64rem) {
-  .house-hub {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas: "bubble stage" "cta stage";
-    align-content: center;
+.class-room {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
+.class-wall {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
+}
+
+/* Walking in: the camera eases in toward the board. */
+.class-wall-view {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 40%;
+  scale: 1.05;
+  animation: class-dolly 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* A course: up close, the wall past the board's edges and further out of
+   focus. */
+.class-wall-view--zoomed {
+  scale: 1.45;
+  filter: blur(2px);
+  animation: none;
+}
+
+[data-theme="dark"] .class-wall-view {
+  filter: brightness(0.6) saturate(0.85);
+}
+
+[data-theme="dark"] .class-wall-view--zoomed {
+  filter: brightness(0.6) saturate(0.85) blur(2px);
+}
+
+@keyframes class-dolly {
+  from {
+    scale: 1;
   }
 }
 
-/* On a desktop the tail points right, at Pinki beside it; stacked above
-   the house it would point at nothing, so it goes. */
-.house-bubble::before {
+.class-desk {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  animation: class-desk-in 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Never more than the bottom of the screen: a tall tablet would otherwise
+   show half a desk. */
+.class-desk img {
+  max-height: 15svh;
+  object-fit: cover;
+  object-position: top;
+}
+
+@keyframes class-desk-in {
+  from {
+    translate: 0 -6%;
+    scale: 0.94;
+  }
+}
+
+/* ---------- The board ---------- */
+.chalkboard {
+  position: relative;
+  padding: clamp(0.55rem, 1.2vw, 0.95rem);
+  border-radius: 1.6rem;
+  background-color: #d9a46c;
+  background-image: var(--noise);
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 3px 3px rgb(255 255 255 / 45%),
+    inset 0 -5px 8px rgb(120 70 30 / 35%),
+    0 26px 44px -20px rgb(90 40 70 / 55%),
+    0 8px 16px -8px rgb(90 40 70 / 35%);
+}
+
+.chalkboard-slate {
+  position: relative;
+  border-radius: 1.05rem;
+  color: #f7f3e9;
+  background-color: #2f5b55;
+  background-image:
+    radial-gradient(ellipse 60% 45% at 25% 18%, rgb(255 255 255 / 9%), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 88%, rgb(255 255 255 / 6%), transparent 70%);
+  box-shadow:
+    inset 0 6px 18px rgb(0 0 0 / 35%),
+    inset 0 0 0 2px rgb(0 0 0 / 15%);
+}
+
+/* Chalk is grainy: the slate's grain lies over what is written on it. */
+.chalkboard-slate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--noise);
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* The chalk tray, three sticks of chalk on it. */
+.chalkboard-tray {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -0.55rem;
+  display: flex;
+  gap: 0.6rem;
+  height: 0.85rem;
+  padding-inline-start: 8%;
+  border-radius: 0.45rem;
+  background-color: #c98f55;
+  background-image: var(--noise);
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 2px 2px rgb(255 255 255 / 40%),
+    0 6px 10px -4px rgb(90 40 70 / 45%);
+}
+
+.chalkboard-tray span {
+  width: 2.2rem;
+  height: 0.5rem;
+  margin-top: -0.3rem;
+  border-radius: 0.25rem;
+  background: #fffaf0;
+  box-shadow: inset 0 -2px 2px rgb(0 0 0 / 12%);
+}
+
+.chalkboard-tray span:nth-child(2) {
+  width: 1.6rem;
+  background: #ffb3d4;
+}
+
+.chalkboard-tray span:nth-child(3) {
+  width: 1.9rem;
+  background: #ffe08a;
+}
+
+.chalk-title {
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.6vw, 2.6rem);
+  line-height: 1.1;
+  color: #fbf8f0;
+  text-shadow:
+    0 0 1px rgb(255 255 255 / 60%),
+    0 0 12px rgb(255 255 255 / 15%);
+}
+
+.chalk-sub {
+  margin-top: 0.2rem;
+  font-size: clamp(0.95rem, 1.35vw, 1.3rem);
+  color: rgb(247 243 233 / 75%);
+}
+
+/* ---------- The hub ---------- */
+.class-hub {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem 10.5rem;
+}
+
+.class-stage {
+  position: relative;
+  width: 100%;
+  max-width: 36rem;
+}
+
+.chalkboard--hub {
+  animation: class-board-in 1s cubic-bezier(0.2, 0.8, 0.3, 1) 0.15s both;
+}
+
+@keyframes class-board-in {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+
+.class-hello {
+  padding: 0.9rem 1.1rem 0.35rem;
+}
+
+.class-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 0.6rem 0.85rem 1.2rem;
+}
+
+/* A course, drawn on the board in chalk: written in from the left as the
+   board settles. */
+.chalk-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 7.25rem;
+  padding: 0.55rem 0.75rem 0.55rem 0.4rem;
+  border: 2.5px solid rgb(247 243 233 / 68%);
+  border-radius: 1.1rem;
+  rotate: -0.35deg;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  animation: chalk-write 0.7s ease-out both;
+}
+
+.chalk-panel + .chalk-panel {
+  rotate: 0.4deg;
+}
+
+.chalk-panel:hover,
+.chalk-panel:focus-visible {
+  outline: none;
+  border-color: #fff;
+  background-color: rgb(255 255 255 / 8%);
+}
+
+/* The course to play next glows pink. */
+.chalk-panel--next {
+  border-color: #ffb3d4;
+  box-shadow:
+    0 0 0 4px rgb(255 158 200 / 16%),
+    0 0 26px rgb(255 158 200 / 24%);
+}
+
+@keyframes chalk-write {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.chalk-panel-art {
+  flex-shrink: 0;
+  width: 6.5rem;
+  aspect-ratio: 5 / 4;
+}
+
+.chalk-panel-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.chalk-heading {
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.2vw, 2.1rem);
+  line-height: 1.15;
+  color: #fbf8f0;
+}
+
+.chalk-panel-desc {
+  font-size: clamp(0.8rem, 1.1vw, 1.05rem);
+  line-height: 1.3;
+  color: rgb(247 243 233 / 70%);
+}
+
+/* A chalk dot per lesson, filled pink once it is learned. */
+.chalk-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+}
+
+.chalk-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 2px solid rgb(247 243 233 / 60%);
+  border-radius: 9999px;
+}
+
+.chalk-dot--on {
+  border-color: #ff9ec8;
+  background: #ff9ec8;
+  box-shadow: 0 0 6px rgb(255 158 200 / 60%);
+}
+
+/* The panel's "go": a clay chip in Pinki's pink (green once finished). */
+.chalk-go {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  color: var(--page-accent-ink, #fff);
+  background-color: var(--page-accent-color);
+  box-shadow:
+    inset 0 2px 3px rgb(255 255 255 / 45%),
+    inset 0 -3px 4px rgb(0 0 0 / 15%),
+    0 6px 12px -4px rgb(0 0 0 / 40%);
+}
+
+.chalk-go--done {
+  color: #fff;
+  background-color: var(--color-go);
+}
+
+.chalk-go-label {
   display: none;
 }
 
-@media (width >= 64rem) {
-  .house-bubble::before {
-    display: block;
-    left: auto;
-    right: -0.45rem;
-    bottom: 1.8rem;
-  }
-}
-
-.house-cta-thing {
-  border-radius: 9999px;
-  background: rgb(255 255 255 / 85%);
-}
-
-.house-stage {
-  container-type: inline-size;
-  aspect-ratio: 1541 / 1244;
-  width: 100%;
-  transition:
-    scale 0.45s cubic-bezier(0.5, 0, 0.75, 0),
-    opacity 0.2s ease-in 0.25s;
-}
-
-/* A desktop fits the whole house on the screen. */
-@media (width >= 64rem) {
-  .house-stage {
-    width: min(100%, calc((100svh - 12rem) * 1.239));
-  }
-}
-
-/* Tapping a room dives into it before the course page opens. */
-.house-stage--dive {
-  scale: 2.6;
-  opacity: 0;
-}
-
-.house-picture {
+/* Pinki beside the board: below its corner on a phone and tablet, at its
+   side on a desktop. Her pointer is behind her raised hand and swings to a
+   panel (`data-aim`). */
+.class-pinki {
+  --aim-0: 80deg;
+  --aim-1: 56deg;
+  position: absolute;
   z-index: 1;
+  right: -0.25rem;
+  bottom: -9.5rem;
+  width: min(36vw, 9.5rem);
+  animation: class-pinki-in 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.15) 0.45s both;
 }
 
-.house-cloud {
-  position: absolute;
-  z-index: 0;
-  animation: house-drift 18s ease-in-out infinite alternate;
-}
-
-.house-cloud--a {
-  left: 3%;
-  top: 6%;
-  width: 21%;
-}
-
-.house-cloud--b {
-  left: 10%;
-  top: 25%;
-  width: 14%;
-  animation-duration: 13s;
-  animation-delay: -6s;
-}
-
-@keyframes house-drift {
-  from {
-    translate: -12% 0;
-  }
-  to {
-    translate: 22% 0;
-  }
-}
-
-/* Three puffs of smoke, one after another, from the chimney. */
-.house-smoke {
-  position: absolute;
-  z-index: 0;
-  left: 73.8%;
-  top: 1.5%;
-  width: 3.4%;
-  aspect-ratio: 1;
-}
-
-.house-smoke span {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: #fff;
-  box-shadow: inset 0 -3px 5px -2px rgb(var(--shadow-hue) / 22%);
-  opacity: 0;
-  animation: house-puff 3.6s ease-out infinite;
-}
-
-.house-smoke span:nth-child(2) {
-  animation-delay: 1.2s;
-}
-
-.house-smoke span:nth-child(3) {
-  animation-delay: 2.4s;
-}
-
-@keyframes house-puff {
-  0% {
-    opacity: 0;
-    translate: 0 40%;
-    scale: 0.5;
-  }
-  20% {
-    opacity: 0.95;
-  }
-  100% {
-    opacity: 0;
-    translate: -35% -240%;
-    scale: 1.6;
-  }
-}
-
-/* A room's open front is its link: it lights up under a finger or the
-   keyboard. */
-.house-room {
-  position: absolute;
-  z-index: 2;
-  border-radius: 0.5rem;
-  transition:
-    background-color 0.2s,
-    box-shadow 0.2s;
-}
-
-.house-room:hover,
-.house-room:focus-visible {
-  outline: none;
-  background-color: rgb(255 255 255 / 16%);
-  box-shadow:
-    inset 0 0 0 3px #fff,
-    0 0 0 3px var(--accent);
-}
-
-.house-reward,
-.house-ghost {
-  position: absolute;
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* A spot still to earn: the thing's white ghost, a faint rim so it shows
-   on the pale walls too. */
-.house-ghost {
-  opacity: 0.8;
-  filter: drop-shadow(0 0 1px rgb(90 70 130 / 45%));
-}
-
-/* The next lesson: its ghost glows and breathes, and is a link. */
-.house-ghost--next {
-  z-index: 4;
-  pointer-events: auto;
-  opacity: 1;
-  filter: drop-shadow(0 0 2px var(--accent)) drop-shadow(0 0 8px rgb(255 255 255 / 90%));
-  animation: house-next 1.6s ease-in-out infinite;
-}
-
-.house-ghost--next:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 0.4rem;
-}
-
-@keyframes house-next {
-  0%,
-  100% {
-    scale: 1;
-  }
-  50% {
-    scale: 1.14;
-  }
-}
-
-/* A reward earned since the last visit fades in with a sparkle. */
-.house-reward--fresh {
-  animation: house-reward-in 0.9s ease-out both;
-}
-
-.house-reward--fresh::after {
-  content: "";
-  position: absolute;
-  inset: -35%;
-  border-radius: 9999px;
-  background: radial-gradient(circle, #fff 0 18%, rgb(255 255 255 / 0%) 62%);
-  animation: house-sparkle 1s ease-out both;
-  animation-delay: inherit;
-}
-
-@keyframes house-reward-in {
+@keyframes class-pinki-in {
   from {
     opacity: 0;
-    filter: brightness(1.8);
-  }
-  to {
-    opacity: 1;
-    filter: brightness(1);
+    translate: 70% 0;
   }
 }
 
-@keyframes house-sparkle {
-  0% {
-    opacity: 0;
-    scale: 0.3;
-  }
-  35% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    scale: 1.4;
-  }
-}
-
-/* A room's sign, sitting on the white beam over its open front (clear of
-   the top shelf of pots). */
-.house-sign {
-  position: absolute;
-  z-index: 4;
-  translate: -50% -88%;
-  display: inline-flex;
-  max-width: 50%;
-  align-items: center;
-  gap: 0.5em;
-  padding: 0.25em 0.85em;
-  font-size: max(0.66rem, 2.1cqi);
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-  color: var(--color-ink);
-  pointer-events: none;
-}
-
-.house-sign-count {
-  flex-shrink: 0;
-}
-
-/* Pinki in her yard, in front of everything. */
-.house-pinki {
-  position: absolute;
-  z-index: 5;
-  left: -1%;
-  bottom: 4%;
-  width: 31%;
+.class-pinki-body {
+  position: relative;
+  display: block;
+  width: 100%;
   cursor: pointer;
 }
 
+.class-pointer {
+  position: absolute;
+  z-index: -1;
+  left: -94%;
+  top: 23.7%;
+  width: 120%;
+  transform-origin: 88% 50%;
+  rotate: var(--aim-0);
+  transition: rotate 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
+  animation: class-pointer-up 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 1.2s backwards;
+}
+
+.class-pinki[data-aim="1"] .class-pointer {
+  rotate: var(--aim-1);
+}
+
+@keyframes class-pointer-up {
+  from {
+    rotate: -30deg;
+  }
+}
+
+@media (width >= 40rem) {
+  .class-hub {
+    padding: 1rem 2rem 13rem;
+  }
+
+  .class-stage {
+    max-width: 40rem;
+  }
+
+  .class-hello {
+    padding: 1.4rem 1.6rem 0.4rem;
+  }
+
+  .class-panels {
+    gap: 1.1rem;
+    padding: 0.8rem 1.3rem 1.6rem;
+  }
+
+  .chalk-panel {
+    min-height: 9.5rem;
+    gap: 1rem;
+    padding: 0.8rem 1.1rem 0.8rem 0.6rem;
+  }
+
+  .chalk-panel-art {
+    width: 9rem;
+  }
+
+  .chalk-go {
+    padding: 0.6rem 1.1rem;
+  }
+
+  .chalk-go-label {
+    display: inline;
+  }
+
+  .class-pinki {
+    right: -1.5rem;
+    bottom: -13rem;
+    width: 14rem;
+  }
+}
+
+/* A desktop: the board on the left, Pinki big at its right on the floor,
+   her feet behind the child's desk. */
+@media (width >= 64rem) {
+  .class-hub {
+    padding: 0.5rem 3rem 6.25rem;
+  }
+
+  .class-stage {
+    max-width: 78rem;
+    padding-right: 27%;
+  }
+
+  .class-panels {
+    gap: 1.3rem;
+    padding: 1rem 1.6rem 1.9rem;
+  }
+
+  .chalk-panel {
+    min-height: min(13rem, 24svh);
+  }
+
+  .chalk-panel-art {
+    width: min(12rem, 22svh);
+  }
+
+  .class-pinki {
+    --aim-0: 40deg;
+    --aim-1: 12deg;
+    right: 0;
+    bottom: -7.5rem;
+    width: 25%;
+  }
+}
+
+/* ---------- A course page: the board up close ---------- */
+.class-course {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  padding: 0.25rem 0.75rem 6.5rem;
+}
+
+.chalkboard--course {
+  width: 100%;
+  max-width: 82rem;
+  margin: 0 auto;
+  align-self: flex-start;
+}
+
+.board-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 1rem 1.1rem 0.4rem;
+}
+
+.board-lessons {
+  display: grid;
+  grid-template-columns: repeat(var(--phone-cols), minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem 1.4rem;
+}
+
+@media (width >= 40rem) {
+  .class-course {
+    padding: 0.5rem 2rem 3rem;
+  }
+
+  .board-head {
+    padding: 1.4rem 1.6rem 0.5rem;
+  }
+
+  .board-lessons {
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1rem 1.5rem 1.8rem;
+  }
+}
+
+/* A desktop: the board fills the screen, every lesson on it at once. */
+@media (width >= 64rem) {
+  .class-course {
+    padding: 0.25rem 3rem 2rem;
+  }
+
+  .chalkboard--course {
+    display: flex;
+    height: max(30rem, calc(100svh - 12.5rem));
+  }
+
+  .chalkboard--course .chalkboard-slate {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .board-lessons {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: repeat(var(--rows), minmax(0, 1fr)) auto;
+  }
+}
+
+/* A lesson, a chalk box with its thing stuck on like a magnet. */
+.board-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  aspect-ratio: 5 / 6;
+  min-height: 0;
+  padding: 0.9rem 0.4rem 0.6rem;
+  border: 2.5px solid rgb(247 243 233 / 55%);
+  border-radius: 1rem;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+  animation: chalk-pop 0.45s ease-out both;
+}
+
+@media (width >= 64rem) {
+  .board-cell {
+    aspect-ratio: auto;
+  }
+}
+
+a.board-cell:hover,
+a.board-cell:focus-visible {
+  outline: none;
+  border-color: #fff;
+  background-color: rgb(255 255 255 / 8%);
+}
+
+.board-cell--review {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  gap: 1rem;
+  aspect-ratio: auto;
+  padding: 0.8rem 1rem;
+}
+
+.board-cell--next {
+  border-color: #ffb3d4;
+  animation:
+    chalk-pop 0.45s ease-out both,
+    chalk-glow 2.2s ease-in-out 1s infinite;
+}
+
+.board-cell--locked {
+  border-style: dashed;
+  border-color: rgb(247 243 233 / 30%);
+}
+
+@keyframes chalk-pop {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+@keyframes chalk-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgb(255 158 200 / 14%),
+      0 0 16px rgb(255 158 200 / 18%);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgb(255 158 200 / 24%),
+      0 0 30px rgb(255 158 200 / 36%);
+  }
+}
+
+.board-cell-art {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  width: 100%;
+  min-height: 0;
+}
+
+.board-cell-art--row {
+  flex: 0 1 auto;
+  width: auto;
+}
+
+.board-magnet {
+  position: relative;
+  display: block;
+  width: 68%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 35%));
+}
+
+.board-cell-art--row .board-magnet {
+  width: clamp(3rem, 9vw, 5.5rem);
+}
+
+@media (width >= 64rem) {
+  .board-magnet {
+    width: auto;
+    height: 100%;
+    max-height: 8.5rem;
+  }
+
+  .board-cell-art--row .board-magnet {
+    height: auto;
+  }
+}
+
+.board-cell--locked .board-magnet {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+}
+
+.board-cell-word {
+  font-weight: 700;
+  font-size: clamp(1.1rem, 1.9vw, 1.75rem);
+  line-height: 1.1;
+  text-align: center;
+  color: #fbf8f0;
+}
+
+.board-cell--locked .board-cell-word {
+  color: rgb(247 243 233 / 45%);
+}
+
+.board-cell-start {
+  position: absolute;
+  top: -0.8rem;
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.2rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--page-accent-ink, #fff);
+  background-color: var(--page-accent-color);
+  box-shadow: 0 4px 10px -3px rgb(0 0 0 / 45%);
+}
+
+.board-cell-tick {
+  position: absolute;
+  top: -0.55rem;
+  right: -0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 9999px;
+  color: #fff;
+  background-color: var(--color-go);
+  box-shadow:
+    inset 0 2px 2px rgb(255 255 255 / 40%),
+    0 4px 8px -2px rgb(0 0 0 / 40%);
+}
+
+.board-cell-lock {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.45rem;
+  color: rgb(247 243 233 / 55%);
+}
+
+/* ---------- Going in to a course and back (view transitions) ---------- */
+::view-transition-group(.board-morph),
+::view-transition-group(.class-morph) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+/* The wall keeps its box; what is in it zooms — in going to a course,
+   out coming back (the new picture is the zoomed one or not). */
+::view-transition-group(.class-morph) {
+  overflow: clip;
+}
+
+::view-transition-old(.class-morph),
+::view-transition-new(.class-morph) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+::view-transition-old(.pinki-exit) {
+  animation: class-pinki-out 0.35s ease-in both;
+}
+
+::view-transition-old(.desk-exit) {
+  animation: class-desk-out 0.4s ease-in both;
+}
+
+@keyframes class-pinki-out {
+  to {
+    opacity: 0;
+    translate: 120% 0;
+  }
+}
+
+@keyframes class-desk-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .house-stage {
+  .class-wall-view,
+  .class-desk,
+  .chalkboard--hub,
+  .chalk-panel,
+  .class-pinki,
+  .class-pointer,
+  .board-cell,
+  .board-cell--next {
+    animation: none;
     transition: none;
   }
 
-  .house-cloud,
-  .house-ghost--next,
-  .house-reward--fresh,
-  .house-reward--fresh::after {
+  ::view-transition-group(.board-morph),
+  ::view-transition-group(.class-morph),
+  ::view-transition-old(.pinki-exit),
+  ::view-transition-old(.desk-exit) {
     animation: none;
-  }
-
-  .house-smoke {
-    display: none;
   }
 }
