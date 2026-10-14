@@ -98,7 +98,11 @@ export default async function CharacterLearnPage({
             start: dict.lessonPicker.ctaStart,
             continue: dict.trail.ctaContinue,
             again: dict.lessonPlayer.playAgain,
-            open: upNextCourses.map((course) => format(dict.characterHub.startLesson, { name: course.name })),
+            startCourse: dict.characterHub.startLesson,
+            continueCourse: dict.characterHub.continueLesson,
+            replayCourse: dict.characterHub.replayLesson,
+            letsLearn: dict.characterHub.letsLearn,
+            allDone: dict.characterHub.allDone,
             pinki: character.name,
           }}
           dir={dir}
