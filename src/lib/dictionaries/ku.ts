@@ -127,7 +127,7 @@ export const ku: Dictionary = {
     classSign: "پۆلا {name}",
     continueLesson: "{name} بەردەوام بە",
     replayLesson: "{name} دووبارە یاری بکە",
-    letsLearn: "وەرە دا {name} فێربین!",
+    youCanDoIt: "تو دشێی!",
     allDone: "تە هەمی فێربوو! دەستخۆش!",
     learnedOf: "{done} ژ {total} فێربوو",
   },

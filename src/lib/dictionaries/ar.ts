@@ -123,7 +123,7 @@ export const ar: Dictionary = {
     classSign: "صفّ {name}",
     continueLesson: "تابع {name}",
     replayLesson: "العب {name} مرة أخرى",
-    letsLearn: "هيا نتعلّم {name}!",
+    youCanDoIt: "يمكنك فعلها!",
     allDone: "تعلّمت كل شيء! أحسنت!",
     learnedOf: "تعلّمت {done} من {total}",
   },
