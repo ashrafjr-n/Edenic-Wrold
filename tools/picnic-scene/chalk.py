@@ -9,6 +9,9 @@
 - `chalk-grain.png` — a tile of chalk's grain, for a `mask-image` over what
   is written on the board (the slate shows through in specks).
 - `chalk-smudge.png` — the faint arcs a board eraser leaves.
+- `chalk-star.png`, `chalk-heart.png`, `chalk-sun.png`, `chalk-smile.png`,
+  `chalk-burst.png`, `chalk-underline.png` — doodles drawn by hand round the
+  hub's cards, and the line under "You can do it!".
 
     python3 tools/picnic-scene/chalk.py
 """
@@ -124,6 +127,92 @@ def curve(points, step=0.5):
     return pts
 
 
+YELLOW, MINT = (255, 224, 138), (182, 240, 200)
+
+
+def hand(points, rng, amount):
+    """A hand never draws the planned line: each point drifts a little."""
+    return [(x + rng.normal(0, amount), y + rng.normal(0, amount)) for x, y in points]
+
+
+def stroke(alpha, points, rng, width=9, strength=0.55, wobble=2.2):
+    """One stroke of the chalk through `points` (doodle pixels)."""
+    pts = [(x * SS, y * SS) for x, y in hand(points, rng, wobble)]
+    chalk_line(alpha, curve(pts), width * SS, rng, strength=strength)
+
+
+def edge(alpha, a, b, rng, over=0.06, bow=3.0, **kw):
+    """A straight-ish line from a to b as a hand pulls it: a slight bow,
+    running a little past both ends (the corners overlap, as drawn)."""
+    (x0, y0), (x1, y1) = a, b
+    dx, dy = x1 - x0, y1 - y0
+    length = math.hypot(dx, dy) or 1
+    nx, ny = -dy / length, dx / length
+    k = rng.uniform(-1, 1) * bow
+    pts = [(x0 - dx * over, y0 - dy * over), (x0 + dx * 0.5 + nx * k, y0 + dy * 0.5 + ny * k), (x1 + dx * over, y1 + dy * over)]
+    stroke(alpha, pts, rng, **kw)
+
+
+def ring_pts(cx, cy, rx, ry, a0=0.0, a1=math.tau, n=28):
+    return [(cx + math.cos(a0 + (a1 - a0) * k / n) * rx, cy + math.sin(a0 + (a1 - a0) * k / n) * ry) for k in range(n + 1)]
+
+
+def doodle(kind, seed):
+    """Doodles a child's teacher draws round the cards: rubbed chalk, each
+    stroke drawn by hand (drifting, overshooting, a second pass where a
+    hand would go over it again) — never a clean icon."""
+    rng = np.random.default_rng(seed)
+    W = H = 200
+    alpha = np.zeros((H * SS, W * SS), np.float32)
+    if kind == "star":
+        # Its outline, edge by edge, then a quicker second pass.
+        tips = [(100 + math.cos(-math.pi / 2 + k * math.pi / 5) * (84 if k % 2 == 0 else 36), 108 + math.sin(-math.pi / 2 + k * math.pi / 5) * (84 if k % 2 == 0 else 36)) for k in range(11)]
+        for k in range(10):
+            edge(alpha, tips[k], tips[k + 1], rng, bow=1.5)
+        for k in range(10):
+            edge(alpha, tips[k], tips[k + 1], rng, width=6, strength=0.3, over=0.02, bow=1.5)
+    elif kind == "heart":
+        left = [(100, 170), (58, 128), (28, 86), (34, 50), (64, 34), (92, 50), (100, 66)]
+        right = [(100, 66), (110, 48), (138, 34), (168, 50), (172, 88), (142, 128), (100, 170)]
+        stroke(alpha, left, rng)
+        stroke(alpha, right, rng)
+        # Scribbled in, as a child's teacher fills one.
+        for k in range(9):
+            y = 58 + k * 12
+            half = 62 * math.sqrt(max(0.0, 1 - ((y - 70) / 108) ** 2)) - k * 4
+            stroke(alpha, [(100 - half + 6, y + 10), (100 + half - 6, y - 10)], rng, width=7, strength=0.32, wobble=2.5)
+    elif kind == "sun":
+        stroke(alpha, ring_pts(100, 100, 46, 44, -0.4, math.tau - 0.1), rng)
+        for k in range(9):
+            a = k * math.tau / 9 + rng.uniform(-0.12, 0.12)
+            r0, r1 = 60, 60 + rng.uniform(22, 32)
+            stroke(alpha, [(100 + math.cos(a) * r0, 100 + math.sin(a) * r0), (100 + math.cos(a) * r1, 100 + math.sin(a) * r1)], rng, width=8)
+        for ex in (84, 116):
+            stroke(alpha, [(ex - 2, 88), (ex + 2, 94)], rng, width=10, wobble=0.6)
+        stroke(alpha, ring_pts(100, 104, 20, 16, 0.35, math.pi - 0.35, 12), rng, width=8)
+    elif kind == "smile":
+        stroke(alpha, ring_pts(100, 100, 74, 72, -0.6, math.tau - 0.25), rng)
+        for ex in (74, 126):
+            stroke(alpha, [(ex, 76), (ex + 1, 92)], rng, width=10, wobble=0.6)
+        stroke(alpha, ring_pts(100, 108, 40, 32, 0.3, math.pi - 0.3, 14), rng)
+    elif kind == "burst":
+        # Three quick dashes, the "look here" marks.
+        for a, r0 in ((-2.3, 40), (-1.6, 34), (-0.9, 40)):
+            stroke(alpha, [(100 + math.cos(a) * r0, 150 + math.sin(a) * r0), (100 + math.cos(a) * (r0 + 70), 150 + math.sin(a) * (r0 + 70))], rng, width=9)
+    return image(grained(alpha, rng), {"star": YELLOW, "heart": PINK, "sun": WHITE, "smile": WHITE, "burst": YELLOW}[kind], (W, H))
+
+
+def underline(seed=23):
+    """A long hand-pulled line under a cheer, a little wavy, darting up at
+    its end."""
+    rng = np.random.default_rng(seed)
+    W, H = 600, 60
+    alpha = np.zeros((H * SS, W * SS), np.float32)
+    stroke(alpha, [(14, 38), (160, 31), (330, 34), (480, 27), (586, 18)], rng, width=10, wobble=1.5)
+    stroke(alpha, [(60, 44), (260, 39), (440, 36)], rng, width=6, strength=0.25, wobble=1.5)
+    return image(grained(alpha, rng), YELLOW, (W, H))
+
+
 def grain_tile(seed=13, size=256):
     """Mostly solid, with specks and streaks where the chalk skipped. Tiles:
     the noise is blurred with wrap-around."""
@@ -165,3 +254,7 @@ if __name__ == "__main__":
     save(frame(WHITE, dashed=True, seed=7, strength=0.2, width=5.5), "chalk-frame-dashed.png")
     save(grain_tile(), "chalk-grain.png")
     save(smudge(), "chalk-smudge.png")
+    # The doodles round the hub's cards, and the cheer's underline.
+    for kind, seed in (("star", 31), ("heart", 37), ("sun", 41), ("smile", 43), ("burst", 47)):
+        save(doodle(kind, seed), f"chalk-{kind}.png")
+    save(underline(), "chalk-underline.png")
