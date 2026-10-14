@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { ViewTransition, type CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { characters } from "@/data/characters";
@@ -8,7 +8,9 @@ import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { CourseCard } from "@/components/learn/course-card";
 import { CourseCardWide } from "@/components/learn/course-card-wide";
 import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
-import { PinkiHouse } from "@/components/learn/pinki-house";
+import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
+import { PinkiClassroom } from "@/components/learn/classroom/pinki-classroom";
+import { courseCovers } from "@/data/courses";
 import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
 import nova from "../../../../public/assets/friends/nova.png";
 import bloo from "../../../../public/assets/friends/bloo.png";
@@ -68,24 +70,32 @@ export default async function CharacterLearnPage({
     />
   );
 
-  /* Pinki's hub is her house (2026-10-14): a room per course, a reward per
-     lesson. Nova and Bloo keep their course cards until theirs are built. */
+  /* Pinki's hub is her classroom (2026-10-14): her board with a panel per
+     course, Pinki beside it with her pointer. Nova and Bloo keep their
+     course cards until theirs are built. */
   if (character.id === "pinki") {
     return (
-      <main
-        className="relative flex flex-1 flex-col overflow-x-clip pb-24 sm:pb-10"
-        style={characterAccent(character)}
-      >
-        <BackRow href="/learn" label={dict.characterHub.backToLearn} />
-        <PinkiHouse
+      <main className="class-page relative flex flex-1 flex-col" style={characterAccent(character)}>
+        <ClassroomBackdrop />
+        {/* Its own transition group, so the zooming wall never covers it. */}
+        <ViewTransition name="pinki-back">
+          <BackRow href="/learn" label={dict.characterHub.backToLearn} />
+        </ViewTransition>
+        <PinkiClassroom
           characterId={character.id}
-          courses={upNextCourses}
+          courses={lessons
+            .filter((lesson) => !lesson.locked)
+            .map((lesson, i) => ({
+              ...upNextCourses[i],
+              description: dict.lessons[lesson.id].description,
+              art: courseCovers(lesson.id),
+            }))}
           labels={{
             hello: format(dict.characterHub.hello, { name: character.name }),
-            welcome: dict.characterHub.welcomeHome,
-            startLesson: dict.characterHub.startLesson,
+            ask: dict.characterHub.askToday,
             start: dict.lessonPicker.ctaStart,
             continue: dict.trail.ctaContinue,
+            open: upNextCourses.map((course) => format(dict.characterHub.startLesson, { name: course.name })),
             pinki: character.name,
           }}
           dir={dir}
