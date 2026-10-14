@@ -4429,6 +4429,19 @@ button:disabled,
   color: rgb(247 243 233 / 75%);
 }
 
+/* Every lesson learned: the board says so, in pink. */
+.chalk-sub--done {
+  font-weight: 700;
+  color: #ffb0d4;
+}
+
+/* A course's board: "2 of 5 learned" over a slim bar. */
+.board-progress .chalk-progress-track {
+  display: block;
+  width: min(14rem, 50vw);
+  margin-top: 0.4rem;
+}
+
 /* ---------- The hub ---------- */
 .class-hub {
   position: relative;
@@ -4700,6 +4713,70 @@ button:disabled,
   from {
     opacity: 0;
     translate: 70% 0;
+  }
+}
+
+/* What Pinki says — the lesson to play next — in a clay bubble over her
+   head, its tail down to her. Empty and hidden between lines. */
+.class-speech {
+  position: absolute;
+  bottom: 96%;
+  right: 30%;
+  z-index: 3;
+  width: max-content;
+  max-width: 13rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 1.1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  color: var(--color-ink);
+  opacity: 0;
+  scale: 0.6;
+  transform-origin: 80% 100%;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    scale 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.class-speech::after {
+  content: "";
+  position: absolute;
+  right: 18%;
+  bottom: -0.4rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 0.15rem;
+  background: inherit;
+  rotate: 45deg;
+}
+
+.class-speech--on {
+  opacity: 1;
+  scale: 1;
+}
+
+/* On a phone and tablet she stands under the board: the bubble goes at
+   her side, on the floor, never over a course's button. */
+@media (width < 64rem) {
+  .class-speech {
+    right: 86%;
+    bottom: 34%;
+    transform-origin: 100% 50%;
+  }
+
+  .class-speech::after {
+    right: -0.35rem;
+    bottom: calc(50% - 0.45rem);
+  }
+}
+
+@media (width >= 64rem) {
+  .class-speech {
+    right: 35%;
+    max-width: 16rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -5088,6 +5165,25 @@ a.board-cell:focus-visible {
   fill: currentColor;
 }
 
+/* Until the board knows what it showed last time, a learned star waits. */
+.board-star--waiting {
+  opacity: 0;
+}
+
+/* A star earned since the last visit flies into its box. */
+.board-star--new {
+  animation: board-star-in 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) backwards;
+}
+
+@keyframes board-star-in {
+  from {
+    opacity: 0;
+    scale: 2.6;
+    translate: -1.5rem -3rem;
+    rotate: -120deg;
+  }
+}
+
 .board-cell-lock {
   position: absolute;
   right: 0.5rem;
@@ -5153,6 +5249,7 @@ a.board-cell:focus-visible {
   .chalk-panel,
   .class-pinki,
   .class-sign,
+  .board-star--new,
   .chalk-arrow,
   .board-cell,
   .board-cell--next {
