@@ -197,7 +197,7 @@ export function PinkiHouse({ characterId, courses, labels, dir }: PinkiHouseProp
                       <span
                         key={key}
                         className={`house-reward ${fresh.includes(key) ? "house-reward--fresh" : ""}`}
-                        style={{ ...place(reward.box), animationDelay: `${0.5 + fresh.indexOf(key) * 0.25}s` }}
+                        style={{ ...place(reward.box), animationDelay: `${0.5 + Math.min(fresh.indexOf(key), 8) * 0.15}s` }}
                       >
                         <Image src={reward.picture} alt="" fill sizes={`${Math.ceil(reward.box[2] * PX_PER_PCT)}px`} />
                       </span>
