@@ -216,8 +216,9 @@ public/
   assets/learn-with-pinki/  Pinki's poses
   assets/learn/pinki/classroom/ Pinki's classroom: the wall and the child's
                             desk (portrait and landscape), rendered by
-                            tools/picnic-scene, and the chalk frames the
-                            board's boxes are drawn with (chalk.py)
+                            tools/picnic-scene, and the board's chalk —
+                            the boxes' frames, the grain, the arrow, the
+                            eraser's smudges (chalk.py)
   assets/learn/pinki/       Course card art (placeholders until the course
                             art arrives), then each course's pictures and
                             reels (shapes/reels/1–4.mp4 are placeholders cut
@@ -276,14 +277,15 @@ gold), and Bloo's is Bloo's blue.
 Their pages are real. **Pinki's corner is her classroom.** The child sits at
 their desk in front of a pink wall hung with the class's crayon drawings
 (shapes, colors, one of Pinki) under shape bunting, all softly out of focus.
-Her hub is her chalkboard: her hello in chalk and a box per course drawn in
-chalk — its things stuck on, its name, a chalk dot per lesson, filled pink
-once learned; the next course's box is drawn in pink chalk and glows —
-with Pinki beside it, her stick raised to the board; she jumps when
-tapped. Walking in, the camera
+Her hub is her chalkboard, under a wooden "Pinki's Class" sign: a slate
+wiped with the eraser on its tray, her hello written in grainy chalk, and a
+box per course drawn in chalk — its things stuck on, its name, a chalk star
+per lesson, filled pink once learned; the next course's box is drawn in
+pink chalk and glows, a yellow chalk arrow drawn down at its button — with
+Pinki beside it, her stick raised to the board; she jumps when tapped. Walking in, the camera
 eases toward the board. Tapping a course zooms the board up to fill the
 screen as Pinki steps out of the picture: that is the course page, a chalk
-box per lesson (learned ones ticked, the next one glowing with "Start", the
+box per lesson, its thing held up by a clay magnet (learned ones ticked, the next one glowing with "Start", the
 rest dashed, their words a "?"). Nova's and Bloo's hubs are still the friend
 saying hello above one big white clay card per course, and their course
 page is a banner over its lessons. Everything in Pinki's courses
