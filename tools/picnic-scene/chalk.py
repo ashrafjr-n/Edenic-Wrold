@@ -145,7 +145,7 @@ def grain_tile(seed=13, size=256):
     for _ in range(3):
         g = (g + np.roll(g, 1, 0) + np.roll(g, -1, 0) + np.roll(g, 1, 1) + np.roll(g, -1, 1)) / 5
     g = (g - g.mean()) / g.std()
-    alpha = np.clip(0.95 + 0.42 * g, 0.25, 1)
+    alpha = np.clip(1.02 + 0.3 * g, 0.5, 1)
     rgba = np.zeros((size, size, 4), np.uint8)
     rgba[..., :3] = 255
     rgba[..., 3] = (alpha * 255).astype(np.uint8)
