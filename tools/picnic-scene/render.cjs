@@ -84,6 +84,11 @@
  *
  *   node tools/picnic-scene/render.cjs classroom pinki
  *
+ * Pinki's courses' things for their boxes on her board (2026-10-14), then
+ * `crop.py things public/assets/learn/pinki/classroom course-shapes course-colors`:
+ *
+ *   node tools/picnic-scene/render.cjs thing course-shapes=shapeBlocks@hd course-colors=palette@hd@top
+ *
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
