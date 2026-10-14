@@ -3,7 +3,7 @@
 import { useState, ViewTransition } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Heart, Play, RotateCcw, Smile, Sparkles, Star } from "lucide-react";
+import { Play, RotateCcw } from "lucide-react";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { Celebration } from "@/components/ui/celebration";
@@ -11,6 +11,12 @@ import { format } from "@/lib/format-dict";
 import { itemKey, useProgress } from "@/store/progress";
 import pinkiWithStick from "../../../../public/assets/learn-with-pinki/pinki/pinki-with-a-stick.png";
 import pinkiCelebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
+import chalkStar from "../../../../public/assets/learn/pinki/classroom/chalk-star.png";
+import chalkHeart from "../../../../public/assets/learn/pinki/classroom/chalk-heart.png";
+import chalkSun from "../../../../public/assets/learn/pinki/classroom/chalk-sun.png";
+import chalkSmile from "../../../../public/assets/learn/pinki/classroom/chalk-smile.png";
+import chalkBurst from "../../../../public/assets/learn/pinki/classroom/chalk-burst.png";
+import chalkUnderline from "../../../../public/assets/learn/pinki/classroom/chalk-underline.png";
 
 export interface ClassCourse extends UpNextCourse {
   /** The course's one 3D thing (`classroomModels`). */
@@ -41,8 +47,9 @@ interface PinkiClassroomProps {
   dir: "rtl" | "ltr";
 }
 
-/** The chalk doodles round the cards (lucide icons drawn in chalk). */
-const DOODLES = [Star, Heart, Sparkles, Star, Heart];
+/** The chalk doodles round the cards — drawn by hand (`chalk.py`), never
+    icons — placed by `.class-doodles img:nth-child(n)`. */
+const DOODLES = [chalkStar, chalkHeart, chalkSun, chalkBurst, chalkStar, chalkHeart];
 
 /**
  * Pinki's hub as her classroom (2026-10-14): her board under its sign, a
@@ -50,7 +57,8 @@ const DOODLES = [Star, Heart, Sparkles, Star, Heart];
  * name on a clay tag, its one 3D thing, how far along it is, one button
  * (Start / Continue / Play again). What a course teaches stays inside it:
  * a card never lists its lessons. The next course's card glows pink.
- * Chalk doodles round the cards and "You can do it!" under them.
+ * Chalk doodles drawn by hand round the cards and "You can do it!" under
+ * them.
  *
  * Pinki stands beside the board, her stick raised to it (her own pose; it
  * does not move — direct request), and jumps when tapped; she says
@@ -84,8 +92,8 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
         <Chalkboard size="hub" className="class-board">
           {allDone && <Celebration />}
           <span className="class-doodles" aria-hidden>
-            {DOODLES.map((Doodle, i) => (
-              <Doodle key={i} strokeWidth={1.75} />
+            {DOODLES.map((doodle, i) => (
+              <Image key={i} src={doodle} alt="" width={56} height={56} />
             ))}
           </span>
 
@@ -124,8 +132,13 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
           </div>
 
           <p dir={dir} className={`class-cheer ${allDone ? "class-cheer--done" : ""}`}>
-            <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
-            <Smile className="class-cheer-smile" strokeWidth={1.75} aria-hidden />
+            <span className="class-cheer-words">
+              <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
+              <span className="class-cheer-line" aria-hidden>
+                <Image src={chalkUnderline} alt="" fill sizes="24rem" />
+              </span>
+            </span>
+            <Image src={chalkSmile} alt="" width={44} height={44} className="class-cheer-smile" />
           </p>
         </Chalkboard>
 
