@@ -19,8 +19,8 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her house**: a clay dollhouse with a room per course, where every finished lesson leaves its reward. Nova and Bloo say hello above one big clay card per course |
-| `/learn/[character]/[lesson]` | A course: a banner and its lessons, unlocked one at a time — a box of things (one cell per lesson) for every course; a Continue button to the next one |
+| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her classroom**: her chalkboard with a panel per course and Pinki beside it with her pointer. Nova and Bloo say hello above one big clay card per course |
+| `/learn/[character]/[lesson]` | A course: its lessons, unlocked one at a time, with a Continue button to the next one. Pinki's: her board up close, a chalk box per lesson. Nova's and Bloo's: a banner over a box of things (one cell per lesson) |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
 | `/play/puzzle` | The fifteen puzzle stages, unlocked one at a time |
@@ -158,9 +158,11 @@ src/
     globals.css                   Design tokens, blocks, hero mask, keyframes
   components/
     home/             Hero, friends introduction, Learn/Play panels
-    learn/            Friend picker, character cards, course cards,
-                      Pinki's house, the course's box of lessons, their
-                      progress bar and Continue button
+    learn/            Friend picker, character cards, course cards, the
+                      course's box of lessons, their progress bar and
+                      Continue button
+    learn/classroom/  Pinki's classroom: the room, her chalkboard, the
+                      hub's course panels, a course's lessons on the board
     learn/lesson/     The lesson player: the task button and its how-to
                       demos, the tablet task and lesson panels, the desktop step trail,
                       the full-screen reel, the word card, the tracing board, the
@@ -212,9 +214,9 @@ public/
   assets/icons/       3D icons — Memory Match's card faces, the Play panel art
   assets/nav-icons/   The phone bottom bar's four masked icons
   assets/learn-with-pinki/  Pinki's poses
-  assets/learn/pinki/house/ Pinki's house: the house, each lesson's reward
-                            (rewards/) and its ghost (ghosts/), rendered
-                            by tools/picnic-scene
+  assets/learn/pinki/classroom/ Pinki's classroom: the wall and the child's
+                            desk (portrait and landscape) and her pointer,
+                            rendered by tools/picnic-scene
   assets/learn/pinki/       Course card art (placeholders until the course
                             art arrives), then each course's pictures and
                             reels (shapes/reels/1–4.mp4 are placeholders cut
@@ -270,20 +272,23 @@ is American English (color, fall,
 mom). Each friend's corner wears one colour: Pinki's is pink, Nova's is gold
 (back button, play buttons, progress bars, banners — with dark ink on the
 gold), and Bloo's is Bloo's blue.
-Their pages are real. **Pinki's hub is her house**: a clay dollhouse cut open
-at the front, the Shapes workshop downstairs and the Colors studio upstairs.
-Every finished lesson leaves its reward in its room — a shape on the
-workshop shelf, a paint pot in the studio, a trophy and a rainbow for the
-reviews — and each one still to earn is a white ghost in its spot, the next
-one glowing (tap it to play). Tapping a room dives into it (the course
-page). Pinki stands in her yard and jumps when tapped; clouds drift past and
-the chimney puffs smoke. Nova's and Bloo's hubs are still the friend saying
-hello above one big white clay card per course,
-and a course page is a banner over its lessons. Everything in Pinki's courses
+Their pages are real. **Pinki's corner is her classroom.** The child sits at
+their desk in front of a pink wall hung with the class's crayon drawings
+(shapes, colors, one of Pinki) under shape bunting, all softly out of focus.
+Her hub is her chalkboard: her hello in chalk and a panel per course — its
+things stuck on, its name, a chalk dot per lesson, filled pink once learned
+— with Pinki beside it, her pointer on the course to play next (or on the
+one under the child's finger); she jumps when tapped. Walking in, the camera
+eases toward the board. Tapping a course zooms the board up to fill the
+screen as Pinki steps out of the picture: that is the course page, a chalk
+box per lesson (learned ones ticked, the next one glowing with "Start", the
+rest dashed, their words a "?"). Nova's and Bloo's hubs are still the friend
+saying hello above one big white clay card per course, and their course
+page is a banner over its lessons. Everything in Pinki's courses
 is Pinki's pink — the banners, the cards' play buttons and progress bars,
 Continue, and the lesson's own buttons — with green kept for "Next". Tablets and desktops get their own layouts that fill
 the screen: on Nova's and Bloo's hubs the friend greets the child beside an
-"Up next" card and big course cards (Pinki's house sits beside her greeting); a course's box of lessons fills a board on a desktop; and a
+"Up next" card and big course cards (Pinki's hub is her classroom); a course's box of lessons fills a board on a desktop; and a
 lesson shows how its step is played and which lesson it is in panels beside
 the step. On a desktop a lesson is an open stage: no board and no cards — the step stands straight on the page, the lesson's steps run as a trail of little discs at the far right of the back row (done ones ticked, the current one its round task button, the rest faded), and the step's buttons sit centred under it. Both
 pages have a Start / Continue / Next Lesson button.
