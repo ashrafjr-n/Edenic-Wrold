@@ -127,6 +127,8 @@ export const en = {
     startLesson: "Start {name}",
     hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
+    /** Pinki's hub is her house: each course is a room in it. */
+    welcomeHome: "Welcome to my house! Tap a room.",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
