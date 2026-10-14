@@ -91,7 +91,7 @@ def box_path(step):
     return pts
 
 
-def frame(color, dashed=False, seed=1):
+def frame(color, dashed=False, seed=1, strength=0.5, width=WIDTH):
     rng = np.random.default_rng(seed)
     alpha = np.zeros((N * SS, N * SS), np.float32)
     pts = [
@@ -99,7 +99,7 @@ def frame(color, dashed=False, seed=1):
         for x, y, nx, ny, along, part in box_path(0.5)
         if not (dashed and part == "edge" and ((along - MARGIN - RADIUS) % (DASH + GAP)) > DASH)
     ]
-    chalk_line(alpha, pts, WIDTH * SS, rng)
+    chalk_line(alpha, pts, width * SS, rng, strength=strength)
     return image(grained(alpha, rng), color, (N, N))
 
 
@@ -145,7 +145,7 @@ def grain_tile(seed=13, size=256):
     for _ in range(3):
         g = (g + np.roll(g, 1, 0) + np.roll(g, -1, 0) + np.roll(g, 1, 1) + np.roll(g, -1, 1)) / 5
     g = (g - g.mean()) / g.std()
-    alpha = np.clip(1.02 + 0.3 * g, 0.5, 1)
+    alpha = np.clip(1.06 + 0.22 * g, 0.65, 1)
     rgba = np.zeros((size, size, 4), np.uint8)
     rgba[..., :3] = 255
     rgba[..., 3] = (alpha * 255).astype(np.uint8)
@@ -164,16 +164,18 @@ def smudge(seed=17):
             pts.append((2 * (cx + math.cos(th) * r), 2 * (cy + math.sin(th) * r), math.cos(th), math.sin(th)))
         chalk_line(alpha, pts, 240, rng, strength=0.05, spread=0.3)
     # Barely there: a trace of chalk dust, never a mark.
-    alpha = alpha / alpha.max() * 0.09
+    alpha = alpha / alpha.max() * 0.05
     return image(alpha, WHITE, (W // 2, H // 2)).filter(ImageFilter.GaussianBlur(4))
 
 
 if __name__ == "__main__":
     os.makedirs(DEST, exist_ok=True)
     save = lambda img, name: img.save(os.path.join(DEST, name), optimize=True)
-    save(frame(WHITE, seed=3), "chalk-frame.png")
-    save(frame(PINK, seed=5), "chalk-frame-pink.png")
-    save(frame(WHITE, dashed=True, seed=7), "chalk-frame-dashed.png")
+    # Light, so a box never competes with what is in it; the next one's pink
+    # stays the strongest line on the board.
+    save(frame(WHITE, seed=3, strength=0.26, width=6), "chalk-frame.png")
+    save(frame(PINK, seed=5, strength=0.45, width=6.5), "chalk-frame-pink.png")
+    save(frame(WHITE, dashed=True, seed=7, strength=0.2, width=5.5), "chalk-frame-dashed.png")
     save(grain_tile(), "chalk-grain.png")
     save(arrow(), "chalk-arrow.png")
     save(smudge(), "chalk-smudge.png")
