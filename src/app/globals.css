@@ -4620,6 +4620,12 @@ button:disabled,
     0 6px 12px -4px rgb(0 0 0 / 40%);
 }
 
+/* The next course: a chalk arrow drawn down at its button — with room
+   kept for it, since Arabic and Kurdish text runs right up to the button. */
+.chalk-panel--next .chalk-panel-text {
+  padding-right: clamp(1.25rem, 5vw, 4rem);
+}
+
 /* The next course: a chalk arrow drawn down at its button. */
 .chalk-go {
   position: relative;
