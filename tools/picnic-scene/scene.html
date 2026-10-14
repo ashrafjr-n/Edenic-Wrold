@@ -1467,6 +1467,75 @@ const ITEMS = {
     }
     return g;
   },
+  /* ---------- Pinki's courses, one clear thing each, for their boxes on
+     her board (2026-10-14). ---------- */
+  // Shapes: a little tower of toy blocks — a pink rectangle for the base, a
+  // green square and a blue circle standing on it, a gold triangle on top
+  shapeBlocks() {
+    const g = new THREE.Group();
+    const toy = (color) => clay(color, { clearcoat: 0.6, clearcoatRoughness: 0.25, roughness: 0.45 });
+    const base = mesh(new RoundedBoxGeometry(2.5, 0.6, 1.0, 6, 0.12), toy(0xf776ac));
+    base.position.y = 0.3;
+    g.add(base);
+    const cube = mesh(new RoundedBoxGeometry(0.95, 0.95, 0.95, 6, 0.12), toy(0x5cc56b));
+    cube.position.set(-0.6, 0.6 + 0.475, 0);
+    g.add(cube);
+    const round = new THREE.Shape();
+    round.absarc(0, 0, 0.46, 0, Math.PI * 2, false);
+    const discGeo = roundedShapeExtrude(round, 0.24, 0.07);
+    discGeo.center();
+    const disc = mesh(discGeo, toy(0x4da3ec));
+    disc.position.set(0.62, 0.6 + 0.53, 0);
+    g.add(disc);
+    const tri = new THREE.Shape();
+    tri.moveTo(-0.52, 0); tri.lineTo(0.52, 0); tri.lineTo(0, 0.82); tri.closePath();
+    const prism = mesh(roundedShapeExtrude(tri, 0.6, 0.07), toy(0xffc93a));
+    prism.position.set(-0.6, 1.55 + 0.07, -0.3);
+    g.add(prism);
+    g.rotation.y = -0.22;
+    return g;
+  },
+  // Colors: a painter's palette, six paints on it and a brush across it
+  palette() {
+    const g = new THREE.Group();
+    // a kidney: an oval with the thumb's notch pressed into its side
+    const rim = [];
+    for (let k = 0; k < 96; k++) {
+      const t = (k / 96) * Math.PI * 2;
+      const off = ((t - 3.55 + Math.PI) % (Math.PI * 2)) - Math.PI;
+      const notch = 1 - 0.3 * Math.exp(-((off / 0.32) ** 2));
+      rim.push(new THREE.Vector2(Math.cos(t) * 1.6 * notch, Math.sin(t) * 1.15 * notch));
+    }
+    const board = new THREE.Shape();
+    board.setFromPoints(rim);
+    const hole = new THREE.Path();
+    hole.absarc(-0.82, -0.08, 0.2, 0, Math.PI * 2, true);
+    board.holes.push(hole);
+    g.add(flat(board, 0.12, 0.06, clay(0xf3d2a8, { roughness: 0.6, clearcoat: 0.3 })));
+    ["red", "orange", "yellow", "green", "blue", "purple"].forEach((c, i) => {
+      const a = Math.PI * 0.95 - (i / 5) * Math.PI * 1.15;
+      const blob = mesh(new THREE.SphereGeometry(0.27, 40, 24, 0, Math.PI * 2, 0, Math.PI / 2), clay(PAINT[c], { clearcoat: 0.55, clearcoatRoughness: 0.2, roughness: 0.35 }));
+      blob.scale.y = 0.55;
+      blob.position.set(Math.cos(a) * 1.05 + 0.1, 0.2, -Math.sin(a) * 0.72);
+      g.add(blob);
+    });
+    const brush = new THREE.Group();
+    const handle = mesh(new THREE.CapsuleGeometry(0.08, 1.7, 8, 24), clay(0xf776ac, { clearcoat: 0.6 }));
+    handle.rotation.z = Math.PI / 2;
+    brush.add(handle);
+    const ferrule = mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.32, 32), clay(0xd3daea, { roughness: 0.3, clearcoat: 0.9 }));
+    ferrule.rotation.z = Math.PI / 2;
+    ferrule.position.x = -1.0;
+    brush.add(ferrule);
+    const tip = mesh(new THREE.ConeGeometry(0.11, 0.42, 32), clay(PAINT.blue, { clearcoat: 0.5 }));
+    tip.rotation.z = Math.PI / 2;
+    tip.position.x = -1.36;
+    brush.add(tip);
+    brush.rotation.y = -0.55;
+    brush.position.set(0.25, 0.32, 0.55);
+    g.add(brush);
+    return g;
+  },
 };
 
 /* ---------- Nova's garden (Fruits & Vegetables: pick them) ----------
