@@ -53,6 +53,20 @@ export const useProgress = create<ProgressState>()(
       /* `hydrated` is derived, never stored — persisting it would make a fresh
          load start out claiming it had already read storage. */
       partialize: (state) => ({ items: state.items }),
+      /* v0 → v1 (2026-10-14): courses gained, lost and renumbered lessons
+         (Vegetables, Animals, Colors), so a stored `nova.fruits.9` named a
+         different lesson than it does now. Course progress starts over; the
+         play games (`puzzle.*`, `memory.*`) never moved and are kept. */
+      version: 1,
+      migrate: (persisted, version) => {
+        const items = (persisted as { items?: Record<ItemKey, ItemProgress> } | null)?.items ?? {};
+        if (version >= 1) return { items };
+        return {
+          items: Object.fromEntries(
+            Object.entries(items).filter(([key]) => /^(puzzle|memory)\./.test(key)),
+          ),
+        };
+      },
       /* Fires with the rehydrated state on success. It is deliberately still
          guarded: on FAILURE zustand calls this with `undefined`, and setting
          from here in that case is not merely useless but harmful — see the
