@@ -127,6 +127,8 @@ export const en = {
     startLesson: "Start {name}",
     hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
+    /** The sign over Pinki's board. */
+    classSign: "{name}'s Class",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
