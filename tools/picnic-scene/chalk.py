@@ -8,7 +8,6 @@
   (the corners) and repeats the edges between.
 - `chalk-grain.png` — a tile of chalk's grain, for a `mask-image` over what
   is written on the board (the slate shows through in specks).
-- `chalk-arrow.png` — a curved arrow in yellow chalk, at the next course.
 - `chalk-smudge.png` — the faint arcs a board eraser leaves.
 
     python3 tools/picnic-scene/chalk.py
@@ -23,7 +22,7 @@ DEST = os.path.join(HERE, "../../public/assets/learn/pinki/classroom")
 N, MARGIN, RADIUS, WIDTH = 320, 24, 46, 7.5
 SS = 3  # drawn this many times larger, then shrunk: smooth, not jagged
 DASH, GAP = 18, 10
-WHITE, PINK, YELLOW = (247, 243, 233), (255, 176, 212), (255, 224, 138)
+WHITE, PINK = (247, 243, 233), (255, 176, 212)
 
 
 def chalk_line(alpha, pts, width, rng, strength=0.5, spread=0.17):
@@ -125,18 +124,6 @@ def curve(points, step=0.5):
     return pts
 
 
-def arrow(seed=11):
-    """A loose curved arrow, down and to the right, its head at the end."""
-    W, H = 220, 150
-    rng = np.random.default_rng(seed)
-    alpha = np.zeros((H * SS, W * SS), np.float32)
-    s = lambda pts: [(x * SS, y * SS) for x, y in pts]
-    chalk_line(alpha, curve(s([(22, 28), (70, 22), (132, 46), (176, 104)])), 8 * SS, rng)
-    chalk_line(alpha, curve(s([(178, 108), (150, 98)])), 8 * SS, rng)
-    chalk_line(alpha, curve(s([(178, 108), (184, 78)])), 8 * SS, rng)
-    return image(grained(alpha, rng), YELLOW, (W, H))
-
-
 def grain_tile(seed=13, size=256):
     """Mostly solid, with specks and streaks where the chalk skipped. Tiles:
     the noise is blurred with wrap-around."""
@@ -177,5 +164,4 @@ if __name__ == "__main__":
     save(frame(PINK, seed=5, strength=0.45, width=6.5), "chalk-frame-pink.png")
     save(frame(WHITE, dashed=True, seed=7, strength=0.2, width=5.5), "chalk-frame-dashed.png")
     save(grain_tile(), "chalk-grain.png")
-    save(arrow(), "chalk-arrow.png")
     save(smudge(), "chalk-smudge.png")
