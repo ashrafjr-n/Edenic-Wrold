@@ -15,15 +15,16 @@ interface ClassroomBackdropProps {
 /**
  * Pinki's classroom round her board (2026-10-14): the pink wall, sharp,
  * with the class's drawings, a "Small Steps, Big Dreams" poster and a
- * window, and the child's own desk in the front, out of focus
- * (`tools/picnic-scene`, `render.cjs classroom pinki`). A
+ * window, and the class's chairs and a desk in the front, out of focus
+ * (`tools/picnic-scene`, `render.cjs classroom pinki`) — a whole frame laid
+ * over the wall the same way, so they stand where they were rendered. A
  * portrait and a landscape frame, the one that fits the screen shown — the
  * other is never fetched (lazy and `display: none`) — and preloaded, so the
  * room is there with the page, not a moment after.
  *
  * The wall is ONE view transition (`pinki-wall`) on the hub and on a course
  * page, so going in to a course zooms it, and coming back zooms it out; the
- * desk slides away on the way in (`desk-exit`). The zoom is on the view
+ * chairs slide away on the way in (`desk-exit`). The zoom is on the view
  * INSIDE the wall, never the wall itself: a transition's snapshot is the
  * named element's box, and a wall scaled past the page would cover the
  * header for the length of the transition.
@@ -43,8 +44,10 @@ export function ClassroomBackdrop({ zoomed = false }: ClassroomBackdropProps) {
       {!zoomed && (
         <ViewTransition exit="desk-exit" default="none">
           <div className="class-desk">
-            <Image src={deskPortrait} alt="" sizes="100vw" className="h-auto w-full landscape:hidden" />
-            <Image src={deskLandscape} alt="" sizes="100vw" className="h-auto w-full portrait:hidden" />
+            <div className="class-desk-view">
+              <Image src={deskPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+              <Image src={deskLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+            </div>
           </div>
         </ViewTransition>
       )}
