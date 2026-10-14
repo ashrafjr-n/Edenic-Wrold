@@ -99,7 +99,7 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                       </span>
                     </span>
                   </span>
-                  <span className={`chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
+                  <span className={`btn3d chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
                     {i === nextIndex && <span className="chalk-arrow" />}
                     {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
                     <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
