@@ -10,6 +10,7 @@ import { courseCovers, courseStops } from "@/data/courses";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { BoardLessons } from "@/components/learn/classroom/board-lessons";
+import { BoardProgress } from "@/components/learn/classroom/board-progress";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -76,7 +77,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <div className="board-head">
               <div dir={dir} className="min-w-0">
                 <h1 className="chalk-title">{course.name}</h1>
-                <p className="chalk-sub">{lessonsCount}</p>
+                <BoardProgress
+                  characterId={character.id}
+                  lessonId={lesson.id}
+                  total={lesson.totalItems}
+                  template={dict.characterHub.learnedOf}
+                  dir={dir}
+                />
               </div>
               <ContinueButton
                 count={lesson.totalItems}
