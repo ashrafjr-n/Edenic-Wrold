@@ -25,13 +25,11 @@ interface UpNextProps {
   className?: string;
 }
 
-/**
- * The one lesson to play next, across all of a character's courses: its
- * thing on a clay disc in the course colour, the course and lesson names,
- * and a button straight into it (tablet and desktop hub). Renders nothing
- * once every lesson is done.
- */
-export function UpNext({ characterId, courses, labels, dir, className = "" }: UpNextProps) {
+/** The one lesson to play next across a character's courses (the first
+    not done, in course order), and whether its course is started — null
+    once every lesson is done. Nothing is done until the store has read
+    localStorage, so the first render matches the server's. */
+export function useUpNext<C extends Pick<UpNextCourse, "id" | "titles">>(characterId: string, courses: readonly C[]) {
   const items = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
   const done = (courseId: string, n: number) =>
@@ -41,10 +39,21 @@ export function UpNext({ characterId, courses, labels, dir, className = "" }: Up
     .map((course) => ({ course, index: course.titles.findIndex((_, i) => !done(course.id, i + 1)) }))
     .find(({ index }) => index !== -1);
   if (!next) return null;
+  return { ...next, started: next.course.titles.some((_, i) => done(next.course.id, i + 1)) };
+}
 
-  const { course, index } = next;
+/**
+ * The one lesson to play next, across all of a character's courses: its
+ * thing on a clay disc in the course colour, the course and lesson names,
+ * and a button straight into it (tablet and desktop hub). Renders nothing
+ * once every lesson is done.
+ */
+export function UpNext({ characterId, courses, labels, dir, className = "" }: UpNextProps) {
+  const next = useUpNext(characterId, courses);
+  if (!next) return null;
+
+  const { course, index, started } = next;
   const cover = course.covers[index]?.[0];
-  const started = course.titles.some((_, i) => done(course.id, i + 1));
 
   return (
     <div className={`card card-clay-white flex items-center gap-4 p-4 pe-5 ${className}`}>
