@@ -121,6 +121,11 @@ export const ar: Dictionary = {
     hello: "مرحبًا، أنا {name}!",
     askToday: "ماذا سنتعلّم اليوم؟",
     classSign: "صفّ {name}",
+    continueLesson: "تابع {name}",
+    replayLesson: "العب {name} مرة أخرى",
+    letsLearn: "هيا نتعلّم {name}!",
+    allDone: "تعلّمت كل شيء! أحسنت!",
+    learnedOf: "تعلّمت {done} من {total}",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",
