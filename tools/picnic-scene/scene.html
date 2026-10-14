@@ -3828,11 +3828,21 @@ if (THING) {
 } else if (CLASSROOM) {
   /* ---------- Pinki's classroom (2026-10-14): her hub and her course
      pages. The board itself is the page's (HTML, sharp in every language);
-     this is everything round it — a pink wall with the class's crayon
-     drawings pinned up (shapes and colors, and one of Pinki), shape bunting,
-     a window, a clock, a shelf — and, alone, the child's own desk in the
-     front (`&layer=front`). `crop.py classroom` blurs both, the desk more:
-     a camera focused on the board. `?classroom=pinki&frame=portrait|landscape`. ---------- */
+     this is everything round it — a pink wall with shape bunting, the
+     class's crayon drawings pinned up, a "Small Steps, Big Dreams" poster
+     and, on a landscape wall, a sunny window with a plant and a globe on
+     its sill — and, alone, the child's own desk in the front
+     (`&layer=front`). Placed where the page leaves the wall in sight (the
+     right above Pinki and the left edge on a desktop; under the board's
+     left on a phone or tablet). `crop.py classroom` keeps the wall sharp
+     and blurs the desk. `?classroom=pinki&frame=portrait|landscape`. ---------- */
+  /* The poster's words are in the site's own Fredoka. */
+  const fonts = document.createElement("link");
+  fonts.rel = "stylesheet";
+  fonts.href = "https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=block";
+  document.head.append(fonts);
+  await new Promise((done) => { fonts.onload = done; });
+  await document.fonts.load("700 100px Fredoka");
   const portrait = params.get("frame") === "portrait";
   const [w, h] = portrait ? [1080, 1920] : [1920, 1080];
   renderer.setSize(w, h);
@@ -4038,16 +4048,142 @@ if (THING) {
     return at(g, x, y, 0.35);
   };
 
+  /* A poster in the class's words (2026-10-14, from the user's picture):
+     "Small Steps, Big Dreams" in Fredoka, a star, a rainbow. Tall on a
+     landscape wall (four words down), wide on a portrait one (two lines
+     beside the rainbow). */
+  const poster = (x, y, wd, ht, tall) => {
+    const W2 = tall ? 640 : 960, H2 = Math.round(W2 * (ht / wd));
+    const c = document.createElement("canvas");
+    c.width = W2; c.height = H2;
+    const g = c.getContext("2d");
+    g.fillStyle = "#fffaf0";
+    g.fillRect(0, 0, W2, H2);
+    g.strokeStyle = "#ffd6e7"; g.lineWidth = 18;
+    g.strokeRect(22, 22, W2 - 44, H2 - 44);
+    const word = (text, cx, cy, size, color) => {
+      g.font = `700 ${size}px Fredoka`;
+      g.textAlign = "center"; g.textBaseline = "middle";
+      g.lineJoin = "round"; g.lineWidth = size * 0.16; g.strokeStyle = "#ffffff";
+      g.strokeText(text, cx, cy);
+      g.fillStyle = color;
+      g.fillText(text, cx, cy);
+    };
+    const star = (cx, cy, r, color) => {
+      g.beginPath();
+      for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + (k * Math.PI) / 5, rr = k % 2 ? r * 0.45 : r; g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+      g.closePath(); g.fillStyle = color; g.fill();
+    };
+    const rainbow = (cx, cy, r, band) => {
+      g.lineCap = "round";
+      ["#ee4645", "#ff8c2e", "#ffd31a", "#4fbf5a", "#3f86e8", "#9257de"].forEach((col, i) => {
+        g.beginPath(); g.arc(cx, cy, r - i * band, Math.PI, Math.PI * 2); g.lineWidth = band * 0.92; g.strokeStyle = col; g.stroke();
+      });
+      for (const side of [-1, 1]) { g.beginPath(); g.arc(cx + side * (r - band * 2.5), cy + band * 0.3, band * 1.6, 0, Math.PI * 2); g.fillStyle = "#e3f1ff"; g.fill(); }
+    };
+    if (tall) {
+      word("Small", W2 / 2, H2 * 0.13, 128, "#f0569b");
+      word("Steps", W2 / 2, H2 * 0.29, 128, "#3f86e8");
+      word("Big", W2 / 2, H2 * 0.46, 128, "#9257de");
+      star(W2 * 0.2, H2 * 0.46, 42, "#ffc93a"); star(W2 * 0.8, H2 * 0.46, 42, "#ff86c2");
+      word("Dreams", W2 / 2, H2 * 0.62, 128, "#3f86e8");
+      rainbow(W2 / 2, H2 * 0.92, W2 * 0.3, 24);
+    } else {
+      rainbow(W2 * 0.19, H2 * 0.74, H2 * 0.36, 17);
+      word("Small Steps,", W2 * 0.655, H2 * 0.34, 104, "#f0569b");
+      word("Big Dreams", W2 * 0.655, H2 * 0.7, 104, "#3f86e8");
+      star(W2 * 0.19, H2 * 0.24, 30, "#ffc93a");
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    const grp = new THREE.Group();
+    const sheet = mesh(new THREE.PlaneGeometry(wd, ht), matte(0xffffff, { map: tex, clearcoat: 0, sheen: 0.05 }));
+    sheet.position.z = 0.03;
+    grp.add(sheet);
+    /* Pinned up with two clay pins. */
+    for (const side of [-1, 1]) {
+      const pin = mesh(new THREE.SphereGeometry(0.09, 24, 16), clay(side < 0 ? 0xf776ac : 0x4da3ec, { clearcoat: 0.6 }));
+      pin.position.set(side * (wd / 2 - 0.22), ht / 2 - 0.2, 0.1);
+      grp.add(pin);
+    }
+    return at(grp, x, y, 0);
+  };
+
+  /* A window onto a sunny morning: a sky with clouds and a green hill in
+     a white clay frame, a sill with a plant and the class's globe. */
+  const windowAt = (x, y, wd, ht) => {
+    const c = document.createElement("canvas");
+    c.width = 512; c.height = Math.round(512 * (ht / wd));
+    const g = c.getContext("2d");
+    const sky = g.createLinearGradient(0, 0, 0, c.height);
+    sky.addColorStop(0, "#7cc8f8"); sky.addColorStop(1, "#d9f0ff");
+    g.fillStyle = sky; g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = "#ffffff";
+    for (const [cx, cy, r] of [[130, 150, 46], [180, 135, 58], [235, 155, 42], [360, 300, 36], [400, 285, 46], [440, 302, 32]]) { g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }
+    g.fillStyle = "#8fd17a";
+    g.beginPath(); g.ellipse(170, c.height + 60, 330, 190, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#6fbf62";
+    g.beginPath(); g.ellipse(470, c.height + 90, 300, 190, 0, 0, Math.PI * 2); g.fill();
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const grp = new THREE.Group();
+    const glass = mesh(new THREE.PlaneGeometry(wd, ht), new THREE.MeshBasicMaterial({ map: tex }));
+    glass.position.z = 0.02;
+    glass.castShadow = false;
+    grp.add(glass);
+    const white = matte(0xfffaf3, { clearcoat: 0.3 });
+    const bar = (bw, bh, bx, by) => { const b = box(bw, bh, 0.18, white, 0.05); b.position.set(bx, by, 0.1); grp.add(b); };
+    bar(wd + 0.3, 0.18, 0, ht / 2); bar(wd + 0.3, 0.18, 0, -ht / 2);
+    bar(0.18, ht + 0.3, -wd / 2, 0); bar(0.18, ht + 0.3, wd / 2, 0);
+    bar(0.1, ht, 0, 0); bar(wd, 0.1, 0, ht * 0.1);
+    const sill = box(wd + 0.7, 0.16, 0.5, white, 0.05);
+    sill.position.set(0, -ht / 2 - 0.16, 0.25);
+    grp.add(sill);
+    /* A plant in a yellow pot on the sill. */
+    const plant = new THREE.Group();
+    plant.add(mesh(new THREE.CylinderGeometry(0.26, 0.19, 0.42, 32), clay(0xffc93a)));
+    for (const [px, py, r] of [[0, 0.5, 0.28], [-0.22, 0.38, 0.2], [0.22, 0.4, 0.21], [0.05, 0.72, 0.17]]) { const leaf = mesh(new THREE.SphereGeometry(r, 24, 16), matte(0x7cc66a)); leaf.position.set(px, py, 0); plant.add(leaf); }
+    plant.position.set(-wd * 0.22, -ht / 2 - 0.08 + 0.21, 0.3);
+    grp.add(plant);
+    /* The class's globe: blue sea, green land, on a wooden stand. */
+    const map = document.createElement("canvas");
+    map.width = 256; map.height = 128;
+    const mg = map.getContext("2d");
+    mg.fillStyle = "#4da3ec"; mg.fillRect(0, 0, 256, 128);
+    mg.fillStyle = "#7cc66a";
+    for (const [cx, cy, rx, ry] of [[50, 45, 26, 20], [70, 85, 14, 24], [140, 40, 34, 18], [150, 80, 16, 22], [210, 90, 18, 12], [200, 40, 22, 14]]) { mg.beginPath(); mg.ellipse(cx, cy, rx, ry, 0.3, 0, Math.PI * 2); mg.fill(); }
+    const mapTex = new THREE.CanvasTexture(map);
+    mapTex.colorSpace = THREE.SRGBColorSpace;
+    const globe = new THREE.Group();
+    const ball = mesh(new THREE.SphereGeometry(0.34, 48, 32), clay(0xffffff, { map: mapTex, clearcoat: 0.5 }));
+    ball.position.y = 0.52;
+    ball.rotation.set(0.4, -0.6, 0.35);
+    globe.add(ball);
+    const stem = mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.2, 12), matte(0xc98f55));
+    stem.position.y = 0.12;
+    globe.add(stem);
+    globe.add(mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.06, 32), matte(0xc98f55)));
+    globe.position.set(wd * 0.25, -ht / 2 - 0.08, 0.3);
+    grp.add(globe);
+    return at(grp, x, y, 0);
+  };
+
   if (portrait) {
-    // above the board: bunting, a row of drawings, the clock; under it, the shelf by the floor
-    bunting(-5, 5, 12.4);
-    [["sun", -3.3, 10.6, 0.8, 0.06], ["pinki", -1.1, 10.8, 0.85, -0.04], ["rainbow", 1.15, 10.6, 0.8, 0.05], ["house", 3.35, 10.7, 0.8, -0.06]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
-    pinUp("shapes", -3.9, 2.2, 0.7, 0.05);
+    // bunting above the board; the poster under its left, beside Pinki;
+    // a drawing at each side above the board (seen on a phone)
+    bunting(-5, 5, 10.25);
+    poster(-1.95, 2.95, 3.4, 1.45, false);
+    pinUp("sun", -3.5, 11.35, 0.55, 0.06);
+    pinUp("rainbow", 3.5, 11.35, 0.55, -0.05);
     pinUp("flower", 3.9, 2.4, 0.7, -0.05);
   } else {
-    bunting(-9, 9, 8.1);
-    [["sun", -7.3, 5.6, 0.9, 0.06], ["shapes", -7.4, 3.0, 0.85, -0.05], ["pinki", 5.0, 6.0, 0.9, -0.05], ["house", 7.2, 6.1, 0.85, 0.05], ["rainbow", 6.3, 3.6, 0.85, 0.03], ["flower", -5.4, 6.5, 0.7, -0.08], ["cat", 4.2, 3.4, 0.7, 0.06]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
-    shelfAt(-7.0, 1.9, 0.9);
+    // the window at the left edge; the poster at the right, over Pinki's
+    // head; drawings round it; bunting along the top, under the header
+    bunting(-9, 9, 7.75);
+    windowAt(-6.85, 4.6, 2.2, 2.6);
+    poster(4.75, 5.55, 2.0, 2.5, true);
+    [["rainbow", 6.95, 6.05, 0.62, 0.04], ["house", 6.95, 4.35, 0.62, -0.05]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
   }
 
   /* The child's desk, in front: wood, a notebook, a pencil, crayons. */
