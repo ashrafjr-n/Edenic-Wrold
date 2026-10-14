@@ -65,6 +65,13 @@ and the rewards' boxes (% of the house) for `data/pinki-house.ts`.
 
     python3 tools/picnic-scene/crop.py house pinki
 
+Pinki's classroom — run after `render.cjs classroom pinki`: the wall,
+slightly blurred with a vignette (`<frame>.jpg`), and the child's desk,
+blurred more (`<frame>-desk.png`, cropped to it), both frames, into
+`public/assets/learn/pinki/classroom/`.
+
+    python3 tools/picnic-scene/crop.py classroom pinki
+
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
@@ -256,6 +263,33 @@ if NAME == "house":
         return rel((l, t, l + w, t + h))
 
     print(json.dumps({"size": [bw, bh], "rooms": {k: room(v) for k, v in meta["rooms"].items()}, "rewards": rewards}))
+    sys.exit()
+
+if NAME == "classroom":
+    # Pinki's classroom, both frames: the wall a little out of focus (the
+    # board, which the page draws, is what the camera is on) with a soft
+    # vignette, as a JPEG; the child's desk in front far more out of focus,
+    # as a PNG over it. At most 1600px on the long side.
+    who = sys.argv[2] if len(sys.argv) > 2 else "pinki"
+    out = os.path.join(HERE, "out", f"classroom-{who}")
+    dest = os.path.join(ROOT, f"public/assets/learn/{who}/classroom")
+    os.makedirs(dest, exist_ok=True)
+    for frame in ("portrait", "landscape"):
+        back = Image.open(f"{out}/{frame}-back.png").convert("RGB")
+        back.thumbnail((1600, 1600), Image.LANCZOS)
+        back = back.filter(ImageFilter.GaussianBlur(max(back.size) * 0.0032))
+        w, h = back.size
+        yy, xx = np.mgrid[0:h, 0:w]
+        d = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h * 0.42) / (h / 2)) ** 2)
+        shade = (1 - 0.16 * np.clip(d - 0.45, 0, 1) ** 1.6)[..., None]
+        px = np.asarray(back).astype(np.float32) * shade
+        Image.fromarray(np.clip(px, 0, 255).astype(np.uint8)).save(f"{dest}/{frame}.jpg", quality=84, optimize=True, progressive=True)
+        front = Image.open(f"{out}/{frame}-front.png").convert("RGBA")
+        front.thumbnail((1600, 1600), Image.LANCZOS)
+        front = front.filter(ImageFilter.GaussianBlur(max(front.size) * 0.006))
+        top = alpha_box(front, threshold=4, pad=0)[1]
+        front.crop((0, top, front.width, front.height)).save(f"{dest}/{frame}-desk.png", optimize=True)
+        print(frame, "desk from", round(top / front.height * 100, 2), "% down")
     sys.exit()
 
 if NAME == "backdrop":
