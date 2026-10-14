@@ -91,6 +91,7 @@ export default async function CharacterLearnPage({
               art: courseCovers(lesson.id),
             }))}
           labels={{
+            sign: format(dict.characterHub.classSign, { name: character.name }),
             hello: format(dict.characterHub.hello, { name: character.name }),
             ask: dict.characterHub.askToday,
             start: dict.lessonPicker.ctaStart,

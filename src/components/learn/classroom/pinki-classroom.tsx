@@ -3,7 +3,7 @@
 import { useState, ViewTransition } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Check, Play } from "lucide-react";
+import { Check, Play, Star } from "lucide-react";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { CourseArt } from "@/components/learn/course-art";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
@@ -20,6 +20,8 @@ interface PinkiClassroomProps {
   characterId: string;
   courses: readonly ClassCourse[];
   labels: {
+    /** "Pinki's Class", on the sign over the board. */
+    sign: string;
     hello: string;
     ask: string;
     start: string;
@@ -32,9 +34,10 @@ interface PinkiClassroomProps {
 }
 
 /**
- * Pinki's hub as her classroom (2026-10-14): her board, with her hello in
- * chalk and a panel per course — its things stuck on, its name, a chalk dot
- * per lesson (filled once learned), the next course's glowing — and Pinki
+ * Pinki's hub as her classroom (2026-10-14): her board under its sign, with
+ * her hello in chalk and a box per course — its things stuck on, its name,
+ * a chalk star per lesson (filled pink once learned); the next course's in
+ * pink chalk, glowing, a chalk arrow at its button — and Pinki
  * beside it, her stick raised to the board (her own pose; it does not
  * move — direct request 2026-10-14). A panel
  * is the course's link: the board zooms up into the course page
@@ -54,6 +57,11 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
   return (
     <div className="class-hub">
       <div className="class-stage">
+        <ViewTransition exit="class-sign-exit" default="none">
+          <span dir={dir} className="class-sign">
+            {labels.sign}
+          </span>
+        </ViewTransition>
         <Chalkboard size="hub" className="class-board">
           <div dir={dir} className="class-hello">
             <h1 className="chalk-title">{labels.hello}</h1>
@@ -76,13 +84,14 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                   <span dir={dir} className="chalk-panel-text">
                     <span className="chalk-heading">{course.name}</span>
                     <span className="chalk-panel-desc line-clamp-1 sm:line-clamp-2">{course.description}</span>
-                    <span className="chalk-dots" aria-hidden>
+                    <span className="chalk-stars" aria-hidden>
                       {learned[i].map((on, n) => (
-                        <span key={n} className={on ? "chalk-dot chalk-dot--on" : "chalk-dot"} />
+                        <Star key={n} className={on ? "chalk-star chalk-star--on" : "chalk-star"} strokeWidth={2.5} />
                       ))}
                     </span>
                   </span>
                   <span className={`chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
+                    {i === nextIndex && <span className="chalk-arrow" />}
                     {finished ? (
                       <Check className="h-5 w-5" strokeWidth={3} />
                     ) : (
