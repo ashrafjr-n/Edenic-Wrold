@@ -71,3 +71,4 @@
 2026-10-11 simplify memory match timing
 2026-10-13 simplify locale strings
 2026-10-13 rename confetti timing
+2026-10-14 clean up dark mode colors
