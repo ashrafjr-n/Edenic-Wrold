@@ -35,6 +35,8 @@ interface PinkiClassroomProps {
     startCourse: string;
     continueCourse: string;
     replayCourse: string;
+    /** "Next up", over the next lesson's name in the next course's box. */
+    nextUp: string;
     /** "Let's learn {name}!" — Pinki, the lesson to play next. */
     letsLearn: string;
     /** On the board, and from Pinki, once every lesson is learned. */
@@ -141,6 +143,20 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                       </span>
                     </span>
                   </span>
+                  {/* The next course's box shows the lesson it opens on. */}
+                  {i === nextIndex && next && (
+                    <span className="chalk-peek" aria-hidden>
+                      {course.covers[next.index]?.[0] && (
+                        <span className="chalk-peek-thing">
+                          <Image src={course.covers[next.index][0]} alt="" fill sizes="3.5rem" className="object-contain" />
+                        </span>
+                      )}
+                      <span dir={dir} className="chalk-peek-text">
+                        <span className="chalk-peek-label">{labels.nextUp}</span>
+                        <span className="chalk-peek-title">{course.titles[next.index]}</span>
+                      </span>
+                    </span>
+                  )}
                   <span className={`btn3d chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
                     {i === nextIndex && <span className="chalk-arrow" />}
                     {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}

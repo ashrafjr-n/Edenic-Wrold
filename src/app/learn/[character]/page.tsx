@@ -101,6 +101,7 @@ export default async function CharacterLearnPage({
             startCourse: dict.characterHub.startLesson,
             continueCourse: dict.characterHub.continueLesson,
             replayCourse: dict.characterHub.replayLesson,
+            nextUp: dict.characterHub.nextUp,
             letsLearn: dict.characterHub.letsLearn,
             allDone: dict.characterHub.allDone,
             pinki: character.name,

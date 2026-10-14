@@ -4240,6 +4240,11 @@ button:disabled,
   overflow: clip;
 }
 
+/* The back button against the pink wall and bunting: a white ring. */
+.class-page > .sticky > .btn3d {
+  outline: 4px solid rgb(255 255 255 / 75%);
+}
+
 .class-room {
   position: absolute;
   inset: 0;
@@ -4273,6 +4278,15 @@ button:disabled,
 
 [data-theme="dark"] .class-wall-view {
   filter: brightness(0.6) saturate(0.85);
+}
+
+/* An evening class: a warm lamp glows over the board. */
+[data-theme="dark"] .class-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 45% at 40% 30%, rgb(255 205 140 / 22%), transparent 70%);
+  pointer-events: none;
 }
 
 [data-theme="dark"] .class-wall-view--zoomed {
@@ -4337,6 +4351,16 @@ button:disabled,
   box-shadow:
     inset 0 6px 18px rgb(0 0 0 / 35%),
     inset 0 0 0 2px rgb(0 0 0 / 15%);
+}
+
+/* Light from above: brighter along the top of the slate. */
+.chalkboard-slate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(rgb(255 255 255 / 7%), transparent 35%);
+  pointer-events: none;
 }
 
 /* Chalk is grainy: the slate's grain lies over what is written on it. */
@@ -4470,8 +4494,10 @@ button:disabled,
   }
 }
 
+/* Centred, under the sign. */
 .class-hello {
   padding: 1.5rem 1.1rem 0.35rem;
+  text-align: center;
 }
 
 /* The sign over the board: a clay wood plaque, half over the frame. */
@@ -4542,8 +4568,8 @@ button:disabled,
 
 @media (width >= 40rem) {
   .chalk-panel {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas: "model text go";
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "model text peek go";
   }
 }
 
@@ -4652,6 +4678,52 @@ button:disabled,
 
 .chalk-panel:active .chalk-go {
   translate: 0 1px;
+}
+
+/* The next course's box shows the lesson it opens on — from a desktop,
+   where the box has the room (on a phone the button says it). */
+.chalk-peek {
+  display: none;
+  grid-area: peek;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.5rem;
+  border-radius: 1rem;
+  background-color: rgb(255 255 255 / 7%);
+}
+
+.chalk-peek-thing {
+  position: relative;
+  flex-shrink: 0;
+  width: 3rem;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 30%));
+}
+
+.chalk-peek-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.chalk-peek-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #ffb0d4;
+}
+
+.chalk-peek-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fbf8f0;
+}
+
+@media (width >= 64rem) {
+  .chalk-peek {
+    display: flex;
+  }
 }
 
 /* The next course: a chalk arrow drawn down at its button — with room
@@ -4780,6 +4852,19 @@ button:disabled,
   }
 }
 
+/* Her shadow on the floor (on a desktop her feet are behind the desk). */
+.class-pinki::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 18%;
+  right: 12%;
+  bottom: 1%;
+  height: 9%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(90 40 70 / 35%), transparent);
+}
+
 .class-pinki-body {
   position: relative;
   display: block;
@@ -4864,6 +4949,17 @@ button:disabled,
   }
 }
 
+/* A big screen: the room comes closer — board and Pinki grow. */
+@media (width >= 100rem) {
+  .class-stage {
+    max-width: 94rem;
+  }
+
+  .chalkboard--course {
+    max-width: 96rem;
+  }
+}
+
 /* A short desktop (under 800px tall): the descriptions go, so both courses
    and Pinki fit without scrolling. */
 @media (width >= 64rem) and (height < 50rem) {
@@ -4907,6 +5003,21 @@ button:disabled,
   max-width: 82rem;
   margin: 0 auto;
   align-self: flex-start;
+}
+
+/* The course's thing, carried over from its box on the hub. */
+.board-head-model {
+  position: relative;
+  flex-shrink: 0;
+  width: 4.25rem;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 30%));
+}
+
+@media (width >= 64rem) {
+  .board-head-model {
+    width: 6.5rem;
+  }
 }
 
 .board-head {
@@ -5091,8 +5202,8 @@ a.board-cell:focus-visible {
 @media (width >= 64rem) {
   .board-magnet {
     width: auto;
-    height: 100%;
-    max-height: 8.5rem;
+    height: 82%;
+    max-height: 13rem;
   }
 
   .board-cell-art--row .board-magnet {

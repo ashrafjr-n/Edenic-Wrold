@@ -11,6 +11,8 @@ import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdr
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { BoardLessons } from "@/components/learn/classroom/board-lessons";
 import { BoardProgress } from "@/components/learn/classroom/board-progress";
+import { classroomModels } from "@/data/classroom";
+import Image from "next/image";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -75,7 +77,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <div className="class-course">
           <Chalkboard size="course">
             <div className="board-head">
-              <div dir={dir} className="min-w-0">
+              {/* The thing the child tapped on the hub, carried over. */}
+              {classroomModels[lesson.id] && (
+                <span className="board-head-model" aria-hidden>
+                  <Image src={classroomModels[lesson.id]!} alt="" fill sizes="7rem" className="object-contain" />
+                </span>
+              )}
+              <div dir={dir} className="min-w-0 flex-1">
                 <h1 className="chalk-title">{course.name}</h1>
                 <BoardProgress
                   characterId={character.id}
