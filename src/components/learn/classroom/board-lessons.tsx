@@ -3,7 +3,7 @@
 import { useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Lock } from "lucide-react";
+import { Lock, Star } from "lucide-react";
 import { format } from "@/lib/format-dict";
 import { useCourseUnlock } from "@/components/learn/use-course-unlock";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -29,7 +29,8 @@ const SPRING_DELAY = 1.1;
  * A course's lessons written up on Pinki's board (2026-10-14, her course
  * pages): a chalk box per lesson, its thing held up by a clay magnet.
  * The rules are `LessonBox`'s — a learned lesson keeps its thing, its word
- * and a tick; the next one is lit, with "Start"; one still locked is
+ * and the stars it earned (of 3 — where a star means something, not on
+ * the hub); the next one is lit, with "Start"; one still locked is
  * dimmed, its word a "?" (a colour shows an empty pot); the review takes a
  * row of its own; a lock that opened since the last visit springs off.
  */
@@ -84,8 +85,10 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
             <span dir={dir} className="board-cell-word">{label}</span>
             {isNext && <span className="board-cell-start">{dict.ctaStart}</span>}
             {done && (
-              <span className="board-cell-tick" aria-hidden>
-                <Check className="h-4 w-4" strokeWidth={3.25} />
+              <span className="board-cell-stars" aria-hidden>
+                {[1, 2, 3].map((k) => (
+                  <Star key={k} className={k <= stars[i] ? "board-star board-star--on" : "board-star"} strokeWidth={2.5} />
+                ))}
               </span>
             )}
             {(locked || springing) && (
