@@ -4220,3 +4220,297 @@ button:disabled,
     opacity: 0;
   }
 }
+
+/* ---------------------------------------------------------------
+   Pinki's house — her hub (2026-10-14).
+
+   ONE grid for every width: her greeting, the house, the next lesson's
+   button stacked on a phone and tablet; on a desktop the greeting and the
+   button beside the house, the pair centred on it.
+
+   The house is a picture with everything that changes laid over it at %
+   boxes (`data/pinki-house.ts`): a link per room, a reward per lesson —
+   earned, a ghost, or the glowing next one — and a sign per room. It is a
+   size container, so the signs' text scales with it.
+   --------------------------------------------------------------- */
+.house-hub {
+  grid-template-areas: "bubble" "stage" "cta";
+  align-content: center;
+}
+
+@media (width >= 64rem) {
+  .house-hub {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "bubble stage" "cta stage";
+    align-content: center;
+  }
+}
+
+/* On a desktop the tail points right, at Pinki beside it; stacked above
+   the house it would point at nothing, so it goes. */
+.house-bubble::before {
+  display: none;
+}
+
+@media (width >= 64rem) {
+  .house-bubble::before {
+    display: block;
+    left: auto;
+    right: -0.45rem;
+    bottom: 1.8rem;
+  }
+}
+
+.house-cta-thing {
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 85%);
+}
+
+.house-stage {
+  container-type: inline-size;
+  aspect-ratio: 1541 / 1244;
+  width: 100%;
+  transition:
+    scale 0.45s cubic-bezier(0.5, 0, 0.75, 0),
+    opacity 0.2s ease-in 0.25s;
+}
+
+/* A desktop fits the whole house on the screen. */
+@media (width >= 64rem) {
+  .house-stage {
+    width: min(100%, calc((100svh - 12rem) * 1.239));
+  }
+}
+
+/* Tapping a room dives into it before the course page opens. */
+.house-stage--dive {
+  scale: 2.6;
+  opacity: 0;
+}
+
+.house-picture {
+  z-index: 1;
+}
+
+.house-cloud {
+  position: absolute;
+  z-index: 0;
+  animation: house-drift 18s ease-in-out infinite alternate;
+}
+
+.house-cloud--a {
+  left: 3%;
+  top: 6%;
+  width: 21%;
+}
+
+.house-cloud--b {
+  left: 10%;
+  top: 25%;
+  width: 14%;
+  animation-duration: 13s;
+  animation-delay: -6s;
+}
+
+@keyframes house-drift {
+  from {
+    translate: -12% 0;
+  }
+  to {
+    translate: 22% 0;
+  }
+}
+
+/* Three puffs of smoke, one after another, from the chimney. */
+.house-smoke {
+  position: absolute;
+  z-index: 0;
+  left: 73.8%;
+  top: 1.5%;
+  width: 3.4%;
+  aspect-ratio: 1;
+}
+
+.house-smoke span {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: inset 0 -3px 5px -2px rgb(var(--shadow-hue) / 22%);
+  opacity: 0;
+  animation: house-puff 3.6s ease-out infinite;
+}
+
+.house-smoke span:nth-child(2) {
+  animation-delay: 1.2s;
+}
+
+.house-smoke span:nth-child(3) {
+  animation-delay: 2.4s;
+}
+
+@keyframes house-puff {
+  0% {
+    opacity: 0;
+    translate: 0 40%;
+    scale: 0.5;
+  }
+  20% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    translate: -35% -240%;
+    scale: 1.6;
+  }
+}
+
+/* A room's open front is its link: it lights up under a finger or the
+   keyboard. */
+.house-room {
+  position: absolute;
+  z-index: 2;
+  border-radius: 0.5rem;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.house-room:hover,
+.house-room:focus-visible {
+  outline: none;
+  background-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 0 0 3px #fff,
+    0 0 0 3px var(--accent);
+}
+
+.house-reward,
+.house-ghost {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* A spot still to earn: the thing's white ghost, a faint rim so it shows
+   on the pale walls too. */
+.house-ghost {
+  opacity: 0.8;
+  filter: drop-shadow(0 0 1px rgb(90 70 130 / 45%));
+}
+
+/* The next lesson: its ghost glows and breathes, and is a link. */
+.house-ghost--next {
+  z-index: 4;
+  pointer-events: auto;
+  opacity: 1;
+  filter: drop-shadow(0 0 2px var(--accent)) drop-shadow(0 0 8px rgb(255 255 255 / 90%));
+  animation: house-next 1.6s ease-in-out infinite;
+}
+
+.house-ghost--next:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 0.4rem;
+}
+
+@keyframes house-next {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.14;
+  }
+}
+
+/* A reward earned since the last visit fades in with a sparkle. */
+.house-reward--fresh {
+  animation: house-reward-in 0.9s ease-out both;
+}
+
+.house-reward--fresh::after {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0 18%, rgb(255 255 255 / 0%) 62%);
+  animation: house-sparkle 1s ease-out both;
+  animation-delay: inherit;
+}
+
+@keyframes house-reward-in {
+  from {
+    opacity: 0;
+    filter: brightness(1.8);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes house-sparkle {
+  0% {
+    opacity: 0;
+    scale: 0.3;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.4;
+  }
+}
+
+/* A room's sign, sitting on the white beam over its open front (clear of
+   the top shelf of pots). */
+.house-sign {
+  position: absolute;
+  z-index: 4;
+  translate: -50% -88%;
+  display: inline-flex;
+  max-width: 50%;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.25em 0.85em;
+  font-size: max(0.66rem, 2.1cqi);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--color-ink);
+  pointer-events: none;
+}
+
+.house-sign-count {
+  flex-shrink: 0;
+}
+
+/* Pinki in her yard, in front of everything. */
+.house-pinki {
+  position: absolute;
+  z-index: 5;
+  left: -1%;
+  bottom: 4%;
+  width: 31%;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .house-stage {
+    transition: none;
+  }
+
+  .house-cloud,
+  .house-ghost--next,
+  .house-reward--fresh,
+  .house-reward--fresh::after {
+    animation: none;
+  }
+
+  .house-smoke {
+    display: none;
+  }
+}
