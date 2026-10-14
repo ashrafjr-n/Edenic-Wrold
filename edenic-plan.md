@@ -594,6 +594,18 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
        (same file names); compressed (H.264 MP4, a poster frame); decide
        where they are hosted (the repo is no place for big files).
 
+5. [ ] **Each friend's hub as their home** (direct request 2026-10-14:
+       "not cards, not a map — Edenic's own identity, a game"):
+       - [x] **Pinki's house** (2026-10-14) — a clay dollhouse rendered by
+             `tools/picnic-scene` (`render.cjs house pinki` → `crop.py
+             house pinki`): the Shapes workshop downstairs, the Colors studio
+             upstairs, a yard where Pinki stands. Every lesson leaves its
+             reward in its room (a shape on the shelf, a paint pot, the
+             reviews' trophy and rainbow), the rest are white ghosts, the next
+             one glows and plays; a room dives into its course page.
+       - [ ] Nova's home (her garden cottage: Vegetables, Seasons).
+       - [ ] Bloo's home (his tree house on the hill: Animals, Weather).
+
 Before calling Learn done (easy to forget):
 - [ ] The user's open checks of each course (Colors, Seasons, Vegetables'
       cups, Animals, Weather — the items above), or close them.
