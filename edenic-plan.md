@@ -615,7 +615,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
              box = one 3D thing (`ITEMS.shapeBlocks`, `ITEMS.palette`), a
              short name, a simple line, a progress bar, one button; no stars
              on the hub — a finished lesson shows its earned stars on the
-             course's board. A
+             course's board; then (1–6 of the last list): a course box is
+             announced as it reads (Start / Continue / Play again {name}),
+             Pinki says the next lesson (on arrival and when tapped), a
+             finished class celebrates (her celebrate pose, confetti), new
+             stars fly into their lesson's box, the course board says
+             "2 of 5 learned", the wall is preloaded (only the frame that
+             fits). A
              panel zooms the board up into the course page (view
              transitions) — Pinki's course pages ARE the board now, a chalk
              box per lesson (item 2, the course page, done for Pinki).
