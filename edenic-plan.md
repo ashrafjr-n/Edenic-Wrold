@@ -594,17 +594,20 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
        (same file names); compressed (H.264 MP4, a poster frame); decide
        where they are hosted (the repo is no place for big files).
 
-5. [ ] **Each friend's hub as their home** (direct request 2026-10-14:
+5. [ ] **Each friend's hub as their own room** (direct request 2026-10-14:
        "not cards, not a map — Edenic's own identity, a game"):
-       - [x] **Pinki's house** (2026-10-14) — a clay dollhouse rendered by
-             `tools/picnic-scene` (`render.cjs house pinki` → `crop.py
-             house pinki`): the Shapes workshop downstairs, the Colors studio
-             upstairs, a yard where Pinki stands. Every lesson leaves its
-             reward in its room (a shape on the shelf, a paint pot, the
-             reviews' trophy and rainbow), the rest are white ghosts, the next
-             one glows and plays; a room dives into its course page.
-       - [ ] Nova's home (her garden cottage: Vegetables, Seasons).
-       - [ ] Bloo's home (his tree house on the hill: Animals, Weather).
+       - [x] **Pinki's classroom** (2026-10-14; a dollhouse came first the
+             same day and was rejected — "not professional enough, as an
+             idea or as made"): her chalkboard on a pink wall of the
+             class's crayon drawings (`render.cjs classroom pinki` →
+             `crop.py classroom pinki`, blurred like a camera on the board),
+             the child's desk in front; a chalk panel per course, Pinki
+             beside it with a pointer that swings to the next course. A
+             panel zooms the board up into the course page (view
+             transitions) — Pinki's course pages ARE the board now, a chalk
+             box per lesson (item 2, the course page, done for Pinki).
+       - [ ] Nova's room (her own idea to match — a garden classroom?).
+       - [ ] Bloo's room (a nature corner?).
 
 Before calling Learn done (easy to forget):
 - [ ] The user's open checks of each course (Colors, Seasons, Vegetables'
