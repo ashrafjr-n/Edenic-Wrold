@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, ViewTransition } from "react";
+import { useState, ViewTransition } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Play, RotateCcw } from "lucide-react";
+import { Heart, Play, RotateCcw, Smile, Sparkles, Star } from "lucide-react";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { Celebration } from "@/components/ui/celebration";
@@ -13,7 +13,6 @@ import pinkiWithStick from "../../../../public/assets/learn-with-pinki/pinki/pin
 import pinkiCelebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 
 export interface ClassCourse extends UpNextCourse {
-  description: string;
   /** The course's one 3D thing (`classroomModels`). */
   model: StaticImageData;
 }
@@ -24,47 +23,41 @@ interface PinkiClassroomProps {
   labels: {
     /** "Pinki's Class", on the sign over the board. */
     sign: string;
-    hello: string;
-    ask: string;
+    /** "You can do it!", written under the cards. */
+    cheer: string;
     start: string;
     continue: string;
     /** A finished course's button. */
     again: string;
-    /** "{name}" templates: how a course's box is announced, by where the
+    /** "{name}" templates: how a course's card is announced, by where the
         child is in it. */
     startCourse: string;
     continueCourse: string;
     replayCourse: string;
-    /** "Next up", over the next lesson's name in the next course's box. */
-    nextUp: string;
-    /** "Let's learn {name}!" — Pinki, the lesson to play next. */
-    letsLearn: string;
-    /** On the board, and from Pinki, once every lesson is learned. */
+    /** On the board, in place of the cheer, once every lesson is learned. */
     allDone: string;
     pinki: string;
   };
   dir: "rtl" | "ltr";
 }
 
-/** When Pinki first speaks after the room settles, and how long a line
-    stays up (ms). */
-const FIRST_WORD = 2200;
-const SAY_FOR = 4000;
+/** The chalk doodles round the cards (lucide icons drawn in chalk). */
+const DOODLES = [Star, Heart, Sparkles, Star, Heart];
 
 /**
- * Pinki's hub as her classroom (2026-10-14): her board under its sign, with
- * her hello in chalk and a box per course holding only what a child needs
- * — the course's one 3D thing, its short name, a few words on it, how far
- * along it is, and one button (Start / Continue / Play again); the next
- * course's box in pink chalk, a chalk arrow at its button. No stars here:
- * a star means something only where it was earned (the course's board).
+ * Pinki's hub as her classroom (2026-10-14): her board under its sign, a
+ * square paper card per course stuck on it side by side — the course's
+ * name on a clay tag, its one 3D thing, how far along it is, one button
+ * (Start / Continue / Play again). What a course teaches stays inside it:
+ * a card never lists its lessons. The next course's card glows pink.
+ * Chalk doodles round the cards and "You can do it!" under them.
  *
- * Pinki stands beside it, her stick raised to the board (her own pose; it
- * does not move — direct request). Once the room settles, and whenever
- * she is tapped, she says which lesson is next. When every lesson is
- * learned she celebrates instead, and so does the board.
+ * Pinki stands beside the board, her stick raised to it (her own pose; it
+ * does not move — direct request), and jumps when tapped; she says
+ * nothing. When every lesson is learned she celebrates instead, and the
+ * board says so.
  *
- * A box is the course's link: the board zooms up into the course page
+ * A card is the course's link: the board zooms up into the course page
  * (`Chalkboard`'s view transition) as Pinki steps out of the picture.
  */
 export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClassroomProps) {
@@ -72,33 +65,13 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
   const hydrated = useProgress((state) => state.hydrated);
   const next = useUpNext(characterId, courses);
   const [jumps, setJumps] = useState(0);
-  const [talking, setTalking] = useState(false);
-  const hush = useRef<ReturnType<typeof setTimeout>>(undefined);
   const nextIndex = next ? courses.indexOf(next.course) : -1;
-
-  const learned = courses.map((course) =>
-    course.titles.map((_, i) => hydrated && (items[itemKey(characterId, course.id, i + 1)]?.stars ?? 0) > 0),
-  );
   const allDone = hydrated && !next;
-  const line = next ? format(labels.letsLearn, { name: next.course.titles[next.index] }) : labels.allDone;
 
-  const say = () => {
-    setTalking(true);
-    clearTimeout(hush.current);
-    hush.current = setTimeout(() => setTalking(false), SAY_FOR);
-  };
-
-  /* Once the room has settled, Pinki says what is next. */
-  useEffect(() => {
-    const first = setTimeout(() => {
-      setTalking(true);
-      hush.current = setTimeout(() => setTalking(false), SAY_FOR);
-    }, FIRST_WORD);
-    return () => {
-      clearTimeout(first);
-      clearTimeout(hush.current);
-    };
-  }, []);
+  const learned = courses.map(
+    (course) =>
+      course.titles.filter((_, i) => hydrated && (items[itemKey(characterId, course.id, i + 1)]?.stars ?? 0) > 0).length,
+  );
 
   return (
     <div className="class-hub">
@@ -110,14 +83,15 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
         </ViewTransition>
         <Chalkboard size="hub" className="class-board">
           {allDone && <Celebration />}
-          <div dir={dir} className="class-hello">
-            <h1 className="chalk-title">{labels.hello}</h1>
-            <p className={`chalk-sub ${allDone ? "chalk-sub--done" : ""}`}>{allDone ? labels.allDone : labels.ask}</p>
-          </div>
+          <span className="class-doodles" aria-hidden>
+            {DOODLES.map((Doodle, i) => (
+              <Doodle key={i} strokeWidth={1.75} />
+            ))}
+          </span>
 
-          <div className="class-panels">
+          <div className="class-cards">
             {courses.map((course, i) => {
-              const done = learned[i].filter(Boolean).length;
+              const done = learned[i];
               const finished = done === course.titles.length;
               const announce = finished ? labels.replayCourse : done ? labels.continueCourse : labels.startCourse;
               return (
@@ -125,40 +99,22 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                   key={course.id}
                   href={`/learn/${characterId}/${course.id}`}
                   aria-label={format(announce, { name: course.name })}
-                  className={`chalk-panel ${i === nextIndex ? "chalk-panel--next" : ""}`}
-                  style={{ animationDelay: `${0.75 + i * 0.2}s` }}
+                  className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
+                  style={{ animationDelay: `${0.7 + i * 0.18}s` }}
                 >
-                  <span className="chalk-panel-model">
-                    <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 12rem, 7rem" className="object-contain" />
+                  <span dir={dir} className="class-card-tag">
+                    {course.name}
                   </span>
-                  <span dir={dir} className="chalk-panel-text">
-                    <span className="chalk-heading">{course.name}</span>
-                    <span className="chalk-panel-desc line-clamp-2">{course.description}</span>
-                    <span className="chalk-progress" aria-hidden>
-                      <span className="chalk-progress-track">
-                        <span className="chalk-progress-fill" style={{ width: `${(done / course.titles.length) * 100}%` }} />
-                      </span>
-                      <span className="chalk-progress-count">
-                        {done}/{course.titles.length}
-                      </span>
-                    </span>
+                  <span className="class-card-model">
+                    <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 15rem, 30vw" className="object-contain" />
                   </span>
-                  {/* The next course's box shows the lesson it opens on. */}
-                  {i === nextIndex && next && (
-                    <span className="chalk-peek" aria-hidden>
-                      {course.covers[next.index]?.[0] && (
-                        <span className="chalk-peek-thing">
-                          <Image src={course.covers[next.index][0]} alt="" fill sizes="3.5rem" className="object-contain" />
-                        </span>
-                      )}
-                      <span dir={dir} className="chalk-peek-text">
-                        <span className="chalk-peek-label">{labels.nextUp}</span>
-                        <span className="chalk-peek-title">{course.titles[next.index]}</span>
-                      </span>
+                  <span className="class-card-progress" aria-hidden>
+                    <span className="class-card-track">
+                      <span className="class-card-fill" style={{ width: `${(done / course.titles.length) * 100}%` }} />
                     </span>
-                  )}
-                  <span className={`btn3d chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
-                    {i === nextIndex && <span className="chalk-arrow" />}
+                    {done}/{course.titles.length}
+                  </span>
+                  <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
                     {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
                     <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
                   </span>
@@ -166,6 +122,11 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
               );
             })}
           </div>
+
+          <p dir={dir} className={`class-cheer ${allDone ? "class-cheer--done" : ""}`}>
+            <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
+            <Smile className="class-cheer-smile" strokeWidth={1.75} aria-hidden />
+          </p>
         </Chalkboard>
 
         {/* Pinki, her stick raised to the board — or celebrating, once
@@ -173,21 +134,11 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
             board zooms into a course. */}
         <ViewTransition exit="pinki-exit" default="none">
           <div className="class-pinki">
-            <span
-              dir={dir}
-              role="status"
-              className={`class-speech card card-clay-white speech-clay ${talking ? "class-speech--on" : ""}`}
-            >
-              {talking ? line : ""}
-            </span>
             <button
               type="button"
               aria-label={labels.pinki}
               className="class-pinki-body"
-              onClick={() => {
-                setJumps((n) => n + 1);
-                say();
-              }}
+              onClick={() => setJumps((n) => n + 1)}
             >
               <span key={jumps} className={`block ${jumps ? "anim-jump" : ""}`}>
                 <Image
