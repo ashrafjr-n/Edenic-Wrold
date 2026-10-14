@@ -4442,15 +4442,16 @@ button:disabled,
 }
 
 /* A box drawn on the board in chalk (`tools/picnic-scene/chalk.py`, handed
-   down by `Chalkboard`): the frame is sliced at its corners and stretched
-   along its edges, outset so its line sits where a 2.5px border would. A
+   down by `Chalkboard`): the frame is sliced at its corners and its edges
+   repeat (`round` — stretched, a long box's dashes smear into streaks),
+   outset so its line sits where a 2.5px border would. A
    course panel's and a lesson's: white; the next one's: pink; a locked
    lesson's: dashed. */
 .chalk-panel,
 .board-cell {
   border: 2.5px solid transparent;
   border-radius: 1.5rem;
-  border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem stretch;
+  border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
 }
 
 .chalk-panel--next,
@@ -4773,11 +4774,7 @@ button:disabled,
   aspect-ratio: 5 / 6;
   min-height: 0;
   padding: 0.9rem 0.4rem 0.6rem;
-  border: 2.5px solid rgb(247 243 233 / 55%);
-  border-radius: 1rem;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
+  transition: background-color 0.2s;
   animation: chalk-pop 0.45s ease-out both;
 }
 
@@ -4790,7 +4787,6 @@ button:disabled,
 a.board-cell:hover,
 a.board-cell:focus-visible {
   outline: none;
-  border-color: #fff;
   background-color: rgb(255 255 255 / 8%);
 }
 
@@ -4803,15 +4799,13 @@ a.board-cell:focus-visible {
 }
 
 .board-cell--next {
-  border-color: #ffb3d4;
   animation:
     chalk-pop 0.45s ease-out both,
     chalk-glow 2.2s ease-in-out 1s infinite;
 }
 
 .board-cell--locked {
-  border-style: dashed;
-  border-color: rgb(247 243 233 / 30%);
+  border-image-source: var(--chalk-frame-dashed);
 }
 
 @keyframes chalk-pop {
