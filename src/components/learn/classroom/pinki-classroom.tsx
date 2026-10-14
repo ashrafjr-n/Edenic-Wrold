@@ -3,17 +3,16 @@
 import { useState, ViewTransition } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Check, Play, Star } from "lucide-react";
+import { Play, RotateCcw } from "lucide-react";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
-import { CourseArt } from "@/components/learn/course-art";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { itemKey, useProgress } from "@/store/progress";
 import pinkiWithStick from "../../../../public/assets/learn-with-pinki/pinki/pinki-with-a-stick.png";
 
 export interface ClassCourse extends UpNextCourse {
   description: string;
-  /** The course's things, piled on its panel (`courseCovers`). */
-  art: StaticImageData[];
+  /** The course's one 3D thing (`classroomModels`). */
+  model: StaticImageData;
 }
 
 interface PinkiClassroomProps {
@@ -26,6 +25,8 @@ interface PinkiClassroomProps {
     ask: string;
     start: string;
     continue: string;
+    /** A finished course's button. */
+    again: string;
     /** "Start {name}" with the course's name in it, per course. */
     open: readonly string[];
     pinki: string;
@@ -35,9 +36,12 @@ interface PinkiClassroomProps {
 
 /**
  * Pinki's hub as her classroom (2026-10-14): her board under its sign, with
- * her hello in chalk and a box per course — its things stuck on, its name,
- * a chalk star per lesson (filled pink once learned); the next course's in
- * pink chalk, glowing, a chalk arrow at its button — and Pinki
+ * her hello in chalk and a box per course holding only what a child needs
+ * — the course's one 3D thing, its short name, a few words on it, how far
+ * along it is, and one button (Start / Continue / Play again); the next
+ * course's box in pink chalk, a chalk arrow at its button. No stars here:
+ * a star means something only where it was earned (the course's board) —
+ * and Pinki
  * beside it, her stick raised to the board (her own pose; it does not
  * move — direct request 2026-10-14). A panel
  * is the course's link: the board zooms up into the course page
@@ -80,26 +84,25 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                   className={`chalk-panel ${i === nextIndex ? "chalk-panel--next" : ""}`}
                   style={{ animationDelay: `${0.75 + i * 0.2}s` }}
                 >
-                  <CourseArt images={course.art} width={220} className="chalk-panel-art" />
+                  <span className="chalk-panel-model">
+                    <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 12rem, 7rem" className="object-contain" />
+                  </span>
                   <span dir={dir} className="chalk-panel-text">
                     <span className="chalk-heading">{course.name}</span>
-                    <span className="chalk-panel-desc line-clamp-1 sm:line-clamp-2">{course.description}</span>
-                    <span className="chalk-stars" aria-hidden>
-                      {learned[i].map((on, n) => (
-                        <Star key={n} className={on ? "chalk-star chalk-star--on" : "chalk-star"} strokeWidth={2.5} />
-                      ))}
+                    <span className="chalk-panel-desc line-clamp-2">{course.description}</span>
+                    <span className="chalk-progress" aria-hidden>
+                      <span className="chalk-progress-track">
+                        <span className="chalk-progress-fill" style={{ width: `${(done / course.titles.length) * 100}%` }} />
+                      </span>
+                      <span className="chalk-progress-count">
+                        {done}/{course.titles.length}
+                      </span>
                     </span>
                   </span>
                   <span className={`chalk-go ${finished ? "chalk-go--done" : ""}`} aria-hidden>
                     {i === nextIndex && <span className="chalk-arrow" />}
-                    {finished ? (
-                      <Check className="h-5 w-5" strokeWidth={3} />
-                    ) : (
-                      <>
-                        <span className="chalk-go-label">{done ? labels.continue : labels.start}</span>
-                        <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />
-                      </>
-                    )}
+                    {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
+                    <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
                   </span>
                 </Link>
               );
