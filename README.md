@@ -284,10 +284,13 @@ toy blocks for Shapes, a painter's palette for Colors), a short name, a few
 words, a progress bar ("2/5") and one button (Start, Continue or Play
 again); the next course's box is drawn in pink chalk and glows, a yellow
 chalk arrow at its button — with
-Pinki beside it, her stick raised to the board; she jumps when tapped. Walking in, the camera
+Pinki beside it, her stick raised to the board. A moment after the room
+settles, and whenever she is tapped, she says which lesson is next ("Let's
+learn Triangle!"); once every lesson is learned she celebrates instead, the
+board says "You learned it all!" and confetti flies. Walking in, the camera
 eases toward the board. Tapping a course zooms the board up to fill the
 screen as Pinki steps out of the picture: that is the course page, a chalk
-box per lesson, its thing held up by a clay magnet (learned ones show the stars they earned, of 3 — stars appear only where they mean something; the next one glowing with "Start", the
+box per lesson under "2 of 5 learned", its thing held up by a clay magnet (learned ones show the stars they earned, of 3 — stars appear only where they mean something, and ones earned since the last visit fly in; the next one glowing with "Start", the
 rest dashed, their words a "?"). Nova's and Bloo's hubs are still the friend
 saying hello above one big white clay card per course, and their course
 page is a banner over its lessons. Everything in Pinki's courses
