@@ -27,7 +27,7 @@ const SPRING_DELAY = 1.1;
 
 /**
  * A course's lessons written up on Pinki's board (2026-10-14, her course
- * pages): a chalk box per lesson with its thing stuck on like a magnet.
+ * pages): a chalk box per lesson, its thing held up by a clay magnet.
  * The rules are `LessonBox`'s — a learned lesson keeps its thing, its word
  * and a tick; the next one is lit, with "Start"; one still locked is
  * dimmed, its word a "?" (a colour shows an empty pot); the review takes a
@@ -51,7 +51,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     <div
       ref={rootRef}
       className="board-lessons"
-      style={{ "--cols": cols, "--rows": Math.ceil(singles / cols), "--phone-cols": singles > 5 ? 3 : 2 } as CSSProperties}
+      style={{ "--cols": cols, "--rows": Math.ceil(singles / cols) } as CSSProperties}
     >
       {titles.map((title, i) => {
         const n = i + 1;
