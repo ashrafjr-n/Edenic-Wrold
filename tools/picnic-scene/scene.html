@@ -1467,21 +1467,6 @@ const ITEMS = {
     }
     return g;
   },
-  // Pinki's pointer: a wooden stick, a pink tip, a pink grip — lying along
-  // x, the tip at the left (her classroom, 2026-10-14)
-  pointer() {
-    const g = new THREE.Group();
-    const wood = clay(0xd29a5e, { roughness: 0.55, clearcoat: 0.5 });
-    g.add(taperTube([[-1.6, 0.12, 0], [0, 0.12, 0], [1.6, 0.12, 0]], 0.045, 0.085, wood));
-    const tip = mesh(new THREE.SphereGeometry(0.12, 32, 24), clay(0xf776ac, { clearcoat: 0.7 }));
-    tip.position.set(-1.66, 0.12, 0);
-    g.add(tip);
-    const grip = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 32), clay(0xf776ac, { clearcoat: 0.5 }));
-    grip.rotation.z = Math.PI / 2;
-    grip.position.set(1.25, 0.12, 0);
-    g.add(grip);
-    return g;
-  },
 };
 
 /* ---------- Nova's garden (Fruits & Vegetables: pick them) ----------
