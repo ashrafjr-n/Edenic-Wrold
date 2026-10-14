@@ -47,9 +47,22 @@ interface PinkiClassroomProps {
   dir: "rtl" | "ltr";
 }
 
-/** The chalk doodles round the cards — drawn by hand (`chalk.py`), never
-    icons — placed by `.class-doodles img:nth-child(n)`. */
-const DOODLES = [chalkStar, chalkHeart, chalkSun, chalkBurst, chalkStar, chalkHeart];
+/** The chalk doodles beside the cards — drawn by hand (`chalk.py`), never
+    icons: a star and a heart at the left, a smiling sun and "look here"
+    dashes at the right, where Pinki's stick is. */
+const DOODLES = { left: [chalkStar, chalkHeart], right: [chalkSun, chalkBurst] };
+
+/** One side's doodles: a column of the cards' grid that only gets the
+    board's room the cards leave — none, none drawn. */
+function Doodles({ side }: { side: keyof typeof DOODLES }) {
+  return (
+    <span className={`class-doodles class-doodles--${side}`} aria-hidden>
+      {DOODLES[side].map((doodle, i) => (
+        <Image key={i} src={doodle} alt="" width={56} height={56} />
+      ))}
+    </span>
+  );
+}
 
 /**
  * Pinki's hub as her classroom (2026-10-14): her board under its sign, a
@@ -91,13 +104,8 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
         </ViewTransition>
         <Chalkboard size="hub" className="class-board">
           {allDone && <Celebration />}
-          <span className="class-doodles" aria-hidden>
-            {DOODLES.map((doodle, i) => (
-              <Image key={i} src={doodle} alt="" width={56} height={56} />
-            ))}
-          </span>
-
           <div className="class-cards">
+            <Doodles side="left" />
             {courses.map((course, i) => {
               const done = learned[i];
               const finished = done === course.titles.length;
@@ -129,9 +137,11 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                 </Link>
               );
             })}
+            <Doodles side="right" />
           </div>
 
           <p dir={dir} className={`class-cheer ${allDone ? "class-cheer--done" : ""}`}>
+            <Image src={chalkStar} alt="" width={36} height={36} className="class-cheer-doodle" />
             <span className="class-cheer-words">
               <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
               <span className="class-cheer-line" aria-hidden>
@@ -139,6 +149,7 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
               </span>
             </span>
             <Image src={chalkSmile} alt="" width={44} height={44} className="class-cheer-smile" />
+            <Image src={chalkHeart} alt="" width={36} height={36} className="class-cheer-doodle class-cheer-doodle--heart" />
           </p>
         </Chalkboard>
 
