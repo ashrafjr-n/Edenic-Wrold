@@ -604,7 +604,11 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
              the child's desk in front; a box per course drawn in chalk
              (`chalk.py`, a `border-image`), Pinki beside it in her own
              pose with a stick (restored from git — a rendered stick that
-             swung was rejected: "not nice, no need for it to move"). A
+             swung was rejected: "not nice, no need for it to move"); then
+             the board's details (direct request "do the rest"): grainy
+             chalk writing, chalk stars per lesson, a chalk arrow at the
+             next course, an eraser and smudges, a "Pinki's Class" sign,
+             clay magnets on a course's things, a bigger Pinki on a phone. A
              panel zooms the board up into the course page (view
              transitions) — Pinki's course pages ARE the board now, a chalk
              box per lesson (item 2, the course page, done for Pinki).
