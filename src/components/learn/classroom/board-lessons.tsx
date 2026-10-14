@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
 import { format } from "@/lib/format-dict";
 import { useCourseUnlock } from "@/components/learn/use-course-unlock";
+import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { BoxStop } from "@/data/courses";
 
@@ -25,12 +26,25 @@ interface BoardLessonsProps {
     settled (seconds). */
 const SPRING_DELAY = 1.1;
 
+/* The stars each lesson had the last time the child saw its board — stars
+   earned since fly into their lesson's box, once. */
+const STARS_SEEN_KEY = "edenic-board-stars-seen";
+
+function readStarsSeen(): Record<string, number> {
+  try {
+    const seen: unknown = JSON.parse(localStorage.getItem(STARS_SEEN_KEY) ?? "{}");
+    return seen && typeof seen === "object" ? (seen as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
 /**
  * A course's lessons written up on Pinki's board (2026-10-14, her course
  * pages): a chalk box per lesson, its thing held up by a clay magnet.
  * The rules are `LessonBox`'s — a learned lesson keeps its thing, its word
  * and the stars it earned (of 3 — where a star means something, not on
- * the hub); the next one is lit, with "Start"; one still locked is
+ * the hub), any earned since the last visit flying in; the next one is lit, with "Start"; one still locked is
  * dimmed, its word a "?" (a colour shows an empty pot); the review takes a
  * row of its own; a lock that opened since the last visit springs off.
  */
@@ -45,6 +59,30 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     nextRef,
     scroll: true,
   });
+  const hydrated = useProgress((state) => state.hydrated);
+  /* What the board showed last time, read once progress is known: until
+     then a learned lesson's stars wait hidden, so a new one never shows,
+     vanishes and flies in. */
+  const [seen, setSeen] = useState<Record<string, number> | null>(null);
+  const starsKey = stars.join(",");
+  useEffect(() => {
+    if (!hydrated) return;
+    const timer = setTimeout(() => {
+      const before = readStarsSeen();
+      setSeen((current) => current ?? before);
+      const now = { ...before };
+      starsKey.split(",").forEach((s, i) => {
+        if (Number(s) > 0) now[itemKey(characterId, lessonId, i + 1)] = Number(s);
+      });
+      try {
+        localStorage.setItem(STARS_SEEN_KEY, JSON.stringify(now));
+      } catch {
+        /* Storage off: the stars just don't fly. Nothing is lost. */
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [hydrated, starsKey, characterId, lessonId]);
+  let flying = 0;
   const singles = stops.filter((stop) => !stop.review).length;
   const cols = singles > 5 ? Math.ceil(singles / 2) : singles;
 
@@ -86,9 +124,19 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
             {isNext && <span className="board-cell-start">{dict.ctaStart}</span>}
             {done && (
               <span className="board-cell-stars" aria-hidden>
-                {[1, 2, 3].map((k) => (
-                  <Star key={k} className={k <= stars[i] ? "board-star board-star--on" : "board-star"} strokeWidth={2.5} />
-                ))}
+                {[1, 2, 3].map((k) => {
+                  const earned = k <= stars[i];
+                  const isNew = earned && seen !== null && k > (seen[itemKey(characterId, lessonId, n)] ?? 0);
+                  const state = !earned ? "" : seen === null ? "board-star--on board-star--waiting" : isNew ? "board-star--on board-star--new" : "board-star--on";
+                  return (
+                    <Star
+                      key={k}
+                      className={`board-star ${state}`}
+                      style={isNew ? { animationDelay: `${0.6 + flying++ * 0.18}s` } : undefined}
+                      strokeWidth={2.5}
+                    />
+                  );
+                })}
               </span>
             )}
             {(locked || springing) && (
