@@ -58,8 +58,8 @@ writes them as JPEGs, 1280px on the long side, into `dest`.
     python3 tools/picnic-scene/crop.py backdrop circle public/assets/learn/pinki/shapes/backdrop/circle
 
 Pinki's classroom — run after `render.cjs classroom pinki`: the wall,
-slightly blurred with a vignette (`<frame>.jpg`), and the child's desk,
-blurred more (`<frame>-desk.png`, cropped to it), both frames, into
+sharp with a vignette (`<frame>.jpg`), and the child's desk, blurred
+(`<frame>-desk.png`, cropped to it), both frames, into
 `public/assets/learn/pinki/classroom/`.
 
     python3 tools/picnic-scene/crop.py classroom pinki
@@ -213,10 +213,10 @@ if NAME.startswith("harvest-"):
     sys.exit()
 
 if NAME == "classroom":
-    # Pinki's classroom, both frames: the wall a little out of focus (the
-    # board, which the page draws, is what the camera is on) with a soft
-    # vignette, as a JPEG; the child's desk in front far more out of focus,
-    # as a PNG over it. At most 1600px on the long side.
+    # Pinki's classroom, both frames: the wall SHARP (2026-10-14, direct
+    # request: its poster's words are read) with a soft vignette, as a
+    # JPEG; the child's desk in front out of focus, as a PNG over it. At
+    # most 1600px on the long side.
     who = sys.argv[2] if len(sys.argv) > 2 else "pinki"
     out = os.path.join(HERE, "out", f"classroom-{who}")
     dest = os.path.join(ROOT, f"public/assets/learn/{who}/classroom")
@@ -224,7 +224,6 @@ if NAME == "classroom":
     for frame in ("portrait", "landscape"):
         back = Image.open(f"{out}/{frame}-back.png").convert("RGB")
         back.thumbnail((1600, 1600), Image.LANCZOS)
-        back = back.filter(ImageFilter.GaussianBlur(max(back.size) * 0.0032))
         w, h = back.size
         yy, xx = np.mgrid[0:h, 0:w]
         d = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h * 0.42) / (h / 2)) ** 2)
