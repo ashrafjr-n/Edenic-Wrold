@@ -78,11 +78,6 @@
  *
  *   node tools/picnic-scene/render.cjs backdrop circle square triangle rectangle review
  *
- * Pinki's house (2026-10-14) — her hub: the house and every lesson's
- * reward as its own layer (`out/house-pinki/`), then `crop.py house`:
- *
- *   node tools/picnic-scene/render.cjs house pinki
- *
  * Pinki's classroom (2026-10-14) — her hub's and course pages' room, in
  * both frames, the wall (`<frame>-back.png`) and the child's desk in front
  * (`<frame>-front.png`), then `crop.py classroom`:
@@ -156,14 +151,6 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         const layers = await render(page, `classroom=${who}&frame=${frame}`);
         for (const [layer, url] of Object.entries(layers)) save(out, `${frame}-${layer}`, url);
       }
-    }
-  } else if (mode === "house") {
-    for (const who of specs) {
-      const out = path.join(__dirname, "out", `house-${who}`);
-      fs.mkdirSync(out, { recursive: true });
-      const layers = await render(page, `house=${who}`);
-      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
-      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
   } else if (mode === "backdrop") {
     for (const name of specs) {

@@ -57,14 +57,6 @@ writes them as JPEGs, 1280px on the long side, into `dest`.
 
     python3 tools/picnic-scene/crop.py backdrop circle public/assets/learn/pinki/shapes/backdrop/circle
 
-Pinki's house — run after `render.cjs house pinki`: the house without its
-rewards (`house.png`), each lesson's reward as the patch of the house it
-changes (`rewards/<course>-<n>.png`, shadow included) and a white ghost of
-it (`ghosts/`), into `public/assets/learn/pinki/house/`; prints the rooms'
-and the rewards' boxes (% of the house) for `data/pinki-house.ts`.
-
-    python3 tools/picnic-scene/crop.py house pinki
-
 Pinki's classroom — run after `render.cjs classroom pinki`: the wall,
 slightly blurred with a vignette (`<frame>.jpg`), and the child's desk,
 blurred more (`<frame>-desk.png`, cropped to it), both frames, into
@@ -218,51 +210,6 @@ if NAME.startswith("harvest-"):
         seen = ImageChops.subtract(layer.split()[-1].point(lambda v: 255 if v > 40 else 0), solid)
         items.append({"food": food, "box": pct(box), "hit": pct(seen.getbbox()), "tilt": meta["tilt"][k]})
     print(json.dumps({"items": items, **({"front": pct(front)} if front else {})}))
-    sys.exit()
-
-if NAME == "house":
-    # Pinki's house: the house without rewards, and per lesson the patch its
-    # reward changes (the house rendered WITH it, minus the house without —
-    # shadow included, so it lies over the house exactly) plus a white ghost
-    # of the reward alone, all as % of the house's box.
-    who = sys.argv[2] if len(sys.argv) > 2 else "pinki"
-    out = os.path.join(HERE, "out", f"house-{who}")
-    dest = os.path.join(ROOT, f"public/assets/learn/{who}/house")
-    os.makedirs(f"{dest}/rewards", exist_ok=True)
-    os.makedirs(f"{dest}/ghosts", exist_ok=True)
-    meta = json.load(open(f"{out}/meta.json"))
-    W, H = meta["size"]
-    house = Image.open(f"{out}/house.png").convert("RGBA")
-    box = alpha_box(Image.open(f"{out}/all.png"), pad=4)
-    house.crop(box).save(f"{dest}/house.png", optimize=True)
-    bw, bh = box[2] - box[0], box[3] - box[1]
-
-    def rel(b):
-        return [round((b[0] - box[0]) / bw * 100, 2), round((b[1] - box[1]) / bh * 100, 2),
-                round((b[2] - b[0]) / bw * 100, 2), round((b[3] - b[1]) / bh * 100, 2)]
-
-    plain = np.asarray(house).astype(np.int16)
-    rewards = {}
-    for name in sorted({n[:-4] for n in os.listdir(out) if n.endswith(".png") and "-" in n and "__" not in n}):
-        with_it = Image.open(f"{out}/{name}.png").convert("RGBA")
-        diff = np.abs(np.asarray(with_it).astype(np.int16) - plain).max(axis=2)
-        mask = Image.fromarray(((diff > 5) * 255).astype(np.uint8), "L").filter(ImageFilter.MaxFilter(7)).filter(ImageFilter.GaussianBlur(1.5))
-        patch = with_it.copy()
-        patch.putalpha(ImageChops.multiply(with_it.split()[-1], mask))
-        pbox = alpha_box(patch, threshold=2, pad=1)
-        patch.crop(pbox).save(f"{dest}/rewards/{name}.png", optimize=True)
-        alone = Image.open(f"{out}/{name}__alone.png").convert("RGBA")
-        gbox = alpha_box(alone, threshold=40, pad=1)
-        ghost = Image.new("RGBA", alone.size, (255, 255, 255, 0))
-        ghost.putalpha(alone.split()[-1].point(lambda v: 255 if v > 40 else 0).filter(ImageFilter.GaussianBlur(1)))
-        ghost.crop(gbox).save(f"{dest}/ghosts/{name}.png", optimize=True)
-        rewards[name] = {"patch": rel(pbox), "ghost": rel(gbox)}
-
-    def room(r):
-        l, t, w, h = (r[0] / 100 * W, r[1] / 100 * H, r[2] / 100 * W, r[3] / 100 * H)
-        return rel((l, t, l + w, t + h))
-
-    print(json.dumps({"size": [bw, bh], "rooms": {k: room(v) for k, v in meta["rooms"].items()}, "rewards": rewards}))
     sys.exit()
 
 if NAME == "classroom":
