@@ -47,7 +47,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("weathersteps") || params.has("house") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("weathersteps") || params.has("house") || params.has("classroom") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1465,6 +1465,21 @@ const ITEMS = {
       eye.position.set(0.62, 0.34, side * 0.12);
       g.add(eye);
     }
+    return g;
+  },
+  // Pinki's pointer: a wooden stick, a pink tip, a pink grip — lying along
+  // x, the tip at the left (her classroom, 2026-10-14)
+  pointer() {
+    const g = new THREE.Group();
+    const wood = clay(0xd29a5e, { roughness: 0.55, clearcoat: 0.5 });
+    g.add(taperTube([[-1.6, 0.12, 0], [0, 0.12, 0], [1.6, 0.12, 0]], 0.045, 0.085, wood));
+    const tip = mesh(new THREE.SphereGeometry(0.12, 32, 24), clay(0xf776ac, { clearcoat: 0.7 }));
+    tip.position.set(-1.66, 0.12, 0);
+    g.add(tip);
+    const grip = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 32), clay(0xf776ac, { clearcoat: 0.5 }));
+    grip.rotation.z = Math.PI / 2;
+    grip.position.set(1.25, 0.12, 0);
+    g.add(grip);
     return g;
   },
 };
@@ -3525,6 +3540,7 @@ const SEASON = params.get("season");
 const WEATHERSTEPS = params.get("weathersteps");
 const BACKDROP = params.get("backdrop");
 const HOUSE = params.get("house");
+const CLASSROOM = params.get("classroom");
 const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS || BACKDROP ? null : SCENES[SCENE];
 
 if (THING) {
@@ -3999,6 +4015,265 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () => ({ size: [w, h], rooms: { shapes: roomBox(0), colors: roomBox(1) } });
+} else if (CLASSROOM) {
+  /* ---------- Pinki's classroom (2026-10-14): her hub and her course
+     pages. The board itself is the page's (HTML, sharp in every language);
+     this is everything round it — a pink wall with the class's crayon
+     drawings pinned up (shapes and colors, and one of Pinki), shape bunting,
+     a window, a clock, a shelf — and, alone, the child's own desk in the
+     front (`&layer=front`). `crop.py classroom` blurs both, the desk more:
+     a camera focused on the board. `?classroom=pinki&frame=portrait|landscape`. ---------- */
+  const portrait = params.get("frame") === "portrait";
+  const [w, h] = portrait ? [1080, 1920] : [1920, 1080];
+  renderer.setSize(w, h);
+  renderer.setClearColor(0x000000, 0);
+  const view = new THREE.PerspectiveCamera(portrait ? 62 : 38, w / h, 0.1, 200);
+  const EYE = portrait ? 5.2 : 3.8;
+  view.position.set(0, EYE, 13);
+  view.lookAt(0, EYE + 0.2, 0);
+  catcher.visible = false;
+  sun.position.set(-6, 14, 12);
+  Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16 });
+  const fill = new THREE.DirectionalLight(0xfff1e6, 1.2);
+  fill.position.set(3, 4, 20);
+  scene.add(fill);
+  scene.environmentIntensity = 0.55;
+
+  const matte = (color, extra = {}) => clay(color, { clearcoat: 0.1, roughness: 0.8, sheen: 0.25, ...extra });
+  const box = (wd, ht, dp, material, r = 0.05) => mesh(new RoundedBoxGeometry(wd, ht, dp, 4, r), material);
+  const at = (thing, x, y, z, rz = 0) => { thing.position.set(x, y, z); thing.rotation.z = rz; scene.add(thing); return thing; };
+  const room = new THREE.Group();
+  scene.add(room);
+
+  /* The room: a pink wall, a cream wainscot under a mint rail, a wood floor. */
+  /* Wallpaper: soft stripes in two pinks. */
+  const paper = document.createElement("canvas");
+  paper.width = 256; paper.height = 8;
+  const pg = paper.getContext("2d");
+  pg.fillStyle = "#fcdbe6"; pg.fillRect(0, 0, 256, 8);
+  pg.fillStyle = "#f8cfdd"; pg.fillRect(0, 0, 96, 8);
+  const stripes = new THREE.CanvasTexture(paper);
+  stripes.colorSpace = THREE.SRGBColorSpace;
+  stripes.wrapS = THREE.RepeatWrapping;
+  stripes.repeat.set(36, 1);
+  const wall = mesh(new THREE.PlaneGeometry(60, 30), matte(0xffffff, { map: stripes }));
+  wall.position.set(0, 15, 0);
+  wall.castShadow = false;
+  scene.add(wall);
+  at(box(60, 1.6, 0.12, matte(0xfff3e3)), 0, 0.8, 0.06);
+  at(box(60, 0.16, 0.2, matte(0xa9e2cf)), 0, 1.68, 0.1);
+  at(box(60, 0.26, 0.16, matte(0xfff8f0)), 0, 0.13, 0.12);
+  const floor = mesh(new THREE.PlaneGeometry(60, 40), matte(0xe9c49b, { roughness: 0.7 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.z = 20;
+  floor.castShadow = false;
+  scene.add(floor);
+  for (let x = -30; x <= 30; x += 1.6) at(box(0.03, 0.005, 40, matte(0xd9b088)), x, 0.003, 20);
+
+  /* ---------- The class's drawings: crayon on paper, drawn here. ---------- */
+  function crayonPaper(draw, paper = "#fffdf7") {
+    const W2 = 512, H2 = 640;
+    const c = document.createElement("canvas");
+    c.width = W2; c.height = H2;
+    const g = c.getContext("2d");
+    g.fillStyle = paper;
+    g.fillRect(0, 0, W2, H2);
+    const P = (x, y) => [x * W2, y * H2];
+    const line = (color, pts, width = 14, closed = false) => {
+      g.strokeStyle = color; g.lineCap = "round"; g.lineJoin = "round";
+      for (let pass = 0; pass < 5; pass++) {
+        g.globalAlpha = 0.32;
+        g.lineWidth = width * (0.6 + rand() * 0.5);
+        g.beginPath();
+        pts.forEach(([x, y], i) => {
+          const [px, py] = P(x, y);
+          const jx = px + (rand() - 0.5) * width * 0.45, jy = py + (rand() - 0.5) * width * 0.45;
+          i ? g.lineTo(jx, jy) : g.moveTo(jx, jy);
+        });
+        if (closed) g.closePath();
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+    };
+    const fill = (color, pts) => {
+      g.save();
+      g.beginPath();
+      pts.forEach(([x, y], i) => (i ? g.lineTo(...P(x, y)) : g.moveTo(...P(x, y))));
+      g.closePath();
+      g.clip();
+      const xs = pts.map((p) => p[0] * W2), ys = pts.map((p) => p[1] * H2);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      g.strokeStyle = color; g.globalAlpha = 0.42; g.lineWidth = 10; g.lineCap = "round";
+      g.beginPath();
+      for (let y = y0 - (x1 - x0) * 0.3; y < y1 + 10; y += 8) {
+        g.moveTo(x0 - 10, y + (rand() - 0.5) * 6);
+        g.lineTo(x1 + 10, y + (x1 - x0) * 0.3 + (rand() - 0.5) * 6);
+      }
+      g.stroke();
+      g.restore();
+      g.globalAlpha = 1;
+    };
+    const ring = (cx, cy, r, n = 48, from = 0, to = Math.PI * 2) =>
+      Array.from({ length: n + 1 }, (_, i) => { const a = from + (i / n) * (to - from); return [cx + Math.cos(a) * r, cy + Math.sin(a) * r * (W2 / H2)]; });
+    draw({ line, fill, ring });
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+  const DRAWINGS = {
+    sun: ({ line, fill, ring }) => {
+      fill("#ffd23a", ring(0.5, 0.42, 0.22));
+      line("#ff9d2e", ring(0.5, 0.42, 0.22), 12, true);
+      for (let k = 0; k < 10; k++) { const a = (k / 10) * Math.PI * 2; line("#ffb02e", [[0.5 + Math.cos(a) * 0.29, 0.42 + Math.sin(a) * 0.23], [0.5 + Math.cos(a) * 0.4, 0.42 + Math.sin(a) * 0.32]], 11); }
+      line("#6b4a2b", ring(0.43, 0.38, 0.015, 8), 10); line("#6b4a2b", ring(0.57, 0.38, 0.015, 8), 10);
+      line("#e2553f", ring(0.5, 0.44, 0.09, 16, 0.3, Math.PI - 0.3), 9);
+      line("#7cc66a", [[0.05, 0.9], [0.3, 0.86], [0.6, 0.91], [0.95, 0.87]], 18);
+    },
+    house: ({ line, fill }) => {
+      fill("#ff8fb8", [[0.25, 0.5], [0.75, 0.5], [0.75, 0.86], [0.25, 0.86]]);
+      line("#e2557f", [[0.25, 0.5], [0.75, 0.5], [0.75, 0.86], [0.25, 0.86]], 12, true);
+      fill("#4d8fe8", [[0.18, 0.52], [0.5, 0.24], [0.82, 0.52]]);
+      line("#2e6fd0", [[0.18, 0.52], [0.5, 0.24], [0.82, 0.52]], 12, true);
+      fill("#ffd23a", [[0.44, 0.68], [0.56, 0.68], [0.56, 0.86], [0.44, 0.86]]);
+      line("#7cc66a", [[0.02, 0.88], [0.98, 0.88]], 18);
+      line("#7fc3f5", [[0.05, 0.1], [0.95, 0.1]], 22);
+    },
+    rainbow: ({ line, ring }) => {
+      ["#ee4645", "#ff8c2e", "#ffd31a", "#4fbf5a", "#3f86e8", "#9257de"].forEach((c, i) => line(c, ring(0.5, 0.66, 0.4 - i * 0.055, 40, Math.PI, Math.PI * 2), 16));
+      line("#b9d7f2", ring(0.14, 0.7, 0.08, 24), 14); line("#b9d7f2", ring(0.86, 0.7, 0.08, 24), 14);
+    },
+    pinki: ({ line, fill, ring }) => {
+      fill("#ffd23a", [[0.3, 0.32], [0.36, 0.14], [0.42, 0.3]]);
+      fill("#ffd23a", [[0.58, 0.3], [0.66, 0.14], [0.7, 0.33]]);
+      fill("#ff86c2", ring(0.5, 0.5, 0.27));
+      line("#f0569b", ring(0.5, 0.5, 0.27), 12, true);
+      fill("#5b3a8f", ring(0.41, 0.46, 0.05, 16)); fill("#5b3a8f", ring(0.59, 0.46, 0.05, 16));
+      line("#e2553f", ring(0.5, 0.55, 0.08, 16, 0.2, Math.PI - 0.2), 10);
+      line("#ff86c2", [[0.36, 0.76], [0.34, 0.9]], 18); line("#ff86c2", [[0.64, 0.76], [0.66, 0.9]], 18);
+      line("#f0569b", [[0.82, 0.18], [0.86, 0.12], [0.9, 0.18], [0.86, 0.26], [0.82, 0.18]], 8);
+    },
+    flower: ({ line, fill, ring }) => {
+      line("#4fbf5a", [[0.5, 0.42], [0.5, 0.78]], 14);
+      line("#4fbf5a", [[0.5, 0.62], [0.64, 0.54]], 12);
+      ["#ff86c2", "#9257de", "#ff86c2", "#9257de", "#ff86c2", "#9257de"].forEach((c, k) => { const a = (k / 6) * Math.PI * 2; fill(c, ring(0.5 + Math.cos(a) * 0.12, 0.34 + Math.sin(a) * 0.1, 0.08, 20)); });
+      fill("#ffd23a", ring(0.5, 0.34, 0.07, 20));
+      fill("#c98f55", [[0.36, 0.78], [0.64, 0.78], [0.6, 0.94], [0.4, 0.94]]);
+    },
+    shapes: ({ line, fill, ring }) => {
+      fill("#3f86e8", ring(0.3, 0.27, 0.15)); line("#2e6fd0", ring(0.3, 0.27, 0.15), 10, true);
+      fill("#4fbf5a", [[0.56, 0.15], [0.84, 0.15], [0.84, 0.38], [0.56, 0.38]]); line("#3a9e47", [[0.56, 0.15], [0.84, 0.15], [0.84, 0.38], [0.56, 0.38]], 10, true);
+      fill("#ffd31a", [[0.14, 0.82], [0.3, 0.52], [0.46, 0.82]]); line("#e8b400", [[0.14, 0.82], [0.3, 0.52], [0.46, 0.82]], 10, true);
+      fill("#ff86c2", [[0.54, 0.6], [0.9, 0.6], [0.9, 0.8], [0.54, 0.8]]); line("#f0569b", [[0.54, 0.6], [0.9, 0.6], [0.9, 0.8], [0.54, 0.8]], 10, true);
+    },
+    cat: ({ line, fill, ring }) => {
+      fill("#ff9d4a", ring(0.5, 0.62, 0.22));
+      fill("#ff9d4a", ring(0.5, 0.36, 0.16));
+      fill("#ff9d4a", [[0.37, 0.3], [0.38, 0.14], [0.47, 0.24]]); fill("#ff9d4a", [[0.53, 0.24], [0.62, 0.14], [0.63, 0.3]]);
+      line("#2e2b35", ring(0.44, 0.35, 0.012, 6), 9); line("#2e2b35", ring(0.56, 0.35, 0.012, 6), 9);
+      line("#ff9d4a", [[0.7, 0.72], [0.84, 0.6], [0.86, 0.46]], 16);
+    },
+  };
+  const PAPER = ["#fffdf7", "#fff6d6", "#e9f4ff", "#fdeef6"];
+  let paperIndex = 0;
+  /* A drawing pinned to the wall: paper, a little tilt, two strips of tape. */
+  const pinUp = (name, x, y, k = 1, tilt = 0) => {
+    const g = new THREE.Group();
+    const sheet = mesh(new THREE.PlaneGeometry(1.6 * k, 2.0 * k), matte(0xffffff, { map: crayonPaper(DRAWINGS[name], PAPER[paperIndex++ % PAPER.length]), clearcoat: 0, sheen: 0.1 }));
+    sheet.position.z = 0.03;
+    g.add(sheet);
+    for (const side of [-1, 1]) {
+      const tape = box(0.5 * k, 0.16 * k, 0.01, clay(0xfff6c8, { transparent: true, opacity: 0.75, clearcoat: 0.2 }), 0.005);
+      tape.position.set(side * 0.62 * k, 0.95 * k, 0.05);
+      tape.rotation.z = side * 0.35;
+      g.add(tape);
+    }
+    return at(g, x, y, 0, tilt);
+  };
+
+  /* Bunting of Pinki's shapes along the top of the wall. */
+  const bunting = (x0, x1, y0) => {
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(x0, y0, 0.3), new THREE.Vector3((x0 + x1) / 2, y0 - 0.45, 0.3), new THREE.Vector3(x1, y0, 0.3)]);
+    scene.add(mesh(new THREE.TubeGeometry(curve, 64, 0.025, 8), matte(0xffffff)));
+    const colors = [0xf776ac, 0x4da3ec, 0xffc93a, 0x5cc56b];
+    const n = Math.round((x1 - x0) / 0.75);
+    for (let k = 1; k < n; k++) {
+      const p = curve.getPoint(k / n);
+      const s = new THREE.Shape();
+      const kind = k % 4;
+      if (kind === 0) s.absarc(0, -0.28, 0.24, 0, Math.PI * 2, false);
+      else if (kind === 1) { s.moveTo(-0.23, -0.04); s.lineTo(0.23, -0.04); s.lineTo(0.23, -0.5); s.lineTo(-0.23, -0.5); s.closePath(); }
+      else if (kind === 2) { s.moveTo(-0.27, -0.02); s.lineTo(0.27, -0.02); s.lineTo(0, -0.52); s.closePath(); }
+      else { s.moveTo(-0.3, -0.06); s.lineTo(0.3, -0.06); s.lineTo(0.3, -0.38); s.lineTo(-0.3, -0.38); s.closePath(); }
+      const flag = mesh(roundedShapeExtrude(s, 0.03, 0.02), clay(colors[k % colors.length], { clearcoat: 0.3 }));
+      flag.position.copy(p);
+      scene.add(flag);
+    }
+  };
+
+  /* A shelf of books, paint pots and a plant. */
+  const shelfAt = (x, y, k = 1) => {
+    const g = new THREE.Group();
+    g.add(box(3.2 * k, 0.14, 0.7, matte(0xe9c49b), 0.04));
+    [[0xf776ac, 0.62], [0x4da3ec, 0.72], [0xffc93a, 0.58], [0x9257de, 0.68]].forEach(([c, ht], i) => {
+      const book = box(0.2 * k, ht * k, 0.55, matte(c, { clearcoat: 0.3 }), 0.03);
+      book.position.set(-1.3 * k + i * 0.23 * k, (ht * k) / 2 + 0.07, 0);
+      g.add(book);
+    });
+    ["red", "blue", "yellow"].forEach((c, i) => { const pot = ITEMS.pot(c); pot.scale.setScalar(0.3 * k); pot.position.set(0.0 + i * 0.45 * k, 0.07, 0.05); g.add(pot); });
+    const plant = new THREE.Group();
+    plant.add(mesh(new THREE.CylinderGeometry(0.2 * k, 0.15 * k, 0.32 * k, 32), clay(0xf9c06b)));
+    for (const [px, py, r] of [[0, 0.38, 0.22], [-0.16, 0.3, 0.16], [0.16, 0.32, 0.17]]) { const leaf = mesh(new THREE.SphereGeometry(r * k, 24, 16), matte(0x7cc66a)); leaf.position.set(px * k, py * k, 0); plant.add(leaf); }
+    plant.position.set(1.35 * k, 0.07 + 0.16 * k, 0);
+    g.add(plant);
+    return at(g, x, y, 0.35);
+  };
+
+  if (portrait) {
+    // above the board: bunting, a row of drawings, the clock; under it, the shelf by the floor
+    bunting(-5, 5, 12.4);
+    [["sun", -3.3, 10.6, 0.8, 0.06], ["pinki", -1.1, 10.8, 0.85, -0.04], ["rainbow", 1.15, 10.6, 0.8, 0.05], ["house", 3.35, 10.7, 0.8, -0.06]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
+    pinUp("shapes", -3.9, 2.2, 0.7, 0.05);
+    pinUp("flower", 3.9, 2.4, 0.7, -0.05);
+  } else {
+    bunting(-9, 9, 8.1);
+    [["sun", -7.3, 5.6, 0.9, 0.06], ["shapes", -7.4, 3.0, 0.85, -0.05], ["pinki", 5.0, 6.0, 0.9, -0.05], ["house", 7.2, 6.1, 0.85, 0.05], ["rainbow", 6.3, 3.6, 0.85, 0.03], ["flower", -5.4, 6.5, 0.7, -0.08], ["cat", 4.2, 3.4, 0.7, 0.06]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
+    shelfAt(-7.0, 1.9, 0.9);
+  }
+
+  /* The child's desk, in front: wood, a notebook, a pencil, crayons. */
+  const desk = new THREE.Group();
+  const DZ = portrait ? 8.6 : 9.2, DY = portrait ? 2.45 : 2.2;
+  desk.add(at(box(40, 0.5, 3.2, matte(0xd9a36b, { roughness: 0.6 }), 0.2), 0, DY, DZ));
+  const book = box(2.2, 0.12, 1.6, matte(0xff86c2), 0.05);
+  desk.add(at(book, portrait ? -2.2 : -3.2, DY + 0.31, DZ - 0.4));
+  book.rotation.y = 0.15;
+  const pages = box(2.05, 0.1, 1.5, matte(0xfffdf7), 0.03);
+  desk.add(at(pages, portrait ? -2.2 : -3.2, DY + 0.4, DZ - 0.4));
+  pages.rotation.y = 0.15;
+  ["#ee4645", "#3f86e8", "#ffd31a", "#4fbf5a"].forEach((c, i) => {
+    const crayon = new THREE.Group();
+    const body = mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.9, 24), clay(new THREE.Color(c), { clearcoat: 0.4 }));
+    body.rotation.z = Math.PI / 2;
+    crayon.add(body);
+    const tip = mesh(new THREE.ConeGeometry(0.09, 0.22, 24), clay(new THREE.Color(c), { clearcoat: 0.4 }));
+    tip.rotation.z = -Math.PI / 2;
+    tip.position.x = 0.56;
+    crayon.add(tip);
+    crayon.rotation.y = 0.5 - i * 0.25;
+    desk.add(at(crayon, (portrait ? 1.4 : 2.6) + i * 0.32, DY + 0.34, DZ - 0.6 + i * 0.15));
+  });
+  scene.add(desk);
+
+  const shot = () => { renderer.render(scene, view); return renderer.domElement.toDataURL("image/png"); };
+  window.renderLayers = () => {
+    desk.visible = false;
+    const back = shot();
+    scene.children.forEach((o) => { if (o !== desk && !o.isLight) o.visible = false; });
+    desk.visible = true;
+    const front = shot();
+    return { back, front };
+  };
+  window.itemsMeta = () => ({});
 } else if (BACKDROP) {
   /* ---------- A course's backdrop (2026-10-13): its world behind every
      step, rendered sharp here and blurred by `crop.py backdrop`. Shapes:
