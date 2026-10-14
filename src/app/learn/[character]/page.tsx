@@ -11,6 +11,7 @@ import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
 import { PinkiClassroom } from "@/components/learn/classroom/pinki-classroom";
 import { courseCovers } from "@/data/courses";
+import { classroomModels } from "@/data/classroom";
 import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
 import nova from "../../../../public/assets/friends/nova.png";
 import bloo from "../../../../public/assets/friends/bloo.png";
@@ -88,7 +89,7 @@ export default async function CharacterLearnPage({
             .map((lesson, i) => ({
               ...upNextCourses[i],
               description: dict.lessons[lesson.id].description,
-              art: courseCovers(lesson.id),
+              model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
             }))}
           labels={{
             sign: format(dict.characterHub.classSign, { name: character.name }),
@@ -96,6 +97,7 @@ export default async function CharacterLearnPage({
             ask: dict.characterHub.askToday,
             start: dict.lessonPicker.ctaStart,
             continue: dict.trail.ctaContinue,
+            again: dict.lessonPlayer.playAgain,
             open: upNextCourses.map((course) => format(dict.characterHub.startLesson, { name: course.name })),
             pinki: character.name,
           }}
