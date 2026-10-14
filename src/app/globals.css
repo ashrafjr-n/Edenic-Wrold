@@ -4296,24 +4296,31 @@ button:disabled,
 
 .class-desk {
   position: absolute;
-  inset-inline: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 2;
+}
+
+/* The chairs in front: the whole frame over the wall, framed as the wall is
+   (same zoom about the same point) — so they stand where they were
+   rendered. Walking in, they come from closer and settle, the camera
+   passing them on its way to the board. */
+.class-desk-view {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 40%;
+  scale: 1.05;
   animation: class-desk-in 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* Never more than the bottom of the screen: a tall tablet would otherwise
-   show half a desk. */
-.class-desk img {
-  max-height: 15svh;
-  object-fit: cover;
-  object-position: top;
+/* An evening class: the chairs dim with the wall. */
+[data-theme="dark"] .class-desk-view {
+  filter: brightness(0.6) saturate(0.85);
 }
 
 @keyframes class-desk-in {
   from {
-    translate: 0 -6%;
-    scale: 0.94;
+    scale: 1.16;
+    translate: 0 4%;
   }
 }
 
@@ -4542,73 +4549,47 @@ button:disabled,
   border-image-source: var(--chalk-frame-pink);
 }
 
-/* Chalk doodles round the cards, drawn by hand (`chalk.py` — never icons):
-   stars, hearts, a smiling sun, "look here" dashes, on the slate's empty
-   edges, each drawn in as the board settles. A phone keeps two. */
+/* Chalk doodles beside the cards, drawn by hand (`chalk.py` — never
+   icons). Each side is a column of the cards' grid that takes only the
+   room the cards leave (`minmax(0, 1fr)`), so a doodle shrinks with it and
+   is gone when there is none — it never lies over a card. */
 .class-doodles {
-  position: absolute;
-  inset: 0;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
   pointer-events: none;
 }
 
 .class-doodles img {
-  position: absolute;
-  width: clamp(1.9rem, 4vw, 3.6rem);
+  width: min(100%, clamp(1.9rem, 4vw, 3.6rem));
   height: auto;
   opacity: 0.85;
   animation: chalk-draw 0.6s ease-out backwards;
 }
 
-.class-doodles img:nth-child(1) {
-  top: 8%;
-  left: 3%;
+.class-doodles--left img:first-child {
   rotate: -10deg;
   animation-delay: 1.2s;
 }
 
-.class-doodles img:nth-child(2) {
-  top: 44%;
-  left: 2.5%;
+.class-doodles--left img:last-child {
   rotate: -8deg;
+  translate: 25% 0;
   animation-delay: 1.35s;
 }
 
-.class-doodles img:nth-child(3) {
-  top: 5%;
-  right: 3%;
-  width: clamp(2.2rem, 4.8vw, 4.4rem);
+.class-doodles--right img:first-child {
+  width: min(100%, clamp(2.2rem, 4.8vw, 4.4rem));
   rotate: 8deg;
   animation-delay: 1.5s;
 }
 
-/* "Look here" dashes at the board's right edge, where Pinki's stick is. */
-.class-doodles img:nth-child(4) {
-  top: 42%;
-  right: 2.5%;
+/* "Look here" dashes, pointing in from Pinki's side. */
+.class-doodles--right img:last-child {
   rotate: 70deg;
   animation-delay: 1.65s;
-}
-
-.class-doodles img:nth-child(5) {
-  bottom: 9%;
-  right: 7%;
-  scale: 0.8;
-  rotate: 14deg;
-  animation-delay: 1.8s;
-}
-
-.class-doodles img:nth-child(6) {
-  bottom: 10%;
-  left: 7%;
-  scale: 0.6;
-  rotate: 12deg;
-  animation-delay: 1.95s;
-}
-
-@media (width < 40rem) {
-  .class-doodles img:nth-child(-n + 4) {
-    display: none;
-  }
 }
 
 @keyframes chalk-draw {
@@ -4621,13 +4602,14 @@ button:disabled,
 }
 
 /* The courses: square chalk boxes side by side, as big as the screen's
-   height allows. */
+   height allows; the doodles' columns either side get what is left. The
+   gap between the cards is their margins (a column gap would also open
+   either side of an empty doodle column). */
 .class-cards {
+  --card-gap: clamp(0.2rem, 1.75vw - 0.15rem, 1.375rem);
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, min(22rem, 40svh)));
-  justify-content: center;
-  gap: clamp(0.6rem, 3.5vw, 2.75rem);
+  grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, calc(min(22rem, 40svh) + 2 * var(--card-gap)))) minmax(0, 1fr);
   padding: 2.2rem 0.4rem 0.25rem;
 }
 
@@ -4644,6 +4626,7 @@ button:disabled,
   align-items: center;
   gap: clamp(0.25rem, 0.9vw, 0.6rem);
   padding: clamp(1.05rem, 2.6vw, 2.1rem) clamp(0.5rem, 1.6vw, 1.3rem) clamp(0.5rem, 1.5vw, 1.1rem);
+  margin-inline: var(--card-gap);
   color: #fbf8f0;
   transition: background-color 0.2s;
   animation: class-card-write 0.7s ease-out backwards;
@@ -4794,6 +4777,22 @@ button:disabled,
   animation: chalk-draw 0.6s ease-out 1.7s backwards;
 }
 
+/* A star before the words and a heart after the smile, small. */
+.class-cheer-doodle {
+  flex-shrink: 0;
+  width: clamp(1.3rem, 2.4vw, 2.3rem);
+  height: auto;
+  opacity: 0.85;
+  rotate: -12deg;
+  animation: chalk-draw 0.5s ease-out 1.9s backwards;
+}
+
+.class-cheer-doodle--heart {
+  width: clamp(1.1rem, 2vw, 1.9rem);
+  rotate: 14deg;
+  animation-delay: 2.1s;
+}
+
 .class-cheer-smile {
   flex-shrink: 0;
   width: clamp(1.7rem, 3.2vw, 3rem);
@@ -4850,7 +4849,7 @@ button:disabled,
   }
 
   .class-cards {
-    padding: 3rem 1.5rem 0.5rem;
+    padding: 3rem 0.75rem 0.5rem;
   }
 
   .class-card-go {
@@ -4885,7 +4884,7 @@ button:disabled,
   }
 
   .class-cards {
-    padding: 3.2rem 4.5rem 0.5rem;
+    padding: 3.2rem 1rem 0.5rem;
   }
 
   .class-card-go {
@@ -4920,7 +4919,7 @@ button:disabled,
   }
 
   .class-cards {
-    grid-template-columns: repeat(2, minmax(0, 36svh));
+    grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, calc(36svh + 2 * var(--card-gap)))) minmax(0, 1fr);
     padding-top: 2.6rem;
   }
 
@@ -5295,10 +5294,11 @@ a.board-cell:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .class-wall-view,
-  .class-desk,
+  .class-desk-view,
   .chalkboard--hub,
   .class-card,
   .class-doodles img,
+  .class-cheer-doodle,
   .class-cheer .chalk-title,
   .class-cheer-line,
   .class-cheer-smile,
