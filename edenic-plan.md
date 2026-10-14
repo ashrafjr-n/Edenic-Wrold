@@ -608,7 +608,14 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
              the board's details (direct request "do the rest"): grainy
              chalk writing, chalk stars per lesson, a chalk arrow at the
              next course, an eraser and smudges, a "Pinki's Class" sign,
-             clay magnets on a course's things, a bigger Pinki on a phone. A
+             clay magnets on a course's things, a bigger Pinki on a phone;
+             then calmer and clearer ("the child should focus on the
+             lesson, not the decoration"): a 15% slimmer frame, a cleaner
+             slate, faint lesson boxes, grain on headings only; each course
+             box = one 3D thing (`ITEMS.shapeBlocks`, `ITEMS.palette`), a
+             short name, a simple line, a progress bar, one button; no stars
+             on the hub — a finished lesson shows its earned stars on the
+             course's board. A
              panel zooms the board up into the course page (view
              transitions) — Pinki's course pages ARE the board now, a chalk
              box per lesson (item 2, the course page, done for Pinki).
