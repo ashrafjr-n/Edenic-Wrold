@@ -72,3 +72,4 @@
 2026-10-13 simplify locale strings
 2026-10-13 rename confetti timing
 2026-10-14 clean up dark mode colors
+2026-10-14 tidy back button position
