@@ -8,6 +8,7 @@ import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { CourseCard } from "@/components/learn/course-card";
 import { CourseCardWide } from "@/components/learn/course-card-wide";
 import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
+import { PinkiHouse } from "@/components/learn/pinki-house";
 import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
 import nova from "../../../../public/assets/friends/nova.png";
 import bloo from "../../../../public/assets/friends/bloo.png";
@@ -66,6 +67,32 @@ export default async function CharacterLearnPage({
       className={className}
     />
   );
+
+  /* Pinki's hub is her house (2026-10-14): a room per course, a reward per
+     lesson. Nova and Bloo keep their course cards until theirs are built. */
+  if (character.id === "pinki") {
+    return (
+      <main
+        className="relative flex flex-1 flex-col overflow-x-clip pb-24 sm:pb-10"
+        style={characterAccent(character)}
+      >
+        <BackRow href="/learn" label={dict.characterHub.backToLearn} />
+        <PinkiHouse
+          characterId={character.id}
+          courses={upNextCourses}
+          labels={{
+            hello: format(dict.characterHub.hello, { name: character.name }),
+            welcome: dict.characterHub.welcomeHome,
+            startLesson: dict.characterHub.startLesson,
+            start: dict.lessonPicker.ctaStart,
+            continue: dict.trail.ctaContinue,
+            pinki: character.name,
+          }}
+          dir={dir}
+        />
+      </main>
+    );
+  }
 
   /* This character owns the page, so the back button beneath reads the
      accent from here — Nova's and Bloo's hubs come out right by default
