@@ -71,8 +71,8 @@ export default async function CharacterLearnPage({
     />
   );
 
-  /* Pinki's hub is her classroom (2026-10-14): her board with a panel per
-     course, Pinki beside it with her pointer. Nova and Bloo keep their
+  /* Pinki's hub is her classroom (2026-10-14): her board with a square card
+     per course, Pinki beside it with her pointer. Nova and Bloo keep their
      course cards until theirs are built. */
   if (character.id === "pinki") {
     return (
@@ -88,21 +88,17 @@ export default async function CharacterLearnPage({
             .filter((lesson) => !lesson.locked)
             .map((lesson, i) => ({
               ...upNextCourses[i],
-              description: dict.lessons[lesson.id].description,
               model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
             }))}
           labels={{
             sign: format(dict.characterHub.classSign, { name: character.name }),
-            hello: format(dict.characterHub.hello, { name: character.name }),
-            ask: dict.characterHub.askToday,
+            cheer: dict.characterHub.youCanDoIt,
             start: dict.lessonPicker.ctaStart,
             continue: dict.trail.ctaContinue,
             again: dict.lessonPlayer.playAgain,
             startCourse: dict.characterHub.startLesson,
             continueCourse: dict.characterHub.continueLesson,
             replayCourse: dict.characterHub.replayLesson,
-            nextUp: dict.characterHub.nextUp,
-            letsLearn: dict.characterHub.letsLearn,
             allDone: dict.characterHub.allDone,
             pinki: character.name,
           }}
