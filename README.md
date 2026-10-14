@@ -64,8 +64,9 @@ there:
   `metadataBase` from Vercel's own environment. If a custom domain is added
   later, set `metadataBase: new URL("https://<domain>")` in
   `src/app/layout.tsx` — nothing else changes.
-- Progress is stored in the visitor's browser, so nothing needs migrating and
-  no deploy can lose it.
+- Progress is stored in the visitor's browser, so no deploy can lose it. When
+  a course's lessons are added, removed or renumbered, bump the store's
+  `version` in `src/store/progress.ts` and let its `migrate` drop what moved.
 
 ## Tech stack
 
