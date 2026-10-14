@@ -601,8 +601,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
              idea or as made"): her chalkboard on a pink wall of the
              class's crayon drawings (`render.cjs classroom pinki` →
              `crop.py classroom pinki`, blurred like a camera on the board),
-             the child's desk in front; a chalk panel per course, Pinki
-             beside it with a pointer that swings to the next course. A
+             the child's desk in front; a box per course drawn in chalk
+             (`chalk.py`, a `border-image`), Pinki beside it in her own
+             pose with a stick (restored from git — a rendered stick that
+             swung was rejected: "not nice, no need for it to move"). A
              panel zooms the board up into the course page (view
              transitions) — Pinki's course pages ARE the board now, a chalk
              box per lesson (item 2, the course page, done for Pinki).
