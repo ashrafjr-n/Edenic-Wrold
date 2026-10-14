@@ -4561,12 +4561,9 @@ button:disabled,
   display: none;
 }
 
-/* Pinki beside the board: below its corner on a phone and tablet, at its
-   side on a desktop. Her pointer is behind her raised hand and swings to a
-   panel (`data-aim`). */
+/* Pinki beside the board, her stick raised to it: below its corner on a
+   phone and tablet, at its side on a desktop. */
 .class-pinki {
-  --aim-0: 80deg;
-  --aim-1: 56deg;
   position: absolute;
   z-index: 1;
   right: -0.25rem;
@@ -4587,28 +4584,6 @@ button:disabled,
   display: block;
   width: 100%;
   cursor: pointer;
-}
-
-.class-pointer {
-  position: absolute;
-  z-index: -1;
-  left: -94%;
-  top: 23.7%;
-  width: 120%;
-  transform-origin: 88% 50%;
-  rotate: var(--aim, var(--aim-0));
-  transition: rotate 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
-  animation: class-pointer-up 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 1.2s backwards;
-}
-
-.class-pinki[data-aim="1"] .class-pointer {
-  rotate: var(--aim, var(--aim-1));
-}
-
-@keyframes class-pointer-up {
-  from {
-    rotate: -30deg;
-  }
 }
 
 @media (width >= 40rem) {
@@ -4680,9 +4655,7 @@ button:disabled,
   }
 
   .class-pinki {
-    --aim-0: 40deg;
-    --aim-1: 12deg;
-    right: 0;
+    right: 3.5%;
     bottom: -7.5rem;
     width: 25%;
   }
@@ -4999,7 +4972,6 @@ a.board-cell:focus-visible {
   .chalkboard--hub,
   .chalk-panel,
   .class-pinki,
-  .class-pointer,
   .board-cell,
   .board-cell--next {
     animation: none;
