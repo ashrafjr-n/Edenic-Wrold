@@ -125,6 +125,11 @@ export const ku: Dictionary = {
     hello: "سلاڤ، ئەز {name} م!",
     askToday: "ئەڤرۆ دێ چ فێربین؟",
     classSign: "پۆلا {name}",
+    continueLesson: "{name} بەردەوام بە",
+    replayLesson: "{name} دووبارە یاری بکە",
+    letsLearn: "وەرە دا {name} فێربین!",
+    allDone: "تە هەمی فێربوو! دەستخۆش!",
+    learnedOf: "{done} ژ {total} فێربوو",
   },
   lessonPicker: {
     backTo: "ڤەگەڕان بۆ وانەیێن {characterName}",
