@@ -120,6 +120,7 @@ export const ar: Dictionary = {
     startLesson: "ابدأ {name}",
     hello: "مرحبًا، أنا {name}!",
     askToday: "ماذا سنتعلّم اليوم؟",
+    classSign: "صفّ {name}",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",
