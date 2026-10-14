@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { ViewTransition, type CSSProperties } from "react";
 import { notFound, redirect } from "next/navigation";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
@@ -7,6 +7,9 @@ import { LessonBox } from "@/components/learn/lesson-box";
 import { CourseArt } from "@/components/learn/course-art";
 import { CourseProgress } from "@/components/learn/course-progress";
 import { courseCovers, courseStops } from "@/data/courses";
+import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
+import { Chalkboard } from "@/components/learn/classroom/chalkboard";
+import { BoardLessons } from "@/components/learn/classroom/board-lessons";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
 
@@ -55,6 +58,50 @@ export default async function LessonPage({ params }: LessonPageProps) {
       size={size}
     />
   );
+
+  /* Pinki's courses are her board, up close (2026-10-14): the hub's board
+     zooms up to fill the screen with the course's lessons on it. */
+  if (character.id === "pinki") {
+    return (
+      <main className="class-page relative flex flex-1 flex-col" style={characterAccent(character)}>
+        <ClassroomBackdrop zoomed />
+        <ViewTransition name="pinki-back">
+          <BackRow
+            href={`/learn/${character.id}`}
+            label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+          />
+        </ViewTransition>
+        <div className="class-course">
+          <Chalkboard size="course">
+            <div className="board-head">
+              <div dir={dir} className="min-w-0">
+                <h1 className="chalk-title">{course.name}</h1>
+                <p className="chalk-sub">{lessonsCount}</p>
+              </div>
+              <ContinueButton
+                count={lesson.totalItems}
+                characterId={character.id}
+                lessonId={lesson.id}
+                basePath={basePath}
+                tone={tone}
+                dict={dict}
+                className="board-continue shrink-0 px-6 py-3 text-base lg:text-lg"
+              />
+            </div>
+            <BoardLessons
+              titles={course.items}
+              stops={stops}
+              characterId={character.id}
+              lessonId={lesson.id}
+              basePath={basePath}
+              dict={dict.lessonPicker}
+              dir={dir}
+            />
+          </Chalkboard>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main
