@@ -4441,8 +4441,26 @@ button:disabled,
   padding: 0.6rem 0.85rem 1.2rem;
 }
 
-/* A course, drawn on the board in chalk: written in from the left as the
-   board settles. */
+/* A box drawn on the board in chalk (`tools/picnic-scene/chalk.py`, handed
+   down by `Chalkboard`): the frame is sliced at its corners and stretched
+   along its edges, outset so its line sits where a 2.5px border would. A
+   course panel's and a lesson's: white; the next one's: pink; a locked
+   lesson's: dashed. */
+.chalk-panel,
+.board-cell {
+  border: 2.5px solid transparent;
+  border-radius: 1.5rem;
+  border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem stretch;
+}
+
+.chalk-panel--next,
+.board-cell--next {
+  border-image-source: var(--chalk-frame-pink);
+}
+
+/* A course, a box drawn on the board in chalk: written in from the left as
+   the board settles. `backwards`, not `both`: a clip-path left on after
+   the animation would cut the next course's glow into square corners. */
 .chalk-panel {
   position: relative;
   display: flex;
@@ -4450,32 +4468,21 @@ button:disabled,
   gap: 0.7rem;
   min-height: 7.25rem;
   padding: 0.55rem 0.75rem 0.55rem 0.4rem;
-  border: 2.5px solid rgb(247 243 233 / 68%);
-  border-radius: 1.1rem;
-  rotate: -0.35deg;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
-  animation: chalk-write 0.7s ease-out both;
-}
-
-.chalk-panel + .chalk-panel {
-  rotate: 0.4deg;
+  transition: background-color 0.2s;
+  animation: chalk-write 0.7s ease-out backwards;
 }
 
 .chalk-panel:hover,
 .chalk-panel:focus-visible {
   outline: none;
-  border-color: #fff;
   background-color: rgb(255 255 255 / 8%);
 }
 
 /* The course to play next glows pink. */
 .chalk-panel--next {
-  border-color: #ffb3d4;
   box-shadow:
-    0 0 0 4px rgb(255 158 200 / 16%),
-    0 0 26px rgb(255 158 200 / 24%);
+    0 0 0 4px rgb(255 158 200 / 12%),
+    0 0 26px rgb(255 158 200 / 22%);
 }
 
 @keyframes chalk-write {
