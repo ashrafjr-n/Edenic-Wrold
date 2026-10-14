@@ -19,7 +19,7 @@ The plan for Learn lives in `edenic-plan.md`.
 | --- | --- |
 | `/` | Home — hero, an introduction to the three friends, and the two ways into the site |
 | `/learn` | Friend picker: choose Pinki, Nova or Bloo |
-| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her classroom**: her chalkboard with a panel per course and Pinki beside it with her pointer. Nova and Bloo say hello above one big clay card per course |
+| `/learn/[character]` | That friend's courses (two each; all three friends are open). Pinki's is **her classroom**: her chalkboard with a chalk-drawn panel per course and Pinki beside it, her stick raised to the board. Nova and Bloo say hello above one big clay card per course |
 | `/learn/[character]/[lesson]` | A course: its lessons, unlocked one at a time, with a Continue button to the next one. Pinki's: her board up close, a chalk box per lesson. Nova's and Bloo's: a banner over a box of things (one cell per lesson) |
 | `/learn/[character]/[lesson]/[item]` | One lesson (`/1` … `/5`): a full-screen reel, then its steps (a Shapes lesson: meet the word, trace the shape, build the word, find the shapes), then "Lesson complete!". On a desktop the steps play on an open stage, with a trail of the lesson's steps across the top. A lesson not written yet shows a "Pinki is getting this lesson ready" card |
 | `/play` | Play — the Edenic Trail card, then Puzzle Time and Memory Match |
@@ -215,8 +215,9 @@ public/
   assets/nav-icons/   The phone bottom bar's four masked icons
   assets/learn-with-pinki/  Pinki's poses
   assets/learn/pinki/classroom/ Pinki's classroom: the wall and the child's
-                            desk (portrait and landscape) and her pointer,
-                            rendered by tools/picnic-scene
+                            desk (portrait and landscape), rendered by
+                            tools/picnic-scene, and the chalk frames the
+                            board's boxes are drawn with (chalk.py)
   assets/learn/pinki/       Course card art (placeholders until the course
                             art arrives), then each course's pictures and
                             reels (shapes/reels/1–4.mp4 are placeholders cut
@@ -275,10 +276,11 @@ gold), and Bloo's is Bloo's blue.
 Their pages are real. **Pinki's corner is her classroom.** The child sits at
 their desk in front of a pink wall hung with the class's crayon drawings
 (shapes, colors, one of Pinki) under shape bunting, all softly out of focus.
-Her hub is her chalkboard: her hello in chalk and a panel per course — its
-things stuck on, its name, a chalk dot per lesson, filled pink once learned
-— with Pinki beside it, her pointer on the course to play next (or on the
-one under the child's finger); she jumps when tapped. Walking in, the camera
+Her hub is her chalkboard: her hello in chalk and a box per course drawn in
+chalk — its things stuck on, its name, a chalk dot per lesson, filled pink
+once learned; the next course's box is drawn in pink chalk and glows —
+with Pinki beside it, her stick raised to the board; she jumps when
+tapped. Walking in, the camera
 eases toward the board. Tapping a course zooms the board up to fill the
 screen as Pinki steps out of the picture: that is the course page, a chalk
 box per lesson (learned ones ticked, the next one glowing with "Start", the
