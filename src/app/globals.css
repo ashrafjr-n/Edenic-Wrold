@@ -4224,8 +4224,8 @@ button:disabled,
 /* ---------------------------------------------------------------
    Pinki's classroom — her hub and her course pages (2026-10-14).
 
-   The room is a rendered picture (`ClassroomBackdrop`): the wall, a little
-   out of focus, under everything, and the child's desk in front of
+   The room is a rendered picture (`ClassroomBackdrop`): the wall, sharp,
+   under everything, and the child's desk in front of
    everything (pointer-events off). The board is the page's own
    (`Chalkboard`): a slate in a clay wood frame, written on in chalk, so it
    is sharp in every language. On the hub Pinki stands beside it with her

@@ -13,9 +13,10 @@ interface ClassroomBackdropProps {
 }
 
 /**
- * Pinki's classroom round her board (2026-10-14): the pink wall with the
- * class's drawings, a little out of focus, and the child's own desk in the
- * front, more so (`tools/picnic-scene`, `render.cjs classroom pinki`). A
+ * Pinki's classroom round her board (2026-10-14): the pink wall, sharp,
+ * with the class's drawings, a "Small Steps, Big Dreams" poster and a
+ * window, and the child's own desk in the front, out of focus
+ * (`tools/picnic-scene`, `render.cjs classroom pinki`). A
  * portrait and a landscape frame, the one that fits the screen shown — the
  * other is never fetched (lazy and `display: none`) — and preloaded, so the
  * room is there with the page, not a moment after.
