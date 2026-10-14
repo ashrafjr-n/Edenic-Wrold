@@ -129,6 +129,15 @@ export const en = {
     askToday: "What shall we learn today?",
     /** The sign over Pinki's board. */
     classSign: "{name}'s Class",
+    /** What a course's box is announced as, by where the child is in it. */
+    continueLesson: "Continue {name}",
+    replayLesson: "Play {name} again",
+    /** Pinki, when tapped: the lesson to play next. */
+    letsLearn: "Let's learn {name}!",
+    /** On the board once every lesson of the friend's is learned. */
+    allDone: "You learned it all! Well done!",
+    /** A course's board: how far along it is. */
+    learnedOf: "{done} of {total} learned",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
