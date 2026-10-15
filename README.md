@@ -524,5 +524,3 @@ Planned, in order:
 
 Audio narration is deliberately out of scope for the MVP, but the experience is
 built around where it will go.
-
-
