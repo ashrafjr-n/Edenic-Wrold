@@ -77,6 +77,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           covers={courseLessons[lesson.id].map((lessonDef) => lessonDef.cover)}
           dict={dict}
           dir={dir}
+          classroom={character.id === "pinki"}
         />
         {backdrop && <CourseBackdrop backdrop={backdrop} />}
       </main>
