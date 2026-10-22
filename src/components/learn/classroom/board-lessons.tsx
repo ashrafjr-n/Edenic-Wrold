@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, ViewTransition, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
 import { format } from "@/lib/format-dict";
+import { lessonMorph } from "@/lib/progress-keys";
 import { useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -158,16 +159,19 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
             {cell}
           </span>
         ) : (
-          <Link
-            key={n}
-            ref={isNext ? nextRef : undefined}
-            href={`${basePath}/${n}`}
-            className={className}
-            style={style}
-            aria-label={format(dict.startLessonAria, { n, title })}
-          >
-            {cell}
-          </Link>
+          /* The box opens into its lesson, and the lesson folds back into
+             it (`lessonMorph`, the player's stage carries the same name). */
+          <ViewTransition key={n} name={lessonMorph(characterId, lessonId, n)} share="lesson-morph" default="none">
+            <Link
+              ref={isNext ? nextRef : undefined}
+              href={`${basePath}/${n}`}
+              className={className}
+              style={style}
+              aria-label={format(dict.startLessonAria, { n, title })}
+            >
+              {cell}
+            </Link>
+          </ViewTransition>
         );
       })}
     </div>
