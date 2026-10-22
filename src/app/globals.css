@@ -5260,6 +5260,42 @@ a.board-cell:focus-visible {
   animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
+/* A lesson's box opening into the lesson (and folding back): the box
+   grows to the stage while the lesson shows through it — the old picture
+   fades early so the slate never fills the screen. */
+::view-transition-group(.lesson-morph) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+::view-transition-old(.lesson-morph) {
+  animation: lesson-morph-out 0.3s ease-out both;
+}
+
+::view-transition-new(.lesson-morph) {
+  animation: lesson-morph-in 0.45s ease-out 0.1s both;
+}
+
+/* `object-fit` keeps each picture's own shape while the box between them
+   changes its. */
+::view-transition-old(.lesson-morph),
+::view-transition-new(.lesson-morph) {
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes lesson-morph-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lesson-morph-in {
+  from {
+    opacity: 0;
+  }
+}
+
 ::view-transition-old(.pinki-exit) {
   animation: class-pinki-out 0.35s ease-in both;
 }
@@ -5313,6 +5349,9 @@ a.board-cell:focus-visible {
 
   ::view-transition-group(.board-morph),
   ::view-transition-group(.class-morph),
+  ::view-transition-group(.lesson-morph),
+  ::view-transition-old(.lesson-morph),
+  ::view-transition-new(.lesson-morph),
   ::view-transition-old(.pinki-exit),
   ::view-transition-old(.desk-exit) {
     animation: none;
