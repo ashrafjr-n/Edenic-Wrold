@@ -76,8 +76,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "find", scene: q.scene, target: q.target };
     case "sort":
       return { kind: "sort", item: q.items[0], bins: q.bins };
-    case "paint":
-      return { kind: "paint", round: q.rounds[0], pots: q.pots };
     case "pop":
       return { kind: "pop", color: q.color, others: q.others };
     case "order":
