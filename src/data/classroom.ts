@@ -47,7 +47,7 @@ export interface Classroom {
   chalk: { accent: string; glow: string };
 }
 
-export const CLASSROOMS: Partial<Record<CharacterId, Classroom>> = {
+export const CLASSROOMS: Record<CharacterId, Classroom> = {
   pinki: {
     wall: { portrait: pinkiWall, landscape: pinkiWallWide },
     desk: { portrait: pinkiDesk, landscape: pinkiDeskWide },
