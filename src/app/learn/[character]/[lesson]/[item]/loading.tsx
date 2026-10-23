@@ -13,7 +13,7 @@ export default async function LessonLoading() {
   return (
     <main className="relative isolate flex flex-1 flex-col items-center justify-center">
       <LoadingRoom />
-      <LessonLoader label={dict.lessonPlayer.loading} />
+      <Loader label={dict.ui.loading} />
     </main>
   );
 }
