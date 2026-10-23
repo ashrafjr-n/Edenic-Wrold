@@ -1,4 +1,4 @@
-"""Chalk for Pinki's board (2026-10-14), into
+"""Chalk for the friends' boards (2026-10-14; every friend's since 2026-10-23), into
 `public/assets/learn/classroom/` (shared by every friend's board):
 
 - `chalk-frame.png`, `chalk-frame-dashed.png` — a rounded box drawn in
