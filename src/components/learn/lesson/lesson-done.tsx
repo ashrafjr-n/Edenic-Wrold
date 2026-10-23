@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { Star } from "lucide-react";
+import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { Celebration } from "@/components/ui/celebration";
 import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
@@ -19,6 +21,11 @@ interface LessonDoneProps {
   drawing?: readonly StrokePoint[];
   accent: string;
   dir: "rtl" | "ltr";
+  /** Pinki's lessons: what was learned is written up on her board — the
+      title in chalk, the stars it earned (of 3; the same stars then fly
+      into the lesson's box on the course's board), the word on its paper
+      strip. */
+  board?: { stars: number };
 }
 
 /**
@@ -42,11 +49,12 @@ interface LessonDoneProps {
  * Desktop: the board spans the whole width here (no side panels), so the
  * beats sit side by side — Pinki big on the left, what was learned on the
  * right.
+ *
+ * Pinki's lessons (`board`): the second beat is up on her chalkboard, with
+ * the stars the lesson earned — the ones her course board shows on its box.
  */
-export function LessonDone({ title, words, faces, drawing, accent, dir }: LessonDoneProps) {
-  /* One or two things and a drawing get big tiles; a review's four things
-     and a drawing (five in a row) share the card's width. */
-  const tile = faces.length > 2 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
+export function LessonDone({ title, words, faces, drawing, accent, dir, board }: LessonDoneProps) {
+  const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} paper={board !== undefined} />;
   return (
     <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center lg:row-span-2">
@@ -65,52 +73,93 @@ export function LessonDone({ title, words, faces, drawing, accent, dir }: Lesson
         <Celebration />
       </div>
 
-      <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-5xl" style={{ animationDelay: "0.2s" }}>
-        {title}
-      </p>
-
-      <div
-        className="card card-clay-white card-bare-lg anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 lg:gap-4 lg:px-8 lg:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
-        style={{ animationDelay: "0.35s" }}
-      >
-        <div className={`flex items-center justify-center ${faces.length > 2 ? "gap-2" : "gap-3"}`}>
-          {faces.map((face) => (
-            <span
-              key={face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text}
-              className={`tile flex items-center justify-center ${tile}`}
-              style={{ "--tile-tint": "var(--background)" } as CSSProperties}
-            >
-              <FaceView face={face} size="tile" />
-            </span>
-          ))}
-          {drawing && drawing.length > 1 && (
-            <span
-              className={`tile flex items-center justify-center p-2 ${tile}`}
-              style={{ "--tile-tint": "var(--background)" } as CSSProperties}
-            >
-              <svg viewBox="0 0 100 100" className="done-drawing h-full w-full" aria-hidden>
-                <polyline
-                  points={drawing.map(([x, y]) => `${x},${y}`).join(" ")}
-                  fill="none"
-                  stroke={accent}
-                  strokeWidth={9}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={100}
+      {board ? (
+        <Chalkboard size="lesson" className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
+          <div className="relative z-[1] flex flex-col items-center gap-3 px-5 pb-5 pt-4 lg:gap-4 lg:px-8 lg:py-7 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+            <p dir={dir} className="chalk-title anim-fade-up" style={{ animationDelay: "0.2s" }}>
+              {title}
+            </p>
+            <span className="done-stars" aria-hidden>
+              {[1, 2, 3].map((k) => (
+                <Star
+                  key={k}
+                  className={`board-star ${k <= board.stars ? "board-star--on" : ""}`}
+                  style={{ animationDelay: `${0.7 + k * 0.18}s` }}
+                  strokeWidth={2.25}
                 />
-              </svg>
+              ))}
             </span>
-          )}
-        </div>
-        {words.length > 0 && (
-          <div className={`flex flex-wrap items-center justify-center ${words.length > 1 ? "gap-x-5 gap-y-1 [&>span]:text-4xl sm:[&>span]:text-5xl" : ""}`}>
-            {words.map(({ word, tone }) => (
-              <ClayWord key={word} word={word} size="sm" tone={tone} />
-            ))}
+            {learned}
           </div>
+        </Chalkboard>
+      ) : (
+        <>
+          <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-5xl" style={{ animationDelay: "0.2s" }}>
+            {title}
+          </p>
+
+          <div
+            className="card card-clay-white card-bare-lg anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 lg:gap-4 lg:px-8 lg:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
+            style={{ animationDelay: "0.35s" }}
+          >
+            {learned}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+type LearnedProps = Pick<LessonDoneProps, "words" | "faces" | "drawing" | "accent"> & {
+  /** On her board: the word on a paper strip, so a brown or black word
+      reads as it does on a white card. */
+  paper: boolean;
+};
+
+/** What was learned: the things, the child's drawing, the word. */
+function Learned({ words, faces, drawing, accent, paper }: LearnedProps) {
+  /* One or two things and a drawing get big tiles; a review's four things
+     and a drawing (five in a row) share the card's width. */
+  const tile = faces.length > 2 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
+  const wordRow = words.length > 0 && (
+    <div className={`flex flex-wrap items-center justify-center ${words.length > 1 ? "gap-x-5 gap-y-1 [&>span]:text-4xl sm:[&>span]:text-5xl" : ""}`}>
+      {words.map(({ word, tone }) => (
+        <ClayWord key={word} word={word} size="sm" tone={tone} />
+      ))}
+    </div>
+  );
+  return (
+    <>
+      <div className={`flex items-center justify-center ${faces.length > 2 ? "gap-2" : "gap-3"}`}>
+        {faces.map((face) => (
+          <span
+            key={face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text}
+            className={`tile flex items-center justify-center ${tile}`}
+            style={{ "--tile-tint": "var(--background)" } as CSSProperties}
+          >
+            <FaceView face={face} size="tile" />
+          </span>
+        ))}
+        {drawing && drawing.length > 1 && (
+          <span
+            className={`tile flex items-center justify-center p-2 ${tile}`}
+            style={{ "--tile-tint": "var(--background)" } as CSSProperties}
+          >
+            <svg viewBox="0 0 100 100" className="done-drawing h-full w-full" aria-hidden>
+              <polyline
+                points={drawing.map(([x, y]) => `${x},${y}`).join(" ")}
+                fill="none"
+                stroke={accent}
+                strokeWidth={9}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                pathLength={100}
+              />
+            </svg>
+          </span>
         )}
       </div>
-
-    </div>
+      {wordRow && (paper ? <span className="board-paper">{wordRow}</span> : wordRow)}
+    </>
   );
 }
