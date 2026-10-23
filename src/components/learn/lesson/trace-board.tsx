@@ -275,7 +275,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
               key={`guide-${index}`}
               d={path}
               fill="none"
-              stroke={chalk ? "rgb(251 248 240 / 55%)" : "var(--color-locked-dark)"}
+              stroke="rgb(251 248 240 / 55%)"
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
