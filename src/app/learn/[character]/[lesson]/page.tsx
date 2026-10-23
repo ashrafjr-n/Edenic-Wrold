@@ -93,16 +93,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
                   dir={dir}
                 />
               </div>
-              <ContinueButton
-                count={lesson.totalItems}
-                characterId={character.id}
-                lessonId={lesson.id}
-                basePath={basePath}
-                tone={tone}
-                dict={dict}
-                className="board-continue shrink-0 px-6 py-3 text-base lg:text-lg"
-              />
             </div>
+            {/* No Continue here: the next lesson's big sheet is the way on. */}
             <BoardLessons
               titles={course.items}
               stops={stops}
@@ -110,6 +102,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
               lessonId={lesson.id}
               basePath={basePath}
               dict={dict.lessonPicker}
+              allDone={dict.characterHub.allDone}
               dir={dir}
             />
           </Chalkboard>
