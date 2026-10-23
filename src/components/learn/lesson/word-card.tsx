@@ -1,6 +1,5 @@
 import Image, { type StaticImageData } from "next/image";
 import type { ShapeId } from "@/types/course";
-import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { CueButton } from "./cue-button";
 import { ClayWord, type LetterTone } from "./clay-word";
 import { FaceView } from "./face";
@@ -20,7 +19,7 @@ interface WordCardProps {
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
   label: string;
-  /** Pinki's lessons: the word is up on her board, its clay letters on a
+  /** Pinki's lessons (the step is on her board): its clay letters on a
       paper sentence strip held by two magnets — the SAME letters the child
       then spells with (so never chalk), as easy to read as on a white card
       (a brown or black word sinks into the slate). */
@@ -73,9 +72,7 @@ export function WordCard({ word, shape, picture, tilt, tone, cue, label, board =
   );
 
   return board ? (
-    <Chalkboard size="lesson" className="w-full max-w-xl lg:w-auto lg:max-w-none">
-      <div className={`relative z-[1] ${layout}`}>{content}</div>
-    </Chalkboard>
+    <div className={`max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>
   ) : (
     <div className={`card card-clay-white card-bare-lg max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>
   );

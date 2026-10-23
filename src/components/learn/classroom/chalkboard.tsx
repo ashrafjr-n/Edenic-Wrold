@@ -17,10 +17,9 @@ const CHALK = {
 
 interface ChalkboardProps {
   /** `hub`: the board on Pinki's wall. `course`: up close, filling the
-      screen — a course's lessons. `lesson`: a small board inside one of her
-      lessons (the word, the done screen). `strip`: a slim one, no tray —
-      the desktop lesson's steps. */
-  size: "hub" | "course" | "lesson" | "strip";
+      screen — a course's lessons. `stage`: what one of her lessons' steps
+      are on. `strip`: a slim one, no tray — the desktop lesson's steps. */
+  size: "hub" | "course" | "stage" | "strip";
   className?: string;
   children: ReactNode;
 }
@@ -47,7 +46,7 @@ export function Chalkboard({ size, className = "", children }: ChalkboardProps) 
       )}
     </div>
   );
-  if (size === "lesson" || size === "strip") return board;
+  if (size === "stage" || size === "strip") return board;
   return (
     <ViewTransition name="pinki-board" share="board-morph" default="none">
       {board}

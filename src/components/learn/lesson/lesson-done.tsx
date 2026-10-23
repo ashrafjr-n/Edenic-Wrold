@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
-import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { Celebration } from "@/components/ui/celebration";
 import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
@@ -21,8 +20,8 @@ interface LessonDoneProps {
   drawing?: readonly StrokePoint[];
   accent: string;
   dir: "rtl" | "ltr";
-  /** Pinki's lessons: what was learned is written up on her board — the
-      title in chalk, the stars it earned (of 3; the same stars then fly
+  /** Pinki's lessons (the step is on her board): what was learned is
+      written up on it — the title in chalk, the stars it earned (of 3; the same stars then fly
       into the lesson's box on the course's board), the word on its paper
       strip. */
   board?: { stars: number };
@@ -50,8 +49,9 @@ interface LessonDoneProps {
  * beats sit side by side — Pinki big on the left, what was learned on the
  * right.
  *
- * Pinki's lessons (`board`): the second beat is up on her chalkboard, with
- * the stars the lesson earned — the ones her course board shows on its box.
+ * Pinki's lessons (`board`): the second beat is written up on her
+ * chalkboard, with the stars the lesson earned — the ones her course board
+ * shows on its box.
  */
 export function LessonDone({ title, words, faces, drawing, accent, dir, board }: LessonDoneProps) {
   const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} paper={board !== undefined} />;
@@ -74,8 +74,8 @@ export function LessonDone({ title, words, faces, drawing, accent, dir, board }:
       </div>
 
       {board ? (
-        <Chalkboard size="lesson" className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
-          <div className="relative z-[1] flex flex-col items-center gap-3 px-5 pb-5 pt-4 lg:gap-4 lg:px-8 lg:py-7 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+        <div className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
+          <div className="flex flex-col items-center gap-3 px-5 pb-5 pt-4 lg:gap-4 lg:px-8 lg:py-7 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
             <p dir={dir} className="chalk-title anim-fade-up" style={{ animationDelay: "0.2s" }}>
               {title}
             </p>
@@ -91,7 +91,7 @@ export function LessonDone({ title, words, faces, drawing, accent, dir, board }:
             </span>
             {learned}
           </div>
-        </Chalkboard>
+        </div>
       ) : (
         <>
           <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-5xl" style={{ animationDelay: "0.2s" }}>
