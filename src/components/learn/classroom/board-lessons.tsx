@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, ViewTransition, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play, Star } from "lucide-react";
 import { format } from "@/lib/format-dict";
-import { lessonMorph } from "@/lib/progress-keys";
 import { useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -130,60 +129,56 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     if (i === nextIndex) {
       const springing = i === unlocking;
       next = (
-        /* The sheet opens into its lesson, and the lesson folds back into
-           it (`lessonMorph`, the player's stage carries the same name). */
-        <ViewTransition key={n} name={lessonMorph(characterId, lessonId, n)} share="lesson-morph" default="none">
-          <Link
-            ref={nextRef}
-            href={`${basePath}/${n}`}
-            className="board-next"
-            aria-label={format(dict.startLessonAria, { n, title })}
-          >
-            {art(false, springing, "(min-width: 1024px) 15rem, 8rem")}
-            <span dir={dir} className="board-next-text">
-              <span className="board-next-label">{format(dict.lessonN, { n })}</span>
-              <span className="board-next-word">{word}</span>
-              <span className="btn3d board-next-go" aria-hidden>
-                <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
-                <span>{dict.ctaStart}</span>
-              </span>
+        <Link
+          key={n}
+          ref={nextRef}
+          href={`${basePath}/${n}`}
+          className="board-next"
+          aria-label={format(dict.startLessonAria, { n, title })}
+        >
+          {art(false, springing, "(min-width: 1024px) 15rem, 8rem")}
+          <span dir={dir} className="board-next-text">
+            <span className="board-next-label">{format(dict.lessonN, { n })}</span>
+            <span className="board-next-word">{word}</span>
+            <span className="btn3d board-next-go" aria-hidden>
+              <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
+              <span>{dict.ctaStart}</span>
             </span>
-            {springing && (
-              <span className="board-cell-lock path-lock-off" style={{ animationDelay: `${SPRING_DELAY}s` }} aria-hidden>
-                <Lock className="h-5 w-5" strokeWidth={2.75} />
-              </span>
-            )}
-          </Link>
-        </ViewTransition>
+          </span>
+          {springing && (
+            <span className="board-cell-lock path-lock-off" style={{ animationDelay: `${SPRING_DELAY}s` }} aria-hidden>
+              <Lock className="h-5 w-5" strokeWidth={2.75} />
+            </span>
+          )}
+        </Link>
       );
     } else if (done) {
       learned.push(
-        <ViewTransition key={n} name={lessonMorph(characterId, lessonId, n)} share="lesson-morph" default="none">
-          <Link
-            href={`${basePath}/${n}`}
-            className="board-cell"
-            style={style}
-            aria-label={format(dict.startLessonAria, { n, title })}
-          >
-            {art(false, false, "(min-width: 1024px) 5rem, 3rem")}
-            <span dir={dir} className="board-cell-word">{word}</span>
-            <span className="board-cell-stars" aria-hidden>
-              {[1, 2, 3].map((k) => {
-                const earned = k <= stars[i];
-                const isNew = earned && seen !== null && k > (seen[itemKey(characterId, lessonId, n)] ?? 0);
-                const state = !earned ? "" : seen === null ? "board-star--on board-star--waiting" : isNew ? "board-star--on board-star--new" : "board-star--on";
-                return (
-                  <Star
-                    key={k}
-                    className={`board-star ${state}`}
-                    style={isNew ? { animationDelay: `${0.6 + flying++ * 0.18}s` } : undefined}
-                    strokeWidth={2.5}
-                  />
-                );
-              })}
-            </span>
-          </Link>
-        </ViewTransition>,
+        <Link
+          key={n}
+          href={`${basePath}/${n}`}
+          className="board-cell"
+          style={style}
+          aria-label={format(dict.startLessonAria, { n, title })}
+        >
+          {art(false, false, "(min-width: 1024px) 5rem, 3rem")}
+          <span dir={dir} className="board-cell-word">{word}</span>
+          <span className="board-cell-stars" aria-hidden>
+            {[1, 2, 3].map((k) => {
+              const earned = k <= stars[i];
+              const isNew = earned && seen !== null && k > (seen[itemKey(characterId, lessonId, n)] ?? 0);
+              const state = !earned ? "" : seen === null ? "board-star--on board-star--waiting" : isNew ? "board-star--on board-star--new" : "board-star--on";
+              return (
+                <Star
+                  key={k}
+                  className={`board-star ${state}`}
+                  style={isNew ? { animationDelay: `${0.6 + flying++ * 0.18}s` } : undefined}
+                  strokeWidth={2.5}
+                />
+              );
+            })}
+          </span>
+        </Link>,
       );
     } else {
       later.push(

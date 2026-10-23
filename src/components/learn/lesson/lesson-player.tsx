@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useEffectEvent, useRef, useState, ViewTransition } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Lightbulb, SkipForward } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
@@ -9,7 +9,6 @@ import { format } from "@/lib/format-dict";
 import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
-import { lessonMorph } from "@/lib/progress-keys";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { LessonDef } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
@@ -76,8 +75,7 @@ interface LessonPlayerProps {
   covers: readonly (readonly StaticImageData[])[];
   dict: Dictionary;
   dir: "rtl" | "ltr";
-  /** Pinki's lessons (2026-10-23): the lesson opens out of its sheet on her
-      board and folds back into it, and every step is on her chalkboard. */
+  /** Pinki's lessons (2026-10-23): every step is on her chalkboard. */
   classroom?: boolean;
 }
 
@@ -275,16 +273,6 @@ export function LessonPlayer({
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
-  /* The stage on screen shares its box's name on the board, so the box
-     opens into the lesson and the lesson folds back into it. */
-  const morph = (stage: ReactNode) =>
-    classroom ? (
-      <ViewTransition name={lessonMorph(characterId, courseId, n)} share="lesson-morph" default="none">
-        {stage}
-      </ViewTransition>
-    ) : (
-      stage
-    );
   /* What the steps swap on: Pinki's board in her lessons (every step on her
      chalkboard, in her classroom — 2026-10-23), otherwise a box that paints
      nothing (the step stands on the page ground). */
@@ -344,6 +332,7 @@ export function LessonPlayer({
       <ReelVideo
         src={lesson.reel}
         image={image}
+        loadingLabel={lines.loading}
         label={format(lines.reelAbout, { title })}
         skipLabel={lines.skip}
         playLabel={lines.playReel}
@@ -556,16 +545,14 @@ export function LessonPlayer({
           same lift on every step, so every button sits in one spot. A
           desktop moves the way onward into the footer bar instead. */}
       {step?.kind === "watch" ? (
-        morph(
-          <div
-            key={`${round}-${at}`}
-            className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:flex lg:w-full lg:max-w-5xl lg:flex-1 lg:flex-col lg:px-8 lg:py-4 ${
-              leaving ? "stage-swap--out" : ""
-            }`}
-          >
-            {body}
-          </div>,
-        )
+        <div
+          key={`${round}-${at}`}
+          className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:flex lg:w-full lg:max-w-5xl lg:flex-1 lg:flex-col lg:px-8 lg:py-4 ${
+            leaving ? "stage-swap--out" : ""
+          }`}
+        >
+          {body}
+        </div>
       ) : (
         /* Phone: `contents` — no box of its own, the step is laid out exactly
            as it always was. Tablet: the task and the lesson side by side
@@ -586,23 +573,21 @@ export function LessonPlayer({
           )}
           {/* The desktop stage: stays put while the steps swap on it. */}
           {stageBox(
-            morph(
-              <div
-                key={`${round}-${at}-${demo}`}
-                className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
-                  leaving ? "stage-swap--out" : ""
-                }`}
-              >
-                <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
-                  {body}
-                </div>
-                {/* On the done screen the buttons sit higher (direct request) —
-                    closer to what was just learned. */}
-                <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? (classroom ? "mb-[min(2rem,3svh)]" : "mb-[min(4.5rem,8svh)]") : ""}`}>
-                  {action}
-                </div>
-              </div>,
-            ),
+            <div
+              key={`${round}-${at}-${demo}`}
+              className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
+                leaving ? "stage-swap--out" : ""
+              }`}
+            >
+              <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
+                {body}
+              </div>
+              {/* On the done screen the buttons sit higher (direct request) —
+                  closer to what was just learned. */}
+              <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? (classroom ? "mb-[min(2rem,3svh)]" : "mb-[min(4.5rem,8svh)]") : ""}`}>
+                {action}
+              </div>
+            </div>,
           )}
         </div>
       )}

@@ -24,13 +24,6 @@ export function itemKey(
   return `${characterId}.${lessonId}.${item}`;
 }
 
-/** The view transition a lesson shares between its box on Pinki's board
-    and its own page (`lesson-pinki-shapes-3`): the box opens into the
-    lesson, and the lesson folds back into it. */
-export function lessonMorph(characterId: string, lessonId: string, item: number): string {
-  return `lesson-${characterId}-${lessonId}-${item}`;
-}
-
 /** Puzzles sit outside the character → lesson → item tree (they live under
     `/play`), but they are the same thing to the store: one key, best
     score wins, one place completion lives. */
