@@ -27,7 +27,7 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, tilt, tone, cue, label, board = false }: WordCardProps) {
+export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordCardProps) {
   /* Desktop: side by side — the shape big on the left, the speaker above
      the word on the right. The two wrappers are `contents` below `lg`, so
      the phone's column is exactly what it was. */
