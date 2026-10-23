@@ -116,7 +116,6 @@ export const ar: Dictionary = {
   },
   characterHub: {
     backToLearn: "العودة إلى التعلّم",
-    nextUp: "التالي",
     startLesson: "ابدأ {name}",
     continueLesson: "تابع {name}",
     replayLesson: "العب {name} مرة أخرى",

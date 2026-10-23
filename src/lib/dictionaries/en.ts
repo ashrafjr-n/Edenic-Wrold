@@ -123,7 +123,6 @@ export const en = {
   },
   characterHub: {
     backToLearn: "Back to Learn",
-    nextUp: "Next up",
     startLesson: "Start {name}",
     /** What a course's box is announced as, by where the child is in it. */
     continueLesson: "Continue {name}",

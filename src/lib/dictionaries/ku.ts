@@ -120,7 +120,6 @@ export const ku: Dictionary = {
   },
   characterHub: {
     backToLearn: "ڤەگەڕان بۆ فێربوونێ",
-    nextUp: "یا دی",
     startLesson: "{name} دەستپێبکە",
     continueLesson: "{name} بەردەوام بە",
     replayLesson: "{name} دووبارە یاری بکە",
