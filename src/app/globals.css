@@ -4064,12 +4064,6 @@ button:disabled,
    the dormant lavender and the course colour lit up to the next stop.
    --------------------------------------------------------------- */
 
-/* Titles on a coloured card: white, standing on a thin edge-coloured rim,
-   so they read as pressed out of the same clay rather than printed on it. */
-.clay-title {
-  text-shadow: 0 2px 0 color-mix(in srgb, var(--clay-edge) 70%, transparent);
-}
-
 /* A thing on a card or a stop casts a shadow in the colour under it. */
 .course-art-thing {
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
