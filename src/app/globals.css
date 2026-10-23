@@ -2930,30 +2930,6 @@ button:disabled,
   }
 }
 
-/* Paint, in the task button's demo, on the demos' beat: it spreads just
-   after the finger taps the pot. */
-.demo-paint {
-  animation: demo-paint 3.6s ease-out infinite;
-}
-
-@keyframes demo-paint {
-  0%,
-  38% {
-    clip-path: circle(0% at 50% 55%);
-    opacity: 1;
-  }
-  58%,
-  84% {
-    clip-path: circle(75% at 50% 55%);
-    opacity: 1;
-  }
-  96%,
-  100% {
-    clip-path: circle(75% at 50% 55%);
-    opacity: 0;
-  }
-}
-
 /* …the weather demos: the first go only — the finger taps the cloud
    (`.demo-squash`) or shakes it (`.demo-shake`, the finger with it) and the
    rain or snow starts (`.demo-fall`), pushes one cloud off the sun
