@@ -1,30 +1,15 @@
-import { ViewTransition, type CSSProperties } from "react";
+import { ViewTransition } from "react";
 import { notFound, redirect } from "next/navigation";
-import Image from "next/image";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
-import { courseLessons } from "@/data/courses";
+import { courseCovers, courseLessons } from "@/data/courses";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
-import { CourseCard } from "@/components/learn/course-card";
-import { CourseCardWide } from "@/components/learn/course-card-wide";
-import { UpNext, type UpNextCourse } from "@/components/learn/up-next";
+import type { UpNextCourse } from "@/components/learn/up-next";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
 import { FriendClassroom } from "@/components/learn/classroom/friend-classroom";
-import { courseCovers } from "@/data/courses";
 import { CLASSROOMS, classroomModels, classroomStyle } from "@/data/classroom";
-import pinkiSpeak from "../../../../public/assets/learn-with-pinki/pinki/pinki-speak.png";
-import nova from "../../../../public/assets/friends/nova.png";
-import bloo from "../../../../public/assets/friends/bloo.png";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
-import { format } from "@/lib/format-dict";
-
-/** Who says hello on each hub. Only Pinki has a talking pose yet; Nova and
-    Bloo wave from their portraits until theirs arrive. */
-const hello = { pinki: pinkiSpeak, nova, bloo };
-
-/** The friend's base: narrower than the friend, so they rise well above it. */
-const STAGE = { "--stage-inset": "auto 9% 0 9%" } as CSSProperties;
 
 export function generateStaticParams() {
   return characters.map((character) => ({ character: character.id }));
