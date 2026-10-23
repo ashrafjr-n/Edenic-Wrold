@@ -4174,18 +4174,44 @@ if (THING) {
       });
       for (const side of [-1, 1]) { g.beginPath(); g.arc(cx + side * (r - band * 2.5), cy + band * 0.3, band * 1.6, 0, Math.PI * 2); g.fillStyle = "#e3f1ff"; g.fill(); }
     };
+    /* Nova's sprout in its pot; Bloo's sun peeping over a cloud. */
+    const sprout = (cx, cy, k) => {
+      g.fillStyle = "#e8924a";
+      g.beginPath(); g.moveTo(cx - k * 0.7, cy - k * 0.2); g.lineTo(cx + k * 0.7, cy - k * 0.2); g.lineTo(cx + k * 0.5, cy + k * 0.8); g.lineTo(cx - k * 0.5, cy + k * 0.8); g.closePath(); g.fill();
+      g.fillStyle = "#c97534"; g.fillRect(cx - k * 0.78, cy - k * 0.36, k * 1.56, k * 0.26);
+      g.strokeStyle = "#4fbf5a"; g.lineWidth = k * 0.16; g.lineCap = "round";
+      g.beginPath(); g.moveTo(cx, cy - k * 0.36); g.lineTo(cx, cy - k * 1.1); g.stroke();
+      g.fillStyle = "#7cc66a";
+      g.beginPath(); g.ellipse(cx - k * 0.42, cy - k * 1.12, k * 0.42, k * 0.22, -0.5, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(cx + k * 0.42, cy - k * 1.3, k * 0.42, k * 0.22, 0.5, 0, Math.PI * 2); g.fill();
+    };
+    const sunCloud = (cx, cy, k) => {
+      g.fillStyle = "#ffc93a";
+      g.beginPath(); g.arc(cx + k * 0.35, cy - k * 0.3, k * 0.62, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = "#ffb02e"; g.lineWidth = k * 0.12; g.lineCap = "round";
+      for (let i = 0; i < 8; i++) { const a = -Math.PI + (i / 7) * Math.PI; g.beginPath(); g.moveTo(cx + k * 0.35 + Math.cos(a) * k * 0.8, cy - k * 0.3 + Math.sin(a) * k * 0.8); g.lineTo(cx + k * 0.35 + Math.cos(a) * k * 1.05, cy - k * 0.3 + Math.sin(a) * k * 1.05); g.stroke(); }
+      g.fillStyle = "#e3f1ff";
+      for (const [dx, dy, r] of [[-0.45, 0.25, 0.42], [0.05, 0.1, 0.55], [0.55, 0.3, 0.4]]) { g.beginPath(); g.arc(cx + dx * k, cy + dy * k, r * k, 0, Math.PI * 2); g.fill(); }
+    };
+    const emblem = (cx, cy, k) =>
+      THEME.poster.emblem === "sprout" ? sprout(cx, cy, k) : THEME.poster.emblem === "sun" ? sunCloud(cx, cy, k) : null;
+    const [t1, t2, t3, t4] = THEME.poster.tall;
+    const [w1, w2] = THEME.poster.wide;
+    const [s1, s2] = THEME.poster.stars;
     if (tall) {
-      word("Small", W2 / 2, H2 * 0.13, 128, "#f0569b");
-      word("Steps", W2 / 2, H2 * 0.29, 128, "#3f86e8");
-      word("Big", W2 / 2, H2 * 0.46, 128, "#9257de");
-      star(W2 * 0.2, H2 * 0.46, 42, "#ffc93a"); star(W2 * 0.8, H2 * 0.46, 42, "#ff86c2");
-      word("Dreams", W2 / 2, H2 * 0.62, 128, "#3f86e8");
-      rainbow(W2 / 2, H2 * 0.92, W2 * 0.3, 24);
+      word(t1[0], W2 / 2, H2 * 0.13, 128, t1[1], W2 * 0.62);
+      word(t2[0], W2 / 2, H2 * 0.29, 128, t2[1]);
+      word(t3[0], W2 / 2, H2 * 0.46, 128, t3[1], W2 * 0.5);
+      star(W2 * 0.2, H2 * 0.46, 42, s1); star(W2 * 0.8, H2 * 0.46, 42, s2);
+      word(t4[0], W2 / 2, H2 * 0.62, 128, t4[1]);
+      if (THEME.poster.emblem === "rainbow") rainbow(W2 / 2, H2 * 0.92, W2 * 0.3, 24);
+      else emblem(W2 / 2, H2 * 0.86, W2 * 0.11);
     } else {
-      rainbow(W2 * 0.19, H2 * 0.74, H2 * 0.36, 17);
-      word("Small Steps,", W2 * 0.655, H2 * 0.34, 104, "#f0569b");
-      word("Big Dreams", W2 * 0.655, H2 * 0.7, 104, "#3f86e8");
-      star(W2 * 0.19, H2 * 0.24, 30, "#ffc93a");
+      if (THEME.poster.emblem === "rainbow") rainbow(W2 * 0.19, H2 * 0.74, H2 * 0.36, 17);
+      else emblem(W2 * 0.19, H2 * 0.62, H2 * 0.2);
+      word(w1[0], W2 * 0.655, H2 * 0.34, 104, w1[1], W2 * 0.6);
+      word(w2[0], W2 * 0.655, H2 * 0.7, 104, w2[1], W2 * 0.6);
+      star(W2 * 0.19, H2 * 0.24, 30, s1);
     }
     const tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
