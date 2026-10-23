@@ -60,9 +60,7 @@ export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordC
     </>
   );
 
-  return board ? (
-    <div className={`max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>
-  ) : (
-    <div className={`card card-clay-white card-bare-lg max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>
-  );
+  /* On the friend's board: no card of its own — the word goes up on a
+     paper strip (`.chalkboard--stage .clay-word`). */
+  return <div className={`max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>;
 }
