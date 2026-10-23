@@ -126,10 +126,6 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
-  /** Nova's cups: the thing (`picture`) goes under one of three cups, they
-      swap places, and the child taps the one it is under — one miss and
-      the round starts again, the thing under a new cup. */
-  | { type: "cups"; ask: Ask; word: string; picture: StaticImageData }
   /** Make the weather by hand, in three goes, on Bloo's hill: tap the
       cloud (rain), push the clouds off the sun, swipe across the sky
       (wind), shake the cloud (snow). Nothing can go wrong — the weather is
