@@ -251,6 +251,18 @@ if NAME == "classroom":
         Image.fromarray((out_px * 255).round().astype(np.uint8), "RGBA").save(f"{dest}/{frame}-desk.png", optimize=True)
     sys.exit()
 
+if NAME == "playcard":
+    # A game card's picture on /play (2026-10-23) — run after `render.cjs
+    # backdrop play-<name>`: the landscape frame, sharp (the card lays its
+    # own wash over it), 1376px wide like the other cards' pictures, into
+    # `public/assets/play/<name>/<name>-card.jpg`.
+    name = sys.argv[2]
+    dest = os.path.join(ROOT, f"public/assets/play/{name}")
+    os.makedirs(dest, exist_ok=True)
+    img = Image.open(os.path.join(HERE, "out", f"backdrop-play-{name}", "landscape.png")).convert("RGB")
+    img.resize((1376, round(1376 * img.height / img.width)), Image.LANCZOS).save(f"{dest}/{name}-card.jpg", quality=84, optimize=True, progressive=True)
+    sys.exit()
+
 if NAME == "backdrop":
     name, dest = sys.argv[2], os.path.join(ROOT, sys.argv[3])
     os.makedirs(dest, exist_ok=True)
