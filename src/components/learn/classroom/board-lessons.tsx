@@ -195,7 +195,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           aria-label={format(dict.lockedLessonAria, { n, title })}
         >
           {art(true, false, "(min-width: 1024px) 5rem, 3rem")}
-          <span dir={dir} className="board-cell-word">{review ? title : "?"}</span>
+          {!review && <span dir={dir} className="board-cell-word">?</span>}
           <span className="board-cell-lock" aria-hidden>
             <Lock className="h-3 w-3" strokeWidth={2.75} />
           </span>
