@@ -1,5 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import type { ShapeId } from "@/types/course";
+import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { CueButton } from "./cue-button";
 import { ClayWord, type LetterTone } from "./clay-word";
 import { FaceView } from "./face";
@@ -19,6 +20,11 @@ interface WordCardProps {
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
   label: string;
+  /** Pinki's lessons: the word is up on her board, its clay letters on a
+      paper sentence strip held by two magnets — the SAME letters the child
+      then spells with (so never chalk), as easy to read as on a white card
+      (a brown or black word sinks into the slate). */
+  board?: boolean;
 }
 
 /**
@@ -27,18 +33,20 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordCardProps) {
-  return (
-    /* Desktop: side by side — the shape big on the left, the speaker above
-       the word on the right. The two wrappers are `contents` below `lg`, so
-       the phone's column is exactly what it was. */
-    <div className="card card-clay-white card-bare-lg flex w-full max-w-xl flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:w-auto lg:max-w-none lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5">
+export function WordCard({ word, shape, picture, tilt, tone, cue, label, board = false }: WordCardProps) {
+  /* Desktop: side by side — the shape big on the left, the speaker above
+     the word on the right. The two wrappers are `contents` below `lg`, so
+     the phone's column is exactly what it was. */
+  const layout =
+    "flex w-full flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5";
+  const content = (
+    <>
       <span className="contents lg:col-start-2 lg:row-start-1 lg:flex lg:items-end lg:justify-center lg:self-end">
         <CueButton cue={cue} label={label} size="xl" invite />
       </span>
       {(shape || picture) && (
         <span
-          className="anim-pop-in relative flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]"
+          className={`anim-pop-in relative flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]`}
           style={{ animationDelay: "0.05s" }}
         >
           {picture && tilt ? (
@@ -53,8 +61,22 @@ export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordC
         </span>
       )}
       <span className="contents lg:col-start-2 lg:row-start-2 lg:flex lg:justify-center lg:self-start">
-        <ClayWord word={word} tone={tone} />
+        {board ? (
+          <span className="board-paper">
+            <ClayWord word={word} tone={tone} />
+          </span>
+        ) : (
+          <ClayWord word={word} tone={tone} />
+        )}
       </span>
-    </div>
+    </>
+  );
+
+  return board ? (
+    <Chalkboard size="lesson" className="w-full max-w-xl lg:w-auto lg:max-w-none">
+      <div className={`relative z-[1] ${layout}`}>{content}</div>
+    </Chalkboard>
+  ) : (
+    <div className={`card card-clay-white card-bare-lg max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>
   );
 }
