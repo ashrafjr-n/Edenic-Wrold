@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { TASK_ICONS, type TaskKind } from "./task-chip";
