@@ -28,20 +28,17 @@ const LIFT_MS = 420;
 const ROUND_GAP_MS = 350;
 /** The food in view, before its cup comes down over it. */
 const LOOK_MS = 1400;
-/** Medium speed for 5–9-year-olds (direct request): `SWAPS` swaps of
-    `SWAP_MS` each. A miss makes the next round a swap shorter and a little
-    slower — never under three swaps, never slower than `SLOWEST_MS`. */
-const SWAPS = 5;
-const SWAP_MS = 640;
-const SLOWEST_MS = 820;
-/** Found, then the step is solved. */
+/** A miss makes the next round a swap shorter and a little slower — never
+    under three swaps, never more than `EASE_MS` slower than the level. */
+const EASE_MS = 180;
+/** Found, then the level is solved. */
 const DONE_MS = 700;
 
-/* The table's width, capped by the height a step has so it never pushes
-   the page into a scroll (`--ratio` is its w/h). Phone and tablet: over
-   the word; desktop: beside it. */
+/* The table's width, capped by the height the screen leaves so it never
+   pushes the page into a scroll (`--ratio` is its w/h). Phone and tablet:
+   over the word; desktop: beside it. */
 const TABLE_SIZE =
-  "max-w-[min(100%,calc((100svh-26rem-min(2.5rem,4svh))*var(--ratio)))] sm:max-w-[min(32rem,calc((100svh-44rem)*var(--ratio)))] lg:max-w-[min(38rem,calc((var(--stage-h)-2rem)*var(--ratio)))]";
+  "max-w-[min(100%,calc((100svh-25rem)*var(--ratio)))] sm:max-w-[min(34rem,calc((100svh-26rem)*var(--ratio)))] lg:max-w-[min(40rem,calc((100svh-24rem)*var(--ratio)))]";
 
 type Phase = "show" | "shuffle" | "guess" | "reveal" | "solved";
 
