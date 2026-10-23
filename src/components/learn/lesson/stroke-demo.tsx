@@ -5,9 +5,6 @@ import { strokeLength, strokeToPath } from "@/lib/trace-score";
 
 interface StrokeDemoProps {
   strokes: readonly Stroke[];
-  accent: string;
-  /** On Pinki's board: she draws it in pink chalk over a faint chalk shape. */
-  chalk?: boolean;
 }
 
 /** One full cycle: the line draws for the first 62% of it and the finished
