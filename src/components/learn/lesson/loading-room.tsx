@@ -2,16 +2,20 @@
 
 import { useParams } from "next/navigation";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
+import { CLASSROOMS } from "@/data/classroom";
+import type { CharacterId } from "@/types/character";
 
-/** Behind the loader: Pinki's classroom wall for her lessons (the room
-    never blinks out between her course page and the lesson), nothing for
-    the others. A loading file gets no params — the URL tells. */
+/** Behind the loader: the friend's classroom wall for their lessons (the
+    room never blinks out between their course page and the lesson),
+    nothing for a friend without one. A loading file gets no params — the
+    URL tells. */
 export function LoadingRoom() {
   const { character } = useParams<{ character: string }>();
-  if (character !== "pinki") return null;
+  const room = CLASSROOMS[character as CharacterId];
+  if (!room) return null;
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
-      <ClassroomBackdrop still />
+      <ClassroomBackdrop wall={room.wall} desk={room.desk} still />
     </div>
   );
 }
