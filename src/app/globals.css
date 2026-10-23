@@ -5637,7 +5637,7 @@ a.board-cell:focus-visible {
 }
 
 .chalkboard--stage .letter-slot:empty::after {
-  background: rgb(255 176 212 / 75%);
+  background: color-mix(in srgb, var(--chalk-accent) 75%, transparent);
 }
 
 .chalkboard--stage .letter-gap {
