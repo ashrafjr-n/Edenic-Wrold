@@ -4881,21 +4881,21 @@ button:disabled,
     font-size: 1.05rem;
   }
 
-  .class-pinki {
+  .class-teacher {
     right: -1.5rem;
     bottom: -13rem;
     width: 14rem;
   }
 }
 
-/* A desktop: the board on the left, Pinki big at its right on the floor,
+/* A desktop: the board on the left, the friend big at its right on the floor,
    her feet behind the child's desk. */
 @media (width >= 64rem) {
   .class-hub {
     padding: 0.5rem 3rem 6.25rem;
   }
 
-  /* Pinki's side: 27% of the STAGE (a bare % padding reads the hub's
+  /* The friend's side: 27% of the STAGE (a bare % padding reads the hub's
      width, which squeezed the board on a wide screen). */
   .class-stage {
     max-width: 78rem;
