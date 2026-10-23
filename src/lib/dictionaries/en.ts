@@ -85,7 +85,7 @@ export const en = {
     finishFirst: "Finish {name}'s lessons first!",
   },
   characters: {
-    pinki: { tagline: "Counts everything and finds shapes in the whole wide world." },
+    pinki: { tagline: "Finds every shape and color in the whole wide world." },
     nova: { tagline: "Turns letters into stories worth telling twice." },
     bloo: { tagline: "Wonders about colours, seasons and everything in the sky." },
   },
