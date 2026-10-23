@@ -77,15 +77,12 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           covers={courseLessons[lesson.id].map((lessonDef) => lessonDef.cover)}
           dict={dict}
           dir={dir}
-          classroom={room !== undefined}
-          cheer={room?.cheer}
+          cheer={room.cheer}
         />
         {/* A friend's lessons are in their classroom, up close on their board. */}
-        {room && (
-          <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
-            <ClassroomBackdrop wall={room.wall} desk={room.desk} still />
-          </div>
-        )}
+        <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
+          <ClassroomBackdrop wall={room.wall} desk={room.desk} still />
+        </div>
       </main>
     );
   }
