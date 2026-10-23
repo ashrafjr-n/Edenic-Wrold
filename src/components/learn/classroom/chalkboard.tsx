@@ -1,6 +1,5 @@
 import { ViewTransition, type CSSProperties, type ReactNode } from "react";
 import chalkFrame from "../../../../public/assets/learn/pinki/classroom/chalk-frame.png";
-import chalkFramePink from "../../../../public/assets/learn/pinki/classroom/chalk-frame-pink.png";
 import chalkFrameDashed from "../../../../public/assets/learn/pinki/classroom/chalk-frame-dashed.png";
 import chalkGrain from "../../../../public/assets/learn/pinki/classroom/chalk-grain.png";
 import chalkSmudge from "../../../../public/assets/learn/pinki/classroom/chalk-smudge.png";
@@ -11,7 +10,6 @@ import chalkSmudge from "../../../../public/assets/learn/pinki/classroom/chalk-s
    (cache-busted) files. */
 const CHALK = {
   "--chalk-frame": `url(${chalkFrame.src})`,
-  "--chalk-frame-pink": `url(${chalkFramePink.src})`,
   "--chalk-frame-dashed": `url(${chalkFrameDashed.src})`,
   "--chalk-grain": `url(${chalkGrain.src})`,
   "--chalk-smudge": `url(${chalkSmudge.src})`,

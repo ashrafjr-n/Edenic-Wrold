@@ -1,9 +1,9 @@
 """Chalk for Pinki's board (2026-10-14), into
 `public/assets/learn/pinki/classroom/`:
 
-- `chalk-frame.png`, `chalk-frame-pink.png`, `chalk-frame-dashed.png` — a
-  rounded box drawn in chalk, a 9-slice image for CSS `border-image`: white,
-  pink (the next course or lesson), dashed (a locked one). The line runs
+- `chalk-frame.png`, `chalk-frame-dashed.png` — a rounded box drawn in
+  chalk, a 9-slice image for CSS `border-image`: white (a lesson learned),
+  dashed (a locked one; the next lesson is a paper sheet, not chalk). The line runs
   MARGIN in from the edge with round corners of RADIUS; CSS slices it at 80
   (the corners) and repeats the edges between.
 - `chalk-grain.png` — a tile of chalk's grain, for a `mask-image` over what
@@ -247,10 +247,8 @@ def smudge(seed=17):
 if __name__ == "__main__":
     os.makedirs(DEST, exist_ok=True)
     save = lambda img, name: img.save(os.path.join(DEST, name), optimize=True)
-    # Light, so a box never competes with what is in it; the next one's pink
-    # stays the strongest line on the board.
+    # Light, so a box never competes with what is in it.
     save(frame(WHITE, seed=3, strength=0.26, width=6), "chalk-frame.png")
-    save(frame(PINK, seed=5, strength=0.45, width=6.5), "chalk-frame-pink.png")
     save(frame(WHITE, dashed=True, seed=7, strength=0.2, width=5.5), "chalk-frame-dashed.png")
     save(grain_tile(), "chalk-grain.png")
     save(smudge(), "chalk-smudge.png")
