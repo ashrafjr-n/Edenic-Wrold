@@ -369,6 +369,7 @@ export function LessonPlayer({
           tone={q.color && COLORS[q.color].letter}
           cue={lessonCue.word(q.word)}
           label={format(lines.hearWord, { word: q.word })}
+          board={classroom}
         />
       );
       action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
