@@ -1,5 +1,5 @@
 """Chalk for Pinki's board (2026-10-14), into
-`public/assets/learn/pinki/classroom/`:
+`public/assets/learn/classroom/` (shared by every friend's board):
 
 - `chalk-frame.png`, `chalk-frame-dashed.png` — a rounded box drawn in
   chalk, a 9-slice image for CSS `border-image`: white (a lesson learned),
@@ -21,7 +21,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(__file__)
-DEST = os.path.join(HERE, "../../public/assets/learn/pinki/classroom")
+DEST = os.path.join(HERE, "../../public/assets/learn/classroom")
 N, MARGIN, RADIUS, WIDTH = 320, 24, 46, 7.5
 SS = 3  # drawn this many times larger, then shrunk: smooth, not jagged
 DASH, GAP = 18, 10
