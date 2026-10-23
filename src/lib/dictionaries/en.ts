@@ -283,6 +283,8 @@ export const en = {
     introSkip: "Skip",
   },
   ui: {
+    /** Read out while something loads (nothing is written on screen). */
+    loading: "Loading…",
     completedAria: "{label} completed",
   },
 };
