@@ -138,8 +138,6 @@ export const ku: Dictionary = {
     lessonN: "وانا {n}",
   },
   lessonPlayer: {
-    /** Read out while a lesson or its reel loads (nothing on screen). */
-    loading: "بارکرن…",
     backTo: "ڤەگەڕان بۆ {lessonName}",
     traceInstruction: "شێوەی ب تلییا خۆ بشوپینە",
     reelAbout: "ڤیدیۆیەکا کورت: {title}",
