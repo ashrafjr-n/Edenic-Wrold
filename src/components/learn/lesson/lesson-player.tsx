@@ -439,8 +439,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "likes") {
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
-    } else if (q.type === "cups") {
-      body = <CupsGame key={seed} word={q.word} picture={q.picture} cupAria={lines.cupAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "weather") {
       body = (
         <MakeWeather key={seed} ref={weather} word={q.word} gesture={q.gesture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} onSolved={onSolved} />
