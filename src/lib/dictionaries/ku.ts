@@ -178,7 +178,6 @@ export const ku: Dictionary = {
     popColor: "بالۆنێن {color} بتەقینە!",
     spellPicture: "پەیڤا ڤی وێنەی چێ بکە!",
     thisSeason: "ئەڤە وەرزێ {season}ە!",
-    findUnderCup: "تەماشەی پەرداخان بکە و {thing} بدۆزە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
