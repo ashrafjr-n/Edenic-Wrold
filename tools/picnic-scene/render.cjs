@@ -78,11 +78,12 @@
  *
  *   node tools/picnic-scene/render.cjs backdrop circle square triangle rectangle review
  *
- * Pinki's classroom (2026-10-14) — her hub's and course pages' room, in
- * both frames, the wall (`<frame>-back.png`) and the child's desk in front
- * (`<frame>-front.png`), then `crop.py classroom`:
+ * A friend's classroom (Pinki's 2026-10-14, Nova's and Bloo's 2026-10-23 —
+ * `THEMES` in `scene.html`) — their hub's and course pages' room, in both
+ * frames, the wall (`<frame>-back.png`) and the chairs in front
+ * (`<frame>-front.png`), then `crop.py classroom <id>`:
  *
- *   node tools/picnic-scene/render.cjs classroom pinki
+ *   node tools/picnic-scene/render.cjs classroom pinki nova bloo
  *
  * Pinki's courses' things for their boxes on her board (2026-10-14), then
  * `crop.py things public/assets/learn/pinki/classroom course-shapes course-colors`:
