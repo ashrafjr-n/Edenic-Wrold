@@ -5306,17 +5306,17 @@ a.board-cell:focus-visible {
   }
 }
 
-/* ---------- A lesson on its way (`LessonLoader`) ----------
+/* ---------- Something on its way (`Loader`) ----------
    Three clay magnets — her board's pink, blue and gold — hop one after
    another, each squashing a little as it lands. */
-.lesson-loader {
+.loader {
   display: inline-flex;
   align-items: flex-end;
   gap: 0.75rem;
   height: 3.4rem;
 }
 
-.lesson-loader > [aria-hidden] {
+.loader > [aria-hidden] {
   width: 1.4rem;
   aspect-ratio: 1;
   border-radius: 9999px;
