@@ -5689,9 +5689,9 @@ a.board-cell:focus-visible {
 }
 
 .chalk-trail-dot--done {
-  border-color: #ffb0d4;
-  color: #ffb0d4;
-  background-color: rgb(255 176 212 / 14%);
+  border-color: var(--chalk-accent);
+  color: var(--chalk-accent);
+  background-color: color-mix(in srgb, var(--chalk-accent) 14%, transparent);
 }
 
 .chalk-trail-line {
