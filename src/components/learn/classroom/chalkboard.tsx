@@ -27,7 +27,7 @@ interface ChalkboardProps {
 /**
  * Pinki's chalkboard (2026-10-14): a slate, wiped but never quite clean, in
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
- * language. The SAME view transition (`pinki-board`) on the hub and on a
+ * language. The SAME view transition (`class-board`) on the hub and on a
  * course page: tapping a course zooms the board up to fill the screen with
  * its lessons on it, and back. A lesson's boards (`stage`, `strip`) take
  * no part in it — a lesson opens through its loader, nothing grows.
