@@ -4103,12 +4103,12 @@ if (THING) {
   const bunting = (x0, x1, y0) => {
     const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(x0, y0, 0.3), new THREE.Vector3((x0 + x1) / 2, y0 - 0.45, 0.3), new THREE.Vector3(x1, y0, 0.3)]);
     scene.add(mesh(new THREE.TubeGeometry(curve, 64, 0.025, 8), matte(0xffffff)));
-    const colors = [0xf776ac, 0x4da3ec, 0xffc93a, 0x5cc56b];
+    const { colors, kinds } = THEME.bunting;
     const n = Math.round((x1 - x0) / 0.75);
     for (let k = 1; k < n; k++) {
       const p = curve.getPoint(k / n);
       const s = new THREE.Shape();
-      const kind = k % 4;
+      const kind = kinds[k % 4];
       if (kind === 0) s.absarc(0, -0.28, 0.24, 0, Math.PI * 2, false);
       else if (kind === 1) { s.moveTo(-0.23, -0.04); s.lineTo(0.23, -0.04); s.lineTo(0.23, -0.5); s.lineTo(-0.23, -0.5); s.closePath(); }
       else if (kind === 2) { s.moveTo(-0.27, -0.02); s.lineTo(0.27, -0.02); s.lineTo(0, -0.52); s.closePath(); }
