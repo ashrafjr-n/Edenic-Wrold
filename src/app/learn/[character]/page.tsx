@@ -71,19 +71,22 @@ export default async function CharacterLearnPage({
     />
   );
 
-  /* Pinki's hub is her classroom (2026-10-14): her board with a square card
-     per course, Pinki beside it with her pointer. Nova and Bloo keep their
-     course cards until theirs are built. */
-  if (character.id === "pinki") {
+  /* A friend with a classroom (Pinki's 2026-10-14, Nova's and Bloo's
+     2026-10-23): their board with a square sheet per course, the friend
+     beside it with their pointer. */
+  const room = CLASSROOMS[character.id];
+  if (room) {
     return (
-      <main className="class-page relative flex flex-1 flex-col" style={characterAccent(character)}>
-        <ClassroomBackdrop />
+      <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
+        <ClassroomBackdrop wall={room.wall} desk={room.desk} />
         {/* Its own transition group, so the zooming wall never covers it. */}
-        <ViewTransition name="pinki-back">
+        <ViewTransition name="class-back">
           <BackRow href="/learn" label={dict.characterHub.backToLearn} />
         </ViewTransition>
-        <PinkiClassroom
+        <FriendClassroom
           characterId={character.id}
+          teacher={room.teacher}
+          cheer={room.cheer}
           courses={lessons
             .filter((lesson) => !lesson.locked)
             .map((lesson, i) => ({
