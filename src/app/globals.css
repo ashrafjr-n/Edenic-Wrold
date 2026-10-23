@@ -5361,7 +5361,7 @@ a.board-cell:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lesson-loader > [aria-hidden] {
+  .loader > [aria-hidden] {
     animation: loader-fade 1.2s ease-in-out infinite alternate;
   }
 }
