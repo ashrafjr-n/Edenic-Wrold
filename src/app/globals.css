@@ -4225,18 +4225,19 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   Pinki's classroom — her hub and her course pages (2026-10-14).
+   A friend's classroom — their hub and course pages (Pinki's 2026-10-14,
+   Nova's and Bloo's 2026-10-23: the same classroom, their own room).
 
    The room is a rendered picture (`ClassroomBackdrop`): the wall, sharp,
    under everything, and the child's desk in front of
    everything (pointer-events off). The board is the page's own
    (`Chalkboard`): a slate in a clay wood frame, written on in chalk, so it
-   is sharp in every language. On the hub Pinki stands beside it with her
-   pointer; a course page is the same board up close. Both are view
-   transitions: the board zooms up into a course, the wall with it, Pinki
-   and the desk leave the picture.
+   is sharp in every language. On the hub the friend stands beside it with
+   their pointer; a course page is the same board up close. Both are view
+   transitions: the board zooms up into a course, the wall with it, the
+   friend and the desk leave the picture.
    --------------------------------------------------------------- */
-/* `clip`, never `hidden` (the back row is sticky): Pinki stands behind the
+/* `clip`, never `hidden` (the back row is sticky): the friend stands behind the
    desk with her feet past the page's bottom edge, which must not scroll. */
 .class-page {
   isolation: isolate;
