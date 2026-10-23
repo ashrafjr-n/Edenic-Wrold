@@ -1,5 +1,5 @@
 import { ViewTransition, type CSSProperties, type ReactNode } from "react";
-import chalkFrame from "../../../../public/assets/learn/pinki/classroom/chalk-frame.png";
+import chalkFrame from "../../../../public/assets/learn/classroom/chalk-frame.png";
 import chalkFrameDashed from "../../../../public/assets/learn/pinki/classroom/chalk-frame-dashed.png";
 import chalkGrain from "../../../../public/assets/learn/pinki/classroom/chalk-grain.png";
 import chalkSmudge from "../../../../public/assets/learn/pinki/classroom/chalk-smudge.png";
