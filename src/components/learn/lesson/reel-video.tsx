@@ -119,7 +119,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
           )}
           {!ready && !failed && (
             <span className="absolute inset-0 flex items-center justify-center">
-              <LessonLoader label={loadingLabel} />
+              <Loader label={loadingLabel} />
             </span>
           )}
 
