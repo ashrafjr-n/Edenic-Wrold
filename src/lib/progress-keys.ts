@@ -38,3 +38,8 @@ export function puzzleKey(stage: number): ItemKey {
 export function memoryKey(level: number): ItemKey {
   return `memory.${level}`;
 }
+
+/** Nova's Cups' five levels (`cups.1`) — finished or not, like a puzzle. */
+export function cupsKey(level: number): ItemKey {
+  return `cups.${level}`;
+}
