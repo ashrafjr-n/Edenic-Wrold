@@ -1,9 +1,5 @@
 "use client";
 
-import type { CSSProperties } from "react";
-import Image, { type StaticImageData } from "next/image";
-import { ArrowRight } from "lucide-react";
-import { Button3D } from "@/components/ui/button-3d";
 import { itemKey, useProgress } from "@/store/progress";
 
 export interface UpNextCourse {
