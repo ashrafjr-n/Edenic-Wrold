@@ -56,7 +56,7 @@ interface LessonDoneProps {
  * chalkboard, with the stars the lesson earned — the ones her course board
  * shows on its box.
  */
-export function LessonDone({ title, words, faces, drawing, accent, dir, board }: LessonDoneProps) {
+export function LessonDone({ title, words, faces, drawing, accent, cheer = celebrate, dir, board }: LessonDoneProps) {
   const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} />;
   return (
     <div className={`relative mb-auto flex w-full max-w-sm ${board ? "" : "-mt-[4.5rem]"} flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2`}>
