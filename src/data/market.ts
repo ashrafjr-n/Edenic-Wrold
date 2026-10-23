@@ -1,16 +1,10 @@
 import type { StaticImageData } from "next/image";
 import type { SceneRect } from "@/types/course";
 import pot from "../../public/assets/learn/nova/fruits/props/pot.png";
-import cup from "../../public/assets/play/cups/cup.png";
 
 /* Nova's market — the things her Vegetables course happens in, rendered
-   by `tools/picnic-scene` (`soupPot`, `cup`) in the same clay as
-   everything else. */
-
-/** Nova's cup, upside down — the lessons' cups game hides the food under
-    one of three. No shadow: the table draws one that stays down when the
-    cup is lifted. */
-export const CUP: StaticImageData = cup;
+   by `tools/picnic-scene` (`soupPot`) in the same clay as everything
+   else. (Her cup went with the cups game to /play, 2026-10-23.) */
 
 /** What a Make fills — Nova's soup pot — empty, and where what goes in
     lies in that picture: its mouth (% of the picture, measured off the
