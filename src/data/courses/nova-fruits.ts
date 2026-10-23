@@ -24,8 +24,8 @@ const FOODS: Food[] = [
   { word: "carrot", things: "carrots", picture: carrot },
   { word: "broccoli", things: "broccoli", picture: broccoli },
   { word: "potato", things: "potatoes", picture: potato },
-  { word: "tomato", things: "tomatoes", picture: tomato, core: true },
-  { word: "pepper", things: "peppers", picture: pepper, core: true },
+  { word: "tomato", things: "tomatoes", picture: tomato },
+  { word: "pepper", things: "peppers", picture: pepper },
 ];
 
 const food = (word: string): Food => {
