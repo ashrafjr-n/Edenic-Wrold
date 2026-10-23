@@ -42,167 +42,42 @@ export default async function CharacterLearnPage({
       covers: courseLessons[lesson.id].map((def) => def.cover),
       tone: { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink },
     }));
-  const upNext = (className: string) => (
-    <UpNext
-      characterId={character.id}
-      courses={upNextCourses}
-      labels={{
-        upNext: dict.characterHub.nextUp,
-        start: dict.lessonPicker.ctaStart,
-        continue: dict.trail.ctaContinue,
-      }}
-      dir={dir}
-      className={className}
-    />
-  );
 
-  /* A friend with a classroom (Pinki's 2026-10-14, Nova's and Bloo's
-     2026-10-23): their board with a square sheet per course, the friend
-     beside it with their pointer. */
+  /* Every friend's hub is their classroom (Pinki's 2026-10-14, Nova's and
+     Bloo's 2026-10-23): their board with a square sheet per course, the
+     friend beside it with their pointer. */
   const room = CLASSROOMS[character.id];
-  if (room) {
-    return (
-      <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
-        <ClassroomBackdrop wall={room.wall} desk={room.desk} />
-        {/* Its own transition group, so the zooming wall never covers it. */}
-        <ViewTransition name="class-back">
-          <BackRow href="/learn" label={dict.characterHub.backToLearn} />
-        </ViewTransition>
-        <FriendClassroom
-          characterId={character.id}
-          teacher={room.teacher}
-          cheer={room.cheer}
-          courses={lessons
-            .filter((lesson) => !lesson.locked)
-            .map((lesson, i) => ({
-              ...upNextCourses[i],
-              model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
-            }))}
-          labels={{
-            lessons: dict.lessonPicker.lessonsCount,
-            cheer: dict.characterHub.youCanDoIt,
-            start: dict.lessonPicker.ctaStart,
-            continue: dict.trail.ctaContinue,
-            again: dict.lessonPlayer.playAgain,
-            startCourse: dict.characterHub.startLesson,
-            continueCourse: dict.characterHub.continueLesson,
-            replayCourse: dict.characterHub.replayLesson,
-            allDone: dict.characterHub.allDone,
-            friend: character.name,
-          }}
-          dir={dir}
-        />
-      </main>
-    );
-  }
-
-  /* This character owns the page, so the back button beneath reads the
-     accent from here — Nova's and Bloo's hubs come out right by default
-     rather than wearing Pinki's pink. */
   return (
-    <main
-      className="relative flex flex-1 flex-col pb-20 sm:pb-10"
-      style={characterAccent(character)}
-    >
-      {/* Back alone: Pinki herself says whose page this is, at every width. */}
-      <BackRow href="/learn" label={dict.characterHub.backToLearn} />
-
-      {/* ================= Phone (< sm) =================
-          Pinki says hello from a speech bubble, then each course is one big
-          clay card in its own colour (`CourseCard`). */}
-      <div className="flex flex-col px-6 sm:hidden">
-        <div className="mt-2 flex items-end gap-1">
-          {/* The friend stands on a round clay base in their colour — the
-              friend picker's look. */}
-          <span className="art-stage art-stage--round w-28 shrink-0" style={STAGE}>
-            <Image
-              src={hello[character.id]}
-              alt=""
-              sizes="112px"
-              preload
-              className="anim-pop-in w-full"
-              style={{ animationDelay: "0.1s" }}
-            />
-          </span>
-          <div
-            dir={dirFor(dict.locale)}
-            className="hub-bubble card card-clay-white speech-clay anim-pop-in relative mb-5 min-w-0 flex-1 px-5 py-4"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <h1 className="text-xl font-bold leading-tight text-[var(--color-ink)]">
-              {format(dict.characterHub.hello, { name: character.name })}
-            </h1>
-            <p className="mt-1 text-sm text-[var(--color-ink-soft)]">{dict.characterHub.askToday}</p>
-          </div>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-5">
-          {lessons.map((lesson, index) => (
-            <CourseCard
-              key={lesson.id}
-              lesson={lesson}
-              characterId={character.id}
-              name={dict.lessons[lesson.id].name}
-              description={dict.lessons[lesson.id].description}
-              ariaLabel={format(dict.characterHub.startLesson, { name: dict.lessons[lesson.id].name })}
-              dir={dirFor(dict.locale)}
-              index={index}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ================= Tablet + desktop (sm and up) =================
-          The phone's pieces grown to fill a big screen. Tablet: Pinki and
-          her bubble across the top, the two courses side by side as tall
-          cards, "Up next" under them. Desktop: two columns the height of
-          the screen — Pinki, her bubble and "Up next" on the left, the
-          courses stacked on the right, each taking half the height. */}
-      <div className="mx-auto hidden w-full max-w-7xl flex-1 flex-col px-8 pt-4 sm:flex lg:grid lg:h-[calc(100svh-13rem)] lg:min-h-[32rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[1fr_auto] lg:gap-10 lg:pt-6 xl:gap-14 xl:px-12">
-        <section className="flex items-end gap-5 lg:flex-col-reverse lg:items-center lg:justify-center lg:gap-3">
-          <span
-            className="art-stage art-stage--round w-44 shrink-0 lg:w-[min(18rem,32svh)] lg:[@media(max-height:820px)]:w-[25svh]"
-            style={STAGE}
-          >
-            <Image
-              src={hello[character.id]}
-              alt=""
-              sizes="(min-width: 1024px) 18rem, 11rem"
-              preload
-              className="anim-pop-in w-full"
-              style={{ animationDelay: "0.1s" }}
-            />
-          </span>
-          <div
-            dir={dir}
-            className="hub-bubble hub-bubble--wide card card-clay-white speech-clay anim-pop-in relative mb-8 min-w-0 flex-1 px-8 py-6 lg:mb-0 lg:w-full lg:flex-none lg:text-center"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <h1 className="text-3xl font-bold leading-tight text-[var(--color-ink)] xl:text-4xl">
-              {format(dict.characterHub.hello, { name: character.name })}
-            </h1>
-            <p className="mt-1.5 text-lg text-[var(--color-ink-soft)] xl:text-xl">{dict.characterHub.askToday}</p>
-          </div>
-        </section>
-
-        <div className="mt-8 grid flex-1 auto-rows-fr grid-cols-2 gap-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:grid-cols-1 xl:gap-8">
-          {lessons.map((lesson, index) => (
-            <CourseCardWide
-              key={lesson.id}
-              lesson={lesson}
-              characterId={character.id}
-              name={dict.lessons[lesson.id].name}
-              description={dict.lessons[lesson.id].description}
-              count={format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems })}
-              ariaLabel={format(dict.characterHub.startLesson, { name: dict.lessons[lesson.id].name })}
-              dir={dir}
-              index={index}
-            />
-          ))}
-        </div>
-
-        {upNext("anim-fade-up mt-6 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-start")}
-      </div>
+    <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
+      <ClassroomBackdrop wall={room.wall} desk={room.desk} />
+      {/* Its own transition group, so the zooming wall never covers it. */}
+      <ViewTransition name="class-back">
+        <BackRow href="/learn" label={dict.characterHub.backToLearn} />
+      </ViewTransition>
+      <FriendClassroom
+        characterId={character.id}
+        teacher={room.teacher}
+        cheer={room.cheer}
+        courses={lessons
+          .filter((lesson) => !lesson.locked)
+          .map((lesson, i) => ({
+            ...upNextCourses[i],
+            model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
+          }))}
+        labels={{
+          lessons: dict.lessonPicker.lessonsCount,
+          cheer: dict.characterHub.youCanDoIt,
+          start: dict.lessonPicker.ctaStart,
+          continue: dict.trail.ctaContinue,
+          again: dict.lessonPlayer.playAgain,
+          startCourse: dict.characterHub.startLesson,
+          continueCourse: dict.characterHub.continueLesson,
+          replayCourse: dict.characterHub.replayLesson,
+          allDone: dict.characterHub.allDone,
+          friend: character.name,
+        }}
+        dir={dir}
+      />
     </main>
   );
 }
