@@ -202,10 +202,18 @@ export const ar: Dictionary = {
     cook: "اطبخ",
     like: "تحبّه؟",
     harvest: "اقطف",
-    cups: "ابحث",
     weather: "اصنع",
   },
   activities: {
+    /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
+        step until then). */
+    cupsCtaButton: "لعبة الأكواب",
+    cupsCtaAlt: "أكواب Nova الثلاثة في حديقتها، وتحت أحدها جزرة",
+    cupsAsk: "راقب الأكواب واعثر على {thing}!",
+    cupsWin: "وجدتها كلها!",
+    /** A cup's name for a screen reader, by where it stands — never by
+        what is under it. */
+    cupAria: "الكوب {n}",
     puzzleTitle: "وقت تركيب الصور",
     puzzleSubtitle: "أكمل قطع البازل!",
     memoryTitle: "اختبر ذاكرتك",
