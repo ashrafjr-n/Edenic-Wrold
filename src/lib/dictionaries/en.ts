@@ -127,8 +127,6 @@ export const en = {
     startLesson: "Start {name}",
     hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
-    /** The sign over Pinki's board. */
-    classSign: "{name}'s Class",
     /** What a course's box is announced as, by where the child is in it. */
     continueLesson: "Continue {name}",
     replayLesson: "Play {name} again",

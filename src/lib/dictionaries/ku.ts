@@ -124,7 +124,6 @@ export const ku: Dictionary = {
     startLesson: "{name} دەستپێبکە",
     hello: "سلاڤ، ئەز {name} م!",
     askToday: "ئەڤرۆ دێ چ فێربین؟",
-    classSign: "پۆلا {name}",
     continueLesson: "{name} بەردەوام بە",
     replayLesson: "{name} دووبارە یاری بکە",
     youCanDoIt: "تو دشێی!",
