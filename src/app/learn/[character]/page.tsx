@@ -2,7 +2,7 @@ import { ViewTransition } from "react";
 import { notFound, redirect } from "next/navigation";
 import { characters } from "@/data/characters";
 import { lessonsByCharacter } from "@/data/lessons";
-import { courseCovers, courseLessons } from "@/data/courses";
+import { courseCovers } from "@/data/courses";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
 import type { UpNextCourse } from "@/components/learn/up-next";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
