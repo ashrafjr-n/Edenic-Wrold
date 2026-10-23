@@ -45,8 +45,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "cook", target: q.list.length === 1 ? q.list[0] : undefined };
     case "likes":
       return { kind: "like" };
-    case "cups":
-      return { kind: "cups", target: q.word };
     case "weather":
       return { kind: "weather", target: q.word };
     case "harvest":
