@@ -19,38 +19,39 @@ interface ClassroomBackdropProps {
 }
 
 /**
- * Pinki's classroom round her board (2026-10-14): the pink wall, sharp,
- * with the class's drawings, a "Small Steps, Big Dreams" poster and a
- * window, and the class's chairs and a desk in the front, out of focus
- * (`tools/picnic-scene`, `render.cjs classroom pinki`) — a whole frame laid
+ * A friend's classroom round their board (Pinki's 2026-10-14: the pink
+ * wall, sharp, with the class's drawings, a "Small Steps, Big Dreams"
+ * poster and a window; Nova's and Bloo's their own), and the class's
+ * chairs and a desk in the front, out of focus (`tools/picnic-scene`,
+ * `render.cjs classroom <id>`) — a whole frame laid
  * over the wall the same way, so they stand where they were rendered. A
  * portrait and a landscape frame, the one that fits the screen shown — the
  * other is never fetched (lazy and `display: none`) — and preloaded, so the
  * room is there with the page, not a moment after.
  *
- * The wall is ONE view transition (`pinki-wall`) on the hub and on a course
+ * The wall is ONE view transition (`class-wall`) on the hub and on a course
  * page, so going in to a course zooms it, and coming back zooms it out; the
  * chairs slide away on the way in (`desk-exit`). The zoom is on the view
  * INSIDE the wall, never the wall itself: a transition's snapshot is the
  * named element's box, and a wall scaled past the page would cover the
  * header for the length of the transition.
  */
-export function ClassroomBackdrop({ zoomed = false, still = false }: ClassroomBackdropProps) {
+export function ClassroomBackdrop({ wall: room, desk: chairs, zoomed = false, still = false }: ClassroomBackdropProps) {
   const wall = (
     <div className="class-wall">
       <div className={`class-wall-view ${zoomed || still ? "class-wall-view--zoomed" : ""}`}>
-        <Image src={wallPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
-        <Image src={wallLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+        <Image src={room.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+        <Image src={room.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
       </div>
     </div>
   );
   return (
     <div className="class-room" aria-hidden>
-      <WallPreload portrait={wallPortrait} landscape={wallLandscape} />
+      <WallPreload portrait={room.portrait} landscape={room.landscape} />
       {still ? (
         wall
       ) : (
-        <ViewTransition name="pinki-wall" share="class-morph" default="none">
+        <ViewTransition name="class-wall" share="class-morph" default="none">
           {wall}
         </ViewTransition>
       )}
