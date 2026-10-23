@@ -4069,20 +4069,6 @@ button:disabled,
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
 
-/* "Start" above the next stop, with a tail pointing down at it. */
-.path-bubble::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -0.35rem;
-  width: 0.9rem;
-  height: 0.9rem;
-  border-radius: 0.15rem;
-  background: inherit;
-  translate: -50% 0;
-  rotate: 45deg;
-}
-
 /* A locked stop still shows what is coming, only quieter. */
 .path-art-locked {
   opacity: 0.55;
