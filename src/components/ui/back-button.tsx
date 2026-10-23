@@ -11,7 +11,7 @@ interface BackButtonProps {
 }
 
 /** The three variables a route hands down to colour its own section. */
-export type PageAccentVars = CSSProperties & {
+type PageAccentVars = CSSProperties & {
   "--page-accent-color"?: string;
   "--page-accent-edge"?: string;
   "--page-accent-ink"?: string;

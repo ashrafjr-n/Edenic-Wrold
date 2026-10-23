@@ -27,7 +27,7 @@ interface TraceBoardProps {
 }
 
 /** Chalk's two colours on her board: what is written, and her pink. */
-export const CHALK_WHITE = "#fbf8f0";
+const CHALK_WHITE = "#fbf8f0";
 export const CHALK_PINK = "#ffb0d4";
 
 /** How much of the stroke must stay on the line. Fixed — this is what keeps

@@ -18,7 +18,7 @@ import chalkSmile from "../../../../public/assets/learn/pinki/classroom/chalk-sm
 import chalkBurst from "../../../../public/assets/learn/pinki/classroom/chalk-burst.png";
 import chalkUnderline from "../../../../public/assets/learn/pinki/classroom/chalk-underline.png";
 
-export interface ClassCourse extends UpNextCourse {
+interface ClassCourse extends UpNextCourse {
   /** The course's one 3D thing (`classroomModels`). */
   model: StaticImageData;
 }

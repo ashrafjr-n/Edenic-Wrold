@@ -17,7 +17,7 @@ type ToneVars = CSSProperties & {
 
 /** `playful` — gradient face that scales on hover/tap, for the kid-facing CTAs.
     `calm` — solid face, no motion, soft shadow only, for the header chrome. */
-export type ButtonVariant = "playful" | "calm";
+type ButtonVariant = "playful" | "calm";
 
 interface Button3DProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
