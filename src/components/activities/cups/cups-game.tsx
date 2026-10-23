@@ -46,17 +46,20 @@ interface CupsGameProps {
   /** The food, in English, and its picture. */
   word: string;
   picture: StaticImageData;
+  /** How hard the level is: this many swaps of this long each. */
+  swaps: number;
+  swapMs: number;
   /** A cup's name for a screen reader, by where it stands ("Cup {n}") —
       never by what is under it. */
   cupAria: string;
   onSolved: () => void;
-  onMiss: () => void;
 }
 
 /**
- * Nova's cups: the food goes under one of three cups (a different one,
- * at random, every round), they swap places, and the child taps the one
- * it is under. Found → the cup comes up on it, its word is said and it
+ * Nova's Cups (a game on /play since 2026-10-23; it was the Vegetables
+ * lessons' third step): the food goes under one of three cups (a different
+ * one, at random, every round), they swap places, and the child taps the
+ * one it is under. Found → the cup comes up on it, its word is said and it
  * jumps. Not there → that cup shakes, the right one lifts to show where it
  * went, and the round starts again (direct request: one miss and the
  * challenge restarts).
