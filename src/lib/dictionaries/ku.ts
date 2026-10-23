@@ -206,10 +206,18 @@ export const ku: Dictionary = {
     cook: "چێ بکە",
     like: "حەز دکەی؟",
     harvest: "بچنە",
-    cups: "بدۆزە",
     weather: "چێ بکە",
   },
   activities: {
+    /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
+        step until then). */
+    cupsCtaButton: "یاریا پەرداخان",
+    cupsCtaAlt: "سێ پەرداخێن Nova د باخچێ وێدا، گێزەرەک ل بن ئێکێ ژ وان",
+    cupsAsk: "تەماشەی پەرداخان بکە و {thing} بدۆزە!",
+    cupsWin: "تە هەمی دیتن!",
+    /** A cup's name for a screen reader, by where it stands — never by
+        what is under it. */
+    cupAria: "پەرداخا {n}",
     puzzleTitle: "دەمێ چێکرنا وێنەیان",
     puzzleSubtitle: "پازلان تەمام بکە!",
     memoryTitle: "بیرا خۆ تاقی بکە",
