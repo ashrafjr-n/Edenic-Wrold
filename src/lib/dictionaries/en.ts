@@ -170,7 +170,6 @@ export const en = {
     likeAria: "I like it",
     dislikeAria: "I don't like it",
     balloonAria: "{color} balloon",
-    cupAria: "Cup {n}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
