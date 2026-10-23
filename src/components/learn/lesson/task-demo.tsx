@@ -32,7 +32,6 @@ export type TaskDemoDef =
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
-  | { kind: "cups"; picture: StaticImageData }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
 
