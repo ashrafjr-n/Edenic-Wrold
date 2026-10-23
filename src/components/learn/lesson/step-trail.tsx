@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Check } from "lucide-react";
+import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { TASK_ICONS, type TaskKind } from "./task-chip";
 
 interface StepTrailProps {
@@ -11,6 +12,9 @@ interface StepTrailProps {
   current: ReactNode;
   /** The course's colour. */
   tone: { face: string; edge: string; ink: string };
+  /** Pinki's lessons: the trail is written in chalk on a strip of her
+      board — done steps ticked in pink chalk, the ones to come faint. */
+  chalk?: boolean;
 }
 
 /**
@@ -19,7 +23,30 @@ interface StepTrailProps {
  * the current one is its round task button (the how-to), the ones to come
  * show their icon, faded.
  */
-export function StepTrail({ kinds, at, current, tone }: StepTrailProps) {
+export function StepTrail({ kinds, at, current, tone, chalk = false }: StepTrailProps) {
+  if (chalk) {
+    return (
+      <Chalkboard size="strip">
+        <ol className="chalk-trail">
+          {kinds.map((kind, i) => {
+            const Icon = TASK_ICONS[kind];
+            return (
+              <li key={i} className="flex items-center gap-2">
+                {i > 0 && <span aria-hidden className={`chalk-trail-line ${i <= at ? "chalk-trail-line--done" : ""}`} />}
+                {i === at ? (
+                  current
+                ) : (
+                  <span aria-hidden className={`chalk-trail-dot ${i < at ? "chalk-trail-dot--done" : ""}`}>
+                    {i < at ? <Check className="h-5 w-5" strokeWidth={3.5} /> : <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={2.5} />}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </Chalkboard>
+    );
+  }
   const clay = { backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties;
   return (
     <ol className="flex items-center gap-2">
