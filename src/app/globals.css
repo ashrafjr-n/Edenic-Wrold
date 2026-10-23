@@ -2200,17 +2200,16 @@ button:disabled,
    (6rem) — so every step can size itself to fit without a scroll.
 
    `.card-bare-lg` strips a step's own wrapping card at `lg` (its contents
-   stay as they are) — except on Pinki's board (`.chalkboard--stage`), where
-   the cards stay white, papers on the slate. `.card` is unlayered, so a
-   Tailwind `lg:bg-*` on it loses; this rule is declared after
-   `.card-clay-white` and its dark twin, so it wins at the same specificity
-   (`:where` adds none). */
+   stay as they are; on Pinki's board at every width — `.chalkboard--stage`).
+   `.card` is unlayered, so a Tailwind `lg:bg-*` on it loses; this rule is
+   declared after `.card-clay-white` and its dark twin, so it wins at the
+   same specificity. */
 @media (width >= 64rem) {
   .lesson-board {
     --stage-h: calc(100svh - 22.75rem);
   }
 
-  :where(.lesson-board:not(.chalkboard--stage)) .card.card-bare-lg {
+  .card.card-bare-lg {
     background: none;
     box-shadow: none;
   }
@@ -4995,7 +4994,7 @@ button:disabled,
 
 @media (width >= 64rem) {
   .board-head-model {
-    width: 6.5rem;
+    width: min(6.5rem, 12svh);
   }
 }
 
@@ -5053,8 +5052,8 @@ button:disabled,
     flex: 1;
     min-height: 0;
     justify-content: center;
-    gap: min(1.6rem, 3svh);
-    padding-block: 0.5rem 1.6rem;
+    gap: min(1.6rem, 2svh);
+    padding-block: 0.25rem 1.1rem;
   }
 }
 
@@ -5062,25 +5061,50 @@ button:disabled,
    small chalk boxes side by side, each its thing held up by a clay magnet
    and its word. */
 .board-row {
-  /* A phone: five a row, whatever its width. */
-  --box: min(3.6rem, calc((100vw - 6rem) / 5));
+  --box: 3.6rem;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem 0.4rem;
+  flex-shrink: 0;
+  gap: 0.5rem;
   max-width: 100%;
+  /* ONE line, side by side — never stacked (direct request): what does not
+     fit scrolls sideways (a phone with ten lessons), a thin chalk scrollbar
+     showing there is more. The padding is the room the chalk frame's
+     outset and the stars badge stand out into. */
+  padding: 0.85rem 0.6rem 0.6rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(251 248 240 / 35%) transparent;
+}
+
+/* Centred while they fit, from the start once they don't (an auto margin,
+   unlike `justify-content: center`, never pushes the first one out of
+   reach). */
+.board-row > :first-child {
+  margin-inline-start: auto;
+}
+
+.board-row > :last-child {
+  margin-inline-end: auto;
+}
+
+.board-row > * {
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 
 @media (width >= 40rem) {
   .board-row {
     --box: 5.25rem;
-    gap: 1rem 0.85rem;
+    gap: 0.85rem;
   }
 }
 
 @media (width >= 64rem) {
   .board-row {
-    --box: clamp(4.5rem, 9.5svh, 7rem);
+    --box: clamp(4rem, 8.5svh, 7rem);
+    padding-block: 0.75rem 0.4rem;
   }
 }
 
@@ -5393,7 +5417,7 @@ a.board-cell:focus-visible {
   max-width: 100%;
   overflow: hidden;
   font-weight: 700;
-  font-size: clamp(1.9rem, 6vw, 3.4rem);
+  font-size: clamp(1.9rem, min(6vw, 7svh), 3.4rem);
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -5429,11 +5453,11 @@ a.board-cell:focus-visible {
 @media (width >= 64rem) {
   .board-next {
     max-width: 46rem;
-    padding: 1.4rem 2.2rem 1.4rem 1.6rem;
+    padding: min(1.4rem, 1.8svh) 2.2rem min(1.4rem, 1.8svh) 1.6rem;
   }
 
   .board-next > .board-cell-art {
-    width: min(15rem, 24svh);
+    width: min(15rem, 19svh);
   }
 
   .board-next-go {
@@ -5511,25 +5535,43 @@ a.board-cell:focus-visible {
   }
 }
 
-/* Her board in a lesson: a word is on a paper sentence strip, held up by
-   two clay magnets — the letters read as they do on a white card. */
-.board-paper {
+/* ---------- Her lessons' steps, straight on the slate ----------
+   No step has a card of its own here: its wrapping card (`.card-bare-lg`)
+   is stripped at every width and the step is written up on the board. What
+   would sink into the slate goes up on paper, held by two clay magnets: a
+   word (`.clay-word` — a brown or black word, an ink one, read as on a
+   white card) and a scene to search (`.pic-card`, a photo). The answer
+   tiles, pots and letter tiles stay the clay things they are. */
+.chalkboard--stage .card.card-bare-lg {
+  background: none;
+  box-shadow: none;
+}
+
+.chalkboard--stage .clay-word,
+.chalkboard--stage .card.pic-card {
   position: relative;
-  display: inline-flex;
-  padding: 0.35rem 1.1rem 0.6rem;
-  border-radius: 0.7rem;
+  border-radius: 0.8rem;
   background-color: #fbf8f0;
   background-image: var(--noise);
   background-blend-mode: soft-light;
   box-shadow:
     inset 0 -3px 0 rgb(120 90 60 / 8%),
-    0 10px 16px -8px rgb(0 0 0 / 50%);
+    0 12px 18px -8px rgb(0 0 0 / 55%);
 }
 
-.board-paper::before,
-.board-paper::after {
+.chalkboard--stage .clay-word {
+  width: fit-content;
+  padding: 0.12em 0.3em 0.2em;
+  border-radius: 0.18em;
+}
+
+.chalkboard--stage .clay-word::before,
+.chalkboard--stage .clay-word::after,
+.chalkboard--stage .pic-card::before,
+.chalkboard--stage .pic-card::after {
   content: "";
   position: absolute;
+  z-index: 2;
   top: -0.45rem;
   width: 1.1rem;
   aspect-ratio: 1;
@@ -5542,13 +5584,33 @@ a.board-cell:focus-visible {
     0 3px 4px rgb(0 0 0 / 35%);
 }
 
-.board-paper::before {
+.chalkboard--stage .clay-word::before,
+.chalkboard--stage .pic-card::before {
   left: 0.9rem;
 }
 
-.board-paper::after {
+.chalkboard--stage .clay-word::after,
+.chalkboard--stage .pic-card::after {
   --magnet: #4da3ec;
   right: 0.9rem;
+}
+
+/* The spelling spaces: wells rubbed into the slate, a pink chalk dash
+   where each letter goes; a letter's place left in the tray, a chalk
+   outline. */
+.chalkboard--stage .letter-slot {
+  background: rgb(0 0 0 / 20%);
+  box-shadow:
+    inset 0 4px 8px -2px rgb(0 0 0 / 45%),
+    inset 0 -2px 3px -2px rgb(255 255 255 / 25%);
+}
+
+.chalkboard--stage .letter-slot:empty::after {
+  background: rgb(255 176 212 / 75%);
+}
+
+.chalkboard--stage .letter-gap {
+  border-color: rgb(251 248 240 / 35%);
 }
 
 /* The done screen's stars, written up one after another — the same stars
