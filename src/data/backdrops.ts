@@ -1,37 +1,5 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
-import shapesCirclePortrait from "../../public/assets/learn/pinki/shapes/backdrop/circle/portrait.jpg";
-import shapesCircleLandscape from "../../public/assets/learn/pinki/shapes/backdrop/circle/landscape.jpg";
-import shapesSquarePortrait from "../../public/assets/learn/pinki/shapes/backdrop/square/portrait.jpg";
-import shapesSquareLandscape from "../../public/assets/learn/pinki/shapes/backdrop/square/landscape.jpg";
-import shapesTrianglePortrait from "../../public/assets/learn/pinki/shapes/backdrop/triangle/portrait.jpg";
-import shapesTriangleLandscape from "../../public/assets/learn/pinki/shapes/backdrop/triangle/landscape.jpg";
-import shapesRectanglePortrait from "../../public/assets/learn/pinki/shapes/backdrop/rectangle/portrait.jpg";
-import shapesRectangleLandscape from "../../public/assets/learn/pinki/shapes/backdrop/rectangle/landscape.jpg";
-import shapesReviewPortrait from "../../public/assets/learn/pinki/shapes/backdrop/review/portrait.jpg";
-import shapesReviewLandscape from "../../public/assets/learn/pinki/shapes/backdrop/review/landscape.jpg";
-import colorsRedPortrait from "../../public/assets/learn/pinki/colors/backdrop/red/portrait.jpg";
-import colorsRedLandscape from "../../public/assets/learn/pinki/colors/backdrop/red/landscape.jpg";
-import colorsBluePortrait from "../../public/assets/learn/pinki/colors/backdrop/blue/portrait.jpg";
-import colorsBlueLandscape from "../../public/assets/learn/pinki/colors/backdrop/blue/landscape.jpg";
-import colorsYellowPortrait from "../../public/assets/learn/pinki/colors/backdrop/yellow/portrait.jpg";
-import colorsYellowLandscape from "../../public/assets/learn/pinki/colors/backdrop/yellow/landscape.jpg";
-import colorsGreenPortrait from "../../public/assets/learn/pinki/colors/backdrop/green/portrait.jpg";
-import colorsGreenLandscape from "../../public/assets/learn/pinki/colors/backdrop/green/landscape.jpg";
-import colorsOrangePortrait from "../../public/assets/learn/pinki/colors/backdrop/orange/portrait.jpg";
-import colorsOrangeLandscape from "../../public/assets/learn/pinki/colors/backdrop/orange/landscape.jpg";
-import colorsPurplePortrait from "../../public/assets/learn/pinki/colors/backdrop/purple/portrait.jpg";
-import colorsPurpleLandscape from "../../public/assets/learn/pinki/colors/backdrop/purple/landscape.jpg";
-import colorsPinkPortrait from "../../public/assets/learn/pinki/colors/backdrop/pink/portrait.jpg";
-import colorsPinkLandscape from "../../public/assets/learn/pinki/colors/backdrop/pink/landscape.jpg";
-import colorsBrownPortrait from "../../public/assets/learn/pinki/colors/backdrop/brown/portrait.jpg";
-import colorsBrownLandscape from "../../public/assets/learn/pinki/colors/backdrop/brown/landscape.jpg";
-import colorsBlackPortrait from "../../public/assets/learn/pinki/colors/backdrop/black/portrait.jpg";
-import colorsBlackLandscape from "../../public/assets/learn/pinki/colors/backdrop/black/landscape.jpg";
-import colorsWhitePortrait from "../../public/assets/learn/pinki/colors/backdrop/white/portrait.jpg";
-import colorsWhiteLandscape from "../../public/assets/learn/pinki/colors/backdrop/white/landscape.jpg";
-import colorsReviewPortrait from "../../public/assets/learn/pinki/colors/backdrop/review/portrait.jpg";
-import colorsReviewLandscape from "../../public/assets/learn/pinki/colors/backdrop/review/landscape.jpg";
 import fruitsCarrotPortrait from "../../public/assets/learn/nova/fruits/backdrop/carrot/portrait.jpg";
 import fruitsCarrotLandscape from "../../public/assets/learn/nova/fruits/backdrop/carrot/landscape.jpg";
 import fruitsBroccoliPortrait from "../../public/assets/learn/nova/fruits/backdrop/broccoli/portrait.jpg";
@@ -94,32 +62,14 @@ export interface Backdrop {
 /** Each course's world behind its lessons (2026-10-13), one per lesson in
     order: a clay render, blurred (`render.cjs backdrop` → `crop.py
     backdrop`). One world per course, and everything in it the lesson's own
-    — Shapes: Pinki's picnic meadow in the lesson's shape; Colors: her
-    meadow and easel in the lesson's color; Vegetables: Nova's garden
+    — Vegetables: Nova's garden
     growing the lesson's food; Seasons: the meadow in the season; Animals:
     the videos' pastel world with where the animal lives; Weather: the
     meadow under the weather. Each review: all of its course's. */
 export const BACKDROPS: Record<LessonId, Backdrop[]> = {
-  shapes: [
-    { portrait: shapesCirclePortrait, landscape: shapesCircleLandscape },
-    { portrait: shapesSquarePortrait, landscape: shapesSquareLandscape },
-    { portrait: shapesTrianglePortrait, landscape: shapesTriangleLandscape },
-    { portrait: shapesRectanglePortrait, landscape: shapesRectangleLandscape },
-    { portrait: shapesReviewPortrait, landscape: shapesReviewLandscape },
-  ],
-  colors: [
-    { portrait: colorsRedPortrait, landscape: colorsRedLandscape },
-    { portrait: colorsBluePortrait, landscape: colorsBlueLandscape },
-    { portrait: colorsYellowPortrait, landscape: colorsYellowLandscape },
-    { portrait: colorsGreenPortrait, landscape: colorsGreenLandscape },
-    { portrait: colorsOrangePortrait, landscape: colorsOrangeLandscape },
-    { portrait: colorsPurplePortrait, landscape: colorsPurpleLandscape },
-    { portrait: colorsPinkPortrait, landscape: colorsPinkLandscape },
-    { portrait: colorsBrownPortrait, landscape: colorsBrownLandscape },
-    { portrait: colorsBlackPortrait, landscape: colorsBlackLandscape },
-    { portrait: colorsWhitePortrait, landscape: colorsWhiteLandscape },
-    { portrait: colorsReviewPortrait, landscape: colorsReviewLandscape },
-  ],
+  /* Pinki's lessons are in her classroom, on her board (2026-10-23). */
+  shapes: [],
+  colors: [],
   fruits: [
     { portrait: fruitsCarrotPortrait, landscape: fruitsCarrotLandscape },
     { portrait: fruitsBroccoliPortrait, landscape: fruitsBroccoliLandscape },
