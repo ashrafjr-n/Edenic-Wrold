@@ -80,7 +80,7 @@ export const ar: Dictionary = {
   characters: {
     pinki: { tagline: "تكتشف كل الأشكال والألوان في أرجاء العالم الواسع." },
     nova: { tagline: "يزرع الخضار اللذيذة ويراقب الفصول وهي تتغيّر." },
-    bloo: { tagline: "يتساءل عن الألوان والفصول وكل ما في السماء." },
+    bloo: { tagline: "يتعرّف على كل الحيوانات وعلى كل أنواع الطقس." },
   },
   lessons: {
     shapes: {
