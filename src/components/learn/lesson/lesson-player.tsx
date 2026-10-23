@@ -322,7 +322,7 @@ export function LessonPlayer({
       <ReelVideo
         src={lesson.reel}
         image={image}
-        loadingLabel={lines.loading}
+        loadingLabel={dict.ui.loading}
         label={format(lines.reelAbout, { title })}
         skipLabel={lines.skip}
         playLabel={lines.playReel}
