@@ -36,13 +36,10 @@ function othersFor(color: ColorId, count: number): ColorId[] {
   return [...learned, ...coming].slice(0, count);
 }
 
-/** Turns a list so the right one does not always sit in the same place. */
-const turn = <T,>(items: T[], by: number): T[] => items.map((_, i) => items[(i + by) % items.length]);
-
 /**
  * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (its
- * pot, the word in its own color), spell it, paint two things with it, mix
- * it (the three made colors), pop its balloons, then find it in its picnic.
+ * pot, the word in its own color), spell it, mix it (the three made
+ * colors), pop its balloons, then find it in its picnic.
  * Every step is about this one color; the others are only there to choose
  * between.
  */
