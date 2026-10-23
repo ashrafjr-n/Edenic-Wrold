@@ -475,37 +475,6 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
   );
 }
 
-/** Each demo cup's left edge (% of the stage): `--swap` (60cqi) is the
-    outer two's distance. */
-const DEMO_CUPS = [
-  { left: 6.5, className: "demo-cup-front z-[3]" },
-  { left: 36.5, className: "demo-press z-[2]" },
-  { left: 66.5, className: "demo-cup-back z-[1]" },
-];
-
-/** Cups: the food to find over three cups; the outer two swap places,
-    then the finger taps one. Nothing is ever under a cup here — the demo
-    must never show where the food is (direct request). */
-function CupsDemo({ picture }: { picture: StaticImageData }) {
-  return (
-    <div className="@container relative h-full w-full" style={{ "--swap": "60cqi" } as CSSProperties}>
-      <span className="absolute left-[33%] top-[6%] h-[30%] w-[34%]">
-        <Image src={picture} alt="" fill sizes="6rem" className="object-contain" />
-      </span>
-      {DEMO_CUPS.map(({ left, className }, i) => (
-        <span key={i} className={`absolute top-[52%] h-[30%] w-[27%] ${className}`} style={{ left: `${left}%` }}>
-          <Image src={CUP} alt="" fill sizes="5rem" className="object-contain" />
-          {i === 1 && (
-            <span className="absolute left-1/2 top-1/2">
-              <Finger />
-            </span>
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 /** Make the weather: the hill before it and the first go — the finger taps
     the cloud (rain starts), shakes it (snow starts), pushes one cloud off
     the sun (the hill brightens) or sweeps across the sky (a gust blows);
