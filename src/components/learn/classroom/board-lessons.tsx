@@ -46,9 +46,10 @@ function readStarsSeen(): Record<string, number> {
  * A course's lessons up on Pinki's board (2026-10-23 layout): the lesson to
  * play next big in the middle — a paper sheet pinned up by two magnets,
  * "Lesson 3", its thing and word, one Start button — the lessons learned
- * small side by side above it (each with the stars it earned, of 3, any
+ * small side by side on ONE line above it (it scrolls sideways when it
+ * doesn't fit) (each with the stars it earned, of 3, any
  * earned since the last visit flying in), the ones still to come small
- * below it, dimmed, a "?" for their word (a colour shows an empty pot). A
+ * on one line below it, dimmed, a "?" for their word (a colour shows an empty pot). A
  * lock that opened since the last visit springs off the big sheet.
  */
 export function BoardLessons({ titles, stops, characterId, lessonId, basePath, dict, allDone, dir }: BoardLessonsProps) {
@@ -85,6 +86,15 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     }, 0);
     return () => clearTimeout(timer);
   }, [hydrated, starsKey, characterId, lessonId]);
+
+  /* The learned row is one line that may scroll: start it at its end, the
+     latest lesson learned beside the next one. */
+  const learnedRef = useRef<HTMLDivElement>(null);
+  const learnedCount = stars.filter((s) => s > 0).length;
+  useEffect(() => {
+    const row = learnedRef.current;
+    if (row) row.scrollLeft = row.scrollWidth;
+  }, [learnedCount]);
 
   let flying = 0;
   const learned: ReactNode[] = [];
@@ -195,7 +205,11 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
 
   return (
     <div ref={rootRef} className={`board-lessons ${next ? "" : "board-lessons--all"}`}>
-      {learned.length > 0 && <div className="board-row">{learned}</div>}
+      {learned.length > 0 && (
+        <div ref={learnedRef} className="board-row">
+          {learned}
+        </div>
+      )}
       {next}
       {!next && hydrated && (
         <p dir={dir} className="chalk-title board-all-done">
