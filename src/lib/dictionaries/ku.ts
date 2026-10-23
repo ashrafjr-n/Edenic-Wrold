@@ -122,7 +122,6 @@ export const ku: Dictionary = {
     backToLearn: "ڤەگەڕان بۆ فێربوونێ",
     nextUp: "یا دی",
     startLesson: "{name} دەستپێبکە",
-    askToday: "ئەڤرۆ دێ چ فێربین؟",
     continueLesson: "{name} بەردەوام بە",
     replayLesson: "{name} دووبارە یاری بکە",
     youCanDoIt: "تو دشێی!",

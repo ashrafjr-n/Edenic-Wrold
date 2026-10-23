@@ -118,7 +118,6 @@ export const ar: Dictionary = {
     backToLearn: "العودة إلى التعلّم",
     nextUp: "التالي",
     startLesson: "ابدأ {name}",
-    askToday: "ماذا سنتعلّم اليوم؟",
     continueLesson: "تابع {name}",
     replayLesson: "العب {name} مرة أخرى",
     youCanDoIt: "يمكنك فعلها!",

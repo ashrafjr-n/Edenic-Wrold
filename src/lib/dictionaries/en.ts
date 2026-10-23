@@ -125,7 +125,6 @@ export const en = {
     backToLearn: "Back to Learn",
     nextUp: "Next up",
     startLesson: "Start {name}",
-    askToday: "What shall we learn today?",
     /** What a course's box is announced as, by where the child is in it. */
     continueLesson: "Continue {name}",
     replayLesson: "Play {name} again",
