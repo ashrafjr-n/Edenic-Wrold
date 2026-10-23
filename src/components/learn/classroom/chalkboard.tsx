@@ -2,7 +2,7 @@ import { ViewTransition, type CSSProperties, type ReactNode } from "react";
 import chalkFrame from "../../../../public/assets/learn/classroom/chalk-frame.png";
 import chalkFrameDashed from "../../../../public/assets/learn/classroom/chalk-frame-dashed.png";
 import chalkGrain from "../../../../public/assets/learn/classroom/chalk-grain.png";
-import chalkSmudge from "../../../../public/assets/learn/pinki/classroom/chalk-smudge.png";
+import chalkSmudge from "../../../../public/assets/learn/classroom/chalk-smudge.png";
 
 /* The chalk (`tools/picnic-scene/chalk.py`) — the boxes drawn on the board,
    the grain over what is written on it, the eraser's smudges — handed
