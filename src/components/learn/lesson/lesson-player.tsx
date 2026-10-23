@@ -588,7 +588,7 @@ export function LessonPlayer({
           step's button. */}
       <div
         key={`${round}-${at}-${demo}`}
-        className={`mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex ${finished && !classroom ? "lg:mb-[min(4rem,7svh)]" : ""}`}
+        className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
       >
         {footStart}
         {footEnd}
