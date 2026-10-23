@@ -19,9 +19,6 @@ interface WordCardProps {
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
   label: string;
-  /** Pinki's lessons: the step is on her board — no card of its own (the
-      word goes up on a paper strip, `.chalkboard--stage .clay-word`). */
-  board?: boolean;
 }
 
 /**
