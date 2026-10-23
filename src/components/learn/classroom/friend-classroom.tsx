@@ -9,8 +9,6 @@ import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import { itemKey, useProgress } from "@/store/progress";
-import pinkiWithStick from "../../../../public/assets/learn-with-pinki/pinki/pinki-with-a-stick.png";
-import pinkiCelebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 import chalkStar from "../../../../public/assets/learn/classroom/chalk-star.png";
 import chalkHeart from "../../../../public/assets/learn/classroom/chalk-heart.png";
 import chalkSun from "../../../../public/assets/learn/classroom/chalk-sun.png";
