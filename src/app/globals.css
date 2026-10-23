@@ -5018,6 +5018,19 @@ button:disabled,
   }
 }
 
+/* A portrait tablet, four lessons or fewer: two big square boxes a row,
+   as big as the screen's height lets every lesson stay in view. */
+@media (40rem <= width < 64rem) and (orientation: portrait) {
+  .board-lessons--pairs {
+    grid-template-columns: repeat(2, min(calc((100svh - 35rem) / 2), calc(50% - 0.5rem)));
+    justify-content: center;
+  }
+
+  .board-lessons--pairs .board-cell:not(.board-cell--review) {
+    aspect-ratio: 1;
+  }
+}
+
 /* A desktop: the board fills the screen, every lesson on it at once. */
 @media (width >= 64rem) {
   .class-course {
