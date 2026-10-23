@@ -69,7 +69,7 @@ export function OrderLine({ items, seed, itemAria, onSolved, onMiss }: OrderLine
                 <FaceView face={face} size="tile" />
               </span>
             ) : (
-              <span aria-hidden className="text-[length:34cqi] font-bold text-[rgb(var(--shadow-hue)/0.28)]">
+              <span aria-hidden className="slot-number text-[length:34cqi] font-bold text-[rgb(var(--shadow-hue)/0.28)]">
                 {i + 1}
               </span>
             )}
