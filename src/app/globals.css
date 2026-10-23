@@ -4664,8 +4664,8 @@ button:disabled,
 .class-card--next {
   box-shadow:
     inset 0 -4px 0 rgb(120 90 60 / 10%),
-    0 0 0 4px rgb(255 158 200 / 55%),
-    0 0 34px rgb(255 158 200 / 45%),
+    0 0 0 4px color-mix(in srgb, var(--chalk-glow) 55%, transparent),
+    0 0 34px color-mix(in srgb, var(--chalk-glow) 45%, transparent),
     0 16px 22px -12px rgb(0 0 0 / 55%);
 }
 
