@@ -63,46 +63,29 @@ export function LessonDone({ title, words, faces, drawing, accent, cheer, dir, s
           alt=""
           sizes="(min-width: 1024px) 320px, 180px"
           preload
-          className={`anim-pop-in relative w-auto object-contain ${
-            board ? "h-[min(7rem,12svh)] sm:h-[min(7rem,11svh)] lg:h-[min(14rem,24svh)]" : "h-[min(11rem,20svh)] sm:h-[min(8rem,13svh)] lg:h-[min(20rem,36svh)]"
-          }`}
+          className="anim-pop-in relative h-[min(7rem,12svh)] w-auto object-contain sm:h-[min(7rem,11svh)] lg:h-[min(14rem,24svh)]"
         />
         <Celebration />
       </div>
 
-      {board ? (
-        <div className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
-          <div className="flex flex-col items-center gap-3 px-5 pb-3 pt-2 lg:gap-4 lg:px-8 lg:py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-1">
-            <p dir={dir} className="chalk-title anim-fade-up" style={{ animationDelay: "0.2s" }}>
-              {title}
-            </p>
-            <span className="done-stars" aria-hidden>
-              {[1, 2, 3].map((k) => (
-                <Star
-                  key={k}
-                  className={`board-star ${k <= board.stars ? "board-star--on" : ""}`}
-                  style={{ animationDelay: `${0.7 + k * 0.18}s` }}
-                  strokeWidth={2.25}
-                />
-              ))}
-            </span>
-            {learned}
-          </div>
-        </div>
-      ) : (
-        <>
-          <p dir={dir} className="anim-fade-up text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-5xl" style={{ animationDelay: "0.2s" }}>
+      <div className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
+        <div className="flex flex-col items-center gap-3 px-5 pb-3 pt-2 lg:gap-4 lg:px-8 lg:py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-1">
+          <p dir={dir} className="chalk-title anim-fade-up" style={{ animationDelay: "0.2s" }}>
             {title}
           </p>
-
-          <div
-            className="card card-clay-white card-bare-lg anim-pop-in flex w-full flex-col items-center gap-3 px-5 py-4 lg:gap-4 lg:px-8 lg:py-6 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3"
-            style={{ animationDelay: "0.35s" }}
-          >
-            {learned}
-          </div>
-        </>
-      )}
+          <span className="done-stars" aria-hidden>
+            {[1, 2, 3].map((k) => (
+              <Star
+                key={k}
+                className={`board-star ${k <= stars ? "board-star--on" : ""}`}
+                style={{ animationDelay: `${0.7 + k * 0.18}s` }}
+                strokeWidth={2.25}
+              />
+            ))}
+          </span>
+          {learned}
+        </div>
+      </div>
     </div>
   );
 }
