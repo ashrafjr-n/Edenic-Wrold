@@ -27,8 +27,6 @@ interface PinkiClassroomProps {
   characterId: string;
   courses: readonly ClassCourse[];
   labels: {
-    /** "Pinki's Class", on the sign over the board. */
-    sign: string;
     /** "You can do it!", written under the cards. */
     cheer: string;
     start: string;
@@ -97,11 +95,6 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
   return (
     <div className="class-hub">
       <div className="class-stage">
-        <ViewTransition exit="class-sign-exit" default="none">
-          <span dir={dir} className="class-sign">
-            {labels.sign}
-          </span>
-        </ViewTransition>
         <Chalkboard size="hub" className="class-board">
           {allDone && <Celebration />}
           <div className="class-cards">
