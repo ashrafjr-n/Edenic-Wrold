@@ -3865,13 +3865,50 @@ if (THING) {
   const room = new THREE.Group();
   scene.add(room);
 
+  /* Each friend's room (2026-10-23): the same classroom — wall, rail,
+     floor, drawings, bunting, poster, window, chairs, all in the same
+     places (the board and the friend stand in the same spot on every
+     friend's page) — in their own colours and with their own things.
+     Pinki's values are the ones her room was rendered with. */
+  const THEMES = {
+    pinki: {
+      stripes: ["#fcdbe6", "#f8cfdd"], rail: 0xa9e2cf,
+      bunting: { colors: [0xf776ac, 0x4da3ec, 0xffc93a, 0x5cc56b], kinds: [0, 1, 2, 3] },
+      drawings: { phoneTop: ["sun", "rainbow"], phoneLow: "flower", wide: ["rainbow", "house"] },
+      poster: { frame: "#ffd6e7", tall: [["Small", "#f0569b"], ["Steps", "#3f86e8"], ["Big", "#9257de"], ["Dreams", "#3f86e8"]], wide: [["Small Steps,", "#f0569b"], ["Big Dreams", "#3f86e8"]], emblem: "rainbow", stars: ["#ffc93a", "#ff86c2"], pins: [0xf776ac, 0x4da3ec] },
+      view: "hills", sill: "globe",
+      chairs: [[0x5b7fe6, 0xaec4ff], [0xf28ab8, 0xffd3e6]],
+    },
+    /* Nova — vegetables and seasons: a garden classroom in her lavender,
+       her gold and leaf green; the window onto a vegetable patch. */
+    nova: {
+      stripes: ["#ece4fb", "#e1d6f6"], rail: 0xffd36b,
+      bunting: { colors: [0x5cc56b, 0xffc93a, 0xff8a3d, 0xb9a6ec], kinds: [2, 0, 2, 3] },
+      drawings: { phoneTop: ["carrot", "tree"], phoneLow: "nova", wide: ["tree", "carrot"] },
+      poster: { frame: "#e3d9fa", tall: [["Grow", "#3f9e4a"], ["a Little", "#ff8a3d"], ["Every", "#8a6ad8"], ["Day", "#3f9e4a"]], wide: [["Grow a Little", "#3f9e4a"], ["Every Day", "#ff8a3d"]], emblem: "sprout", stars: ["#ffc93a", "#ff8a3d"], pins: [0xffc93a, 0x5cc56b] },
+      view: "garden", sill: "pumpkin",
+      chairs: [[0x8f78dc, 0xd9cdfb], [0xf2b632, 0xffe9a8]],
+    },
+    /* Bloo — animals and weather: a nature classroom in sky blue and sun
+       yellow; the window onto a rainbow over the sea. */
+    bloo: {
+      stripes: ["#dcefff", "#cde6fb"], rail: 0xffe08a,
+      bunting: { colors: [0x4da3ec, 0xffc93a, 0x7fd0ff, 0x5cc56b], kinds: [0, 2, 0, 1] },
+      drawings: { phoneTop: ["cloud", "fish"], phoneLow: "bloo", wide: ["fish", "cloud"] },
+      poster: { frame: "#cfe8ff", tall: [["Explore", "#2f86c4"], ["the", "#ff8a3d"], ["Big", "#5cb85f"], ["World", "#2f86c4"]], wide: [["Explore the", "#2f86c4"], ["Big World", "#ff8a3d"]], emblem: "sun", stars: ["#ffc93a", "#6bb8f0"], pins: [0x4da3ec, 0xffc93a] },
+      view: "sea", sill: "fishbowl",
+      chairs: [[0x4f9de6, 0xbfe0ff], [0xf6c33a, 0xfff0b8]],
+    },
+  };
+  const THEME = THEMES[CLASSROOM] ?? THEMES.pinki;
+
   /* The room: a pink wall, a cream wainscot under a mint rail, a wood floor. */
   /* Wallpaper: soft stripes in two pinks. */
   const paper = document.createElement("canvas");
   paper.width = 256; paper.height = 8;
   const pg = paper.getContext("2d");
-  pg.fillStyle = "#fcdbe6"; pg.fillRect(0, 0, 256, 8);
-  pg.fillStyle = "#f8cfdd"; pg.fillRect(0, 0, 96, 8);
+  pg.fillStyle = THEME.stripes[0]; pg.fillRect(0, 0, 256, 8);
+  pg.fillStyle = THEME.stripes[1]; pg.fillRect(0, 0, 96, 8);
   const stripes = new THREE.CanvasTexture(paper);
   stripes.colorSpace = THREE.SRGBColorSpace;
   stripes.wrapS = THREE.RepeatWrapping;
