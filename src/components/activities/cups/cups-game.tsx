@@ -186,7 +186,7 @@ export function CupsGame({ word, picture, swaps, swapMs, cupAria, onSolved }: Cu
 
   const ratio = 100 / TABLE_H;
   return (
-    <div className="card card-clay-white card-bare-lg flex w-full max-w-2xl flex-col items-center gap-3 px-3 py-4 sm:gap-5 sm:px-8 sm:py-6 lg:max-w-4xl lg:flex-row lg:justify-center lg:gap-12 lg:py-2 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+    <div className="card card-clay-white flex w-full max-w-2xl flex-col items-center gap-3 px-3 py-4 sm:gap-5 sm:px-8 sm:py-6 lg:max-w-4xl lg:flex-row lg:justify-center lg:gap-12 lg:px-10 lg:py-8 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
       <div
         className={`relative w-full [container-type:inline-size] ${TABLE_SIZE}`}
         style={{ aspectRatio: ratio, "--ratio": ratio } as CSSProperties}
