@@ -1,6 +1,6 @@
 # Edenic World
 
-An educational web app for kids aged 5–9. Three mascots — Pinki, Nova and Bloo — teach short video-led courses, and a Play section adds puzzles and memory games. The interface reads in English, Arabic and Badini Kurdish.
+An educational web app for kids aged 5–9. Three mascots — Pinki, Nova and Bloo — teach short video-led courses, and a Play section adds puzzles, a memory game and Nova's cups game. The interface reads in English, Arabic and Badini Kurdish.
 
 ## Tech Stack
 
