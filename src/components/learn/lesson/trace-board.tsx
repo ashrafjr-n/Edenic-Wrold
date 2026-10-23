@@ -309,7 +309,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             <span
               key={at}
               aria-hidden
-              className={`pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 ${chalk ? "text-[#fbf8f0]/70" : "text-[var(--color-ink-soft)]"}`}
+              className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[#fbf8f0]/70"
               style={{ left: `${mark.x}%`, top: `${mark.y}%`, rotate: `${mark.angle}deg` }}
             >
               <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={3.25} />
