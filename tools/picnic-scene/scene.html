@@ -4294,6 +4294,42 @@ if (THING) {
     for (const [px, py, r] of [[0, 0.5, 0.28], [-0.22, 0.38, 0.2], [0.22, 0.4, 0.21], [0.05, 0.72, 0.17]]) { const leaf = mesh(new THREE.SphereGeometry(r, 24, 16), matte(0x7cc66a)); leaf.position.set(px, py, 0); plant.add(leaf); }
     plant.position.set(-wd * 0.22, -ht / 2 - 0.08 + 0.21, 0.3);
     grp.add(plant);
+    /* Nova's sill: a pumpkin from her seasons. Bloo's: a fishbowl. */
+    if (THEME.sill === "pumpkin") {
+      const pumpkin = new THREE.Group();
+      for (let k = 0; k < 6; k++) {
+        const lobe = mesh(new THREE.SphereGeometry(0.2, 32, 24), clay(0xff8a3d, { clearcoat: 0.35 }));
+        lobe.scale.set(0.62, 0.82, 1);
+        lobe.position.set(Math.cos((k / 6) * Math.PI * 2) * 0.12, 0.16, Math.sin((k / 6) * Math.PI * 2) * 0.12);
+        pumpkin.add(lobe);
+      }
+      const stalk = mesh(new THREE.CylinderGeometry(0.03, 0.045, 0.14, 12), matte(0x5c8f3a));
+      stalk.position.y = 0.36;
+      pumpkin.add(stalk);
+      pumpkin.position.set(wd * 0.25, -ht / 2 - 0.08, 0.3);
+      grp.add(pumpkin);
+      return at(grp, x, y, 0);
+    }
+    if (THEME.sill === "fishbowl") {
+      const bowl = new THREE.Group();
+      const glassBall = mesh(new THREE.SphereGeometry(0.36, 48, 32), new THREE.MeshPhysicalMaterial({ color: 0xdff3ff, transparent: true, opacity: 0.35, roughness: 0.05, clearcoat: 1 }));
+      glassBall.position.y = 0.36;
+      bowl.add(glassBall);
+      const water = mesh(new THREE.SphereGeometry(0.32, 48, 32, 0, Math.PI * 2, Math.PI * 0.38, Math.PI * 0.62), clay(0x7fc3f5, { transparent: true, opacity: 0.75 }));
+      water.position.y = 0.36;
+      bowl.add(water);
+      const fishBody = mesh(new THREE.SphereGeometry(0.09, 24, 16), clay(0xff8a3d, { clearcoat: 0.5 }));
+      fishBody.scale.set(1.4, 0.9, 0.8);
+      fishBody.position.set(-0.04, 0.32, 0.12);
+      bowl.add(fishBody);
+      const tail = mesh(new THREE.ConeGeometry(0.06, 0.12, 12), clay(0xff8a3d, { clearcoat: 0.5 }));
+      tail.rotation.z = Math.PI / 2;
+      tail.position.set(0.12, 0.32, 0.12);
+      bowl.add(tail);
+      bowl.position.set(wd * 0.25, -ht / 2 - 0.08, 0.3);
+      grp.add(bowl);
+      return at(grp, x, y, 0);
+    }
     /* The class's globe: blue sea, green land, on a wooden stand. */
     const map = document.createElement("canvas");
     map.width = 256; map.height = 128;
