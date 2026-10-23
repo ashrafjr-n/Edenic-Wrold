@@ -40,13 +40,13 @@ export default async function ActivitiesPage() {
 
   return (
     <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 sm:py-14">
-      <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:grid-cols-2">
-        {/* Spans both columns, first in the grid — the Trail is a section
-            of the site, not a third game, and leading the page at twice the
-            width is what says so. */}
+      <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:max-w-6xl lg:grid-cols-3">
+        {/* Spans every column, first in the grid — the Trail is a section
+            of the site, not a game, and leading the page at full width is
+            what says so. */}
         <TrailCta
           dict={dict}
-          className="anim-rise-in lg:col-span-2"
+          className="anim-rise-in lg:col-span-3"
           style={{ animationDelay: `${ITEM_DELAY}s` }}
         />
 
