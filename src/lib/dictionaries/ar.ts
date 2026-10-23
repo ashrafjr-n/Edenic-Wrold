@@ -138,6 +138,8 @@ export const ar: Dictionary = {
     lessonN: "الدرس {n}",
   },
   lessonPlayer: {
+    /** Read out while a lesson or its reel loads (nothing on screen). */
+    loading: "جارٍ التحميل…",
     backTo: "العودة إلى {lessonName}",
     traceInstruction: "تتبّع الشكل بإصبعك",
     reelAbout: "فيديو قصير: {title}",
