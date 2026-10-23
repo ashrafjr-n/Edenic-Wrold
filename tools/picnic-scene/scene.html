@@ -4240,10 +4240,39 @@ if (THING) {
     g.fillStyle = sky; g.fillRect(0, 0, c.width, c.height);
     g.fillStyle = "#ffffff";
     for (const [cx, cy, r] of [[130, 150, 46], [180, 135, 58], [235, 155, 42], [360, 300, 36], [400, 285, 46], [440, 302, 32]]) { g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }
-    g.fillStyle = "#8fd17a";
-    g.beginPath(); g.ellipse(170, c.height + 60, 330, 190, 0, 0, Math.PI * 2); g.fill();
-    g.fillStyle = "#6fbf62";
-    g.beginPath(); g.ellipse(470, c.height + 90, 300, 190, 0, 0, Math.PI * 2); g.fill();
+    if (THEME.view === "sea") {
+      /* Bloo's: a rainbow over the sea, a sandy shore. */
+      g.lineCap = "butt";
+      ["#ee4645", "#ff8c2e", "#ffd31a", "#4fbf5a", "#3f86e8", "#9257de"].forEach((col, i) => { g.beginPath(); g.arc(300, c.height * 0.78, 210 - i * 16, Math.PI, Math.PI * 2); g.lineWidth = 15; g.strokeStyle = col; g.stroke(); });
+      g.fillStyle = "#4da3ec"; g.fillRect(0, c.height * 0.68, c.width, c.height * 0.32);
+      g.fillStyle = "#8fd0ff";
+      for (let y = c.height * 0.72; y < c.height; y += 26) for (let x = (y / 26) % 2 ? 0 : 30; x < c.width; x += 70) { g.fillRect(x, y, 34, 4); }
+      g.fillStyle = "#f7dc9b";
+      g.beginPath(); g.ellipse(120, c.height + 40, 260, 90, 0, 0, Math.PI * 2); g.fill();
+    } else {
+      g.fillStyle = "#8fd17a";
+      g.beginPath(); g.ellipse(170, c.height + 60, 330, 190, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "#6fbf62";
+      g.beginPath(); g.ellipse(470, c.height + 90, 300, 190, 0, 0, Math.PI * 2); g.fill();
+    }
+    if (THEME.view === "garden") {
+      /* Nova's: a vegetable patch below the hill — rows of soil, carrot
+         tops and cabbages — under her sun. */
+      g.fillStyle = "#ffd23a";
+      g.beginPath(); g.arc(c.width - 90, 90, 46, 0, Math.PI * 2); g.fill();
+      for (let r = 0; r < 3; r++) {
+        const y = c.height * (0.72 + r * 0.1);
+        g.fillStyle = "#b9814e"; g.fillRect(0, y, c.width, c.height * 0.055);
+        for (let x = 30 + (r % 2) * 40; x < c.width; x += 80) {
+          if ((x + r) % 3) {
+            g.fillStyle = "#4fbf5a";
+            for (const dx of [-8, 0, 8]) { g.beginPath(); g.ellipse(x + dx, y - 10, 5, 15, dx * 0.05, 0, Math.PI * 2); g.fill(); }
+          } else {
+            g.fillStyle = "#8fd17a"; g.beginPath(); g.arc(x, y - 4, 16, 0, Math.PI * 2); g.fill();
+          }
+        }
+      }
+    }
     const tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
     const grp = new THREE.Group();
