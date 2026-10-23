@@ -4069,16 +4069,6 @@ button:disabled,
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
 
-/* A thing (or a friend) standing on a clay base: a pale tile in its own
-   colour behind its lower part, the thing rising above the tile's top edge —
-   the friend picker's look, for the hub, the course cards and the lesson
-   cells. `--stage-tint` defaults to the page's friend colour; `--stage-inset`
-   says where the tile sits in the box. */
-.art-stage {
-  position: relative;
-  isolation: isolate;
-}
-
 .art-stage::before {
   content: "";
   position: absolute;
