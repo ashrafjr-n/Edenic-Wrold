@@ -5459,12 +5459,14 @@ a.board-cell:focus-visible {
 }
 
 /* Her lessons' steps are all on her board: it fills what the back row
-   leaves, the step swapping on the slate above its grain (`z-index`). */
+   leaves, the step swapping on the slate above its grain (`z-index`). The
+   frame and tray take their room out of the step's, so the step's own
+   padding is trimmed to give it back. */
 .chalkboard--stage {
   display: flex;
   flex: 1;
   min-height: 0;
-  margin: 0.25rem 0.75rem 1.25rem;
+  margin: 0.25rem 0.75rem 1rem;
 }
 
 .chalkboard--stage > .chalkboard-slate {
@@ -5478,31 +5480,34 @@ a.board-cell:focus-visible {
 .chalkboard--stage .stage-swap {
   position: relative;
   z-index: 1;
-  padding: 0.75rem 0.75rem 0.25rem;
+  padding: 0.5rem 0.5rem 0;
+}
+
+.chalkboard--stage .stage-swap > :first-child {
+  padding-block: 0.5rem;
 }
 
 @media (width >= 40rem) {
   .chalkboard--stage {
-    margin: 0.5rem 0 1.5rem;
+    margin: 0.5rem 0 0.9rem;
   }
 
   .chalkboard--stage .stage-swap {
-    padding: 1rem 1.5rem 0.5rem;
+    padding: 0.25rem 1.25rem 0;
   }
 }
 
-/* A desktop: the frame and tray take their room out of the step's. */
 @media (width >= 64rem) {
   .chalkboard--stage {
     margin: 0.25rem 0 0.75rem;
   }
 
   .chalkboard--stage.lesson-board {
-    --stage-h: calc(100svh - 25rem);
+    --stage-h: calc(100svh - 26.5rem);
   }
 
   .chalkboard--stage .stage-swap {
-    padding: 1.25rem 1.5rem;
+    padding: 0.5rem 1.5rem;
   }
 }
 
