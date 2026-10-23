@@ -293,7 +293,7 @@ export function LessonPlayer({
         accent={tone.face}
         cheer={cheer}
         dir={dir}
-        board={classroom ? { stars: starsFor(mistakes) } : undefined}
+        stars={starsFor(mistakes)}
       />
     );
     const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
