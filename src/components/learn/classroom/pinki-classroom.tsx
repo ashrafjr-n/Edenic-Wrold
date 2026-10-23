@@ -14,7 +14,7 @@ import pinkiCelebrate from "../../../../public/assets/learn-with-pinki/pinki/pin
 import chalkStar from "../../../../public/assets/learn/classroom/chalk-star.png";
 import chalkHeart from "../../../../public/assets/learn/classroom/chalk-heart.png";
 import chalkSun from "../../../../public/assets/learn/classroom/chalk-sun.png";
-import chalkSmile from "../../../../public/assets/learn/pinki/classroom/chalk-smile.png";
+import chalkSmile from "../../../../public/assets/learn/classroom/chalk-smile.png";
 import chalkBurst from "../../../../public/assets/learn/pinki/classroom/chalk-burst.png";
 import chalkUnderline from "../../../../public/assets/learn/pinki/classroom/chalk-underline.png";
 
