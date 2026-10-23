@@ -160,7 +160,6 @@ export const ku: Dictionary = {
     findItemAria: "دەست بدە {word}",
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
-    potAria: "ڕەنگێ {color}",
     balloonAria: "بالۆنا {color}",
     cupAria: "پەرداخا {n}",
   },
