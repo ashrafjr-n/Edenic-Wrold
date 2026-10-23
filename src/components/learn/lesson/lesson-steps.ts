@@ -82,8 +82,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "make", list: q.list, stall: q.stall, seed };
     case "likes":
       return { kind: "like", face: q.items[0].face };
-    case "cups":
-      return { kind: "cups", picture: q.picture };
     case "weather":
       return { kind: "weather", gesture: q.gesture, scene: q.scene };
     case "harvest":
