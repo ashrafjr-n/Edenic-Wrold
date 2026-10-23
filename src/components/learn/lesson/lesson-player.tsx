@@ -14,6 +14,7 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 import type { LessonDef } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
+import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Button3D } from "@/components/ui/button-3d";
 import { TaskChip, TaskPanel } from "./task-chip";
@@ -75,8 +76,8 @@ interface LessonPlayerProps {
   covers: readonly (readonly StaticImageData[])[];
   dict: Dictionary;
   dir: "rtl" | "ltr";
-  /** Pinki's lessons (2026-10-23): the lesson opens out of its box on her
-      board and folds back into it, and its boards are her chalkboard. */
+  /** Pinki's lessons (2026-10-23): the lesson opens out of its sheet on her
+      board and folds back into it, and every step is on her chalkboard. */
   classroom?: boolean;
 }
 
@@ -283,6 +284,17 @@ export function LessonPlayer({
       </ViewTransition>
     ) : (
       stage
+    );
+  /* What the steps swap on: Pinki's board in her lessons (every step on her
+     chalkboard, in her classroom — 2026-10-23), otherwise a box that paints
+     nothing (the step stands on the page ground). */
+  const stageBox = (stage: ReactNode) =>
+    classroom ? (
+      <Chalkboard size="stage" className="lesson-board sm:col-span-2 sm:row-start-2">
+        {stage}
+      </Chalkboard>
+    ) : (
+      <div className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">{stage}</div>
     );
   let body: ReactNode = null;
   /* Phone and tablet: the one slot under the step. */
@@ -572,8 +584,8 @@ export function LessonPlayer({
             />
           )}
           {/* The desktop stage: stays put while the steps swap on it. */}
-          <div className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-            {morph(
+          {stageBox(
+            morph(
               <div
                 key={`${round}-${at}-${demo}`}
                 className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
@@ -589,8 +601,8 @@ export function LessonPlayer({
                   {action}
                 </div>
               </div>,
-            )}
-          </div>
+            ),
+          )}
         </div>
       )}
 
