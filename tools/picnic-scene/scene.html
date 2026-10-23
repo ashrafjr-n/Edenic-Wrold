@@ -4148,9 +4148,13 @@ if (THING) {
     const g = c.getContext("2d");
     g.fillStyle = "#fffaf0";
     g.fillRect(0, 0, W2, H2);
-    g.strokeStyle = "#ffd6e7"; g.lineWidth = 18;
+    g.strokeStyle = THEME.poster.frame; g.lineWidth = 18;
     g.strokeRect(22, 22, W2 - 44, H2 - 44);
-    const word = (text, cx, cy, size, color) => {
+    const word = (text, cx, cy, size, color, room = W2 * 0.84) => {
+      /* Never wider than the poster leaves it (Nova's and Bloo's words are
+         longer than Pinki's). */
+      g.font = `700 ${size}px Fredoka`;
+      size = Math.min(size, (size * room) / g.measureText(text).width);
       g.font = `700 ${size}px Fredoka`;
       g.textAlign = "center"; g.textBaseline = "middle";
       g.lineJoin = "round"; g.lineWidth = size * 0.16; g.strokeStyle = "#ffffff";
