@@ -26,7 +26,6 @@ import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
-import { PaintColors } from "./paint-colors";
 import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
