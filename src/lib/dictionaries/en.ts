@@ -147,8 +147,6 @@ export const en = {
   /** The lesson player's own chrome and Pinki's lines in a lesson. Taught
       words arrive in `{…}` and stay English. */
   lessonPlayer: {
-    /** Read out while a lesson or its reel loads (nothing on screen). */
-    loading: "Loading…",
     backTo: "Back to {lessonName}",
     traceInstruction: "Trace the shape with your finger",
     reelAbout: "A short video: {title}",
