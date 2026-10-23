@@ -64,6 +64,12 @@ blurred (`<frame>-desk.png`, the whole frame), both frames, into
 
     python3 tools/picnic-scene/crop.py classroom nova
 
+A game card's picture on /play — run after `render.cjs backdrop
+play-<name>`: the landscape frame, sharp, 1376px wide, into
+`public/assets/play/<name>/<name>-card.jpg`.
+
+    python3 tools/picnic-scene/crop.py playcard cups
+
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
 into `dest`. `--grain` lays the clay buttons' grain over each (the
