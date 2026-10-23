@@ -4069,12 +4069,6 @@ button:disabled,
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
 
-/* A locked stop still shows what is coming, only quieter. */
-.path-art-locked {
-  opacity: 0.55;
-  filter: grayscale(0.5);
-}
-
 /* A stop opened since the last visit: its padlock springs off once. */
 .path-lock-off {
   animation: path-lock-off 0.7s cubic-bezier(0.5, 0, 0.7, 0.4) 0.9s both;
