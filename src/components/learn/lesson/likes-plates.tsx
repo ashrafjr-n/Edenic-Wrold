@@ -176,7 +176,7 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
                   )}
                 </span>
               </div>
-              <span className="flex items-center gap-1.5 text-lg font-bold" style={{ color: tone.edge } as CSSProperties}>
+              <span className="plate-label flex items-center gap-1.5 text-lg font-bold" style={{ "--plate-edge": tone.edge, "--plate-face": tone.face } as CSSProperties}>
                 <Icon className="h-5 w-5" strokeWidth={2.75} />
                 {label}
               </span>
