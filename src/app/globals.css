@@ -5351,7 +5351,7 @@ a.board-cell:focus-visible {
   width: clamp(6.5rem, 30vw, 11rem);
   aspect-ratio: 1;
   border-radius: 9999px;
-  background: radial-gradient(closest-side, rgb(255 176 212 / 38%), rgb(255 176 212 / 14%) 70%, transparent);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--chalk-accent) 38%, transparent), color-mix(in srgb, var(--chalk-accent) 14%, transparent) 70%, transparent);
 }
 
 .board-next .board-magnet {
