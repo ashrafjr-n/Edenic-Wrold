@@ -70,7 +70,7 @@ interface CupsGameProps {
  * behind) over the place the state already holds, so a cup always rests
  * where the state says. The food is drawn only while a cup over it is up.
  */
-export function CupsGame({ word, picture, cupAria, onSolved, onMiss }: CupsGameProps) {
+export function CupsGame({ word, picture, swaps, swapMs, cupAria, onSolved }: CupsGameProps) {
   /* Where each cup stands (cup → place), which cup the food is under, which
      cups are up, and whether the food is drawn. */
   const [places, setPlaces] = useState([0, 1, 2]);
