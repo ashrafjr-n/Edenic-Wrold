@@ -5264,7 +5264,7 @@ a.board-cell:focus-visible {
 }
 
 .board-star--on {
-  color: #ffb0d4;
+  color: var(--chalk-accent);
   fill: currentColor;
 }
 
