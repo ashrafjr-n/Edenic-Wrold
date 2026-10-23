@@ -4683,7 +4683,9 @@ button:disabled,
   overflow: hidden;
   border-radius: 9999px;
   font-weight: 700;
-  font-size: clamp(1rem, 2.6vw, 2.1rem);
+  /* A long name ("The Seasons") a size down so it fits whole: its width is
+     about 0.56em a letter plus the padding, kept within 72% of the card. */
+  font-size: min(clamp(1rem, 2.6vw, 2.1rem), calc(72cqi / (var(--chars, 6) * 0.56 + 2.2)));
   line-height: 1.1;
   white-space: nowrap;
   text-overflow: ellipsis;
