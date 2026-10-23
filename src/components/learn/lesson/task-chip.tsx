@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Balloon, Blocks, CloudSunRain, CookingPot, Ear, Eye, ListOrdered, Paintbrush, Pencil, Pointer, Search, Shapes, ShoppingBasket, Shuffle, ThumbsUp, X, type LucideIcon } from "lucide-react";
+import { Balloon, Blocks, CloudSunRain, CookingPot, Ear, Eye, ListOrdered, Pencil, Pointer, Search, Shapes, ShoppingBasket, Shuffle, ThumbsUp, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
