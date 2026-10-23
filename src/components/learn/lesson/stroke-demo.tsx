@@ -97,15 +97,15 @@ export function StrokeDemo({ strokes }: StrokeDemoProps) {
           }
           d={segment}
           fill="none"
-          filter={chalk ? `url(#${chalkId})` : undefined}
-          stroke={ink}
+          filter={`url(#${chalkId})`}
+          stroke={CHALK_PINK}
           strokeWidth={9}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       ))}
 
-      <circle className="pen-tip" style={vars} r={5.5} fill={ink} />
+      <circle className="pen-tip" style={vars} r={5.5} fill={CHALK_PINK} />
     </svg>
   );
 }
