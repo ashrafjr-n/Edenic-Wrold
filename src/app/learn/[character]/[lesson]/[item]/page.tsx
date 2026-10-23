@@ -80,7 +80,6 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           classroom={room !== undefined}
           cheer={room?.cheer}
         />
-        {backdrop && <CourseBackdrop backdrop={backdrop} />}
         {/* A friend's lessons are in their classroom, up close on their board. */}
         {room && (
           <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
