@@ -178,6 +178,11 @@
   --color-bloo-soft: #e0f0fd;
   --color-bloo-dark: #2f86c4;
 
+  /* The chalk on a friend's board — what is learned, the next lesson's
+     ring, the stars: Pinki's pink unless the page sets its friend's own
+     (`classroomStyle`, `data/classroom.ts`). */
+  --chalk-accent: #ffb0d4;
+  --chalk-glow: #ff9ec8;
 
   /* ---------------------------------------------------------------
      The old lesson subjects' hues — Letters violet, Colors blue, Shapes
