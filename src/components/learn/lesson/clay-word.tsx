@@ -64,7 +64,7 @@ export function ClayWord({ word, size = "lg", tone }: ClayWordProps) {
         : "text-[5rem] sm:text-7xl lg:text-[min(5.5rem,9svh)]";
 
   return (
-    <span dir="ltr" aria-label={word} role="img" className={`flex font-bold tracking-wide ${type}`}>
+    <span dir="ltr" aria-label={word} role="img" className={`clay-word flex font-bold tracking-wide ${type}`}>
       {[...word].map((letter, i) => (
         <span
           key={i}

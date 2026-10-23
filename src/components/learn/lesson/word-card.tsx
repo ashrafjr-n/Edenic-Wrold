@@ -19,10 +19,8 @@ interface WordCardProps {
   cue: string;
   /** Names the speaker for a screen reader ("Hear circle"). */
   label: string;
-  /** Pinki's lessons (the step is on her board): its clay letters on a
-      paper sentence strip held by two magnets — the SAME letters the child
-      then spells with (so never chalk), as easy to read as on a white card
-      (a brown or black word sinks into the slate). */
+  /** Pinki's lessons: the step is on her board — no card of its own (the
+      word goes up on a paper strip, `.chalkboard--stage .clay-word`). */
   board?: boolean;
 }
 
@@ -60,13 +58,7 @@ export function WordCard({ word, shape, picture, tilt, tone, cue, label, board =
         </span>
       )}
       <span className="contents lg:col-start-2 lg:row-start-2 lg:flex lg:justify-center lg:self-start">
-        {board ? (
-          <span className="board-paper">
-            <ClayWord word={word} tone={tone} />
-          </span>
-        ) : (
-          <ClayWord word={word} tone={tone} />
-        )}
+        <ClayWord word={word} tone={tone} />
       </span>
     </>
   );

@@ -54,7 +54,7 @@ interface LessonDoneProps {
  * shows on its box.
  */
 export function LessonDone({ title, words, faces, drawing, accent, dir, board }: LessonDoneProps) {
-  const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} paper={board !== undefined} />;
+  const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} />;
   return (
     <div className={`relative mb-auto flex w-full max-w-sm ${board ? "" : "-mt-[4.5rem]"} flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2`}>
       <div className="relative flex items-end justify-center lg:row-span-2">
@@ -112,14 +112,10 @@ export function LessonDone({ title, words, faces, drawing, accent, dir, board }:
   );
 }
 
-type LearnedProps = Pick<LessonDoneProps, "words" | "faces" | "drawing" | "accent"> & {
-  /** On her board: the word on a paper strip, so a brown or black word
-      reads as it does on a white card. */
-  paper: boolean;
-};
+type LearnedProps = Pick<LessonDoneProps, "words" | "faces" | "drawing" | "accent">;
 
 /** What was learned: the things, the child's drawing, the word. */
-function Learned({ words, faces, drawing, accent, paper }: LearnedProps) {
+function Learned({ words, faces, drawing, accent }: LearnedProps) {
   /* One or two things and a drawing get big tiles; a review's four things
      and a drawing (five in a row) share the card's width. */
   const tile = faces.length > 2 ? "h-[min(3.25rem,8svh)] w-[min(3.25rem,8svh)] lg:h-[min(4.5rem,9svh)] lg:w-[min(4.5rem,9svh)]" : "h-[min(5.5rem,10svh)] w-[min(5.5rem,10svh)] lg:h-[min(7rem,12svh)] lg:w-[min(7rem,12svh)]";
@@ -161,7 +157,7 @@ function Learned({ words, faces, drawing, accent, paper }: LearnedProps) {
           </span>
         )}
       </div>
-      {wordRow && (paper ? <span className="board-paper">{wordRow}</span> : wordRow)}
+      {wordRow}
     </>
   );
 }
