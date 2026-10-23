@@ -173,7 +173,6 @@ export function CupsGame({ word, picture, swaps, swapMs, cupAria, onSolved }: Cu
     /* Not there: it shakes, the right cup shows where the food went, and
        it all starts again — somewhere new. */
     setWrong(cup);
-    onMiss();
     misses.current += 1;
     await wait(LIFT_MS + 500);
     setShown(true);
