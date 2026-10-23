@@ -5733,15 +5733,15 @@ a.board-cell:focus-visible {
   animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
-::view-transition-old(.pinki-exit) {
-  animation: class-pinki-out 0.35s ease-in both;
+::view-transition-old(.teacher-exit) {
+  animation: class-teacher-out 0.35s ease-in both;
 }
 
 ::view-transition-old(.desk-exit) {
   animation: class-desk-out 0.4s ease-in both;
 }
 
-@keyframes class-pinki-out {
+@keyframes class-teacher-out {
   to {
     opacity: 0;
     translate: 120% 0;
