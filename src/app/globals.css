@@ -5775,7 +5775,7 @@ a.board-cell:focus-visible {
 
   ::view-transition-group(.board-morph),
   ::view-transition-group(.class-morph),
-  ::view-transition-old(.pinki-exit),
+  ::view-transition-old(.teacher-exit),
   ::view-transition-old(.desk-exit) {
     animation: none;
   }
