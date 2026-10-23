@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import { LessonLoader } from "./lesson-loader";
 
 /** Kept in step with `.morph-btn__icon`'s 0.55s turn in `globals.css`: the
     Skip button finishes its spin before the lesson moves on. */
@@ -13,8 +14,10 @@ interface ReelVideoProps {
   src: string;
   /** Names the clip for a screen reader. */
   label: string;
-  /** Art shown behind the clip while it loads. */
+  /** Art shown in the clip's place if it cannot load. */
   image: string;
+  /** "Loading…", read out while the clip loads. */
+  loadingLabel: string;
   skipLabel: string;
   /** Names the big Play button shown when the browser refuses autoplay. */
   playLabel: string;
@@ -36,7 +39,7 @@ interface ReelVideoProps {
  * exception: there it sits in the lesson's middle column, on the board the
  * steps after it play on, with the watch and lesson panels either side.
  */
-export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDone }: ReelVideoProps) {
+export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabel, tone, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
   const done = useRef(false);
   const timer = useRef<number | undefined>(undefined);
@@ -44,6 +47,9 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
   /* The browser refused to start the reel even muted (Low Power Mode, data
      saver, an autoplay policy): a big Play button asks for the one tap. */
   const [blocked, setBlocked] = useState(false);
+  /* Until the clip can play, the loader (never a frozen first frame); then
+     it fades in. A clip that fails shows the lesson's art instead. */
+  const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
@@ -52,6 +58,9 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
   useEffect(() => {
     const el = video.current;
     if (!el) return;
+    /* Ready (or broken) before React was listening: no event will come. */
+    if (el.error) setState("failed");
+    else if (el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) setState("ready");
     el.play().catch(() => {
       el.muted = true;
       return el.play().catch(() => setBlocked(true));
@@ -85,14 +94,20 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
           plays on. */}
       <div className="lesson-board contents lg:flex lg:w-full lg:justify-center lg:p-5">
         <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
-          <Image
-            src={image}
-            alt=""
-            fill
-            sizes="(min-width: 640px) 28rem, 100vw"
-            preload
-            className="select-none object-contain p-12 opacity-90"
-          />
+          {state === "failed" && (
+            <Image
+              src={image}
+              alt=""
+              fill
+              sizes="(min-width: 640px) 28rem, 100vw"
+              className="select-none object-contain p-12 opacity-90"
+            />
+          )}
+          {state === "loading" && (
+            <span className="absolute inset-0 flex items-center justify-center">
+              <LessonLoader label={loadingLabel} />
+            </span>
+          )}
 
           <video
             ref={video}
@@ -101,7 +116,9 @@ export function ReelVideo({ src, label, image, skipLabel, playLabel, tone, onDon
             preload="auto"
             aria-label={label}
             onEnded={finish}
-            className="absolute inset-0 h-full w-full object-cover"
+            onCanPlay={() => setState("ready")}
+            onError={() => setState("failed")}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${state === "ready" ? "opacity-100" : "opacity-0"}`}
           />
 
           {blocked && (
