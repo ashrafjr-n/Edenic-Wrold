@@ -18,21 +18,18 @@ interface LessonDoneProps {
   /** The child's own passing trace, drawn back beside the shape. */
   drawing?: readonly StrokePoint[];
   accent: string;
-  /** The friend celebrating — Pinki's pose unless their classroom gives
-      their own. */
-  cheer?: StaticImageData;
+  /** The friend celebrating (`CLASSROOMS[id].cheer`). */
+  cheer: StaticImageData;
   dir: "rtl" | "ltr";
-  /** Pinki's lessons (the step is on her board): what was learned is
-      written up on it — the title in chalk, the stars it earned (of 3; the same stars then fly
-      into the lesson's box on the course's board), the word on its paper
-      strip. */
-  board?: { stars: number };
+  /** The stars the lesson earned, of 3 — the same stars then fly into the
+      lesson's box on the course's board. */
+  stars: number;
 }
 
 /**
  * The end of a lesson, as one celebration in two beats, top to bottom:
  *
- * 1. Pinki cheering on a glowing clay disc, confetti bursting round her.
+ * 1. The friend cheering on a glowing clay disc, confetti bursting round them.
  * 2. What was learned: the shape, the child's OWN drawing of it (the most
  *    personal reward there is — no stars or points before sign-in), and the
  *    word in clay letters.
