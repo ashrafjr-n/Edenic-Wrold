@@ -106,7 +106,6 @@ export function LessonPlayer({
   covers,
   dict,
   dir,
-  classroom = false,
   cheer,
 }: LessonPlayerProps) {
   const onward = { face: courseTone.face, edge: courseTone.edge, text: courseTone.ink };
