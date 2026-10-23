@@ -6,7 +6,6 @@ import type { Face } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { FaceView } from "./face";
 import { ClayWord, type LetterTone } from "./clay-word";
-import celebrate from "../../../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
 
 interface LessonDoneProps {
   /** "Lesson complete!" */
