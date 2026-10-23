@@ -217,10 +217,18 @@ export const en = {
     cook: "Cook",
     like: "Like?",
     harvest: "Pick",
-    cups: "Find",
     weather: "Make",
   },
   activities: {
+    /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
+        step until then). */
+    cupsCtaButton: "Nova's Cups",
+    cupsCtaAlt: "Nova's three cups in her garden, a carrot under one of them",
+    cupsAsk: "Watch the cups and find the {thing}!",
+    cupsWin: "You found them all!",
+    /** A cup's name for a screen reader, by where it stands — never by
+        what is under it. */
+    cupAria: "Cup {n}",
     puzzleTitle: "Puzzle Time",
     puzzleSubtitle: "Complete the puzzles!",
     memoryTitle: "Memory Match",
