@@ -5297,6 +5297,26 @@ a.board-cell:focus-visible {
   right: 0.9rem;
 }
 
+/* The done screen's stars, written up one after another — the same stars
+   (and the same flight) as on the lesson's box on the course's board. */
+.done-stars {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.done-stars .board-star {
+  width: 2.4rem;
+  height: 2.4rem;
+  animation: board-star-in 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) backwards;
+}
+
+@media (width >= 64rem) {
+  .done-stars .board-star {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
 .chalk-trail {
   position: relative;
   z-index: 1;
@@ -5446,6 +5466,7 @@ a.board-cell:focus-visible {
   .class-pinki,
   .class-sign,
   .board-star--new,
+  .done-stars .board-star,
   .board-cell,
   .board-cell--next {
     animation: none;
