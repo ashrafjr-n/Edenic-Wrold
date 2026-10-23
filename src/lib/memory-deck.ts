@@ -2,7 +2,7 @@ import type { MemoryLevel } from "@/types/memory";
 
 /** One card on the board: which picture it wears, and a key that stays with
     it for React's sake even though two cards share a face. */
-export interface MemoryCard {
+interface MemoryCard {
   /** Unique per card — `apple#0`, `apple#1`. */
   key: string;
   faceId: string;

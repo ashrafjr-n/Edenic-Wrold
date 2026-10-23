@@ -35,7 +35,7 @@ function hash(seed: number): number {
   return (h >>> 0) / 4294967296;
 }
 
-export interface TraySpot {
+interface TraySpot {
   piece: PuzzlePiece;
   /** Where the piece lies in the tray, as a percentage of it. */
   x: number;

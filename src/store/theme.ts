@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Theme = "light" | "dark";
+type Theme = "light" | "dark";
 
 interface ThemeState {
   theme: Theme;

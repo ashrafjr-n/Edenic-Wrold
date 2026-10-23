@@ -7,7 +7,7 @@ import type { Lesson } from "@/types/lesson";
     route is real, the child just cannot be there yet, and the answer is to
     send them somewhere they can choose again. Shared so the two rules can't
     drift apart across the routes under `/learn`. */
-export type LessonRouteResult =
+type LessonRouteResult =
   | { status: "ok"; character: Character; lesson: Lesson }
   | { status: "missing" }
   | { status: "locked"; backHref: string };

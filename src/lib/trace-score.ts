@@ -6,7 +6,7 @@ const GUIDE_STEP = 1.6;
     guide is 9 wide, so this is about a finger's width either side of it. */
 const TOLERANCE = 8;
 
-export interface TraceScore {
+interface TraceScore {
   /** How much of the shape the stroke went round, 0–1. */
   coverage: number;
   /** How much of the stroke stayed on the shape, 0–1. */
