@@ -6,7 +6,7 @@ import { CUP, POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, PaintRound, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, Gesture, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
