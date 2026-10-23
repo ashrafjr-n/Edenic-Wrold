@@ -169,7 +169,6 @@ export const en = {
     findItemAria: "Tap the {word}",
     likeAria: "I like it",
     dislikeAria: "I don't like it",
-    potAria: "{color} paint",
     balloonAria: "{color} balloon",
     cupAria: "Cup {n}",
   },
