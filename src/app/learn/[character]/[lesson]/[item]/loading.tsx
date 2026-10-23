@@ -1,4 +1,4 @@
-import { LessonLoader } from "@/components/learn/lesson/lesson-loader";
+import { Loader } from "@/components/ui/loader";
 import { getDictionary } from "@/lib/locale";
 import { LoadingRoom } from "@/components/learn/lesson/loading-room";
 
