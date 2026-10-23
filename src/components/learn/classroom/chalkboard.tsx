@@ -48,7 +48,7 @@ export function Chalkboard({ size, className = "", children }: ChalkboardProps) 
   );
   if (size === "stage" || size === "strip") return board;
   return (
-    <ViewTransition name="pinki-board" share="board-morph" default="none">
+    <ViewTransition name="class-board" share="board-morph" default="none">
       {board}
     </ViewTransition>
   );
