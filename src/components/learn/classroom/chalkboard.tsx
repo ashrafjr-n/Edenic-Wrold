@@ -19,8 +19,10 @@ const CHALK = {
 
 interface ChalkboardProps {
   /** `hub`: the board on Pinki's wall. `course`: up close, filling the
-      screen — a course's lessons. */
-  size: "hub" | "course";
+      screen — a course's lessons. `lesson`: a small board inside one of her
+      lessons (the word, the done screen). `strip`: a slim one, no tray —
+      the desktop lesson's steps. */
+  size: "hub" | "course" | "lesson" | "strip";
   className?: string;
   children: ReactNode;
 }
@@ -30,20 +32,27 @@ interface ChalkboardProps {
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
  * language. The SAME view transition (`pinki-board`) on the hub and on a
  * course page: tapping a course zooms the board up to fill the screen
- * with its lessons on it, and back.
+ * with its lessons on it, and back. A lesson's boards are her chalk too,
+ * but not that board: they never take part in its zoom.
  */
 export function Chalkboard({ size, className = "", children }: ChalkboardProps) {
-  return (
-    <ViewTransition name="pinki-board" share="board-morph" default="none">
-      <div className={`chalkboard chalkboard--${size} ${className}`} style={CHALK}>
-        <div className="chalkboard-slate">{children}</div>
+  const board = (
+    <div className={`chalkboard chalkboard--${size} ${className}`} style={CHALK}>
+      <div className="chalkboard-slate">{children}</div>
+      {size !== "strip" && (
         <span className="chalkboard-tray" aria-hidden>
           <span />
           <span />
           <span />
           <span className="chalkboard-eraser" />
         </span>
-      </div>
+      )}
+    </div>
+  );
+  if (size === "lesson" || size === "strip") return board;
+  return (
+    <ViewTransition name="pinki-board" share="board-morph" default="none">
+      {board}
     </ViewTransition>
   );
 }
