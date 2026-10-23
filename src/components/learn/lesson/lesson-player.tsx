@@ -597,7 +597,7 @@ export function LessonPlayer({
                 </div>
                 {/* On the done screen the buttons sit higher (direct request) —
                     closer to what was just learned. */}
-                <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? "mb-[min(4.5rem,8svh)]" : ""}`}>
+                <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? (classroom ? "mb-[min(2rem,3svh)]" : "mb-[min(4.5rem,8svh)]") : ""}`}>
                   {action}
                 </div>
               </div>,
@@ -612,7 +612,7 @@ export function LessonPlayer({
           step's button. */}
       <div
         key={`${round}-${at}-${demo}`}
-        className={`mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex ${finished ? "lg:mb-[min(4rem,7svh)]" : ""}`}
+        className={`mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex ${finished && !classroom ? "lg:mb-[min(4rem,7svh)]" : ""}`}
       >
         {footStart}
         {footEnd}

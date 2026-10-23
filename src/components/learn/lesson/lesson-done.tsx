@@ -56,7 +56,7 @@ interface LessonDoneProps {
 export function LessonDone({ title, words, faces, drawing, accent, dir, board }: LessonDoneProps) {
   const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} paper={board !== undefined} />;
   return (
-    <div className="relative mb-auto -mt-[4.5rem] flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
+    <div className={`relative mb-auto flex w-full max-w-sm ${board ? "" : "-mt-[4.5rem]"} flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2`}>
       <div className="relative flex items-end justify-center lg:row-span-2">
         <span
           aria-hidden
@@ -68,14 +68,16 @@ export function LessonDone({ title, words, faces, drawing, accent, dir, board }:
           alt=""
           sizes="(min-width: 1024px) 320px, 180px"
           preload
-          className="anim-pop-in relative h-[min(11rem,20svh)] w-auto object-contain sm:h-[min(8rem,13svh)] lg:h-[min(20rem,36svh)]"
+          className={`anim-pop-in relative w-auto object-contain ${
+            board ? "h-[min(7rem,12svh)] sm:h-[min(7rem,11svh)] lg:h-[min(14rem,24svh)]" : "h-[min(11rem,20svh)] sm:h-[min(8rem,13svh)] lg:h-[min(20rem,36svh)]"
+          }`}
         />
         <Celebration />
       </div>
 
       {board ? (
         <div className="anim-pop-in w-full [animation-delay:0.35s] lg:row-span-2">
-          <div className="flex flex-col items-center gap-3 px-5 pb-5 pt-4 lg:gap-4 lg:px-8 lg:py-7 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-3">
+          <div className="flex flex-col items-center gap-3 px-5 pb-3 pt-2 lg:gap-4 lg:px-8 lg:py-4 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-1">
             <p dir={dir} className="chalk-title anim-fade-up" style={{ animationDelay: "0.2s" }}>
               {title}
             </p>
