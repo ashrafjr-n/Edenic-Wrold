@@ -91,6 +91,7 @@ export default async function CharacterLearnPage({
               model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
             }))}
           labels={{
+            lessons: dict.lessonPicker.lessonsCount,
             cheer: dict.characterHub.youCanDoIt,
             start: dict.lessonPicker.ctaStart,
             continue: dict.trail.ctaContinue,

@@ -27,6 +27,8 @@ interface PinkiClassroomProps {
   characterId: string;
   courses: readonly ClassCourse[];
   labels: {
+    /** "{n} lessons", under a course's name. */
+    lessons: string;
     /** "You can do it!", written under the cards. */
     cheer: string;
     start: string;
@@ -114,14 +116,21 @@ export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClass
                   <span dir={dir} className="class-card-tag">
                     {course.name}
                   </span>
+                  <span dir={dir} className="class-card-count">
+                    {format(labels.lessons, { n: course.titles.length })}
+                  </span>
                   <span className="class-card-model">
                     <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 15rem, 30vw" className="object-contain" />
                   </span>
-                  <span className="class-card-progress" aria-hidden>
-                    <span className="class-card-track">
-                      <span className="class-card-fill" style={{ width: `${(done / course.titles.length) * 100}%` }} />
-                    </span>
-                    {done}/{course.titles.length}
+                  {/* One dot per lesson: pink once learned, ringed where
+                      the child carries on. */}
+                  <span className="class-card-dots" aria-hidden>
+                    {course.titles.map((_, k) => (
+                      <span
+                        key={k}
+                        className={`class-card-dot ${k < done ? "class-card-dot--done" : k === done ? "class-card-dot--next" : ""}`}
+                      />
+                    ))}
                   </span>
                   <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
                     {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
