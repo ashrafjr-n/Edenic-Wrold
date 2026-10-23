@@ -165,7 +165,10 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           aria-label={format(dict.startLessonAria, { n, title })}
         >
           {art(false, false, "(min-width: 1024px) 5rem, 3rem")}
-          <span dir={dir} className="board-cell-word">{word}</span>
+          {/* A review's small box is its things, two by two — its long
+              name ("Animals review") has no room under them (it ran into
+              the lock); the label reads it out. */}
+          {!review && <span dir={dir} className="board-cell-word">{word}</span>}
           <span className="board-cell-stars" aria-hidden>
             {[1, 2, 3].map((k) => {
               const earned = k <= stars[i];
