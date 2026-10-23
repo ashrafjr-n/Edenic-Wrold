@@ -17,17 +17,9 @@ interface LessonPageProps {
 }
 
 /**
- * A course's own page: its lessons as a box of things (`LessonBox`) — every
- * course, written or still to come — in three layouts, one per screen size,
- * each its own JSX tree:
- *
- * - **Phone (< sm):** a course banner, the box two cells a row, a fixed
- *   Continue bar above the bottom nav.
- * - **Tablet (sm – lg):** the same, grown — a taller banner, the box at
- *   tablet size, the Continue bar at the bottom edge.
- * - **Desktop (lg+):** the height of the screen, no scrolling — the course
- *   in a tall banner on the left with Continue under it, the box filling a
- *   board tinted in the course colour on the right.
+ * A course's own page: the friend's board up close (`BoardLessons` — the
+ * lessons learned small on top, the next one big, the rest small below),
+ * the course's thing, name and progress over them, in their classroom.
  */
 export default async function LessonPage({ params }: LessonPageProps) {
   const { character: characterId, lesson: lessonId } = await params;
