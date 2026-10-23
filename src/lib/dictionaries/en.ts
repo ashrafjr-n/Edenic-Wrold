@@ -125,7 +125,6 @@ export const en = {
     backToLearn: "Back to Learn",
     nextUp: "Next up",
     startLesson: "Start {name}",
-    hello: "Hi, I'm {name}!",
     askToday: "What shall we learn today?",
     /** What a course's box is announced as, by where the child is in it. */
     continueLesson: "Continue {name}",
@@ -145,7 +144,7 @@ export const en = {
     startLessonAria: "Start lesson {n}: {title}",
     ctaStart: "Start",
     ctaNextLesson: "Next Lesson",
-    /** Over the next lesson on Pinki's course board. */
+    /** Over the next lesson on a friend's course board. */
     lessonN: "Lesson {n}",
   },
   /** The lesson player's own chrome and Pinki's lines in a lesson. Taught

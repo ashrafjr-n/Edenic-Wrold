@@ -138,7 +138,7 @@ export const ku: Dictionary = {
     startLessonAria: "وانا {n} دەستپێبکە: {title}",
     ctaStart: "دەستپێبکە",
     ctaNextLesson: "وانا دی",
-    /** Over the next lesson on Pinki's course board. */
+    /** Over the next lesson on a friend's course board. */
     lessonN: "وانا {n}",
   },
   lessonPlayer: {
