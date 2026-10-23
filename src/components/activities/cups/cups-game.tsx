@@ -7,7 +7,7 @@ import { Celebration } from "@/components/ui/celebration";
 import { CUP } from "@/data/market";
 import { format } from "@/lib/format-dict";
 import { lessonCue, playCue } from "@/lib/cue";
-import { ClayWord } from "./clay-word";
+import { ClayWord } from "@/components/learn/lesson/clay-word";
 
 /* The table, in % of its width (`cqi`): three places, each cup `CUP_W`
    wide with its left edge at `PLACE`; a cup goes up `LIFT` to show what is
