@@ -39,8 +39,6 @@ export default async function CharacterLearnPage({
       id: lesson.id,
       name: dict.lessons[lesson.id].name,
       titles: dict.lessons[lesson.id].items,
-      covers: courseLessons[lesson.id].map((def) => def.cover),
-      tone: { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink },
     }));
 
   /* Every friend's hub is their classroom (Pinki's 2026-10-14, Nova's and
