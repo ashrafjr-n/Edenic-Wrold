@@ -189,7 +189,6 @@ export const ku: Dictionary = {
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
     meetThing: "{thing} بناسە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
-    makeJuice: "ئاڤا {thing} چێ بکە!",
     cookSoup: "شۆربەیا {thing} چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     thisWeather: "هەوا {weather}ە!",

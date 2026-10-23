@@ -199,7 +199,6 @@ export const en = {
     sortAnimals: "Put each animal in its home!",
     meetThing: "Meet the {thing}!",
     makeSoup: "Make a vegetable soup!",
-    makeJuice: "Make juice with the {thing}!",
     cookSoup: "Make soup with the {thing}!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",

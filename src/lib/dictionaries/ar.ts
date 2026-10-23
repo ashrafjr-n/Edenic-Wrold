@@ -185,7 +185,6 @@ export const ar: Dictionary = {
     sortAnimals: "ضع كل حيوان في بيته!",
     meetThing: "تعرّف على {thing}!",
     makeSoup: "اصنع حساء خضار!",
-    makeJuice: "اصنع عصير {thing}!",
     cookSoup: "اصنع حساء {thing}!",
     likeThem: "هل تحبّها؟",
     thisWeather: "الجو {weather}!",
