@@ -283,17 +283,17 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             />
           ))}
 
-        {/* A missed line stays flat: the red flash is a signal, not clay. */}
-        <g filter={missed ? undefined : `url(#${clayId})`}>
+        {/* A missed line stays flat: the red flash is a signal, not chalk. */}
+        <g filter={missed ? undefined : `url(#${chalkId})`}>
           {locked &&
             guidePaths.map((path, index) => (
-              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={chalk ? CHALK_PINK : accent} />
+              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={CHALK_PINK} />
             ))}
           {active.length >= MIN_STROKE_POINTS && (
             <polyline
               points={active.map(([x, y]) => `${x},${y}`).join(" ")}
               fill="none"
-              stroke={missed ? "var(--color-miss)" : chalk ? CHALK_WHITE : accent}
+              stroke={missed ? "var(--color-miss)" : CHALK_WHITE}
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
