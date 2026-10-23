@@ -86,11 +86,14 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
   let flying = 0;
   const singles = stops.filter((stop) => !stop.review).length;
   const cols = singles > 5 ? Math.ceil(singles / 2) : singles;
+  /* Four lessons or fewer: on a portrait tablet two big boxes a row
+     instead of one row of small ones (`.board-lessons--pairs`). */
+  const pairs = singles <= 4;
 
   return (
     <div
       ref={rootRef}
-      className="board-lessons"
+      className={`board-lessons ${pairs ? "board-lessons--pairs" : ""}`}
       style={{ "--cols": cols, "--rows": Math.ceil(singles / cols) } as CSSProperties}
     >
       {titles.map((title, i) => {
@@ -114,7 +117,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
                     src={locked && stop.blank ? stop.blank : picture}
                     alt=""
                     fill
-                    sizes="(min-width: 1024px) 9rem, 6rem"
+                    sizes={pairs ? "(min-width: 1024px) 9rem, (min-width: 640px) 14rem, 6rem" : "(min-width: 1024px) 9rem, 6rem"}
                     className={`object-contain ${springing ? "paint-reveal" : ""}`}
                     style={springing ? { animationDelay: `${SPRING_DELAY + 0.1}s` } : undefined}
                   />
