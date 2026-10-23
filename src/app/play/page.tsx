@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { PuzzleCta } from "@/components/activities/puzzle-cta";
 import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
 import { TrailCta } from "@/components/activities/trail-cta";
+import { CupsCta } from "@/components/activities/cups-cta";
 import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Play — Edenic World",
-  description: "Puzzles and memory games for kids at Edenic World.",
+  description: "Puzzles, memory and cups games for kids at Edenic World.",
 };
 
 const ITEM_DELAY = 0.1;
