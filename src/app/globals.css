@@ -4471,6 +4471,31 @@ button:disabled,
   background-color: rgb(255 255 255 / 16%);
 }
 
+.board-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.board-progress-row .chalk-progress-track {
+  margin-top: 0;
+}
+
+.board-progress-count {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgb(247 243 233 / 80%);
+}
+
+/* A phone: the bar takes what the head leaves, "2/5" after it. */
+@media (width < 40rem) {
+  .board-progress-row .chalk-progress-track {
+    flex: 1;
+    width: auto;
+  }
+}
+
 .chalk-progress-fill {
   display: block;
   min-width: 0.5rem;
@@ -4929,12 +4954,14 @@ button:disabled,
 }
 
 /* ---------- A course page: the board up close ---------- */
+/* The bottom nav's room is the body's own padding on a phone — the board
+   only leaves its tray room to hang. */
 .class-course {
   position: relative;
   z-index: 1;
   display: flex;
   flex: 1;
-  padding: 0.25rem 0.75rem 6.5rem;
+  padding: 0.25rem 0.75rem 1.5rem;
 }
 
 .chalkboard--course {
