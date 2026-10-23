@@ -110,9 +110,6 @@ export type Question =
   | { type: "find"; ask: Ask; target: Target; scene: Scene }
   /** Put each thing, one at a time, in the box it belongs in. */
   | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
-  /** Read the color word, tap its pot, and the thing is painted — a round
-      per color. `pots` are the colors on offer, in order. */
-  | { type: "paint"; ask: Ask; rounds: PaintRound[]; pots: ColorId[] }
   /** Balloons of many colors float up; pop every one of `color` (four of
       them) and leave the `others` be. */
   | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] }
