@@ -10,74 +10,35 @@ interface StepTrailProps {
   at: number;
   /** What stands in the current step's place: its round task button. */
   current: ReactNode;
-  /** The course's colour. */
-  tone: { face: string; edge: string; ink: string };
-  /** Pinki's lessons: the trail is written in chalk on a strip of her
-      board — done steps ticked in pink chalk, the ones to come faint. */
-  chalk?: boolean;
 }
 
 /**
- * The desktop's lesson steps, at the back row's far right: a small disc
- * per step, joined by a line. Done steps are ticked in the course colour,
- * the current one is its round task button (the how-to), the ones to come
- * show their icon, faded.
+ * The desktop's lesson steps, at the back row's far right, written in
+ * chalk on a slim strip of the friend's board: a small disc per step,
+ * joined by a line. Done steps are ticked in the friend's chalk, the
+ * current one is its round task button (the how-to), the ones to come
+ * show their icon, faint.
  */
-export function StepTrail({ kinds, at, current, tone, chalk = false }: StepTrailProps) {
-  if (chalk) {
-    return (
-      <Chalkboard size="strip">
-        <ol className="chalk-trail">
-          {kinds.map((kind, i) => {
-            const Icon = TASK_ICONS[kind];
-            return (
-              <li key={i} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden className={`chalk-trail-line ${i <= at ? "chalk-trail-line--done" : ""}`} />}
-                {i === at ? (
-                  current
-                ) : (
-                  <span aria-hidden className={`chalk-trail-dot ${i < at ? "chalk-trail-dot--done" : ""}`}>
-                    {i < at ? <Check className="h-5 w-5" strokeWidth={3.5} /> : <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={2.5} />}
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      </Chalkboard>
-    );
-  }
-  const clay = { backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties;
+export function StepTrail({ kinds, at, current }: StepTrailProps) {
   return (
-    <ol className="flex items-center gap-2">
-      {kinds.map((kind, i) => {
-        const Icon = TASK_ICONS[kind];
-        return (
-          <li key={i} className="flex items-center gap-2">
-            {i > 0 && (
-              <span
-                aria-hidden
-                className="h-1 w-6 rounded-full transition-colors duration-300 xl:w-8"
-                style={{ backgroundColor: i <= at ? tone.face : "rgb(var(--shadow-hue) / 18%)" }}
-              />
-            )}
-            {i === at ? (
-              current
-            ) : i < at ? (
-              <span aria-hidden className="clay flex h-10 w-10 items-center justify-center rounded-full" style={clay}>
-                <Check className="h-5 w-5" strokeWidth={3.5} />
-              </span>
-            ) : (
-              <span
-                aria-hidden
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--color-ink-soft)] opacity-70"
-              >
-                <Icon className="h-5 w-5" strokeWidth={2.5} />
-              </span>
-            )}
-          </li>
-        );
-      })}
-    </ol>
+    <Chalkboard size="strip">
+      <ol className="chalk-trail">
+        {kinds.map((kind, i) => {
+          const Icon = TASK_ICONS[kind];
+          return (
+            <li key={i} className="flex items-center gap-2">
+              {i > 0 && <span aria-hidden className={`chalk-trail-line ${i <= at ? "chalk-trail-line--done" : ""}`} />}
+              {i === at ? (
+                current
+              ) : (
+                <span aria-hidden className={`chalk-trail-dot ${i < at ? "chalk-trail-dot--done" : ""}`}>
+                  {i < at ? <Check className="h-5 w-5" strokeWidth={3.5} /> : <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={2.5} />}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </Chalkboard>
   );
 }
