@@ -568,8 +568,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <MakeDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
-    case "cups":
-      return <CupsDemo picture={demo.picture} />;
     case "weather":
       return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
