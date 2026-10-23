@@ -66,17 +66,15 @@ export function StrokeDemo({ strokes }: StrokeDemoProps) {
 
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
-      {chalk && (
-        <defs>
-          <ChalkFilter id={chalkId} />
-        </defs>
-      )}
+      <defs>
+        <ChalkFilter id={chalkId} />
+      </defs>
       {/* The finished shape, held faintly underneath, so the shape reads as
           a whole even at the start of each replay. */}
       <path
         d={path}
         fill="none"
-        stroke={chalk ? "rgb(251 248 240 / 22%)" : "var(--color-locked)"}
+        stroke="rgb(251 248 240 / 22%)"
         strokeWidth={9}
         strokeLinecap="round"
         strokeLinejoin="round"
