@@ -40,21 +40,19 @@ const face = (word: string): Face => ({ kind: "picture", src: food(word).picture
 const line = (word: string, count: number) => ({ word, things: food(word).things, count });
 
 /**
- * Nova's garden — one thing, one lesson, and every step about IT: meet it
- * (its picture, its word, its speaker) → build its word → Nova's cups
- * (direct request 2026-10-08, replacing Grow it): it goes under one of
- * three cups, they swap, and the child finds it — the same one thing,
- * watched closely. Picking in her garden is the review's exam, with
- * several foods to tell apart.
+ * Nova's garden — one thing, one lesson, and every step about IT: watch its
+ * reel, meet it (its picture, its word, its speaker), build its word.
+ * (Nova's cups were its third step until 2026-10-23 — they are a game of
+ * their own on `/play` now, direct request.) Picking in her garden is the
+ * review's exam, with several foods to tell apart.
  */
-function foodLesson({ word, picture, core }: Food, i: number): LessonDef {
+function foodLesson({ word, picture }: Food, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      ...(core ? [] : [{ type: "cups" as const, ask: { key: "findUnderCup" as const, vars: { thing: word } }, word, picture }]),
     ],
   };
 }
