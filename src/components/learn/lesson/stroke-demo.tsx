@@ -36,9 +36,8 @@ const EXTRA_PER_STROKE = 1.2;
  *
  * The pen rides the combined path and lifts across any gap between strokes.
  */
-export function StrokeDemo({ strokes, accent, chalk = false }: StrokeDemoProps) {
+export function StrokeDemo({ strokes }: StrokeDemoProps) {
   const chalkId = `chalk${useId().replace(/[^\w-]/g, "")}`;
-  const ink = chalk ? CHALK_PINK : accent;
   const segments = strokes.map(strokeToPath);
   /* The whole drawing as one `d` — what the faint shape underneath is drawn
      from, and what the pen travels. Only the drawing line is split. */
