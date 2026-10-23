@@ -251,7 +251,9 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         onPointerUp={handleUp}
         onPointerCancel={handleUp}
       >
-        <defs>{chalk ? <ChalkFilter id={clayId} /> : <ClayFilter id={clayId} />}</defs>
+        <defs>
+          <ChalkFilter id={chalkId} />
+        </defs>
 
         {inviting &&
           guidePaths.map((path, index) => (
