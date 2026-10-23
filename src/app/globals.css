@@ -4565,7 +4565,7 @@ button:disabled,
   animation-delay: 1.5s;
 }
 
-/* "Look here" dashes, pointing in from Pinki's side. */
+/* "Look here" dashes, pointing in from the friend's side. */
 .class-doodles--right img:last-child {
   rotate: 70deg;
   animation-delay: 1.65s;
