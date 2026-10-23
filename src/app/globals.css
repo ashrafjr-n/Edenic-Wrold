@@ -4931,7 +4931,7 @@ button:disabled,
 }
 
 /* A short desktop (under 800px tall): a little less room round the
-   cards, so they and Pinki fit without scrolling. */
+   cards, so they and the friend fit without scrolling. */
 @media (width >= 64rem) and (height < 50rem) {
   .class-hub {
     padding-bottom: 5rem;
