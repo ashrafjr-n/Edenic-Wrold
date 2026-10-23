@@ -33,7 +33,7 @@ interface TraceQuestionProps {
  * A pass fills the shape with colour, and then it turns into a real thing
  * (`reward`), so the shape is something from the child's world.
  */
-export function TraceQuestion({ strokes, accent, reward, dict, board, chalk = false, onSolved, onMiss }: TraceQuestionProps) {
+export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, onMiss }: TraceQuestionProps) {
   const [misses, setMisses] = useState(0);
   const [finished, setFinished] = useState(false);
 
