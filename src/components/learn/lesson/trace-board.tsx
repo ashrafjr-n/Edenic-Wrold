@@ -144,19 +144,18 @@ export function ChalkFilter({ id }: { id: string }) {
  * - Lifting the finger ends the attempt. It passes only if the stroke went
  *   round (almost) all of the shape AND stayed on the line; anything else
  *   flashes red, shakes, and clears itself — there is no second stroke.
- * - Once passed, the shape fills with colour (`.trace-fill`).
+ * - Once passed, the shape fills with pink chalk (`.trace-fill`).
  *
  * The markers are lucide icons laid over the SVG, never drawn in it.
  *
- * The child's line and the fill are CLAY, the same as the start disc: the
- * `.clay` recipe (grain blended `overlay`, a white inset from the top, an
- * edge-colour inset from the bottom, a tinted drop shadow) rebuilt as one SVG
- * filter, because a stroke cannot take `background-image` or `box-shadow`.
+ * It is drawn ON the friend's board (2026-10-23): the guide dots, the
+ * child's line in white chalk and the fill are rubbed chalk
+ * (`ChalkFilter`); the start disc stays clay.
  */
-export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict, chalk = false }: TraceBoardProps) {
+export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
   /* `useId`'s punctuation is not safe inside `url(#…)`. */
-  const clayId = `clay${useId().replace(/[^\w-]/g, "")}`;
+  const chalkId = `chalk${useId().replace(/[^\w-]/g, "")}`;
   const [active, setActive] = useState<StrokePoint[]>([]);
   const [drawing, setDrawing] = useState(false);
   const [missed, setMissed] = useState(false);
