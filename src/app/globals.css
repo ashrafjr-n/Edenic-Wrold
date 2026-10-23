@@ -4069,21 +4069,6 @@ button:disabled,
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
 
-.art-stage::before {
-  content: "";
-  position: absolute;
-  inset: var(--stage-inset, 40% 0 0 0);
-  z-index: -1;
-  border-radius: 1.25rem;
-  background-color: var(--stage-tint, color-mix(in srgb, var(--page-accent-color) 22%, var(--surface)));
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  box-shadow:
-    inset 0 6px 10px -4px rgb(255 255 255 / 60%),
-    inset 0 -6px 10px -4px rgb(var(--shadow-hue) / 16%);
-}
-
 [data-theme="dark"] .art-stage::before {
   box-shadow:
     inset 0 6px 10px -4px rgb(255 255 255 / 14%),
