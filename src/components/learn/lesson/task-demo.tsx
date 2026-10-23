@@ -260,41 +260,6 @@ function SortDemo({ item, bins }: { item: Thing; bins: SortBin[] }) {
   );
 }
 
-/** Paint: under the word, the finger taps its pot and the paint spreads
-    over the grey thing. */
-function PaintDemo({ round, pots }: { round: PaintRound; pots: ColorId[] }) {
-  return (
-    /* Sized by its own box (`cqi`): the same demo fills the popup and the
-       small panel docked beside a tablet's step. */
-    <div className="@container flex h-full w-full flex-col items-center justify-center gap-[4cqi]">
-      <span className="[&>span]:text-[17cqi]">
-        <ClayWord word={round.color} size="demo" tone={PLAIN_TONE} />
-      </span>
-      <span className="relative block h-[36%] w-[36%]">
-        <Image src={round.blank} alt="" fill sizes="8rem" className="object-contain" />
-        <Image src={round.painted} alt="" fill sizes="8rem" className="demo-paint object-contain" />
-      </span>
-      <div className="flex gap-[3cqi]">
-        {pots.map((color) => (
-          <span
-            key={color}
-            className={`card card-clay-white relative flex h-[19cqi] w-[19cqi] items-center justify-center p-[2cqi] ${color === round.color ? "demo-press" : ""}`}
-          >
-            <span className="relative block h-full w-full">
-              <Image src={COLORS[color].pot} alt="" fill sizes="3.5rem" className="object-contain" />
-            </span>
-            {color === round.color && (
-              <span className="absolute left-1/2 top-1/2">
-                <Finger />
-              </span>
-            )}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** Pop: three balloons in a pale sky; the finger taps the one of the color
     and it bursts. */
 function PopDemo({ color, others }: { color: ColorId; others: ColorId[] }) {
