@@ -21,8 +21,11 @@ interface ClassCourse extends UpNextCourse {
   model: StaticImageData;
 }
 
-interface PinkiClassroomProps {
+interface FriendClassroomProps {
   characterId: string;
+  /** The friend at the board, and celebrating (`CLASSROOMS[id]`). */
+  teacher: StaticImageData;
+  cheer: StaticImageData;
   courses: readonly ClassCourse[];
   labels: {
     /** "{n} lessons", under a course's name. */
