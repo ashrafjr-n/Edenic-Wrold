@@ -43,14 +43,15 @@ interface FriendClassroomProps {
     replayCourse: string;
     /** On the board, in place of the cheer, once every lesson is learned. */
     allDone: string;
-    pinki: string;
+    /** The friend's name, for their button (tap: they jump). */
+    friend: string;
   };
   dir: "rtl" | "ltr";
 }
 
 /** The chalk doodles beside the cards — drawn by hand (`chalk.py`), never
     icons: a star and a heart at the left, a smiling sun and "look here"
-    dashes at the right, where Pinki's stick is. */
+    dashes at the right, where the friend's stick is. */
 const DOODLES = { left: [chalkStar, chalkHeart], right: [chalkSun, chalkBurst] };
 
 /** One side's doodles: a column of the cards' grid that only gets the
