@@ -8,6 +8,7 @@ import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { LessonPlayer } from "@/components/learn/lesson/lesson-player";
 import { CourseBackdrop } from "@/components/learn/lesson/course-backdrop";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
+import { CLASSROOMS, classroomStyle } from "@/data/classroom";
 import { BACKDROPS } from "@/data/backdrops";
 import { getDictionary, getLocale } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
