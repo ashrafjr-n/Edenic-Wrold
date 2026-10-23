@@ -51,14 +51,13 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
   const title = course.items[n - 1];
   const def = courseLessons[lesson.id][n - 1];
   const dir = dirFor(locale);
-  const backdrop = BACKDROPS[lesson.id][n - 1];
   const room = CLASSROOMS[character.id];
 
   if (def.questions.length > 0) {
     return (
       /* `overflow-x-clip`, never `-hidden`: `hidden` makes `<main>` a scroll
          container and breaks the back row's `sticky`. `isolate`: the
-         course's backdrop sits under the steps, above the body's ground. */
+         classroom's wall sits under the steps, above the body's ground. */
       <main
         className="relative isolate flex flex-1 flex-col overflow-x-clip pb-4 lg:pb-0"
         style={room ? { ...characterAccent(character), ...classroomStyle(room) } : characterAccent(character)}
