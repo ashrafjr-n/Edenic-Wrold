@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Celebration } from "@/components/ui/celebration";
-import { CUP } from "@/data/market";
+import { CUP } from "@/data/cups-levels";
 import { format } from "@/lib/format-dict";
 import { lessonCue, playCue } from "@/lib/cue";
 import { ClayWord } from "@/components/learn/lesson/clay-word";
