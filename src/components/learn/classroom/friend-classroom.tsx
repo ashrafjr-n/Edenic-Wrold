@@ -67,23 +67,24 @@ function Doodles({ side }: { side: keyof typeof DOODLES }) {
 }
 
 /**
- * Pinki's hub as her classroom (2026-10-14): her board under its sign, a
- * square paper card per course stuck on it side by side — the course's
- * name on a clay tag, its one 3D thing, how far along it is, one button
- * (Start / Continue / Play again). What a course teaches stays inside it:
- * a card never lists its lessons. The next course's card glows pink.
- * Chalk doodles drawn by hand round the cards and "You can do it!" under
- * them.
+ * A friend's hub as their classroom (Pinki's 2026-10-14; Nova's and Bloo's
+ * 2026-10-23 — the same classroom, their own room and chalk): the board, a
+ * square paper sheet per course pinned to it side by side — the course's
+ * name on a clay tag, "5 lessons", its one 3D thing, a dot per lesson, one
+ * button (Start / Continue / Play again). What a course teaches stays
+ * inside it: a sheet never lists its lessons. The next course's sheet
+ * glows. Chalk doodles drawn by hand round the sheets and "You can do it!"
+ * under them.
  *
- * Pinki stands beside the board, her stick raised to it (her own pose; it
- * does not move — direct request), and jumps when tapped; she says
- * nothing. When every lesson is learned she celebrates instead, and the
- * board says so.
+ * The friend stands beside the board, their stick raised to it (their own
+ * pose; it does not move — direct request), and jumps when tapped; they
+ * say nothing. When every lesson is learned they celebrate instead, and
+ * the board says so.
  *
- * A card is the course's link: the board zooms up into the course page
- * (`Chalkboard`'s view transition) as Pinki steps out of the picture.
+ * A sheet is the course's link: the board zooms up into the course page
+ * (`Chalkboard`'s view transition) as the friend steps out of the picture.
  */
-export function PinkiClassroom({ characterId, courses, labels, dir }: PinkiClassroomProps) {
+export function FriendClassroom({ characterId, teacher, cheer, courses, labels, dir }: FriendClassroomProps) {
   const items = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
   const next = useUpNext(characterId, courses);
