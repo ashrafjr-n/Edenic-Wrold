@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Star } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
 import type { Face } from "@/types/course";
