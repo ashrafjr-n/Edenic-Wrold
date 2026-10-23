@@ -174,7 +174,6 @@ export const ar: Dictionary = {
     popColor: "فرقع البالونات {color}!",
     spellPicture: "كوّن كلمة هذه الصورة!",
     thisSeason: "هذا فصل {season}!",
-    findUnderCup: "راقب الأكواب واعثر على {thing}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
     orderSeasons: "رتّب الفصول بالترتيب!",
     sortAnimals: "ضع كل حيوان في بيته!",
