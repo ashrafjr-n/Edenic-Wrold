@@ -560,8 +560,9 @@ export function LessonPlayer({
               className="anim-fade-up hidden sm:flex lg:hidden"
             />
           )}
-          {/* The desktop stage: stays put while the steps swap on it. */}
-          {stageBox(
+          {/* The friend's board (2026-10-23): it stays put while the steps
+              swap on it — every step is written up on it. */}
+          <Chalkboard size="stage" className="lesson-board sm:col-span-2 sm:row-start-2">
             <div
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
