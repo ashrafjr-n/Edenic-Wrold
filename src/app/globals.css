@@ -5324,7 +5324,7 @@ a.board-cell:focus-visible {
 }
 
 .board-next:focus-visible {
-  outline: 4px solid #ffb0d4;
+  outline: 4px solid var(--chalk-accent);
   outline-offset: 4px;
 }
 
