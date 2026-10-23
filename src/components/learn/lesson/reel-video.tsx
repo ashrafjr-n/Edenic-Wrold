@@ -10,6 +10,10 @@ import { LessonLoader } from "./lesson-loader";
     Skip button finishes its spin before the lesson moves on. */
 const SKIP_SPIN_MS = 520;
 
+/** The loader always comes first (direct request: "loading, THEN the
+    video") — at least this long, however fast the clip arrives. */
+const LOADER_MS = 1200;
+
 interface ReelVideoProps {
   src: string;
   /** Names the clip for a screen reader. */
@@ -47,25 +51,35 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
   /* The browser refused to start the reel even muted (Low Power Mode, data
      saver, an autoplay policy): a big Play button asks for the one tap. */
   const [blocked, setBlocked] = useState(false);
-  /* Until the clip can play, the loader (never a frozen first frame); then
-     it fades in. A clip that fails shows the lesson's art instead. */
-  const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
+  /* The loader first — for `LOADER_MS` AND until the clip can play — and
+     only then the clip, fading in (no movement) and starting from its
+     first frame. A clip that fails shows the lesson's art instead. */
+  const [waited, setWaited] = useState(false);
+  const [canPlay, setCanPlay] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const ready = waited && canPlay;
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  useEffect(() => {
+    const wait = window.setTimeout(() => setWaited(true), LOADER_MS);
+    /* Ready (or broken) before React was listening: no event will come. */
+    const el = video.current;
+    if (el?.error) setFailed(true);
+    else if (el && el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) setCanPlay(true);
+    return () => window.clearTimeout(wait);
+  }, []);
 
   /* A browser may refuse autoplay WITH sound; play it muted then rather than
      leave a still frame. If even that is refused, show the Play button. */
   useEffect(() => {
     const el = video.current;
-    if (!el) return;
-    /* Ready (or broken) before React was listening: no event will come. */
-    if (el.error) setState("failed");
-    else if (el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) setState("ready");
+    if (!ready || !el) return;
     el.play().catch(() => {
       el.muted = true;
       return el.play().catch(() => setBlocked(true));
     });
-  }, []);
+  }, [ready]);
 
   const play = () => {
     const el = video.current;
@@ -94,7 +108,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
           plays on. */}
       <div className="lesson-board contents lg:flex lg:w-full lg:justify-center lg:p-5">
         <div className="relative h-full w-full overflow-hidden bg-[var(--surface)] sm:aspect-[9/16] sm:w-auto sm:max-w-full sm:rounded-[1.75rem] sm:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
-          {state === "failed" && (
+          {failed && (
             <Image
               src={image}
               alt=""
@@ -103,7 +117,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
               className="select-none object-contain p-12 opacity-90"
             />
           )}
-          {state === "loading" && (
+          {!ready && !failed && (
             <span className="absolute inset-0 flex items-center justify-center">
               <LessonLoader label={loadingLabel} />
             </span>
@@ -116,9 +130,9 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
             preload="auto"
             aria-label={label}
             onEnded={finish}
-            onCanPlay={() => setState("ready")}
-            onError={() => setState("failed")}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${state === "ready" ? "opacity-100" : "opacity-0"}`}
+            onCanPlay={() => setCanPlay(true)}
+            onError={() => setFailed(true)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}
           />
 
           {blocked && (
