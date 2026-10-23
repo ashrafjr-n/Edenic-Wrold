@@ -28,7 +28,6 @@ export type TaskDemoDef =
   | { kind: "find"; scene: Scene; target: Target }
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: Thing; bins: SortBin[] }
-  | { kind: "paint"; round: PaintRound; pots: ColorId[] }
   | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
