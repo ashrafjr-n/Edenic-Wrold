@@ -110,6 +110,7 @@ export function LessonPlayer({
   dict,
   dir,
   classroom = false,
+  cheer,
 }: LessonPlayerProps) {
   const onward = { face: courseTone.face, edge: courseTone.edge, text: courseTone.ink };
   const complete = useProgress((state) => state.complete);
