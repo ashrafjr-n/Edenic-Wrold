@@ -171,7 +171,6 @@ export const ku: Dictionary = {
     findAll: "هەمی {shape} بدۆزە!",
     sortAll: "هەر تشتەکی بکە د سندوقا شێوێ وی دا!",
     thisColor: "ئەڤە ڕەنگێ {color}ە!",
-    paint: "پەیڤێ بخوینە، پاشان ڕەنگ بکە!",
     findColor: "هەمی تشتێن {color} بدۆزە!",
     mix: "{a} و {b} پێکڤە چ چێدکەن؟",
     whichColor: "{color} کیژە؟",
