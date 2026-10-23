@@ -2200,15 +2200,17 @@ button:disabled,
    (6rem) — so every step can size itself to fit without a scroll.
 
    `.card-bare-lg` strips a step's own wrapping card at `lg` (its contents
-   stay as they are). `.card` is unlayered, so a Tailwind `lg:bg-*` on it
-   loses; this rule is declared after `.card-clay-white` and its dark twin,
-   so it wins at the same specificity. */
+   stay as they are) — except on Pinki's board (`.chalkboard--stage`), where
+   the cards stay white, papers on the slate. `.card` is unlayered, so a
+   Tailwind `lg:bg-*` on it loses; this rule is declared after
+   `.card-clay-white` and its dark twin, so it wins at the same specificity
+   (`:where` adds none). */
 @media (width >= 64rem) {
   .lesson-board {
     --stage-h: calc(100svh - 22.75rem);
   }
 
-  .card.card-bare-lg {
+  :where(.lesson-board:not(.chalkboard--stage)) .card.card-bare-lg {
     background: none;
     box-shadow: none;
   }
@@ -5454,6 +5456,54 @@ a.board-cell:focus-visible {
 
 .chalkboard--strip .chalkboard-slate {
   border-radius: 0.9rem;
+}
+
+/* Her lessons' steps are all on her board: it fills what the back row
+   leaves, the step swapping on the slate above its grain (`z-index`). */
+.chalkboard--stage {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  margin: 0.25rem 0.75rem 1.25rem;
+}
+
+.chalkboard--stage > .chalkboard-slate {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.chalkboard--stage .stage-swap {
+  position: relative;
+  z-index: 1;
+  padding: 0.75rem 0.75rem 0.25rem;
+}
+
+@media (width >= 40rem) {
+  .chalkboard--stage {
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .chalkboard--stage .stage-swap {
+    padding: 1rem 1.5rem 0.5rem;
+  }
+}
+
+/* A desktop: the frame and tray take their room out of the step's. */
+@media (width >= 64rem) {
+  .chalkboard--stage {
+    margin: 0.25rem 0 0.75rem;
+  }
+
+  .chalkboard--stage.lesson-board {
+    --stage-h: calc(100svh - 25rem);
+  }
+
+  .chalkboard--stage .stage-swap {
+    padding: 1.25rem 1.5rem;
+  }
 }
 
 /* Her board in a lesson: a word is on a paper sentence strip, held up by
