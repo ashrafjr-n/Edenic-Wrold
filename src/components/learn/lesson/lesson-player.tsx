@@ -544,10 +544,9 @@ export function LessonPlayer({
           {body}
         </div>
       ) : (
-        /* Phone: `contents` — no box of its own, the step is laid out exactly
-           as it always was. Tablet: the task and the lesson side by side
-           above the step. Desktop: an open stage — no board, no card — as
-           wide as the page's content column. */
+        /* Phone: `contents` — no box of its own. Tablet: the task and the
+           lesson side by side above the board. Desktop: the board as wide
+           as the page's content column. */
         <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:flex lg:max-w-5xl lg:flex-col lg:py-4">
           {panel}
           {!finished && (
