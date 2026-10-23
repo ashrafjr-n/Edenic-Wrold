@@ -157,7 +157,6 @@ export const ar: Dictionary = {
     likeAria: "أحبّه",
     dislikeAria: "لا أحبّه",
     balloonAria: "بالون {color}",
-    cupAria: "الكوب {n}",
   },
   asks: {
     whichShape: "أين {shape}؟",
