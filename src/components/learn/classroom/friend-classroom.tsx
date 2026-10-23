@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ViewTransition } from "react";
+import { useState, ViewTransition, type CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Play, RotateCcw } from "lucide-react";
