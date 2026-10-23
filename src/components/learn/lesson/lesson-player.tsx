@@ -418,8 +418,6 @@ export function LessonPlayer({
       body = (
         <SortShapes key={seed} items={q.items} bins={q.bins} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
       );
-    } else if (q.type === "paint") {
-      body = <PaintColors key={seed} rounds={q.rounds} pots={q.pots} potAria={lines.potAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "pop") {
       body = (
         <PopBalloons key={seed} color={q.color} others={q.others} seed={seed} balloonAria={lines.balloonAria} onSolved={onSolved} onMiss={onMiss} />
