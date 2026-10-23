@@ -273,17 +273,6 @@ export function LessonPlayer({
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
-  /* What the steps swap on: Pinki's board in her lessons (every step on her
-     chalkboard, in her classroom — 2026-10-23), otherwise a box that paints
-     nothing (the step stands on the page ground). */
-  const stageBox = (stage: ReactNode) =>
-    classroom ? (
-      <Chalkboard size="stage" className="lesson-board sm:col-span-2 sm:row-start-2">
-        {stage}
-      </Chalkboard>
-    ) : (
-      <div className="lesson-board contents lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">{stage}</div>
-    );
   let body: ReactNode = null;
   /* Phone and tablet: the one slot under the step. */
   let action: ReactNode = null;
