@@ -33,206 +33,51 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const dir = dirFor(dict.locale);
   const course = dict.lessons[lesson.id];
   const basePath = `/learn/${character.id}/${lesson.id}`;
-  const tone = { face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink };
-  const lessonsCount = format(dict.lessonPicker.lessonsCount, { n: lesson.totalItems });
   const stops = courseStops(lesson.id);
-  /* The lessons themselves, one box per screen size. */
-  const lessons = (size: "phone" | "tablet" | "wide") => (
-    <LessonBox
-      titles={course.items}
-      stops={stops}
-      characterId={character.id}
-      lessonId={lesson.id}
-      basePath={basePath}
-      tone={tone}
-      dict={dict.lessonPicker}
-      size={size}
-    />
-  );
 
   /* A friend's course is their board, up close (Pinki's 2026-10-14): the
      hub's board zooms up to fill the screen with the course's lessons on it. */
   const room = CLASSROOMS[character.id];
-  if (room) {
-    return (
-      <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
-        <ClassroomBackdrop wall={room.wall} desk={room.desk} zoomed />
-        <ViewTransition name="class-back">
-          <BackRow
-            href={`/learn/${character.id}`}
-            label={format(dict.lessonPicker.backTo, { characterName: character.name })}
-          />
-        </ViewTransition>
-        <div className="class-course">
-          <Chalkboard size="course">
-            <div className="board-head">
-              {/* The thing the child tapped on the hub, carried over. */}
-              <span className="board-head-model" aria-hidden>
-                <Image src={classroomModels[lesson.id] ?? courseCovers(lesson.id)[0]} alt="" fill sizes="7rem" className="object-contain" />
-              </span>
-              <div dir={dir} className="min-w-0 flex-1">
-                <h1 className="chalk-title">{course.name}</h1>
-                <BoardProgress
-                  characterId={character.id}
-                  lessonId={lesson.id}
-                  total={lesson.totalItems}
-                  template={dict.characterHub.learnedOf}
-                  dir={dir}
-                />
-              </div>
-            </div>
-            {/* No Continue here: the next lesson's big sheet is the way on. */}
-            <BoardLessons
-              titles={course.items}
-              stops={stops}
-              characterId={character.id}
-              lessonId={lesson.id}
-              basePath={basePath}
-              dict={dict.lessonPicker}
-              allDone={dict.characterHub.allDone}
-              dir={dir}
-            />
-          </Chalkboard>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main
-      /* `pb-[6.75rem]` (108px) on a phone matches the fixed Continue bar's
-         own measured height exactly — it used to be `pb-36` (144px), 36px
-         too much, which opened a bare gap of page background between the
-         sheet's bottom row and the bar every time the page was scrolled all
-         the way down. */
-      className="relative flex flex-1 flex-col pb-[6.75rem] sm:pb-32 lg:pb-10"
-      style={characterAccent(character)}
-    >
-      {/* ONE back row for every layout below — `BackRow` puts the button
-          where it is on every page. */}
-      <BackRow
-        href={`/learn/${character.id}`}
-        label={format(dict.lessonPicker.backTo, { characterName: character.name })}
-      />
-
-      {/* ================= Phone (< sm) =================
-          The course as a banner in its own colour — title, progress, its
-          things piled on the right — then its lessons as a box of things
-          (`LessonBox`). */}
-      <div className="flex w-full flex-1 flex-col px-6 sm:hidden">
-        <section
-          className="card clay anim-pop-in relative mt-10 flex items-center gap-2 py-5 pl-5 pr-2"
-          style={
-            {
-              backgroundColor: tone.face,
-              color: tone.ink,
-              "--clay-edge": tone.edge,
-              animationDelay: "0.1s",
-            } as CSSProperties
-          }
-        >
-          <div dir={dir} className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
-            <h1 className="clay-title mt-0.5 text-[1.625rem] font-bold leading-tight">
-              {course.name}
-            </h1>
-            <p className="mt-1 text-balance text-sm leading-snug opacity-90">
-              {course.description}
-            </p>
-            <CourseProgress
-              characterId={character.id}
-              lessonId={lesson.id}
-              total={lesson.totalItems}
-              className="mt-3.5"
-            />
-          </div>
-          {/* The course's things stand on the banner and rise above its top
-              edge, bigger than the banner could hold. */}
-          <CourseArt images={courseCovers(lesson.id)} width={144} className="-mb-4 -mt-16 h-36 w-36 shrink-0 self-start" />
-        </section>
-
-        <div className="mt-7">{lessons("phone")}</div>
-      </div>
-
-      {/* ================= Tablet (sm – lg) =================
-          The phone's banner and box, grown: a taller banner with a bigger
-          pile of things, the box at tablet size (`size="tablet"`). */}
-      <div className="mx-auto hidden w-full max-w-3xl flex-1 flex-col px-8 sm:flex lg:hidden">
-        <section
-          className="card clay anim-pop-in relative mt-20 flex items-center gap-6 py-8 pl-8 pr-4"
-          style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
-        >
-          <div dir={dir} className="min-w-0 flex-1">
-            <p className="text-sm font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
-            <h1 className="clay-title mt-1 text-4xl font-bold leading-tight">{course.name}</h1>
-            <p className="mt-2 text-balance text-lg leading-snug opacity-90">{course.description}</p>
-            <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
-          </div>
-          <CourseArt images={courseCovers(lesson.id)} width={240} className="-mb-6 -mt-24 h-60 w-60 shrink-0 self-start" />
-        </section>
-
-        <div className="mt-4">
-          {lessons("tablet")}
-        </div>
-      </div>
-
-      {/* Continue — a fixed bar above the phone's `BottomNav` (at the bottom
-          edge on a tablet). `lg:hidden`: the desktop puts its own under the
-          banner. */}
-      <div
-        className="pointer-events-none fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 pb-4 pt-10 sm:bottom-0 sm:pb-6 lg:hidden"
-        style={{ background: "linear-gradient(to top, var(--background) 55%, transparent)" }}
-      >
-        <div className="pointer-events-auto mx-auto w-full max-w-3xl px-6 sm:px-8">
-          <ContinueButton
-            count={lesson.totalItems}
-            characterId={character.id}
-            lessonId={lesson.id}
-            basePath={basePath}
-            tone={tone}
-            dict={dict}
-            className="w-full py-3.5 text-base sm:py-4 sm:text-lg"
-          />
-        </div>
-      </div>
-
-      {/* ================= Desktop (lg and up) =================
-          The height of the screen, in two parts: the course on the left
-          (its pile of things, name, progress, Continue), and the box on
-          the right, filling a board tinted in the course colour
-          (`size="wide"`) — every lesson in view at once, no scrolling. */}
-      <div className="mx-auto hidden w-full max-w-7xl gap-8 px-8 pt-6 lg:flex lg:h-[calc(100svh-12.5rem)] lg:min-h-[30rem] xl:gap-10 xl:px-12">
-        <aside className="flex w-[21rem] shrink-0 flex-col gap-5 xl:w-[24rem]">
-          <section
-            className="card clay anim-pop-in flex min-h-0 flex-1 flex-col p-7"
-            style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge, animationDelay: "0.1s" } as CSSProperties}
-          >
-            <CourseArt images={courseCovers(lesson.id)} width={300} className="mx-auto -mt-10 min-h-0 w-full flex-1" />
-            <div dir={dir} className="mt-4">
-              <p className="text-sm font-bold uppercase tracking-wide opacity-85">{lessonsCount}</p>
-              <h1 className="clay-title mt-1 text-4xl font-bold leading-tight xl:text-5xl">{course.name}</h1>
-              <p className="mt-2 text-lg leading-snug opacity-90">{course.description}</p>
+    <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
+      <ClassroomBackdrop wall={room.wall} desk={room.desk} zoomed />
+      <ViewTransition name="class-back">
+        <BackRow
+          href={`/learn/${character.id}`}
+          label={format(dict.lessonPicker.backTo, { characterName: character.name })}
+        />
+      </ViewTransition>
+      <div className="class-course">
+        <Chalkboard size="course">
+          <div className="board-head">
+            {/* The thing the child tapped on the hub, carried over. */}
+            <span className="board-head-model" aria-hidden>
+              <Image src={classroomModels[lesson.id] ?? courseCovers(lesson.id)[0]} alt="" fill sizes="7rem" className="object-contain" />
+            </span>
+            <div dir={dir} className="min-w-0 flex-1">
+              <h1 className="chalk-title">{course.name}</h1>
+              <BoardProgress
+                characterId={character.id}
+                lessonId={lesson.id}
+                total={lesson.totalItems}
+                template={dict.characterHub.learnedOf}
+                dir={dir}
+              />
             </div>
-            <CourseProgress characterId={character.id} lessonId={lesson.id} total={lesson.totalItems} className="mt-5" />
-          </section>
-          <ContinueButton
-            count={lesson.totalItems}
+          </div>
+          {/* No Continue here: the next lesson's big sheet is the way on. */}
+          <BoardLessons
+            titles={course.items}
+            stops={stops}
             characterId={character.id}
             lessonId={lesson.id}
             basePath={basePath}
-            tone={tone}
-            dict={dict}
-            className="w-full py-4 text-lg"
+            dict={dict.lessonPicker}
+            allDone={dict.characterHub.allDone}
+            dir={dir}
           />
-        </aside>
-
-        <div
-          className="card card-clay-white anim-fade-up min-w-0 flex-1 px-10 py-6"
-          style={{ background: `color-mix(in srgb, ${tone.face} 14%, var(--surface))`, animationDelay: "0.2s" }}
-        >
-          {lessons("wide")}
-        </div>
+        </Chalkboard>
       </div>
-    </main>
+  </main>
   );
 }
