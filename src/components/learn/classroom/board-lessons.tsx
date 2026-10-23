@@ -42,14 +42,17 @@ function readStarsSeen(): Record<string, number> {
 }
 
 /**
- * A course's lessons up on Pinki's board (2026-10-23 layout): the lesson to
- * play next big in the middle — a paper sheet pinned up by two magnets,
- * "Lesson 3", its thing and word, one Start button — the lessons learned
- * small side by side on ONE line above it (it scrolls sideways when it
- * doesn't fit) (each with the stars it earned, of 3, any
- * earned since the last visit flying in), the ones still to come small
- * on one line below it, dimmed, a "?" for their word (a colour shows an empty pot). A
- * lock that opened since the last visit springs off the big sheet.
+ * A course's lessons up on Pinki's board (2026-10-23 layout):
+ *
+ * - The lesson to play next, big in the middle: a paper sheet pinned up by
+ *   one magnet — its thing, "Lesson 3", its word, one Start button. A lock
+ *   that opened since the last visit springs off it.
+ * - The lessons learned, small on ONE line above it, each with the stars it
+ *   earned (of 3; any earned since the last visit fly in).
+ * - The ones still to come, small on one line below it, dimmed, a "?" for
+ *   their word (a colour shows an empty pot).
+ *
+ * A line that doesn't fit scrolls sideways — never wraps.
  */
 export function BoardLessons({ titles, stops, characterId, lessonId, basePath, dict, allDone, dir }: BoardLessonsProps) {
   const rootRef = useRef<HTMLDivElement>(null);
