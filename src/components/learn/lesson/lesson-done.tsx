@@ -19,6 +19,9 @@ interface LessonDoneProps {
   /** The child's own passing trace, drawn back beside the shape. */
   drawing?: readonly StrokePoint[];
   accent: string;
+  /** The friend celebrating — Pinki's pose unless their classroom gives
+      their own. */
+  cheer?: StaticImageData;
   dir: "rtl" | "ltr";
   /** Pinki's lessons (the step is on her board): what was learned is
       written up on it — the title in chalk, the stars it earned (of 3; the same stars then fly
