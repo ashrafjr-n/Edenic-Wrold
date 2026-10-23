@@ -4222,7 +4222,7 @@ if (THING) {
     grp.add(sheet);
     /* Pinned up with two clay pins. */
     for (const side of [-1, 1]) {
-      const pin = mesh(new THREE.SphereGeometry(0.09, 24, 16), clay(side < 0 ? 0xf776ac : 0x4da3ec, { clearcoat: 0.6 }));
+      const pin = mesh(new THREE.SphereGeometry(0.09, 24, 16), clay(side < 0 ? THEME.poster.pins[0] : THEME.poster.pins[1], { clearcoat: 0.6 }));
       pin.position.set(side * (wd / 2 - 0.22), ht / 2 - 0.2, 0.1);
       grp.add(pin);
     }
