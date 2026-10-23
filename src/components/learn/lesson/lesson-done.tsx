@@ -40,22 +40,18 @@ interface LessonDoneProps {
  * The beats arrive one after another (`animation-delay`); Again / Next are the
  * player's, in the action band as on every step.
  *
- * The done screen has no task button, so the middle of the back row is free:
- * the screen is pinned to the top (`mb-auto`) and Pinki rises into that gap
- * (the negative top margin), which is what lets her be this big on a phone.
+ * It is written up on the friend's board (2026-10-23): the title in chalk,
+ * the stars the lesson earned, the word on its paper strip. Pinned to the
+ * top (`mb-auto`) on a phone.
  *
  * Desktop: the board spans the whole width here (no side panels), so the
- * beats sit side by side — Pinki big on the left, what was learned on the
+ * beats sit side by side — the friend on the left, what was learned on the
  * right.
- *
- * Pinki's lessons (`board`): the second beat is written up on her
- * chalkboard, with the stars the lesson earned — the ones her course board
- * shows on its box.
  */
-export function LessonDone({ title, words, faces, drawing, accent, cheer = celebrate, dir, board }: LessonDoneProps) {
+export function LessonDone({ title, words, faces, drawing, accent, cheer, dir, stars }: LessonDoneProps) {
   const learned = <Learned words={words} faces={faces} drawing={drawing} accent={accent} />;
   return (
-    <div className={`relative mb-auto flex w-full max-w-sm ${board ? "" : "-mt-[4.5rem]"} flex-col items-center gap-3 text-center sm:mb-0 sm:mt-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2`}>
+    <div className="relative mb-auto flex w-full max-w-sm flex-col items-center gap-3 text-center sm:mb-0 sm:max-w-md lg:grid lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:content-center lg:items-center lg:gap-x-12 lg:gap-y-5 [@media(max-height:700px)]:gap-2">
       <div className="relative flex items-end justify-center lg:row-span-2">
         <span
           aria-hidden
