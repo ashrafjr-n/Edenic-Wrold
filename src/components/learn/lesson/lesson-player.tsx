@@ -508,6 +508,7 @@ export function LessonPlayer({
           reward={SHAPES[q.shape].thing}
           dict={lines}
           board={board}
+          chalk={classroom}
           onSolved={(stroke) => {
             setDrawing(stroke);
             onSolved();

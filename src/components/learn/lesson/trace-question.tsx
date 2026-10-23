@@ -22,6 +22,8 @@ interface TraceQuestionProps {
   /** The demo is over and the board is up — the player's "Your turn!"
       button, in the action band like every other button. */
   board: boolean;
+  /** On Pinki's board: no card — the shape is drawn on the slate in chalk. */
+  chalk?: boolean;
   /** Passed, with the stroke the child drew (the done screen shows it). */
   onSolved: (stroke: StrokePoint[]) => void;
   onMiss: () => void;
@@ -33,7 +35,7 @@ interface TraceQuestionProps {
  * A pass fills the shape with colour, and then it turns into a real thing
  * (`reward`), so the shape is something from the child's world.
  */
-export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, onMiss }: TraceQuestionProps) {
+export function TraceQuestion({ strokes, accent, reward, dict, board, chalk = false, onSolved, onMiss }: TraceQuestionProps) {
   const [misses, setMisses] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -59,10 +61,11 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
                 }}
                 locked={finished}
                 dict={dict}
+                chalk={chalk}
               />
             </div>
           ) : (
-            <StrokeDemo strokes={strokes} accent={accent} />
+            <StrokeDemo strokes={strokes} accent={accent} chalk={chalk} />
           )}
 
           {finished && (
