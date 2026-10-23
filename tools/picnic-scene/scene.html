@@ -5188,7 +5188,40 @@ if (THING) {
     }
   }
 
-  const WORLDS = { colors: colorsWorld, veg: vegetablesWorld, seasons: seasonsWorld, animals: animalsWorld, weather: weatherWorld };
+  /* ---------- Play (2026-10-23): a game card's picture — `play-cups`,
+     Nova's Cups. Her garden (the meadow, its fence, a tree, the sun), her
+     three gold cups on the grass at the near left, the near one lifted off
+     a carrot, and her basket of vegetables at the near right. The middle
+     stays open grass and sky: the card's button sits there. Landscape
+     only; `crop.py playcard cups`. ---------- */
+  function playWorld(which) {
+    if (which !== "cups") throw new Error(`No play card ${which}`);
+    meadow({ sky: 0xd8ebfb, flowers: [0xffd45e, 0xffffff, 0xff9ec8] });
+    trees([() => roundTree(), () => roundTree([0x8fd474, 0x7cc66a], { dots: 0xff8a3d })]);
+    picketFence(-7);
+    put(ITEMS.sun(), -5.5, 6.0, -24, 2.4);
+    const cups = [[-4.1, 2.2, 0.15], [-2.85, 2.75, -0.1], [-1.55, 3.3, 0.2]];
+    cups.forEach(([x, z, turnY], i) => {
+      /* The near cup is up: the carrot it hid lies on the grass under it. */
+      const c = ITEMS.cup();
+      /* Tipped up on one side, the way a hand lifts it. */
+      if (i === 2) c.rotation.z = -0.55;
+      scene.add(stand(c, i === 2 ? x + 0.3 : x, i === 2 ? 0.04 : 0, z, 0.66, turnY));
+      if (i === 2) {
+        const carrot = new THREE.Group();
+        const body = videoCarrot(0);
+        body.rotation.z = Math.PI / 2;
+        carrot.add(body);
+        scene.add(stand(carrot, x + 0.15, 0, z + 0.15, 0.36, 0.2));
+      }
+    });
+    const basket = ITEMS.basket();
+    [[-0.3, 0.6, -0.2, "broccoli"], [0.3, 0.62, 0.1, "potato"], [0, 0.75, 0.3, "carrot"], [-0.2, 0.8, 0.05, "tomato"]].forEach(([x, y, z, food], i) => basket.add(at(VEG[food].loose(), [x, y, z], 0.34, [0, i, 0])));
+    put(basket, 3.15, 0, 3.0, 0.82);
+    put(VEG.pepper.loose(), 2.0, 0.1, 3.6, 0.5);
+  }
+
+  const WORLDS = { colors: colorsWorld, veg: vegetablesWorld, seasons: seasonsWorld, animals: animalsWorld, weather: weatherWorld, play: playWorld };
   const [course, which] = BACKDROP.includes("-") ? BACKDROP.split("-") : ["shapes", BACKDROP];
   if (course === "shapes") {
     const lesson = LESSONS[which];
