@@ -59,8 +59,8 @@ export function ClassroomBackdrop({ wall: room, desk: chairs, zoomed = false, st
         <ViewTransition exit="desk-exit" default="none">
           <div className="class-desk">
             <div className="class-desk-view">
-              <Image src={deskPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
-              <Image src={deskLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+              <Image src={chairs.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+              <Image src={chairs.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
             </div>
           </div>
         </ViewTransition>
