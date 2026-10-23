@@ -156,7 +156,6 @@ export const ar: Dictionary = {
     findItemAria: "المس {word}",
     likeAria: "أحبّه",
     dislikeAria: "لا أحبّه",
-    potAria: "طلاء {color}",
     balloonAria: "بالون {color}",
     cupAria: "الكوب {n}",
   },
