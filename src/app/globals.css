@@ -4056,15 +4056,11 @@ button:disabled,
 
 
 /* ---------------------------------------------------------------
-   A character's hub and a course's path (phone).
-
-   The hub is Pinki greeting the child plus one big coloured clay card per
-   course, with that course's own things piled on it (`CourseArt`). A course
-   page is a winding clay path (`LessonPath`): a thick track in two clays,
-   the dormant lavender and the course colour lit up to the next stop.
+   Bits shared by the learn pages.
    --------------------------------------------------------------- */
 
-/* A thing on a card or a stop casts a shadow in the colour under it. */
+/* A course's thing (the tablet lesson panel) casts a shadow in the colour
+   under it. */
 .course-art-thing {
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
