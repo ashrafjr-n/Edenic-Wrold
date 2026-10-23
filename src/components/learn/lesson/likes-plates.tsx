@@ -118,7 +118,7 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
         {/* The sentence(s) — English, with their speakers. One slot height. */}
         <div dir="ltr" className="flex min-h-[min(5rem,9svh)] flex-col items-center justify-center gap-1.5 [grid-area:line] lg:min-h-[min(5rem,calc(var(--stage-h)*0.18))]">
           {lines.map((line) => (
-            <p key={line} className="anim-pop-in flex items-center gap-2.5 text-xl font-bold text-[var(--color-ink)] max-sm:text-balance sm:text-2xl lg:text-3xl">
+            <p key={line} className="likes-line anim-pop-in flex items-center gap-2.5 text-xl font-bold text-[var(--color-ink)] max-sm:text-balance sm:text-2xl lg:text-3xl">
               <CueButton cue={lessonCue.sentence(line)} label={format(hearLabel, { word: line })} size="sm" />
               {line}
             </p>
