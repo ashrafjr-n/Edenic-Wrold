@@ -1,17 +1,17 @@
 import { ViewTransition } from "react";
 import Image from "next/image";
 import { WallPreload } from "@/components/learn/classroom/wall-preload";
-import wallPortrait from "../../../../public/assets/learn/pinki/classroom/portrait.jpg";
-import wallLandscape from "../../../../public/assets/learn/pinki/classroom/landscape.jpg";
-import deskPortrait from "../../../../public/assets/learn/pinki/classroom/portrait-desk.png";
-import deskLandscape from "../../../../public/assets/learn/pinki/classroom/landscape-desk.png";
+import type { Framed } from "@/data/classroom";
 
 interface ClassroomBackdropProps {
+  /** The friend's room — `CLASSROOMS[id]`. */
+  wall: Framed;
+  desk: Framed;
   /** A course page: the camera is up close on the board — the wall
       zoomed in past it, the child's desk out of the picture. */
   zoomed?: boolean;
   /** Behind a lesson (and its loading screen): the zoomed wall, still, and
-      NOT the `pinki-wall` transition — the lesson's wall is fixed to the
+      NOT the `class-wall` transition — the lesson's wall is fixed to the
       whole screen, the course page's sits inside the page, and a pair of
       different boxes grew the wall over the header and the bottom nav on
       every tap of a lesson. */
