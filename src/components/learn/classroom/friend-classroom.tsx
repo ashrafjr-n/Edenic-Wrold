@@ -116,7 +116,7 @@ export function FriendClassroom({ characterId, teacher, cheer, courses, labels, 
                   className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
                   style={{ animationDelay: `${0.7 + i * 0.18}s` }}
                 >
-                  <span dir={dir} className="class-card-tag">
+                  <span dir={dir} className="class-card-tag" style={{ "--chars": course.name.length } as CSSProperties}>
                     {course.name}
                   </span>
                   <span dir={dir} className="class-card-count">
