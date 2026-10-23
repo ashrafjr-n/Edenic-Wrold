@@ -188,7 +188,6 @@ export const en = {
     popColor: "Pop the {color} balloons!",
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
-    findUnderCup: "Watch the cups and find the {thing}!",
     sortSeasons: "Put each thing in its season's box!",
     orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
