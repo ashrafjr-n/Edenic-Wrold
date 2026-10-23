@@ -16,7 +16,7 @@ import chalkHeart from "../../../../public/assets/learn/classroom/chalk-heart.pn
 import chalkSun from "../../../../public/assets/learn/classroom/chalk-sun.png";
 import chalkSmile from "../../../../public/assets/learn/classroom/chalk-smile.png";
 import chalkBurst from "../../../../public/assets/learn/classroom/chalk-burst.png";
-import chalkUnderline from "../../../../public/assets/learn/pinki/classroom/chalk-underline.png";
+import chalkUnderline from "../../../../public/assets/learn/classroom/chalk-underline.png";
 
 interface ClassCourse extends UpNextCourse {
   /** The course's one 3D thing (`classroomModels`). */
