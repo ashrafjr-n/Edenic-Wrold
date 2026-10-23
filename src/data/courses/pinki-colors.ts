@@ -48,12 +48,6 @@ function colorLesson(color: ColorId, n: number): LessonDef {
   const questions: Question[] = [
     { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color, picture: COLORS[color].pot },
     { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color, color },
-    {
-      type: "paint",
-      ask: { key: "paint" },
-      rounds: OF[color].paint.map((thing): PaintRound => ({ color, ...thing })),
-      pots: turn([color, ...othersFor(color, 2)], n),
-    },
   ];
   if (mix) {
     const [a, b] = mix;
