@@ -20,7 +20,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   find: Search,
   pick: Pointer,
   sort: Shapes,
-  paint: Paintbrush,
   pop: Balloon,
   order: ListOrdered,
   cook: CookingPot,
