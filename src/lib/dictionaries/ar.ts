@@ -199,7 +199,6 @@ export const ar: Dictionary = {
     find: "ابحث",
     pick: "اختر",
     sort: "رتّب",
-    paint: "لوّن",
     pop: "فرقع",
     order: "صُفّ",
     cook: "اطبخ",
