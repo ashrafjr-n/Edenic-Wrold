@@ -161,7 +161,6 @@ export const ku: Dictionary = {
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
     balloonAria: "بالۆنا {color}",
-    cupAria: "پەرداخا {n}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
