@@ -11,7 +11,7 @@ export type Locale = "en" | "ar" | "ku";
 
 /** The one list of what a valid locale is, so the cookie reader and anything
     else validating untrusted input agree by construction. */
-export const LOCALES = ["en", "ar", "ku"] as const;
+const LOCALES = ["en", "ar", "ku"] as const;
 
 export function isLocale(value: string | undefined): value is Locale {
   return LOCALES.includes(value as Locale);

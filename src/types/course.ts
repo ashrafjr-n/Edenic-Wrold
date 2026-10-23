@@ -18,7 +18,7 @@ export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 /** A set things belong to: the season a thing goes with (Nova's Seasons),
     the animal it is — whose home it goes in (Bloo's Animals) — or the
     weather it is worn in (Bloo's Weather). */
-export type Group = Season | Animal | Weather;
+type Group = Season | Animal | Weather;
 
 /** What a Find looks for, or what a Sort box takes: a shape, a color, or a
     group. */

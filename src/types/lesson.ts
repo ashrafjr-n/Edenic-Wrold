@@ -7,7 +7,7 @@ export type LessonId =
 /** A course's own colour world (its cards, banner, path and buttons).
     Deliberately independent of the character's accent: the hue says what
     the subject is, so a subject reads the same way on every hub. */
-export interface LessonTheme {
+interface LessonTheme {
   accent: string;
   accentDark: string;
   /** What sits ON the accent — white, or ink on a face too pale for white
