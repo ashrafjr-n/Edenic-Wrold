@@ -574,11 +574,11 @@ export function LessonPlayer({
               </div>
               {/* On the done screen the buttons sit higher (direct request) —
                   closer to what was just learned. */}
-              <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? (classroom ? "mb-[min(2rem,3svh)]" : "mb-[min(4.5rem,8svh)]") : ""}`}>
+              <div className={`flex h-16 shrink-0 items-center justify-center sm:h-20 lg:hidden ${finished ? "mb-[min(2rem,3svh)]" : ""}`}>
                 {action}
               </div>
-            </div>,
-          )}
+            </div>
+          </Chalkboard>
         </div>
       )}
 
