@@ -306,6 +306,7 @@ export function LessonPlayer({
         faces={lessonFaces(lesson)}
         drawing={drawing}
         accent={tone.face}
+        cheer={cheer}
         dir={dir}
         board={classroom ? { stars: starsFor(mistakes) } : undefined}
       />
