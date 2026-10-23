@@ -5,10 +5,9 @@ import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdr
 import { CLASSROOMS } from "@/data/classroom";
 import type { CharacterId } from "@/types/character";
 
-/** Behind the loader: the friend's classroom wall for their lessons (the
-    room never blinks out between their course page and the lesson),
-    nothing for a friend without one. A loading file gets no params — the
-    URL tells. */
+/** Behind the loader: the friend's classroom wall (the room never blinks
+    out between their course page and the lesson). A loading file gets no
+    params — the URL tells; a URL that names no friend shows none. */
 export function LoadingRoom() {
   const { character } = useParams<{ character: string }>();
   const room = CLASSROOMS[character as CharacterId];
