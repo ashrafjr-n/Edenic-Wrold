@@ -214,7 +214,6 @@ export const en = {
     find: "Find",
     pick: "Pick",
     sort: "Sort",
-    paint: "Paint",
     pop: "Pop",
     order: "Line up",
     cook: "Cook",
