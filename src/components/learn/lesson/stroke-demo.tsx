@@ -1,10 +1,13 @@
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
+import { CHALK_PINK, ChalkFilter } from "./trace-board";
 import type { Stroke } from "@/types/stroke";
 import { strokeLength, strokeToPath } from "@/lib/trace-score";
 
 interface StrokeDemoProps {
   strokes: readonly Stroke[];
   accent: string;
+  /** On Pinki's board: she draws it in pink chalk over a faint chalk shape. */
+  chalk?: boolean;
 }
 
 /** One full cycle: the line draws for the first 62% of it and the finished
@@ -36,7 +39,9 @@ const EXTRA_PER_STROKE = 1.2;
  *
  * The pen rides the combined path and lifts across any gap between strokes.
  */
-export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
+export function StrokeDemo({ strokes, accent, chalk = false }: StrokeDemoProps) {
+  const chalkId = `chalk${useId().replace(/[^\w-]/g, "")}`;
+  const ink = chalk ? CHALK_PINK : accent;
   const segments = strokes.map(strokeToPath);
   /* The whole drawing as one `d` — what the faint shape underneath is drawn
      from, and what the pen travels. Only the drawing line is split. */
@@ -65,12 +70,17 @@ export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
 
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
+      {chalk && (
+        <defs>
+          <ChalkFilter id={chalkId} />
+        </defs>
+      )}
       {/* The finished shape, held faintly underneath, so the shape reads as
           a whole even at the start of each replay. */}
       <path
         d={path}
         fill="none"
-        stroke="var(--color-locked)"
+        stroke={chalk ? "rgb(251 248 240 / 22%)" : "var(--color-locked)"}
         strokeWidth={9}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -93,14 +103,15 @@ export function StrokeDemo({ strokes, accent }: StrokeDemoProps) {
           }
           d={segment}
           fill="none"
-          stroke={accent}
+          filter={chalk ? `url(#${chalkId})` : undefined}
+          stroke={ink}
           strokeWidth={9}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       ))}
 
-      <circle className="pen-tip" style={vars} r={5.5} fill={accent} />
+      <circle className="pen-tip" style={vars} r={5.5} fill={ink} />
     </svg>
   );
 }
