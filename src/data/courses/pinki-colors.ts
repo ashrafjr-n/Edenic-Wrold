@@ -1,66 +1,23 @@
-import type { StaticImageData } from "next/image";
-import type { ColorId, Face, LessonDef, PaintRound, Question, Scene, SceneItem } from "@/types/course";
+import type { ColorId, Face, LessonDef, Question, Scene, SceneItem } from "@/types/course";
 import { COLOR_ORDER, COLORS, colorBin, potFace } from "@/data/colors";
 import * as scenes from "@/data/color-scenes";
-import apple from "../../../public/assets/learn/pinki/colors/paint/apple.png";
-import appleBlank from "../../../public/assets/learn/pinki/colors/paint/apple-blank.png";
-import fish from "../../../public/assets/learn/pinki/colors/paint/fish.png";
-import fishBlank from "../../../public/assets/learn/pinki/colors/paint/fish-blank.png";
-import duck from "../../../public/assets/learn/pinki/colors/paint/duck.png";
-import duckBlank from "../../../public/assets/learn/pinki/colors/paint/duck-blank.png";
-import frog from "../../../public/assets/learn/pinki/colors/paint/frog.png";
-import frogBlank from "../../../public/assets/learn/pinki/colors/paint/frog-blank.png";
-import carrot from "../../../public/assets/learn/pinki/colors/paint/carrot.png";
-import carrotBlank from "../../../public/assets/learn/pinki/colors/paint/carrot-blank.png";
-import grapes from "../../../public/assets/learn/pinki/colors/paint/grapes.png";
-import grapesBlank from "../../../public/assets/learn/pinki/colors/paint/grapes-blank.png";
-import pig from "../../../public/assets/learn/pinki/colors/paint/pig.png";
-import pigBlank from "../../../public/assets/learn/pinki/colors/paint/pig-blank.png";
-import teddy from "../../../public/assets/learn/pinki/colors/paint/teddy.png";
-import teddyBlank from "../../../public/assets/learn/pinki/colors/paint/teddy-blank.png";
-import hat from "../../../public/assets/learn/pinki/colors/paint/hat.png";
-import hatBlank from "../../../public/assets/learn/pinki/colors/paint/hat-blank.png";
-import snowman from "../../../public/assets/learn/pinki/colors/paint/snowman.png";
-import snowmanBlank from "../../../public/assets/learn/pinki/colors/paint/snowman-blank.png";
-import strawberry from "../../../public/assets/learn/pinki/colors/paint/strawberry.png";
-import strawberryBlank from "../../../public/assets/learn/pinki/colors/paint/strawberry-blank.png";
-import whale from "../../../public/assets/learn/pinki/colors/paint/whale.png";
-import whaleBlank from "../../../public/assets/learn/pinki/colors/paint/whale-blank.png";
-import banana from "../../../public/assets/learn/pinki/colors/paint/banana.png";
-import bananaBlank from "../../../public/assets/learn/pinki/colors/paint/banana-blank.png";
-import pear from "../../../public/assets/learn/pinki/colors/paint/pear.png";
-import pearBlank from "../../../public/assets/learn/pinki/colors/paint/pear-blank.png";
-import orange from "../../../public/assets/learn/pinki/colors/paint/orange.png";
-import orangeBlank from "../../../public/assets/learn/pinki/colors/paint/orange-blank.png";
-import eggplant from "../../../public/assets/learn/pinki/colors/paint/eggplant.png";
-import eggplantBlank from "../../../public/assets/learn/pinki/colors/paint/eggplant-blank.png";
-import iceCream from "../../../public/assets/learn/pinki/colors/paint/icecream.png";
-import iceCreamBlank from "../../../public/assets/learn/pinki/colors/paint/icecream-blank.png";
-import acorn from "../../../public/assets/learn/pinki/colors/paint/acorn.png";
-import acornBlank from "../../../public/assets/learn/pinki/colors/paint/acorn-blank.png";
-import ant from "../../../public/assets/learn/pinki/colors/paint/ant.png";
-import antBlank from "../../../public/assets/learn/pinki/colors/paint/ant-blank.png";
-import sheep from "../../../public/assets/learn/pinki/colors/paint/sheep.png";
-import sheepBlank from "../../../public/assets/learn/pinki/colors/paint/sheep-blank.png";
 
 const text = (value: string): Face => ({ kind: "text", text: value });
 
-type Thing = { word: string; blank: StaticImageData; painted: StaticImageData };
-const thingOf = (word: string, blank: StaticImageData, painted: StaticImageData): Thing => ({ word, blank, painted });
-
-/** Each color's two things to paint (grey, then painted) and its picnic —
-    a lesson paints only its own color (direct request). */
-const OF: Record<ColorId, { paint: [Thing, Thing]; scene: Scene }> = {
-  red: { paint: [thingOf("apple", appleBlank, apple), thingOf("strawberry", strawberryBlank, strawberry)], scene: scenes.redThings },
-  blue: { paint: [thingOf("fish", fishBlank, fish), thingOf("whale", whaleBlank, whale)], scene: scenes.blueThings },
-  yellow: { paint: [thingOf("duck", duckBlank, duck), thingOf("banana", bananaBlank, banana)], scene: scenes.yellowThings },
-  green: { paint: [thingOf("frog", frogBlank, frog), thingOf("pear", pearBlank, pear)], scene: scenes.greenThings },
-  orange: { paint: [thingOf("carrot", carrotBlank, carrot), thingOf("orange", orangeBlank, orange)], scene: scenes.orangeThings },
-  purple: { paint: [thingOf("grapes", grapesBlank, grapes), thingOf("eggplant", eggplantBlank, eggplant)], scene: scenes.purpleThings },
-  pink: { paint: [thingOf("pig", pigBlank, pig), thingOf("ice cream", iceCreamBlank, iceCream)], scene: scenes.pinkThings },
-  brown: { paint: [thingOf("teddy bear", teddyBlank, teddy), thingOf("acorn", acornBlank, acorn)], scene: scenes.brownThings },
-  black: { paint: [thingOf("hat", hatBlank, hat), thingOf("ant", antBlank, ant)], scene: scenes.blackThings },
-  white: { paint: [thingOf("snowman", snowmanBlank, snowman), thingOf("sheep", sheepBlank, sheep)], scene: scenes.whiteThings },
+/** Each color's picnic, where its lesson ends with Find. (Its two things
+    to paint went with the Paint step — removed on direct request,
+    2026-10-23.) */
+const SCENES: Record<ColorId, Scene> = {
+  red: scenes.redThings,
+  blue: scenes.blueThings,
+  yellow: scenes.yellowThings,
+  green: scenes.greenThings,
+  orange: scenes.orangeThings,
+  purple: scenes.purpleThings,
+  pink: scenes.pinkThings,
+  brown: scenes.brownThings,
+  black: scenes.blackThings,
+  white: scenes.whiteThings,
 };
 
 /** The colors that make the secondaries — lessons 4–6 mix them. */
