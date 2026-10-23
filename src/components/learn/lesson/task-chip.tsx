@@ -25,7 +25,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   cook: CookingPot,
   like: ThumbsUp,
   harvest: ShoppingBasket,
-  cups: Shuffle,
   weather: CloudSunRain,
 };
 
