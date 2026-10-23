@@ -4911,14 +4911,14 @@ button:disabled,
     font-size: 1.1rem;
   }
 
-  .class-pinki {
+  .class-teacher {
     right: 3.5%;
     bottom: -7.5rem;
     width: 25%;
   }
 }
 
-/* A big screen: the room comes closer — board and Pinki grow. */
+/* A big screen: the room comes closer — board and friend grow. */
 @media (width >= 100rem) {
   .class-stage {
     max-width: 94rem;
