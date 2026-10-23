@@ -5439,6 +5439,12 @@ a.board-cell:focus-visible {
   color: #fbf8f0;
 }
 
+/* A Pick's sum ("blue + yellow = ?"): its signs are text faces in ink —
+   chalk on the slate. */
+.chalkboard--stage .pick-show {
+  --color-ink: #fbf8f0;
+}
+
 .plate-label {
   color: var(--plate-edge);
 }
