@@ -167,7 +167,6 @@ export const ar: Dictionary = {
     findAll: "ابحث عن كل شكل {shape}!",
     sortAll: "ضع كل شيء في صندوق شكله!",
     thisColor: "هذا اللون {color}!",
-    paint: "اقرأ الكلمة ثم لوّن!",
     findColor: "ابحث عن كل الأشياء ذات اللون {color}!",
     mix: "ماذا يصنع {a} و{b} معًا؟",
     whichColor: "أين اللون {color}؟",
