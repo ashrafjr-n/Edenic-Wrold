@@ -1,7 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { SceneRect } from "@/types/course";
 import pot from "../../public/assets/learn/nova/fruits/props/pot.png";
-import cup from "../../public/assets/learn/nova/fruits/props/cup.png";
+import cup from "../../public/assets/play/cups/cup.png";
 
 /* Nova's market — the things her Vegetables course happens in, rendered
    by `tools/picnic-scene` (`soupPot`, `cup`) in the same clay as
