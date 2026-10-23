@@ -130,7 +130,6 @@ export const ar: Dictionary = {
     lockedLessonAria: "الدرس {n}: {title}، مقفل",
     startLessonAria: "ابدأ الدرس {n}: {title}",
     ctaStart: "بدء",
-    ctaNextLesson: "الدرس التالي",
     /** Over the next lesson on a friend's course board. */
     lessonN: "الدرس {n}",
   },
