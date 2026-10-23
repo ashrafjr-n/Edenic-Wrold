@@ -592,8 +592,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
     case "sort":
       return <SortDemo item={demo.item} bins={demo.bins} />;
-    case "paint":
-      return <PaintDemo round={demo.round} pots={demo.pots} />;
     case "pop":
       return <PopDemo color={demo.color} others={demo.others} />;
     case "order":
