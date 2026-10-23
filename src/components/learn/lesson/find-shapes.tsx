@@ -25,9 +25,10 @@ interface FindShapesProps {
 /** The card a picture activity (Find, Pop) plays on, sized so the card
     and the tray under it fit the stage: as wide as the screen allows on a
     phone, capped by the height left once the tray and the chrome are taken
-    off (measured at 375x667, 390x844, 820x1180) — the picture is 4:5. */
+    off (measured at 375x667, 390x844, 820x1180) — the picture is 4:5.
+    On Pinki's board (`.pic-card`) it is a photo pinned up by two magnets. */
 export const STAGE_CARD =
-  "card card-clay-white card-bare-lg relative w-full max-w-[min(100%,calc((100svh-24.75rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-[min(28rem,calc((100svh-40rem)*0.8))] sm:p-3 lg:max-w-[min(36rem,calc((var(--stage-h)-6.75rem)*0.8+1.5rem))]";
+  "card card-clay-white card-bare-lg pic-card relative w-full max-w-[min(100%,calc((100svh-24.75rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-[min(28rem,calc((100svh-40rem)*0.8))] sm:p-3 lg:max-w-[min(36rem,calc((var(--stage-h)-6.75rem)*0.8+1.5rem))]";
 
 /**
  * The tray of sockets UNDER a picture activity (moved out of the picture on

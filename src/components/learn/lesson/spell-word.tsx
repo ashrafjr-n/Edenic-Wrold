@@ -410,7 +410,7 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
             }`}
           >
             {slots.includes(id) ? (
-              <span className="block h-full w-full rounded-[28%] border-2 border-dashed border-[color-mix(in_srgb,var(--color-ink-soft)_30%,transparent)]" />
+              <span className="letter-gap block h-full w-full rounded-[28%] border-2 border-dashed border-[color-mix(in_srgb,var(--color-ink-soft)_30%,transparent)]" />
             ) : (
               tileFor(id, null)
             )}
