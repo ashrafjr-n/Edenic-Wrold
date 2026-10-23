@@ -5648,6 +5648,24 @@ a.board-cell:focus-visible {
   border-color: rgb(251 248 240 / 35%);
 }
 
+/* Written straight on the slate, in chalk: an ordering space's number, a
+   "Do you like…?" sentence, a plate's "I like" in its own colour, lighter. */
+.chalkboard--stage .slot-number {
+  color: rgb(251 248 240 / 45%);
+}
+
+.chalkboard--stage .likes-line {
+  color: #fbf8f0;
+}
+
+.plate-label {
+  color: var(--plate-edge);
+}
+
+.chalkboard--stage .plate-label {
+  color: color-mix(in srgb, var(--plate-face) 55%, #fff);
+}
+
 /* The done screen's stars, written up one after another — the same stars
    (and the same flight) as on the lesson's box on the course's board. */
 .done-stars {
