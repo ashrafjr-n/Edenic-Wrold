@@ -4215,9 +4215,6 @@ button:disabled,
 @media (prefers-reduced-motion: reduce) {
   .path-lock-off {
     animation: none;
-  }
-
-  .path-lock-off {
     opacity: 0;
   }
 }
@@ -4437,9 +4434,6 @@ button:disabled,
 .chalk-title {
   mask-image: var(--chalk-grain);
   mask-size: 9rem;
-}
-
-.chalk-title {
   font-weight: 700;
   font-size: clamp(1.4rem, 2.6vw, 2.6rem);
   line-height: 1.1;
@@ -4453,12 +4447,6 @@ button:disabled,
   margin-top: 0.2rem;
   font-size: clamp(0.95rem, 1.35vw, 1.3rem);
   color: rgb(247 243 233 / 75%);
-}
-
-/* Every lesson learned: the board says so, in pink. */
-.chalk-sub--done {
-  font-weight: 700;
-  color: #ffb0d4;
 }
 
 /* A course's board: "2 of 5 learned" over a slim chalk bar. */
@@ -4532,18 +4520,6 @@ button:disabled,
     opacity: 0;
     scale: 0.92;
   }
-}
-
-/* A box drawn on the board in chalk (`tools/picnic-scene/chalk.py`, handed
-   down by `Chalkboard`): the frame is sliced at its corners and its edges
-   repeat (`round` — stretched, a long box's dashes smear into streaks),
-   outset so its line sits where a 2.5px border would. A lesson's box on
-   a course page: white; the next one's: pink; a locked lesson's: dashed.
-   A `border` shorthand after this resets `border-image`. */
-.board-cell {
-  border: 2.5px solid transparent;
-  border-radius: 1.5rem;
-  border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
 }
 
 /* Chalk doodles beside the cards, drawn by hand (`chalk.py` — never
@@ -5130,8 +5106,15 @@ button:disabled,
   text-align: center;
 }
 
-/* A lesson, a chalk box with its thing stuck on like a magnet. */
+/* A lesson, a box drawn on the board in chalk with its thing stuck on like
+   a magnet. The chalk (`tools/picnic-scene/chalk.py`, handed down by
+   `Chalkboard`) is a 9-slice `border-image`: sliced at its corners, its
+   edges repeating (`round`), outset so its line sits where a 2.5px border
+   would; white, or dashed when locked. A `border` shorthand after this
+   resets `border-image`. */
 .board-cell {
+  border: 2.5px solid transparent;
+  border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
   position: relative;
   display: flex;
   flex-direction: column;
