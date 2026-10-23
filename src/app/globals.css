@@ -5330,12 +5330,12 @@ a.board-cell:focus-visible {
   animation: loader-hop 1s cubic-bezier(0.4, 0, 0.4, 1) infinite;
 }
 
-.lesson-loader > [aria-hidden]:nth-child(2) {
+.loader > [aria-hidden]:nth-child(2) {
   --magnet: #4da3ec;
   animation-delay: 0.15s;
 }
 
-.lesson-loader > [aria-hidden]:nth-child(3) {
+.loader > [aria-hidden]:nth-child(3) {
   --magnet: #ffc93a;
   animation-delay: 0.3s;
 }
