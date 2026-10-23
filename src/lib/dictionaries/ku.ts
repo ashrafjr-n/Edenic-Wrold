@@ -258,6 +258,8 @@ export const ku: Dictionary = {
     introSkip: "بازدان",
   },
   ui: {
+    /** Read out while something loads (nothing is written on screen). */
+    loading: "بارکرن…",
     completedAria: "{label} تەمام بوو",
   },
 };
