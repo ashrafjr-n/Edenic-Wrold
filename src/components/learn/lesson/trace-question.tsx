@@ -59,11 +59,10 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
                 }}
                 locked={finished}
                 dict={dict}
-                chalk={chalk}
               />
             </div>
           ) : (
-            <StrokeDemo strokes={strokes} accent={accent} chalk={chalk} />
+            <StrokeDemo strokes={strokes} />
           )}
 
           {finished && (
