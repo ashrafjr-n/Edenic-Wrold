@@ -67,7 +67,7 @@ export function LessonDone({ title, words, faces, drawing, accent, cheer = celeb
           style={{ backgroundColor: accent }}
         />
         <Image
-          src={celebrate}
+          src={cheer}
           alt=""
           sizes="(min-width: 1024px) 320px, 180px"
           preload
