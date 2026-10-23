@@ -9,7 +9,7 @@ import { itemKey, type ItemKey } from "@/lib/progress-keys";
    `"use client"` module can only be invoked from client code. Re-exported
    from this file so every existing `@/store/progress` import still works. */
 export type { ItemKey } from "@/lib/progress-keys";
-export { itemKey, puzzleKey, memoryKey } from "@/lib/progress-keys";
+export { itemKey, puzzleKey, memoryKey, cupsKey } from "@/lib/progress-keys";
 
 interface ItemProgress {
   /** 1–3, scored across the whole journey, not per stage. */
