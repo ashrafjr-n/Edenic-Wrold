@@ -75,16 +75,6 @@ export interface SortBin {
   tone: { face: string; edge: string; text: string };
 }
 
-/** One round of a Paint: the word names the color, the thing gets it. */
-export interface PaintRound {
-  color: ColorId;
-  /** The thing in plain grey clay, and painted. */
-  blank: StaticImageData;
-  painted: StaticImageData;
-  /** English — the thing's name. */
-  word: string;
-}
-
 /** Pinki's question, as a key into `dict.asks` plus its values. The taught
     words in `vars` stay English in every locale. */
 export interface Ask {
