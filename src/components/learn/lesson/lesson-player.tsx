@@ -516,7 +516,7 @@ export function LessonPlayer({
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-end lg:hidden">{task}</div>
         <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
-          <StepTrail kinds={kinds} at={at} current={current} tone={courseTone} chalk={classroom} />
+          <StepTrail kinds={kinds} at={at} current={current} />
         </div>
       </BackRow>
       {/* After the back row (it must be `<main>`'s first child): the page's
