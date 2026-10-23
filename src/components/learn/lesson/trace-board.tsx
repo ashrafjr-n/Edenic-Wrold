@@ -21,7 +21,14 @@ interface TraceBoardProps {
   onMiss: () => void;
   /** Frozen once passed: the drawing stays, and the shape fills with colour. */
   locked: boolean;
+  /** On Pinki's board: drawn in chalk (`ChalkFilter`) — the guide dots,
+      the child's line in white chalk, the passed shape scribbled in pink. */
+  chalk?: boolean;
 }
+
+/** Chalk's two colours on her board: what is written, and her pink. */
+export const CHALK_WHITE = "#fbf8f0";
+export const CHALK_PINK = "#ffb0d4";
 
 /** How much of the stroke must stay on the line. Fixed — this is what keeps
     a scribble from passing. */
@@ -119,6 +126,19 @@ export function ClayFilter({
   );
 }
 
+/** Rubbed chalk as an SVG filter: the line's edge roughened (displaced by
+    noise) and its body speckled where the stick skipped over the slate. */
+export function ChalkFilter({ id }: { id: string }) {
+  return (
+    <filter id={id} x="-15%" y="-15%" width="130%" height="130%" colorInterpolationFilters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves={2} seed={4} result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale={1.6} xChannelSelector="R" yChannelSelector="G" result="rough" />
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.6 0 0 0 -0.55" result="speck" />
+      <feComposite in="rough" in2="speck" operator="in" />
+    </filter>
+  );
+}
+
 /**
  * The tracing board: a dotted shape to go round in ONE stroke.
  *
@@ -136,7 +156,7 @@ export function ClayFilter({
  * edge-colour inset from the bottom, a tinted drop shadow) rebuilt as one SVG
  * filter, because a stroke cannot take `background-image` or `box-shadow`.
  */
-export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict }: TraceBoardProps) {
+export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, locked, dict, chalk = false }: TraceBoardProps) {
   const surfaceRef = useRef<SVGSVGElement>(null);
   /* `useId`'s punctuation is not safe inside `url(#…)`. */
   const clayId = `clay${useId().replace(/[^\w-]/g, "")}`;
@@ -235,9 +255,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         onPointerUp={handleUp}
         onPointerCancel={handleUp}
       >
-        <defs>
-          <ClayFilter id={clayId} />
-        </defs>
+        <defs>{chalk ? <ChalkFilter id={clayId} /> : <ClayFilter id={clayId} />}</defs>
 
         {inviting &&
           guidePaths.map((path, index) => (
@@ -259,7 +277,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
               key={`guide-${index}`}
               d={path}
               fill="none"
-              stroke="var(--color-locked-dark)"
+              stroke={chalk ? "rgb(251 248 240 / 55%)" : "var(--color-locked-dark)"}
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -271,13 +289,13 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         <g filter={missed ? undefined : `url(#${clayId})`}>
           {locked &&
             guidePaths.map((path, index) => (
-              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={accent} />
+              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={chalk ? CHALK_PINK : accent} />
             ))}
           {active.length >= MIN_STROKE_POINTS && (
             <polyline
               points={active.map(([x, y]) => `${x},${y}`).join(" ")}
               fill="none"
-              stroke={missed ? "var(--color-miss)" : accent}
+              stroke={missed ? "var(--color-miss)" : chalk ? CHALK_WHITE : accent}
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -293,7 +311,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             <span
               key={at}
               aria-hidden
-              className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[var(--color-ink-soft)]"
+              className={`pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 ${chalk ? "text-[#fbf8f0]/70" : "text-[var(--color-ink-soft)]"}`}
               style={{ left: `${mark.x}%`, top: `${mark.y}%`, rotate: `${mark.angle}deg` }}
             >
               <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={3.25} />
