@@ -86,7 +86,7 @@ export const en = {
   },
   characters: {
     pinki: { tagline: "Finds every shape and color in the whole wide world." },
-    nova: { tagline: "Turns letters into stories worth telling twice." },
+    nova: { tagline: "Grows yummy vegetables and watches the seasons change." },
     bloo: { tagline: "Wonders about colours, seasons and everything in the sky." },
   },
   lessons: {
