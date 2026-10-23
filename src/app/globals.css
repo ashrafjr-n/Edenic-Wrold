@@ -5306,9 +5306,10 @@ a.board-cell:focus-visible {
   color: rgb(247 243 233 / 55%);
 }
 
-/* The lesson to play next: a paper sheet pinned up big in the middle of
-   the board by two clay magnets (the hub's course cards' paper) — its
-   thing, "Lesson 3", its word, one Start button — glowing pink. */
+/* The lesson to play next: a plain paper sheet pinned up big in the middle
+   of the board by one clay magnet — its thing on a soft pink spot,
+   "Lesson 3", its word, one Start button — ringed in pink, still (made
+   simpler 2026-10-23: no pulsing glow, one magnet, a quiet label). */
 .board-next {
   position: relative;
   display: flex;
@@ -5322,10 +5323,12 @@ a.board-cell:focus-visible {
   background-color: #fbf8f0;
   background-image: var(--noise);
   background-blend-mode: soft-light;
+  box-shadow:
+    0 0 0 3px rgb(255 158 200 / 70%),
+    0 0 28px rgb(255 158 200 / 28%),
+    0 18px 26px -14px rgb(0 0 0 / 60%);
   transition: background-color 0.2s;
-  animation:
-    class-card-pin 0.6s cubic-bezier(0.3, 1.3, 0.5, 1) 0.3s backwards,
-    paper-glow 2.4s ease-in-out 1.2s infinite;
+  animation: class-card-pin 0.6s cubic-bezier(0.3, 1.3, 0.5, 1) 0.3s backwards;
 }
 
 .board-next:hover {
@@ -5337,58 +5340,34 @@ a.board-cell:focus-visible {
   outline-offset: 4px;
 }
 
-@keyframes paper-glow {
-  0%,
-  100% {
-    box-shadow:
-      inset 0 -4px 0 rgb(120 90 60 / 10%),
-      0 0 0 4px rgb(255 158 200 / 45%),
-      0 0 22px rgb(255 158 200 / 30%),
-      0 18px 26px -14px rgb(0 0 0 / 60%);
-  }
-  50% {
-    box-shadow:
-      inset 0 -4px 0 rgb(120 90 60 / 10%),
-      0 0 0 7px rgb(255 158 200 / 55%),
-      0 0 40px rgb(255 158 200 / 50%),
-      0 18px 26px -14px rgb(0 0 0 / 60%);
-  }
-}
-
-/* Its two magnets — the hub's cards wear the same. */
-.board-next::before,
-.board-next::after {
+/* Its one magnet, top centre. */
+.board-next::before {
   content: "";
   position: absolute;
-  top: -0.55rem;
+  top: -0.6rem;
+  left: 50%;
+  translate: -50% 0;
   width: 1.35rem;
   aspect-ratio: 1;
   border-radius: 9999px;
   background:
     radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
-    var(--magnet, #f776ac);
+    #f776ac;
   box-shadow:
     inset 0 -2px 3px rgb(0 0 0 / 25%),
     0 3px 4px rgb(0 0 0 / 35%);
-}
-
-.board-next::before {
-  left: 1.2rem;
-}
-
-.board-next::after {
-  --magnet: #4da3ec;
-  right: 1.2rem;
 }
 
 .board-next > .board-cell-art {
   flex: 0 0 auto;
   width: clamp(6.5rem, 30vw, 11rem);
   aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(255 176 212 / 38%), rgb(255 176 212 / 14%) 70%, transparent);
 }
 
 .board-next .board-magnet {
-  width: 100%;
+  width: 84%;
   filter: drop-shadow(0 8px 8px rgb(90 40 70 / 28%));
 }
 
@@ -5406,11 +5385,9 @@ a.board-cell:focus-visible {
 }
 
 .board-next-label {
-  font-size: clamp(0.75rem, 1.4vw, 1.05rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--color-ink-fixed) 62%, transparent);
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--color-ink-fixed) 55%, transparent);
 }
 
 .board-next-word {
@@ -5463,6 +5440,72 @@ a.board-cell:focus-visible {
   .board-next-go {
     padding: 0.75rem 1.8rem;
     font-size: 1.25rem;
+  }
+}
+
+/* ---------- A lesson on its way (`LessonLoader`) ----------
+   Three clay magnets — her board's pink, blue and gold — hop one after
+   another, each squashing a little as it lands. */
+.lesson-loader {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  height: 3.4rem;
+}
+
+.lesson-loader > [aria-hidden] {
+  width: 1.4rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
+    var(--magnet, #f776ac);
+  box-shadow:
+    inset 0 -3px 4px rgb(0 0 0 / 22%),
+    0 5px 8px -3px rgb(0 0 0 / 35%);
+  transform-origin: 50% 100%;
+  animation: loader-hop 1s cubic-bezier(0.4, 0, 0.4, 1) infinite;
+}
+
+.lesson-loader > [aria-hidden]:nth-child(2) {
+  --magnet: #4da3ec;
+  animation-delay: 0.15s;
+}
+
+.lesson-loader > [aria-hidden]:nth-child(3) {
+  --magnet: #ffc93a;
+  animation-delay: 0.3s;
+}
+
+@keyframes loader-hop {
+  0%,
+  64%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  10% {
+    scale: 1.12 0.88;
+  }
+  32% {
+    translate: 0 -1.6rem;
+    scale: 0.94 1.06;
+  }
+  54% {
+    translate: 0 0;
+    scale: 1.1 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-loader > [aria-hidden] {
+    animation: loader-fade 1.2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes loader-fade {
+  from {
+    opacity: 0.35;
   }
 }
 
@@ -5701,42 +5744,6 @@ a.board-cell:focus-visible {
   animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
-/* A lesson's box opening into the lesson (and folding back): the box
-   grows to the stage while the lesson shows through it — the old picture
-   fades early so the slate never fills the screen. */
-::view-transition-group(.lesson-morph) {
-  animation-duration: 0.55s;
-  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
-}
-
-::view-transition-old(.lesson-morph) {
-  animation: lesson-morph-out 0.3s ease-out both;
-}
-
-::view-transition-new(.lesson-morph) {
-  animation: lesson-morph-in 0.45s ease-out 0.1s both;
-}
-
-/* `object-fit` keeps each picture's own shape while the box between them
-   changes its. */
-::view-transition-old(.lesson-morph),
-::view-transition-new(.lesson-morph) {
-  height: 100%;
-  object-fit: contain;
-}
-
-@keyframes lesson-morph-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes lesson-morph-in {
-  from {
-    opacity: 0;
-  }
-}
-
 ::view-transition-old(.pinki-exit) {
   animation: class-pinki-out 0.35s ease-in both;
 }
@@ -5779,9 +5786,6 @@ a.board-cell:focus-visible {
 
   ::view-transition-group(.board-morph),
   ::view-transition-group(.class-morph),
-  ::view-transition-group(.lesson-morph),
-  ::view-transition-old(.lesson-morph),
-  ::view-transition-new(.lesson-morph),
   ::view-transition-old(.pinki-exit),
   ::view-transition-old(.desk-exit) {
     animation: none;
