@@ -84,7 +84,7 @@ export const ku: Dictionary = {
   characters: {
     pinki: { tagline: "شێوە و ڕەنگان ل هەمی جیهانی نیشا تە ددەت." },
     nova: { tagline: "سەوزە و وەرزان نیشا تە ددەت." },
-    bloo: { tagline: "دەربارەی ڕەنگان، وەرزان و هەمی تشتێن ل ئەسمانی پرسیاران دکەت." },
+    bloo: { tagline: "گیانەوەر و کەش و هەوایێ نیشا تە ددەت." },
   },
   lessons: {
     shapes: {
