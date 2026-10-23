@@ -147,10 +147,10 @@ export function CupsGame({ word, picture, swaps, swapMs, cupAria, onSolved }: Cu
     setPhase("guess");
   };
 
-  /* The first round starts once the step has swapped in. */
+  /* The first round starts a breath after the level appears. */
   const start = useEffectEvent(() => void round());
   useEffect(() => {
-    /* One array for the step's life — every wait pushes into it. */
+    /* One array for the level's life — every wait pushes into it. */
     const pending = timers.current;
     pending.push(window.setTimeout(start, ROUND_GAP_MS));
     return () => pending.forEach((timer) => window.clearTimeout(timer));
