@@ -4069,13 +4069,6 @@ button:disabled,
   filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--art-shadow, var(--clay-edge)) 45%, transparent));
 }
 
-/* A friend stands on a round base, as wide as the box, at its bottom. */
-.art-stage--round::before {
-  top: auto;
-  aspect-ratio: 1;
-  border-radius: 9999px;
-}
-
 /* The progress bar: a groove pressed into the card, filled with white clay. */
 .course-track {
   overflow: hidden;
