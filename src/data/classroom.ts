@@ -10,6 +10,18 @@ import pinkiDesk from "../../public/assets/learn/pinki/classroom/portrait-desk.p
 import pinkiDeskWide from "../../public/assets/learn/pinki/classroom/landscape-desk.png";
 import pinkiWithStick from "../../public/assets/learn-with-pinki/pinki/pinki-with-a-stick.png";
 import pinkiCelebrate from "../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
+import novaWall from "../../public/assets/learn/nova/classroom/portrait.jpg";
+import novaWallWide from "../../public/assets/learn/nova/classroom/landscape.jpg";
+import novaDesk from "../../public/assets/learn/nova/classroom/portrait-desk.png";
+import novaDeskWide from "../../public/assets/learn/nova/classroom/landscape-desk.png";
+import novaWithStick from "../../public/assets/learn/nova/classroom/nova-with-a-stick.png";
+import novaCheer from "../../public/assets/friends/nova.png";
+import blooWall from "../../public/assets/learn/bloo/classroom/portrait.jpg";
+import blooWallWide from "../../public/assets/learn/bloo/classroom/landscape.jpg";
+import blooDesk from "../../public/assets/learn/bloo/classroom/portrait-desk.png";
+import blooDeskWide from "../../public/assets/learn/bloo/classroom/landscape-desk.png";
+import blooWithStick from "../../public/assets/learn/bloo/classroom/bloo-with-a-stick.png";
+import blooCheer from "../../public/assets/friends/bloo.png";
 
 /** A picture in both frames — the one that fits the screen shows. */
 export interface Framed {
