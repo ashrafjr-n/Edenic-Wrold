@@ -28,10 +28,9 @@ interface ChalkboardProps {
  * Pinki's chalkboard (2026-10-14): a slate, wiped but never quite clean, in
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
  * language. The SAME view transition (`pinki-board`) on the hub and on a
- * course page AND under a lesson's steps (`stage`): tapping a course zooms
- * the board up to fill the screen with its lessons on it, a lesson keeps
- * that same board, and back. Only the desktop step trail's slim strip is
- * not that board.
+ * course page: tapping a course zooms the board up to fill the screen with
+ * its lessons on it, and back. A lesson's boards (`stage`, `strip`) take
+ * no part in it — a lesson opens through its loader, nothing grows.
  */
 export function Chalkboard({ size, className = "", children }: ChalkboardProps) {
   const board = (
@@ -47,7 +46,7 @@ export function Chalkboard({ size, className = "", children }: ChalkboardProps) 
       )}
     </div>
   );
-  if (size === "strip") return board;
+  if (size === "stage" || size === "strip") return board;
   return (
     <ViewTransition name="pinki-board" share="board-morph" default="none">
       {board}
