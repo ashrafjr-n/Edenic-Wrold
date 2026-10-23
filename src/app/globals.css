@@ -5107,7 +5107,7 @@ button:disabled,
 }
 
 .board-all-done {
-  color: #ffb0d4;
+  color: var(--chalk-accent);
   text-align: center;
 }
 
