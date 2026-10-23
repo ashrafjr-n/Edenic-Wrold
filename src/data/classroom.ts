@@ -55,6 +55,24 @@ export const CLASSROOMS: Partial<Record<CharacterId, Classroom>> = {
     cheer: pinkiCelebrate,
     chalk: { accent: "#ffb0d4", glow: "#ff9ec8" },
   },
+  /* A garden classroom in her lavender — "Grow a Little Every Day", a
+     window onto a vegetable patch, a pumpkin on the sill — her gold chalk. */
+  nova: {
+    wall: { portrait: novaWall, landscape: novaWallWide },
+    desk: { portrait: novaDesk, landscape: novaDeskWide },
+    teacher: novaWithStick,
+    cheer: novaCheer,
+    chalk: { accent: "#ffd77a", glow: "#ffc94a" },
+  },
+  /* A nature classroom in sky blue — "Explore the Big World", a rainbow
+     over the sea in the window, a fishbowl on the sill — his sky chalk. */
+  bloo: {
+    wall: { portrait: blooWall, landscape: blooWallWide },
+    desk: { portrait: blooDesk, landscape: blooDeskWide },
+    teacher: blooWithStick,
+    cheer: blooCheer,
+    chalk: { accent: "#a3d6ff", glow: "#7cc2ff" },
+  },
 };
 
 /** The friend's chalk, for the `<main>` of every page in their classroom. */
