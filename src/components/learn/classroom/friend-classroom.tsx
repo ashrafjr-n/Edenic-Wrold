@@ -158,20 +158,20 @@ export function FriendClassroom({ characterId, teacher, cheer, courses, labels, 
           </p>
         </Chalkboard>
 
-        {/* Pinki, her stick raised to the board — or celebrating, once
-            everything is learned. She steps out of the picture when the
-            board zooms into a course. */}
-        <ViewTransition exit="pinki-exit" default="none">
-          <div className="class-pinki">
+        {/* The friend, their stick raised to the board — or celebrating,
+            once everything is learned. They step out of the picture when
+            the board zooms into a course. */}
+        <ViewTransition exit="teacher-exit" default="none">
+          <div className="class-teacher">
             <button
               type="button"
-              aria-label={labels.pinki}
-              className="class-pinki-body"
+              aria-label={labels.friend}
+              className="class-teacher-body"
               onClick={() => setJumps((n) => n + 1)}
             >
               <span key={jumps} className={`block ${jumps ? "anim-jump" : ""}`}>
                 <Image
-                  src={allDone ? pinkiCelebrate : pinkiWithStick}
+                  src={allDone ? cheer : teacher}
                   alt=""
                   preload
                   sizes="(min-width: 1024px) 340px, 40vw"
