@@ -61,7 +61,7 @@ function colorLesson(color: ColorId, n: number): LessonDef {
   }
   questions.push(
     { type: "pop", ask: { key: "popColor", vars: { color } }, color, others: othersFor(color, 5) },
-    { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: OF[color].scene },
+    { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: SCENES[color] },
   );
   return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].pot], questions };
 }
