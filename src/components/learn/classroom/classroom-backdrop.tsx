@@ -10,6 +10,12 @@ interface ClassroomBackdropProps {
   /** A course page: the camera is up close on the board — the wall
       zoomed in past it, the child's desk out of the picture. */
   zoomed?: boolean;
+  /** Behind a lesson (and its loading screen): the zoomed wall, still, and
+      NOT the `pinki-wall` transition — the lesson's wall is fixed to the
+      whole screen, the course page's sits inside the page, and a pair of
+      different boxes grew the wall over the header and the bottom nav on
+      every tap of a lesson. */
+  still?: boolean;
 }
 
 /**
@@ -29,19 +35,26 @@ interface ClassroomBackdropProps {
  * named element's box, and a wall scaled past the page would cover the
  * header for the length of the transition.
  */
-export function ClassroomBackdrop({ zoomed = false }: ClassroomBackdropProps) {
+export function ClassroomBackdrop({ zoomed = false, still = false }: ClassroomBackdropProps) {
+  const wall = (
+    <div className="class-wall">
+      <div className={`class-wall-view ${zoomed || still ? "class-wall-view--zoomed" : ""}`}>
+        <Image src={wallPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+        <Image src={wallLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+      </div>
+    </div>
+  );
   return (
     <div className="class-room" aria-hidden>
       <WallPreload portrait={wallPortrait} landscape={wallLandscape} />
-      <ViewTransition name="pinki-wall" share="class-morph" default="none">
-        <div className="class-wall">
-          <div className={`class-wall-view ${zoomed ? "class-wall-view--zoomed" : ""}`}>
-            <Image src={wallPortrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
-            <Image src={wallLandscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
-          </div>
-        </div>
-      </ViewTransition>
-      {!zoomed && (
+      {still ? (
+        wall
+      ) : (
+        <ViewTransition name="pinki-wall" share="class-morph" default="none">
+          {wall}
+        </ViewTransition>
+      )}
+      {!zoomed && !still && (
         <ViewTransition exit="desk-exit" default="none">
           <div className="class-desk">
             <div className="class-desk-view">
