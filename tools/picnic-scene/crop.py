@@ -57,12 +57,12 @@ writes them as JPEGs, 1280px on the long side, into `dest`.
 
     python3 tools/picnic-scene/crop.py backdrop circle public/assets/learn/pinki/shapes/backdrop/circle
 
-Pinki's classroom — run after `render.cjs classroom pinki`: the wall,
+A friend's classroom — run after `render.cjs classroom <id>`: the wall,
 sharp with a vignette (`<frame>.jpg`), and the chairs and desk in front,
 blurred (`<frame>-desk.png`, the whole frame), both frames, into
-`public/assets/learn/pinki/classroom/`.
+`public/assets/learn/<id>/classroom/`.
 
-    python3 tools/picnic-scene/crop.py classroom pinki
+    python3 tools/picnic-scene/crop.py classroom nova
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
