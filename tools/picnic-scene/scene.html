@@ -4358,16 +4358,16 @@ if (THING) {
     // a drawing at each side above the board (seen on a phone)
     bunting(-5, 5, 10.25);
     poster(-1.95, 2.95, 3.4, 1.45, false);
-    pinUp("sun", -3.5, 11.35, 0.55, 0.06);
-    pinUp("rainbow", 3.5, 11.35, 0.55, -0.05);
-    pinUp("flower", 3.9, 2.4, 0.7, -0.05);
+    pinUp(THEME.drawings.phoneTop[0], -3.5, 11.35, 0.55, 0.06);
+    pinUp(THEME.drawings.phoneTop[1], 3.5, 11.35, 0.55, -0.05);
+    pinUp(THEME.drawings.phoneLow, 3.9, 2.4, 0.7, -0.05);
   } else {
     // the window at the left edge; the poster at the right, over Pinki's
     // head; drawings round it; bunting along the top, under the header
     bunting(-9, 9, 7.75);
     windowAt(-6.85, 4.6, 2.2, 2.6);
     poster(4.75, 5.55, 2.0, 2.5, true);
-    [["rainbow", 6.95, 6.05, 0.62, 0.04], ["house", 6.95, 4.35, 0.62, -0.05]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
+    [[THEME.drawings.wide[0], 6.95, 6.05, 0.62, 0.04], [THEME.drawings.wide[1], 6.95, 4.35, 0.62, -0.05]].forEach(([n, x, y, k, t]) => pinUp(n, x, y, k, t));
   }
 
   /* The class in front of the camera (2026-10-14, from the user's
