@@ -11,7 +11,7 @@ import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdr
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { BoardLessons } from "@/components/learn/classroom/board-lessons";
 import { BoardProgress } from "@/components/learn/classroom/board-progress";
-import { classroomModels } from "@/data/classroom";
+import { CLASSROOMS, classroomModels, classroomStyle } from "@/data/classroom";
 import Image from "next/image";
 import { getDictionary } from "@/lib/locale";
 import { format, dirFor } from "@/lib/format-dict";
