@@ -4789,7 +4789,7 @@ button:disabled,
 }
 
 .class-cheer--done .chalk-title {
-  color: #ffb0d4;
+  color: var(--chalk-accent);
 }
 
 .class-cheer-line {
