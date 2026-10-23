@@ -81,11 +81,10 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           classroom={character.id === "pinki"}
         />
         {backdrop && <CourseBackdrop backdrop={backdrop} />}
-        {/* Pinki's lessons are in her classroom, up close on her board —
-            the same wall as her course page, so it stays put between them. */}
+        {/* Pinki's lessons are in her classroom, up close on her board. */}
         {character.id === "pinki" && (
           <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
-            <ClassroomBackdrop zoomed />
+            <ClassroomBackdrop still />
           </div>
         )}
       </main>

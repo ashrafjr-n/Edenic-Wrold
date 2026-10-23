@@ -11,7 +11,7 @@ export function LoadingRoom() {
   if (character !== "pinki") return null;
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh">
-      <ClassroomBackdrop zoomed />
+      <ClassroomBackdrop still />
     </div>
   );
 }
