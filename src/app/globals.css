@@ -4844,7 +4844,7 @@ button:disabled,
 }
 
 /* Her shadow on the floor (on a desktop her feet are behind the desk). */
-.class-pinki::after {
+.class-teacher::after {
   content: "";
   position: absolute;
   z-index: -1;
