@@ -181,7 +181,6 @@ export const en = {
     findAll: "Find all the {shape}s!",
     sortAll: "Put each thing in its shape's box!",
     thisColor: "This is {color}!",
-    paint: "Read the word, then paint!",
     findColor: "Find all the {color} things!",
     mix: "What do {a} and {b} make?",
     whichColor: "Which one is {color}?",
