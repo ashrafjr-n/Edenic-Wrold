@@ -134,6 +134,8 @@ export const ar: Dictionary = {
     startLessonAria: "ابدأ الدرس {n}: {title}",
     ctaStart: "بدء",
     ctaNextLesson: "الدرس التالي",
+    /** Over the next lesson on Pinki's course board. */
+    lessonN: "الدرس {n}",
   },
   lessonPlayer: {
     backTo: "العودة إلى {lessonName}",

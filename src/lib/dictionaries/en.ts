@@ -145,6 +145,8 @@ export const en = {
     startLessonAria: "Start lesson {n}: {title}",
     ctaStart: "Start",
     ctaNextLesson: "Next Lesson",
+    /** Over the next lesson on Pinki's course board. */
+    lessonN: "Lesson {n}",
   },
   /** The lesson player's own chrome and Pinki's lines in a lesson. Taught
       words arrive in `{…}` and stay English. */
