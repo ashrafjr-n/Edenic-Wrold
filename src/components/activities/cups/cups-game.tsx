@@ -137,8 +137,8 @@ export function CupsGame({ word, picture, swaps, swapMs, cupAria, onSolved }: Cu
     setShown(false);
     await wait(250);
     setPhase("shuffle");
-    const ms = Math.min(SLOWEST_MS, SWAP_MS + 90 * misses.current);
-    for (let i = Math.max(3, SWAPS - misses.current); i > 0; i--) {
+    const ms = Math.min(swapMs + EASE_MS, swapMs + 90 * misses.current);
+    for (let i = Math.max(3, swaps - misses.current); i > 0; i--) {
       swap(ms);
       await wait(ms + 80);
     }
