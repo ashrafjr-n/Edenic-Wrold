@@ -5704,7 +5704,7 @@ a.board-cell:focus-visible {
 
 .chalk-trail-line--done {
   border-top-style: solid;
-  border-color: #ffb0d4;
+  border-color: var(--chalk-accent);
 }
 
 @media (width >= 80rem) {
