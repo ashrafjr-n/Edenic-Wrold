@@ -10,14 +10,11 @@ import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like carrots.", "3
     carrots") and its picture — the videos' look (smooth satin clay, no
-    face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`).
-    `core`: a lesson of the videos' new things — the reel, its word, its
-    spelling, and nothing after (direct request 2026-10-12). */
+    face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`). */
 interface Food {
   word: string;
   things: string;
   picture: StaticImageData;
-  core?: true;
 }
 
 /** In teaching order — only what the course videos show (direct request
