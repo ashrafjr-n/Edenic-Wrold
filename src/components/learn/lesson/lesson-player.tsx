@@ -31,7 +31,6 @@ import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
-import { CupsGame } from "@/components/activities/cups/cups-game";
 import { MakeWeather, type MakeWeatherHandle } from "./make-weather";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
