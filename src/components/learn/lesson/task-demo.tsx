@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
-import { CUP, POT } from "@/data/market";
+import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
