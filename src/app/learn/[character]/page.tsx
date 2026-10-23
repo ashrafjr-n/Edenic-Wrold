@@ -103,7 +103,7 @@ export default async function CharacterLearnPage({
             continueCourse: dict.characterHub.continueLesson,
             replayCourse: dict.characterHub.replayLesson,
             allDone: dict.characterHub.allDone,
-            pinki: character.name,
+            friend: character.name,
           }}
           dir={dir}
         />
