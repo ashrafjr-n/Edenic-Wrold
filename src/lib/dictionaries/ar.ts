@@ -254,6 +254,8 @@ export const ar: Dictionary = {
     introSkip: "تخطَّ",
   },
   ui: {
+    /** Read out while something loads (nothing is written on screen). */
+    loading: "جارٍ التحميل…",
     completedAria: "{label} مكتمل",
   },
 };
