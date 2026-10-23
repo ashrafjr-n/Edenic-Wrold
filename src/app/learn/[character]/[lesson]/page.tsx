@@ -62,13 +62,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
     />
   );
 
-  /* Pinki's courses are her board, up close (2026-10-14): the hub's board
-     zooms up to fill the screen with the course's lessons on it. */
-  if (character.id === "pinki") {
+  /* A friend's course is their board, up close (Pinki's 2026-10-14): the
+     hub's board zooms up to fill the screen with the course's lessons on it. */
+  const room = CLASSROOMS[character.id];
+  if (room) {
     return (
-      <main className="class-page relative flex flex-1 flex-col" style={characterAccent(character)}>
-        <ClassroomBackdrop zoomed />
-        <ViewTransition name="pinki-back">
+      <main className="class-page relative flex flex-1 flex-col" style={{ ...characterAccent(character), ...classroomStyle(room) }}>
+        <ClassroomBackdrop wall={room.wall} desk={room.desk} zoomed />
+        <ViewTransition name="class-back">
           <BackRow
             href={`/learn/${character.id}`}
             label={format(dict.lessonPicker.backTo, { characterName: character.name })}
