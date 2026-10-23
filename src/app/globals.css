@@ -5257,6 +5257,46 @@ a.board-cell:focus-visible {
   border-radius: 0.9rem;
 }
 
+/* Her board in a lesson: a word is on a paper sentence strip, held up by
+   two clay magnets — the letters read as they do on a white card. */
+.board-paper {
+  position: relative;
+  display: inline-flex;
+  padding: 0.35rem 1.1rem 0.6rem;
+  border-radius: 0.7rem;
+  background-color: #fbf8f0;
+  background-image: var(--noise);
+  background-blend-mode: soft-light;
+  box-shadow:
+    inset 0 -3px 0 rgb(120 90 60 / 8%),
+    0 10px 16px -8px rgb(0 0 0 / 50%);
+}
+
+.board-paper::before,
+.board-paper::after {
+  content: "";
+  position: absolute;
+  top: -0.45rem;
+  width: 1.1rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
+    var(--magnet, #f776ac);
+  box-shadow:
+    inset 0 -2px 3px rgb(0 0 0 / 25%),
+    0 3px 4px rgb(0 0 0 / 35%);
+}
+
+.board-paper::before {
+  left: 0.9rem;
+}
+
+.board-paper::after {
+  --magnet: #4da3ec;
+  right: 0.9rem;
+}
+
 .chalk-trail {
   position: relative;
   z-index: 1;
