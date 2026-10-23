@@ -61,6 +61,12 @@ export default async function ActivitiesPage() {
           className="anim-rise-in"
           style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 2}s` }}
         />
+
+        <CupsCta
+          dict={dict}
+          className="anim-rise-in"
+          style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 3}s` }}
+        />
       </div>
     </main>
   );
