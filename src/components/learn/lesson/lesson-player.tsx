@@ -545,10 +545,12 @@ export function LessonPlayer({
           same lift on every step, so every button sits in one spot. A
           desktop moves the way onward into the footer bar instead. */}
       {step?.kind === "watch" ? (
+        /* No entrance movement: the reel's loader is simply there, then
+           the clip fades in (`ReelVideo`). It still fades out on Skip. */
         <div
           key={`${round}-${at}`}
-          className={`stage-swap absolute inset-0 lg:static lg:mx-auto lg:flex lg:w-full lg:max-w-5xl lg:flex-1 lg:flex-col lg:px-8 lg:py-4 ${
-            leaving ? "stage-swap--out" : ""
+          className={`absolute inset-0 lg:static lg:mx-auto lg:flex lg:w-full lg:max-w-5xl lg:flex-1 lg:flex-col lg:px-8 lg:py-4 ${
+            leaving ? "stage-swap stage-swap--out" : ""
           }`}
         >
           {body}
