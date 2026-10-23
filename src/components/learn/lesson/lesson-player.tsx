@@ -75,8 +75,11 @@ interface LessonPlayerProps {
   covers: readonly (readonly StaticImageData[])[];
   dict: Dictionary;
   dir: "rtl" | "ltr";
-  /** Pinki's lessons (2026-10-23): every step is on her chalkboard. */
+  /** A friend's classroom (Pinki's 2026-10-23): every step is on their
+      chalkboard. */
   classroom?: boolean;
+  /** The friend celebrating, on the done screen (`CLASSROOMS[id].cheer`). */
+  cheer?: StaticImageData;
 }
 
 /**
