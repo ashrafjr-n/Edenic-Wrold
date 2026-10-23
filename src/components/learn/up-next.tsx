@@ -7,24 +7,13 @@ export interface UpNextCourse {
   name: string;
   /** Lesson titles, 1…n. */
   titles: readonly string[];
-  /** Each lesson's cover (`LessonDef.cover`). */
-  covers: readonly (readonly StaticImageData[])[];
-  tone: { face: string; edge: string; ink: string };
-}
-
-interface UpNextProps {
-  characterId: string;
-  /** The character's open courses, in order. */
-  courses: readonly UpNextCourse[];
-  labels: { upNext: string; start: string; continue: string };
-  dir: "rtl" | "ltr";
-  className?: string;
 }
 
 /** The one lesson to play next across a character's courses (the first
     not done, in course order), and whether its course is started — null
     once every lesson is done. Nothing is done until the store has read
-    localStorage, so the first render matches the server's. */
+    localStorage, so the first render matches the server's. The classroom
+    lights that course's sheet. */
 export function useUpNext<C extends Pick<UpNextCourse, "id" | "titles">>(characterId: string, courses: readonly C[]) {
   const items = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
