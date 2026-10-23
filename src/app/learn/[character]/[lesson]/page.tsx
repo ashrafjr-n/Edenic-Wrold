@@ -1,11 +1,7 @@
-import { ViewTransition, type CSSProperties } from "react";
+import { ViewTransition } from "react";
 import { notFound, redirect } from "next/navigation";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
-import { ContinueButton } from "@/components/learn/continue-button";
-import { LessonBox } from "@/components/learn/lesson-box";
-import { CourseArt } from "@/components/learn/course-art";
-import { CourseProgress } from "@/components/learn/course-progress";
 import { courseCovers, courseStops } from "@/data/courses";
 import { ClassroomBackdrop } from "@/components/learn/classroom/classroom-backdrop";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
