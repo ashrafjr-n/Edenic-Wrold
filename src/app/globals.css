@@ -4545,10 +4545,6 @@ button:disabled,
   border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
 }
 
-.board-cell--next {
-  border-image-source: var(--chalk-frame-pink);
-}
-
 /* Chalk doodles beside the cards, drawn by hand (`chalk.py` — never
    icons). Each side is a column of the cards' grid that takes only the
    room the cards leave (`minmax(0, 1fr)`), so a doodle shrinks with it and
@@ -5011,10 +5007,11 @@ button:disabled,
 }
 
 .board-lessons {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  padding: 0.75rem 0.9rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1rem 0.9rem 1.6rem;
 }
 
 @media (width >= 40rem) {
@@ -5027,22 +5024,8 @@ button:disabled,
   }
 
   .board-lessons {
-    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-    gap: 1rem;
-    padding: 1rem 1.5rem 1.8rem;
-  }
-}
-
-/* A portrait tablet, four lessons or fewer: two big square boxes a row,
-   as big as the screen's height lets every lesson stay in view. */
-@media (40rem <= width < 64rem) and (orientation: portrait) {
-  .board-lessons--pairs {
-    grid-template-columns: repeat(2, min(calc((100svh - 35rem) / 2), calc(50% - 0.5rem)));
-    justify-content: center;
-  }
-
-  .board-lessons--pairs .board-cell:not(.board-cell--review) {
-    aspect-ratio: 1;
+    gap: 1.5rem;
+    padding: 1.4rem 1.5rem 2.2rem;
   }
 }
 
@@ -5067,8 +5050,58 @@ button:disabled,
   .board-lessons {
     flex: 1;
     min-height: 0;
-    grid-template-rows: repeat(var(--rows), minmax(0, 1fr)) auto;
+    justify-content: center;
+    gap: min(1.6rem, 3svh);
+    padding-block: 0.5rem 1.6rem;
   }
+}
+
+/* The lessons learned (above the next one) and still to come (below it):
+   small chalk boxes side by side, each its thing held up by a clay magnet
+   and its word. */
+.board-row {
+  /* A phone: five a row, whatever its width. */
+  --box: min(3.6rem, calc((100vw - 6rem) / 5));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 0.4rem;
+  max-width: 100%;
+}
+
+@media (width >= 40rem) {
+  .board-row {
+    --box: 5.25rem;
+    gap: 1rem 0.85rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .board-row {
+    --box: clamp(4.5rem, 9.5svh, 7rem);
+  }
+}
+
+/* Every lesson learned: they are all there is, a size up. */
+.board-lessons--all .board-row {
+  --box: 5rem;
+}
+
+@media (width >= 40rem) {
+  .board-lessons--all .board-row {
+    --box: 7rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .board-lessons--all .board-row {
+    --box: clamp(6rem, 16svh, 10rem);
+  }
+}
+
+.board-all-done {
+  color: #ffb0d4;
+  text-align: center;
 }
 
 /* A lesson, a chalk box with its thing stuck on like a magnet. */
@@ -5078,39 +5111,22 @@ button:disabled,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.15rem;
+  width: var(--box);
   aspect-ratio: 5 / 6;
-  min-height: 0;
-  padding: 0.9rem 0.4rem 0.6rem;
+  padding: 0.45rem 0.2rem 0.3rem;
+  border-radius: 1rem;
+  border-image-width: 1.6rem;
+  border-image-outset: 0.4rem;
   background-color: rgb(255 255 255 / 4%);
   transition: background-color 0.2s;
   animation: chalk-pop 0.45s ease-out both;
-}
-
-@media (width >= 64rem) {
-  .board-cell {
-    aspect-ratio: auto;
-  }
 }
 
 a.board-cell:hover,
 a.board-cell:focus-visible {
   outline: none;
   background-color: rgb(255 255 255 / 8%);
-}
-
-.board-cell--review {
-  grid-column: 1 / -1;
-  flex-direction: row;
-  gap: 1rem;
-  aspect-ratio: auto;
-  padding: 0.8rem 1rem;
-}
-
-.board-cell--next {
-  animation:
-    chalk-pop 0.45s ease-out both,
-    chalk-glow 2.2s ease-in-out 1s infinite;
 }
 
 .board-cell--locked {
@@ -5124,20 +5140,6 @@ a.board-cell:focus-visible {
   }
 }
 
-@keyframes chalk-glow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 3px rgb(255 158 200 / 14%),
-      0 0 16px rgb(255 158 200 / 18%);
-  }
-  50% {
-    box-shadow:
-      0 0 0 6px rgb(255 158 200 / 24%),
-      0 0 30px rgb(255 158 200 / 36%);
-  }
-}
-
 .board-cell-art {
   display: flex;
   flex: 1;
@@ -5148,22 +5150,25 @@ a.board-cell:focus-visible {
   min-height: 0;
 }
 
+/* A review's things: two by two in a small box. */
 .board-cell-art--row {
-  flex: 0 1 auto;
-  width: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+  gap: 0.1rem;
 }
 
 .board-magnet {
   position: relative;
   display: block;
-  width: 68%;
+  width: 78%;
   max-height: 100%;
   aspect-ratio: 1;
-  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 35%));
+  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 35%));
 }
 
 .board-cell-art--row .board-magnet {
-  width: clamp(3rem, 9vw, 5.5rem);
+  width: 100%;
 }
 
 /* A clay magnet holds each thing to the board. */
@@ -5171,10 +5176,10 @@ a.board-cell:focus-visible {
   content: "";
   position: absolute;
   z-index: 1;
-  top: -4%;
+  top: -6%;
   left: 50%;
   translate: -50% 0;
-  width: max(0.9rem, 19%);
+  width: max(0.5rem, 19%);
   aspect-ratio: 1;
   border-radius: 9999px;
   background:
@@ -5182,7 +5187,11 @@ a.board-cell:focus-visible {
     var(--magnet, #f776ac);
   box-shadow:
     inset 0 -2px 3px rgb(0 0 0 / 25%),
-    0 3px 4px rgb(0 0 0 / 35%);
+    0 2px 3px rgb(0 0 0 / 35%);
+}
+
+.board-cell-art--row .board-magnet::before {
+  display: none;
 }
 
 .board-cell:nth-child(3n + 2) .board-magnet {
@@ -5193,28 +5202,19 @@ a.board-cell:focus-visible {
   --magnet: #ffc93a;
 }
 
-@media (width >= 64rem) {
-  .board-magnet {
-    width: auto;
-    height: 82%;
-    max-height: 13rem;
-  }
-
-  .board-cell-art--row .board-magnet {
-    height: auto;
-  }
-}
-
 .board-cell--locked .board-magnet {
   opacity: 0.4;
   filter: grayscale(0.6);
 }
 
 .board-cell-word {
+  max-width: 100%;
+  overflow: hidden;
   font-weight: 700;
-  font-size: clamp(1.1rem, 1.9vw, 1.75rem);
+  font-size: calc(var(--box) * 0.2);
   line-height: 1.1;
   text-align: center;
+  overflow-wrap: anywhere;
   color: #fbf8f0;
 }
 
@@ -5222,47 +5222,31 @@ a.board-cell:focus-visible {
   color: rgb(247 243 233 / 45%);
 }
 
-.board-cell-start {
-  position: absolute;
-  top: -0.8rem;
-  left: 50%;
-  translate: -50% 0;
-  padding: 0.2rem 0.8rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  color: var(--page-accent-ink, #fff);
-  /* Clay like every coloured chip on the site: grain, a lit top. */
-  background-color: var(--page-accent-color);
-  background-image: var(--noise);
-  background-size: 180px 180px;
-  background-blend-mode: overlay;
-  box-shadow:
-    inset 0 2px 3px rgb(255 255 255 / 45%),
-    inset 0 -3px 4px color-mix(in srgb, var(--page-accent-edge) 60%, transparent),
-    0 4px 10px -3px rgb(0 0 0 / 45%);
-}
-
 /* A learned lesson's stars — what it earned, of 3. */
 .board-cell-stars {
   position: absolute;
-  top: -0.7rem;
-  right: -0.35rem;
+  top: -0.6rem;
+  left: 50%;
+  translate: -50% 0;
   display: flex;
   gap: 0.05rem;
-  padding: 0.2rem 0.4rem;
+  padding: 0.12rem 0.3rem;
   border-radius: 9999px;
   background-color: #24463f;
-  box-shadow: 0 4px 8px -2px rgb(0 0 0 / 40%);
+  box-shadow: 0 3px 6px -2px rgb(0 0 0 / 40%);
 }
 
 .board-star {
   width: 0.95rem;
   height: 0.95rem;
   color: rgb(247 243 233 / 40%);
+}
+
+.board-cell-stars .board-star {
+  width: calc(var(--box) * 0.15);
+  height: calc(var(--box) * 0.15);
+  min-width: 0.6rem;
+  min-height: 0.6rem;
 }
 
 .board-star--on {
@@ -5291,9 +5275,169 @@ a.board-cell:focus-visible {
 
 .board-cell-lock {
   position: absolute;
-  right: 0.5rem;
-  bottom: 0.45rem;
+  right: 0.3rem;
+  bottom: 0.25rem;
   color: rgb(247 243 233 / 55%);
+}
+
+/* The lesson to play next: a paper sheet pinned up big in the middle of
+   the board by two clay magnets (the hub's course cards' paper) — its
+   thing, "Lesson 3", its word, one Start button — glowing pink. */
+.board-next {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 3vw, 2.5rem);
+  width: 100%;
+  max-width: 34rem;
+  padding: 1.1rem 1.25rem 1.1rem 1rem;
+  border-radius: 1.6rem;
+  color: var(--color-ink-fixed);
+  background-color: #fbf8f0;
+  background-image: var(--noise);
+  background-blend-mode: soft-light;
+  transition: background-color 0.2s;
+  animation:
+    class-card-pin 0.6s cubic-bezier(0.3, 1.3, 0.5, 1) 0.3s backwards,
+    paper-glow 2.4s ease-in-out 1.2s infinite;
+}
+
+.board-next:hover {
+  background-color: #fffdf8;
+}
+
+.board-next:focus-visible {
+  outline: 4px solid #ffb0d4;
+  outline-offset: 4px;
+}
+
+@keyframes paper-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 -4px 0 rgb(120 90 60 / 10%),
+      0 0 0 4px rgb(255 158 200 / 45%),
+      0 0 22px rgb(255 158 200 / 30%),
+      0 18px 26px -14px rgb(0 0 0 / 60%);
+  }
+  50% {
+    box-shadow:
+      inset 0 -4px 0 rgb(120 90 60 / 10%),
+      0 0 0 7px rgb(255 158 200 / 55%),
+      0 0 40px rgb(255 158 200 / 50%),
+      0 18px 26px -14px rgb(0 0 0 / 60%);
+  }
+}
+
+/* Its two magnets — the hub's cards wear the same. */
+.board-next::before,
+.board-next::after {
+  content: "";
+  position: absolute;
+  top: -0.55rem;
+  width: 1.35rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
+    var(--magnet, #f776ac);
+  box-shadow:
+    inset 0 -2px 3px rgb(0 0 0 / 25%),
+    0 3px 4px rgb(0 0 0 / 35%);
+}
+
+.board-next::before {
+  left: 1.2rem;
+}
+
+.board-next::after {
+  --magnet: #4da3ec;
+  right: 1.2rem;
+}
+
+.board-next > .board-cell-art {
+  flex: 0 0 auto;
+  width: clamp(6.5rem, 30vw, 11rem);
+  aspect-ratio: 1;
+}
+
+.board-next .board-magnet {
+  width: 100%;
+  filter: drop-shadow(0 8px 8px rgb(90 40 70 / 28%));
+}
+
+.board-next .board-magnet::before {
+  display: none;
+}
+
+.board-next-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.board-next-label {
+  font-size: clamp(0.75rem, 1.4vw, 1.05rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--color-ink-fixed) 62%, transparent);
+}
+
+.board-next-word {
+  max-width: 100%;
+  overflow: hidden;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 6vw, 3.4rem);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The site's clay button on a span (the sheet is the link). */
+.board-next-go {
+  --btn-face: var(--page-accent-color);
+  --btn-edge: var(--page-accent-edge);
+  --btn-text: var(--page-accent-ink, #fff);
+  margin-top: 0.3rem;
+  gap: 0.45rem;
+  padding: 0.6rem 1.4rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.board-next:hover .board-next-go {
+  background-color: color-mix(in srgb, var(--btn-face) 85%, black 15%);
+}
+
+.board-next:active .board-next-go {
+  translate: 0 1px;
+}
+
+.board-next .board-cell-lock {
+  top: 0.8rem;
+  right: 1rem;
+  bottom: auto;
+  color: var(--color-ink-fixed);
+}
+
+@media (width >= 64rem) {
+  .board-next {
+    max-width: 46rem;
+    padding: 1.4rem 2.2rem 1.4rem 1.6rem;
+  }
+
+  .board-next > .board-cell-art {
+    width: min(15rem, 24svh);
+  }
+
+  .board-next-go {
+    padding: 0.75rem 1.8rem;
+    font-size: 1.25rem;
+  }
 }
 
 /* ---------- Inside one of her lessons (2026-10-23) ---------- */
@@ -5511,7 +5655,7 @@ a.board-cell:focus-visible {
   .board-star--new,
   .done-stars .board-star,
   .board-cell,
-  .board-cell--next {
+  .board-next {
     animation: none;
     transition: none;
   }
