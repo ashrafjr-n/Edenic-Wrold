@@ -21,9 +21,6 @@ interface TraceBoardProps {
   onMiss: () => void;
   /** Frozen once passed: the drawing stays, and the shape fills with colour. */
   locked: boolean;
-  /** On Pinki's board: drawn in chalk (`ChalkFilter`) — the guide dots,
-      the child's line in white chalk, the passed shape scribbled in pink. */
-  chalk?: boolean;
 }
 
 /** Chalk's two colours on her board: what is written, and her pink. */
