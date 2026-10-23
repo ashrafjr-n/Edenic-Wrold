@@ -5534,7 +5534,7 @@ a.board-cell:focus-visible {
 }
 
 .chalkboard--stage .plate-label {
-  color: color-mix(in srgb, var(--plate-face) 55%, #fff);
+  color: color-mix(in srgb, var(--plate-face) 45%, #fff);
 }
 
 /* The done screen's stars, written up one after another — the same stars
