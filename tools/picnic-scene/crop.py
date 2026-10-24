@@ -160,6 +160,53 @@ if NAME == "weathersteps":
     print(json.dumps({"size": [box[2] - box[0], box[3] - box[1]], "sky": sky}))
     sys.exit()
 
+if NAME == "grow":
+    # Growing Nova's vegetables — run after `render.cjs grow carrot potato
+    # tomato pepper broccoli`: the soil (`ground.png`, the same for all five)
+    # and the seed (`seed.png`) once into `grow/`, and each food's parts into
+    # `grow/<food>/`, each cut to its own pixels (a fruit's flower, green and
+    # ripe on one box, `fruit<n>-*`), all with one grain per food. Prints the
+    # frame's size and each part's box (% of the frame) and the point it
+    # grows from (% of its own box) — paste into `data/grow.ts`.
+    foods = ["carrot", "potato", "tomato", "pepper", "broccoli"]
+    dest = os.path.join(ROOT, "public/assets/learn/nova/fruits/grow")
+    outs = {f: os.path.join(HERE, "out", f"grow-{f}") for f in foods}
+    metas = {f: json.load(open(os.path.join(outs[f], "meta.json"))) for f in foods}
+    layers = {f: {n: Image.open(os.path.join(outs[f], f"{n}.png")) for n in ["ground"] + metas[f]["order"]} for f in foods}
+    boxes = [alpha_box(l, pad=4) for f in foods for l in layers[f].values()]
+    frame = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    fw, fh = frame[2] - frame[0], frame[3] - frame[1]
+    out = {"size": [fw, fh], "foods": {}}
+    os.makedirs(dest, exist_ok=True)
+    for f in foods:
+        os.makedirs(os.path.join(dest, f), exist_ok=True)
+        groups = {}
+        for n in metas[f]["order"]:
+            groups.setdefault(n.split("-")[0], []).append(n)
+        parts = []
+        for n in metas[f]["order"]:
+            b = [alpha_box(layers[f][m], pad=4) for m in groups[n.split("-")[0]]]
+            box = (min(x[0] for x in b), min(x[1] for x in b), max(x[2] for x in b), max(x[3] for x in b))
+            cut = grain(layers[f][n].crop(box), zlib.crc32(f.encode()))
+            shared = n == "seed"
+            if not shared or f == foods[0]:
+                cut.save(os.path.join(dest, "seed.png" if shared else os.path.join(f, f"{n}.png")), optimize=True)
+            W0, H0 = layers[f][n].size
+            fx, fy = metas[f]["from"][n][0] / 100 * W0, metas[f]["from"][n][1] / 100 * H0
+            w, h = box[2] - box[0], box[3] - box[1]
+            parts.append({
+                "name": n,
+                "box": [round((box[0] - frame[0]) / fw * 100, 2), round((box[1] - frame[1]) / fh * 100, 2), round(w / fw * 100, 2), round(h / fh * 100, 2)],
+                "from": [round((fx - box[0]) / w * 100, 2), round((fy - box[1]) / h * 100, 2)],
+            })
+        out["foods"][f] = parts
+    g = layers[foods[0]]["ground"]
+    gb = alpha_box(g, pad=4)
+    grain(g.crop(gb), zlib.crc32(b"ground")).save(os.path.join(dest, "ground.png"), optimize=True)
+    out["ground"] = [round((gb[0] - frame[0]) / fw * 100, 2), round((gb[1] - frame[1]) / fh * 100, 2), round((gb[2] - gb[0]) / fw * 100, 2), round((gb[3] - gb[1]) / fh * 100, 2)]
+    print(json.dumps(out))
+    sys.exit()
+
 if NAME == "things":
     dest = os.path.join(ROOT, sys.argv[2])
     os.makedirs(dest, exist_ok=True)
