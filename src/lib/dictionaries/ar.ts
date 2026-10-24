@@ -188,6 +188,7 @@ export const ar: Dictionary = {
     sortWeather: "ضع كل شيء في صندوق طقسه!",
     whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
+    growIt: "اسحب الدائرة لتكبر نبتة {thing}!",
   },
   tasks: {
     listen: "استمع",
@@ -203,6 +204,7 @@ export const ar: Dictionary = {
     like: "تحبّه؟",
     harvest: "اقطف",
     weather: "اصنع",
+    grow: "ازرع",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
