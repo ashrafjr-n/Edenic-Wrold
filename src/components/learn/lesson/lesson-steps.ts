@@ -49,6 +49,8 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "weather", target: q.word };
     case "harvest":
       return { kind: "harvest" };
+    case "grow":
+      return { kind: "grow", target: q.word };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -58,8 +60,8 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
 
 /** How a step is played, for the task button's popup. The spelling demo
     deals with the board's own seed, so it shows the very letters the child
-    sees. A Pick of pictures with nothing above it (no word, no sum) has none. */
-export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undefined {
+    sees; Grow it's knob wears the course's `tone`, as on the board. A Pick of pictures with nothing above it (no word, no sum) has none. */
+export function demoFor(q: Question, accent: string, seed: string, tone: { face: string; edge: string; ink: string }): TaskDemoDef | undefined {
   switch (q.type) {
     case "word":
       return {
@@ -86,6 +88,8 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "weather", gesture: q.gesture, scene: q.scene };
     case "harvest":
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
+    case "grow":
+      return { kind: "grow", scene: q.scene, tone };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
