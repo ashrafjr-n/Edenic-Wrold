@@ -644,7 +644,16 @@ Before calling Learn done (easy to forget):
       tomatoes / peppers flowering, green, ripe; the broccoli's head). Slid
       back, it shrinks. 3D art for all five (`render.cjs grow`); played
       through headless 360x640 → 1440x900, en/ar/ku, dark, keyboard.
-- [ ] The user checks Grow it → fixes.
+- [x] The user checked Grow it (2026-10-24): "not professional — make it
+      real, every small motion precise" → **rebuilt the same day**: each
+      plant really grows in 3D (seed → hook → seed leaves → stem and leaves
+      unfolding → roots branching → flowers → fruit swelling and ripening;
+      the carrot long then thick; potatoes on runners from a seed potato),
+      32 frames per food cross-dissolved on canvas, the plant following
+      the knob, swaying; crumbs where it breaks the soil, a leaning knob,
+      a ring that bursts, sparkles. Verified 360x640 → 1440x900, ar, dark,
+      keyboard, and a recorded drag.
+- [ ] The user checks Grow it again → fixes.
 - [x] `code hygiene` (2026-10-13) — dead CSS, an unreachable colour
       branch, ~950 lines of dead render builders (output proven identical).
 - [ ] `public/things-in-videos/` deleted — the user's call (untracked).
