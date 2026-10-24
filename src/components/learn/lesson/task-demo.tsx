@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
@@ -481,21 +482,42 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
     the cloud (rain starts), shakes it (snow starts), pushes one cloud off
     the sun (the hill brightens) or sweeps across the sky (a gust blows);
     the next frame fades in after it. The other two goes are the child's. */
-/** Grow it: the finger takes the knob and slides it halfway along its line —
-    the plant comes up half grown — then lets go. Both ride one animated
-    `--grow` (`.demo-grow`). Sized in the square box's `cqi`, so it fits the
-    popup and the tablet's small docked panel alike. */
+/** Grow it: the finger takes the knob and slides it halfway along its line
+    — the plant comes up half grown — then lets go and all goes back. One
+    3.6s loop, in step with the finger's (`.demo-finger`): still to 36%,
+    sliding to 70%, holding, back by 96%. Reduced motion: held halfway. */
+function demoGrowAt(p: number): number {
+  const ease = (x: number) => x * x * (3 - 2 * x);
+  if (p < 0.36) return 0;
+  if (p < 0.7) return 0.5 * ease((p - 0.36) / 0.34);
+  if (p < 0.84) return 0.5;
+  if (p < 0.96) return 0.5 * (1 - ease((p - 0.84) / 0.12));
+  return 0;
+}
+
 function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edge: string; ink: string } }) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const start = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      setValue(still ? 0.5 : demoGrowAt(((now - start) / 3600) % 1));
+      if (!still) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
   return (
     <div className="@container h-full w-full">
-      <div className="demo-grow flex h-full w-full flex-col items-center justify-center gap-[3cqi]">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-[3cqi]">
         <div dir="ltr" className="relative h-[15cqi] w-[84cqi] shrink-0">
           <span className="absolute inset-x-[7.5cqi] top-1/2 h-[3.5cqi] -translate-y-1/2 rounded-full bg-black/20" />
-          <span className="absolute left-[7.5cqi] top-1/2 h-[3.5cqi] w-[calc(var(--grow)*69cqi)] -translate-y-1/2 rounded-full" style={{ backgroundColor: tone.face }} />
+          <span className="absolute left-[7.5cqi] top-1/2 h-[3.5cqi] -translate-y-1/2 rounded-full" style={{ width: `${value * 69}cqi`, backgroundColor: tone.face }} />
           <span className="absolute right-0 top-0 h-[15cqi] w-[15cqi] rounded-full border-[0.8cqi] border-dashed border-[var(--color-locked-dark)]" />
           <span
-            className="clay absolute left-0 top-0 flex h-[15cqi] w-[15cqi] items-center justify-center rounded-full [translate:calc(var(--grow)*69cqi)_0]"
-            style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
+            className="clay absolute left-0 top-0 flex h-[15cqi] w-[15cqi] items-center justify-center rounded-full"
+            style={{ translate: `${value * 69}cqi 0`, backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
           >
             <Sprout className="h-[55%] w-[55%]" strokeWidth={2.5} />
             <span className="absolute left-1/2 top-1/2">
@@ -503,7 +525,7 @@ function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edg
             </span>
           </span>
         </div>
-        <GrowStage scene={scene} paint={{ vw: 60, sm: 15, lg: 15 }} className="w-[74cqi] shrink-0" />
+        <GrowStage scene={scene} value={value} paint={{ vw: 60, sm: 15, lg: 15 }} className="w-[74cqi] shrink-0" />
       </div>
     </div>
   );
