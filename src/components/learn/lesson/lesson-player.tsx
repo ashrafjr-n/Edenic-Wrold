@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { preload } from "react-dom";
 import { Lightbulb, SkipForward } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
@@ -108,6 +109,13 @@ export function LessonPlayer({
   cheer,
 }: LessonPlayerProps) {
   const onward = { face: courseTone.face, edge: courseTone.edge, text: courseTone.ink };
+  /* Grow it's frames are big pictures: fetch them while the lesson's first
+     steps play, so the plant is there the moment its step opens. */
+  for (const q of lesson.questions) {
+    if (q.type !== "grow") continue;
+    preload(q.scene.above.src.src, { as: "image" });
+    preload(q.scene.below.src.src, { as: "image" });
+  }
   const complete = useProgress((state) => state.complete);
   const lines = dict.lessonPlayer;
 
