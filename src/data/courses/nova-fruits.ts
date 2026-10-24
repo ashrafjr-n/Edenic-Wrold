@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import { GARDENS } from "@/data/garden";
-import type { Face, LessonDef } from "@/types/course";
+import { GROW_SCENES } from "@/data/grow";
+import type { Face, GrowScene, LessonDef } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
@@ -9,23 +10,25 @@ import pepper from "../../../public/assets/learn/nova/fruits/things/pepper.png";
 import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like carrots.", "3
-    carrots") and its picture — the videos' look (smooth satin clay, no
-    face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`). */
+    carrots"), its picture — the videos' look (smooth satin clay, no
+    face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`)
+    — and it growing in the soil (`data/grow.ts`). */
 interface Food {
   word: string;
   things: string;
   picture: StaticImageData;
+  grow: GrowScene;
 }
 
 /** In teaching order — only what the course videos show (direct request
     2026-10-12: the apple, banana, orange, grapes and corn went): three
     vegetables, then the two the videos added. */
 const FOODS: Food[] = [
-  { word: "carrot", things: "carrots", picture: carrot },
-  { word: "broccoli", things: "broccoli", picture: broccoli },
-  { word: "potato", things: "potatoes", picture: potato },
-  { word: "tomato", things: "tomatoes", picture: tomato },
-  { word: "pepper", things: "peppers", picture: pepper },
+  { word: "carrot", things: "carrots", picture: carrot, grow: GROW_SCENES.carrot },
+  { word: "broccoli", things: "broccoli", picture: broccoli, grow: GROW_SCENES.broccoli },
+  { word: "potato", things: "potatoes", picture: potato, grow: GROW_SCENES.potato },
+  { word: "tomato", things: "tomatoes", picture: tomato, grow: GROW_SCENES.tomato },
+  { word: "pepper", things: "peppers", picture: pepper, grow: GROW_SCENES.pepper },
 ];
 
 const food = (word: string): Food => {
@@ -41,18 +44,20 @@ const line = (word: string, count: number) => ({ word, things: food(word).things
 
 /**
  * Nova's garden — one thing, one lesson, and every step about IT: watch its
- * reel, meet it (its picture, its word, its speaker), build its word.
- * (Nova's cups were its third step until 2026-10-23 — they are a game of
- * their own on `/play` now, direct request.) Picking in her garden is the
- * review's exam, with several foods to tell apart.
+ * reel, meet it (its picture, its word, its speaker), build its word, then
+ * grow it from its seed (2026-10-24, direct request — Nova's cups, the
+ * third step until 2026-10-23, are a game of their own on `/play`).
+ * Picking in her garden is the review's exam, with several foods to tell
+ * apart.
  */
-function foodLesson({ word, picture }: Food, i: number): LessonDef {
+function foodLesson({ word, picture, grow }: Food, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
+      { type: "grow", ask: { key: "growIt", vars: { thing: word } }, word, picture, scene: grow },
     ],
   };
 }
