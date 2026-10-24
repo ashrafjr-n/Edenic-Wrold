@@ -32,6 +32,7 @@ import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
 import { MakeWeather, type MakeWeatherHandle } from "./make-weather";
+import { GrowPlant } from "./grow-plant";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -224,7 +225,7 @@ export function LessonPlayer({
   if (!finished && step.kind === "question") {
     const q = step.question;
     const { kind, target } = taskFor(q, showing);
-    const how = showing ? undefined : demoFor(q, tone.face, seed);
+    const how = showing ? undefined : demoFor(q, tone.face, seed, courseTone);
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
     const verb = dict.tasks[kind];
     task = (
@@ -457,6 +458,10 @@ export function LessonPlayer({
           <SkipForward className="h-5 w-5 fill-current" strokeWidth={2} />
           <span dir={dir}>{lines.skip}</span>
         </Button3D>
+      );
+    } else if (q.type === "grow") {
+      body = (
+        <GrowPlant key={seed} word={q.word} picture={q.picture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} tone={courseTone} onSolved={onSolved} />
       );
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
