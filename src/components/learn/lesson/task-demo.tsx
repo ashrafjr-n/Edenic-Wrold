@@ -1,12 +1,12 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
+import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, Gesture, GrowScene, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -16,6 +16,7 @@ import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
 import { wordOf } from "./list-note";
 import { lineOf } from "./harvest-pick";
+import { GrowStage } from "./grow-plant";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -33,7 +34,8 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
-  | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } };
+  | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
+  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -479,6 +481,34 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
     the cloud (rain starts), shakes it (snow starts), pushes one cloud off
     the sun (the hill brightens) or sweeps across the sky (a gust blows);
     the next frame fades in after it. The other two goes are the child's. */
+/** Grow it: the finger takes the knob and slides it halfway along its line —
+    the plant comes up half grown — then lets go. Both ride one animated
+    `--grow` (`.demo-grow`). Sized in the square box's `cqi`, so it fits the
+    popup and the tablet's small docked panel alike. */
+function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edge: string; ink: string } }) {
+  return (
+    <div className="@container h-full w-full">
+      <div className="demo-grow flex h-full w-full flex-col items-center justify-center gap-[3cqi]">
+        <div dir="ltr" className="relative h-[15cqi] w-[84cqi] shrink-0">
+          <span className="absolute inset-x-[7.5cqi] top-1/2 h-[3.5cqi] -translate-y-1/2 rounded-full bg-black/20" />
+          <span className="absolute left-[7.5cqi] top-1/2 h-[3.5cqi] w-[calc(var(--grow)*69cqi)] -translate-y-1/2 rounded-full" style={{ backgroundColor: tone.face }} />
+          <span className="absolute right-0 top-0 h-[15cqi] w-[15cqi] rounded-full border-[0.8cqi] border-dashed border-[var(--color-locked-dark)]" />
+          <span
+            className="clay absolute left-0 top-0 flex h-[15cqi] w-[15cqi] items-center justify-center rounded-full [translate:calc(var(--grow)*69cqi)_0]"
+            style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
+          >
+            <Sprout className="h-[55%] w-[55%]" strokeWidth={2.5} />
+            <span className="absolute left-1/2 top-1/2">
+              <Finger />
+            </span>
+          </span>
+        </div>
+        <GrowStage scene={scene} paint={{ vw: 60, sm: 15, lg: 15 }} className="w-[74cqi] shrink-0" />
+      </div>
+    </div>
+  );
+}
+
 function WeatherDemo({ gesture, scene }: { gesture: Gesture; scene: WeatherScene }) {
   const { frames, sky, bits } = scene;
   const [l, t, w, h] = sky[0].box;
@@ -572,5 +602,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
+    case "grow":
+      return <GrowDemo scene={demo.scene} tone={demo.tone} />;
   }
 }
