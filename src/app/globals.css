@@ -3314,6 +3314,97 @@ button:disabled,
   }
 }
 
+/* Grow it (`GrowPlant`, Nova's Vegetables, 2026-10-24): every part of the
+   plant reads ONE number, `--grow` (0–1, where the knob is), through its
+   own stretch of it — `--g0`→`--g1` it grows from nothing (from its
+   `transform-origin`), `--s0`→`--s1` it shows, `--f0`→`--f1` it fades; the
+   defaults leave a part whole. `--grow` is a registered number, so the
+   plant eases after the finger (`.grow-scene`'s transition) and the task
+   button's demo can animate it (`.demo-grow`) — the same picture, no
+   second copy of the timing. Growth eases out: quick to come up, slow to
+   settle. */
+@property --grow {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.grow-scene {
+  transition: --grow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.grow-part {
+  --g0: -2;
+  --g1: -1;
+  --s0: -2;
+  --s1: -1;
+  --f0: 2;
+  --f1: 3;
+  --gt: clamp(0, (var(--grow) - var(--g0)) / (var(--g1) - var(--g0)), 1);
+  --st: clamp(0, (var(--grow) - var(--s0)) / (var(--s1) - var(--s0)), 1);
+  --ft: clamp(0, (var(--grow) - var(--f0)) / (var(--f1) - var(--f0)), 1);
+  scale: calc(var(--gt) * (2 - var(--gt)));
+  opacity: calc(min(var(--gt) * 8, 1) * var(--st) * (1 - var(--ft)));
+}
+
+/* The knob, until the child first takes it: a nudge toward the right end. */
+.grow-nudge {
+  animation: grow-nudge 2.4s ease-in-out infinite;
+}
+
+@keyframes grow-nudge {
+  0%,
+  45%,
+  100% {
+    translate: 0 0;
+  }
+  20% {
+    translate: 0.9rem 0;
+  }
+  30% {
+    translate: 0.2rem 0;
+  }
+}
+
+/* The chevrons in the line, running toward the right end. */
+.grow-hint {
+  animation: grow-hint 1.6s ease-in-out infinite;
+}
+
+@keyframes grow-hint {
+  0%,
+  100% {
+    translate: -0.3rem 0;
+    opacity: 0.35;
+  }
+  50% {
+    translate: 0.3rem 0;
+    opacity: 0.8;
+  }
+}
+
+/* The demo: the finger takes the knob and slides it halfway (the knob
+   rides `--grow` too — `translate` in the line's `cqi`), the plant half
+   grows; then it lets go and all goes back. */
+.demo-grow {
+  animation: demo-grow 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-grow {
+  0%,
+  36% {
+    --grow: 0;
+  }
+  70%,
+  84% {
+    --grow: 0.5;
+  }
+  96%,
+  100% {
+    --grow: 0;
+  }
+}
+
 /* Pick them (`HarvestPick`): the word pops up where a food was picked and
    floats off. Its `-50%` centring lives IN the keyframes — an animation
    owning `translate` drops a utility's. Under reduced motion it only
@@ -3668,8 +3759,20 @@ button:disabled,
   .demo-swipe,
   .demo-fall,
   .demo-gust,
-  .wx-frame-in {
+  .wx-frame-in,
+  .grow-nudge,
+  .grow-hint {
     animation: none;
+  }
+
+  /* Grow it: the plant follows the knob at once; the demo holds halfway. */
+  .grow-scene {
+    transition: none;
+  }
+
+  .demo-grow {
+    animation: none;
+    --grow: 0.5;
   }
 
   /* Balloons hang still, spread down the sky; a pop just removes one. */
