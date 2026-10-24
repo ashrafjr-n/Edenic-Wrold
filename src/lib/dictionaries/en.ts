@@ -202,6 +202,7 @@ export const en = {
     sortWeather: "Put each thing in its weather's box!",
     whichWeather: "Which one is {weather}?",
     pickList: "Pick the things on Nova's list!",
+    growIt: "Slide the circle to grow the {thing}!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -218,6 +219,7 @@ export const en = {
     like: "Like?",
     harvest: "Pick",
     weather: "Make",
+    grow: "Grow",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
