@@ -162,49 +162,81 @@ if NAME == "weathersteps":
 
 if NAME == "grow":
     # Growing Nova's vegetables — run after `render.cjs grow carrot potato
-    # tomato pepper broccoli`: the soil (`ground.png`, the same for all five)
-    # and the seed (`seed.png`) once into `grow/`, and each food's parts into
-    # `grow/<food>/`, each cut to its own pixels (a fruit's flower, green and
-    # ripe on one box, `fruit<n>-*`), all with one grain per food. Prints the
-    # frame's size and each part's box (% of the frame) and the point it
-    # grows from (% of its own box) — paste into `data/grow.ts`.
+    # tomato pepper broccoli`: the soil (`ground.webp`, the same for all
+    # five) into `grow/`, and for each food what each frame ADDS to the
+    # soil — the plant, its shadow (the grass in front of its foot stays
+    # the soil's: a difference matte against the soil alone, both grained
+    # with ONE noise field so the grain never differs) — cut at the soil's
+    # front edge into two sheets of frames, `<food>/above.webp` (it sways)
+    # and `<food>/below.webp`, 8 frames a row. Prints the frame's size and,
+    # per food, each sheet's cell and box (% of the frame), the foot (% of
+    # the above cell — it sways about it) and where the vegetable is (% of
+    # the frame) — paste into `data/grow.ts`.
     foods = ["carrot", "potato", "tomato", "pepper", "broccoli"]
+    SCALE, COLS = 0.85, 8
     dest = os.path.join(ROOT, "public/assets/learn/nova/fruits/grow")
-    outs = {f: os.path.join(HERE, "out", f"grow-{f}") for f in foods}
-    metas = {f: json.load(open(os.path.join(outs[f], "meta.json"))) for f in foods}
-    layers = {f: {n: Image.open(os.path.join(outs[f], f"{n}.png")) for n in ["ground"] + metas[f]["order"]} for f in foods}
-    boxes = [alpha_box(l, pad=4) for f in foods for l in layers[f].values()]
-    frame = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    fw, fh = frame[2] - frame[0], frame[3] - frame[1]
-    out = {"size": [fw, fh], "foods": {}}
     os.makedirs(dest, exist_ok=True)
+    seed = zlib.crc32(b"grow")
+    ground = grain(Image.open(os.path.join(HERE, "out", "grow-carrot", "ground.png")), seed)
+    G = np.asarray(ground).astype(np.int16)
+    H0, W0 = G.shape[:2]
+    mattes, metas = {}, {}
     for f in foods:
+        out = os.path.join(HERE, "out", f"grow-{f}")
+        metas[f] = json.load(open(os.path.join(out, "meta.json")))
+        frames = []
+        for k in range(metas[f]["frames"]):
+            F = np.asarray(grain(Image.open(os.path.join(out, f"frame{k:02d}.png")), seed)).astype(np.int16)
+            d = np.abs(F - G).max(axis=2)
+            a = np.clip((d - 2) / 6, 0, 1) * (F[..., 3] / 255)
+            px = F.astype(np.uint8).copy()
+            px[..., 3] = (a * 255 + 0.5).astype(np.uint8)
+            frames.append(px)
+        mattes[f] = frames
+    # One frame box for all: the soil and everything any plant ever adds.
+    def bbox(mask):
+        ys, xs = np.nonzero(mask)
+        return [xs.min(), ys.min(), xs.max() + 1, ys.max() + 1]
+    boxes = [bbox(G[..., 3] > 6)] + [bbox(m[..., 3] > 6) for f in foods for m in mattes[f]]
+    fl, ft = max(0, min(b[0] for b in boxes) - 4), max(0, min(b[1] for b in boxes) - 4)
+    fr, fb = min(W0, max(b[2] for b in boxes) + 4), min(H0, max(b[3] for b in boxes) + 4)
+    fw, fh = fr - fl, fb - ft
+    pct = lambda v, size: round(v / size * 100, 3)
+    gb = bbox(G[..., 3] > 6)
+    Image.fromarray(G.astype(np.uint8)).crop(gb).resize((round((gb[2] - gb[0]) * SCALE), round((gb[3] - gb[1]) * SCALE)), Image.LANCZOS).save(os.path.join(dest, "ground.webp"), quality=90, method=6)
+    result = {"size": [round(fw * SCALE), round(fh * SCALE)], "ground": [pct(gb[0] - fl, fw), pct(gb[1] - ft, fh), pct(gb[2] - gb[0], fw), pct(gb[3] - gb[1], fh)], "foods": {}}
+    for f in foods:
+        meta = metas[f]
+        foot = (meta["foot"][0] / 100 * W0, meta["foot"][1] / 100 * H0)
+        # The soil's front edge: just under the foot (where the cut face starts).
+        split = int(round(foot[1] + 26))
         os.makedirs(os.path.join(dest, f), exist_ok=True)
-        groups = {}
-        for n in metas[f]["order"]:
-            groups.setdefault(n.split("-")[0], []).append(n)
-        parts = []
-        for n in metas[f]["order"]:
-            b = [alpha_box(layers[f][m], pad=4) for m in groups[n.split("-")[0]]]
-            box = (min(x[0] for x in b), min(x[1] for x in b), max(x[2] for x in b), max(x[3] for x in b))
-            cut = grain(layers[f][n].crop(box), zlib.crc32(f.encode()))
-            shared = n == "seed"
-            if not shared or f == foods[0]:
-                cut.save(os.path.join(dest, "seed.png" if shared else os.path.join(f, f"{n}.png")), optimize=True)
-            W0, H0 = layers[f][n].size
-            fx, fy = metas[f]["from"][n][0] / 100 * W0, metas[f]["from"][n][1] / 100 * H0
-            w, h = box[2] - box[0], box[3] - box[1]
-            parts.append({
-                "name": n,
-                "box": [round((box[0] - frame[0]) / fw * 100, 2), round((box[1] - frame[1]) / fh * 100, 2), round(w / fw * 100, 2), round(h / fh * 100, 2)],
-                "from": [round((fx - box[0]) / w * 100, 2), round((fy - box[1]) / h * 100, 2)],
-            })
-        out["foods"][f] = parts
-    g = layers[foods[0]]["ground"]
-    gb = alpha_box(g, pad=4)
-    grain(g.crop(gb), zlib.crc32(b"ground")).save(os.path.join(dest, "ground.png"), optimize=True)
-    out["ground"] = [round((gb[0] - frame[0]) / fw * 100, 2), round((gb[1] - frame[1]) / fh * 100, 2), round((gb[2] - gb[0]) / fw * 100, 2), round((gb[3] - gb[1]) / fh * 100, 2)]
-    print(json.dumps(out))
+        entry = {"frames": meta["frames"], "cols": COLS, "emerge": meta["emerge"], "veg": [pct(meta["veg"][0] / 100 * W0 - fl, fw), pct(meta["veg"][1] / 100 * H0 - ft, fh)]}
+        for part, rows in (("above", slice(0, split)), ("below", slice(split, H0))):
+            ms = [m.copy() for m in mattes[f]]
+            for m in ms:
+                keep = np.zeros(H0, bool)
+                keep[rows] = True
+                m[~keep, :, 3] = 0
+            b = None
+            for m in ms:
+                if (m[..., 3] > 4).any():
+                    bb = bbox(m[..., 3] > 4)
+                    b = bb if b is None else [min(b[0], bb[0]), min(b[1], bb[1]), max(b[2], bb[2]), max(b[3], bb[3])]
+            b = [max(0, b[0] - 2), max(0, b[1] - 2), min(W0, b[2] + 2), min(H0, b[3] + 2)]
+            cw, ch = round((b[2] - b[0]) * SCALE), round((b[3] - b[1]) * SCALE)
+            n = len(ms)
+            rows_n = (n + COLS - 1) // COLS
+            sheet = Image.new("RGBA", (cw * COLS, ch * rows_n), (0, 0, 0, 0))
+            for k, m in enumerate(ms):
+                cell = Image.fromarray(m).crop(b).resize((cw, ch), Image.LANCZOS)
+                sheet.paste(cell, ((k % COLS) * cw, (k // COLS) * ch))
+            sheet.save(os.path.join(dest, f, f"{part}.webp"), quality=86, alpha_quality=92, method=6)
+            entry[part] = {"cell": [cw, ch], "box": [pct(b[0] - fl, fw), pct(b[1] - ft, fh), pct(b[2] - b[0], fw), pct(b[3] - b[1], fh)]}
+            if part == "above":
+                entry[part]["foot"] = [pct(foot[0] - b[0], b[2] - b[0]), pct(foot[1] - b[1], b[3] - b[1])]
+        result["foods"][f] = entry
+    print(json.dumps(result))
     sys.exit()
 
 if NAME == "things":
