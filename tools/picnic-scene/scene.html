@@ -47,7 +47,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("weathersteps") || params.has("classroom") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("weathersteps") || params.has("grow") || params.has("classroom") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -3288,8 +3288,9 @@ const smooth = (t) => t * t * (3 - 2 * t);
 /* The videos' carrot: fat at its rounded shoulder, tapering to a blunt
    round tip, curved grooves across its front (deeper orange in them),
    smooth satin clay; a fan of short, chubby olive leaves on top. No face.
-   Leaning `tilt` alone; upright in Nova's carrot bed. */
-function videoCarrot(tilt = -0.32) {
+   Leaning `tilt` alone; upright in Nova's carrot bed; without its `leaves`
+   under the soil while it grows (they are a layer of their own there). */
+function videoCarrot(tilt = -0.32, leaves = true) {
   const g = new THREE.Group();
   const geo = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0], [0.08, 0.02], [0.18, 0.13], [0.3, 0.42], [0.4, 0.82], [0.47, 1.17], [0.49, 1.38], [0.44, 1.53], [0.28, 1.62], [0, 1.65]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(220), 180);
   /* Each groove: its height, the way it faces and how far round it goes. */
@@ -3313,6 +3314,8 @@ function videoCarrot(tilt = -0.32) {
     return [c.lerp(groove, deep(v) * 0.85), 0];
   });
   g.add(mesh(geo, satin({ roughness: 0.36, clearcoat: 0.32 })));
+  g.rotation.z = tilt;
+  if (!leaves) return g;
   /* The leaves: short chubby stalks, fanned out flat. */
   const olive = [new THREE.Color(0xa7b14c), new THREE.Color(0x95a543)];
   [[-1.05, 0.1, 0.38], [-0.62, 0.12, 0.46], [-0.2, 0.1, 0.5], [0.22, 0.1, 0.5], [0.64, 0.12, 0.46], [1.05, 0.1, 0.38]].forEach(([fan, lean, h], i) => {
@@ -3322,7 +3325,6 @@ function videoCarrot(tilt = -0.32) {
     tint(leaf, (v) => [olive[i % 2].clone().lerp(new THREE.Color(0xc3c76a), Math.max(0, (v.y - 1.75) * 1.4)), 0]);
     g.add(mesh(leaf, satin({ roughness: 0.55 })));
   });
-  g.rotation.z = tilt;
   return g;
 }
 
@@ -3453,15 +3455,16 @@ function videoPumpkin() {
 }
 
 /* The videos' tomato: glossy red, a little squat with soft lobes, a green
-   star of pointed leaves on top and a short stalk. */
-function videoTomato() {
+   star of pointed leaves on top and a short stalk. `unripe`: green yet
+   (while it grows on the vine). */
+function videoTomato(unripe = false) {
   const g = new THREE.Group();
   const geo = bake(new THREE.SphereGeometry(1, 160, 96), { scale: [0.62, 0.52, 0.6] });
   swell(geo, (v) => {
     const a = Math.atan2(v.z, v.x);
     return 0.018 * Math.cos(a * 5) * Math.max(0, 1 - Math.abs(v.y) / 0.52) - 0.06 * Math.exp(-((v.x * v.x + v.z * v.z) / 0.015)) * (v.y > 0 ? 1 : 0.4);
   });
-  const red = new THREE.Color(0xd4261a), deep = new THREE.Color(0xa0150e), warm = new THREE.Color(0xe84a24);
+  const [red, deep, warm] = (unripe ? [0x7fb43c, 0x5a8f2a, 0xa6cc58] : [0xd4261a, 0xa0150e, 0xe84a24]).map((c) => new THREE.Color(c));
   tint(geo, (v) => [red.clone().lerp(deep, Math.max(0, -v.y) * 0.7).lerp(warm, Math.max(0, v.y - 0.3) * 0.8), 0]);
   g.add(mesh(geo, satin({ roughness: 0.22, clearcoat: 0.7, clearcoatRoughness: 0.15 })));
   const green = satin({ roughness: 0.5 });
@@ -3587,14 +3590,340 @@ function mouthOf(basket) {
   return [l, t, r - l, b - t].map((v) => Math.round(v * 100) / 100);
 }
 
+/* ---------- Growing Nova's vegetables (2026-10-24) ----------
+   The Vegetables lessons' third step: slide the knob along and the
+   vegetable grows from its seed. `?grow=<food>` renders a cut through the
+   soil — a clay slab in three wavy layers, grass on top, pebbles and a worm
+   in it — and every part of the plant ALONE on the same camera: its roots,
+   what grows above the ground, each flower, each fruit green and then
+   ripe, each root vegetable under the soil. The page grows each part from
+   its own point (`meta.json`'s `from`), in its own stretch of the slide.
+   The videos' satin clay and light. */
+
+/* The soil line: the plants stand on it, the root vegetables hang under it. */
+const GROW_TOP = 0.06;
+/* The cut face of the soil — what grows under it lies just in front. */
+const GROW_FACE = 0.72;
+
+/* A wavy band of soil from `bottom` up to `top` (each a function of x), its
+   bottom corners rounded when it is the last. */
+function soilBand(top, bottom, color, round = false) {
+  const W = 2.6, N = 48;
+  const s = new THREE.Shape();
+  s.moveTo(-W, bottom(-W) + (round ? 0.45 : 0));
+  for (let i = 0; i <= N; i++) {
+    const x = -W + (2 * W * i) / N;
+    s.lineTo(x, top(x));
+  }
+  if (round) {
+    s.lineTo(W, bottom(W) + 0.45);
+    s.quadraticCurveTo(W, bottom(W), W - 0.45, bottom(W));
+    s.lineTo(-W + 0.45, bottom(-W));
+    s.quadraticCurveTo(-W, bottom(-W), -W, bottom(-W) + 0.45);
+  } else {
+    for (let i = N; i >= 0; i--) {
+      const x = -W + (2 * W * i) / N;
+      s.lineTo(x, bottom(x));
+    }
+  }
+  const geo = new THREE.ExtrudeGeometry(s, { depth: 1.32, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 6, curveSegments: 24 });
+  geo.translate(0, 0, -0.66);
+  return mesh(geo, velvet(color, { roughness: 0.92, sheen: 0.5 }));
+}
+
+/* The soil, cut open: three layers, darker deeper down; grass on top with
+   tufts along its front; pebbles and a worm in the cut. */
+function growGround() {
+  const g = new THREE.Group();
+  const flat = () => GROW_TOP - 0.1;
+  const wave1 = (x) => -0.62 + 0.07 * Math.sin(x * 1.7 + 0.6);
+  const wave2 = (x) => -1.38 + 0.08 * Math.sin(x * 1.3 + 2.1);
+  g.add(soilBand(flat, wave1, 0x9a6440));
+  g.add(soilBand(wave1, wave2, 0x84522f));
+  g.add(soilBand(wave2, () => -2.42, 0x6c4024, true));
+  const grass = mesh(new RoundedBoxGeometry(5.36, 0.2, 1.56, 6, 0.09), velvet(0x6cbf4f));
+  grass.position.y = GROW_TOP - 0.07;
+  g.add(grass);
+  const tuft = [0x8fd16e, 0x6fbf55, 0x9ad877];
+  for (let i = 0; i < 46; i++) {
+    const h = 0.12 + rand() * 0.1;
+    const blade = mesh(new THREE.CapsuleGeometry(0.035, h, 6, 12), velvet(tuft[i % 3]));
+    const x = -2.55 + (5.1 * i) / 45 + (rand() - 0.5) * 0.06;
+    /* None where the plant comes up. */
+    if (Math.abs(x) < 0.32) continue;
+    blade.position.set(x, GROW_TOP + h / 2, 0.55 + rand() * 0.2);
+    blade.rotation.set(0.15, 0, (rand() - 0.5) * 0.7);
+    g.add(blade);
+  }
+  /* Pebbles, half in the cut face — away from the middle, where things grow. */
+  const stone = [0xd6c2a2, 0xb7aca0, 0xc9b08c];
+  for (const [i, [x, y, r]] of [[-2.1, -0.35, 0.11], [-1.55, -1.05, 0.14], [-2.2, -1.9, 0.16], [1.75, -0.3, 0.09], [2.15, -1.1, 0.15], [1.5, -1.95, 0.12], [-0.9, -2.1, 0.1], [0.95, -2.15, 0.13], [2.3, -0.7, 0.08]].entries()) {
+    const p = mesh(new THREE.SphereGeometry(r, 32, 20), velvet(stone[i % 3]));
+    p.scale.set(1.25, 0.85, 0.6);
+    p.position.set(x, y, GROW_FACE - 0.04);
+    g.add(p);
+  }
+  /* A pink worm, curling through the deep soil at the left. */
+  const worm = taperTube([[-2.25, -1.42, GROW_FACE], [-1.95, -1.3, GROW_FACE], [-1.7, -1.5, GROW_FACE], [-1.42, -1.62, GROW_FACE], [-1.2, -1.5, GROW_FACE]], 0.075, 0.065, velvet(0xf3a3ad));
+  g.add(worm);
+  /* Crumbs on the cut face, a shade lighter or darker than their layer. */
+  for (let i = 0; i < 70; i++) {
+    const x = (rand() - 0.5) * 4.9, y = -0.2 - rand() * 2.1;
+    if (Math.abs(x) < 0.75 && y > -1.9) continue;
+    const deep = y < -1.38 + 0.08 * Math.sin(x * 1.3 + 2.1) ? 2 : y < -0.62 + 0.07 * Math.sin(x * 1.7 + 0.6) ? 1 : 0;
+    const crumb = mesh(new THREE.SphereGeometry(0.025 + rand() * 0.03, 12, 8), velvet([[0xb47a52, 0x845030], [0x9c673f, 0x6e4126], [0x82512f, 0x553019]][deep][i % 2]));
+    crumb.scale.z = 0.5;
+    crumb.position.set(x, y, GROW_FACE - 0.01);
+    g.add(crumb);
+  }
+  return g;
+}
+
+/* A seed in the soil, just under the grass. */
+function growSeed() {
+  const s = mesh(new THREE.SphereGeometry(0.17, 40, 24), satin({ roughness: 0.35, clearcoat: 0.5 }));
+  /* A bean: plump, glossy, warm brown — no pebble looks like it. */
+  swell(s.geometry, (v) => -0.05 * Math.exp(-(((v.x - 0.0) / 0.05) ** 2)) * Math.max(0, v.y / 0.17));
+  tint(s.geometry, (v) => [new THREE.Color(0xd08a3c).lerp(new THREE.Color(0x8e4f1f), Math.max(0, -v.y * 4)), 0]);
+  s.scale.set(1.4, 0.95, 0.9);
+  s.rotation.z = 0.4;
+  s.position.set(0, -0.32, GROW_FACE);
+  return s;
+}
+
+/* Thin pale roots fanning down from the plant's foot. */
+function growRoots(reach = 1) {
+  const g = new THREE.Group();
+  const root = satin({ roughness: 0.6 });
+  for (const [dx, dy, bend] of [[-0.55, -0.85, -0.2], [-0.2, -1.05, 0.1], [0.25, -1.0, -0.1], [0.6, -0.8, 0.2], [0.0, -0.65, 0.3]]) {
+    const r = taperTube([[0, GROW_TOP - 0.05, GROW_FACE], [dx * 0.4 * reach + bend * 0.2, dy * 0.45 * reach, GROW_FACE], [dx * reach, dy * reach, GROW_FACE]], 0.035, 0.012, root);
+    tintAll(r, () => [new THREE.Color(0xe9d7b4), 0]);
+    g.add(r);
+  }
+  return g;
+}
+
+/* A flower: five round petals and a middle — yellow on a tomato, white on a
+   potato or a pepper. Facing the front. */
+function growFlower(petal = 0xffd23a, middle = 0xf2a81c) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2;
+    const p = mesh(new THREE.SphereGeometry(0.1, 24, 16), velvet(petal));
+    p.scale.set(1, 0.62, 0.35);
+    p.position.set(Math.cos(a) * 0.1, Math.sin(a) * 0.1, 0);
+    p.rotation.z = a;
+    g.add(p);
+  }
+  const m = mesh(new THREE.SphereGeometry(0.055, 20, 14), velvet(middle));
+  m.position.z = 0.03;
+  g.add(m);
+  return g;
+}
+
+const leafy = (color) => satin({ roughness: 0.5, vertexColors: false, color });
+
+/* Carrot greens: a fan of thin stalks, each ending in a feathery tuft. */
+function carrotTops() {
+  const g = new THREE.Group();
+  const stalk = leafy(0x7aa63c);
+  const tuft = [leafy(0x86b84a), leafy(0x6fa33c)];
+  [[-0.75, 1.05], [-0.42, 1.35], [-0.12, 1.5], [0.18, 1.45], [0.48, 1.3], [0.78, 1.0]].forEach(([dx, h], i) => {
+    const end = [dx, GROW_TOP + h, GROW_FACE - 0.1];
+    g.add(taperTube([[0, GROW_TOP, GROW_FACE - 0.1], [dx * 0.35, GROW_TOP + h * 0.5, GROW_FACE - 0.1], end], 0.05, 0.03, stalk));
+    for (let k = 0; k < 5; k++) {
+      const a = Math.atan2(h, dx) - Math.PI / 2 + (k - 2) * 0.55;
+      const l = plumpLeaf(0.34, 0.12, tuft[(i + k) % 2]);
+      l.position.set(end[0] - Math.sin(a) * 0.02 * k, end[1] - 0.18 + k * 0.07, end[2] + 0.02);
+      l.rotation.set(0, 0, a + Math.PI / 2 + (k % 2 ? 0.5 : -0.5));
+      g.add(l);
+    }
+    /* Leaflets up the stalk too. */
+    for (const t of [0.45, 0.7]) {
+      for (const side of [-1, 1]) {
+        const l = plumpLeaf(0.22, 0.08, tuft[i % 2]);
+        l.position.set(dx * t, GROW_TOP + h * t, GROW_FACE - 0.08);
+        l.rotation.z = Math.atan2(h, dx) + side * 0.9;
+        g.add(l);
+      }
+    }
+  });
+  return g;
+}
+
+/* A potato plant above the soil: a bush of stems with round leaflets and a
+   few white flowers. */
+function potatoTops() {
+  const g = new THREE.Group();
+  const stem = leafy(0x5f9e36);
+  const leaf = [leafy(0x5fa53e), leafy(0x78b84e)];
+  [[-0.85, 1.05], [-0.4, 1.4], [0.05, 1.55], [0.45, 1.35], [0.85, 1.0]].forEach(([dx, h], i) => {
+    const pts = [[0, GROW_TOP, GROW_FACE - 0.15], [dx * 0.4, GROW_TOP + h * 0.55, GROW_FACE - 0.1], [dx, GROW_TOP + h, GROW_FACE - 0.1]];
+    g.add(taperTube(pts, 0.055, 0.035, stem));
+    for (const t of [0.35, 0.6, 0.85]) {
+      for (const side of [-1, 1]) {
+        const l = plumpLeaf(0.36, 0.17, leaf[(i + (side > 0 ? 1 : 0)) % 2]);
+        l.position.set(dx * t, GROW_TOP + h * t, GROW_FACE - 0.08);
+        l.rotation.set(0.2, 0, Math.atan2(h, dx) + side * 1.1);
+        g.add(l);
+      }
+    }
+    const top = plumpLeaf(0.34, 0.17, leaf[i % 2]);
+    top.position.set(dx, GROW_TOP + h, GROW_FACE - 0.08);
+    top.rotation.z = Math.atan2(h, dx);
+    g.add(top);
+  });
+  for (const [x, y] of [[-0.3, 1.62], [0.25, 1.68], [0.62, 1.48]]) g.add(at(growFlower(0xfdfbf6, 0xffcf3a), [x, y, GROW_FACE + 0.02], 0.9));
+  return g;
+}
+
+/* The potato's runners under the soil, out to where each potato swells. */
+const POTATO_AT = [[-1.05, -0.95], [0.12, -1.6], [1.1, -0.85]];
+function potatoRunners() {
+  const g = new THREE.Group();
+  const runner = satin({ roughness: 0.6 });
+  for (const [x, y] of POTATO_AT) {
+    const r = taperTube([[0, GROW_TOP - 0.05, GROW_FACE], [x * 0.35, y * 0.5, GROW_FACE], [x * 0.85, y * 0.92, GROW_FACE]], 0.04, 0.03, runner);
+    tintAll(r, () => [new THREE.Color(0xe6d2ac), 0]);
+    g.add(r);
+  }
+  return g;
+}
+
+/* A pepper plant: a sturdy stem, branching, glossy dark pointed leaves and
+   white flowers where the peppers will hang. */
+const PEPPER_AT = [[-0.55, 1.1], [0.6, 1.3]];
+function pepperTops() {
+  const g = new THREE.Group();
+  const stem = leafy(0x5b9a34);
+  const leaf = [leafy(0x3f8f3a), leafy(0x55a646)];
+  g.add(taperTube([[0, GROW_TOP, GROW_FACE - 0.2], [0.02, 1.0, GROW_FACE - 0.2], [0, 2.05, GROW_FACE - 0.2]], 0.08, 0.05, stem));
+  for (const [y, side, len] of [[0.55, -1, 0.75], [0.8, 1, 0.8], [1.15, -1, 0.75], [1.45, 1, 0.7], [1.75, -1, 0.6], [1.95, 1, 0.5]]) {
+    g.add(taperTube([[0, y, GROW_FACE - 0.2], [side * len * 0.45, y + 0.18, GROW_FACE - 0.15], [side * len * 0.75, y + 0.3, GROW_FACE - 0.12]], 0.045, 0.03, stem));
+    for (const [t, turn] of [[1, 0], [0.6, 0.6], [0.6, -0.6]]) {
+      const l = plumpLeaf(0.55, 0.2, leaf[(Math.round(y * 10) + (turn > 0 ? 1 : 0)) % 2]);
+      l.position.set(side * len * 0.75 * t, y + 0.3 * t, GROW_FACE - 0.1);
+      l.rotation.set(0.2, side < 0 ? Math.PI : 0, 0.35 + turn);
+      g.add(l);
+    }
+  }
+  const top = plumpLeaf(0.45, 0.18, leaf[0]);
+  top.position.set(0, 2.05, GROW_FACE - 0.15);
+  top.rotation.z = Math.PI / 2;
+  g.add(top);
+  return g;
+}
+
+/* A tomato plant: a stem tied to a wooden stake, a compound leaf (a row of
+   leaflets) out to alternate sides all the way up — the tomatoes hang
+   between them. */
+function tomatoTops() {
+  const g = new THREE.Group();
+  const z = GROW_FACE - 0.2;
+  g.add(taperTube([[0.12, GROW_TOP - 0.05, z - 0.12], [0.12, 1.4, z - 0.12], [0.12, 2.5, z - 0.12]], 0.06, 0.05, satin({ roughness: 0.8, vertexColors: false, color: 0xb07a45 })));
+  const stem = leafy(0x5a9a34);
+  g.add(taperTube([[0, GROW_TOP, z], [-0.05, 0.7, z], [0.06, 1.4, z], [-0.04, 2.0, z], [0.02, 2.45, z]], 0.075, 0.045, stem));
+  const leaf = [leafy(0x4f9a3c), leafy(0x67b14c)];
+  for (const [y, side, len] of [[0.35, 1, 0.85], [0.62, -1, 0.95], [0.95, 1, 1.0], [1.28, -1, 0.95], [1.6, 1, 0.9], [1.92, -1, 0.8], [2.2, 1, 0.65], [2.4, -1, 0.5]]) {
+    const tip = [side * len, y + 0.32, z + 0.05];
+    g.add(taperTube([[0, y, z], [side * len * 0.5, y + 0.22, z + 0.03], tip], 0.035, 0.022, stem));
+    for (const t of [0.35, 0.65]) {
+      for (const up of [1, -1]) {
+        const l = plumpLeaf(0.3, 0.14, leaf[(t > 0.5 ? 1 : 0) ^ (up > 0 ? 1 : 0)]);
+        l.position.set(side * len * t, y + 0.3 * t + 0.02, z + 0.06);
+        l.rotation.set(0.15, side < 0 ? Math.PI : 0, 0.35 + up * 0.95);
+        g.add(l);
+      }
+    }
+    const end = plumpLeaf(0.36, 0.16, leaf[0]);
+    end.position.set(...tip);
+    end.rotation.set(0.15, side < 0 ? Math.PI : 0, 0.35);
+    g.add(end);
+  }
+  return g;
+}
+
+/* Broccoli leaves: big, waxy and blue-green, a pale rib down each, round a
+   thick pale stalk — the `front` pair (over the head's stalk) apart. */
+function broccoliTops(front = false) {
+  const g = new THREE.Group();
+  if (!front) g.add(tintAll(taperTube([[0, GROW_TOP, GROW_FACE - 0.25], [0, 0.3, GROW_FACE - 0.25], [0, 0.55, GROW_FACE - 0.25]], 0.2, 0.18, satin({ roughness: 0.5 })), () => [new THREE.Color(0x9cc45e), 0]));
+  const blue = [leafy(0x4b8c5c), leafy(0x5c9c6a)];
+  const rib = leafy(0x9ec48c);
+  for (const [a, y, len, z] of [[2.45, 0.2, 1.3, -0.45], [0.7, 0.2, 1.3, -0.45], [2.05, 0.35, 1.1, -0.35], [1.1, 0.35, 1.1, -0.35], [2.85, 0.1, 1.05, 0.0], [0.3, 0.1, 1.05, 0.0], [2.15, 0.04, 0.85, 0.3], [1.0, 0.04, 0.85, 0.3]]) {
+    /* The front pair goes on a layer of its own, over the head's stalk. */
+    if ((z > 0) !== front) continue;
+    const l = plumpLeaf(len, 0.48, blue[Math.round(a * 3) % 2]);
+    l.position.set(0, y, GROW_FACE + z);
+    l.rotation.set(0.15, 0, a);
+    g.add(l);
+    const r = taperTube([[0.05, 0, 0.045], [len * 0.45, 0, 0.05], [len * 0.8, 0, 0.04]], 0.022, 0.008, rib);
+    r.position.copy(l.position);
+    r.rotation.copy(l.rotation);
+    g.add(r);
+  }
+  return g;
+}
+
+/* Each food: its parts, in the order they are drawn, each `[name, make,
+   from]` — `from` is the point it grows from, in the world. A fruit is
+   three parts at one place (`<n>-flower`, `<n>-green`, `<n>-ripe`): they
+   share a box when cropped. */
+const GROW_DEFS = {
+  carrot: () => [
+    ["roots", () => growRoots(0.55), [0, GROW_TOP, GROW_FACE]],
+    ["seed", growSeed, [0, -0.32, GROW_FACE]],
+    ["root", () => at(videoCarrot(0, false), [0, GROW_TOP - 1.65 * 1.18 + 0.02, GROW_FACE], 1.18), [0, GROW_TOP, GROW_FACE]],
+    ["tops", carrotTops, [0, GROW_TOP, GROW_FACE]],
+  ],
+  potato: () => [
+    ["runners", potatoRunners, [0, GROW_TOP, GROW_FACE]],
+    ["seed", growSeed, [0, -0.32, GROW_FACE]],
+    ...POTATO_AT.map(([x, y], i) => {
+      const p = videoPotato();
+      p.rotation.set(0.25, -0.35 + i * 0.5, 0.12 - i * 0.2);
+      return [`tuber${i}`, () => at(p, [x, y, GROW_FACE], 1.05 - i * 0.08, [p.rotation.x, p.rotation.y, p.rotation.z]), [x, y, GROW_FACE]];
+    }),
+    ["tops", potatoTops, [0, GROW_TOP, GROW_FACE]],
+  ],
+  tomato: () => [
+    ["roots", () => growRoots(0.9), [0, GROW_TOP, GROW_FACE]],
+    ["seed", growSeed, [0, -0.32, GROW_FACE]],
+    ["tops", tomatoTops, [0, GROW_TOP, GROW_FACE]],
+    ...[[-0.6, 1.88], [0.62, 1.5], [-0.5, 1.02]].flatMap(([x, y], i) => [
+      [`fruit${i}-flower`, () => at(growFlower(), [x, y + 0.2, GROW_FACE + 0.55], 1), [x, y + 0.2, GROW_FACE + 0.55]],
+      [`fruit${i}-green`, () => at(videoTomato(true), [x, y, GROW_FACE + 0.45], 0.55), [x, y + 0.26, GROW_FACE + 0.45]],
+      [`fruit${i}-ripe`, () => at(videoTomato(), [x, y, GROW_FACE + 0.45], 0.55), [x, y + 0.26, GROW_FACE + 0.45]],
+    ]),
+  ],
+  pepper: () => [
+    ["roots", () => growRoots(0.85), [0, GROW_TOP, GROW_FACE]],
+    ["seed", growSeed, [0, -0.32, GROW_FACE]],
+    ["tops", pepperTops, [0, GROW_TOP, GROW_FACE]],
+    ...PEPPER_AT.flatMap(([x, y], i) => [
+      [`fruit${i}-flower`, () => at(growFlower(0xfdfbf6, 0xffcf3a), [x, y + 0.35, GROW_FACE + 0.4], 1), [x, y + 0.35, GROW_FACE + 0.4]],
+      [`fruit${i}-green`, () => at(videoPepper("green"), [x, y - 0.55, GROW_FACE + 0.35], 0.72, [0, 0, i ? 0.25 : -0.1]), [x, y + 0.2, GROW_FACE + 0.35]],
+      [`fruit${i}-ripe`, () => at(videoPepper("red"), [x, y - 0.55, GROW_FACE + 0.35], 0.72, [0, 0, i ? 0.25 : -0.1]), [x, y + 0.2, GROW_FACE + 0.35]],
+    ]),
+  ],
+  broccoli: () => [
+    ["roots", () => growRoots(0.9), [0, GROW_TOP, GROW_FACE]],
+    ["seed", growSeed, [0, -0.32, GROW_FACE]],
+    ["tops", () => broccoliTops(), [0, GROW_TOP, GROW_FACE]],
+    ["head", () => at(videoBroccoli(), [0, 0.2, GROW_FACE - 0.1], 1.3), [0, 0.3, GROW_FACE - 0.1]],
+    ["front", () => broccoliTops(true), [0, GROW_TOP, GROW_FACE]],
+  ],
+};
+
 const THING = params.get("thing");
 const HARVEST = params.get("harvest");
 const BASKET = params.has("basket");
 const SEASON = params.get("season");
 const WEATHERSTEPS = params.get("weathersteps");
+const GROW = params.get("grow");
 const BACKDROP = params.get("backdrop");
 const CLASSROOM = params.get("classroom");
-const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS || BACKDROP ? null : SCENES[SCENE];
+const def = THING || HARVEST || BASKET || SEASON || WEATHERSTEPS || GROW || BACKDROP ? null : SCENES[SCENE];
 
 if (THING) {
   /* ---------- One thing alone, seen from the front and a little above ---------- */
@@ -3780,6 +4109,54 @@ if (THING) {
     return out;
   };
   window.itemsMeta = () => ({});
+} else if (GROW) {
+  /* ---------- Growing a vegetable: the soil cut open, then each part of
+     the plant alone, all on one camera — the same for all five foods, so
+     every lesson's soil sits in the same place. The videos' light. No
+     ground shadow (the page draws one). ---------- */
+  catcher.visible = false;
+  sun.color.set(0xfff0e4);
+  sun.intensity = 1.7;
+  sun.position.set(-3, 8, 10);
+  sky.color.set(0xfff0f6);
+  sky.groundColor.set(0xc8d4ff);
+  sky.intensity = 1.35;
+  scene.environmentIntensity = 0.55;
+  const rim = new THREE.DirectionalLight(0xffe6f2, 1.6);
+  rim.position.set(4, 6, -8);
+  scene.add(rim);
+  renderer.setPixelRatio(2);
+  renderer.setSize(500, 550);
+  const span = 3.05;
+  Object.assign(camera, { left: -span, right: span, top: span * 1.1, bottom: -span * 1.1 });
+  const lift = THREE.MathUtils.degToRad(10);
+  const look = 0.25;
+  camera.position.set(0, look + Math.sin(lift) * 30, Math.cos(lift) * 30);
+  camera.lookAt(0, look, 0);
+  camera.updateProjectionMatrix();
+  const parts = GROW_DEFS[GROW]();
+  window.renderLayers = () => {
+    renderer.setClearColor(0x000000, 0);
+    const out = {};
+    const shoot = (name, thing) => {
+      scene.add(thing);
+      out[name] = frame();
+      scene.remove(thing);
+    };
+    shoot("ground", growGround());
+    for (const [name, make] of parts) shoot(name, make());
+    return out;
+  };
+  /* Where each part grows from, % of the picture. */
+  window.itemsMeta = () => ({
+    from: Object.fromEntries(
+      parts.map(([name, , point]) => {
+        const p = new THREE.Vector3(...point).project(camera);
+        return [name, [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100]];
+      }),
+    ),
+    order: parts.map(([name]) => name),
+  });
 } else if (SEASON) {
   /* ---------- Nova's seasons: the island, then one frame per step, each
      with everything before it. The camera is the same for all four, so

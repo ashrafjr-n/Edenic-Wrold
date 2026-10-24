@@ -147,7 +147,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "season" || mode === "weathersteps") {
+  } else if (mode === "season" || mode === "weathersteps" || mode === "grow") {
     for (const what of specs) {
       const layers = await render(page, `${mode}=${what}`);
       const out = path.join(__dirname, "out", `${mode}-${what}`);
