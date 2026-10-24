@@ -680,3 +680,63 @@ cookie, ball, toast, cheese, book, kite); `squares/`, `triangles/`,
 | `public/assets/learn/{friend}/{course}/reels/` | `1.mp4` … `n.mp4`, one per lesson (placeholders until Phase 6) |
 
 Pictures are imported in code; reels are played by path.
+
+## 11. Future: Watch and Adventure (idea only, not built, not scheduled)
+
+Recorded 2026-10-24 from an outside suggestion. Nothing here exists yet; it does
+not change the current scope. Core advice: build ONE polished, connected
+experience (watch the song → learn the concept → finish a challenge), not many
+similar activities.
+
+### Adventure — Explore & Discover
+A stronger replacement for a plain games page: an adventure map, short stories,
+puzzles, memory games, and missions tied to what the child learned.
+
+### Watch — Songs & Stories
+The company's content library: Reels, songs and short films, with clear
+categories and easy ways to find things. Not just a grid of videos — a smart
+library built on the content the company already has.
+
+- **Sing Along** — all the short learning songs in one place. Categories
+  (Letters, Numbers, Colors, Shapes, Animals, Seasons), suggestions per
+  character (Pinki / Nova / Bloo), a clear thumbnail + simple name + duration
+  per video, a replay button, and a hop to a related activity (e.g. after the
+  Shapes song: "Let's find shapes!" → the shape-finding game).
+- **Story Time** — short films kept apart from songs (consumed differently).
+  Short episodes with title, thumbnail, an understandable story; ordered in
+  series/adventures; one or two questions after the film; a "next episode"
+  button when it is part of a series (e.g. a star falls from the sky → pick the
+  shape that looks like the star, or order the events).
+- **Discover** — small groups, not one huge grid: Songs for Beginners, Learn
+  with Pinki, Animals with Bloo, Seasons with Nova, Short Stories, Watch Again.
+  Suggestions come from the topic the child chose or what they watched — no
+  personal data, no complex recommender.
+
+### One video, many places
+A single video serves several experiences (no new content per page). Example
+for a Shapes reel: Home → suggested song; Watch → the full original in the
+library; Learn → Shapes → the song opens the lesson; Adventure → a find-the-shapes
+mission; end of lesson → "watch the song again".
+
+Implementation: ONE unified record per video — title, source video URL,
+thumbnail, topic, linked character, duration, content type, and the lessons that
+use it. Then 50 new songs from the company = data entries, not hand-built pages.
+
+### Reel → small interactive activity
+Each Reel can get a tiny experience instead of a bare embed: watch, then one
+question or a short challenge by topic (e.g. Bloo's animal song → "What animal
+did you see?" with picture choices). Not every video needs a quiz — some just
+suggest an optional activity or a related lesson. Reuse the content's own
+audio (animal-name pronunciations; colour videos → pick-the-right-colour).
+
+### Suggested order (0 of 6 done)
+1. [ ] Finish Learn — missing states, pronunciation, progress, phone responsiveness.
+2. [ ] Build Watch — unified library of songs/Reels/films, categories by topic and character.
+3. [ ] First Adventure — one short story + three missions, tied to Shapes or Animals.
+4. [ ] Three reusable games — Memory Match, shape matching, sorting.
+5. [ ] Connect content and progress — reuse videos across Watch / Learn / Adventure, save the child's progress.
+6. [ ] Final polish — motion and sound, usability, phone testing, a parent experience.
+
+Conflicts to settle before building: CLAUDE.md says no accounts / no profile
+before sign-in and no audio yet; "Watch Again" and saved progress must stay
+client-side (zustand + localStorage) to fit that.
