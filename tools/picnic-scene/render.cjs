@@ -147,7 +147,25 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
     }
-  } else if (mode === "season" || mode === "weathersteps" || mode === "grow") {
+  } else if (mode === "grow") {
+    /* `grow <food>… [--frames=N] [--only=k,k]`: the soil, then the soil
+       with the plant at each of N moments. */
+    const opt = (name) => (specs.find((s) => s.startsWith(`--${name}=`)) || "").split("=")[1];
+    const frames = Number(opt("frames") || 32);
+    const only = opt("only") ? opt("only").split(",").map(Number) : null;
+    for (const what of specs.filter((s) => !s.startsWith("--"))) {
+      const out = path.join(__dirname, "out", `grow-${what}`);
+      fs.mkdirSync(out, { recursive: true });
+      const layers = await render(page, `grow=${what}&frames=${frames}`);
+      save(out, "ground", layers.ground);
+      for (let k = 0; k < frames; k++) {
+        if (only && !only.includes(k)) continue;
+        save(out, `frame${String(k).padStart(2, "0")}`, await page.evaluate((i) => window.growFrame(i), k));
+      }
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+      console.log(what, "done");
+    }
+  } else if (mode === "season" || mode === "weathersteps") {
     for (const what of specs) {
       const layers = await render(page, `${mode}=${what}`);
       const out = path.join(__dirname, "out", `${mode}-${what}`);
