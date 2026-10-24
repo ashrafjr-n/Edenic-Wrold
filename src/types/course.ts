@@ -136,7 +136,13 @@ export type Question =
       Tap one and it is picked (pulled up) into the basket, its word popping
       up where it was; one more than the note says wiggles back. `order` is
       each line: the English word, its plural and how many. */
-  | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden };
+  | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden }
+  /** Grow it (Nova's Vegetables, 2026-10-24): slide the knob from the
+      left end of its line to the right and the vegetable grows from its
+      seed in the soil under it — slid back, it shrinks again. Nothing can
+      go wrong; the right end is the vegetable, whole (its `picture` waits
+      there, faint). */
+  | { type: "grow"; ask: Ask; word: string; picture: StaticImageData; scene: GrowScene };
 
 /** Where the foods grow, to pick them (Nova's Fruits review) — one render
     (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
@@ -178,6 +184,26 @@ export interface WeatherScene {
   frames: readonly StaticImageData[];
   sky: readonly { src: StaticImageData; box: SceneRect }[];
   bits: readonly StaticImageData[];
+}
+
+/** A part of a growing plant (`data/grow.ts`): its picture, where it lies
+    (% of the frame), the point it grows from (% of its own box) and when,
+    as the knob goes from 0 to 1 — it `grows` from nothing, `shows` (fades
+    in) or `fades` (out). Without any, it is simply there. */
+export interface GrowPart {
+  src: StaticImageData;
+  box: SceneRect;
+  from: readonly [number, number];
+  grows?: readonly [number, number];
+  shows?: readonly [number, number];
+  fades?: readonly [number, number];
+}
+
+/** A vegetable growing in the soil, cut open: the soil, then its parts in
+    drawing order. */
+export interface GrowScene {
+  ground: { src: StaticImageData; box: SceneRect };
+  parts: readonly GrowPart[];
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
