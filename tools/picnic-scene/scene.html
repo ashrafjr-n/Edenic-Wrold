@@ -3592,13 +3592,14 @@ function mouthOf(basket) {
 
 /* ---------- Growing Nova's vegetables (2026-10-24) ----------
    The Vegetables lessons' third step: slide the knob along and the
-   vegetable grows from its seed. `?grow=<food>` renders a cut through the
-   soil — a clay slab in three wavy layers, grass on top, pebbles and a worm
-   in it — and every part of the plant ALONE on the same camera: its roots,
-   what grows above the ground, each flower, each fruit green and then
-   ripe, each root vegetable under the soil. The page grows each part from
-   its own point (`meta.json`'s `from`), in its own stretch of the slide.
-   The videos' satin clay and light. */
+   vegetable grows from its seed. `?grow=<food>` builds a cut through the
+   soil — a clay slab in three wavy layers, speckled, grass on top, pebbles
+   and a worm in it — and renders it alone (`ground`), then with the plant
+   as it is at each of `GROW_FRAMES` moments (`window.growFrame(k)`), on
+   one camera. `crop.py grow` keeps only what each frame adds to the soil
+   (the plant, its shadow, the grass in front of its foot stays the
+   soil's) and packs the frames into sheets. The videos' satin clay and
+   light. */
 
 /* The soil line: the plants stand on it, the root vegetables hang under it. */
 const GROW_TOP = 0.06;
@@ -3607,6 +3608,32 @@ const GROW_FACE = 0.72;
 
 /* A wavy band of soil from `bottom` up to `top` (each a function of x), its
    bottom corners rounded when it is the last. */
+/* Speckles for the cut face — crumbs, light and dark, pressed into the
+   clay (its `map` and its `bumpMap`). Seeded. */
+let soilSpeckles;
+function soilTexture() {
+  if (soilSpeckles) return soilSpeckles;
+  const c = document.createElement("canvas");
+  c.width = c.height = 512;
+  const x = c.getContext("2d");
+  x.fillStyle = "#ececec";
+  x.fillRect(0, 0, 512, 512);
+  const rnd = seeded(77);
+  for (let i = 0; i < 900; i++) {
+    const r = 1.5 + rnd() * rnd() * 7;
+    const v = rnd() < 0.55 ? 196 + rnd() * 30 : 248 + rnd() * 7;
+    x.fillStyle = `rgb(${v},${v},${v})`;
+    x.beginPath();
+    x.ellipse(rnd() * 512, rnd() * 512, r * (1 + rnd() * 0.6), r, rnd() * 3, 0, Math.PI * 2);
+    x.fill();
+  }
+  soilSpeckles = new THREE.CanvasTexture(c);
+  soilSpeckles.wrapS = soilSpeckles.wrapT = THREE.RepeatWrapping;
+  soilSpeckles.repeat.set(0.55, 0.55);
+  soilSpeckles.colorSpace = THREE.SRGBColorSpace;
+  return soilSpeckles;
+}
+
 function soilBand(top, bottom, color, round = false) {
   const W = 2.6, N = 48;
   const s = new THREE.Shape();
@@ -3628,7 +3655,7 @@ function soilBand(top, bottom, color, round = false) {
   }
   const geo = new THREE.ExtrudeGeometry(s, { depth: 1.32, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 6, curveSegments: 24 });
   geo.translate(0, 0, -0.66);
-  return mesh(geo, velvet(color, { roughness: 0.92, sheen: 0.5 }));
+  return mesh(geo, velvet(color, { roughness: 0.92, sheen: 0.5, map: soilTexture(), bumpMap: soilTexture(), bumpScale: 1.2 }));
 }
 
 /* The soil, cut open: three layers, darker deeper down; grass on top with
@@ -3638,22 +3665,25 @@ function growGround() {
   const flat = () => GROW_TOP - 0.1;
   const wave1 = (x) => -0.62 + 0.07 * Math.sin(x * 1.7 + 0.6);
   const wave2 = (x) => -1.38 + 0.08 * Math.sin(x * 1.3 + 2.1);
-  g.add(soilBand(flat, wave1, 0x9a6440));
-  g.add(soilBand(wave1, wave2, 0x84522f));
-  g.add(soilBand(wave2, () => -2.42, 0x6c4024, true));
+  g.add(soilBand(flat, wave1, 0xa86e47));
+  g.add(soilBand(wave1, wave2, 0x8f5a34));
+  g.add(soilBand(wave2, () => -2.42, 0x764628, true));
   const grass = mesh(new RoundedBoxGeometry(5.36, 0.2, 1.56, 6, 0.09), velvet(0x6cbf4f));
   grass.position.y = GROW_TOP - 0.07;
   g.add(grass);
-  const tuft = [0x8fd16e, 0x6fbf55, 0x9ad877];
-  for (let i = 0; i < 46; i++) {
-    const h = 0.12 + rand() * 0.1;
-    const blade = mesh(new THREE.CapsuleGeometry(0.035, h, 6, 12), velvet(tuft[i % 3]));
-    const x = -2.55 + (5.1 * i) / 45 + (rand() - 0.5) * 0.06;
-    /* None where the plant comes up. */
-    if (Math.abs(x) < 0.32) continue;
-    blade.position.set(x, GROW_TOP + h / 2, 0.55 + rand() * 0.2);
-    blade.rotation.set(0.15, 0, (rand() - 0.5) * 0.7);
-    g.add(blade);
+  /* Blades of grass: a row along the front edge (none right where the
+     plant comes up) and shorter ones over the top behind. */
+  const tuft = [0x8fd16e, 0x6fbf55, 0x9ad877, 0x7cc95e];
+  const grassR = seeded(31);
+  for (let i = 0; i < 130; i++) {
+    const front = i < 80;
+    const x = front ? -2.58 + (5.16 * i) / 79 + (grassR() - 0.5) * 0.05 : (grassR() - 0.5) * 5.1;
+    if (front && Math.abs(x) < 0.2) continue;
+    const h = front ? 0.1 + grassR() * 0.14 : 0.06 + grassR() * 0.08;
+    const b = mesh(new THREE.CapsuleGeometry(front ? 0.028 : 0.022, h, 6, 12), velvet(tuft[i % 4]));
+    b.position.set(x, GROW_TOP + h / 2 - 0.01, front ? 0.56 + grassR() * 0.2 : -0.6 + grassR() * 1.1);
+    b.rotation.set(0.12 + grassR() * 0.15, 0, (grassR() - 0.5) * 0.8);
+    g.add(b);
   }
   /* Pebbles, half in the cut face — away from the middle, where things grow. */
   const stone = [0xd6c2a2, 0xb7aca0, 0xc9b08c];
@@ -3679,241 +3709,650 @@ function growGround() {
   return g;
 }
 
-/* A seed in the soil, just under the grass. */
-function growSeed() {
+/* ---------- The plants, growing (2026-10-24, second pass) ----------
+   Each food is a function of `t` (0 → 1, where the knob is): the whole
+   plant as it is at that moment — built anew for every frame, so a stem
+   lengthens, a leaf unfolds, a root branches, a fruit swells and ripens
+   the way they do, not a grown plant scaled up from nothing. Everything
+   is laid out by its own seeded random (`seeded`), never the scene's
+   `rand`, so every frame lays the plant out alike. */
+
+const ramp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+const easeOut = (x) => 1 - (1 - x) * (1 - x);
+const lerp = (a, b, x) => a + (b - a) * x;
+const col = (c) => new THREE.Color(c);
+/* Through a few colors in turn, `x` 0 → 1. */
+function through(colors, x) {
+  const n = colors.length - 1;
+  const i = Math.min(n - 1, Math.floor(x * n));
+  return col(colors[i]).lerp(col(colors[i + 1]), x * n - i);
+}
+function seeded(s) {
+  let v = s;
+  return () => ((v = (v * 16807) % 2147483647) / 2147483647);
+}
+
+/* Soft, slightly waxy plant tissue, coloured per vertex. */
+const tissue = (extra = {}) => new THREE.MeshPhysicalMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.52, clearcoat: 0.22, clearcoatRoughness: 0.45, sheen: 0.35, sheenRoughness: 0.5, sheenColor: 0xffffff, ...extra });
+
+/* A leaf blade, lying along +x from its base, facing +z: a real surface
+   (a grid, so it can bend) — `shape(u)` its half-width along it (0 → 1),
+   cupped along its length (`curl`), folded up along its midrib (`fold`),
+   drooping in its own plane (`bend`), its edge rippled (`ripple`) or
+   toothed (`teeth`). Darker at the base, lighter to the tip and the edges,
+   a pale midrib down the middle. */
+function blade(len, wid, o = {}) {
+  const { shape = (u) => Math.sin(Math.PI * Math.pow(u, 0.72)), curl = 0.1, fold = 0.22, bend = 0, ripple = 0, teeth = 0, color = 0x4f9a3c, light = 0x86c25a, rib = 0xb5d88a, nu = 26, nv = 10, mat = {} } = o;
+  const pos = [], cols = [], idx = [];
+  const c0 = col(color), c1 = col(light), cr = col(rib);
+  for (let i = 0; i <= nu; i++) {
+    const u = i / nu;
+    let w = wid * shape(u);
+    if (teeth) w *= 1 - teeth * Math.pow(Math.abs(Math.sin(u * Math.PI * 9)), 3);
+    for (let j = 0; j <= nv; j++) {
+      const v = (j / nv) * 2 - 1;
+      const x = u * len;
+      const y = v * w + bend * len * u * u;
+      const z = curl * len * u * u + fold * Math.abs(v * w) + ripple * wid * Math.sin(u * 19 + (v > 0 ? 0 : 1.7)) * Math.pow(Math.abs(v), 2.5);
+      pos.push(x, y, z);
+      const c = c0.clone().lerp(c1, Math.min(1, 0.45 * u + 0.35 * Math.pow(Math.abs(v), 1.5)));
+      const r = Math.max(0, 1 - Math.abs(v) / 0.1);
+      if (r > 0) c.lerp(cr, 0.6 * r * (1 - 0.7 * u));
+      cols.push(c.r, c.g, c.b);
+    }
+  }
+  for (let i = 0; i < nu; i++) {
+    for (let j = 0; j < nv; j++) {
+      const a = i * (nv + 1) + j, b = a + nv + 1;
+      idx.push(a, b, a + 1, b, b + 1, a + 1);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  return mesh(geo, tissue(mat));
+}
+
+/* A stalk along `points`, coloured `color` (lighter `tip` at its end). */
+function stalk(points, r0, r1, color, tip = color) {
+  const t = taperTube(points, r0, r1, tissue());
+  const a = new THREE.Vector3(...points[0]), b = new THREE.Vector3(...points[points.length - 1]);
+  const len = Math.max(1e-4, a.distanceTo(b));
+  return tintAll(t, (p) => [col(color).lerp(col(tip), Math.min(1, p.distanceTo(a) / len)), 0]);
+}
+
+/* A leaf set on a stem: its blade turned to `angle` (radians in the
+   picture's plane, 0 = right), leaning `lean` toward the camera, drooping
+   by `droop` (in the picture, whichever way it points), `k` of its full
+   size. */
+function setLeaf(make, at, angle, k, lean = 0.25, droop = 0) {
+  const g = new THREE.Group();
+  if (k <= 0.001) return g;
+  const l = make(droop * -Math.cos(angle));
+  l.rotation.set(lean, 0, angle);
+  g.add(l);
+  g.position.set(...at);
+  g.scale.setScalar(k);
+  return g;
+}
+
+/* A seed: a glossy bean, plump with water as it wakes (`swellK`), then
+   split and spent as the plant takes over (`spent`). */
+function seedAt(x, y, swellK, spent) {
   const s = mesh(new THREE.SphereGeometry(0.17, 40, 24), satin({ roughness: 0.35, clearcoat: 0.5 }));
-  /* A bean: plump, glossy, warm brown — no pebble looks like it. */
-  swell(s.geometry, (v) => -0.05 * Math.exp(-(((v.x - 0.0) / 0.05) ** 2)) * Math.max(0, v.y / 0.17));
-  tint(s.geometry, (v) => [new THREE.Color(0xd08a3c).lerp(new THREE.Color(0x8e4f1f), Math.max(0, -v.y * 4)), 0]);
-  s.scale.set(1.4, 0.95, 0.9);
+  swell(s.geometry, (v) => -0.05 * Math.exp(-((v.x / 0.05) ** 2)) * Math.max(0, v.y / 0.17));
+  tint(s.geometry, (v) => [col(0xd08a3c).lerp(col(0x8e4f1f), Math.max(0, -v.y * 4)).lerp(col(0x7a5a3a), spent * 0.6), 0]);
+  const k = (1 + 0.14 * swellK) * (1 - 0.45 * spent);
+  s.scale.set(1.4 * k, 0.95 * k * (1 - 0.25 * spent), 0.9 * k);
   s.rotation.z = 0.4;
-  s.position.set(0, -0.32, GROW_FACE);
+  s.position.set(x, y, GROW_FACE);
   return s;
 }
 
-/* Thin pale roots fanning down from the plant's foot. */
-function growRoots(reach = 1) {
+/* Fine roots: a main root down from `from`, `reach` of its full `depth`,
+   with side roots branching off as it passes them, each growing on its
+   own, wavering a little. Pale and thin, lying in the cut face. */
+function rootSystem(from, reach, { depth = 1.2, sides = 9, spread = 0.65, seed = 3, color = 0xeadcc0, thick = 0.032 } = {}) {
   const g = new THREE.Group();
-  const root = satin({ roughness: 0.6 });
-  for (const [dx, dy, bend] of [[-0.55, -0.85, -0.2], [-0.2, -1.05, 0.1], [0.25, -1.0, -0.1], [0.6, -0.8, 0.2], [0.0, -0.65, 0.3]]) {
-    const r = taperTube([[0, GROW_TOP - 0.05, GROW_FACE], [dx * 0.4 * reach + bend * 0.2, dy * 0.45 * reach, GROW_FACE], [dx * reach, dy * reach, GROW_FACE]], 0.035, 0.012, root);
-    tintAll(r, () => [new THREE.Color(0xe9d7b4), 0]);
-    g.add(r);
+  if (reach <= 0.002) return g;
+  const rnd = seeded(seed);
+  const [x0, y0] = from;
+  const wob = [rnd() - 0.5, rnd() - 0.5, rnd() - 0.5];
+  const mainAt = (s) => [x0 + 0.07 * Math.sin(s * 5 + wob[0] * 6) * s, y0 - depth * s, GROW_FACE + 0.02];
+  const n = 10;
+  const len = reach;
+  g.add(stalk(Array.from({ length: n + 1 }, (_, i) => mainAt((i / n) * len)), thick, 0.008, color, 0xf6eedb));
+  for (let i = 0; i < sides; i++) {
+    const s0 = 0.12 + (i / sides) * 0.75 + (rnd() - 0.5) * 0.05;
+    const side = i % 2 ? 1 : -1;
+    const grow = easeOut(Math.min(1, Math.max(0, (len - s0) / 0.35)));
+    if (grow <= 0.01) {
+      rnd(); rnd();
+      continue;
+    }
+    const L = spread * (0.55 + 0.45 * rnd()) * (1 - s0 * 0.55) * grow;
+    const ang = -0.45 - rnd() * 0.5;
+    const [bx, by, bz] = mainAt(s0);
+    const pts = [0, 0.33, 0.66, 1].map((q) => [bx + side * Math.cos(ang) * L * q + 0.03 * Math.sin(q * 7 + i), by + Math.sin(ang) * L * q - 0.08 * q * q, bz]);
+    g.add(stalk(pts, thick * 0.6, 0.006, color, 0xf6eedb));
   }
   return g;
 }
 
-/* A flower: five round petals and a middle — yellow on a tomato, white on a
-   potato or a pepper. Facing the front. */
-function growFlower(petal = 0xffd23a, middle = 0xf2a81c) {
+/* A shoot pushing up out of the seed and through the soil: a pale hook
+   until it is out (`up` 0 → 1 of the way), then straight. */
+function shoot(from, up, top = GROW_TOP) {
+  const [x0, y0] = from;
+  const y1 = lerp(y0, top + 0.02, up);
+  const hook = Math.max(0, 1 - up * 1.1) * 0.08;
+  return stalk([[x0, y0, GROW_FACE], [x0 + 0.02, lerp(y0, y1, 0.5), GROW_FACE], [x0 + hook, y1, GROW_FACE - 0.04]], 0.03, 0.026, 0xe9e2b4, 0xb9d47a);
+}
+
+/* A stem from the soil up, `h` tall (of its path `x(y)`), `r` thick at its
+   foot. Returns the stem and where it is at height y. */
+function stemUp(h, r, x = (y) => 0, z = GROW_FACE - 0.12, color = 0x6aa43a, tip = 0x9cc95a) {
+  const at = (y) => [x(y), GROW_TOP + y, z];
+  if (h <= 0.005) return { stem: new THREE.Group(), at };
+  const n = Math.max(3, Math.ceil(h / 0.15));
+  const pts = Array.from({ length: n + 1 }, (_, i) => at((i / n) * h));
+  /* From under the grass, so its foot never shows a gap. */
+  pts.unshift([x(0), GROW_TOP - 0.12, z]);
+  return { stem: stalk(pts, r, Math.max(0.012, r * 0.45), color, tip), at };
+}
+
+/* Two seed leaves at the top of a young shoot, opening (`open` 0 → 1). */
+function cotyledons(at, open, { len = 0.24, wid = 0.075, color = 0x7cb342, light = 0xa6d05e, shape } = {}) {
   const g = new THREE.Group();
-  for (let i = 0; i < 5; i++) {
-    const a = (i / 5) * Math.PI * 2;
-    const p = mesh(new THREE.SphereGeometry(0.1, 24, 16), velvet(petal));
-    p.scale.set(1, 0.62, 0.35);
-    p.position.set(Math.cos(a) * 0.1, Math.sin(a) * 0.1, 0);
-    p.rotation.z = a;
-    g.add(p);
+  if (open <= 0) return g;
+  for (const s of [-1, 1]) {
+    const a = Math.PI / 2 - s * lerp(0.15, 1.25, easeOut(open));
+    g.add(setLeaf((bend) => blade(len, wid, { color, light, rib: light, curl: 0.15, fold: 0.15, bend, shape }), at, a, lerp(0.08, 1, open), 0.2, 0.05));
   }
-  const m = mesh(new THREE.SphereGeometry(0.055, 20, 14), velvet(middle));
-  m.position.z = 0.03;
+  return g;
+}
+
+/* A flower: `n` petals round a middle, facing the camera tipped `nod`,
+   `open` 0 (a green bud) → 1 (open) and `wilt` 0 → 1 (petals shrinking,
+   browning, gone — its fruit is coming). */
+function flower(at, { petal = 0xffd23a, middle = 0xf2a81c, n = 5, size = 0.11, open = 1, wilt = 0, nod = 0.5, reflex = 0.2, sepals = 0x5f9a34, grow = 1 } = {}) {
+  const g = new THREE.Group();
+  const bud = mesh(new THREE.SphereGeometry(size * 0.38, 20, 14), satin());
+  tint(bud.geometry, () => [col(sepals), 0]);
+  bud.scale.set(1, 1.25, 1);
+  g.add(bud);
+  const pk = easeOut(open) * (1 - wilt);
+  if (pk > 0.02) {
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      const p = blade(size * 1.1, size * 0.36, { color: petal, light: petal, rib: petal, curl: -reflex, fold: 0.05, nu: 10, nv: 4 });
+      tintAll(p, () => [col(petal).lerp(col(0x9a7a3a), wilt * 0.7), 0]);
+      p.rotation.set(0, -lerp(1.2, 0.25, easeOut(open)), 0);
+      const holder = new THREE.Group();
+      holder.add(p);
+      holder.rotation.z = a;
+      holder.scale.setScalar(pk);
+      g.add(holder);
+    }
+    const m = mesh(new THREE.ConeGeometry(size * 0.22, size * 0.35, 16), satin());
+    tint(m.geometry, () => [col(middle), 0]);
+    m.rotation.x = Math.PI / 2;
+    m.position.z = size * 0.15;
+    m.scale.setScalar(pk);
+    g.add(m);
+  }
+  g.rotation.x = nod;
+  g.position.set(...at);
+  g.scale.setScalar(Math.max(0.001, grow));
+  return g;
+}
+
+/* ---- Fruit and roots that ripen: the videos' own shapes, coloured by
+   how far along they are ---- */
+
+/* The carrot's taproot: `len` long from its crown down, `wide` across;
+   pale and thin while young, orange as it swells (`ripe`). Its crown at
+   `top`. */
+function carrotRoot(top, len, wide, ripe) {
+  const geo = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0], [0.08, 0.02], [0.18, 0.13], [0.3, 0.42], [0.4, 0.82], [0.47, 1.17], [0.49, 1.38], [0.44, 1.53], [0.28, 1.62], [0, 1.65]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(160), 120);
+  const GROOVES = [[0.3, 0.2, 1.2], [0.47, -0.5, 1.4], [0.64, 0.4, 1.5], [0.81, -0.2, 1.6], [0.98, 0.6, 1.5], [1.15, -0.4, 1.6], [1.31, 0.1, 1.4]];
+  const deep = (v) => {
+    const a = Math.atan2(v.x, v.z);
+    let d = 0;
+    for (const [y, face, reach] of GROOVES) {
+      const off = Math.atan2(Math.sin(a - face), Math.cos(a - face));
+      d = Math.max(d, smooth(Math.max(0, 1 - Math.abs(off) / reach)) * Math.exp(-(((v.y - (y - 0.045 * Math.cos(off))) / 0.026) ** 2)));
+    }
+    return d;
+  };
+  swell(geo, (v) => -0.03 * deep(v) * ripe);
+  const body = through([0xf1e2c4, 0xf3c48a, 0xef8a34, 0xef6e22], ripe);
+  const groove = body.clone().lerp(col(0xbd4c16), 0.6 * ripe);
+  const shoulder = body.clone().lerp(col(0xa7b14c), 0.25 * ripe);
+  tint(geo, (v) => [body.clone().lerp(shoulder, Math.max(0, (v.y - 1.5) * 4)).lerp(groove, deep(v) * 0.85), 0]);
+  const m = mesh(geo, satin({ roughness: 0.4, clearcoat: 0.3 }));
+  m.scale.set(wide / 0.98, len / 1.65, (wide / 0.98) * 0.92);
+  m.position.set(top[0], top[1] - len, top[2]);
+  return m;
+}
+
+/* A potato, `k` of its full size; pale and smooth while young, tan, its
+   eyes and patches coming as it grows (`skin`). The videos' potato. */
+function potatoTuber(k, skin, seed = 1) {
+  const geo = bake(new THREE.SphereGeometry(1, 96, 72), { scale: [0.62, 0.44, 0.46] });
+  const rnd = seeded(seed);
+  const EYES = Array.from({ length: 14 }, () => [rnd() - 0.5, rnd() - 0.5, rnd() - 0.2]);
+  const eyeAt = (v) => EYES.reduce((d, e) => Math.max(d, Math.exp(-((v.distanceTo(new THREE.Vector3(...e).normalize().multiply(new THREE.Vector3(0.62, 0.44, 0.46))) / 0.026) ** 2))), 0);
+  swell(geo, (v) => 0.035 * (noise3(v.x * 3 + seed, v.y * 3, v.z * 3) - 0.5) - 0.022 * eyeAt(v) * skin);
+  const tan = through([0xf0dcb4, 0xd8a56a, 0xa8653a], skin), dark = tan.clone().lerp(col(0x834826), 0.7 * skin), eye = col(0x4a2a12);
+  tint(geo, (v) => {
+    const m = noise3(v.x * 5 + 3 + seed, v.y * 5, v.z * 5);
+    return [tan.clone().lerp(dark, smooth(Math.min(1, Math.max(0, (m - 0.35) / 0.45))) * 0.75).lerp(eye, eyeAt(v) * skin), 0];
+  });
+  const g = group(mesh(geo, satin({ roughness: 0.6, clearcoat: 0.14, sheen: 0.12 })));
+  g.scale.setScalar(Math.max(0.001, k));
+  return g;
+}
+
+/* A tomato, `k` of its full size, through green, the breaker's blush and
+   orange to red (`ripe`); its green star on top. Hangs from its top. */
+function tomatoFruit(k, ripe) {
+  const g = new THREE.Group();
+  const geo = bake(new THREE.SphereGeometry(1, 120, 80), { scale: [0.62, 0.52, 0.6] });
+  swell(geo, (v) => {
+    const a = Math.atan2(v.z, v.x);
+    return 0.018 * Math.cos(a * 5) * Math.max(0, 1 - Math.abs(v.y) / 0.52) - 0.06 * Math.exp(-((v.x * v.x + v.z * v.z) / 0.015)) * (v.y > 0 ? 1 : 0.4);
+  });
+  const red = through([0x78ad3a, 0xa9c24a, 0xe9b04a, 0xe86a26, 0xd4261a], ripe);
+  const deep = red.clone().lerp(col(0x000000), 0.25), warm = red.clone().lerp(col(0xffd08a), 0.18);
+  /* The blush comes from the bottom up. */
+  tint(geo, (v) => [red.clone().lerp(deep, Math.max(0, -v.y) * 0.7).lerp(warm, Math.max(0, v.y - 0.3) * 0.8), 0]);
+  g.add(mesh(geo, satin({ roughness: 0.22, clearcoat: 0.7, clearcoatRoughness: 0.15 })));
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + 0.2;
+    const leaf = blade(0.36, 0.06, { color: 0x3f7a26, light: 0x6a9e3a, rib: 0x6a9e3a, curl: -0.4, fold: 0.1, nu: 10, nv: 4 });
+    leaf.rotation.set(-Math.PI / 2, 0, -a);
+    leaf.position.set(0, 0.5, 0);
+    g.add(leaf);
+  }
+  g.add(stalk([[0, 0.46, 0], [0.01, 0.6, 0], [0.04, 0.7, 0.01]], 0.035, 0.028, 0x4f8a2c));
+  g.scale.setScalar(Math.max(0.001, k));
+  /* Its top at the group's origin. */
+  g.children.forEach((c) => (c.position.y -= 0.7));
+  return g;
+}
+
+/* A bell pepper, `k` of its full size, longer as it grows, green → red
+   (`ripe`), glossy. Hangs from its stalk. */
+function pepperFruit(k, ripe, long = 1) {
+  const g = new THREE.Group();
+  const geo = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0.04], [0.22, 0.0], [0.44, 0.1], [0.54, 0.34], [0.55, 0.62], [0.5, 0.8], [0.36, 0.88], [0.14, 0.87], [0, 0.82]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(120), 120);
+  geo.rotateY(Math.PI);
+  swell(geo, (v) => {
+    const a = Math.atan2(v.z, v.x);
+    const lobes = Math.abs(Math.cos(a * 2));
+    return 0.07 * (lobes - 0.6) * Math.min(1, Math.hypot(v.x, v.z) * 2) - 0.12 * Math.max(0, 1 - lobes) ** 3 * Math.max(0, 0.5 - v.y);
+  });
+  const body = through([0x5aa832, 0x4a9a2a, 0x8a9a26, 0xe0662a, 0xd8301a, 0xd02016], ripe);
+  const dark = body.clone().lerp(col(0x000000), 0.32);
+  tint(geo, (v) => [body.clone().lerp(dark, (1 - Math.abs(Math.cos(Math.atan2(v.z, v.x) * 2))) * 0.6), 0]);
+  const m = mesh(geo, satin({ roughness: 0.18, clearcoat: 0.8, clearcoatRoughness: 0.1 }));
+  m.scale.y = long;
   g.add(m);
+  const cap = bake(new THREE.SphereGeometry(0.16, 32, 16), { scale: [1, 0.35, 1], at: [0, 0.84 * long, 0] });
+  tint(cap, () => [col(0x5e9a34), 0]);
+  g.add(mesh(cap, satin({ roughness: 0.5 })));
+  g.add(stalk([[0, 0.82 * long, 0], [0.01, 0.95 * long, 0], [0.03, 1.08 * long, 0.01]], 0.06, 0.045, 0x5e9a34));
+  g.children.forEach((c) => (c.position.y -= 1.08 * long));
+  g.scale.setScalar(Math.max(0.001, k));
   return g;
 }
 
-const leafy = (color) => satin({ roughness: 0.5, vertexColors: false, color });
+/* ---- The five foods ---- */
 
-/* Carrot greens: a fan of thin stalks, each ending in a feathery tuft. */
-function carrotTops() {
+const SEED_Y = -0.3;
+/* Where each plant comes up: its stem's foot, a little behind the cut. */
+const STEM_Z = GROW_FACE - 0.12;
+/* The shoot breaks through the soil at about this `t` (the page throws a
+   few crumbs up there). */
+const EMERGE_T = 0.1;
+
+/* A compound leaf (tomato, potato): a stalk out along `angle`, pairs of
+   leaflets opening off it and one at its tip. `g` 0 → 1: folded and small
+   → open and full. */
+function compoundLeaf(at, angle, len, g, { pairs = 3, leaflet = [0.3, 0.13], teeth = 0, ripple = 0, color, light, rib, droop = 0.25, round = 0.72, lean = 0.3 } = {}) {
+  const out = new THREE.Group();
+  if (g <= 0.005) return out;
+  const L = len * lerp(0.04, 1, easeOut(g));
+  const dir = (s) => angle - droop * s * s * Math.cos(angle) * easeOut(g);
+  const pts = [];
+  let p = new THREE.Vector3(...at);
+  for (let i = 0; i <= 8; i++) {
+    pts.push(p.toArray());
+    const a = dir(i / 8);
+    p = p.clone().add(new THREE.Vector3(Math.cos(a), Math.sin(a), 0.03).multiplyScalar(L / 8));
+  }
+  out.add(stalk(pts, 0.018 * lerp(0.4, 1, g), 0.006, 0x5f9a34, 0x7fb04a));
+  const curve = new THREE.CatmullRomCurve3(pts.map((q) => new THREE.Vector3(...q)));
+  const open = lerp(0.12, 1.05, easeOut(g));
+  const leafy_ = (bend, s) => blade(leaflet[0] * s, leaflet[1] * s, { teeth, ripple, color, light, rib, curl: 0.1, fold: 0.18, bend, shape: (u) => Math.sin(Math.PI * Math.pow(u, round)) });
+  for (let j = 0; j < pairs; j++) {
+    const s = 0.3 + (0.62 * j) / pairs;
+    const q = curve.getPointAt(s);
+    const a = dir(s);
+    const size = (1 - 0.12 * (pairs - 1 - j)) * lerp(0.05, 1, g);
+    for (const side of [-1, 1]) out.add(setLeaf((b) => leafy_(b, size), q.toArray(), a + side * open, 1, lean, 0.18));
+  }
+  const tip = curve.getPointAt(1);
+  out.add(setLeaf((b) => leafy_(b, 1.1 * lerp(0.06, 1, g)), tip.toArray(), dir(1), 1, lean, 0.15));
+  return out;
+}
+
+function carrotAt(t) {
   const g = new THREE.Group();
-  const stalk = leafy(0x7aa63c);
-  const tuft = [leafy(0x86b84a), leafy(0x6fa33c)];
-  [[-0.75, 1.05], [-0.42, 1.35], [-0.12, 1.5], [0.18, 1.45], [0.48, 1.3], [0.78, 1.0]].forEach(([dx, h], i) => {
-    const end = [dx, GROW_TOP + h, GROW_FACE - 0.1];
-    g.add(taperTube([[0, GROW_TOP, GROW_FACE - 0.1], [dx * 0.35, GROW_TOP + h * 0.5, GROW_FACE - 0.1], end], 0.05, 0.03, stalk));
-    for (let k = 0; k < 5; k++) {
-      const a = Math.atan2(h, dx) - Math.PI / 2 + (k - 2) * 0.55;
-      const l = plumpLeaf(0.34, 0.12, tuft[(i + k) % 2]);
-      l.position.set(end[0] - Math.sin(a) * 0.02 * k, end[1] - 0.18 + k * 0.07, end[2] + 0.02);
-      l.rotation.set(0, 0, a + Math.PI / 2 + (k % 2 ? 0.5 : -0.5));
-      g.add(l);
+  const spent = ramp(t, 0.12, 0.3);
+  if (t < 0.3) g.add(seedAt(0.06, SEED_Y, ramp(t, 0, 0.05), spent));
+  /* The taproot: long and thin first, then it swells and colors, its
+     crown rising to the surface. */
+  const len = 0.75 * easeOut(ramp(t, 0.015, 0.2)) + 1.2 * smooth(ramp(t, 0.15, 0.8));
+  const wide = lerp(0.045, 1.12, smooth(ramp(t, 0.3, 1)));
+  const crownY = lerp(SEED_Y + 0.05, GROW_TOP + 0.03, smooth(ramp(t, 0.1, 0.6)));
+  if (len > 0.01) g.add(carrotRoot([0, crownY, GROW_FACE], len, wide, smooth(ramp(t, 0.26, 0.92))));
+  /* Hair roots along it. */
+  const rnd = seeded(21);
+  for (let i = 0; i < 7; i++) {
+    const q = 0.3 + (i / 7) * 0.6 + (rnd() - 0.5) * 0.08;
+    const grow = easeOut(ramp(t, 0.05 + i * 0.03, 0.35 + i * 0.03));
+    const L = (0.08 + 0.12 * rnd()) * grow * (1 - 0.3 * q);
+    const side = rnd() < 0.5 ? 1 : -1;
+    if (L < 0.01 || len < 0.05) continue;
+    const yn = 1 - q;
+    const r = (wide / 2) * Math.sin(Math.PI * Math.pow(Math.max(0.02, yn), 0.85)) * 0.95;
+    const y = crownY - len * q;
+    g.add(stalk([[side * r * 0.9, y, GROW_FACE + 0.02], [side * (r + L * 0.55), y - L * 0.3, GROW_FACE + 0.02], [side * (r + L), y - L * (0.5 + 0.4 * rnd()), GROW_FACE + 0.02]], 0.009, 0.003, 0xe6d4b2, 0xf0e6d0));
+  }
+  /* Up to the surface, while the crown is still under it. */
+  const up = ramp(t, 0.03, 0.1);
+  if (crownY < GROW_TOP - 0.06) g.add(shoot([0.02, crownY], up));
+  if (up < 1) return g;
+  const foot = [0, GROW_TOP + 0.02, STEM_Z];
+  const fade = 1 - 0.5 * ramp(t, 0.55, 0.85);
+  g.add(cotyledons(foot, ramp(t, 0.09, 0.17), { len: 0.32 * fade, wid: 0.032, color: 0x7fb33e, light: 0xa8cf62, shape: (u) => Math.sin(Math.PI * Math.pow(u, 0.5)) }));
+  /* The fronds: the oldest out to the sides, each new one up the middle;
+     each a stalk with feathery leaflets opening along it. */
+  const FRONDS = [[0.55, 1.05], [2.6, 1.1], [0.8, 1.3], [2.35, 1.35], [1.05, 1.5], [2.1, 1.5], [1.32, 1.55], [1.8, 1.5], [1.56, 1.4]];
+  FRONDS.forEach(([angle, full], i) => {
+    const t0 = 0.14 + i * 0.05;
+    const gk = smooth(ramp(t, t0, t0 + 0.34));
+    if (gk <= 0.005) return;
+    const L = full * lerp(0.04, 1, gk);
+    const droop = 0.28 * Math.cos(angle) * gk;
+    const pts = [];
+    let p = new THREE.Vector3(...foot);
+    for (let k = 0; k <= 8; k++) {
+      pts.push(p.toArray());
+      const a = angle - droop * (k / 8) ** 2 * Math.sign(Math.cos(angle) || 1) * 1.4;
+      p = p.clone().add(new THREE.Vector3(Math.cos(a), Math.sin(a), 0.02 + 0.04 * Math.sin(i * 3)).multiplyScalar(L / 8));
     }
-    /* Leaflets up the stalk too. */
-    for (const t of [0.45, 0.7]) {
+    g.add(stalk(pts, 0.022 * lerp(0.35, 1, gk), 0.006, 0x6f9e34, 0x8fbe4a));
+    const curve = new THREE.CatmullRomCurve3(pts.map((q) => new THREE.Vector3(...q)));
+    const open = lerp(0.1, 0.95, easeOut(gk));
+    const lobed = (u) => Math.sin(Math.PI * Math.pow(u, 0.7)) * (0.55 + 0.45 * Math.abs(Math.sin(u * Math.PI * 2.5)));
+    for (let j = 0; j < 7; j++) {
+      const s = 0.32 + j * 0.1;
+      const q = curve.getPointAt(Math.min(1, s));
+      const tan = curve.getTangentAt(Math.min(1, s));
+      const a = Math.atan2(tan.y, tan.x);
+      const size = (1 - j * 0.09) * lerp(0.05, 1, gk);
       for (const side of [-1, 1]) {
-        const l = plumpLeaf(0.22, 0.08, tuft[i % 2]);
-        l.position.set(dx * t, GROW_TOP + h * t, GROW_FACE - 0.08);
-        l.rotation.z = Math.atan2(h, dx) + side * 0.9;
-        g.add(l);
+        g.add(setLeaf((b) => blade(0.22 * size, 0.07 * size, { shape: lobed, teeth: 0.25, color: 0x5d9a2e, light: 0x8cc24c, rib: 0x9cc85a, curl: 0.08, fold: 0.2, bend: b, nu: 18, nv: 6 }), q.toArray(), a + side * open, 1, 0.35, 0.2));
       }
+    }
+    const tip = curve.getPointAt(1);
+    const tt = curve.getTangentAt(1);
+    g.add(setLeaf((b) => blade(0.2 * lerp(0.05, 1, gk), 0.07 * lerp(0.05, 1, gk), { shape: lobed, teeth: 0.25, color: 0x5d9a2e, light: 0x8cc24c, rib: 0x9cc85a, bend: b, nu: 18, nv: 6 }), tip.toArray(), Math.atan2(tt.y, tt.x), 1, 0.35, 0.2));
+  });
+  return g;
+}
+
+function tomatoAt(t) {
+  const g = new THREE.Group();
+  const spent = ramp(t, 0.15, 0.35);
+  if (t < 0.36) g.add(seedAt(0.04, SEED_Y, ramp(t, 0, 0.05), spent));
+  g.add(rootSystem([0.02, SEED_Y], easeOut(ramp(t, 0.02, 0.75)), { depth: 1.35, sides: 11, spread: 0.75, seed: 5 }));
+  const up = ramp(t, 0.03, 0.1);
+  g.add(shoot([0.02, SEED_Y], up));
+  /* The gardener's stake, there from the start. */
+  g.add(stalk([[0.2, GROW_TOP - 0.15, STEM_Z - 0.2], [0.2, 1.4, STEM_Z - 0.2], [0.2, 2.5, STEM_Z - 0.2]], 0.045, 0.04, 0xa8743f, 0xb98a52));
+  if (up < 1) return g;
+  const H = 0.3 * easeOut(ramp(t, 0.09, 0.17)) + 2.0 * smooth(ramp(t, 0.17, 0.72));
+  const x = (y) => 0.05 * Math.sin(y * 2.4);
+  const { stem, at } = stemUp(H, 0.02 + 0.026 * smooth(ramp(t, 0.15, 0.85)), x, STEM_Z, 0x5f9a34, 0x86bd4a);
+  g.add(stem);
+  /* Twine, tying it to the stake once it is tall enough. */
+  for (const y of [0.85, 1.6]) {
+    if (H < y + 0.08) continue;
+    const [sx, sy, sz] = at(y);
+    const tie = mesh(new THREE.TorusGeometry(0.1, 0.012, 8, 32), satin({ vertexColors: false, color: 0xe2c68e, roughness: 0.8 }));
+    const tk = ramp(H, y + 0.08, y + 0.25);
+    tie.scale.set(((0.2 - sx + 0.1) / 0.2) * tk, 0.5 * tk, tk);
+    tie.position.set((sx + 0.2) / 2, sy, sz - 0.1);
+    tie.rotation.x = Math.PI / 2;
+    g.add(tie);
+  }
+  const fade = 1 - 0.45 * ramp(t, 0.65, 0.9);
+  g.add(cotyledons(at(Math.min(H, 0.3)), ramp(t, 0.1, 0.18), { len: 0.24 * fade, wid: 0.07 * fade, color: 0x6fa83a, light: 0x9ccc5a }));
+  const LEAVES = [[0.45, 1], [0.7, -1], [0.95, 1], [1.2, -1], [1.45, 1], [1.7, -1], [1.92, 1], [2.12, -1], [2.28, 1]];
+  for (const [y, side] of LEAVES) {
+    const gk = smooth(Math.min(1, Math.max(0, (H - y) / 0.5)));
+    const size = lerp(1.0, 0.62, y / 2.3);
+    const a = side > 0 ? lerp(1.35, 0.42, easeOut(gk)) : Math.PI - lerp(1.35, 0.42, easeOut(gk));
+    g.add(compoundLeaf(at(y), a, 1.08 * size, gk, { pairs: 3, leaflet: [0.38 * size, 0.165 * size], teeth: 0.16, color: 0x4b9438, light: 0x7cc25a, rib: 0xa6d47e, droop: 0.35, round: 0.7 }));
+  }
+  /* Three trusses: a flower (and one that falls), then its fruit swelling
+     and ripening — through green, the breaker's blush, orange, red. */
+  const TRUSSES = [[0.92, -1, 0.42], [1.42, 1, 0.47], [1.86, -1, 0.52]];
+  TRUSSES.forEach(([y, side, tf], i) => {
+    if (H < y + 0.18 || t < tf - 0.05) return;
+    const base = new THREE.Vector3(...at(y));
+    const k = smooth(ramp(t, tf + 0.08, tf + 0.4));
+    const hang = base.clone().add(new THREE.Vector3(side * 0.34, -0.06 - 0.1 * k, 0.4));
+    const show = ramp(t, tf - 0.05, tf);
+    const reach = (v) => base.clone().lerp(v, show);
+    g.add(stalk([base.toArray(), reach(base.clone().add(new THREE.Vector3(side * 0.22, 0.06, 0.2))).toArray(), reach(hang).toArray()], 0.018, 0.013, 0x5f9a34, 0x7fb04a));
+    const open = ramp(t, tf, tf + 0.07) * show;
+    const wilt = ramp(t, tf + 0.1, tf + 0.2);
+    if (wilt < 1) g.add(flower(hang.clone().add(new THREE.Vector3(0, -0.04, 0.02)).toArray(), { open, wilt, size: 0.1, nod: 0.9, reflex: 0.35, n: 6, grow: show }));
+    /* Its sister flower, which falls without setting fruit. */
+    const sis = hang.clone().add(new THREE.Vector3(side * 0.15, 0.08, -0.04));
+    const swilt = ramp(t, tf + 0.08, tf + 0.16);
+    if (swilt < 1) g.add(flower(sis.toArray(), { open: ramp(t, tf + 0.02, tf + 0.08) * show, wilt: swilt, size: 0.085, nod: 1.0, reflex: 0.35, n: 6, grow: show }));
+    if (k > 0.005) {
+      const f = tomatoFruit(0.54 * k, ramp(t, 0.7 + 0.04 * i, 0.95 + 0.015 * i));
+      f.position.copy(hang);
+      f.rotation.z = side * 0.12;
+      g.add(f);
     }
   });
   return g;
 }
 
-/* A potato plant above the soil: a bush of stems with round leaflets and a
-   few white flowers. */
-function potatoTops() {
+function pepperAt(t) {
   const g = new THREE.Group();
-  const stem = leafy(0x5f9e36);
-  const leaf = [leafy(0x5fa53e), leafy(0x78b84e)];
-  [[-0.85, 1.05], [-0.4, 1.4], [0.05, 1.55], [0.45, 1.35], [0.85, 1.0]].forEach(([dx, h], i) => {
-    const pts = [[0, GROW_TOP, GROW_FACE - 0.15], [dx * 0.4, GROW_TOP + h * 0.55, GROW_FACE - 0.1], [dx, GROW_TOP + h, GROW_FACE - 0.1]];
-    g.add(taperTube(pts, 0.055, 0.035, stem));
-    for (const t of [0.35, 0.6, 0.85]) {
-      for (const side of [-1, 1]) {
-        const l = plumpLeaf(0.36, 0.17, leaf[(i + (side > 0 ? 1 : 0)) % 2]);
-        l.position.set(dx * t, GROW_TOP + h * t, GROW_FACE - 0.08);
-        l.rotation.set(0.2, 0, Math.atan2(h, dx) + side * 1.1);
-        g.add(l);
-      }
+  const spent = ramp(t, 0.15, 0.35);
+  if (t < 0.36) g.add(seedAt(0.04, SEED_Y, ramp(t, 0, 0.05), spent));
+  g.add(rootSystem([0.02, SEED_Y], easeOut(ramp(t, 0.02, 0.75)), { depth: 1.25, sides: 10, spread: 0.7, seed: 7 }));
+  const up = ramp(t, 0.03, 0.1);
+  g.add(shoot([0.02, SEED_Y], up));
+  if (up < 1) return g;
+  const H = 0.28 * easeOut(ramp(t, 0.09, 0.17)) + 0.95 * smooth(ramp(t, 0.17, 0.52));
+  const r = 0.02 + 0.045 * smooth(ramp(t, 0.15, 0.85));
+  const { stem, at } = stemUp(H, r, (y) => 0.03 * Math.sin(y * 3), STEM_Z, 0x4f8f2e, 0x76b04a);
+  g.add(stem);
+  const fade = 1 - 0.45 * ramp(t, 0.6, 0.9);
+  g.add(cotyledons(at(Math.min(H, 0.28)), ramp(t, 0.1, 0.18), { len: 0.3 * fade, wid: 0.055 * fade, color: 0x5f9e36, light: 0x8cc456, shape: (u) => Math.sin(Math.PI * Math.pow(u, 0.6)) }));
+  const ovate = (u) => Math.sin(Math.PI * Math.pow(u, 0.6)) * (1 - 0.1 * u);
+  /* No two leaves alike: each turned, sized and leaning a little its own way. */
+  const jit = seeded(41);
+  const leaf = (pos, a0, gk, size0) => {
+    const a = a0 + (jit() - 0.5) * 0.35, size = size0 * (0.88 + jit() * 0.24), lean = 0.15 + jit() * 0.35;
+    return setLeaf((b) => blade(0.52 * size, 0.2 * size, { shape: ovate, color: 0x2f7a2a, light: 0x52a043, rib: 0x8fcf73, curl: 0.12, fold: 0.22, bend: b, mat: { clearcoat: 0.6, clearcoatRoughness: 0.2, roughness: 0.35 } }), pos, a, lerp(0.05, 1, easeOut(gk)), lean, 0.25);
+  };
+  for (const [y, side] of [[0.36, 1], [0.54, -1], [0.72, 1], [0.9, -1], [1.06, 1], [1.18, -1]]) {
+    const gk = smooth(Math.min(1, Math.max(0, (H - y) / 0.35)));
+    if (gk > 0) g.add(leaf(at(y), side > 0 ? lerp(1.3, 0.3, gk) : Math.PI - lerp(1.3, 0.3, gk), gk, 1.05));
+  }
+  /* It forks at the top of its stem: two branches up and out. */
+  const fork = new THREE.Vector3(...at(H));
+  const bk = smooth(ramp(t, 0.45, 0.8));
+  const branches = [];
+  for (const [dx, dy, side] of [[-0.75, 0.95, -1], [0.8, 0.9, 1]]) {
+    if (bk <= 0.01) break;
+    const end = fork.clone().add(new THREE.Vector3(dx * bk, dy * bk, 0.05));
+    const mid = fork.clone().add(new THREE.Vector3(dx * 0.3 * bk, dy * 0.6 * bk, 0.02));
+    g.add(stalk([fork.toArray(), mid.toArray(), end.toArray()], r * 0.75, 0.012, 0x4f8f2e, 0x76b04a));
+    const curve = new THREE.CatmullRomCurve3([fork, mid, end]);
+    branches.push(curve);
+    [[0.3, -side], [0.5, side], [0.7, -side], [0.85, side], [1, 0]].forEach(([s, ls], j) => {
+      const gk = ramp(bk, s * 0.6, s * 0.6 + 0.4);
+      if (gk <= 0) return;
+      const p = curve.getPointAt(s);
+      const a = ls === 0 ? Math.atan2(dy, dx) : ls > 0 ? lerp(1.4, 0.35, gk) : Math.PI - lerp(1.4, 0.35, gk);
+      g.add(leaf(p.toArray(), a, gk, 0.95 - j * 0.08));
+    });
+  }
+  /* Two flowers — one in the fork, one up the right branch — each
+     becoming a pepper that hangs, lengthens and turns from green to red. */
+  const SPOTS = [[() => (branches[0] ? branches[0].getPointAt(0.45).add(new THREE.Vector3(-0.05, -0.04, 0.32)) : null), 0.5], [() => (branches[1] ? branches[1].getPointAt(0.6).add(new THREE.Vector3(0.05, -0.04, 0.32)) : null), 0.58]];
+  SPOTS.forEach(([where, tf], i) => {
+    const hang = where();
+    if (!hang || t < tf - 0.04) return;
+    const k = smooth(ramp(t, tf + 0.08, tf + 0.36));
+    const open = ramp(t, tf - 0.02, tf + 0.06);
+    const wilt = ramp(t, tf + 0.1, tf + 0.18);
+    if (wilt < 1) g.add(flower(hang.clone().add(new THREE.Vector3(0, -0.06, 0.02)).toArray(), { petal: 0xfdfbf6, middle: 0xe8d040, n: 6, size: 0.09, open, wilt, nod: 1.1, reflex: 0.1, grow: ramp(t, tf - 0.04, tf) }));
+    if (k > 0.005) {
+      const f = pepperFruit(0.6 * k, ramp(t, 0.76 + 0.04 * i, 0.97), lerp(0.8, 1.05, k));
+      f.position.copy(hang);
+      f.rotation.z = i ? 0.2 : -0.12;
+      g.add(f);
     }
-    const top = plumpLeaf(0.34, 0.17, leaf[i % 2]);
-    top.position.set(dx, GROW_TOP + h, GROW_FACE - 0.08);
-    top.rotation.z = Math.atan2(h, dx);
-    g.add(top);
   });
-  for (const [x, y] of [[-0.3, 1.62], [0.25, 1.68], [0.62, 1.48]]) g.add(at(growFlower(0xfdfbf6, 0xffcf3a), [x, y, GROW_FACE + 0.02], 0.9));
   return g;
 }
 
-/* The potato's runners under the soil, out to where each potato swells. */
-const POTATO_AT = [[-1.05, -0.95], [0.12, -1.6], [1.1, -0.85]];
-function potatoRunners() {
+function broccoliAt(t) {
   const g = new THREE.Group();
-  const runner = satin({ roughness: 0.6 });
-  for (const [x, y] of POTATO_AT) {
-    const r = taperTube([[0, GROW_TOP - 0.05, GROW_FACE], [x * 0.35, y * 0.5, GROW_FACE], [x * 0.85, y * 0.92, GROW_FACE]], 0.04, 0.03, runner);
-    tintAll(r, () => [new THREE.Color(0xe6d2ac), 0]);
-    g.add(r);
+  const spent = ramp(t, 0.15, 0.35);
+  if (t < 0.36) g.add(seedAt(0.04, SEED_Y, ramp(t, 0, 0.05), spent));
+  g.add(rootSystem([0.02, SEED_Y], easeOut(ramp(t, 0.02, 0.75)), { depth: 1.15, sides: 12, spread: 0.85, seed: 13, thick: 0.038 }));
+  const up = ramp(t, 0.03, 0.1);
+  g.add(shoot([0.02, SEED_Y], up));
+  if (up < 1) return g;
+  const H = 0.22 * easeOut(ramp(t, 0.09, 0.17)) + 0.4 * smooth(ramp(t, 0.2, 0.8));
+  const r = 0.03 + 0.12 * smooth(ramp(t, 0.2, 0.9));
+  const { stem, at } = stemUp(H, r, () => 0, GROW_FACE - 0.3, 0x93bf62, 0xa9cc6a);
+  g.add(stem);
+  const heart = (u) => Math.sin(Math.PI * Math.pow(u, 0.45));
+  const fade = 1 - 0.6 * ramp(t, 0.45, 0.75);
+  g.add(cotyledons(at(Math.min(H, 0.22)), ramp(t, 0.1, 0.18), { len: 0.2 * fade, wid: 0.11 * fade, color: 0x6f9e52, light: 0x95bf73, shape: heart }));
+  /* The rosette: each new leaf higher and more upright, the old ones out
+     wide and low; round the stem by the golden angle. */
+  for (let i = 0; i < 11; i++) {
+    const t0 = 0.15 + 0.042 * i;
+    const gk = smooth(ramp(t, t0, t0 + 0.36));
+    if (gk <= 0.005) continue;
+    const size = lerp(0.06, 1, gk) * (1 - 0.025 * i);
+    const yy = Math.min(H, 0.04 + 0.05 * i);
+    const leafG = new THREE.Group();
+    leafG.add(stalk([[0, 0, 0], [0.18 * size, 0.04 * size, 0], [0.38 * size, 0.06 * size, 0]], 0.04 * size, 0.025 * size, 0xa9cc8a, 0xb9d6a0));
+    const b = blade(1.1 * size, 0.46 * size, { ripple: 0.12, color: 0x4f8e62, light: 0x80b48e, rib: 0xbcd6ab, curl: -0.1, fold: 0.22, mat: { sheen: 0, clearcoat: 0.1, clearcoatRoughness: 0.5, roughness: 0.62 }, shape: (u) => Math.sin(Math.PI * Math.pow(u, 0.65)) * (0.75 + 0.25 * Math.sin(u * Math.PI * 4) ** 2) });
+    b.position.x = 0.36 * size;
+    leafG.add(b);
+    /* Face the leaf partly up, partly to us; raise it; turn it round. */
+    leafG.rotation.order = "YZX";
+    const az = i * 2.39996 + 0.6;
+    const elev = lerp(1.35, lerp(0.3, 0.95, i / 10), easeOut(gk));
+    leafG.rotation.set(-0.35, az, elev);
+    leafG.position.set(...at(yy));
+    g.add(leafG);
+  }
+  /* The head: a tight green button at the heart, swelling into florets. */
+  const k = smooth(ramp(t, 0.48, 0.97));
+  if (k > 0.005) {
+    const head = videoBroccoli();
+    head.scale.setScalar(lerp(0.12, 1.12, k));
+    const top = at(H);
+    head.position.set(top[0], top[1] - 0.62 * lerp(0.12, 1.12, k), top[2] + 0.05);
+    g.add(head);
   }
   return g;
 }
 
-/* A pepper plant: a sturdy stem, branching, glossy dark pointed leaves and
-   white flowers where the peppers will hang. */
-const PEPPER_AT = [[-0.55, 1.1], [0.6, 1.3]];
-function pepperTops() {
+function potatoAt(t) {
   const g = new THREE.Group();
-  const stem = leafy(0x5b9a34);
-  const leaf = [leafy(0x3f8f3a), leafy(0x55a646)];
-  g.add(taperTube([[0, GROW_TOP, GROW_FACE - 0.2], [0.02, 1.0, GROW_FACE - 0.2], [0, 2.05, GROW_FACE - 0.2]], 0.08, 0.05, stem));
-  for (const [y, side, len] of [[0.55, -1, 0.75], [0.8, 1, 0.8], [1.15, -1, 0.75], [1.45, 1, 0.7], [1.75, -1, 0.6], [1.95, 1, 0.5]]) {
-    g.add(taperTube([[0, y, GROW_FACE - 0.2], [side * len * 0.45, y + 0.18, GROW_FACE - 0.15], [side * len * 0.75, y + 0.3, GROW_FACE - 0.12]], 0.045, 0.03, stem));
-    for (const [t, turn] of [[1, 0], [0.6, 0.6], [0.6, -0.6]]) {
-      const l = plumpLeaf(0.55, 0.2, leaf[(Math.round(y * 10) + (turn > 0 ? 1 : 0)) % 2]);
-      l.position.set(side * len * 0.75 * t, y + 0.3 * t, GROW_FACE - 0.1);
-      l.rotation.set(0.2, side < 0 ? Math.PI : 0, 0.35 + turn);
-      g.add(l);
+  /* The seed potato, giving itself up as the plant grows. */
+  const seedP = potatoTuber(0.5 * (1 - 0.3 * ramp(t, 0.3, 1)), 1, 9);
+  seedP.traverse((o) => o.isMesh && o.material.color.setScalar(lerp(1, 0.68, ramp(t, 0.3, 1))));
+  seedP.rotation.set(0.2, 0.4, 0.15);
+  seedP.position.set(0, -0.62, GROW_FACE);
+  g.add(seedP);
+  g.add(rootSystem([0.02, -0.75], easeOut(ramp(t, 0.03, 0.6)), { depth: 0.85, sides: 8, spread: 0.5, seed: 11 }));
+  const up = ramp(t, 0.02, 0.1);
+  g.add(shoot([0.02, -0.45], up));
+  /* Runners out under the soil; a potato swelling at each tip. */
+  const RUNNERS = [[-1.05, -0.92, 0.82, 0.4], [-0.5, -1.6, 0.68, 2.1], [0.6, -1.5, 0.86, 1.2], [1.15, -0.84, 0.74, 2.8]];
+  RUNNERS.forEach(([x, y, size, turn], i) => {
+    const s = easeOut(ramp(t, 0.26 + 0.03 * i, 0.5 + 0.03 * i));
+    if (s <= 0.01) return;
+    const o = new THREE.Vector3(0.03, -0.35, GROW_FACE + 0.02);
+    const end = new THREE.Vector3(x * 0.92, y * 0.95 + 0.08, GROW_FACE + 0.02);
+    const mid = o.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0.12, 0));
+    const curve = new THREE.CatmullRomCurve3([o, mid, end]);
+    const n = 8;
+    g.add(stalk(Array.from({ length: n + 1 }, (_, j) => curve.getPointAt((j / n) * s).toArray()), 0.026, 0.02, 0xe2cfae, 0xeadcc2));
+    const k = smooth(ramp(t, 0.44 + 0.05 * i, 0.96));
+    if (k > 0.005) {
+      const tu = potatoTuber(size * lerp(0.08, 1, k), ramp(t, 0.5, 1), 3 + i);
+      tu.rotation.set(0.25, turn, 0.15 * (i - 1.5));
+      tu.position.set(x, y, GROW_FACE + 0.05);
+      g.add(tu);
     }
-  }
-  const top = plumpLeaf(0.45, 0.18, leaf[0]);
-  top.position.set(0, 2.05, GROW_FACE - 0.15);
-  top.rotation.z = Math.PI / 2;
-  g.add(top);
-  return g;
-}
-
-/* A tomato plant: a stem tied to a wooden stake, a compound leaf (a row of
-   leaflets) out to alternate sides all the way up — the tomatoes hang
-   between them. */
-function tomatoTops() {
-  const g = new THREE.Group();
-  const z = GROW_FACE - 0.2;
-  g.add(taperTube([[0.12, GROW_TOP - 0.05, z - 0.12], [0.12, 1.4, z - 0.12], [0.12, 2.5, z - 0.12]], 0.06, 0.05, satin({ roughness: 0.8, vertexColors: false, color: 0xb07a45 })));
-  const stem = leafy(0x5a9a34);
-  g.add(taperTube([[0, GROW_TOP, z], [-0.05, 0.7, z], [0.06, 1.4, z], [-0.04, 2.0, z], [0.02, 2.45, z]], 0.075, 0.045, stem));
-  const leaf = [leafy(0x4f9a3c), leafy(0x67b14c)];
-  for (const [y, side, len] of [[0.35, 1, 0.85], [0.62, -1, 0.95], [0.95, 1, 1.0], [1.28, -1, 0.95], [1.6, 1, 0.9], [1.92, -1, 0.8], [2.2, 1, 0.65], [2.4, -1, 0.5]]) {
-    const tip = [side * len, y + 0.32, z + 0.05];
-    g.add(taperTube([[0, y, z], [side * len * 0.5, y + 0.22, z + 0.03], tip], 0.035, 0.022, stem));
-    for (const t of [0.35, 0.65]) {
-      for (const up of [1, -1]) {
-        const l = plumpLeaf(0.3, 0.14, leaf[(t > 0.5 ? 1 : 0) ^ (up > 0 ? 1 : 0)]);
-        l.position.set(side * len * t, y + 0.3 * t + 0.02, z + 0.06);
-        l.rotation.set(0.15, side < 0 ? Math.PI : 0, 0.35 + up * 0.95);
-        g.add(l);
-      }
+  });
+  if (up < 1) return g;
+  /* Three stems, leaning out a little, compound leaves up them, white
+     flowers on top late on. */
+  const base = 0.25 * easeOut(ramp(t, 0.09, 0.17)) + 1.25 * smooth(ramp(t, 0.17, 0.65));
+  const STEMS = [[-0.05, -0.28, 0.9, 2], [0.03, 0.04, 1.0, 1], [0.1, 0.33, 0.82, 0]];
+  STEMS.forEach(([x0, lean, k, nTop], si) => {
+    const H = base * k;
+    const x = (y) => x0 + Math.sin(lean) * y + 0.03 * Math.sin(y * 4 + si);
+    const { stem, at } = stemUp(H, 0.02 + 0.03 * smooth(ramp(t, 0.15, 0.8)), x, STEM_Z - 0.05 * si, 0x5a9336, 0x7fb04a);
+    g.add(stem);
+    if (si === 1) g.add(cotyledons(at(Math.min(H, 0.24)), ramp(t, 0.1, 0.18) * (1 - 0.5 * ramp(t, 0.5, 0.8)), { len: 0.18, wid: 0.09, color: 0x6aa142, light: 0x92c262 }));
+    const nodes = [0.35, 0.68, 0.98];
+    nodes.forEach((f, j) => {
+      const y = f * 1.25 * k;
+      const gk = smooth(Math.min(1, Math.max(0, (H - y) / 0.4)));
+      const side = (j + si) % 2 ? 1 : -1;
+      const a = (side > 0 ? lerp(1.3, 0.45, easeOut(gk)) : Math.PI - lerp(1.3, 0.45, easeOut(gk))) + lean * 0.6;
+      g.add(compoundLeaf(at(Math.min(H, y)), a, 0.78 * (1 - 0.1 * j), gk, { pairs: 2, leaflet: [0.3, 0.16], ripple: 0.08, color: 0x4a8a36, light: 0x7ab256, rib: 0x9fcf7a, droop: 0.3, round: 0.85 }));
+    });
+    /* Flowers, once it is grown. */
+    const open = ramp(t, 0.58 + si * 0.03, 0.7 + si * 0.03);
+    for (let f = 0; f < nTop + 1 && open > 0; f++) {
+      const top = new THREE.Vector3(...at(H));
+      const p = top.add(new THREE.Vector3((f - nTop / 2) * 0.13, 0.08 + 0.05 * (f % 2), 0.2));
+      g.add(flower(p.toArray(), { petal: 0xf8f4ff, middle: 0xffd23a, n: 5, size: 0.085, open, nod: -0.1, reflex: 0.05, grow: Math.min(1, open * 3) }));
     }
-    const end = plumpLeaf(0.36, 0.16, leaf[0]);
-    end.position.set(...tip);
-    end.rotation.set(0.15, side < 0 ? Math.PI : 0, 0.35);
-    g.add(end);
-  }
+  });
   return g;
 }
 
-/* Broccoli leaves: big, waxy and blue-green, a pale rib down each, round a
-   thick pale stalk — the `front` pair (over the head's stalk) apart. */
-function broccoliTops(front = false) {
-  const g = new THREE.Group();
-  if (!front) g.add(tintAll(taperTube([[0, GROW_TOP, GROW_FACE - 0.25], [0, 0.3, GROW_FACE - 0.25], [0, 0.55, GROW_FACE - 0.25]], 0.2, 0.18, satin({ roughness: 0.5 })), () => [new THREE.Color(0x9cc45e), 0]));
-  const blue = [leafy(0x4b8c5c), leafy(0x5c9c6a)];
-  const rib = leafy(0x9ec48c);
-  for (const [a, y, len, z] of [[2.45, 0.2, 1.3, -0.45], [0.7, 0.2, 1.3, -0.45], [2.05, 0.35, 1.1, -0.35], [1.1, 0.35, 1.1, -0.35], [2.85, 0.1, 1.05, 0.0], [0.3, 0.1, 1.05, 0.0], [2.15, 0.04, 0.85, 0.3], [1.0, 0.04, 0.85, 0.3]]) {
-    /* The front pair goes on a layer of its own, over the head's stalk. */
-    if ((z > 0) !== front) continue;
-    const l = plumpLeaf(len, 0.48, blue[Math.round(a * 3) % 2]);
-    l.position.set(0, y, GROW_FACE + z);
-    l.rotation.set(0.15, 0, a);
-    g.add(l);
-    const r = taperTube([[0.05, 0, 0.045], [len * 0.45, 0, 0.05], [len * 0.8, 0, 0.04]], 0.022, 0.008, rib);
-    r.position.copy(l.position);
-    r.rotation.copy(l.rotation);
-    g.add(r);
-  }
-  return g;
-}
-
-/* Each food: its parts, in the order they are drawn, each `[name, make,
-   from]` — `from` is the point it grows from, in the world. A fruit is
-   three parts at one place (`<n>-flower`, `<n>-green`, `<n>-ripe`): they
-   share a box when cropped. */
-const GROW_DEFS = {
-  carrot: () => [
-    ["roots", () => growRoots(0.55), [0, GROW_TOP, GROW_FACE]],
-    ["seed", growSeed, [0, -0.32, GROW_FACE]],
-    ["root", () => at(videoCarrot(0, false), [0, GROW_TOP - 1.65 * 1.18 + 0.02, GROW_FACE], 1.18), [0, GROW_TOP, GROW_FACE]],
-    ["tops", carrotTops, [0, GROW_TOP, GROW_FACE]],
-  ],
-  potato: () => [
-    ["runners", potatoRunners, [0, GROW_TOP, GROW_FACE]],
-    ["seed", growSeed, [0, -0.32, GROW_FACE]],
-    ...POTATO_AT.map(([x, y], i) => {
-      const p = videoPotato();
-      p.rotation.set(0.25, -0.35 + i * 0.5, 0.12 - i * 0.2);
-      return [`tuber${i}`, () => at(p, [x, y, GROW_FACE], 1.05 - i * 0.08, [p.rotation.x, p.rotation.y, p.rotation.z]), [x, y, GROW_FACE]];
-    }),
-    ["tops", potatoTops, [0, GROW_TOP, GROW_FACE]],
-  ],
-  tomato: () => [
-    ["roots", () => growRoots(0.9), [0, GROW_TOP, GROW_FACE]],
-    ["seed", growSeed, [0, -0.32, GROW_FACE]],
-    ["tops", tomatoTops, [0, GROW_TOP, GROW_FACE]],
-    ...[[-0.6, 1.88], [0.62, 1.5], [-0.5, 1.02]].flatMap(([x, y], i) => [
-      [`fruit${i}-flower`, () => at(growFlower(), [x, y + 0.2, GROW_FACE + 0.55], 1), [x, y + 0.2, GROW_FACE + 0.55]],
-      [`fruit${i}-green`, () => at(videoTomato(true), [x, y, GROW_FACE + 0.45], 0.55), [x, y + 0.26, GROW_FACE + 0.45]],
-      [`fruit${i}-ripe`, () => at(videoTomato(), [x, y, GROW_FACE + 0.45], 0.55), [x, y + 0.26, GROW_FACE + 0.45]],
-    ]),
-  ],
-  pepper: () => [
-    ["roots", () => growRoots(0.85), [0, GROW_TOP, GROW_FACE]],
-    ["seed", growSeed, [0, -0.32, GROW_FACE]],
-    ["tops", pepperTops, [0, GROW_TOP, GROW_FACE]],
-    ...PEPPER_AT.flatMap(([x, y], i) => [
-      [`fruit${i}-flower`, () => at(growFlower(0xfdfbf6, 0xffcf3a), [x, y + 0.35, GROW_FACE + 0.4], 1), [x, y + 0.35, GROW_FACE + 0.4]],
-      [`fruit${i}-green`, () => at(videoPepper("green"), [x, y - 0.55, GROW_FACE + 0.35], 0.72, [0, 0, i ? 0.25 : -0.1]), [x, y + 0.2, GROW_FACE + 0.35]],
-      [`fruit${i}-ripe`, () => at(videoPepper("red"), [x, y - 0.55, GROW_FACE + 0.35], 0.72, [0, 0, i ? 0.25 : -0.1]), [x, y + 0.2, GROW_FACE + 0.35]],
-    ]),
-  ],
-  broccoli: () => [
-    ["roots", () => growRoots(0.9), [0, GROW_TOP, GROW_FACE]],
-    ["seed", growSeed, [0, -0.32, GROW_FACE]],
-    ["tops", () => broccoliTops(), [0, GROW_TOP, GROW_FACE]],
-    ["head", () => at(videoBroccoli(), [0, 0.2, GROW_FACE - 0.1], 1.3), [0, 0.3, GROW_FACE - 0.1]],
-    ["front", () => broccoliTops(true), [0, GROW_TOP, GROW_FACE]],
-  ],
-};
+const GROW_PLANTS = { carrot: carrotAt, potato: potatoAt, tomato: tomatoAt, pepper: pepperAt, broccoli: broccoliAt };
+/* What the vegetable is, at the end — where the page sparkles. */
+const GROW_VEG = { carrot: [0, -0.9, GROW_FACE], potato: [0.62, -1.45, GROW_FACE], tomato: [0.36, 1.16, GROW_FACE + 0.4], pepper: [0.1, 0.6, GROW_FACE + 0.3], broccoli: [0, 0.95, GROW_FACE - 0.2] };
 
 const THING = params.get("thing");
 const HARVEST = params.get("harvest");
@@ -4110,10 +4549,10 @@ if (THING) {
   };
   window.itemsMeta = () => ({});
 } else if (GROW) {
-  /* ---------- Growing a vegetable: the soil cut open, then each part of
-     the plant alone, all on one camera — the same for all five foods, so
-     every lesson's soil sits in the same place. The videos' light. No
-     ground shadow (the page draws one). ---------- */
+  /* ---------- Growing a vegetable: the soil alone, then the soil with
+     the plant at each moment (`growFrame`) — one camera for all five
+     foods, so the soil sits in the same place in every lesson. The
+     videos' light. No ground shadow (the page draws one). ---------- */
   catcher.visible = false;
   sun.color.set(0xfff0e4);
   sun.intensity = 1.7;
@@ -4134,29 +4573,32 @@ if (THING) {
   camera.position.set(0, look + Math.sin(lift) * 30, Math.cos(lift) * 30);
   camera.lookAt(0, look, 0);
   camera.updateProjectionMatrix();
-  const parts = GROW_DEFS[GROW]();
-  window.renderLayers = () => {
-    renderer.setClearColor(0x000000, 0);
-    const out = {};
-    const shoot = (name, thing) => {
-      scene.add(thing);
-      out[name] = frame();
-      scene.remove(thing);
-    };
-    shoot("ground", growGround());
-    for (const [name, make] of parts) shoot(name, make());
-    return out;
+  scene.add(growGround());
+  const frames = Number(params.get("frames") ?? 32);
+  const make = GROW_PLANTS[GROW];
+  renderer.setClearColor(0x000000, 0);
+  window.renderLayers = () => ({ ground: frame() });
+  window.growFrame = (k) => {
+    const plant = make(frames === 1 ? 1 : k / (frames - 1));
+    scene.add(plant);
+    const url = frame();
+    scene.remove(plant);
+    plant.traverse((o) => {
+      if (o.isMesh) {
+        o.geometry.dispose();
+        o.material.dispose();
+      }
+    });
+    return url;
   };
-  /* Where each part grows from, % of the picture. */
-  window.itemsMeta = () => ({
-    from: Object.fromEntries(
-      parts.map(([name, , point]) => {
-        const p = new THREE.Vector3(...point).project(camera);
-        return [name, [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100]];
-      }),
-    ),
-    order: parts.map(([name]) => name),
-  });
+  const pct = (point) => {
+    const p = new THREE.Vector3(...point).project(camera);
+    return [Math.round(((p.x + 1) / 2) * 10000) / 100, Math.round(((1 - p.y) / 2) * 10000) / 100];
+  };
+  /* Where the plant's foot is (it sways about it; the soil line splits
+     above from below), where the shoot comes up and when, and where the
+     vegetable is at the end — % of the picture. */
+  window.itemsMeta = () => ({ frames, foot: pct([0, GROW_TOP, STEM_Z]), emerge: EMERGE_T, veg: pct(GROW_VEG[GROW]) });
 } else if (SEASON) {
   /* ---------- Nova's seasons: the island, then one frame per step, each
      with everything before it. The camera is the same for all four, so
