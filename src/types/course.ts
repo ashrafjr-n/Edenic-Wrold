@@ -186,24 +186,26 @@ export interface WeatherScene {
   bits: readonly StaticImageData[];
 }
 
-/** A part of a growing plant (`data/grow.ts`): its picture, where it lies
-    (% of the frame), the point it grows from (% of its own box) and when,
-    as the knob goes from 0 to 1 — it `grows` from nothing, `shows` (fades
-    in) or `fades` (out). Without any, it is simply there. */
-export interface GrowPart {
+/** Frames of a growing plant, side by side in one picture (`cols` a row):
+    one frame's size in it (px), and where a frame lies (% of the scene). */
+export interface GrowSheet {
   src: StaticImageData;
+  cell: readonly [number, number];
   box: SceneRect;
-  from: readonly [number, number];
-  grows?: readonly [number, number];
-  shows?: readonly [number, number];
-  fades?: readonly [number, number];
 }
 
-/** A vegetable growing in the soil, cut open: the soil, then its parts in
-    drawing order. */
+/** A vegetable growing in the soil, cut open (`data/grow.ts`): the soil,
+    and `frames` moments of the plant — what grows above the soil (swaying
+    about its `foot`, % of its frame) and under it. `emerge`: when (0–1)
+    the shoot breaks the soil; `veg`: where the vegetable is at the end. */
 export interface GrowScene {
   ground: { src: StaticImageData; box: SceneRect };
-  parts: readonly GrowPart[];
+  frames: number;
+  cols: number;
+  above: GrowSheet & { foot: readonly [number, number] };
+  below: GrowSheet;
+  emerge: number;
+  veg: readonly [number, number];
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
