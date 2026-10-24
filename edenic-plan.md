@@ -193,7 +193,7 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell only; built 2026-10-02; reworked 2026-10-03; its third step is **Nova's cups** since 2026-10-08 — the food under one of three cups, a random one every round, the cups swap and the child finds it; one miss and the round starts again. Grow it, its step from 2026-10-07, was replaced. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
+| Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell, then (2026-10-24) **Grow it** — slide the knob and the vegetable grows from its seed in the soil, cut open; built 2026-10-02; reworked 2026-10-03; its third step was **Nova's cups** 2026-10-08 → 2026-10-23 (a /play game since) — and before them a tap-by-tap Grow it (2026-10-07, replaced); the 2026-10-24 Grow it is a slide, the plant following the knob. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
 | Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
@@ -637,6 +637,14 @@ Before calling Learn done (easy to forget):
       `migrate` drops every v0 course key (lessons were renumbered) and
       keeps `puzzle.*` / `memory.*`.
 - [ ] Known: the word card scrolls 18px at 360x640 (every course).
+- [x] **Vegetables: Grow it** (2026-10-24, direct request): the lessons'
+      third step — a line with a knob at its left end; slide it right and
+      the vegetable grows from its seed in the soil, cut open (roots, what
+      comes up, then the carrot / potatoes swelling underground, or the
+      tomatoes / peppers flowering, green, ripe; the broccoli's head). Slid
+      back, it shrinks. 3D art for all five (`render.cjs grow`); played
+      through headless 360x640 → 1440x900, en/ar/ku, dark, keyboard.
+- [ ] The user checks Grow it → fixes.
 - [x] `code hygiene` (2026-10-13) — dead CSS, an unreachable colour
       branch, ~950 lines of dead render builders (output proven identical).
 - [ ] `public/things-in-videos/` deleted — the user's call (untracked).
