@@ -170,6 +170,7 @@ export const en = {
     likeAria: "I like it",
     dislikeAria: "I don't like it",
     balloonAria: "{color} balloon",
+    tracksAria: "Footprints {n}",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -203,6 +204,7 @@ export const en = {
     whichWeather: "Which one is {weather}?",
     pickList: "Pick the things on Nova's list!",
     growIt: "Slide the circle to grow the {thing}!",
+    matchTracks: "Draw a line from the {thing} to its footprints!",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
@@ -220,6 +222,7 @@ export const en = {
     harvest: "Pick",
     weather: "Make",
     grow: "Grow",
+    tracks: "Match",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
