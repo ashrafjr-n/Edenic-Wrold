@@ -28,7 +28,32 @@ const cat: Tracks = {
   ],
 };
 
+/* Dog: longer than wide, four oval toes with a CLAW mark ahead of each,
+   the middle two forward and close; the heel pad one lobe in front, two
+   behind — an X fits in the space between. */
+const dog: Tracks = {
+  feet: {
+    front: [
+      { d: "M 0 3 C 11 3 23 15 22 26 C 21 33 14 35 9 32 C 5 30 -5 30 -9 32 C -14 35 -21 33 -22 26 C -23 15 -11 3 0 3 Z" },
+      { e: [-22, -6, 7, 10, -24] },
+      { e: [22, -6, 7, 10, 24] },
+      { e: [-8, -25, 7.5, 11, -5] },
+      { e: [8, -25, 7.5, 11, 5] },
+      { d: "M -27 -17 L -30 -24", w: 4.5 },
+      { d: "M 27 -17 L 30 -24", w: 4.5 },
+      { d: "M -9 -40 L -10 -47", w: 4.5 },
+      { d: "M 9 -40 L 10 -47", w: 4.5 },
+    ],
+  },
+  steps: [
+    { at: [42, 110], s: 0.29, left: true },
+    { at: [58, 80], s: 0.29 },
+    { at: [42, 50], s: 0.29, left: true },
+    { at: [58, 20], s: 0.29 },
+  ],
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
