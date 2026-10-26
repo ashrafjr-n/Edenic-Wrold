@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { Animal, ColorId, LessonDef, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
+import { TRACKS, type Walker } from "@/data/tracks";
 import cat from "../../../public/assets/learn/bloo/animals/things/cat.png";
 import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-grey.png";
 import dog from "../../../public/assets/learn/bloo/animals/things/dog.png";
@@ -45,11 +46,30 @@ const MORE: Record<string, StaticImageData> = { elephant, mouse, bird, parrot, t
 /** Every lesson's animal and picture, in teaching order. */
 const TAUGHT: [string, StaticImageData][] = [...ORDER.map((animal): [string, StaticImageData] => [animal, ANIMALS[animal].picture]), ...Object.entries(MORE)];
 
+/** Match the footprints: beside each animal's own footprints, two FAR
+    unlike them — never a cat's beside a dog's, a bird's beside a
+    parrot's, nor one tiny trail beside another — so a 5-year-old matches
+    what the feet are like, not a guess between near twins. */
+const UNLIKE: Record<Walker, readonly [Walker, Walker]> = {
+  cat: ["elephant", "bird"],
+  dog: ["turtle", "parrot"],
+  elephant: ["mouse", "bird"],
+  mouse: ["elephant", "dog"],
+  bird: ["elephant", "turtle"],
+  parrot: ["cat", "elephant"],
+  turtle: ["cat", "bird"],
+  gecko: ["elephant", "dog"],
+};
+const walks = (animal: string): animal is Walker => animal in TRACKS;
+
 /**
  * Bloo's animals — one animal, one lesson, and every step about IT (the
  * Fruits rule: no choosing inside a one-thing lesson): meet it (its
- * picture, its word, its speaker) → build its word. Telling them
- * apart is the review's. (Feed it, the third step, was removed 2026-10-12.)
+ * picture, its word, its speaker) → build its word → match it to its
+ * footprints (2026-10-26, last — the one choice, and a real one: the
+ * lesson never showed its feet). The fish has no feet, so no footprints.
+ * Telling the animals apart is the review's. (Feed it was removed
+ * 2026-10-12.)
  */
 function animalLesson([animal, picture]: [string, StaticImageData], i: number): LessonDef {
   return {
@@ -58,6 +78,9 @@ function animalLesson([animal, picture]: [string, StaticImageData], i: number): 
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture, tilt: true },
       { type: "spell", ask: { key: "spell", vars: { word: animal } }, word: animal },
+      ...(walks(animal)
+        ? [{ type: "tracks" as const, ask: { key: "matchTracks" as const, vars: { thing: animal } }, word: animal, picture, own: TRACKS[animal], others: UNLIKE[animal].map((other) => TRACKS[other]) }]
+        : []),
     ],
   };
 }
