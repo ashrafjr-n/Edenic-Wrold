@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
+import { Check, PawPrint, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
@@ -36,7 +36,8 @@ export type TaskDemoDef =
   | { kind: "like"; face: Face }
   | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
-  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } };
+  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } }
+  | { kind: "tracks"; picture: StaticImageData; word: string; tone: { face: string; edge: string; ink: string } };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -531,6 +532,42 @@ function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edg
   );
 }
 
+/** Match the footprints: the finger takes the animal's handle and draws
+    the chalk line down to a sheet — the middle one, and every sheet is
+    blank: it shows HOW to match, never which footprints are whose. One
+    3.6s loop, in step with the finger (`.demo-finger`): it presses at
+    36%, draws to 64%, the line rests, then all lets go. */
+function TracksDemo({ picture, word, tone }: { picture: StaticImageData; word: string; tone: { face: string; edge: string; ink: string } }) {
+  return (
+    <div className="@container relative h-full w-full">
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <span className="relative block h-[30cqi] w-[30cqi]">
+          <Image src={picture} alt={word} fill sizes="6rem" className="object-contain" />
+        </span>
+        <span
+          className="clay relative z-[1] -mt-[2cqi] flex h-[11cqi] w-[11cqi] items-center justify-center rounded-full"
+          style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
+        >
+          <PawPrint className="h-[55%] w-[55%]" strokeWidth={2.5} />
+        </span>
+        <span className="block h-[12cqi]" />
+        <div className="flex gap-[4cqi]">
+          {[0, 1, 2].map((i) => (
+            <span key={i} className={`block h-[32cqi] w-[24cqi] rounded-[2.5cqi] bg-[#fbf8f0] shadow-md ${i === 1 ? "demo-tracks-sheet" : ""}`} />
+          ))}
+        </div>
+      </div>
+      {/* The handle's middle is 42% down, the middle sheet's top 59.5%. */}
+      <svg viewBox="0 0 100 100" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full">
+        <line x1={50} y1={42} x2={50} y2={59.5} pathLength={1} className="demo-tracks-line" stroke="var(--chalk-accent)" strokeWidth={2} strokeLinecap="round" />
+      </svg>
+      <span className="demo-tracks-pen absolute left-1/2 top-[42%] z-10">
+        <Finger />
+      </span>
+    </div>
+  );
+}
+
 function WeatherDemo({ gesture, scene }: { gesture: Gesture; scene: WeatherScene }) {
   const { frames, sky, bits } = scene;
   const [l, t, w, h] = sky[0].box;
@@ -626,5 +663,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "grow":
       return <GrowDemo scene={demo.scene} tone={demo.tone} />;
+    case "tracks":
+      return <TracksDemo picture={demo.picture} word={demo.word} tone={demo.tone} />;
   }
 }
