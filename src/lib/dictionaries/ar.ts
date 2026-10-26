@@ -157,6 +157,7 @@ export const ar: Dictionary = {
     likeAria: "أحبّه",
     dislikeAria: "لا أحبّه",
     balloonAria: "بالون {color}",
+    tracksAria: "آثار أقدام {n}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -189,6 +190,7 @@ export const ar: Dictionary = {
     whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
     growIt: "اسحب الدائرة لتكبر نبتة {thing}!",
+    matchTracks: "صِل {thing} بآثار أقدامه!",
   },
   tasks: {
     listen: "استمع",
@@ -205,6 +207,7 @@ export const ar: Dictionary = {
     harvest: "اقطف",
     weather: "اصنع",
     grow: "ازرع",
+    tracks: "صِل",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
