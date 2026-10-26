@@ -49,7 +49,8 @@ interface MatchTracksProps {
  * far unlike them. Draw a chalk line from the animal (its handle) down to
  * its footprints, or tap the sheet. The right sheet: the line stays, its
  * footprints are walked again one by one and the others fade. A wrong
- * one: it shakes its head, the line lets go and the sheet stays dimmed.
+ * one: it shakes its head, the line lets go and the sheet stays greyed
+ * (never see-through — the board's green would show through the paper).
  */
 export function MatchTracks({ word, picture, own, others, seed, sheetAria, tone, onSolved, onMiss }: MatchTracksProps) {
   const sheets = useMemo(() => shuffle([own, ...others], seed), [own, others, seed]);
@@ -157,11 +158,12 @@ export function MatchTracks({ word, picture, own, others, seed, sheetAria, tone,
         onPointerCancel={onPointerUp}
         className={`relative flex touch-none select-none flex-col items-center ${done ? "" : held ? "cursor-grabbing" : "cursor-grab"}`}
       >
-        <span className={`relative block aspect-square h-[min(10rem,calc(var(--room)*0.34))] ${done ? "anim-jump" : ""}`}>
+        <span className={`relative block aspect-square h-[min(11rem,calc(var(--room)*0.36))] ${done ? "anim-jump" : ""}`}>
           <Image src={picture} alt={word} fill preload sizes="(min-width: 1024px) 10rem, 34vw" draggable={false} className="pointer-events-none select-none object-contain" />
         </span>
         <span
           ref={handle}
+          data-tracks-handle
           aria-hidden
           className="clay relative -mt-2 flex h-11 w-11 items-center justify-center rounded-full sm:h-12 sm:w-12"
           style={{ backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
@@ -172,10 +174,10 @@ export function MatchTracks({ word, picture, own, others, seed, sheetAria, tone,
       </span>
 
       {/* The line's run, down to the sheets. */}
-      <span aria-hidden className="block h-[min(3.5rem,calc(var(--room)*0.11))] shrink-0" />
+      <span aria-hidden className="block h-[min(4.5rem,calc(var(--room)*0.14))] shrink-0" />
 
       <div
-        className="grid justify-center gap-3 [--sheet-w:min(calc((100%-1.5rem)/3),calc(min(13rem,var(--room)*0.44)/1.3))] [grid-template-columns:repeat(3,var(--sheet-w))] sm:gap-5 sm:[--sheet-w:min(calc((100%-2.5rem)/3),calc(min(13rem,var(--room)*0.44)/1.3))]"
+        className="grid justify-center gap-3 [--sheet-w:min(calc((100%-1.5rem)/3),calc(min(14rem,var(--room)*0.44)/1.3))] [grid-template-columns:repeat(3,var(--sheet-w))] sm:gap-5 sm:[--sheet-w:min(calc((100%-2.5rem)/3),calc(min(14rem,var(--room)*0.44)/1.3))]"
         style={{ width: "100%" }}
       >
         {sheets.map((tracks, i) => {
@@ -190,9 +192,9 @@ export function MatchTracks({ word, picture, own, others, seed, sheetAria, tone,
               aria-label={format(sheetAria, { n: i + 1 })}
               disabled={off || done}
               onClick={() => connect(i, handleAt(), true)}
-              className={`card card-clay-white pic-card tracks-sheet block p-1 transition-[opacity,scale,filter] duration-300 sm:p-1.5 ${
+              className={`card card-clay-white pic-card tracks-sheet block p-1 transition-[scale,filter] duration-300 sm:p-1.5 ${
                 aim === i ? "scale-[1.04]" : ""
-              } ${off ? "opacity-40 saturate-50" : ""} ${done && i === right ? "tracks-sheet--found" : ""} ${shaking === i ? "anim-wiggle" : ""}`}
+              } ${off ? "brightness-[0.72] saturate-0" : ""} ${done && i === right ? "tracks-sheet--found" : ""} ${shaking === i ? "anim-wiggle" : ""}`}
             >
               <TrackSheet tracks={tracks} walk={done && i === right} className="block h-auto w-full" />
             </button>
