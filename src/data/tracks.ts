@@ -1,4 +1,4 @@
-import type { Tracks } from "@/types/course";
+import type { PrintPart, Tracks } from "@/types/course";
 
 /* Every animal's footprints, drawn as a field guide draws them (Match the
    footprints, Bloo's Animals — 2026-10-26): each foot a right one, toes
@@ -6,6 +6,9 @@ import type { Tracks } from "@/types/course";
    up the sheet, bottom print first. Sizes are true to each other — an
    elephant's sole fills a sheet, a mouse's foot is a few toes. The fish
    has none: it has no feet. */
+/** Thin toes from one point, each ending in a dot (`dot` its radius). */
+const toes = (from: readonly [number, number], tips: readonly (readonly [number, number])[], w: number, dot: number): PrintPart[] =>
+  tips.flatMap(([x, y]) => [{ d: `M ${from[0]} ${from[1]} L ${x} ${y}`, w }, { e: [x, y, dot, dot] }]);
 
 /* Cat: round, four teardrop toes and NO claws (drawn in as it walks), the
    leading toe a little ahead; the heel pad wide, two lobes in front, three
@@ -77,7 +80,30 @@ const elephant: Tracks = {
   ],
 };
 
+/* Mouse: tiny, and it bounds — prints in fours: the long hind feet (five
+   toes) land ahead of and wider than the little front ones (four toes,
+   a star). A thin tail line runs through. */
+const mouse: Tracks = {
+  feet: {
+    front: [{ e: [0, 6, 10, 9] }, ...toes([0, 2], [[-30, -14], [-12, -34], [12, -34], [30, -14]], 7, 6)],
+    hind: [{ d: "M -9 4 C -9 -6 9 -6 9 4 L 6 36 C 5 42 -5 42 -6 36 Z" }, ...toes([0, -2], [[-34, 4], [-20, -30], [0, -38], [20, -30], [34, 4]], 6, 5.5)],
+  },
+  steps: [
+    { at: [45, 114], s: 0.13, left: true },
+    { at: [55, 110], s: 0.13 },
+    { at: [37, 94], s: 0.15, left: true, hind: true },
+    { at: [63, 94], s: 0.15, hind: true },
+    { at: [45, 64], s: 0.13, left: true },
+    { at: [55, 60], s: 0.13 },
+    { at: [37, 44], s: 0.15, left: true, hind: true },
+    { at: [63, 44], s: 0.15, hind: true },
+    { at: [45, 14], s: 0.13, left: true },
+    { at: [55, 10], s: 0.13 },
+  ],
+  drag: { d: "M 50 128 C 46 112 54 98 50 84 S 46 56 50 40 S 54 14 50 2", w: 1.2 },
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog, elephant } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant, mouse } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
