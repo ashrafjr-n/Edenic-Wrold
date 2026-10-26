@@ -167,7 +167,22 @@ const turtle: Tracks = {
   drag: { d: "M 50 128 L 50 2", w: 2.5 },
 };
 
+/* Gecko: five thin splayed toes, each ending in a round sticky pad; wide
+   steps, and the tail swings an S behind. */
+const gecko: Tracks = {
+  feet: {
+    front: [{ e: [0, 8, 9, 9] }, ...toes([0, 6], [[-36, -4], [-24, -30], [-2, -40], [20, -32], [34, -10]], 4.5, 6)],
+  },
+  steps: [
+    { at: [27, 108], s: 0.31, r: -24, left: true },
+    { at: [73, 86], s: 0.31, r: 24 },
+    { at: [27, 56], s: 0.31, r: -24, left: true },
+    { at: [73, 34], s: 0.31, r: 24 },
+  ],
+  drag: { d: "M 50 128 C 64 112 36 96 50 80 S 64 48 50 32 S 40 10 50 2", w: 1.6 },
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog, elephant, mouse, bird, parrot, turtle } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant, mouse, bird, parrot, turtle, gecko } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
