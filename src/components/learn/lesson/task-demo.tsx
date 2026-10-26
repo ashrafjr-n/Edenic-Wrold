@@ -553,7 +553,7 @@ function TracksDemo({ picture, word, tone }: { picture: StaticImageData; word: s
         <span className="block h-[12cqi]" />
         <div className="flex gap-[4cqi]">
           {[0, 1, 2].map((i) => (
-            <span key={i} className={`block h-[32cqi] w-[24cqi] rounded-[2.5cqi] bg-[#fbf8f0] shadow-md ${i === 1 ? "demo-tracks-sheet" : ""}`} />
+            <span key={i} className={`block h-[32cqi] w-[24cqi] rounded-[2.5cqi] border-[0.5cqi] border-[rgb(var(--shadow-hue)/0.14)] bg-[#fbf8f0] shadow-md ${i === 1 ? "demo-tracks-sheet" : ""}`} />
           ))}
         </div>
       </div>
