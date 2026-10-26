@@ -3480,6 +3480,126 @@ button:disabled,
   }
 }
 
+/* Match the footprints (`MatchTracks`, Bloo's Animals, 2026-10-26). Small,
+   calm motions, each on its own property:
+
+   - `.tracks-line`: the chalk line from the animal's handle, in the
+     friend's chalk. `--draw`: it draws itself to a tapped sheet;
+     `--let-go`: it fades off a wrong one. Its end is a chalk dot.
+   - `.tracks-nudge`: the handle's paw, until first taken, nods down toward
+     the sheets. `translate`.
+   - `.tracks-sheet--found`: the right sheet lifts a little, ringed in
+     chalk. `scale`, `outline`.
+   - `.track-stamp` / `.track-drag` (`TrackSheet`): the footprints walked
+     again — each print pressed in, one after another, and the tail drawn
+     on behind them. */
+.tracks-line {
+  stroke: var(--chalk-accent);
+  stroke-width: 6px;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 30%));
+}
+
+.tracks-line--draw {
+  stroke-dasharray: 1;
+  animation: tracks-draw 0.38s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.tracks-line--let-go {
+  animation: tracks-let-go 0.22s ease-in 0.3s both;
+}
+
+.tracks-line--draw.tracks-line--let-go {
+  animation:
+    tracks-draw 0.38s cubic-bezier(0.3, 0.7, 0.4, 1) both,
+    tracks-let-go 0.22s ease-in 0.3s both;
+}
+
+.tracks-line-end {
+  fill: var(--chalk-accent);
+  transition: r 0.15s ease-out;
+}
+
+.tracks-line--draw + .tracks-line-end {
+  animation: tracks-end-in 0.18s ease-out 0.3s both;
+}
+
+.tracks-line--let-go + .tracks-line-end {
+  animation: tracks-let-go 0.22s ease-in 0.3s both;
+}
+
+@keyframes tracks-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tracks-let-go {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes tracks-end-in {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+.tracks-nudge {
+  animation: tracks-nudge 2.4s ease-in-out infinite;
+}
+
+@keyframes tracks-nudge {
+  0%,
+  45%,
+  100% {
+    translate: 0 0;
+  }
+  20% {
+    translate: 0 0.3rem;
+  }
+  30% {
+    translate: 0 0.05rem;
+  }
+}
+
+.tracks-sheet--found {
+  scale: 1.05;
+  outline: 4px solid var(--chalk-accent);
+  outline-offset: 4px;
+}
+
+.track-stamp {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: track-stamp 0.5s cubic-bezier(0.3, 0.8, 0.4, 1) both;
+}
+
+@keyframes track-stamp {
+  0% {
+    opacity: 0.12;
+    scale: 1.25;
+  }
+  55% {
+    opacity: 1;
+    scale: 0.96;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+.track-drag {
+  stroke-dasharray: 1;
+  animation: tracks-draw var(--walk) linear both;
+}
+
 /* Pick them (`HarvestPick`): the word pops up where a food was picked and
    floats off. Its `-50%` centring lives IN the keyframes — an animation
    owning `translate` drops a utility's. Under reduced motion it only
@@ -3839,7 +3959,12 @@ button:disabled,
   .grow-hint,
   .grow-sway,
   .grow-ring,
-  .grow-cheer {
+  .grow-cheer,
+  .tracks-nudge,
+  .tracks-line--draw,
+  .tracks-line--draw + .tracks-line-end,
+  .track-stamp,
+  .track-drag {
     animation: none;
   }
 
