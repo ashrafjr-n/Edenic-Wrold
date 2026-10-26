@@ -143,7 +143,31 @@ const parrot: Tracks = {
   ],
 };
 
+/* Turtle: a short pad with long claw scratches; the feet wide apart either
+   side of the shell, which drags a line down the middle. */
+const turtle: Tracks = {
+  feet: {
+    front: [
+      { e: [0, 10, 16, 11], o: 0.85 },
+      { d: "M -12 0 L -19 -22", w: 4.5 },
+      { d: "M -6 -3 L -9 -28", w: 4.5 },
+      { d: "M 0 -4 L 0 -30", w: 4.5 },
+      { d: "M 6 -3 L 9 -28", w: 4.5 },
+      { d: "M 12 0 L 19 -22", w: 4.5 },
+    ],
+  },
+  steps: [
+    { at: [24, 112], s: 0.3, r: -22, left: true },
+    { at: [76, 94], s: 0.3, r: 22 },
+    { at: [24, 72], s: 0.3, r: -22, left: true },
+    { at: [76, 54], s: 0.3, r: 22 },
+    { at: [24, 32], s: 0.3, r: -22, left: true },
+    { at: [76, 14], s: 0.3, r: 22 },
+  ],
+  drag: { d: "M 50 128 L 50 2", w: 2.5 },
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog, elephant, mouse, bird, parrot } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant, mouse, bird, parrot, turtle } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
