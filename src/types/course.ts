@@ -142,7 +142,32 @@ export type Question =
       seed in the soil under it — slid back, it shrinks again. Nothing can
       go wrong; the right end is the vegetable, whole (its `picture` waits
       there, faint). */
-  | { type: "grow"; ask: Ask; word: string; picture: StaticImageData; scene: GrowScene };
+  | { type: "grow"; ask: Ask; word: string; picture: StaticImageData; scene: GrowScene }
+  /** Match the footprints (Bloo's Animals, 2026-10-26): the animal above
+      three sheets of footprints — its `own` and two `others` far unlike
+      them, dealt in a seeded order. Draw a line from the animal to its
+      footprints (or tap the sheet). */
+  | { type: "tracks"; ask: Ask; word: string; picture: StaticImageData; own: Tracks; others: readonly Tracks[] };
+
+/** One part of a footprint, in ink: a path — filled, or stroked `w` wide —
+    or an ellipse (centre, radii, turn in °). `o`: how dark (1 when left
+    out) — a big soft sole is pressed lighter than a toe. */
+export type PrintPart =
+  | { d: string; w?: number; o?: number }
+  | { e: readonly [cx: number, cy: number, rx: number, ry: number, turn?: number]; w?: number; o?: number };
+
+/** An animal's footprints, as a field guide draws them: its feet — a right
+    foot, toes up, in a box from −50 to 50 round its middle (a left foot is
+    the same, mirrored) — and its trail on a 100×130 sheet, walking up. */
+export interface Tracks {
+  feet: { front: readonly PrintPart[]; hind?: readonly PrintPart[] };
+  /** Each print in the order it was made, bottom first: its middle, its
+      size (sheet units per foot unit), its turn (°), and whether it is a
+      left foot and a hind one. */
+  steps: readonly { at: readonly [number, number]; s: number; r?: number; left?: boolean; hind?: boolean }[];
+  /** A tail or a shell dragged along between them, stroked `w` wide. */
+  drag?: { d: string; w: number };
+}
 
 /** Where the foods grow, to pick them (Nova's Fruits review) — one render
     (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
