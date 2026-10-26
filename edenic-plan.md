@@ -195,7 +195,7 @@ sort boxes, done screen, the course page).
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
 | Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell, then (2026-10-24) **Grow it** — slide the knob and the vegetable grows from its seed in the soil, cut open; built 2026-10-02; reworked 2026-10-03; its third step was **Nova's cups** 2026-10-08 → 2026-10-23 (a /play game since) — and before them a tap-by-tap Grow it (2026-10-07, replaced); the 2026-10-24 Grow it is a slide, the plant following the knob. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
-| Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell (its third step, Feed it, removed 2026-10-12 — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
+| Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell → match the footprints (2026-10-26 — draw a chalk line from the animal to its own footprints among three far-unlike sheets; the fish has no feet, so none; Feed it, the third step until 2026-10-12, was removed — "simple, but with a goal"; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **make it by hand** since the same day (the user did not like Dress Bloo and chose this from four options): tap the cloud and it rains, push the clouds off the sun, swipe the sky and the wind blows, shake the cloud and it snows — three goes each. Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
@@ -245,6 +245,7 @@ about 3 minutes.
 | **Make it**: drag the thing the word names into Nova's blender (juice) or soup pot (soup) | built (`make`) | Fruits review |
 | ~~Fill the word~~: rub each empty letter and it fills with small pictures of the thing | removed 2026-10-08 | Fruits dropped it 2026-10-07 ("not suitable"), Animals 2026-10-08 — its last course |
 | ~~Feed it~~: three bites of the animal's own food dragged or tapped into its mouth | removed 2026-10-12 | Animals — "empty talk": no goal |
+| **Match the footprints**: the animal above three sheets of footprints — its own and two far unlike them; draw a line from the animal to its own, or tap the sheet | built (`tracks`) | Animals |
 | ~~The magic button~~: the picture starts bare; each tap on the glowing spot spreads the next part of the season over it | removed 2026-10-12 | Seasons, its last course (Fruits' Grow it and Months' wheel went 2026-10-08) |
 | **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
@@ -270,7 +271,13 @@ about 3 minutes.
   bird, parrot, turtle, gecko — each the course video's own animal, cut
   out of its still (the cow, with no still, removed 2026-10-13); each lesson is reel → word →
   spell (Feed it, its third step from 2026-10-08, was removed 2026-10-12:
-  "a cat you give milk to is empty talk — simple, but with a goal"). The first idea, a Find in a farm/sea scene, was
+  "a cat you give milk to is empty talk — simple, but with a goal").
+  Since 2026-10-26 (direct request) every lesson but the fish's ends with
+  **Match the footprints**: the animal above three paper sheets of
+  footprints drawn as a field guide draws them (`data/tracks.ts`) — its
+  own and two far unlike them — draw a line from the animal to its own,
+  or tap the sheet. A real choice, not filler: the lesson never showed
+  its feet. The first idea, a Find in a farm/sea scene, was
   dropped: finding the cat among others is choosing inside a one-thing
   lesson. Review: sort the three, each in two coats, into their
   homes (cat bed, kennel, fishbowl — each box labelled with the
@@ -654,6 +661,18 @@ Before calling Learn done (easy to forget):
       a ring that bursts, sparkles. Verified 360x640 → 1440x900, ar, dark,
       keyboard, and a recorded drag.
 - [ ] The user checks Grow it again → fixes.
+- [x] **Animals: Match the footprints** (2026-10-26, direct request): the
+      last step of every animal lesson but the fish's — the animal, its
+      handle, and three paper sheets pinned to Bloo's board, each a trail
+      of footprints drawn true to the animal (cat: round, no claws; dog:
+      claws; elephant: a cracked sole with toenails; mouse: bounding fours
+      and a tail; bird: hopping pairs; parrot: an X; turtle: claws either
+      side of a shell drag; gecko: toe pads and an S tail). Drag a chalk
+      line from the animal to its own (or tap the sheet): the right one
+      keeps the line and its footprints are walked again; a wrong one
+      shakes, the line lets go, the sheet greys. The demo draws to a blank
+      sheet — how, never which. Played headless 375x667 → 1440x900.
+- [ ] The user checks Match the footprints → fixes.
 - [x] `code hygiene` (2026-10-13) — dead CSS, an unreachable colour
       branch, ~950 lines of dead render builders (output proven identical).
 - [ ] `public/things-in-videos/` deleted — the user's call (untracked).
