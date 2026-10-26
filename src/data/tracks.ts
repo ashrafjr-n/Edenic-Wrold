@@ -6,13 +6,14 @@ import type { PrintPart, Tracks } from "@/types/course";
    up the sheet, bottom print first. Sizes are true to each other — an
    elephant's sole fills a sheet, a mouse's foot is a few toes. The fish
    has none: it has no feet. */
+
 /** Thin toes from one point, each ending in a dot (`dot` its radius). */
 const toes = (from: readonly [number, number], tips: readonly (readonly [number, number])[], w: number, dot: number): PrintPart[] =>
   tips.flatMap(([x, y]) => [{ d: `M ${from[0]} ${from[1]} L ${x} ${y}`, w }, { e: [x, y, dot, dot] }]);
 
-/* Cat: round, four teardrop toes and NO claws (drawn in as it walks), the
-   leading toe a little ahead; the heel pad wide, two lobes in front, three
-   behind. Walks one paw before the other, nearly in a line. */
+/* Cat: round, four teardrop toes and NO claws (drawn in as it walks),
+   the leading toe a little ahead; the heel pad wide, two lobes in front,
+   three behind. Walks one paw before the other, nearly in a line. */
 const cat: Tracks = {
   feet: {
     front: [
