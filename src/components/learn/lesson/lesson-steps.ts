@@ -51,6 +51,8 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "harvest" };
     case "grow":
       return { kind: "grow", target: q.word };
+    case "tracks":
+      return { kind: "tracks", target: q.word };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -60,7 +62,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
 
 /** How a step is played, for the task button's popup. The spelling demo
     deals with the board's own seed, so it shows the very letters the child
-    sees; Grow it's knob wears the course's `tone`, as on the board. A Pick of pictures with nothing above it (no word, no sum) has none. */
+    sees; Grow it's knob and Match's handle wear the course's `tone`, as on the board. A Pick of pictures with nothing above it (no word, no sum) has none. */
 export function demoFor(q: Question, accent: string, seed: string, tone: { face: string; edge: string; ink: string }): TaskDemoDef | undefined {
   switch (q.type) {
     case "word":
@@ -90,6 +92,8 @@ export function demoFor(q: Question, accent: string, seed: string, tone: { face:
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "grow":
       return { kind: "grow", scene: q.scene, tone };
+    case "tracks":
+      return { kind: "tracks", picture: q.picture, word: q.word, tone };
     case "pick":
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
@@ -109,7 +113,7 @@ export function lessonFaces(lesson: LessonDef): Face[] {
       const answer = q.options[q.answer];
       return answer.kind === "text" ? [] : [answer];
     }
-    if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
+    if ((q.type === "word" || q.type === "spell" || q.type === "tracks") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
     return [];
   });
   const key = (face: Face) => (face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text);
