@@ -53,7 +53,31 @@ const dog: Tracks = {
   ],
 };
 
+/* Elephant: one big round sole pressed soft and cracked, toenails along
+   its front edge. Two steps fill the sheet. */
+const elephant: Tracks = {
+  feet: {
+    front: [
+      { e: [0, 0, 44, 48], o: 0.22 },
+      { e: [0, 0, 44, 48], w: 3.2, o: 0.85 },
+      { d: "M -30 6 Q -16 -2 -2 8 T 28 4", w: 1.8, o: 0.45 },
+      { d: "M -22 24 Q -8 17 6 27 T 26 22", w: 1.8, o: 0.45 },
+      { d: "M -12 -16 Q 0 -9 14 -16", w: 1.8, o: 0.45 },
+      { d: "M -2 8 L 2 22", w: 1.6, o: 0.4 },
+      { d: "M 10 -16 L 8 4", w: 1.6, o: 0.4 },
+      { e: [-31, -28, 7.5, 5, -52] },
+      { e: [-12, -41, 7.5, 5, -18] },
+      { e: [12, -41, 7.5, 5, 18] },
+      { e: [31, -28, 7.5, 5, 52] },
+    ],
+  },
+  steps: [
+    { at: [36, 96], s: 0.46, left: true },
+    { at: [64, 36], s: 0.46 },
+  ],
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
