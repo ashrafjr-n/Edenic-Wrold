@@ -124,7 +124,26 @@ const bird: Tracks = {
   ],
 };
 
+/* Parrot: two toes forward, two BACK — an X — and it walks, toes in. */
+const parrot: Tracks = {
+  feet: {
+    front: [
+      { d: "M 0 0 Q -6 -20 -16 -38", w: 8.5 },
+      { d: "M 0 0 Q 6 -20 14 -36", w: 8.5 },
+      { d: "M 0 0 Q -8 16 -20 30", w: 8.5 },
+      { d: "M 0 0 Q 8 16 18 28", w: 8.5 },
+      { e: [0, 0, 7, 8] },
+    ],
+  },
+  steps: [
+    { at: [42, 108], s: 0.25, r: 14, left: true },
+    { at: [58, 78], s: 0.29, r: -14 },
+    { at: [42, 48], s: 0.25, r: 14, left: true },
+    { at: [58, 18], s: 0.29, r: -14 },
+  ],
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog, elephant, mouse, bird } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant, mouse, bird, parrot } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
