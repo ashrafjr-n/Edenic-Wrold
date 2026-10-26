@@ -3060,6 +3060,65 @@ button:disabled,
   }
 }
 
+/* Match the footprints' demo: the finger draws the line from the handle
+   down to the middle (blank) sheet while it is pressed (38–64%), the line
+   rests, the sheet is ringed, and all lets go with the finger (84%). */
+.demo-tracks-pen {
+  animation: demo-tracks-pen 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-tracks-pen {
+  0%,
+  38% {
+    translate: 0 0;
+  }
+  64%,
+  100% {
+    translate: 0 17.5cqi;
+  }
+}
+
+.demo-tracks-line {
+  stroke-dasharray: 1;
+  animation: demo-tracks-line 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-tracks-line {
+  0%,
+  38% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  64%,
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  90%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.demo-tracks-sheet {
+  animation: demo-tracks-sheet 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-tracks-sheet {
+  0%,
+  62%,
+  90%,
+  100% {
+    outline: 0 solid transparent;
+  }
+  68%,
+  82% {
+    outline: 1cqi solid var(--chalk-accent);
+    outline-offset: 0.8cqi;
+  }
+}
+
 .demo-fall {
   opacity: 0;
   animation: demo-fall 3.6s linear infinite;
@@ -3933,6 +3992,8 @@ button:disabled,
   /* The demos hold their "tapped" frame: the finger on the target, the
      first part drawn, the ring round the thing found. */
   .demo-finger,
+  .demo-tracks-pen,
+  .demo-tracks-sheet,
   .demo-press,
   .demo-wave,
   .demo-fly,
