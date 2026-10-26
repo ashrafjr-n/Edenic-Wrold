@@ -103,7 +103,28 @@ const mouse: Tracks = {
   drag: { d: "M 50 128 C 46 112 54 98 50 84 S 46 56 50 40 S 54 14 50 2", w: 1.2 },
 };
 
+/* Bird (a sparrow): three thin toes forward, one back; it HOPS, so the
+   prints come in pairs, side by side. */
+const birdFoot: PrintPart[] = [
+  { d: "M 0 4 Q -1 -18 1 -44", w: 6 },
+  { d: "M 0 4 Q -12 -14 -24 -32", w: 6 },
+  { d: "M 0 4 Q 12 -14 24 -32", w: 6 },
+  { d: "M 0 4 Q 1 16 -1 28", w: 6 },
+  { e: [0, 2, 5.5, 6] },
+];
+const bird: Tracks = {
+  feet: { front: birdFoot },
+  steps: [
+    { at: [41, 106], s: 0.27, r: 8, left: true },
+    { at: [59, 106], s: 0.27, r: -8 },
+    { at: [41, 64], s: 0.27, r: 8, left: true },
+    { at: [59, 64], s: 0.27, r: -8 },
+    { at: [41, 22], s: 0.27, r: 8, left: true },
+    { at: [59, 22], s: 0.27, r: -8 },
+  ],
+};
+
 /** Each walking animal's footprints. */
-export const TRACKS = { cat, dog, elephant, mouse } satisfies Record<string, Tracks>;
+export const TRACKS = { cat, dog, elephant, mouse, bird } satisfies Record<string, Tracks>;
 
 export type Walker = keyof typeof TRACKS;
