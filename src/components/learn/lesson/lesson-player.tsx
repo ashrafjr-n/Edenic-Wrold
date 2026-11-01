@@ -33,6 +33,7 @@ import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
 import { GrowPlant } from "./grow-plant";
+import { MatchShadows } from "./match-shadows";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -447,6 +448,8 @@ export function LessonPlayer({
       body = (
         <GrowPlant key={seed} word={q.word} picture={q.picture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} tone={courseTone} onSolved={onSolved} />
       );
+    } else if (q.type === "shadows") {
+      body = <MatchShadows key={seed} word={q.word} animals={q.animals} seed={seed} shadowAria={lines.shadowAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
