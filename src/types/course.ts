@@ -143,7 +143,21 @@ export type Question =
       shadows on a paper, dealt in another order. Drag each onto its own
       shadow, or tap it and then the shadow. `demo`: an animal NOT among
       them, for the task button's demo. */
-  | { type: "shadows"; ask: Ask; word: string; animals: readonly ShadowPair[]; demo: ShadowPair };
+  | { type: "shadows"; ask: Ask; word: string; animals: readonly ShadowPair[]; demo: ShadowPair }
+  /** Feed the animal (Bloo's Animals, 2026-11-01): the animal over three
+      foods — its own first (dealt in a seeded order), then two it would
+      never eat. Drag one into it (or tap it): its own is eaten, anything
+      else it shakes its head at. `mouth`: where the food goes, % of the
+      picture. `demo`: another animal fed its own food. */
+  | {
+      type: "feed";
+      ask: Ask;
+      word: string;
+      picture: StaticImageData;
+      mouth: readonly [number, number];
+      foods: readonly Food[];
+      demo: { picture: StaticImageData; mouth: readonly [number, number]; food: Food };
+    };
 
 /** An animal and its shadow (Match the shadow) — the shadow is its
     picture, darkened, at the same size, so the one lands on the other. */

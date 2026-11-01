@@ -34,6 +34,7 @@ import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
 import { GrowPlant } from "./grow-plant";
 import { MatchShadows } from "./match-shadows";
+import { FeedAnimal } from "./feed-animal";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
@@ -450,6 +451,8 @@ export function LessonPlayer({
       );
     } else if (q.type === "shadows") {
       body = <MatchShadows key={seed} word={q.word} animals={q.animals} seed={seed} shadowAria={lines.shadowAria} onSolved={onSolved} onMiss={onMiss} />;
+    } else if (q.type === "feed") {
+      body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
