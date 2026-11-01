@@ -63,12 +63,10 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     if (row && now) row.scrollLeft = now.offsetLeft - (row.clientWidth - now.offsetWidth) / 2;
   }, [nextIndex]);
 
-  let next: ReactNode = null;
-  const cells = titles.map((title, i) => {
-    const n = i + 1;
+  /** Lesson `i`'s word and its thing(s) as magnets. */
+  const lessonAt = (i: number) => {
+    const title = titles[i];
     const stop = stops[i];
-    const done = stars[i] > 0;
-    const now = i === nextIndex;
     const review = stop.review === true;
     /* A word still to learn keeps its name a secret; a review is labelled
        by its title. */
@@ -89,34 +87,42 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
         ))}
       </span>
     );
+    return { n: i + 1, title, review, word, art };
+  };
 
-    if (now) {
-      const springing = i === unlocking;
-      next = (
-        <Link
-          ref={nextRef}
-          href={`${basePath}/${n}`}
-          className="board-next"
-          aria-label={format(dict.startLessonAria, { n, title })}
-        >
-          {art(false, springing, "(min-width: 1024px) 17rem, 10rem")}
-          <span dir={dir} className="board-next-text">
-            <span className="board-next-label">{format(dict.lessonN, { n })}</span>
-            <span className="board-next-word">{word}</span>
-            <span className="btn3d board-next-go" aria-hidden>
-              <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
-              <span>{dict.ctaStart}</span>
-            </span>
+  let next: ReactNode = null;
+  if (nextIndex >= 0) {
+    const { n, title, word, art } = lessonAt(nextIndex);
+    const springing = nextIndex === unlocking;
+    next = (
+      <Link
+        ref={nextRef}
+        href={`${basePath}/${n}`}
+        className="board-next"
+        aria-label={format(dict.startLessonAria, { n, title })}
+      >
+        {art(false, springing, "(min-width: 1024px) 17rem, 10rem")}
+        <span dir={dir} className="board-next-text">
+          <span className="board-next-label">{format(dict.lessonN, { n })}</span>
+          <span className="board-next-word">{word}</span>
+          <span className="btn3d board-next-go" aria-hidden>
+            <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
+            <span>{dict.ctaStart}</span>
           </span>
-          {springing && (
-            <span className="board-cell-lock path-lock-off" style={{ animationDelay: `${SPRING_DELAY}s` }} aria-hidden>
-              <Lock className="h-5 w-5" strokeWidth={2.75} />
-            </span>
-          )}
-        </Link>
-      );
-    }
+        </span>
+        {springing && (
+          <span className="board-cell-lock path-lock-off" style={{ animationDelay: `${SPRING_DELAY}s` }} aria-hidden>
+            <Lock className="h-5 w-5" strokeWidth={2.75} />
+          </span>
+        )}
+      </Link>
+    );
+  }
 
+  const cells = titles.map((_, i) => {
+    const { n, title, review, word, art } = lessonAt(i);
+    const done = stars[i] > 0;
+    const now = i === nextIndex;
     const open = done || now;
     const state = now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked";
     /* A review's small box is its things, two by two — its long name
