@@ -26,9 +26,10 @@ export type Target = { shape: ShapeId } | { color: ColorId } | { group: Group };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
-    picture's alt text. */
+    picture's alt text. A `full` picture (a whole scene, not one thing)
+    fills its tile edge to edge. */
 export type Face =
-  | { kind: "picture"; src: StaticImageData; word: string }
+  | { kind: "picture"; src: StaticImageData; word: string; full?: boolean }
   | { kind: "shape"; shape: ShapeId }
   | { kind: "text"; text: string };
 

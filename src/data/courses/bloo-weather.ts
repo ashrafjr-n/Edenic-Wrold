@@ -24,7 +24,7 @@ const WEATHERS: Record<Weather, { scene: StaticImageData; bloo: StaticImageData;
 const ORDER = Object.keys(WEATHERS) as Weather[];
 
 const face = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].scene, word: weather });
-const dressed = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].bloo, word: weather });
+const dressed = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].bloo, word: weather, full: true });
 
 /**
  * Bloo's weather — one weather, one lesson: meet it (Bloo's hill under
