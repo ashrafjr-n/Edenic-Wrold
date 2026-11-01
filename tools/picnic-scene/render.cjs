@@ -8,6 +8,13 @@
  *
  *   node tools/picnic-scene/render.cjs squares   (picnic | squares | triangles | rectangles | red | yellow | purple | pink | white)
  *
+ * Nova's kitchen counter (Find It!, the Vegetables lessons' last step,
+ * 2026-11-01) is a Find scene like the picnics — `out/kitchen/` — then
+ * `crop.py kitchen public/assets/learn/nova/fruits/find`, whose numbers go
+ * into `data/kitchen.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs kitchen
+ *
  * Nova's garden — for each garden, writes `out/harvest-<garden>/`: the
  * garden without its food, a mask of what stands in front of it, each food
  * alone, and `meta.json`. Then `crop.py harvest-<garden>`.
