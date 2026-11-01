@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Lock, Play, Star } from "lucide-react";
+import { Check, Lock, Play } from "lucide-react";
 import { format } from "@/lib/format-dict";
 import { useCourseUnlock } from "@/components/learn/use-course-unlock";
-import { itemKey, useProgress } from "@/store/progress";
+import { useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { BoxStop } from "@/data/courses";
 
@@ -28,35 +28,24 @@ interface BoardLessonsProps {
     settled (seconds). */
 const SPRING_DELAY = 1.1;
 
-/* The stars each lesson had the last time the child saw its board — stars
-   earned since fly into their lesson's box, once. */
-const STARS_SEEN_KEY = "edenic-board-stars-seen";
-
-function readStarsSeen(): Record<string, number> {
-  try {
-    const seen: unknown = JSON.parse(localStorage.getItem(STARS_SEEN_KEY) ?? "{}");
-    return seen && typeof seen === "object" ? (seen as Record<string, number>) : {};
-  } catch {
-    return {};
-  }
-}
-
 /**
- * A course's lessons up on Pinki's board (2026-10-23 layout):
+ * A course's lessons up on the friend's board (2026-11-02 layout):
  *
- * - The lesson to play next, big in the middle: a paper sheet pinned up by
- *   one magnet — its thing, "Lesson 3", its word, one Start button. A lock
- *   that opened since the last visit springs off it.
- * - The lessons learned, small on ONE line above it, each with the stars it
- *   earned (of 3; any earned since the last visit fly in).
- * - The ones still to come, small on one line below it, dimmed, a "?" for
- *   their word (a colour shows an empty pot).
+ * - The lesson to play next, big in the middle — the one thing to look at:
+ *   a paper sheet pinned up by one magnet, its thing, "Lesson 3", its word,
+ *   one Start button. A lock that opened since the last visit springs off.
+ * - Under it, EVERY lesson in order on one line, all the same size: the
+ *   learned ones a chalk box with a tick, the next one ringed in the
+ *   friend's chalk, the ones to come dashed and dim with a "?". A line that
+ *   doesn't fit scrolls sideways, centred on the next one — never wraps.
  *
- * A line that doesn't fit scrolls sideways — never wraps.
+ * No stars (direct request 2026-11-02: no stars or rewards) — learned is
+ * learned.
  */
 export function BoardLessons({ titles, stops, characterId, lessonId, basePath, dict, allDone, dir }: BoardLessonsProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLAnchorElement>(null);
+  const rowRef = useRef<HTMLOListElement>(null);
   const { stars, nextIndex, unlocking } = useCourseUnlock({
     characterId,
     lessonId,
@@ -66,47 +55,20 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     scroll: true,
   });
   const hydrated = useProgress((state) => state.hydrated);
-  /* What the board showed last time, read once progress is known: until
-     then a learned lesson's stars wait hidden, so a new one never shows,
-     vanishes and flies in. */
-  const [seen, setSeen] = useState<Record<string, number> | null>(null);
-  const starsKey = stars.join(",");
-  useEffect(() => {
-    if (!hydrated) return;
-    const timer = setTimeout(() => {
-      const before = readStarsSeen();
-      setSeen((current) => current ?? before);
-      const now = { ...before };
-      starsKey.split(",").forEach((s, i) => {
-        if (Number(s) > 0) now[itemKey(characterId, lessonId, i + 1)] = Number(s);
-      });
-      try {
-        localStorage.setItem(STARS_SEEN_KEY, JSON.stringify(now));
-      } catch {
-        /* Storage off: the stars just don't fly. Nothing is lost. */
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [hydrated, starsKey, characterId, lessonId]);
 
-  /* The learned row is one line that may scroll: start it at its end, the
-     latest lesson learned beside the next one. */
-  const learnedRef = useRef<HTMLDivElement>(null);
-  const learnedCount = stars.filter((s) => s > 0).length;
+  /* The row may scroll: bring the lesson the child is on to its middle. */
   useEffect(() => {
-    const row = learnedRef.current;
-    if (row) row.scrollLeft = row.scrollWidth;
-  }, [learnedCount]);
+    const row = rowRef.current;
+    const now = row?.querySelector<HTMLElement>(".board-cell--now");
+    if (row && now) row.scrollLeft = now.offsetLeft - (row.clientWidth - now.offsetWidth) / 2;
+  }, [nextIndex]);
 
-  let flying = 0;
-  const learned: ReactNode[] = [];
-  const later: ReactNode[] = [];
   let next: ReactNode = null;
-
-  titles.forEach((title, i) => {
+  const cells = titles.map((title, i) => {
     const n = i + 1;
     const stop = stops[i];
     const done = stars[i] > 0;
+    const now = i === nextIndex;
     const review = stop.review === true;
     /* A word still to learn keeps its name a secret; a review is labelled
        by its title. */
@@ -127,19 +89,17 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
         ))}
       </span>
     );
-    const style = { animationDelay: `${0.35 + i * 0.05}s` };
 
-    if (i === nextIndex) {
+    if (now) {
       const springing = i === unlocking;
       next = (
         <Link
-          key={n}
           ref={nextRef}
           href={`${basePath}/${n}`}
           className="board-next"
           aria-label={format(dict.startLessonAria, { n, title })}
         >
-          {art(false, springing, "(min-width: 1024px) 15rem, 8rem")}
+          {art(false, springing, "(min-width: 1024px) 17rem, 10rem")}
           <span dir={dir} className="board-next-text">
             <span className="board-next-label">{format(dict.lessonN, { n })}</span>
             <span className="board-next-word">{word}</span>
@@ -155,69 +115,68 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           )}
         </Link>
       );
-    } else if (done) {
-      learned.push(
-        <Link
-          key={n}
-          href={`${basePath}/${n}`}
-          className="board-cell"
-          style={style}
-          aria-label={format(dict.startLessonAria, { n, title })}
-        >
-          {art(false, false, "(min-width: 1024px) 5rem, 3rem")}
-          {/* A review's small box is its things, two by two — its long
-              name ("Animals review") has no room under them (it ran into
-              the lock); the label reads it out. */}
-          {!review && <span dir={dir} className="board-cell-word">{word}</span>}
-          <span className="board-cell-stars" aria-hidden>
-            {[1, 2, 3].map((k) => {
-              const earned = k <= stars[i];
-              const isNew = earned && seen !== null && k > (seen[itemKey(characterId, lessonId, n)] ?? 0);
-              const state = !earned ? "" : seen === null ? "board-star--on board-star--waiting" : isNew ? "board-star--on board-star--new" : "board-star--on";
-              return (
-                <Star
-                  key={k}
-                  className={`board-star ${state}`}
-                  style={isNew ? { animationDelay: `${0.6 + flying++ * 0.18}s` } : undefined}
-                  strokeWidth={2.5}
-                />
-              );
-            })}
+    }
+
+    const open = done || now;
+    const state = now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked";
+    /* A review's small box is its things, two by two — its long name
+       ("Animals review") has no room under them; the label reads it out. */
+    const inner = (
+      <>
+        <span className="board-cell-n" aria-hidden>
+          {n}
+        </span>
+        {art(!open, false, "(min-width: 1024px) 5rem, 3rem")}
+        {!review && (
+          <span dir={dir} className="board-cell-word">
+            {open ? word : "?"}
           </span>
-        </Link>,
-      );
-    } else {
-      later.push(
-        <span
-          key={n}
-          className="board-cell board-cell--locked"
-          style={style}
-          aria-label={format(dict.lockedLessonAria, { n, title })}
-        >
-          {art(true, false, "(min-width: 1024px) 5rem, 3rem")}
-          {!review && <span dir={dir} className="board-cell-word">?</span>}
+        )}
+        {done && (
+          <span className="board-cell-tick" aria-hidden>
+            <Check strokeWidth={3.5} />
+          </span>
+        )}
+        {!open && (
           <span className="board-cell-lock" aria-hidden>
             <Lock className="h-3 w-3" strokeWidth={2.75} />
           </span>
-        </span>,
-      );
-    }
+        )}
+      </>
+    );
+    const style = { animationDelay: `${0.35 + i * 0.04}s` };
+    return (
+      <li key={n} className="board-row-item">
+        {open ? (
+          <Link
+            href={`${basePath}/${n}`}
+            className={`board-cell ${state}`}
+            style={style}
+            aria-label={format(dict.startLessonAria, { n, title })}
+            aria-current={now ? "step" : undefined}
+          >
+            {inner}
+          </Link>
+        ) : (
+          <span className={`board-cell ${state}`} style={style} aria-label={format(dict.lockedLessonAria, { n, title })}>
+            {inner}
+          </span>
+        )}
+      </li>
+    );
   });
 
   return (
     <div ref={rootRef} className={`board-lessons ${next ? "" : "board-lessons--all"}`}>
-      {learned.length > 0 && (
-        <div ref={learnedRef} className="board-row">
-          {learned}
-        </div>
-      )}
       {next}
       {!next && hydrated && (
         <p dir={dir} className="chalk-title board-all-done">
           {allDone}
         </p>
       )}
-      {later.length > 0 && <div className="board-row">{later}</div>}
+      <ol ref={rowRef} className="board-row">
+        {cells}
+      </ol>
     </div>
   );
 }
