@@ -1,8 +1,7 @@
 import type { StaticImageData } from "next/image";
-import type { Ask, ColorId, Face, Gesture, LessonDef, Question, SortBin, Thing, Weather } from "@/types/course";
+import type { ColorId, Face, LessonDef, Question, SortBin, Thing, Weather } from "@/types/course";
 import { COLORS } from "@/data/colors";
 import { WEAR } from "@/data/bloo-wear";
-import { WEATHER_MAKING } from "@/data/bloo-skies";
 import sunny from "../../../public/assets/learn/bloo/weather/scenes/sunny.png";
 import rainy from "../../../public/assets/learn/bloo/weather/scenes/rainy.png";
 import windy from "../../../public/assets/learn/bloo/weather/scenes/windy.png";
@@ -20,27 +19,21 @@ const ORDER = Object.keys(WEATHERS) as Weather[];
 
 const face = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].scene, word: weather });
 
-/** What to do to make each weather — the step's instruction. */
-const MAKE_ASK: Record<Gesture, Ask["key"]> = { tap: "rainTap", push: "sunPush", swipe: "windSwipe", shake: "snowShake" };
-
 /**
  * Bloo's weather — one weather, one lesson, and every step about IT (the
  * one-thing lesson rule): meet it (Bloo's hill under it, its word, its
- * speaker) → build its word → make it by hand on his hill, its own way
- * (tap the cloud, push the clouds off the sun, swipe the sky, shake the
- * cloud — direct request 2026-10-08). Telling the four apart is the
- * review's.
+ * speaker) → build its word. Telling the four apart is the review's.
+ * (Make it by hand, the third step from 2026-10-08, was removed
+ * 2026-11-01.)
  */
 function weatherLesson(weather: Weather, i: number): LessonDef {
   const { scene } = WEATHERS[weather];
-  const { gesture, scene: making } = WEATHER_MAKING[weather];
   return {
     reel: `/assets/learn/bloo/weather/reels/${i + 1}.mp4`,
     cover: [scene],
     questions: [
       { type: "word", ask: { key: "thisWeather", vars: { weather } }, word: weather, picture: scene },
       { type: "spell", ask: { key: "spell", vars: { word: weather } }, word: weather },
-      { type: "weather", ask: { key: MAKE_ASK[gesture], vars: { weather } }, word: weather, gesture, scene: making },
     ],
   };
 }
