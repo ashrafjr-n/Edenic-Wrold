@@ -194,6 +194,7 @@ export const en = {
     meetThing: "Meet the {thing}!",
     feedAnimal: "What does the {thing} eat? Feed it!",
     basketTime: "Put the {thing} in Nova's basket!",
+    findIt: "Find the {thing}!",
     makeSoup: "Make a vegetable soup!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",

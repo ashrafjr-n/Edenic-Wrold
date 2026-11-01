@@ -180,6 +180,7 @@ export const ar: Dictionary = {
     meetThing: "تعرّف على {thing}!",
     feedAnimal: "ماذا يأكل {thing}؟ أطعِمه!",
     basketTime: "ضع {thing} في سلة نوفا!",
+    findIt: "ابحث عن {thing}!",
     makeSoup: "اصنع حساء خضار!",
     likeThem: "هل تحبّها؟",
     thisWeather: "الجو {weather}!",

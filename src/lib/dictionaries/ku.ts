@@ -184,6 +184,7 @@ export const ku: Dictionary = {
     meetThing: "{thing} بناسە!",
     feedAnimal: "{thing} چ دخوت؟ خوارنێ بدێ!",
     basketTime: "{thing} بکە د سەلکا نۆڤایێ دا!",
+    findIt: "{thing} ببینە!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     thisWeather: "هەوا {weather}ە!",
