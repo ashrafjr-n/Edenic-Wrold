@@ -184,6 +184,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     fs.mkdirSync(out, { recursive: true });
     for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
     fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+  } else if (mode === "kitchen") {
+    for (const frame of ["landscape", "portrait"]) {
+      const layers = await render(page, `scene=kitchen&frame=${frame}`);
+      const out = path.join(__dirname, "out", `kitchen-${frame}`);
+      fs.mkdirSync(out, { recursive: true });
+      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+    }
   } else {
     const name = mode || "picnic";
     const layers = await render(page, `scene=${name}`);
