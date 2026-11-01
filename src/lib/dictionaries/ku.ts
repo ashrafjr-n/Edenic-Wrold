@@ -185,10 +185,6 @@ export const ku: Dictionary = {
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     thisWeather: "هەوا {weather}ە!",
-    rainTap: "دەست بدە ئەوری دا باران ببارێت!",
-    sunPush: "ئەوران پاڵ بدە دا ڕۆژ دەرکەڤیت!",
-    windSwipe: "تبلا خۆ ب سەر ئەسمانی دا ڕاکێشە دا با بێت!",
-    snowShake: "ئەوری بهەژینە دا بەفر ببارێت!",
     sortWeather: "هەر تشتەکی بکە د سندوقا هەوایێ وی دا!",
     whichWeather: "{weather} کیژە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
@@ -207,7 +203,6 @@ export const ku: Dictionary = {
     cook: "چێ بکە",
     like: "حەز دکەی؟",
     harvest: "بچنە",
-    weather: "چێ بکە",
     grow: "بچینە",
   },
   activities: {

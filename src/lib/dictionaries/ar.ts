@@ -181,10 +181,6 @@ export const ar: Dictionary = {
     makeSoup: "اصنع حساء خضار!",
     likeThem: "هل تحبّها؟",
     thisWeather: "الجو {weather}!",
-    rainTap: "المس الغيمة لتمطر!",
-    sunPush: "ادفع الغيوم بعيدًا لتشرق الشمس!",
-    windSwipe: "اسحب إصبعك عبر السماء لتهبّ الريح!",
-    snowShake: "هزّ الغيمة ليتساقط الثلج!",
     sortWeather: "ضع كل شيء في صندوق طقسه!",
     whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
@@ -203,7 +199,6 @@ export const ar: Dictionary = {
     cook: "اطبخ",
     like: "تحبّه؟",
     harvest: "اقطف",
-    weather: "اصنع",
     grow: "ازرع",
   },
   activities: {

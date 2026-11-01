@@ -195,10 +195,6 @@ export const en = {
     makeSoup: "Make a vegetable soup!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
-    rainTap: "Tap the cloud to make it rainy!",
-    sunPush: "Push the clouds away to make it sunny!",
-    windSwipe: "Swipe across the sky to make it windy!",
-    snowShake: "Shake the cloud to make it snowy!",
     sortWeather: "Put each thing in its weather's box!",
     whichWeather: "Which one is {weather}?",
     pickList: "Pick the things on Nova's list!",
@@ -218,7 +214,6 @@ export const en = {
     cook: "Cook",
     like: "Like?",
     harvest: "Pick",
-    weather: "Make",
     grow: "Grow",
   },
   activities: {
