@@ -567,9 +567,10 @@ function FeedDemo({ picture, mouth, food }: { picture: StaticImageData; mouth: r
       <span className="card card-clay-white pic-card absolute left-[30%] top-[64%] h-[28%] w-[40%]" />
       <span className="demo-feed absolute left-[39%] top-[67%] z-[1] h-[22%] w-[22%]" style={{ "--to-x": `${to.x}cqi`, "--to-y": `${to.y}cqi` } as CSSProperties}>
         <Image src={food.src} alt={food.word} fill sizes="5rem" className="object-contain" />
-        <span className="absolute left-1/2 top-1/2">
-          <Finger />
-        </span>
+      </span>
+      {/* The finger rides with the food, but never shrinks with it. */}
+      <span className="demo-feed-pen absolute left-1/2 top-[78%] z-10" style={{ "--to-x": `${to.x}cqi`, "--to-y": `${to.y}cqi` } as CSSProperties}>
+        <Finger />
       </span>
     </div>
   );

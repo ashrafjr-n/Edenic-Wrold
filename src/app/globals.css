@@ -2763,6 +2763,21 @@ button:disabled,
   }
 }
 
+.demo-feed-pen {
+  animation: demo-feed-pen 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-feed-pen {
+  0%,
+  36% {
+    translate: 0 0;
+  }
+  64%,
+  100% {
+    translate: var(--to-x) var(--to-y);
+  }
+}
+
 .demo-fly {
   animation: demo-fly 3.6s cubic-bezier(0.34, 1.25, 0.5, 1) infinite;
 }
@@ -3777,6 +3792,7 @@ button:disabled,
   .demo-fly,
   .demo-shadow-carry,
   .demo-feed,
+  .demo-feed-pen,
   .demo-draw,
   .demo-pen,
   .demo-ring,
