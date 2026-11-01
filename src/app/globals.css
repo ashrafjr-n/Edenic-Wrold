@@ -4704,20 +4704,22 @@ button:disabled,
   }
 }
 
-/* The lessons learned (above the next one) and still to come (below it):
-   small chalk boxes side by side, each its thing held up by a clay magnet
-   and its word. */
+/* Every lesson, in order, under the next one (2026-11-02): small chalk
+   boxes side by side, all one size, each its thing held up by a clay
+   magnet and its word. */
 .board-row {
-  --box: 3.6rem;
+  --box: 3.9rem;
   display: flex;
   flex-shrink: 0;
-  gap: 0.5rem;
+  gap: 0.6rem;
   max-width: 100%;
+  margin: 0;
+  list-style: none;
   /* ONE line, side by side — never stacked (direct request): what does not
      fit scrolls sideways (a phone with ten lessons), a thin chalk scrollbar
      showing there is more. The padding is the room the chalk frame's
      outset and the stars badge stand out into. */
-  padding: 0.85rem 0.6rem 0.6rem;
+  padding: 0.9rem 0.7rem 0.7rem;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
@@ -4737,6 +4739,7 @@ button:disabled,
 }
 
 .board-row > * {
+  display: flex;
   flex-shrink: 0;
   scroll-snap-align: center;
 }
@@ -4750,8 +4753,9 @@ button:disabled,
 
 @media (width >= 64rem) {
   .board-row {
-    --box: clamp(4rem, 8.5svh, 7rem);
-    padding-block: 0.75rem 0.4rem;
+    --box: clamp(4rem, min(10svh, 6vw), 6.5rem);
+    gap: 0.9rem;
+    padding-block: 0.9rem 0.5rem;
   }
 }
 
@@ -4902,55 +4906,59 @@ a.board-cell:focus-visible {
   color: rgb(247 243 233 / 45%);
 }
 
-/* A learned lesson's stars — what it earned, of 3. */
-.board-cell-stars {
+/* A learned lesson's tick, on its top corner, in the friend's chalk. */
+.board-cell-tick {
   position: absolute;
-  top: -0.6rem;
-  left: 50%;
-  translate: -50% 0;
-  display: flex;
-  gap: 0.05rem;
-  padding: 0.12rem 0.3rem;
+  top: -0.55rem;
+  right: -0.45rem;
+  display: grid;
+  place-items: center;
+  width: max(1.25rem, calc(var(--box) * 0.27));
+  aspect-ratio: 1;
   border-radius: 9999px;
-  background-color: #24463f;
-  box-shadow: 0 3px 6px -2px rgb(0 0 0 / 40%);
+  color: #24463f;
+  background-color: var(--chalk-accent);
+  box-shadow: 0 3px 6px -2px rgb(0 0 0 / 45%);
+  animation: chalk-pop 0.45s ease-out both;
+  animation-delay: inherit;
 }
 
-.board-star {
-  width: 0.95rem;
-  height: 0.95rem;
-  color: rgb(247 243 233 / 40%);
+.board-cell-tick svg {
+  width: 62%;
+  height: 62%;
 }
 
-.board-cell-stars .board-star {
-  width: calc(var(--box) * 0.15);
-  height: calc(var(--box) * 0.15);
-  min-width: 0.6rem;
-  min-height: 0.6rem;
+/* Its number, small chalk in the top corner — the order reads at a glance. */
+.board-cell-n {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.45rem;
+  font-size: max(0.65rem, calc(var(--box) * 0.17));
+  font-weight: 700;
+  line-height: 1;
+  color: rgb(247 243 233 / 60%);
 }
 
-.board-star--on {
+.board-cell--locked .board-cell-n {
+  color: rgb(247 243 233 / 35%);
+}
+
+/* The lesson the child is on, in the line: ringed in their chalk, the
+   same one the big sheet above shows. */
+.board-cell--now {
+  background-color: color-mix(in srgb, var(--chalk-accent) 22%, transparent);
+  box-shadow: 0 0 0 3px var(--chalk-accent);
+  border-image: none;
+  border-color: transparent;
+}
+
+a.board-cell--now:hover,
+a.board-cell--now:focus-visible {
+  background-color: color-mix(in srgb, var(--chalk-accent) 32%, transparent);
+}
+
+.board-cell--now .board-cell-n {
   color: var(--chalk-accent);
-  fill: currentColor;
-}
-
-/* Until the board knows what it showed last time, a learned star waits. */
-.board-star--waiting {
-  opacity: 0;
-}
-
-/* A star earned since the last visit flies into its box. */
-.board-star--new {
-  animation: board-star-in 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) backwards;
-}
-
-@keyframes board-star-in {
-  from {
-    opacity: 0;
-    scale: 2.6;
-    translate: -1.5rem -3rem;
-    rotate: -120deg;
-  }
 }
 
 .board-cell-lock {
@@ -5081,14 +5089,44 @@ a.board-cell:focus-visible {
   color: var(--color-ink-fixed);
 }
 
-@media (width >= 64rem) {
+/* A phone: the sheet stands up — its thing big on top, the words and
+   Start centred under it. */
+@media (width < 40rem) {
   .board-next {
-    max-width: 46rem;
-    padding: min(1.4rem, 1.8svh) 2.2rem min(1.4rem, 1.8svh) 1.6rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 19rem;
+    padding: 1.3rem 1.25rem 1.25rem;
+    text-align: center;
   }
 
   .board-next > .board-cell-art {
-    width: min(15rem, 19svh);
+    width: clamp(7rem, min(36vw, 22svh), 10rem);
+  }
+
+  .board-next-text {
+    align-items: center;
+  }
+}
+
+/* Wider: the sheet hugs what is on it, never a long empty strip. */
+@media (width >= 40rem) {
+  .board-next {
+    width: auto;
+    min-width: min(100%, 28rem);
+    padding-right: 3rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .board-next {
+    max-width: 46rem;
+    min-width: 32rem;
+    padding: min(1.6rem, 2.2svh) 3.5rem min(1.6rem, 2.2svh) 1.8rem;
+  }
+
+  .board-next > .board-cell-art {
+    width: min(17rem, 24svh);
   }
 
   .board-next-go {
