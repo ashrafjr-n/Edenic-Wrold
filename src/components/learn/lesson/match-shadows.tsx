@@ -21,15 +21,23 @@ const REACH = 12;
 const DRAG_THRESHOLD = 8;
 
 /* The height a step has, `--room` (as Match the footprints had it): the
-   animals' row and the paper of shadows each take at most a third of it,
-   so the step never pushes the page into a scroll. */
+   animals and the paper of shadows share it, so the step never pushes the
+   page into a scroll. A tall phone has height to spare and too little
+   width for four in a row: there they stand two by two (`--cols`). */
 const ROOM =
   "[--room:calc(100svh-21rem-min(2.5rem,4svh))] sm:[--room:calc(100svh-38rem)] lg:[--room:calc(var(--stage-h)-1.5rem)]";
 
+const COLS = "[--cols:4] [@media(max-width:639px)_and_(min-height:740px)]:[--cols:2]";
+
 /* One cell — an animal, or its shadow — the same size above and below, so
-   an animal lands exactly on its shadow: four in a row with their gaps and
-   the paper's padding, never taller than a third of the room. */
-const CELL = { "--cell": "min(calc((100cqi - 3 * var(--gap) - 1.5rem) / 4), calc(var(--room) * 0.36), 9.5rem)" } as CSSProperties;
+   an animal lands exactly on its shadow: `--cols` in a row with their gaps
+   and the paper's padding, and both blocks' rows (4 / cols each) in about
+   four fifths of the room. */
+const CELL = {
+  "--rows": "calc(4 / var(--cols))",
+  "--cell":
+    "min(calc((100cqi - (var(--cols) - 1) * var(--gap) - 1.5rem) / var(--cols)), calc((var(--room) * 0.82 - 1.5rem - (2 * var(--rows) - 1) * var(--gap)) / (2 * var(--rows))), 9.5rem)",
+} as CSSProperties;
 
 interface Drag {
   index: number;
@@ -203,9 +211,9 @@ export function MatchShadows({ word, animals, seed, shadowAria, onSolved, onMiss
 
   return (
     <div className={`card card-clay-white card-bare-lg relative w-full max-w-2xl px-2 py-3 [container-type:inline-size] sm:px-6 lg:max-w-3xl ${ROOM}`}>
-      <div className="flex flex-col items-center gap-[min(2.5rem,calc(var(--room)*0.1))] [--gap:0.4rem] sm:[--gap:1rem]" style={CELL}>
+      <div className={`flex flex-col items-center gap-[min(2.5rem,calc(var(--room)*0.1))] [--gap:0.4rem] sm:[--gap:1rem] ${COLS}`} style={CELL}>
         {/* The animals, standing on the board. */}
-        <div className="flex gap-[var(--gap)]">
+        <div className="grid grid-cols-[repeat(var(--cols),var(--cell))] gap-[var(--gap)]">
           {top.map((index, i) => {
             const { word: name, picture } = animals[index];
             const gone = placed.includes(index);
@@ -256,7 +264,7 @@ export function MatchShadows({ word, animals, seed, shadowAria, onSolved, onMiss
         </div>
 
         {/* Their shadows, pressed into a paper on the board. */}
-        <div className="card card-clay-white pic-card flex gap-[var(--gap)] p-3">
+        <div className="card card-clay-white pic-card grid grid-cols-[repeat(var(--cols),var(--cell))] gap-[var(--gap)] p-3">
           {slots.map((index, i) => {
             const { picture, shadow } = animals[index];
             const filled = placed.includes(index);
