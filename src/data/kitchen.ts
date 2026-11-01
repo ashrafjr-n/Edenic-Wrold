@@ -1,37 +1,74 @@
-import type { Scene } from "@/types/course";
-import ground from "../../public/assets/learn/nova/fruits/find/kitchen/ground.jpg";
-import blender from "../../public/assets/learn/nova/fruits/find/kitchen/blender.png";
-import milk from "../../public/assets/learn/nova/fruits/find/kitchen/milk.png";
-import garlic from "../../public/assets/learn/nova/fruits/find/kitchen/garlic.png";
-import carrot from "../../public/assets/learn/nova/fruits/find/kitchen/carrot.png";
-import broccoli from "../../public/assets/learn/nova/fruits/find/kitchen/broccoli.png";
-import tomato from "../../public/assets/learn/nova/fruits/find/kitchen/tomato.png";
-import cheese from "../../public/assets/learn/nova/fruits/find/kitchen/cheese.png";
-import potato from "../../public/assets/learn/nova/fruits/find/kitchen/potato.png";
-import pepper from "../../public/assets/learn/nova/fruits/find/kitchen/pepper.png";
-import egg from "../../public/assets/learn/nova/fruits/find/kitchen/egg.png";
-import egg2 from "../../public/assets/learn/nova/fruits/find/kitchen/egg2.png";
+import type { Kitchen } from "@/types/course";
+import pinki from "../../public/assets/friends/pinki.png";
+import pinkiCheer from "../../public/assets/learn-with-pinki/pinki/pinki-celebrate.png";
+import lGround from "../../public/assets/learn/nova/fruits/kitchen/landscape/ground.jpg";
+import lCounter from "../../public/assets/learn/nova/fruits/kitchen/landscape/counter.png";
+import lBasket from "../../public/assets/learn/nova/fruits/kitchen/landscape/basket.png";
+import lBasketRim from "../../public/assets/learn/nova/fruits/kitchen/landscape/basket-rim.png";
+import lBlender from "../../public/assets/learn/nova/fruits/kitchen/landscape/blender.png";
+import lMilk from "../../public/assets/learn/nova/fruits/kitchen/landscape/milk.png";
+import lTomato from "../../public/assets/learn/nova/fruits/kitchen/landscape/tomato.png";
+import lPepper from "../../public/assets/learn/nova/fruits/kitchen/landscape/pepper.png";
+import lPotato from "../../public/assets/learn/nova/fruits/kitchen/landscape/potato.png";
+import lCheese from "../../public/assets/learn/nova/fruits/kitchen/landscape/cheese.png";
+import lBroccoli from "../../public/assets/learn/nova/fruits/kitchen/landscape/broccoli.png";
+import lCarrot from "../../public/assets/learn/nova/fruits/kitchen/landscape/carrot.png";
+import lGarlic from "../../public/assets/learn/nova/fruits/kitchen/landscape/garlic.png";
+import pGround from "../../public/assets/learn/nova/fruits/kitchen/portrait/ground.jpg";
+import pCounter from "../../public/assets/learn/nova/fruits/kitchen/portrait/counter.png";
+import pBasket from "../../public/assets/learn/nova/fruits/kitchen/portrait/basket.png";
+import pBasketRim from "../../public/assets/learn/nova/fruits/kitchen/portrait/basket-rim.png";
+import pBlender from "../../public/assets/learn/nova/fruits/kitchen/portrait/blender.png";
+import pMilk from "../../public/assets/learn/nova/fruits/kitchen/portrait/milk.png";
+import pGarlic from "../../public/assets/learn/nova/fruits/kitchen/portrait/garlic.png";
+import pTomato from "../../public/assets/learn/nova/fruits/kitchen/portrait/tomato.png";
+import pPotato from "../../public/assets/learn/nova/fruits/kitchen/portrait/potato.png";
+import pPepper from "../../public/assets/learn/nova/fruits/kitchen/portrait/pepper.png";
+import pCheese from "../../public/assets/learn/nova/fruits/kitchen/portrait/cheese.png";
+import pBroccoli from "../../public/assets/learn/nova/fruits/kitchen/portrait/broccoli.png";
+import pCarrot from "../../public/assets/learn/nova/fruits/kitchen/portrait/carrot.png";
 
-/** Nova's kitchen counter — Find It!, the Vegetables lessons' last step
-    (the user's design, 2026-11-01): the five vegetables among a blender,
-    a bottle of milk, a wedge of cheese, a bulb of garlic and two eggs, on
-    warm wood under a tiled wall. One render for all five lessons
-    (`render.cjs kitchen`, then `crop.py kitchen
-    public/assets/learn/nova/fruits/find`, whose numbers these are); each
-    lesson finds its own vegetable (its `group`). */
-export const KITCHEN: Scene = {
-  background: ground,
-  items: [
-    { id: "blender", src: blender, word: "blender", shape: null, box: [11.3, 10.72, 30.9, 26.32], hit: [11.9, 11.2, 21.0, 25.36] },
-    { id: "milk", src: milk, word: "milk", shape: null, box: [46.7, 17.36, 16.9, 15.12], hit: [47.3, 17.84, 11.7, 14.16] },
-    { id: "garlic", src: garlic, word: "garlic", shape: null, box: [72.1, 25.04, 19.3, 13.04], hit: [72.7, 25.52, 15.5, 11.12] },
-    { id: "carrot", src: carrot, word: "carrot", shape: null, group: "carrot", box: [19.5, 37.6, 29.0, 14.0], hit: [20.1, 38.08, 24.8, 10.48] },
-    { id: "broccoli", src: broccoli, word: "broccoli", shape: null, group: "broccoli", box: [66.4, 36.0, 26.6, 17.12], hit: [67.0, 36.48, 19.0, 15.68] },
-    { id: "tomato", src: tomato, word: "tomato", shape: null, group: "tomato", box: [41.4, 48.56, 20.9, 13.92], hit: [42.0, 49.04, 16.5, 11.92] },
-    { id: "cheese", src: cheese, word: "cheese", shape: null, box: [7.1, 54.8, 22.1, 15.2], hit: [7.7, 55.28, 17.8, 14.24] },
-    { id: "potato", src: potato, word: "potato", shape: null, group: "potato", box: [70.6, 58.96, 20.9, 13.6], hit: [71.2, 59.44, 15.3, 10.8] },
-    { id: "pepper", src: pepper, word: "pepper", shape: null, group: "pepper", box: [15.1, 64.24, 21.2, 14.96], hit: [15.7, 64.72, 15.1, 12.0] },
-    { id: "egg", src: egg, word: "egg", shape: null, box: [50.5, 72.32, 12.6, 7.68], hit: [51.1, 72.8, 9.7, 6.16] },
-    { id: "egg2", src: egg2, word: "egg", shape: null, box: [58.4, 75.12, 12.2, 8.0], hit: [59.0, 75.6, 9.3, 6.4] },
-  ],
+/** The kitchen — Basket Time, the Vegetables lessons' last step (the
+    user's design, 2026-11-01: Find It! merged into it). A wooden counter
+    with the five vegetables among a blender, a bottle of milk, a wedge of
+    cheese and a bulb of garlic, a basket on it, and Pinki behind it — her
+    picture, never 3D. One render for all five lessons, in two frames
+    (`render.cjs kitchen`, then `crop.py kitchen`, whose numbers these
+    are); items run back to front, so a nearer one lies over a farther. */
+export const KITCHEN: Kitchen = {
+  friend: { picture: pinki, cheer: pinkiCheer },
+  landscape: {
+    ground: lGround,
+    counter: { src: lCounter, box: [0.0, 57.4, 100.0, 42.6] },
+    friend: [63.36, 20.59, 35.34, 49.93],
+    basket: { src: lBasket, rim: lBasketRim, mouth: [3.34, 23.09, 78.11, 48.51], box: [74.19, 58.3, 22.25, 26.9] },
+    items: [
+    { id: "blender", src: lBlender, word: "blender", shape: null, box: [5.06, 36.5, 18.44, 31.2], hit: [5.44, 37.1, 12.25, 30.0] },
+    { id: "milk", src: lMilk, word: "milk", shape: null, box: [18.62, 47.2, 10.19, 18.2], hit: [19.0, 47.8, 6.81, 17.0] },
+    { id: "tomato", src: lTomato, word: "tomato", shape: null, group: "tomato", box: [33.0, 48.7, 13.19, 17.2], hit: [33.38, 49.3, 10.25, 15.3] },
+    { id: "pepper", src: lPepper, word: "pepper", shape: null, group: "pepper", box: [48.81, 48.7, 12.94, 16.7], hit: [49.19, 49.3, 9.44, 14.7] },
+    { id: "potato", src: lPotato, word: "potato", shape: null, group: "potato", box: [62.12, 49.3, 13.12, 15.7], hit: [62.5, 49.9, 9.38, 12.9] },
+    { id: "cheese", src: lCheese, word: "cheese", shape: null, box: [4.81, 69.7, 13.94, 16.5], hit: [5.19, 70.3, 11.06, 15.3] },
+    { id: "broccoli", src: lBroccoli, word: "broccoli", shape: null, group: "broccoli", box: [22.19, 58.6, 16.69, 22.1], hit: [22.56, 59.2, 11.69, 20.5] },
+    { id: "carrot", src: lCarrot, word: "carrot", shape: null, group: "carrot", box: [31.56, 67.0, 19.19, 16.3], hit: [31.94, 67.6, 16.5, 12.9] },
+    { id: "garlic", src: lGarlic, word: "garlic", shape: null, box: [60.69, 67.1, 11.31, 15.4], hit: [61.06, 67.7, 8.94, 13.5] },
+    ],
+  },
+  portrait: {
+    ground: pGround,
+    counter: { src: pCounter, box: [0.0, 53.04, 100.0, 46.96] },
+    friend: [54.05, 30.27, 47.3, 27.18],
+    basket: { src: pBasket, rim: pBasketRim, mouth: [3.64, 8.87, 77.79, 69.48], box: [65.4, 72.69, 32.1, 17.33] },
+    items: [
+    { id: "blender", src: pBlender, word: "blender", shape: null, box: [5.3, 42.09, 26.1, 20.48], hit: [5.9, 42.54, 17.3, 19.58] },
+    { id: "milk", src: pMilk, word: "milk", shape: null, box: [24.3, 48.54, 14.5, 11.85], hit: [24.9, 48.99, 9.6, 10.95] },
+    { id: "garlic", src: pGarlic, word: "garlic", shape: null, box: [39.7, 52.51, 16.2, 9.83], hit: [40.3, 52.96, 12.7, 8.63] },
+    { id: "tomato", src: pTomato, word: "tomato", shape: null, group: "tomato", box: [5.5, 63.02, 19.6, 11.4], hit: [6.1, 63.47, 15.2, 10.2] },
+    { id: "potato", src: pPotato, word: "potato", shape: null, group: "potato", box: [27.5, 62.72, 19.6, 10.5], hit: [28.1, 63.17, 14.0, 9.23] },
+    { id: "pepper", src: pPepper, word: "pepper", shape: null, group: "pepper", box: [49.2, 62.27, 19.2, 11.93], hit: [49.8, 62.72, 14.0, 10.73] },
+    { id: "cheese", src: pCheese, word: "cheese", shape: null, box: [72.3, 62.64, 20.7, 12.98], hit: [72.9, 63.09, 16.4, 12.08] },
+    { id: "broccoli", src: pBroccoli, word: "broccoli", shape: null, group: "broccoli", box: [5.5, 71.64, 24.9, 14.7], hit: [6.1, 72.09, 17.4, 13.58] },
+    { id: "carrot", src: pCarrot, word: "carrot", shape: null, group: "carrot", box: [17.7, 78.24, 28.6, 10.35], hit: [18.3, 78.69, 24.5, 9.0] },
+    ],
+  },
 };
