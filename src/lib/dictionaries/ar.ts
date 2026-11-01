@@ -185,7 +185,6 @@ export const ar: Dictionary = {
     sortWeather: "ضع كل شيء في صندوق طقسه!",
     whichWeather: "أين {weather}؟",
     pickList: "اقطف ما في قائمة نوفا!",
-    growIt: "اسحب الدائرة لتكبر نبتة {thing}!",
   },
   tasks: {
     listen: "استمع",
@@ -200,7 +199,6 @@ export const ar: Dictionary = {
     cook: "اطبخ",
     like: "تحبّه؟",
     harvest: "اقطف",
-    grow: "ازرع",
     feed: "أطعِم",
   },
   activities: {

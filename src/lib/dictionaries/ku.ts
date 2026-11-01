@@ -189,7 +189,6 @@ export const ku: Dictionary = {
     sortWeather: "هەر تشتەکی بکە د سندوقا هەوایێ وی دا!",
     whichWeather: "{weather} کیژە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
-    growIt: "بازنەی ڕاکێشە دا {thing} شین ببیت!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -204,7 +203,6 @@ export const ku: Dictionary = {
     cook: "چێ بکە",
     like: "حەز دکەی؟",
     harvest: "بچنە",
-    grow: "بچینە",
     feed: "خوارن بدە",
   },
   activities: {
