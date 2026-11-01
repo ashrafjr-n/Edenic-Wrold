@@ -6,7 +6,7 @@ import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Food, Garden, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { Basket, ColorId, Face, Food, Garden, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -33,7 +33,8 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
-  | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food };
+  | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
+  | { kind: "basket"; food: Food; basket: Basket };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -501,6 +502,38 @@ function FeedDemo({ picture, mouth, food }: { picture: StaticImageData; mouth: r
   );
 }
 
+/** Basket Time: the word over the basket, and the finger carries its
+    vegetable up into it. The one vegetable NOT among the step's four —
+    how, never which. Laid out in % of the square stage: the word at the
+    top, the basket 34% tall from 22%, the vegetable 22% wide centred at
+    (50, 80); the feed demo's carry (`.demo-feed`). */
+function BasketDemo({ food, basket }: { food: Food; basket: Basket }) {
+  const w = 34 * (basket.src.width / basket.src.height);
+  const [, mt, , mh] = basket.mouth;
+  const to = { x: 0, y: 22 + (34 * (mt + mh * 0.5)) / 100 - 80 };
+  const pen = { "--to-x": `${to.x}cqi`, "--to-y": `${to.y}cqi` } as CSSProperties;
+  return (
+    <div className="@container relative h-full w-full">
+      <div dir="ltr" className="absolute inset-x-0 top-[3%] flex justify-center">
+        <ClayWord word={food.word} size="demo" tone={PLAIN_TONE} />
+      </div>
+      <span className="absolute top-[22%] h-[34%]" style={{ left: `${50 - w / 2}%`, width: `${w}%` }}>
+        <Image src={basket.src} alt="" fill sizes="10rem" className="object-contain" />
+        <span className="absolute inset-0 z-[2]">
+          <Image src={basket.rim} alt="" fill sizes="10rem" className="object-contain" />
+        </span>
+      </span>
+      <span className="card card-clay-white pic-card absolute left-[30%] top-[66%] h-[28%] w-[40%]" />
+      <span className="demo-feed absolute left-[39%] top-[69%] z-[1] h-[22%] w-[22%]" style={pen}>
+        <Image src={food.src} alt={food.word} fill sizes="5rem" className="object-contain" />
+      </span>
+      <span className="demo-feed-pen absolute left-1/2 top-[80%] z-10" style={pen}>
+        <Finger />
+      </span>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -528,5 +561,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
+    case "basket":
+      return <BasketDemo food={demo.food} basket={demo.basket} />;
   }
 }
