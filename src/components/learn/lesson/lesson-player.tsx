@@ -309,7 +309,6 @@ export function LessonPlayer({
         accent={tone.face}
         cheer={cheer}
         dir={dir}
-        stars={starsFor(mistakes)}
       />
     );
     const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
