@@ -183,6 +183,7 @@ export const ku: Dictionary = {
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
     meetThing: "{thing} بناسە!",
     feedAnimal: "{thing} چ دخوت؟ خوارنێ بدێ!",
+    basketTime: "{thing} بکە د سەلکا نۆڤایێ دا!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     thisWeather: "هەوا {weather}ە!",
@@ -204,6 +205,7 @@ export const ku: Dictionary = {
     like: "حەز دکەی؟",
     harvest: "بچنە",
     feed: "خوارن بدە",
+    basket: "دانە",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third

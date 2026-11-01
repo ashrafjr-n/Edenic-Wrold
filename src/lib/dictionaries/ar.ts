@@ -179,6 +179,7 @@ export const ar: Dictionary = {
     sortAnimals: "ضع كل حيوان في بيته!",
     meetThing: "تعرّف على {thing}!",
     feedAnimal: "ماذا يأكل {thing}؟ أطعِمه!",
+    basketTime: "ضع {thing} في سلة نوفا!",
     makeSoup: "اصنع حساء خضار!",
     likeThem: "هل تحبّها؟",
     thisWeather: "الجو {weather}!",
@@ -200,6 +201,7 @@ export const ar: Dictionary = {
     like: "تحبّه؟",
     harvest: "اقطف",
     feed: "أطعِم",
+    basket: "ضع",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third

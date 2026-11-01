@@ -26,6 +26,7 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   like: ThumbsUp,
   harvest: ShoppingBasket,
   feed: Utensils,
+  basket: ShoppingBasket,
 };
 
 interface TaskChipProps {
