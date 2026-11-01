@@ -2918,6 +2918,154 @@ ITEMS.weather = (what) => {
   return g;
 };
 
+
+/* ---------- Bloo himself, dressed for the weather (2026-11-01) ----------
+   The Weather lessons' "Which weather?": four pictures of Bloo on his
+   hill, each dressed for one weather — sunglasses under the sun, an
+   umbrella in the rain, a kite in the wind, a woolly hat and scarf in the
+   snow. Bloo in the friends' look: a round body of blue velvet, two shiny
+   gold horns, the friends' own face (purple eyes with a gold heart, pink
+   cheeks, an open smile), stubby arms and feet. `?thing=bloo&arg=<weather>`
+   (or `plain`); one unseen box frames all four alike. */
+const BLOO_BLUE = 0x8db9f2;
+const HORN_GOLD = new THREE.MeshPhysicalMaterial({ color: 0xf0b43a, metalness: 0.75, roughness: 0.26, clearcoat: 0.7, clearcoatRoughness: 0.15 });
+
+/* Bloo standing, his feet at y 0, facing +z. `arms`: each arm's swing
+   (radians, 0 hanging down, up toward π), left then right. Returns the
+   figure and where each hand is (in its own space), so what he holds can
+   be put in it. */
+function blooFigure({ arms = [0.5, 0.5], mouth = true } = {}) {
+  const g = new THREE.Group();
+  const fur = velvet(BLOO_BLUE);
+  const C = 1.32;
+  const bodyGeo = new THREE.SphereGeometry(1, 128, 96);
+  /* A little wider low down, like a pear of felt. */
+  swell(bodyGeo, (v) => 0.06 * Math.max(0, -v.y) - 0.03 * Math.max(0, v.y - 0.5));
+  bodyGeo.scale(1, 1.02, 0.9);
+  const body = mesh(bodyGeo, fur);
+  body.position.y = C;
+  g.add(body);
+  /* Horns: curved gold cones out of the top, leaning out. */
+  for (const s of [-1, 1]) {
+    const horn = new THREE.Group();
+    const pts = [[0, 0, 0], [s * 0.05, 0.28, 0], [s * 0.15, 0.54, -0.02], [s * 0.3, 0.76, -0.04]];
+    const tube = taperTube(pts, 0.3, 0.035, HORN_GOLD, 64);
+    horn.add(tube);
+    horn.position.set(s * 0.52, C + 0.62, -0.1);
+    horn.rotation.z = -s * 0.12;
+    g.add(horn);
+  }
+  /* Feet: short round stubs, toes a little forward. */
+  for (const s of [-1, 1]) {
+    const leg = mesh(new THREE.CapsuleGeometry(0.24, 0.22, 12, 32), fur);
+    leg.position.set(s * 0.42, 0.34, 0.05);
+    g.add(leg);
+    const foot = mesh(new THREE.SphereGeometry(0.28, 40, 28), fur);
+    foot.scale.set(1, 0.62, 1.25);
+    foot.position.set(s * 0.44, 0.16, 0.14);
+    g.add(foot);
+  }
+  /* Arms: stubby, rounded, swung out from the shoulder. */
+  const hands = [];
+  [-1, 1].forEach((s, i) => {
+    const arm = new THREE.Group();
+    const limb = mesh(new THREE.CapsuleGeometry(0.19, 0.42, 12, 32), fur);
+    limb.position.y = -0.32;
+    arm.add(limb);
+    arm.position.set(s * 0.86, C + 0.05, 0.05);
+    arm.rotation.z = s * arms[i];
+    g.add(arm);
+    const hand = new THREE.Vector3(0, -0.62, 0).applyEuler(arm.rotation).add(arm.position);
+    hands.push(hand);
+  });
+  friendFace(g, [body], 0, C + 0.12, 2.15, { eyes: 0.2, cheeks: 0.29, mouth });
+  return { figure: g, hands, top: C + 0.95, eyes: C + 0.25, front: 0.92 };
+}
+
+/* What each weather puts on Bloo, in his hands and round him. */
+const BLOO_WEATHER = {
+  plain: () => ({ figure: blooFigure({ arms: [0.5, 2.4] }).figure, sky: [] }),
+  sunny() {
+    const b = blooFigure({ arms: [0.45, 2.5] });
+    b.figure.add(at(WEAR.sunglasses(), [0, b.eyes, b.front + 0.06], 0.82));
+    return {
+      figure: b.figure,
+      ground: [0xff86c2, 0xffffff, 0xffd23a].map((c, i) => onHill(at(hillFlower(c), [0, 0, 0], 1.5), [-1.75, 1.85, 0.6][i], [0.9, 0.6, 1.6][i])),
+      sky: [at(weatherSun(), [1.55, 4.25, -0.5], 1.05)],
+    };
+  },
+  rainy() {
+    const b = blooFigure({ arms: [0.4, 1.9] });
+    const [, hand] = b.hands;
+    /* Held up and leaning over his head: its crook in his hand. */
+    const umbrella = at(WEAR.umbrella(), [hand.x - 0.02, hand.y - 0.3, hand.z + 0.2], 1.25, [0, 0, 0.6]);
+    b.figure.add(umbrella);
+    return {
+      figure: b.figure,
+      ground: [[-1.7, 1.0, 0.5], [1.75, 0.9, 0.42]].map(([x, z, r]) => {
+        const puddle = mesh(new THREE.CylinderGeometry(r, r, 0.04, 48), velvet(0x8fcdfc));
+        puddle.scale.z = 0.62;
+        return onHill(puddle, x, z);
+      }),
+      sky: [
+        at(weatherCloud(0xb9cde2), [-1.35, 4.5, -0.6], 0.95),
+        ...[[-2.1, 3.3], [-1.55, 2.6], [-2.25, 1.9], [-0.95, 3.35], [2.1, 3.0], [2.35, 2.1], [1.75, 1.6], [-1.6, 1.45]].map(([x, y]) => at(raindrop(), [x, y, 0.8], 1.4)),
+      ],
+    };
+  },
+  windy() {
+    const b = blooFigure({ arms: [0.5, 2.3] });
+    const [, hand] = b.hands;
+    /* The kite high up at his right, in his own space (he is scaled and
+       stood on the hill), and its string from his hand, sagging a little. */
+    const kite = [1.3, 2.95, -0.4];
+    const string = taperTube([[hand.x, hand.y, hand.z + 0.05], [hand.x + 0.18, hand.y + 0.55, -0.15], [kite[0] - 0.18, kite[1] - 0.42, kite[2]]], 0.016, 0.016, velvet(0xffffff));
+    b.figure.add(string, at(WEAR.kite(), kite, 0.5, [0, 0, -0.4]));
+    return {
+      figure: b.figure,
+      sky: [
+        at(windSwirl(1.9), [-2.5, 3.6, 0.6], 0.95),
+        at(windSwirl(1.6), [-2.7, 2.45, 0.8], 0.95),
+        at(windSwirl(1.3), [1.3, 2.3, 0.8], 0.9),
+        ...[[-1.4, 4.4, 0x78cf5c, 0.5], [-0.4, 4.0, 0xffa53a, -0.6], [2.35, 3.2, 0x63c84e, 1.2], [-2.0, 1.6, 0xf2683a, -0.2]].map(([x, y, color, turn]) => at(plumpLeaf(0.32, 0.15, velvet(color)), [x, y, 0.9], 1.35, [0.3, 0.2, turn])),
+      ],
+    };
+  },
+  snowy() {
+    const b = blooFigure({ arms: [0.5, 0.75] });
+    b.figure.add(at(WEAR.beanie(), [0, b.top - 0.24, -0.06], 0.92));
+    const scarf = WEAR.scarf();
+    scarf.scale.set(1.02, 1.0, 0.92);
+    scarf.position.set(0, 1.32 - 0.08, 0);
+    /* Its unseen body, which hides the band's back, must stay inside his
+       or it hides his face too. */
+    scarf.traverse((o) => o.isMesh && o.material.colorWrite === false && o.scale.setScalar(0.94));
+    b.figure.add(scarf);
+    return {
+      figure: b.figure,
+      snowy: true,
+      ground: [onHill(at(weatherSnowman(), [0, 0, 0], 0.95), 1.95, 0.6, -0.4)],
+      sky: [...[[-2.1, 3.9, 0.8], [-1.5, 2.7, 0.65], [1.9, 4.2, 0.85], [2.3, 3.0, 0.6], [-2.4, 1.9, 0.6], [1.2, 3.6, 0.55], [-0.9, 4.5, 0.6]].map(([x, y, k]) => at(velvetFlake(), [x, y, 0.8], k, [0, 0, x]))],
+    };
+  },
+};
+
+ITEMS.bloo = (what = "plain") => {
+  const def = BLOO_WEATHER[what]();
+  const hill = hillBase(def.snowy ? 0xfbfdff : 0x78cf5c);
+  hill.add(...(def.ground ?? []));
+  hill.scale.setScalar(0.85);
+  def.figure.position.y = 1.1 * 0.85;
+  def.figure.scale.setScalar(1.22);
+  const g = group(hill, def.figure, ...def.sky);
+  /* All four framed alike, whatever is in the sky. */
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(5.6, 5.2, 0.1));
+  frame.visible = false;
+  frame.position.set(0, 2.6, 0);
+  g.add(frame);
+  return g;
+};
+
 /* ---------- Weather helpers: what a weather leaves on Bloo's hill ---------- */
 
 /* A cloud with no face — one that is pushed off the sun. */
@@ -4626,7 +4774,7 @@ if (THING) {
   /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
      what is worn for it; the videos' vegetables): a softer, fuller light —
      their felt is evenly lit, with no hard dark side. */
-  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food"].includes(THING)) {
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "bloo", "video", "food"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;

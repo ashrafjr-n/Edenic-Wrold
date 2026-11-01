@@ -53,6 +53,12 @@
  *   node tools/picnic-scene/render.cjs thing sunglasses=wear:sunglasses@float@front sunhat=wear:sunhat@float umbrella=wear:umbrella@float@front rainhat=wear:rainhat@float kite=wear:kite@float@front pinwheel=wear:pinwheel@float@front beanie=wear:beanie@float scarf=wear:scarf@float@front
  *   node tools/picnic-scene/render.cjs thing weather-sunny=weather:sunny@float weather-rainy=weather:rainy@float weather-windy=weather:windy@float weather-snowy=weather:snowy@float
  *
+ * Bloo himself, dressed for each weather (the Weather lessons' "Which
+ * weather?", 2026-11-01) — then `crop.py bloo`, which crops all four on
+ * one box (`plain` is Bloo alone, to compare with his picture):
+ *
+ *   node tools/picnic-scene/render.cjs thing bloo-sunny=bloo:sunny@float bloo-rainy=bloo:rainy@float bloo-windy=bloo:windy@float bloo-snowy=bloo:snowy@float
+ *
  * What Bloo's animals eat (Feed the animal, 2026-11-01) — in the videos'
  * look, like the vegetables, cropped with `--grain` (`crop.py things
  * public/assets/learn/bloo/animals/food … --grain`):
