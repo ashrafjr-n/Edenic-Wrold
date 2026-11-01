@@ -5387,24 +5387,88 @@ a.board-cell--now:focus-visible {
   color: color-mix(in srgb, var(--plate-face) 45%, #fff);
 }
 
-/* The done screen's stars, written up one after another — the same stars
-   (and the same flight) as on the lesson's box on the course's board. */
-.done-stars {
-  display: flex;
-  gap: 0.4rem;
+/* ---------- The done screen's party (`LessonDone`, 2026-11-02) ----------
+   Behind the step's content and buttons on the board: `z-index: -1` inside
+   `.stage-swap`'s own stacking context, so it paints over the slate but
+   under everything in flow. A size container, so the balloons rise its
+   full height (`.balloon-rise` reads `cqh`). */
+.done-party {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: 1.05rem;
+  container-type: size;
+  pointer-events: none;
 }
 
-.done-stars .board-star {
-  width: 2.4rem;
-  height: 2.4rem;
-  animation: board-star-in 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) backwards;
+.done-party .balloon-rise {
+  opacity: 0.92;
 }
 
-@media (width >= 64rem) {
-  .done-stars .board-star {
-    width: 3rem;
-    height: 3rem;
+/* A doodle drawn on, then left there. */
+.done-doodle {
+  position: absolute;
+  height: auto;
+  translate: -50% -50%;
+  opacity: 0.85;
+  animation: chalk-pop 0.5s ease-out both;
+}
+
+/* A piece of confetti falling the board's height, turning, then again. */
+.done-rain {
+  position: absolute;
+  top: 0;
+  width: 0.55rem;
+  height: 0.8rem;
+  border-radius: 0.15rem;
+  animation: done-rain 5s linear infinite backwards;
+}
+
+@keyframes done-rain {
+  from {
+    opacity: 0;
+    translate: 0 -2rem;
+    rotate: 0deg;
   }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    translate: 1.5rem 100cqh;
+    rotate: var(--rain-spin);
+  }
+}
+
+/* The friend hops for joy, again and again, once it has popped in. */
+.done-hop {
+  transform-origin: 50% 100%;
+  animation: done-hop 1.5s ease-in-out 0.8s infinite;
+}
+
+@keyframes done-hop {
+  0%,
+  45%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  8% {
+    transform: translateY(0) scale(1.05, 0.94);
+  }
+  22% {
+    transform: translateY(-9%) scale(0.97, 1.04);
+  }
+  36% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+}
+
+.done-title {
+  font-size: clamp(2rem, min(7vw, 6svh), 3.4rem);
 }
 
 .chalk-trail {
@@ -5507,8 +5571,10 @@ a.board-cell--now:focus-visible {
   .class-cheer-line,
   .class-cheer-smile,
   .class-teacher,
-  .board-star--new,
-  .done-stars .board-star,
+  .done-hop,
+  .done-rain,
+  .done-party .balloon-rise,
+  .done-party .balloon-sway,
   .board-cell,
   .board-next {
     animation: none;
