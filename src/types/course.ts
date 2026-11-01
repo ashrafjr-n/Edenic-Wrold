@@ -138,11 +138,12 @@ export type Question =
       up where it was; one more than the note says wiggles back. `order` is
       each line: the English word, its plural and how many. */
   | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden }
-  /** Basket Time (Nova's Vegetables, 2026-11-01): the word over Nova's
-      basket and four vegetables — its own first (dealt in a seeded
-      order), then three others. Drag it into the basket (or tap it).
-      `demo`: the one vegetable not among them. */
-  | { type: "basket"; ask: Ask; word: string; foods: readonly Food[]; basket: Basket; demo: Food }
+  /** Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find
+      It! merged in): the kitchen, its friend behind the counter, the word
+      up on the wall; drag its vegetable from the counter into the basket
+      (or tap it). `demo`: another vegetable carried into `basket` (the
+      demo's own, small). */
+  | { type: "basket"; ask: Ask; word: Vegetable; kitchen: Kitchen; basket: Basket; demo: Food }
   /** Feed the animal (Bloo's Animals, 2026-11-01): the animal over three
       foods — its own first (dealt in a seeded order), then two it would
       never eat. Drag one into it (or tap it): its own is eaten, anything
@@ -189,6 +190,26 @@ export interface Basket {
   src: StaticImageData;
   rim: StaticImageData;
   mouth: SceneRect;
+}
+
+/** One frame of the kitchen (`tools/picnic-scene`, `render.cjs kitchen`):
+    the room blurred under the sharp counter, the counter alone (laid over
+    the friend standing behind it), where the friend stands, the basket on
+    the counter and the things on it — boxes are % of the picture. */
+export interface KitchenFrame {
+  ground: StaticImageData;
+  counter: { src: StaticImageData; box: SceneRect };
+  friend: SceneRect;
+  basket: Basket & { box: SceneRect };
+  items: readonly SceneItem[];
+}
+
+/** The kitchen, framed for a wide board and for a phone's, and the
+    friend in it — always their picture, never 3D (the user, 2026-11-01). */
+export interface Kitchen {
+  landscape: KitchenFrame;
+  portrait: KitchenFrame;
+  friend: { picture: StaticImageData; cheer: StaticImageData };
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
