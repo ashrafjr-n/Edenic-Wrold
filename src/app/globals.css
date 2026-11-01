@@ -2727,6 +2727,42 @@ button:disabled,
   }
 }
 
+/* Feed the animal's demo: the food carried up into the mouth while the
+   finger presses (36–64%), eaten (shrinking away), and back (95%). */
+.demo-feed {
+  animation: demo-feed 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-feed {
+  0%,
+  36% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  64% {
+    translate: var(--to-x) var(--to-y);
+    scale: 0.5;
+    opacity: 1;
+  }
+  74%,
+  94% {
+    translate: var(--to-x) var(--to-y);
+    scale: 0.1;
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
 .demo-fly {
   animation: demo-fly 3.6s cubic-bezier(0.34, 1.25, 0.5, 1) infinite;
 }
@@ -3740,6 +3776,7 @@ button:disabled,
   .demo-wave,
   .demo-fly,
   .demo-shadow-carry,
+  .demo-feed,
   .demo-draw,
   .demo-pen,
   .demo-ring,

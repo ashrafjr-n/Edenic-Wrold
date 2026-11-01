@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, GrowScene, Scene, ShadowPair, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { ColorId, Face, Food, Garden, GrowScene, Scene, ShadowPair, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -36,7 +36,8 @@ export type TaskDemoDef =
   | { kind: "like"; face: Face }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
   | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } }
-  | { kind: "shadows"; pair: ShadowPair };
+  | { kind: "shadows"; pair: ShadowPair }
+  | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -549,6 +550,31 @@ function ShadowsDemo({ pair }: { pair: ShadowPair }) {
   );
 }
 
+/** Feed the animal: the finger carries a food up into the animal's mouth.
+    Another animal and its own food, NOT the step's — HOW to feed, never
+    what this one eats. One 3.6s loop with the finger: it presses at 36%,
+    carries to 64%, the food is eaten, then all comes back. Laid out in %
+    of the square stage: the animal 46% tall from 4%, the food 22% wide
+    centred at (50, 78). */
+function FeedDemo({ picture, mouth, food }: { picture: StaticImageData; mouth: readonly [number, number]; food: Food }) {
+  const w = 46 * (picture.width / picture.height);
+  const to = { x: 50 - w / 2 + (w * mouth[0]) / 100 - 50, y: 4 + (46 * mouth[1]) / 100 - 78 };
+  return (
+    <div className="@container relative h-full w-full">
+      <span className="absolute top-[4%] h-[46%]" style={{ left: `${50 - w / 2}%`, width: `${w}%` }}>
+        <Image src={picture} alt="" fill sizes="10rem" className="object-contain" />
+      </span>
+      <span className="card card-clay-white pic-card absolute left-[30%] top-[64%] h-[28%] w-[40%]" />
+      <span className="demo-feed absolute left-[39%] top-[67%] z-[1] h-[22%] w-[22%]" style={{ "--to-x": `${to.x}cqi`, "--to-y": `${to.y}cqi` } as CSSProperties}>
+        <Image src={food.src} alt={food.word} fill sizes="5rem" className="object-contain" />
+        <span className="absolute left-1/2 top-1/2">
+          <Finger />
+        </span>
+      </span>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -578,5 +604,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <GrowDemo scene={demo.scene} tone={demo.tone} />;
     case "shadows":
       return <ShadowsDemo pair={demo.pair} />;
+    case "feed":
+      return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
   }
 }
