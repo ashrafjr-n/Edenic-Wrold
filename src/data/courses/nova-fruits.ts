@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import { BASKET, GARDENS } from "@/data/garden";
-import type { Face, Food, LessonDef } from "@/types/course";
+import { KITCHEN } from "@/data/kitchen";
+import type { Face, Food, LessonDef, Vegetable } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
@@ -12,7 +13,7 @@ import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
     carrots"), its picture — the videos' look (smooth satin clay, no
     face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`). */
 interface Veg {
-  word: string;
+  word: Vegetable;
   things: string;
   picture: StaticImageData;
 }
@@ -45,9 +46,10 @@ const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
 /**
  * Nova's garden — one thing, one lesson: watch its reel, meet it (its
  * picture, its word, its speaker), build its word, then Basket Time —
- * read its word and put it in her basket, from four (the user's design,
- * 2026-11-01: choosing inside a lesson is wanted since). Three of the
- * other four vegetables are on the paper; the fourth is the demo's. (Grow
+ * read its word and put it in her basket, from four — then Find It! on
+ * her busy kitchen counter (the user's design, 2026-11-01: choosing
+ * inside a lesson is wanted since). Three of the other four vegetables
+ * are on Basket Time's paper; the fourth is its demo's. (Grow
  * it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
  * cups, before it, are a game on `/play`.) Picking in her garden is the
  * review's exam, with several foods to tell apart.
@@ -63,6 +65,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
       { type: "basket", ask: { key: "basketTime", vars: { thing: word } }, word, foods: [veg, ...others.filter((other) => other !== outsider)].map(bite), basket: BASKET, demo: bite(outsider) },
+      { type: "find", ask: { key: "findIt", vars: { thing: word } }, target: { group: word }, scene: KITCHEN },
     ],
   };
 }
