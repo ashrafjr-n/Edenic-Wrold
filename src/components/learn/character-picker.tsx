@@ -25,13 +25,13 @@ export async function CharacterPicker() {
   }));
 
   return (
-    <section className="flex flex-1 flex-col justify-center px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6">
+    <section className="flex flex-1 flex-col justify-center px-4 pb-12 pt-4 sm:px-8 sm:pb-16 sm:pt-6 lg:py-6">
       {/* `w-full` is load-bearing: the section is a flex COLUMN, and an auto
           inline margin on a flex item defeats the default `stretch`, so
           without it the card shrinks to fit its contents instead of filling
           the page the way the home page's copy of it does (that one sits in a
           plain block section, where `mx-auto` + `max-w-*` is enough). */}
-      <div className="card mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-16 lg:py-16">
+      <div className="card mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-16 lg:py-10">
         <div className="mx-auto max-w-3xl text-center">
           {/* `dir` here is NOT about the mixed-content case `dirFor` was added
               for — every word of this heading is Arabic. It is about the FULL
@@ -73,7 +73,7 @@ export async function CharacterPicker() {
             pods, and three 14rem tiles simply do not fit inside this card at
             a tablet's width. They overlapped each other from 640px to about
             900px before this. "Desktop" here means real desktop width. */}
-        <div className="mx-auto mt-14 w-full max-w-6xl lg:mt-16">
+        <div className="mx-auto mt-14 w-full max-w-6xl lg:mt-10 lg:[--portrait:clamp(9rem,calc(100svh-35rem),20rem)]">
           <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-end lg:justify-center lg:gap-14">
             {cast.map(({ character, previousName }) => (
               <CharacterCard
