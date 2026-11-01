@@ -95,6 +95,7 @@ export function demoFor(q: Question, accent: string, seed: string, tone: { face:
     case "feed":
       return { kind: "feed", ...q.demo };
     case "pick":
+      if (q.blind) return { kind: "pick", word: q.word, plain: q.plain, options: q.options.map(() => ({ kind: "text", text: "?" })), answer: 1 };
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
       return undefined;

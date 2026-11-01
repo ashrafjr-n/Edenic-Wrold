@@ -94,8 +94,9 @@ export type Question =
       the tiles (an equation made of pictures); `word` is a taught word in
       clay letters above them instead — `plain` writes it in one quiet ink,
       for a word that must be READ (a color word). `answer` indexes `options` before they
-      are shuffled. */
-  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number }
+      are shuffled. `blind`: the task button's demo shows blank tiles — a
+      lesson's own word, whose answer it must not give away. */
+  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number; blind?: boolean }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the
