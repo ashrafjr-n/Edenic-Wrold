@@ -3324,6 +3324,85 @@ button:disabled,
   }
 }
 
+/* Feed the animal (`FeedAnimal`, Bloo's Animals, 2026-11-01), each motion
+   on its own property:
+
+   - `.feed-animal`: the animal, a soft shadow under it; `--aim` (food held
+     over it): it leans in, glowing in the friend's chalk. `.feed-no`: a
+     wrong food — it shakes its head, side to side. `translate`, `rotate`.
+   - `.feed-food`: a food on the paper; `--held`: lifted toward the finger,
+     a deeper shadow (the finger owns its `translate`).
+   - `.feed-heart`: hearts float up out of its mouth as it munches. */
+.feed-animal {
+  filter: drop-shadow(0 8px 6px rgb(0 0 0 / 25%));
+  transition:
+    scale 0.2s ease-out,
+    filter 0.2s ease-out;
+}
+
+.feed-animal--aim {
+  scale: 1.05;
+  filter: drop-shadow(0 0 10px var(--chalk-accent)) drop-shadow(0 8px 6px rgb(0 0 0 / 25%));
+}
+
+.feed-no {
+  animation: feed-no 0.5s ease-in-out;
+}
+
+@keyframes feed-no {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  20% {
+    translate: -4% 0;
+    rotate: -3deg;
+  }
+  45% {
+    translate: 4% 0;
+    rotate: 3deg;
+  }
+  70% {
+    translate: -2% 0;
+    rotate: -1.5deg;
+  }
+}
+
+.feed-food {
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 22%));
+  transition:
+    scale 0.18s ease-out,
+    filter 0.18s ease-out;
+}
+
+.feed-food--held {
+  scale: 1.15;
+  filter: drop-shadow(0 16px 10px rgb(0 0 0 / 30%));
+}
+
+.feed-heart {
+  opacity: 0;
+  animation: feed-heart 1.3s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes feed-heart {
+  0% {
+    translate: 0 0;
+    scale: 0.3;
+    opacity: 0;
+  }
+  20% {
+    scale: 1;
+    opacity: 1;
+  }
+  100% {
+    translate: 0 -260%;
+    scale: 1.1;
+    opacity: 0;
+  }
+}
+
 /* Pick them (`HarvestPick`): the word pops up where a food was picked and
    floats off. Its `-50%` centring lives IN the keyframes — an animation
    owning `translate` drops a utility's. Under reduced motion it only
@@ -3678,6 +3757,7 @@ button:disabled,
   .grow-cheer,
   .shadow-bob,
   .shadow-land,
+  .feed-no,
   .shadow-land.shadow-hop {
     animation: none;
   }
