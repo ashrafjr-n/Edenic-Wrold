@@ -60,7 +60,7 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
 
 /** How a step is played, for the task button's popup. The spelling demo
     deals with the board's own seed, so it shows the very letters the child
-    sees; Grow it's knob and Match's handle wear the course's `tone`, as on the board. A Pick of pictures with nothing above it (no word, no sum) has none. */
+    sees; Grow it's knob wears the course's `tone`, as on the board. A Pick of pictures with nothing above it (no word, no sum) has none. */
 export function demoFor(q: Question, accent: string, seed: string, tone: { face: string; edge: string; ink: string }): TaskDemoDef | undefined {
   switch (q.type) {
     case "word":
