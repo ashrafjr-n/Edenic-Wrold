@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
+import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Food, Garden, GrowScene, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { ColorId, Face, Food, Garden, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -17,7 +16,6 @@ import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
 import { wordOf } from "./list-note";
 import { lineOf } from "./harvest-pick";
-import { GrowStage } from "./grow-plant";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -35,7 +33,6 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
-  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
@@ -478,55 +475,6 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
   );
 }
 
-/** Grow it: the finger takes the knob and slides it halfway along its line
-    — the plant comes up half grown — then lets go and all goes back. One
-    3.6s loop, in step with the finger's (`.demo-finger`): still to 36%,
-    sliding to 70%, holding, back by 96%. Reduced motion: held halfway. */
-function demoGrowAt(p: number): number {
-  const ease = (x: number) => x * x * (3 - 2 * x);
-  if (p < 0.36) return 0;
-  if (p < 0.7) return 0.5 * ease((p - 0.36) / 0.34);
-  if (p < 0.84) return 0.5;
-  if (p < 0.96) return 0.5 * (1 - ease((p - 0.84) / 0.12));
-  return 0;
-}
-
-function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edge: string; ink: string } }) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const start = performance.now();
-    let frame = 0;
-    const tick = (now: number) => {
-      setValue(still ? 0.5 : demoGrowAt(((now - start) / 3600) % 1));
-      if (!still) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, []);
-  return (
-    <div className="@container h-full w-full">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-[3cqi]">
-        <div dir="ltr" className="relative h-[15cqi] w-[84cqi] shrink-0">
-          <span className="absolute inset-x-[7.5cqi] top-1/2 h-[3.5cqi] -translate-y-1/2 rounded-full bg-black/20" />
-          <span className="absolute left-[7.5cqi] top-1/2 h-[3.5cqi] -translate-y-1/2 rounded-full" style={{ width: `${value * 69}cqi`, backgroundColor: tone.face }} />
-          <span className="absolute right-0 top-0 h-[15cqi] w-[15cqi] rounded-full border-[0.8cqi] border-dashed border-[var(--color-locked-dark)]" />
-          <span
-            className="clay absolute left-0 top-0 flex h-[15cqi] w-[15cqi] items-center justify-center rounded-full"
-            style={{ translate: `${value * 69}cqi 0`, backgroundColor: tone.face, color: tone.ink, "--clay-edge": tone.edge } as CSSProperties}
-          >
-            <Sprout className="h-[55%] w-[55%]" strokeWidth={2.5} />
-            <span className="absolute left-1/2 top-1/2">
-              <Finger />
-            </span>
-          </span>
-        </div>
-        <GrowStage scene={scene} value={value} paint={{ vw: 60, sm: 15, lg: 15 }} className="w-[74cqi] shrink-0" />
-      </div>
-    </div>
-  );
-}
-
 /** Feed the animal: the finger carries a food up into the animal's mouth.
     Another animal and its own food, NOT the step's — HOW to feed, never
     what this one eats. One 3.6s loop with the finger: it presses at 36%,
@@ -578,8 +526,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <LikeDemo face={demo.face} />;
     case "harvest":
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
-    case "grow":
-      return <GrowDemo scene={demo.scene} tone={demo.tone} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
   }

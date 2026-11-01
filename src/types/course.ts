@@ -134,12 +134,6 @@ export type Question =
       up where it was; one more than the note says wiggles back. `order` is
       each line: the English word, its plural and how many. */
   | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden }
-  /** Grow it (Nova's Vegetables, 2026-10-24): slide the knob from the
-      left end of its line to the right and the vegetable grows from its
-      seed in the soil under it — slid back, it shrinks again. Nothing can
-      go wrong; the right end is the vegetable, whole (its `picture` waits
-      there, faint). */
-  | { type: "grow"; ask: Ask; word: string; picture: StaticImageData; scene: GrowScene }
   /** Feed the animal (Bloo's Animals, 2026-11-01): the animal over three
       foods — its own first (dealt in a seeded order), then two it would
       never eat. Drag one into it (or tap it): its own is eaten, anything
@@ -186,28 +180,6 @@ export interface Basket {
   src: StaticImageData;
   rim: StaticImageData;
   mouth: SceneRect;
-}
-
-/** Frames of a growing plant, side by side in one picture (`cols` a row):
-    one frame's size in it (px), and where a frame lies (% of the scene). */
-export interface GrowSheet {
-  src: StaticImageData;
-  cell: readonly [number, number];
-  box: SceneRect;
-}
-
-/** A vegetable growing in the soil, cut open (`data/grow.ts`): the soil,
-    and `frames` moments of the plant — what grows above the soil (swaying
-    about its `foot`, % of its frame) and under it. `emerge`: when (0–1)
-    the shoot breaks the soil; `veg`: where the vegetable is at the end. */
-export interface GrowScene {
-  ground: { src: StaticImageData; box: SceneRect };
-  frames: number;
-  cols: number;
-  above: GrowSheet & { foot: readonly [number, number] };
-  below: GrowSheet;
-  emerge: number;
-  veg: readonly [number, number];
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */

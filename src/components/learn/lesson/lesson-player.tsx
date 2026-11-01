@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { preload } from "react-dom";
 import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
@@ -32,7 +31,6 @@ import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
-import { GrowPlant } from "./grow-plant";
 import { FeedAnimal } from "./feed-animal";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
@@ -109,13 +107,6 @@ export function LessonPlayer({
   cheer,
 }: LessonPlayerProps) {
   const onward = { face: courseTone.face, edge: courseTone.edge, text: courseTone.ink };
-  /* Grow it's frames are big pictures: fetch them while the lesson's first
-     steps play, so the plant is there the moment its step opens. */
-  for (const q of lesson.questions) {
-    if (q.type !== "grow") continue;
-    preload(q.scene.above.src.src, { as: "image" });
-    preload(q.scene.below.src.src, { as: "image" });
-  }
   const complete = useProgress((state) => state.complete);
   const lines = dict.lessonPlayer;
 
@@ -229,7 +220,7 @@ export function LessonPlayer({
   if (!finished && step.kind === "question") {
     const q = step.question;
     const { kind, target } = taskFor(q, showing);
-    const how = showing ? undefined : demoFor(q, tone.face, seed, courseTone);
+    const how = showing ? undefined : demoFor(q, tone.face, seed);
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
     const verb = dict.tasks[kind];
     task = (
@@ -444,10 +435,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "likes") {
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
-    } else if (q.type === "grow") {
-      body = (
-        <GrowPlant key={seed} word={q.word} picture={q.picture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} tone={courseTone} onSolved={onSolved} />
-      );
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
