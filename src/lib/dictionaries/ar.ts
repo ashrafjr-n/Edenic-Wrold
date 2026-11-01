@@ -154,7 +154,6 @@ export const ar: Dictionary = {
     letterAria: "الحرف {letter}",
     playReel: "شغّل الفيديو",
     findItemAria: "المس {word}",
-    shadowAria: "الظل {n}",
     likeAria: "أحبّه",
     dislikeAria: "لا أحبّه",
     balloonAria: "بالون {color}",
@@ -179,7 +178,6 @@ export const ar: Dictionary = {
     orderSeasons: "رتّب الفصول بالترتيب!",
     sortAnimals: "ضع كل حيوان في بيته!",
     meetThing: "تعرّف على {thing}!",
-    matchShadows: "ضع كل حيوان على ظله!",
     feedAnimal: "ماذا يأكل {thing}؟ أطعِمه!",
     makeSoup: "اصنع حساء خضار!",
     likeThem: "هل تحبّها؟",
@@ -203,7 +201,6 @@ export const ar: Dictionary = {
     like: "تحبّه؟",
     harvest: "اقطف",
     grow: "ازرع",
-    shadows: "طابِق",
     feed: "أطعِم",
   },
   activities: {

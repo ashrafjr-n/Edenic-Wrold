@@ -158,7 +158,6 @@ export const ku: Dictionary = {
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",
     findItemAria: "دەست بدە {word}",
-    shadowAria: "سیبەر {n}",
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
     balloonAria: "بالۆنا {color}",
@@ -183,7 +182,6 @@ export const ku: Dictionary = {
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
     meetThing: "{thing} بناسە!",
-    matchShadows: "هەر گیانەوەرەکی دانە سەر سیبەرا وی!",
     feedAnimal: "{thing} چ دخوت؟ خوارنێ بدێ!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
@@ -207,7 +205,6 @@ export const ku: Dictionary = {
     like: "حەز دکەی؟",
     harvest: "بچنە",
     grow: "بچینە",
-    shadows: "گرێبدە",
     feed: "خوارن بدە",
   },
   activities: {
