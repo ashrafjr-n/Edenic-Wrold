@@ -42,15 +42,6 @@ boxes and picks), at most 640px, with the grain, into
 
     python3 tools/picnic-scene/crop.py weather
 
-Making the weather — run after `render.cjs weathersteps sunny rainy windy
-snowy`: crops every frame and sky layer of the four on ONE box (the
-frames of a weather cross-fade, its sky lies over them), with one grain
-for all of a weather, into `public/assets/learn/bloo/weather/make/
-<weather>/`, and prints each sky layer's box (% of that box) for
-`data/bloo-skies.ts`.
-
-    python3 tools/picnic-scene/crop.py weathersteps
-
 A lesson's backdrop — run after `render.cjs backdrop <name>`: blurs both
 frames (the world stays known, never sharp enough to pull the eye) and
 writes them as JPEGs, 1280px on the long side, into `dest`.
@@ -136,29 +127,6 @@ def one_box(prefix, names, dest):
 
 if NAME == "weather":
     one_box("weather", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/scenes")
-
-if NAME == "weathersteps":
-    weathers = ["sunny", "rainy", "windy", "snowy"]
-    outs = {w: os.path.join(HERE, "out", f"weathersteps-{w}") for w in weathers}
-    names = {w: sorted(n[:-4] for n in os.listdir(o) if n.endswith(".png") and not n.endswith(".face.png")) for w, o in outs.items()}
-    boxes = [alpha_box(Image.open(os.path.join(outs[w], f"{n}.png"))) for w in weathers for n in names[w]]
-    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
-    sky = {}
-    for w in weathers:
-        dest = os.path.join(ROOT, "public/assets/learn/bloo/weather/make", w)
-        os.makedirs(dest, exist_ok=True)
-        for n in names[w]:
-            cut = Image.open(os.path.join(outs[w], f"{n}.png")).crop(box)
-            cut.thumbnail((640, 640), Image.LANCZOS)
-            face = os.path.join(outs[w], f"{n}.face.png")
-            keep = Image.open(face).crop(box).resize(cut.size, Image.LANCZOS) if os.path.exists(face) else None
-            # One grain for all of a weather: its frames cross-fade without the grain jumping.
-            grain(cut, zlib.crc32(w.encode()), keep).save(os.path.join(dest, f"{n}.png"), optimize=True)
-            if n.startswith("sky"):
-                l, t, r, b = cut.split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
-                sky.setdefault(w, []).append([round(l / cut.width * 100, 2), round(t / cut.height * 100, 2), round((r - l) / cut.width * 100, 2), round((b - t) / cut.height * 100, 2)])
-    print(json.dumps({"size": [box[2] - box[0], box[3] - box[1]], "sky": sky}))
-    sys.exit()
 
 if NAME == "grow":
     # Growing Nova's vegetables — run after `render.cjs grow carrot potato
