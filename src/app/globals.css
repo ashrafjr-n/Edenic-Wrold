@@ -2691,42 +2691,6 @@ button:disabled,
   }
 }
 
-/* Match the shadow's demo: the animal is carried down into its shadow
-   while the finger presses (36–64%), rests there, and fades home (84%+). */
-.demo-shadow-carry {
-  animation: demo-shadow-carry 3.6s ease-in-out infinite;
-}
-
-@keyframes demo-shadow-carry {
-  0%,
-  36% {
-    translate: 0 0;
-    scale: 1;
-    opacity: 1;
-  }
-  42% {
-    scale: 1.1;
-  }
-  64%,
-  84% {
-    translate: 0 52cqi;
-    scale: 1;
-    opacity: 1;
-  }
-  94% {
-    translate: 0 52cqi;
-    opacity: 0;
-  }
-  95% {
-    translate: 0 0;
-    opacity: 0;
-  }
-  100% {
-    translate: 0 0;
-    opacity: 1;
-  }
-}
-
 /* Feed the animal's demo: the food carried up into the mouth while the
    finger presses (36–64%), eaten (shrinking away), and back (95%). */
 .demo-feed {
@@ -3278,103 +3242,6 @@ button:disabled,
   }
 }
 
-/* Match the shadow (`MatchShadows`, Bloo's Animals, 2026-11-01). Each
-   motion on its own property, so none fights another:
-
-   - `.shadow-animal`: an animal standing on the board, a soft shadow under
-     it. `.shadow-bob`: it breathes and sways a little, each out of step
-     (a negative delay) — alive, never still. `--picked` (tapped): it
-     stands up on its toes. `--held` (dragged): lifted toward the finger,
-     leaning, a deeper shadow; the finger owns its `translate`.
-   - `.shadow-spot`: where it stood once it is home — a chalk outline.
-   - `.shadow-slot--aim`: a shadow an animal is over (or, while one is
-     picked, every free shadow) glows in the friend's chalk.
-   - `.shadow-land`: the animal filling its shadow — a pop and a flash of
-     light. `.shadow-hop`: all home, they hop one after another. */
-.shadow-animal {
-  filter: drop-shadow(0 6px 5px rgb(0 0 0 / 28%));
-  transition:
-    scale 0.18s ease-out,
-    rotate 0.18s ease-out,
-    filter 0.18s ease-out;
-}
-
-.shadow-bob {
-  transform-origin: 50% 90%;
-  animation: shadow-bob 2.8s ease-in-out infinite;
-}
-
-@keyframes shadow-bob {
-  0%,
-  100% {
-    scale: 1 1;
-    rotate: -1.5deg;
-  }
-  50% {
-    scale: 1.02 0.98;
-    rotate: 1.5deg;
-  }
-}
-
-.shadow-animal--picked {
-  translate: 0 -7%;
-  scale: 1.08;
-  filter: drop-shadow(0 14px 8px rgb(0 0 0 / 32%));
-}
-
-.shadow-animal--held {
-  scale: 1.12;
-  rotate: -5deg;
-  filter: drop-shadow(0 22px 12px rgb(0 0 0 / 35%));
-}
-
-.shadow-spot {
-  border: 2px dashed rgb(251 248 240 / 28%);
-}
-
-.shadow-slot--aim {
-  filter: drop-shadow(0 0 6px var(--chalk-accent)) drop-shadow(0 0 2px var(--chalk-accent));
-}
-
-.shadow-land {
-  animation: shadow-land 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
-}
-
-@keyframes shadow-land {
-  0% {
-    scale: 1.12;
-    filter: brightness(1.45);
-  }
-  100% {
-    scale: 1;
-    filter: brightness(1);
-  }
-}
-
-.shadow-land.shadow-hop {
-  transform-origin: 50% 100%;
-  animation: shadow-hop 0.62s cubic-bezier(0.3, 0.8, 0.4, 1) both;
-}
-
-@keyframes shadow-hop {
-  0%,
-  100% {
-    translate: 0 0;
-    scale: 1 1;
-  }
-  20% {
-    scale: 1.08 0.9;
-  }
-  50% {
-    translate: 0 -16%;
-    scale: 0.95 1.06;
-  }
-  80% {
-    translate: 0 0;
-    scale: 1.04 0.96;
-  }
-}
-
 /* Feed the animal (`FeedAnimal`, Bloo's Animals, 2026-11-01), each motion
    on its own property:
 
@@ -3790,7 +3657,6 @@ button:disabled,
   .demo-press,
   .demo-wave,
   .demo-fly,
-  .demo-shadow-carry,
   .demo-feed,
   .demo-feed-pen,
   .demo-draw,
@@ -3808,10 +3674,7 @@ button:disabled,
   .grow-sway,
   .grow-ring,
   .grow-cheer,
-  .shadow-bob,
-  .shadow-land,
-  .feed-no,
-  .shadow-land.shadow-hop {
+  .feed-no {
     animation: none;
   }
 
