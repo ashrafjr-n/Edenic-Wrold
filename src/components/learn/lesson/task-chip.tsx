@@ -125,7 +125,7 @@ export function TaskChip({ kind, verb, target, label, demo, closeLabel, tone, di
                 <X className="h-5 w-5" strokeWidth={3} />
               </Button3D>
             </span>
-            <div className="aspect-square w-full">
+            <div className="@container aspect-square w-full">
               <TaskDemo demo={demo} />
             </div>
           </div>
@@ -177,7 +177,7 @@ export function TaskPanel({ kind, verb, target, label, demo, tone, dir, classNam
       </p>
       </div>
       {demo && (
-        <div className="aspect-square w-32 shrink-0 lg:w-full">
+        <div className="@container aspect-square w-32 shrink-0 lg:w-full">
           <TaskDemo demo={demo} />
         </div>
       )}

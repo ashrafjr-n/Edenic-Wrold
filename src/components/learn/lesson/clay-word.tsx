@@ -34,8 +34,8 @@ interface ClayWordProps {
   word: string;
   /** `lg` is the word on its own card; `md` sits above the spelling board;
       `sm` is the word on the done screen and above a pick; `demo` is the
-      word inside a how-to demo, which never grows with the screen (the
-      demo's box is the same size everywhere). */
+      word inside a how-to demo, sized to the demo's own square (a
+      container: the popup's, or the tablet panel's small one). */
   size?: "lg" | "md" | "sm" | "demo";
   /** One tone for every letter instead of one per letter: a color word in
       its own color, or `PLAIN_TONE`. */
@@ -52,7 +52,7 @@ export function ClayWord({ word, size = "lg", tone }: ClayWordProps) {
   const long = word.length > 6;
   const type =
     size === "demo"
-      ? "text-5xl sm:text-6xl"
+      ? "text-[min(3.75rem,15cqi)]"
       : size === "sm"
       ? "text-5xl sm:text-6xl lg:text-[min(4.5rem,8svh)]"
       : size === "lg"
