@@ -21,6 +21,15 @@ not behind the front) and the front's box — paste them into
 
     python3 tools/picnic-scene/crop.py harvest-vegetables --grain
 
+The kitchen (the Vegetables lessons' Kitchen step) — run after `render.cjs
+kitchen`: for each frame (landscape, portrait), the room blurred under the
+sharp counter (`ground.jpg`), the counter alone (`counter.png`, over the
+friend behind it), each thing, and the basket with its near half, into
+`<dest>/<frame>/`; prints the boxes for `data/kitchen.ts`. `dest` defaults
+to `public/assets/learn/nova/fruits/kitchen`.
+
+    python3 tools/picnic-scene/crop.py kitchen
+
 Nova's basket — run after `render.cjs basket`: writes the basket
 (`basket.png`) and its near half, which goes over what is piled in it
 (`basket-rim.png`), both on one box, into `dest`, and prints the mouth (%
@@ -283,6 +292,51 @@ if NAME == "basket":
         cut.thumbnail((512, 512), Image.LANCZOS)
         cut.save(f"{dest}/{name}.png", optimize=True)
     print(json.dumps({"mouth": [round(v * 100, 2) for v in mouth]}))
+    sys.exit()
+
+if NAME == "kitchen":
+    # The kitchen, both frames — run after `render.cjs kitchen`: the room
+    # blurred under the sharp counter (`ground.jpg`), the counter alone
+    # (`counter.png`, laid over the friend standing behind it), each thing
+    # cropped to its pixels, the basket and its near half (`basket.png`,
+    # `basket-rim.png`, one box), into `<dest>/<frame>/`. Prints each frame's
+    # boxes (% of the scene) — paste them into `data/kitchen.ts`.
+    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/kitchen")
+    layout = {}
+    for frame in ("landscape", "portrait"):
+        out = os.path.join(HERE, "out", f"kitchen-{frame}")
+        to = os.path.join(dest, frame)
+        os.makedirs(to, exist_ok=True)
+        meta = json.load(open(f"{out}/meta.json"))
+        scene = Image.open(f"{out}/background.png").convert("RGB")
+        W, H = scene.size
+        mask = Image.open(f"{out}/countermask.png").convert("L")
+        room = Image.open(f"{out}/back.png").convert("RGB").filter(ImageFilter.GaussianBlur(W / 150))
+        Image.composite(scene, room, mask).save(f"{to}/ground.jpg", quality=84, optimize=True, progressive=True)
+        counter = scene.convert("RGBA")
+        counter.putalpha(mask)
+        box = mask.getbbox()
+        counter.crop(box).save(f"{to}/counter.png", optimize=True)
+        sized = lambda r: [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2), round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
+        frame_layout = {"counter": sized(box), "friend": meta["friend"], "items": {}}
+        for name in meta["items"]:
+            layer = Image.open(f"{out}/{name}.png")
+            box = alpha_box(layer)
+            layer.crop(box).save(f"{to}/{name}.png", optimize=True)
+            hit = Image.open(f"{out}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
+            frame_layout["items"][name] = {"box": sized(box), "hit": sized(hit)}
+        basket = Image.open(f"{out}/basket.png")
+        rim = basket.copy()
+        rim.putalpha(ImageChops.multiply(basket.split()[-1], Image.open(f"{out}/rimmask.png").convert("L")))
+        box = alpha_box(basket, pad=2)
+        bw, bh = box[2] - box[0], box[3] - box[1]
+        l, t, w, h = meta["mouth"]
+        mouth = [(l / 100 * W - box[0]) / bw, (t / 100 * H - box[1]) / bh, w / 100 * W / bw, h / 100 * H / bh]
+        basket.crop(box).save(f"{to}/basket.png", optimize=True)
+        rim.crop(box).save(f"{to}/basket-rim.png", optimize=True)
+        frame_layout["basket"] = {"box": sized(box), "mouth": [round(v * 100, 2) for v in mouth]}
+        layout[frame] = frame_layout
+    print(json.dumps(layout))
     sys.exit()
 
 OUT = os.path.join(HERE, "out", NAME)
