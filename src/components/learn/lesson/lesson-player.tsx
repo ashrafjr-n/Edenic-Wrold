@@ -10,7 +10,7 @@ import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import type { LessonDef } from "@/types/course";
+import type { LessonDef, Question } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
@@ -49,6 +49,19 @@ const GO_TONE = {
 
 /** Kept in step with `.stage-swap--out`'s 0.2s in `globals.css`. */
 const STEP_LEAVE_MS = 200;
+
+/* A solved step goes on BY ITSELF once its cheer has played — no Next
+   (direct request 2026-11-02). How long each cheer runs: a trace turns
+   into its thing (`.trace-morph-in` ends at 1.65s) and is looked at; a
+   feed/basket/make has already played its own ending before it reports. */
+const SOLVED_HOLD_MS: Partial<Record<Question["type"], number>> = {
+  trace: 2900,
+  spell: 2100,
+  feed: 700,
+  basket: 700,
+  make: 700,
+};
+const SOLVED_HOLD_DEFAULT_MS = 1900;
 
 interface LessonPlayerProps {
   lesson: LessonDef;
@@ -200,6 +213,14 @@ export function LessonPlayer({
       setRound((value) => value + 1);
     });
   const endDemo = () => go(() => setDemo(false));
+
+  const onHeld = useEffectEvent(() => advance());
+  const holdMs = (question && SOLVED_HOLD_MS[question.type]) ?? SOLVED_HOLD_DEFAULT_MS;
+  useEffect(() => {
+    if (!solved) return;
+    const timer = window.setTimeout(onHeld, holdMs);
+    return () => window.clearTimeout(timer);
+  }, [solved, holdMs]);
 
   const onSolved = () => setSolved(true);
   const onMiss = () => {
@@ -474,10 +495,11 @@ export function LessonPlayer({
       );
     }
     if (q.type !== "spell") footEnd = action;
+    /* Solved: nothing to press — the step goes on by itself (above). */
     if (solved) {
-      action = <NextButton label={lines.next} tone={GO_TONE} onPress={advance} dir={dir} className="lesson-onward" />;
+      action = null;
       footStart = null;
-      footEnd = action;
+      footEnd = null;
     }
   }
 
