@@ -49,8 +49,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "harvest" };
     case "grow":
       return { kind: "grow", target: q.word };
-    case "shadows":
-      return { kind: "shadows", target: q.word };
     case "feed":
       return { kind: "feed", target: q.word };
     case "pick": {
@@ -90,8 +88,6 @@ export function demoFor(q: Question, accent: string, seed: string, tone: { face:
       return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "grow":
       return { kind: "grow", scene: q.scene, tone };
-    case "shadows":
-      return { kind: "shadows", pair: q.demo };
     case "feed":
       return { kind: "feed", ...q.demo };
     case "pick":
