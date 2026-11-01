@@ -47,10 +47,12 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "like" };
     case "harvest":
       return { kind: "harvest" };
+    /* Their demos feed and fill with another animal and vegetable (how,
+       never which), so the chip names no word that would not match. */
     case "feed":
-      return { kind: "feed", target: q.word };
+      return { kind: "feed" };
     case "basket":
-      return { kind: "basket", target: q.word };
+      return { kind: "basket" };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
