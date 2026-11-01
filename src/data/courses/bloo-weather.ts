@@ -6,25 +6,32 @@ import sunny from "../../../public/assets/learn/bloo/weather/scenes/sunny.png";
 import rainy from "../../../public/assets/learn/bloo/weather/scenes/rainy.png";
 import windy from "../../../public/assets/learn/bloo/weather/scenes/windy.png";
 import snowy from "../../../public/assets/learn/bloo/weather/scenes/snowy.png";
+import sunnyBloo from "../../../public/assets/learn/bloo/weather/dressed/sunny.png";
+import rainyBloo from "../../../public/assets/learn/bloo/weather/dressed/rainy.png";
+import windyBloo from "../../../public/assets/learn/bloo/weather/dressed/windy.png";
+import snowyBloo from "../../../public/assets/learn/bloo/weather/dressed/snowy.png";
 
-/** Each weather: its picture — Bloo's hill under it — and its review box's
+/** Each weather: its picture — Bloo's hill under it — Bloo himself dressed
+    for it (sunglasses, an umbrella, a kite, a woolly hat and scarf — 3D,
+    `render.cjs thing bloo-<weather>=bloo:<weather>`) and its review box's
     color. In teaching order. */
-const WEATHERS: Record<Weather, { scene: StaticImageData; box: ColorId }> = {
-  sunny: { scene: sunny, box: "yellow" },
-  rainy: { scene: rainy, box: "blue" },
-  windy: { scene: windy, box: "green" },
-  snowy: { scene: snowy, box: "purple" },
+const WEATHERS: Record<Weather, { scene: StaticImageData; bloo: StaticImageData; box: ColorId }> = {
+  sunny: { scene: sunny, bloo: sunnyBloo, box: "yellow" },
+  rainy: { scene: rainy, bloo: rainyBloo, box: "blue" },
+  windy: { scene: windy, bloo: windyBloo, box: "green" },
+  snowy: { scene: snowy, bloo: snowyBloo, box: "purple" },
 };
 const ORDER = Object.keys(WEATHERS) as Weather[];
 
 const face = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].scene, word: weather });
+const dressed = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].bloo, word: weather });
 
 /**
- * Bloo's weather — one weather, one lesson, and every step about IT (the
- * one-thing lesson rule): meet it (Bloo's hill under it, its word, its
- * speaker) → build its word. Telling the four apart is the review's.
- * (Make it by hand, the third step from 2026-10-08, was removed
- * 2026-11-01.)
+ * Bloo's weather — one weather, one lesson: meet it (Bloo's hill under
+ * it, its word, its speaker) → build its word → read it and pick the Bloo
+ * dressed for it, of four (the user's design, 2026-11-01: sunglasses, an
+ * umbrella, a kite, a woolly hat; its demo blind). (Make it by hand, the
+ * third step from 2026-10-08, was removed 2026-11-01.)
  */
 function weatherLesson(weather: Weather, i: number): LessonDef {
   const { scene } = WEATHERS[weather];
@@ -34,6 +41,7 @@ function weatherLesson(weather: Weather, i: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "thisWeather", vars: { weather } }, word: weather, picture: scene },
       { type: "spell", ask: { key: "spell", vars: { word: weather } }, word: weather },
+      { type: "pick", ask: { key: "whichWeather", vars: { weather } }, word: weather, plain: true, options: ORDER.map(dressed), answer: i, blind: true },
     ],
   };
 }
