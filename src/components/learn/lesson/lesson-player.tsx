@@ -439,7 +439,7 @@ export function LessonPlayer({
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "basket") {
-      body = <BasketTime key={seed} word={q.word} foods={q.foods} basket={q.basket} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
+      body = <BasketTime key={seed} word={q.word} kitchen={q.kitchen} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
