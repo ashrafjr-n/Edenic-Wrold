@@ -3762,6 +3762,13 @@ button:disabled,
     animation: none;
   }
 
+  /* Fed: the hearts simply stand over its mouth. */
+  .feed-heart {
+    animation: none;
+    opacity: 1;
+    translate: 0 -140%;
+  }
+
   /* Grow it: no crumbs, no sparkles, no ring burst. */
   .grow-crumb,
   .grow-twinkle,

@@ -194,6 +194,7 @@ export const en = {
     sortAnimals: "Put each animal in its home!",
     meetThing: "Meet the {thing}!",
     matchShadows: "Put each animal on its shadow!",
+    feedAnimal: "What does the {thing} eat? Feed it!",
     makeSoup: "Make a vegetable soup!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
@@ -218,6 +219,7 @@ export const en = {
     harvest: "Pick",
     grow: "Grow",
     shadows: "Match",
+    feed: "Feed",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
