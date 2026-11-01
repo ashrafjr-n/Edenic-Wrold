@@ -3461,6 +3461,322 @@ const VIDEO_THINGS = {
 };
 ITEMS.video = (what) => VIDEO_THINGS[what]();
 
+/* ---------- What Bloo's animals eat — Feed the animal (2026-11-01) ----------
+   The animals' own food, in the videos' look like the vegetables (smooth
+   satin, coloured per vertex, the videos' warm light — `?thing=food&arg=`,
+   `@hd@float`, then `crop.py things … --grain`). No faces: they get eaten.
+   Each reads at a thumb's size — one clear shape, its own colour. */
+
+/* One colour, or a gradient by height between two. */
+const coat = (geo, low, high = low, from = 0, to = 1) =>
+  tint(geo, (v) => [new THREE.Color(low).lerp(new THREE.Color(high), Math.min(1, Math.max(0, (v.y - from) / (to - from)))), 0]);
+
+const ANIMAL_FOODS = {
+  /* A round pink bowl of milk — a white band round its belly, the milk
+     standing a little under the rim with one slow ring on it. */
+  milk() {
+    const g = new THREE.Group();
+    const bowl = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0], [0.42, 0], [0.5, 0.03], [0.62, 0.16], [0.74, 0.38], [0.8, 0.5], [0.78, 0.55], [0.72, 0.53], [0.66, 0.4], [0.56, 0.2], [0.4, 0.12], [0, 0.12]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(160), 160);
+    bowl.rotateY(Math.PI);
+    tint(bowl, (v) => {
+      const r = Math.hypot(v.x, v.z);
+      const band = Math.exp(-(((v.y - 0.3) / 0.045) ** 2)) * (r > 0.6 ? 1 : 0);
+      return [new THREE.Color(0xf59bc0).lerp(new THREE.Color(0xfff6fa), band).lerp(new THREE.Color(0xe77aa8), Math.max(0, 0.12 - v.y) * 6), 0];
+    });
+    g.add(mesh(bowl, satin({ roughness: 0.25, clearcoat: 0.7, clearcoatRoughness: 0.15 })));
+    const milk = new THREE.CircleGeometry(0.715, 128);
+    milk.rotateX(-Math.PI / 2);
+    milk.translate(0, 0.47, 0);
+    swell(milk, (v) => 0.012 * Math.cos(Math.hypot(v.x, v.z) * 16) * Math.max(0, 1 - Math.hypot(v.x, v.z) / 0.7));
+    tint(milk, (v) => [new THREE.Color(0xfffdf8).lerp(new THREE.Color(0xf3ece4), Math.hypot(v.x, v.z) / 0.72), 0]);
+    g.add(mesh(milk, satin({ roughness: 0.12, clearcoat: 0.9, clearcoatRoughness: 0.05 })));
+    return g;
+  },
+
+  /* A cartoon bone: a fat shaft, two round knuckles at each end. */
+  bone() {
+    const g = new THREE.Group();
+    const m = satin({ roughness: 0.42 });
+    const shaft = new THREE.CapsuleGeometry(0.17, 1.0, 16, 48);
+    shaft.rotateZ(Math.PI / 2);
+    swell(shaft, (v) => -0.03 * Math.cos((v.x / 0.6) * Math.PI * 0.5));
+    coat(shaft, 0xeadcc0, 0xfff7e6, -0.2, 0.2);
+    g.add(mesh(shaft, m));
+    for (const x of [-0.62, 0.62]) for (const z of [-0.17, 0.17]) {
+      const knob = new THREE.SphereGeometry(0.25, 64, 48);
+      knob.translate(x, 0, z);
+      coat(knob, 0xe6d6b8, 0xfffaf0, -0.25, 0.25);
+      g.add(mesh(knob, m));
+    }
+    g.rotation.set(-0.5, 0.25, 0.18);
+    return g;
+  },
+
+  /* Fish food: its blue tub with an orange fish on the front, the lid
+     tipped open, and flakes and pellets spilled in a heap before it —
+     orange, red, yellow and green. */
+  fishFood() {
+    const g = new THREE.Group();
+    const tub = new THREE.LatheGeometry(new THREE.SplineCurve([[0, 0], [0.36, 0], [0.4, 0.04], [0.41, 0.9], [0.38, 0.95], [0, 0.95]].map(([x, y]) => new THREE.Vector2(x, y))).getPoints(80), 96);
+    tint(tub, (v) => [new THREE.Color(0x4f9ff0).lerp(new THREE.Color(0xffffff), Math.exp(-(((v.y - 0.78) / 0.05) ** 2)) * 0.9), 0]);
+    const body = mesh(tub, satin({ roughness: 0.3, clearcoat: 0.5 }));
+    g.add(body);
+    const lid = new THREE.CylinderGeometry(0.43, 0.43, 0.1, 96);
+    coat(lid, 0xff6b5e, 0xff8a7a, -0.05, 0.05);
+    const lidM = mesh(lid, satin({ roughness: 0.3, clearcoat: 0.5 }));
+    lidM.position.set(-0.05, 1.08, -0.32);
+    lidM.rotation.x = -1.1;
+    g.add(lidM);
+    /* The fish on its front: an oval body and a fan tail, raised. */
+    const fish = new THREE.Shape();
+    fish.absellipse(0, 0, 0.17, 0.11, 0, Math.PI * 2);
+    const tail = new THREE.Shape();
+    tail.moveTo(0.13, 0);
+    tail.lineTo(0.3, 0.11);
+    tail.lineTo(0.27, -0.11);
+    tail.closePath();
+    for (const shape of [fish, tail]) {
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.03, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.015, bevelSegments: 4, curveSegments: 32 });
+      coat(geo, 0xff8a2a);
+      const part = mesh(geo, satin({ roughness: 0.35 }));
+      part.position.set(-0.06, 0.45, 0.405);
+      g.add(part);
+    }
+    const eye = new THREE.SphereGeometry(0.022, 16, 12);
+    eye.translate(-0.15, 0.475, 0.455);
+    g.add(mesh(coat(eye, 0x1f1d24), satin({ roughness: 0.1 })));
+    const colors = [0xff8a3d, 0xe8524a, 0xffc23d, 0x7cc95a, 0xff6f61];
+    let k = 0;
+    const bit = (x, y, z, flake) => {
+      const geo = flake ? new THREE.CylinderGeometry(0.075, 0.075, 0.02, 7) : new THREE.SphereGeometry(0.05, 20, 14);
+      if (!flake) geo.scale(1.2, 0.8, 1);
+      geo.rotateX(rand() * 2);
+      geo.rotateZ(rand() * 2);
+      geo.translate(x, y, z);
+      coat(geo, colors[k++ % colors.length]);
+      g.add(mesh(geo, satin({ roughness: 0.5 })));
+    };
+    for (const [y, r, n] of [[0.05, 0.42, 12], [0.06, 0.24, 8], [0.14, 0.3, 8], [0.16, 0.12, 5], [0.25, 0.14, 4], [0.32, 0, 1]]) {
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + y * 9;
+        bit(0.35 + Math.cos(a) * r, y, 0.62 + Math.sin(a) * r * 0.55, (i + n) % 3 === 0);
+      }
+    }
+    g.rotation.y = -0.3;
+    return g;
+  },
+
+  /* A bunch of three bananas: each a fat crescent, a green neck where
+     they meet at the stem, a small dark tip at the other end — fanned out
+     a little from the stem. */
+  banana() {
+    const g = new THREE.Group();
+    const m = satin({ roughness: 0.36, clearcoat: 0.4 });
+    const ARC = 1.7, R = 0.8, SEGS = 96, RING = 32;
+    const curve = new THREE.CatmullRomCurve3(
+      Array.from({ length: 13 }, (_, i) => {
+        const a = -ARC / 2 + (ARC * i) / 12;
+        return new THREE.Vector3(R * Math.sin(a), R * (1 - Math.cos(a)), 0);
+      }),
+    );
+    const fat = (u) => 0.035 + 0.165 * Math.sin(Math.min(1, Math.max(0, (u - 0.04) / 0.94)) * Math.PI) ** 0.55;
+    const one = () => {
+      const geo = new THREE.TubeGeometry(curve, SEGS, 1, RING);
+      const pos = geo.attributes.position;
+      for (let i = 0; i <= SEGS; i++) {
+        const c = curve.getPointAt(i / SEGS);
+        const r = fat(i / SEGS);
+        for (let j = 0; j <= RING; j++) {
+          const idx = i * (RING + 1) + j;
+          /* A banana has edges: five soft flats round it. */
+          const dx = pos.getX(idx) - c.x, dy = pos.getY(idx) - c.y, dz = pos.getZ(idx) - c.z;
+          const k = r * (1 - 0.045 * Math.cos((j / RING) * Math.PI * 10));
+          pos.setXYZ(idx, c.x + dx * k, c.y + dy * k, c.z + dz * k);
+        }
+      }
+      geo.computeVertexNormals();
+      const left = curve.getPointAt(0).x, right = curve.getPointAt(1).x;
+      tint(geo, (v) => {
+        const u = (v.x - left) / (right - left);
+        const c = new THREE.Color(0xffd83f).lerp(new THREE.Color(0xf5bf1e), Math.max(0, v.y < 0.1 ? 0.4 : 0));
+        if (u < 0.14) c.lerp(new THREE.Color(0x9cb844), (1 - u / 0.14) ** 1.5);
+        if (u > 0.975) c.lerp(new THREE.Color(0x5a3a22), (u - 0.975) / 0.025);
+        return [c, 0];
+      });
+      const b = new THREE.Group();
+      b.add(mesh(geo, m));
+      return b;
+    };
+    const stemAt = curve.getPointAt(0);
+    [[0.32, -0.2], [0, 0], [-0.32, 0.2]].forEach(([fan, depth]) => {
+      const pivot = new THREE.Group();
+      pivot.position.copy(stemAt);
+      pivot.position.z = depth;
+      const b = one();
+      b.position.sub(stemAt);
+      pivot.add(b);
+      pivot.rotation.set(0, 0, fan);
+      g.add(pivot);
+    });
+    const stem = taperTube([[stemAt.x, stemAt.y, 0], [stemAt.x - 0.08, stemAt.y + 0.12, 0], [stemAt.x - 0.12, stemAt.y + 0.28, 0]], 0.08, 0.06, satin({ roughness: 0.5 }));
+    tintAll(stem, () => [new THREE.Color(0x7f8d36), 0]);
+    g.add(stem);
+    g.rotation.set(0.15, -0.2, -0.1);
+    return g;
+  },
+
+  /* A wedge of cheese, its cut faces full of round holes. */
+  cheese() {
+    const L = 1.5, W = 1.0, H = 0.62;
+    const geo = new THREE.BoxGeometry(1, 1, 1, 90, 40, 70);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const u = pos.getX(i) + 0.5;
+      pos.setXYZ(i, u * L - L / 2, (pos.getY(i) + 0.5) * H, pos.getZ(i) * W * (1 - u * 0.96));
+    }
+    geo.computeVertexNormals();
+    /* Holes: [x, y, z, radius] on the faces. */
+    const HOLES = [[-0.45, 0.38, 0.5, 0.13], [-0.12, 0.2, 0.33, 0.09], [0.25, 0.4, 0.2, 0.07], [-0.55, 0.62, 0.0, 0.14], [-0.05, 0.62, 0.1, 0.1], [0.4, 0.62, -0.05, 0.06], [-0.75, 0.3, 0.1, 0.12], [-0.75, 0.15, -0.3, 0.08], [-0.2, 0.62, -0.3, 0.08], [0.0, 0.3, -0.34, 0.1]];
+    const hole = (v) => HOLES.reduce((d, [x, y, z, r]) => Math.max(d, Math.max(0, 1 - Math.hypot(v.x - x, v.y - y, v.z - z) / r)), 0);
+    swell(geo, (v) => -0.09 * Math.sqrt(hole(v)));
+    tint(geo, (v) => [new THREE.Color(0xffd257).lerp(new THREE.Color(0xe9a528), Math.min(1, hole(v) * 2.2)).lerp(new THREE.Color(0xf3b73a), v.x < -L / 2 + 0.03 ? 0.7 : 0), 0]);
+    const g = new THREE.Group();
+    g.add(mesh(geo, satin({ roughness: 0.55, clearcoat: 0.1 })));
+    g.rotation.y = 0.55;
+    return g;
+  },
+
+  /* A pink earthworm, wriggling: a soft tube in an S, rings round it, a
+     paler band near its head. */
+  worm() {
+    const pts = [];
+    for (let i = 0; i <= 14; i++) {
+      const t = i / 14;
+      pts.push([(t - 0.5) * 1.7, 0.16 + 0.22 * Math.sin(t * Math.PI * 2.2) * (0.4 + t * 0.6), 0.12 * Math.cos(t * 5)]);
+    }
+    const w = taperTube(pts, 0.12, 0.16, satin({ roughness: 0.3, clearcoat: 0.45 }), 120);
+    const curve = new THREE.CatmullRomCurve3(pts.map(([x, y, z]) => new THREE.Vector3(x, y, z)));
+    const along = curve.getSpacedPoints(400);
+    const tAt = (v) => {
+      let best = 0, bd = Infinity;
+      along.forEach((p, i) => {
+        const d = p.distanceToSquared(v);
+        if (d < bd) [bd, best] = [d, i];
+      });
+      return best / 400;
+    };
+    tintAll(w, (v) => {
+      const t = tAt(v);
+      const ring = 0.5 + 0.5 * Math.cos(t * Math.PI * 44);
+      const c = new THREE.Color(0xf28a9a).lerp(new THREE.Color(0xd96479), ring * 0.45);
+      return [c.lerp(new THREE.Color(0xf7b2b6), Math.exp(-(((t - 0.78) / 0.05) ** 2)) * 0.8), 0];
+    });
+    return w;
+  },
+
+  /* A little heap of sunflower seeds: teardrops, grey-black with pale
+     stripes. */
+  seeds() {
+    const g = new THREE.Group();
+    const seed = (x, y, z, ry, rz) => {
+      const geo = new THREE.SphereGeometry(0.1, 32, 24);
+      const p = geo.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        const yy = p.getY(i) / 0.1;
+        p.setXYZ(i, p.getX(i) * 1.9 * (1 - 0.35 * yy), p.getY(i) * 2.6, p.getZ(i) * 0.9);
+      }
+      geo.computeVertexNormals();
+      tint(geo, (v) => {
+        const a = Math.atan2(v.z, v.x);
+        const stripe = Math.max(0, Math.cos(a * 4)) ** 6;
+        return [new THREE.Color(0x3b3532).lerp(new THREE.Color(0xe9e2d4), stripe * 0.85), 0];
+      });
+      geo.rotateZ(rz);
+      geo.rotateY(ry);
+      geo.translate(x, y, z);
+      g.add(mesh(geo, satin({ roughness: 0.35, clearcoat: 0.4 })));
+    };
+    let i = 0;
+    for (const [y, r, n] of [[0.1, 0.55, 9], [0.1, 0.25, 5], [0.28, 0.36, 7], [0.44, 0.15, 4], [0.58, 0, 1]]) {
+      for (let k = 0; k < n; k++) {
+        const a = (k / n) * Math.PI * 2 + i++ * 0.7;
+        seed(Math.cos(a) * r, y, Math.sin(a) * r * 0.8, a, 1.2 + rand() * 0.6);
+      }
+    }
+    return g;
+  },
+
+  /* A small head of lettuce: ruffled, cupped leaves round a pale heart. */
+  lettuce() {
+    const g = new THREE.Group();
+    const leaf = (turn, tip, size, color) => {
+      const geo = new THREE.SphereGeometry(size, 96, 48, 0, Math.PI * 1.1, 0, Math.PI * 0.55);
+      swell(geo, (v) => 0.05 * size * Math.sin(Math.atan2(v.z, v.x) * 13) * Math.max(0, 1 - v.y / size));
+      tint(geo, (v) => {
+        const rim = Math.max(0, 1 - v.y / size);
+        const vein = Math.exp(-((Math.atan2(v.z, v.x) - Math.PI * 0.55) ** 2) / 0.004);
+        return [new THREE.Color(color[0]).lerp(new THREE.Color(color[1]), rim).lerp(new THREE.Color(0xe9f6c8), vein * 0.6), 0];
+      });
+      const m = mesh(geo, satin({ roughness: 0.45, clearcoat: 0.25, side: THREE.DoubleSide }));
+      m.rotation.set(tip, turn, 0);
+      return m;
+    };
+    g.add(mesh(coat(new THREE.SphereGeometry(0.42, 64, 48), 0xd7eda0, 0xeaf7c4, 0, 0.4), satin({ roughness: 0.45 })));
+    [[0, 0.45], [2.1, 0.5], [4.2, 0.45], [1.05, 0.9], [3.15, 0.95], [5.25, 0.9]].forEach(([turn, tip], i) =>
+      g.add(leaf(turn, tip, i < 3 ? 0.62 : 0.72, i < 3 ? [0x9fd45a, 0x6fb53a] : [0x84c64a, 0x4f9a2c])),
+    );
+    g.position.y = 0.3;
+    const out = new THREE.Group();
+    out.add(g);
+    out.scale.y = 0.85;
+    return out;
+  },
+
+  /* A green cricket, side on: a long body, a round head with bead eyes,
+     long feelers and big folded jumping legs. */
+  cricket() {
+    const g = new THREE.Group();
+    const m = satin({ roughness: 0.32, clearcoat: 0.45 });
+    const green = (geo, a = 0x7cc24a, b = 0xa6dc6a) => coat(geo, a, b, 0.1, 0.55);
+    const body = new THREE.CapsuleGeometry(0.2, 0.7, 16, 48);
+    body.rotateZ(Math.PI / 2 - 0.12);
+    body.translate(0.05, 0.42, 0);
+    g.add(mesh(green(body), m));
+    const wing = new THREE.CapsuleGeometry(0.15, 0.62, 12, 32);
+    wing.scale(1, 1, 0.5);
+    wing.rotateZ(Math.PI / 2 - 0.2);
+    wing.translate(0.12, 0.55, 0.06);
+    g.add(mesh(green(wing, 0x5ea83a, 0x8acb57), m));
+    const head = new THREE.SphereGeometry(0.21, 48, 32);
+    head.translate(-0.5, 0.52, 0);
+    g.add(mesh(green(head), m));
+    for (const z of [-0.12, 0.12]) {
+      const eye = new THREE.SphereGeometry(0.06, 24, 16);
+      eye.translate(-0.62, 0.6, z);
+      g.add(mesh(coat(eye, 0x1f1d24), satin({ roughness: 0.1, clearcoat: 1 })));
+      const feeler = taperTube([[-0.6, 0.68, z * 0.6], [-0.85, 1.0, z * 1.5], [-0.75, 1.35, z * 2.5], [-0.45, 1.5, z * 3]], 0.022, 0.012, m, 40);
+      tintAll(feeler, () => [new THREE.Color(0x5d9a36), 0]);
+      g.add(feeler);
+    }
+    for (const z of [-0.16, 0.16]) {
+      const thigh = taperTube([[0.2, 0.42, z], [0.45, 0.78, z * 1.2], [0.62, 0.62, z * 1.25]], 0.09, 0.05, m, 40);
+      const shin = taperTube([[0.62, 0.62, z * 1.25], [0.55, 0.3, z * 1.3], [0.62, 0.05, z * 1.35]], 0.04, 0.03, m, 40);
+      for (const leg of [thigh, shin]) {
+        tintAll(leg, () => [new THREE.Color(0x6db540), 0]);
+        g.add(leg);
+      }
+      for (const x of [-0.3, -0.05]) {
+        const small = taperTube([[x, 0.32, z * 0.8], [x - 0.05, 0.15, z * 1.4], [x - 0.12, 0.03, z * 1.6]], 0.03, 0.022, m, 30);
+        tintAll(small, () => [new THREE.Color(0x6db540), 0]);
+        g.add(small);
+      }
+    }
+    g.rotation.y = 0.35;
+    return g;
+  },
+};
+ITEMS.food = (what) => ANIMAL_FOODS[what]();
+
 /* A see-through floor that only shows shadows, for the item layers. */
 const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
 catcher.rotation.x = -Math.PI / 2;
@@ -4310,14 +4626,14 @@ if (THING) {
   /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
      what is worn for it; the videos' vegetables): a softer, fuller light —
      their felt is evenly lit, with no hard dark side. */
-  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video"].includes(THING)) {
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
   }
   /* The videos' light: warm and soft from the front, a pink sky, a blue
      ground, and a rim of light from behind that the fur catches. */
-  if (THING === "video") {
+  if (THING === "video" || THING === "food") {
     sun.color.set(0xfff0e4);
     sun.intensity = 1.7;
     sun.position.set(-3, 8, 10);

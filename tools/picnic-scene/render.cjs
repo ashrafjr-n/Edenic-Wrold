@@ -53,6 +53,12 @@
  *   node tools/picnic-scene/render.cjs thing sunglasses=wear:sunglasses@float@front sunhat=wear:sunhat@float umbrella=wear:umbrella@float@front rainhat=wear:rainhat@float kite=wear:kite@float@front pinwheel=wear:pinwheel@float@front beanie=wear:beanie@float scarf=wear:scarf@float@front
  *   node tools/picnic-scene/render.cjs thing weather-sunny=weather:sunny@float weather-rainy=weather:rainy@float weather-windy=weather:windy@float weather-snowy=weather:snowy@float
  *
+ * What Bloo's animals eat (Feed the animal, 2026-11-01) — in the videos'
+ * look, like the vegetables, cropped with `--grain` (`crop.py things
+ * public/assets/learn/bloo/animals/food … --grain`):
+ *
+ *   node tools/picnic-scene/render.cjs thing milk=food:milk@hd@float bone=food:bone@hd@float fish-food=food:fishFood@hd@float banana=food:banana@hd@float cheese=food:cheese@hd@float worm=food:worm@hd@float seeds=food:seeds@hd@float lettuce=food:lettuce@hd@float cricket=food:cricket@hd@float
+ *
  * The videos' look (2026-10-12): smooth satin vegetables with no face, in
  * the videos' warm light, cropped with `--grain` like the rest — Nova's
  * vegetables into `nova/fruits/things` and the pumpkin into
