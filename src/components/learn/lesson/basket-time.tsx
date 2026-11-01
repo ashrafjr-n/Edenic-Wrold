@@ -194,7 +194,7 @@ export function BasketTime({ word, foods, basket, seed, onSolved, onMiss }: Bask
         {/* Nova's basket: what goes in lies under its near half. */}
         <div
           ref={basketRef}
-          className={`basket-bin relative h-[min(15rem,calc(var(--room)*0.36))] ${aim ? "basket-bin--aim" : ""} ${landed ? "basket-bin--in" : ""}`}
+          className={`basket-bin relative h-[min(17rem,calc(var(--room)*0.5-2.6rem))] ${aim ? "basket-bin--aim" : ""} ${landed ? "basket-bin--in" : ""}`}
           style={{ aspectRatio: `${basket.src.width} / ${basket.src.height}` }}
         >
           <span aria-hidden className="absolute inset-x-[10%] -bottom-[5%] h-[16%] rounded-[50%] bg-[radial-gradient(closest-side,rgb(0_0_0/0.3),transparent)]" />
