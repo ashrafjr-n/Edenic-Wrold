@@ -3076,6 +3076,39 @@ button:disabled,
   }
 }
 
+/* Basket Time (`BasketTime`, Nova's Vegetables, 2026-11-01): the basket
+   (`.basket-bin`) leans in and glows in the friend's chalk while a
+   vegetable is held over it (`--aim`), and bounces once it is in (`--in`).
+   The vegetables wear Feed the animal's `.feed-food`. */
+.basket-bin {
+  filter: drop-shadow(0 8px 6px rgb(0 0 0 / 22%));
+  transform-origin: 50% 100%;
+  transition:
+    scale 0.2s ease-out,
+    filter 0.2s ease-out;
+}
+
+.basket-bin--aim {
+  scale: 1.06;
+  filter: drop-shadow(0 0 10px var(--chalk-accent)) drop-shadow(0 8px 6px rgb(0 0 0 / 22%));
+}
+
+.basket-bin--in {
+  animation: basket-in 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+@keyframes basket-in {
+  0% {
+    scale: 1.08 0.9;
+  }
+  45% {
+    scale: 0.96 1.05;
+  }
+  100% {
+    scale: 1 1;
+  }
+}
+
 /* Feed the animal (`FeedAnimal`, Bloo's Animals, 2026-11-01), each motion
    on its own property:
 
@@ -3503,7 +3536,8 @@ button:disabled,
   .make-fill-out,
   .balloon-sway,
   .demo-pop,
-  .feed-no {
+  .feed-no,
+  .basket-bin--in {
     animation: none;
   }
 
