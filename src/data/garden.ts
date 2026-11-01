@@ -14,7 +14,7 @@ import vegetablesPotato from "../../public/assets/learn/nova/fruits/garden/veget
    with the fruits, 2026-10-12). Beside it, the basket (`render.cjs
    basket`, then `crop.py basket`). */
 
-const BASKET: Basket = { src: basket, rim: basketRim, mouth: [3.66, 25.5, 92.69, 46.03] };
+export const BASKET: Basket = { src: basket, rim: basketRim, mouth: [3.66, 25.5, 92.69, 46.03] };
 
 export const GARDENS = {
   vegetables: {

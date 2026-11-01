@@ -1,6 +1,6 @@
 import type { StaticImageData } from "next/image";
-import { GARDENS } from "@/data/garden";
-import type { Face, LessonDef } from "@/types/course";
+import { BASKET, GARDENS } from "@/data/garden";
+import type { Face, Food, LessonDef } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
@@ -11,7 +11,7 @@ import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 /** One thing to learn: its word, its plural ("I like carrots.", "3
     carrots"), its picture — the videos' look (smooth satin clay, no
     face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`). */
-interface Food {
+interface Veg {
   word: string;
   things: string;
   picture: StaticImageData;
@@ -20,7 +20,7 @@ interface Food {
 /** In teaching order — only what the course videos show (direct request
     2026-10-12: the apple, banana, orange, grapes and corn went): three
     vegetables, then the two the videos added. */
-const FOODS: Food[] = [
+const FOODS: Veg[] = [
   { word: "carrot", things: "carrots", picture: carrot },
   { word: "broccoli", things: "broccoli", picture: broccoli },
   { word: "potato", things: "potatoes", picture: potato },
@@ -28,7 +28,7 @@ const FOODS: Food[] = [
   { word: "pepper", things: "peppers", picture: pepper },
 ];
 
-const food = (word: string): Food => {
+const food = (word: string): Veg => {
   const found = FOODS.find((f) => f.word === word);
   if (!found) throw new Error(`No ${word} at the market`);
   return found;
@@ -39,20 +39,30 @@ const face = (word: string): Face => ({ kind: "picture", src: food(word).picture
 /** A line of Nova's note: how many of a food to pick. */
 const line = (word: string, count: number) => ({ word, things: food(word).things, count });
 
+/** A vegetable as Basket Time shows it: its word and picture. */
+const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
+
 /**
  * Nova's garden — one thing, one lesson: watch its reel, meet it (its
- * picture, its word, its speaker), build its word. (Grow it, the third
- * step from 2026-10-24, was removed 2026-11-01 for the user's new design;
- * Nova's cups, before it, are a game on `/play`.) Picking in her garden
- * is the review's exam, with several foods to tell apart.
+ * picture, its word, its speaker), build its word, then Basket Time —
+ * read its word and put it in her basket, from four (the user's design,
+ * 2026-11-01: choosing inside a lesson is wanted since). Three of the
+ * other four vegetables are on the paper; the fourth is the demo's. (Grow
+ * it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
+ * cups, before it, are a game on `/play`.) Picking in her garden is the
+ * review's exam, with several foods to tell apart.
  */
-function foodLesson({ word, picture }: Food, i: number): LessonDef {
+function foodLesson(veg: Veg, i: number): LessonDef {
+  const { word, picture } = veg;
+  const others = FOODS.filter((other) => other !== veg);
+  const outsider = others[i % others.length];
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
+      { type: "basket", ask: { key: "basketTime", vars: { thing: word } }, word, foods: [veg, ...others.filter((other) => other !== outsider)].map(bite), basket: BASKET, demo: bite(outsider) },
     ],
   };
 }
