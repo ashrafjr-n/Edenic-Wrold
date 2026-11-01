@@ -193,9 +193,9 @@ sort boxes, done screen, the course page).
 | Friend | Course | Lessons |
 | --- | --- | --- |
 | Pinki | ~~My Family~~ | CANCELLED 2026-10-02 (family words are relationships, not things) — rethink from the videos |
-| Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell, then (2026-10-24) **Grow it** — slide the knob and the vegetable grows from its seed in the soil, cut open; built 2026-10-02; reworked 2026-10-03; its third step was **Nova's cups** 2026-10-08 → 2026-10-23 (a /play game since) — and before them a tap-by-tap Grow it (2026-10-07, replaced); the 2026-10-24 Grow it is a slide, the plant following the knob. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
+| Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell, then since 2026-11-01 **Basket Time** (read the word, its vegetable of four into Nova's basket) and **Find It!** (tap it on her 3D kitchen counter) — the 2026-10-24 Grow it (slide the knob, the vegetable grows in the soil) deleted that day; built 2026-10-02; reworked 2026-10-03; its third step was **Nova's cups** 2026-10-08 → 2026-10-23 (a /play game since) — and before them a tap-by-tap Grow it (2026-10-07, replaced); the 2026-10-24 Grow it is a slide, the plant following the knob. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
-| Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell → match the shadow → feed the animal (2026-11-01, the user's design; Match the footprints, 2026-10-26, deleted that day; the old Feed it — three bites, no choice — removed 2026-10-12; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
+| Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell → feed the animal (2026-11-01, the user's design; Match the shadow built and deleted the same day; Match the footprints, 2026-10-26, deleted that day; the old Feed it — three bites, no choice — removed 2026-10-12; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
 | Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **which weather?** since 2026-11-01 (pick the 3D Bloo dressed for the word; make it by hand, 2026-10-08 → 2026-11-01, deleted). Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
@@ -246,11 +246,11 @@ about 3 minutes.
 | ~~Fill the word~~: rub each empty letter and it fills with small pictures of the thing | removed 2026-10-08 | Fruits dropped it 2026-10-07 ("not suitable"), Animals 2026-10-08 — its last course |
 | ~~Feed it~~: three bites of the animal's own food dragged or tapped into its mouth | removed 2026-10-12 | Animals — "empty talk": no goal |
 | ~~Match the footprints~~: the animal above three sheets of footprints; draw a line to its own | removed 2026-11-01 | Animals — the user's new design |
-| **Match the shadow**: four animals (the lesson's + three far unlike it) over their 3D pressed-in shadows on a paper; drag (or tap, tap) each onto its own | built (`shadows`, 2026-11-01) | Animals |
+| ~~Match the shadow~~: four animals onto their 3D shadows on a paper | removed 2026-11-01 (the same day — "keep only the food") | Animals |
 | **Feed the animal**: the animal over three foods — its own and two it would never eat; drag (or tap) the right one into its mouth | built (`feed`, 2026-11-01) | Animals |
 | **Which weather?**: read the word, pick the 3D Bloo dressed for it (sunglasses, umbrella, kite, woolly hat + scarf) — a Pick, its demo blind | built (`pick` + `blind`, 2026-11-01) | Weather |
-| **Basket Time**: the word over Nova's basket, four vegetables below; drag the right one in | planned (2026-11-01) | Vegetables |
-| **Find It!**: a busy 3D kitchen counter (blender, milk, cheese, garlic, the vegetables); tap the lesson's vegetable | planned (2026-11-01) | Vegetables |
+| **Basket Time**: the word over Nova's basket, four vegetables below; drag the right one in | built (`basket`, 2026-11-01) | Vegetables |
+| **Find It!**: a busy 3D kitchen counter (blender, milk, cheese, garlic, eggs, the vegetables); tap the lesson's vegetable | built (`find` + `KITCHEN`, 2026-11-01) | Vegetables |
 | ~~The magic button~~: the picture starts bare; each tap on the glowing spot spreads the next part of the season over it | removed 2026-10-12 | Seasons, its last course (Fruits' Grow it and Months' wheel went 2026-10-08) |
 | **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
@@ -278,9 +278,9 @@ about 3 minutes.
   spell (Feed it, its third step from 2026-10-08, was removed 2026-10-12:
   "a cat you give milk to is empty talk — simple, but with a goal").
   Since 2026-11-01 (the user's design, a picture) every lesson ends with
-  **Match the shadow** (four animals onto their 3D shadows pressed into a
-  paper) and **Feed the animal** (its own food of three) — choosing inside
-  a lesson is wanted now. Match the footprints (2026-10-26) was deleted
+  **Feed the animal** (its own food of three) — choosing inside a lesson
+  is wanted now (Match the shadow, built with it, was deleted the same
+  day). Match the footprints (2026-10-26) was deleted
   that day. Review: sort the three, each in two coats, into their
   homes (cat bed, kennel, fishbowl — each box labelled with the
   animal's word), then spell dog and fish from a picture.
@@ -664,8 +664,8 @@ Before calling Learn done (easy to forget):
       the knob, swaying; crumbs where it breaks the soil, a leaning knob,
       a ring that bursts, sparkles. Verified 360x640 → 1440x900, ar, dark,
       keyboard, and a recorded drag.
-- [x] ~~The user checks Grow it again~~ — to be deleted with the
-      Vegetables' new activities (2026-11-01 design).
+- [x] ~~The user checks Grow it again~~ — deleted 2026-11-01 with the
+      Vegetables' new activities.
 - [x] **Animals: Match the footprints** (2026-10-26, direct request): the
       last step of every animal lesson but the fish's — the animal, its
       handle, and three paper sheets pinned to Bloo's board, each a trail
@@ -681,23 +681,24 @@ Before calling Learn done (easy to forget):
 - [x] **The user's new design (2026-11-01, a picture of two activities
       per course; "delete the old ones, be creative in 3D, Bloo first")** —
       choosing inside a lesson is wanted now:
-      - [x] **Bloo · Animals**: reel → word → spell → **Match the shadow**
-            (four animals onto their 3D pressed-in shadows) → **Feed the
-            animal** (its own food of three, 3D foods in the videos' look).
-            Match the footprints deleted. The image's lion, giraffe,
+      - [x] **Bloo · Animals**: reel → word → spell → **Feed the animal**
+            (its own food of three, 3D foods in the videos' look). Match
+            the footprints deleted; Match the shadow was built too and
+            deleted the same day ("keep only the food"). The image's lion, giraffe,
             rabbit and cow are not ours — the nine with stills are used.
       - [x] **Bloo · Weather**: reel → word → spell → **Which weather?**
             (read the word, pick the 3D Bloo dressed for it — Bloo built
             in 3D for it). Make it by hand deleted. The image's fourth
             picture (cloudy) is windy here: our words are sunny, rainy,
             windy, snowy.
-      - [ ] The user checks the three → fixes.
-      - [ ] **Nova · Vegetables** (next): reel → word → spell → **Basket
+      - [ ] The user checks Feed, Which weather?, Basket Time and Find It! → fixes.
+      - [x] **Nova · Vegetables** (built 2026-11-01): reel → word → spell → **Basket
             Time** (the word over her basket — reuse the exam's basket —
             and four vegetables: the lesson's + three of the others; drag
             the right one in) → **Find It!** (one busy 3D kitchen counter:
             blender, milk, cheese, garlic and the five vegetables; tap the
-            lesson's — reuse `FindShapes`). **Grow it is DELETED** with
+            lesson's — reuses `FindShapes`, the counter rendered in 3D:
+            `render.cjs kitchen`). **Grow it is DELETED** with
             it (`grow-plant.tsx`, `data/grow.ts`, `nova/fruits/grow/`,
             `render.cjs grow`, `crop.py grow`). No speaker on these (the
             picture's speakers are the word card's only). Nova stays gold
