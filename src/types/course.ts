@@ -15,10 +15,14 @@ export type Animal = "cat" | "dog" | "fish";
 /** The four weathers Bloo's Weather course teaches, in order. */
 export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 
+/** The five vegetables Nova's Vegetables course teaches, in order. */
+export type Vegetable = "carrot" | "broccoli" | "potato" | "tomato" | "pepper";
+
 /** A set things belong to: the season a thing goes with (Nova's Seasons),
-    the animal it is — whose home it goes in (Bloo's Animals) — or the
-    weather it is worn in (Bloo's Weather). */
-type Group = Season | Animal | Weather;
+    the animal it is — whose home it goes in (Bloo's Animals) — the
+    weather it is worn in (Bloo's Weather), or the vegetable it is (Find
+    It! on Nova's kitchen counter). */
+type Group = Season | Animal | Weather | Vegetable;
 
 /** What a Find looks for, or what a Sort box takes: a shape, a color, or a
     group. */
