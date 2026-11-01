@@ -40,18 +40,17 @@ const face = (word: string): Face => ({ kind: "picture", src: food(word).picture
 /** A line of Nova's note: how many of a food to pick. */
 const line = (word: string, count: number) => ({ word, things: food(word).things, count });
 
-/** A vegetable as Basket Time shows it: its word and picture. */
+/** A vegetable as Basket Time's demo carries it: its word and picture. */
 const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
 
 /**
  * Nova's garden — one thing, one lesson: watch its reel, meet it (its
  * picture, its word, its speaker), build its word, then Basket Time —
- * read its word and put it in her basket, from four — then Find It! on
- * her busy kitchen counter (the user's design, 2026-11-01: choosing
- * inside a lesson is wanted since). Three of the other four vegetables
- * are on Basket Time's paper; the fourth is its demo's. (Grow
- * it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
- * cups, before it, are a game on `/play`.) Picking in her garden is the
+ * read its word and put it from the kitchen counter, among everything
+ * else on it, into the basket (the user's design, 2026-11-01: Find It!
+ * merged into it). Its demo carries another vegetable. (Grow it, the
+ * third step from 2026-10-24, was removed 2026-11-01; Nova's cups,
+ * before it, are a game on `/play`.) Picking in her garden is the
  * review's exam, with several foods to tell apart.
  */
 function foodLesson(veg: Veg, i: number): LessonDef {
@@ -64,8 +63,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      { type: "basket", ask: { key: "basketTime", vars: { thing: word } }, word, foods: [veg, ...others.filter((other) => other !== outsider)].map(bite), basket: BASKET, demo: bite(outsider) },
-      { type: "find", ask: { key: "findIt", vars: { thing: word } }, target: { group: word }, scene: KITCHEN },
+      { type: "basket", ask: { key: "basketTime", vars: { thing: word } }, word, kitchen: KITCHEN, basket: BASKET, demo: bite(outsider) },
     ],
   };
 }
