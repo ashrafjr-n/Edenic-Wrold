@@ -3097,6 +3097,16 @@ button:disabled,
   animation: basket-in 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 
+/* In the kitchen the basket was rendered with its own shadow: no second
+   one, only the glow while something is held over it. */
+.kitchen-basket {
+  filter: none;
+}
+
+.kitchen-basket.basket-bin--aim {
+  filter: drop-shadow(0 0 10px var(--chalk-accent));
+}
+
 @keyframes basket-in {
   0% {
     scale: 1.08 0.9;
@@ -5280,6 +5290,21 @@ a.board-cell:focus-visible {
 .chalkboard--stage .pic-card::after {
   --magnet: #4da3ec;
   right: 0.9rem;
+}
+
+/* Basket Time's word, up on the kitchen wall (in the picture, which is
+   already pinned up): sized to the picture (`--word`, by its frame), no
+   magnets of its own, a ring in the course colour. */
+.kitchen-word .clay-word {
+  font-size: min(3.5rem, var(--word));
+  box-shadow:
+    inset 0 0 0 0.12em color-mix(in srgb, var(--chalk-accent) 75%, white),
+    0 10px 16px -8px rgb(0 0 0 / 45%);
+}
+
+.kitchen-word .clay-word::before,
+.kitchen-word .clay-word::after {
+  content: none;
 }
 
 /* The spelling spaces: wells rubbed into the slate, a pink chalk dash
