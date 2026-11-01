@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { preload } from "react-dom";
-import { Lightbulb, SkipForward } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
@@ -32,7 +32,6 @@ import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
 import { HarvestPick } from "./harvest-pick";
-import { MakeWeather, type MakeWeatherHandle } from "./make-weather";
 import { GrowPlant } from "./grow-plant";
 import { LessonDone } from "./lesson-done";
 import { LessonAbout } from "./lesson-about";
@@ -141,9 +140,6 @@ export function LessonPlayer({
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
   const spell = useRef<SpellWordHandle>(null);
-  const weather = useRef<MakeWeatherHandle>(null);
-  /* The weather step was skipped — it is making itself; Next comes when it is done. */
-  const [skipped, setSkipped] = useState(false);
   /* The child's passing trace, kept for the done screen. */
   const [drawing, setDrawing] = useState<StrokePoint[] | undefined>(undefined);
 
@@ -197,7 +193,6 @@ export function LessonPlayer({
       setStepMisses(0);
       setSpelling(false);
       setBoard(false);
-      setSkipped(false);
       setLeaving(false);
     }, STEP_LEAVE_MS);
   };
@@ -448,25 +443,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "likes") {
       body = <LikesPlates key={seed} items={q.items} likeAria={lines.likeAria} dislikeAria={lines.dislikeAria} hearLabel={lines.hearWord} onSolved={onSolved} />;
-    } else if (q.type === "weather") {
-      body = (
-        <MakeWeather key={seed} ref={weather} word={q.word} gesture={q.gesture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} onSolved={onSolved} />
-      );
-      /* Skip (direct request 2026-10-12): the weather then makes itself,
-         calmly, and Next takes its place once it is done. */
-      action = skipped ? null : (
-        <Button3D
-          tone={onward}
-          onClick={() => {
-            setSkipped(true);
-            weather.current?.skip();
-          }}
-          className="anim-pop-in h-12 gap-2 px-6 text-base font-bold lg:h-14 lg:px-7"
-        >
-          <SkipForward className="h-5 w-5 fill-current" strokeWidth={2} />
-          <span dir={dir}>{lines.skip}</span>
-        </Button3D>
-      );
     } else if (q.type === "grow") {
       body = (
         <GrowPlant key={seed} word={q.word} picture={q.picture} scene={q.scene} label={format(dict.asks[q.ask.key], q.ask.vars ?? {})} tone={courseTone} onSolved={onSolved} />

@@ -126,11 +126,6 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
-  /** Make the weather by hand, in three goes, on Bloo's hill: tap the
-      cloud (rain), push the clouds off the sun, swipe across the sky
-      (wind), shake the cloud (snow). Nothing can go wrong — the weather is
-      the lesson. */
-  | { type: "weather"; ask: Ask; word: Weather; gesture: Gesture; scene: WeatherScene }
   /** Pick what Nova's note says (a review's exam): three plants, the
       note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
       Tap one and it is picked (pulled up) into the basket, its word popping
@@ -168,22 +163,6 @@ export interface Basket {
   src: StaticImageData;
   rim: StaticImageData;
   mouth: SceneRect;
-}
-
-/** How a weather is made by hand (Bloo's Weather lessons). */
-export type Gesture = "tap" | "push" | "swipe" | "shake";
-
-/** A weather made by hand (`tools/picnic-scene`, `?weathersteps=`): Bloo's
-    hill before the weather and after each go (`frames`, all on one box —
-    the sun has one: its clouds go instead), what is in its sky as layers of
-    their own the same size (`sky` — the cloud to tap or shake, the clouds
-    to push off the sun) with where each is (`box`, % of the picture), and
-    what the weather sends down or across (`bits`: drops, flakes, swirls and
-    leaves, sparkles). */
-export interface WeatherScene {
-  frames: readonly StaticImageData[];
-  sky: readonly { src: StaticImageData; box: SceneRect }[];
-  bits: readonly StaticImageData[];
 }
 
 /** Frames of a growing plant, side by side in one picture (`cols` a row):

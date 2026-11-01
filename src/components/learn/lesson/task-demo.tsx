@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { Check, Pointer, Sprout, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
 import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, Gesture, GrowScene, Scene, ShapeId, SortBin, Target, Thing, WeatherScene } from "@/types/course";
+import type { ColorId, Face, Garden, GrowScene, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -34,7 +34,6 @@ export type TaskDemoDef =
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
-  | { kind: "weather"; gesture: Gesture; scene: WeatherScene }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
   | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } };
 
@@ -478,10 +477,6 @@ function HarvestDemo({ garden, line }: { garden: Garden; line: { word: string; t
   );
 }
 
-/** Make the weather: the hill before it and the first go — the finger taps
-    the cloud (rain starts), shakes it (snow starts), pushes one cloud off
-    the sun (the hill brightens) or sweeps across the sky (a gust blows);
-    the next frame fades in after it. The other two goes are the child's. */
 /** Grow it: the finger takes the knob and slides it halfway along its line
     — the plant comes up half grown — then lets go and all goes back. One
     3.6s loop, in step with the finger's (`.demo-finger`): still to 36%,
@@ -531,72 +526,6 @@ function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edg
   );
 }
 
-function WeatherDemo({ gesture, scene }: { gesture: Gesture; scene: WeatherScene }) {
-  const { frames, sky, bits } = scene;
-  const [l, t, w, h] = sky[0].box;
-  const cloud = { left: `${l + w / 2}%`, top: `${t + h / 2}%` };
-  const ratio = frames[0].width / frames[0].height;
-  const layer = (src: StaticImageData, className = "", style?: CSSProperties) => (
-    <span className={`absolute inset-0 ${className}`} style={style}>
-      <Image src={src} alt="" fill sizes="18rem" className="object-contain" />
-    </span>
-  );
-  const finger = (at: CSSProperties) => (
-    <span className="absolute z-10" style={at}>
-      <Finger />
-    </span>
-  );
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="@container relative w-full" style={{ aspectRatio: ratio }}>
-        {layer(frames[0], gesture === "push" ? "demo-dull" : "")}
-        {frames[1] && layer(frames[1], "demo-frame-next")}
-        {(gesture === "tap" || gesture === "shake") &&
-          [0.2, 0.45, 0.7].map((u, i) => (
-            <span
-              key={i}
-              className="demo-fall absolute w-[5cqi]"
-              style={{ left: `${l + w * u}%`, top: `${t + h * 0.72}%`, aspectRatio: bits[0].width / bits[0].height, animationDelay: `${i * 0.15}s`, "--fall": `${(80 - (t + h * 0.72)) / ratio}cqi` } as CSSProperties}
-            >
-              <Image src={bits[0]} alt="" fill sizes="2rem" className="object-contain" />
-            </span>
-          ))}
-        {gesture === "swipe" &&
-          [30, 44].map((top, i) => (
-            <span key={top} className="demo-gust absolute left-[6%] w-[18cqi]" style={{ top: `${top}%`, aspectRatio: bits[0].width / bits[0].height, animationDelay: `${i * 0.12}s` }}>
-              <Image src={bits[0]} alt="" fill sizes="4rem" className="object-contain" />
-            </span>
-          ))}
-        {gesture === "push" && sky.slice(1).map(({ src }, i) => <span key={i}>{layer(src)}</span>)}
-        {gesture === "tap" && (
-          <>
-            {layer(sky[0].src, "demo-squash", { transformOrigin: `${cloud.left} ${cloud.top}` })}
-            {finger(cloud)}
-          </>
-        )}
-        {gesture === "shake" && (
-          <span className="demo-shake absolute inset-0">
-            {layer(sky[0].src)}
-            {finger(cloud)}
-          </span>
-        )}
-        {gesture === "push" && (
-          <span className="demo-push absolute inset-0">
-            {layer(sky[0].src)}
-            {finger(cloud)}
-          </span>
-        )}
-        {gesture === "swipe" && (
-          <>
-            {layer(sky[0].src)}
-            <span className="demo-swipe absolute inset-0">{finger({ left: "14%", top: "40%" })}</span>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -620,8 +549,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <MakeDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "like":
       return <LikeDemo face={demo.face} />;
-    case "weather":
-      return <WeatherDemo gesture={demo.gesture} scene={demo.scene} />;
     case "harvest":
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "grow":
