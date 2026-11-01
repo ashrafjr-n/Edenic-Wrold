@@ -612,15 +612,19 @@ leads; the older items below fold into it:
       coming later (the user will describe it).
 - [ ] **Bloo · Weather**: Which weather? will probably be replaced — the
       user is thinking of an alternative.
-- [ ] **Shared, every course**: the review, the three stars, the
-      end-of-lesson celebration and similar small things — one pass, the
-      same for all.
+- [ ] **Shared, every course**: the review and similar small things —
+      one pass, the same for all. Done 2026-11-02: the end-of-lesson
+      celebration (the friend big, hopping, balloons + confetti + chalk
+      doodles) and NO stars anywhere (the user: "no stars or rewards");
+      a solved step goes on by itself (no Next); `/learn` fits the
+      screen on a desktop; Shapes' hub sheet wears its lessons' things.
 - [ ] **Last**: audio, then the real videos (items 3–4 below).
 1. [ ] **Polish the activities' elements** — small design details in the
        steps (letters, tiles, buttons, boxes), one course at a time; the
        Spell's faint dashed slots over the backdrops on a desktop.
-2. [ ] **Redesign the course page** — the page that shows a course's
-       lessons (`LessonBox`), phone and wide.
+2. [x] **Redesign the course page** — done 2026-11-02 (`BoardLessons`):
+       the next lesson big in the middle, every lesson in order on one
+       line under it (numbered, learned ticked, the next ringed).
 3. [ ] **Audio** — every taught word and line recorded (§7), `playCue`
        wired (`lib/cue.ts`, howler.js — a new dependency, ask first); one
        tap starts sound (iOS blocks autoplay); a mute switch.
