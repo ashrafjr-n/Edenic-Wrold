@@ -158,6 +158,7 @@ export const ku: Dictionary = {
     letterAria: "تیپا {letter}",
     playReel: "ڤیدیۆیێ لێ بدە",
     findItemAria: "دەست بدە {word}",
+    shadowAria: "سیبەر {n}",
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
     balloonAria: "بالۆنا {color}",
@@ -182,6 +183,7 @@ export const ku: Dictionary = {
     orderSeasons: "وەرزان ب ڕێزێ ڕیز بکە!",
     sortAnimals: "هەر گیانەوەرەکی بکە د مالا وی دا!",
     meetThing: "{thing} بناسە!",
+    matchShadows: "هەر گیانەوەرەکی دانە سەر سیبەرا وی!",
     makeSoup: "شۆربەیا سەوزەیان چێ بکە!",
     likeThem: "تو حەز ژ وان دکەی؟",
     thisWeather: "هەوا {weather}ە!",
@@ -204,6 +206,7 @@ export const ku: Dictionary = {
     like: "حەز دکەی؟",
     harvest: "بچنە",
     grow: "بچینە",
+    shadows: "گرێبدە",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third

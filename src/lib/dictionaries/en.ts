@@ -167,6 +167,7 @@ export const en = {
     letterAria: "Letter {letter}",
     playReel: "Play the video",
     findItemAria: "Tap the {word}",
+    shadowAria: "Shadow {n}",
     likeAria: "I like it",
     dislikeAria: "I don't like it",
     balloonAria: "{color} balloon",
@@ -192,6 +193,7 @@ export const en = {
     orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
     meetThing: "Meet the {thing}!",
+    matchShadows: "Put each animal on its shadow!",
     makeSoup: "Make a vegetable soup!",
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
@@ -215,6 +217,7 @@ export const en = {
     like: "Like?",
     harvest: "Pick",
     grow: "Grow",
+    shadows: "Match",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
