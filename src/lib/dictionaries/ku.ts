@@ -161,7 +161,6 @@ export const ku: Dictionary = {
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
     balloonAria: "بالۆنا {color}",
-    tracksAria: "شوێنپێ {n}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -194,7 +193,6 @@ export const ku: Dictionary = {
     whichWeather: "{weather} کیژە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
     growIt: "بازنەی ڕاکێشە دا {thing} شین ببیت!",
-    matchTracks: "{thing} ب شوێنپێیێن وی ڤە گرێبدە!",
   },
   tasks: {
     listen: "گوهداری بکە",
@@ -211,7 +209,6 @@ export const ku: Dictionary = {
     harvest: "بچنە",
     weather: "چێ بکە",
     grow: "بچینە",
-    tracks: "گرێبدە",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
