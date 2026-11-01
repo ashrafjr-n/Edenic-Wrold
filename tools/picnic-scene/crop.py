@@ -35,15 +35,6 @@ scenes/<season>.png`.
 
     python3 tools/picnic-scene/crop.py seasons
 
-Bloo's animals' shadows (Match the shadow, 2026-11-01) — no render: each
-animal's cut-out (`bloo/animals/things/<animal>.png`) becomes its shadow,
-the same size so the animal lands exactly on it — the body alone (its
-soft ground shadow and stray specks dropped), Bloo's deep blue, pressed
-INTO the paper: darker under its top-left edge, a lit rim along the
-bottom-right, grained — into `bloo/animals/shadows/<animal>.png`.
-
-    python3 tools/picnic-scene/crop.py shadows cat dog fish elephant mouse bird parrot turtle gecko
-
 Bloo dressed for each weather (the Weather lessons' "Which weather?",
 2026-11-01) — run after `render.cjs thing bloo-sunny=bloo:sunny@float …`
 (all four): crops the four on ONE box (they are a Pick's tiles), at most
@@ -141,36 +132,6 @@ def one_box(prefix, names, dest):
         grain(cut, zlib.crc32(n.encode()), keep).save(os.path.join(dest, f"{n}.png"), optimize=True)
     sys.exit()
 
-
-if NAME == "shadows":
-    from scipy import ndimage
-    src = os.path.join(ROOT, "public/assets/learn/bloo/animals/things")
-    dest = os.path.join(ROOT, "public/assets/learn/bloo/animals/shadows")
-    os.makedirs(dest, exist_ok=True)
-    INK = np.array([46, 76, 132], np.float32) / 255
-    for name in sys.argv[2:]:
-        a = np.asarray(Image.open(os.path.join(src, f"{name}.png")).convert("RGBA"))[..., 3].astype(np.float32)
-        # The body is opaque; its ground shadow is a faint grey under it.
-        m = np.clip((a - 170) / 70, 0, 1)
-        parts, n = ndimage.label(m > 0.5)
-        if n > 1:
-            sizes = ndimage.sum(np.ones_like(m), parts, range(1, n + 1))
-            m = m * np.isin(parts, 1 + np.flatnonzero(sizes >= 0.015 * sizes.max()))
-        h, w = m.shape
-        r = max(h, w) / 100
-        soft = ndimage.gaussian_filter(m, 1.8 * r)
-        # Pressed in: the paper's edge throws a shadow down-right into it,
-        # and the far edge catches the light.
-        under = m * (1 - ndimage.shift(soft, (2.2 * r, 1.4 * r), order=1, cval=0))
-        lit = m * (1 - ndimage.shift(soft, (-1.6 * r, -1.0 * r), order=1, cval=0))
-        rows = np.linspace(1.06, 0.94, h)[:, None]
-        tone = np.clip(rows - 0.42 * under + 0.22 * lit, 0, 1.4)[..., None]
-        rgb = np.clip(INK * tone, 0, 1)
-        px = np.dstack([rgb, m]) * 255
-        out = Image.fromarray((px + 0.5).astype(np.uint8), "RGBA")
-        grain(out, zlib.crc32(name.encode())).save(os.path.join(dest, f"{name}.png"), optimize=True)
-        print(name, out.size)
-    sys.exit()
 
 if NAME == "bloo":
     one_box("bloo", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/dressed")
