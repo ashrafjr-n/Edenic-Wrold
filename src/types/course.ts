@@ -139,6 +139,14 @@ export type Question =
       there, faint). */
   | { type: "grow"; ask: Ask; word: string; picture: StaticImageData; scene: GrowScene };
 
+/** An animal and its shadow (Match the shadow) — the shadow is its
+    picture, darkened, at the same size, so the one lands on the other. */
+export interface ShadowPair {
+  word: string;
+  picture: StaticImageData;
+  shadow: StaticImageData;
+}
+
 /** Where the foods grow, to pick them (Nova's Fruits review) — one render
     (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
     kind of food (all of one kind are alike) and what stands in front of
