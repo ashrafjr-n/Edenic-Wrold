@@ -134,6 +134,11 @@ export type Question =
       up where it was; one more than the note says wiggles back. `order` is
       each line: the English word, its plural and how many. */
   | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden }
+  /** Basket Time (Nova's Vegetables, 2026-11-01): the word over Nova's
+      basket and four vegetables — its own first (dealt in a seeded
+      order), then three others. Drag it into the basket (or tap it).
+      `demo`: the one vegetable not among them. */
+  | { type: "basket"; ask: Ask; word: string; foods: readonly Food[]; basket: Basket; demo: Food }
   /** Feed the animal (Bloo's Animals, 2026-11-01): the animal over three
       foods — its own first (dealt in a seeded order), then two it would
       never eat. Drag one into it (or tap it): its own is eaten, anything
