@@ -2691,6 +2691,42 @@ button:disabled,
   }
 }
 
+/* Match the shadow's demo: the animal is carried down into its shadow
+   while the finger presses (36–64%), rests there, and fades home (84%+). */
+.demo-shadow-carry {
+  animation: demo-shadow-carry 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-shadow-carry {
+  0%,
+  36% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  42% {
+    scale: 1.1;
+  }
+  64%,
+  84% {
+    translate: 0 52cqi;
+    scale: 1;
+    opacity: 1;
+  }
+  94% {
+    translate: 0 52cqi;
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
 .demo-fly {
   animation: demo-fly 3.6s cubic-bezier(0.34, 1.25, 0.5, 1) infinite;
 }
@@ -3624,6 +3660,7 @@ button:disabled,
   .demo-press,
   .demo-wave,
   .demo-fly,
+  .demo-shadow-carry,
   .demo-draw,
   .demo-pen,
   .demo-ring,

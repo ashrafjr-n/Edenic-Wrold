@@ -7,7 +7,7 @@ import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { ColorId, Face, Garden, GrowScene, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { ColorId, Face, Garden, GrowScene, Scene, ShadowPair, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -35,7 +35,8 @@ export type TaskDemoDef =
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
   | { kind: "harvest"; garden: Garden; line: { word: string; things: string; count: number } }
-  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } };
+  | { kind: "grow"; scene: GrowScene; tone: { face: string; edge: string; ink: string } }
+  | { kind: "shadows"; pair: ShadowPair };
 
 /** The finger that plays each demo — a lucide icon, white with an ink
     outline so it reads on grass, clay and the white card alike. Put inside a
@@ -526,6 +527,28 @@ function GrowDemo({ scene, tone }: { scene: GrowScene; tone: { face: string; edg
   );
 }
 
+/** Match the shadow: the finger takes an animal and carries it down into
+    its shadow on the paper. The animal is one NOT in the step — it shows
+    HOW to match, never which shadow is whose. One 3.6s loop, in step with
+    the finger (`.demo-finger`): it presses at 36%, carries to 64%, the
+    animal rests in its shadow, then all goes back. */
+function ShadowsDemo({ pair }: { pair: ShadowPair }) {
+  return (
+    <div className="@container relative h-full w-full">
+      <span className="card card-clay-white pic-card absolute left-[24%] top-[52%] h-[42%] w-[52%]" />
+      <span className="absolute left-[35%] top-[58%] h-[30%] w-[30%]">
+        <Image src={pair.shadow} alt="" fill sizes="6rem" className="object-contain" />
+      </span>
+      <span className="demo-shadow-carry absolute left-[35%] top-[6%] z-[1] h-[30%] w-[30%]">
+        <Image src={pair.picture} alt={pair.word} fill sizes="6rem" className="object-contain" />
+        <span className="absolute left-1/2 top-1/2">
+          <Finger />
+        </span>
+      </span>
+    </div>
+  );
+}
+
 /** The demo for one step, filling a square stage. */
 export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
   switch (demo.kind) {
@@ -553,5 +576,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <HarvestDemo garden={demo.garden} line={demo.line} />;
     case "grow":
       return <GrowDemo scene={demo.scene} tone={demo.tone} />;
+    case "shadows":
+      return <ShadowsDemo pair={demo.pair} />;
   }
 }
