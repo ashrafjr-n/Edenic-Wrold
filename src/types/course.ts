@@ -153,6 +153,13 @@ export interface ShadowPair {
   shadow: StaticImageData;
 }
 
+/** Something an animal eats (Feed the animal): its English word and its
+    picture. */
+export interface Food {
+  word: string;
+  src: StaticImageData;
+}
+
 /** Where the foods grow, to pick them (Nova's Fruits review) — one render
     (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
     kind of food (all of one kind are alike) and what stands in front of
