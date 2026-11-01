@@ -593,6 +593,27 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       lessons checked: each fetches its own backdrop, no errors.
 
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
+
+**What is left, per course (the user's list, 2026-11-01)** — this order
+leads; the older items below fold into it:
+- [ ] **Pinki** (Shapes, Colors): activities done — small design
+      polish and detail fixes only.
+- [ ] **Nova · Vegetables**: merge Basket Time and Find It! into ONE
+      activity, nicer looking and more fun.
+- [ ] **Nova · Seasons**: activities still to decide (it has none after
+      spell). Proposed 2026-11-01: Spring — tap closed flowers open,
+      butterflies come; Summer — catch falling ice creams; Fall (not
+      "Autumn") — catch falling leaves before they land; Winter — build a
+      snowman (3 balls, then nose, hat, scarf). Warned: Spring is close to
+      the removed "Make it come"; catching must be slow with no fail.
+- [ ] **Bloo · Animals**: good — design polish; a big improvement is
+      coming later (the user will describe it).
+- [ ] **Bloo · Weather**: Which weather? will probably be replaced — the
+      user is thinking of an alternative.
+- [ ] **Shared, every course**: the review, the three stars, the
+      end-of-lesson celebration and similar small things — one pass, the
+      same for all.
+- [ ] **Last**: audio, then the real videos (items 3–4 below).
 1. [ ] **Polish the activities' elements** — small design details in the
        steps (letters, tiles, buttons, boxes), one course at a time; the
        Spell's faint dashed slots over the backdrops on a desktop.
