@@ -5620,20 +5620,21 @@ if (THING) {
      first nearest the camera (where the traced shape's thing lands — the
      REWARD), relative to the Find's x (the corner + 5). ---- */
   const SLOTS = {
-    landscape: [[-2.4, 1.0], [1.3, 1.9], [0.0, -0.9], [-4.6, -1.9], [4.4, 0.2], [2.8, -3.0], [-1.6, -3.8]],
-    portrait: [[-1.25, 2.6], [1.3, 2.2], [0.15, 0.3], [-1.55, -1.2], [1.6, -1.3], [-0.35, -3.6], [1.6, -4.6]],
+    landscape: [[-2.6, 0.5], [1.4, 1.0], [-0.2, -1.2], [-4.0, -1.6], [3.8, -0.6], [2.4, -3.2], [-1.6, -3.9]],
+    portrait: [[-0.95, 1.5], [1.0, 1.0], [0.0, -0.7], [-1.25, -2.1], [1.25, -2.4], [-0.4, -4.3], [1.1, -5.3]],
   };
   const FIND = {
     1: ["ball", "book", "orange", "gift", "hoop", "sunflower", "pennant"],
     2: ["toast", "orange", "block", "cheese", "gift", "crate", "book"],
-    3: ["cheese", "ball", "pennant", "gift", "tent", "sailboat", "book"],
+    3: ["cheese", "ball", "book", "gift", "tent", "sailboat", "pennant"],
     4: ["book", "ball", "sign", "cheese", "trough", "rectFlag", "gift"],
   };
   const frameName = portrait ? "portrait" : "landscape";
   const targets = {};
   if (LESSON <= 4) {
     FIND[LESSON].forEach((name, i) => {
-      const [dx, z] = SLOTS[frameName][i];
+      /* A wide thing in the phone's narrow frame sits a little further in. */
+      const [dx, z] = SLOTS[frameName][i].map((v, j) => (j === 0 && portrait && name === "cheese" && i === 0 ? v + 0.3 : v));
       const thing = T[name]();
       thing.rotation.y = (rand() - 0.5) * 0.3;
       const k = { orange: 1.25, ball: 0.95, tent: 0.8, sailboat: 1.35, gift: 0.95 }[name] ?? 1;
@@ -5706,15 +5707,15 @@ if (THING) {
   const station = (x, look = x, find = false) =>
     find
       ? portrait
-        ? [x, 4.2, 10.4, x, 0.4, -1.4]
-        : [x, 3.5, 10.6, x, 1.0, -1.6]
+        ? [x, 4.6, 7.6, x, -0.2, -2.6]
+        : [x, 3.7, 10.8, x, 0.85, -1.6]
       : portrait
         ? [x, 2.9, 11.5, look, 2.0, -6]
         : [x, 2.7, 11.2, look, 1.9, -6];
   const STATIONS =
     LESSON <= 4
       ? portrait
-        ? [station(fx - 8.5), station(fx - 3.6), station(fx - 1.5), station(fx, fx, true)]
+        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), station(fx, fx, true)]
         : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), station(fx, fx, true)]
       : [station(-6), station(37), station(77), station(117)];
   const ENTRY = (() => {
