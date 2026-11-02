@@ -123,7 +123,10 @@ async function render(page, query) {
 const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`), Buffer.from(url.split(",")[1], "base64"));
 
 (async () => {
-  const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+  /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
+     six times SwiftShader); everything else as it always was. */
+  const gpu = mode === "garden" ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
   if (mode === "thing") {
@@ -177,6 +180,46 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       const out = path.join(__dirname, "out", `backdrop-${name}`);
       fs.mkdirSync(out, { recursive: true });
       for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${name}&frame=${frame}`)).backdrop);
+    }
+  } else if (mode === "garden") {
+    /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
+       — each station's still, every frame of each camera move (`m<i>/`;
+       move 0 is the entry), and the Find station in layers at 1.6x. */
+    const SECONDS = { entry: 2.4, step: 1.5, walk: 2.6 };
+    const FPS = 30;
+    for (const lesson of specs) {
+      for (const frame of ["landscape", "portrait"]) {
+        const out = path.join(__dirname, "out", `garden-${lesson}-${frame}`);
+        fs.mkdirSync(out, { recursive: true });
+        const open = async (px) => {
+          await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=${lesson}&frame=${frame}&px=${px}`);
+          await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+        };
+        await open(1);
+        const stations = await page.evaluate(() => window.garden.stations);
+        for (let i = 0; i < stations; i++) save(out, `s${i}`, await page.evaluate((i) => window.garden.station(i), i));
+        fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.garden.meta())));
+        /* The moves, at 0.8x — they are seen moving, and mostly out of focus. */
+        await open(0.8);
+        for (let i = 0; i < stations; i++) {
+          const dir = path.join(out, `m${i}`);
+          fs.rmSync(dir, { recursive: true, force: true });
+          fs.mkdirSync(dir);
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : lesson === "5" ? SECONDS.walk : SECONDS.step));
+          for (let f = 0; f < n; f++) {
+            const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
+            fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+          }
+          console.log(`garden ${lesson} ${frame} move ${i}: ${n} frames`);
+        }
+        if (Number(lesson) <= 4) {
+          await open(1.6);
+          const layers = await page.evaluate(() => window.garden.findLayers());
+          const find = path.join(out, "find");
+          fs.mkdirSync(find, { recursive: true });
+          for (const [layer, url] of Object.entries(layers)) save(find, layer, url);
+        }
+      }
     }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
