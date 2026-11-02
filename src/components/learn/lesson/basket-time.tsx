@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Celebration } from "@/components/ui/celebration";
 import { lessonCue, playCue } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
+import { useWide } from "@/lib/use-wide";
 import type { Basket, Kitchen, SceneRect } from "@/types/course";
 import { ClayWord, type LetterTone } from "./clay-word";
 import { place } from "./find-shapes";
@@ -29,15 +30,6 @@ const ROOM =
 /* The word's one quiet ink — it is read, not matched. Fixed: its paper
    is light in dark mode too. */
 const INK: LetterTone = { face: "var(--color-ink-fixed)", edge: "color-mix(in srgb, var(--color-ink-fixed) 55%, #000)" };
-
-/* A wide board (a desktop's, a tablet's on its side) gets the wide frame;
-   a phone's or an upright tablet's, the tall one. */
-const WIDE = "(orientation: landscape)";
-const watchWide = (change: () => void) => {
-  const query = window.matchMedia(WIDE);
-  query.addEventListener("change", change);
-  return () => query.removeEventListener("change", change);
-};
 
 /** Where the vegetable lies in the basket (% of the basket picture): in
     the middle of its mouth, its lower part under the rim. */
@@ -80,7 +72,9 @@ interface BasketTimeProps {
  * confetti. Anything else shakes, goes home and greys.
  */
 export function BasketTime({ word, kitchen, itemAria, onSolved, onMiss }: BasketTimeProps) {
-  const wide = useSyncExternalStore(watchWide, () => window.matchMedia(WIDE).matches, () => false);
+  /* A wide board gets the wide frame; a phone's or an upright tablet's,
+     the tall one. */
+  const wide = useWide();
   const frame = wide ? kitchen.landscape : kitchen.portrait;
   const { items, basket } = frame;
   const answer = items.findIndex((item) => item.group === word);
