@@ -238,6 +238,9 @@ export interface LessonWorld {
   /** Where the traced shape's thing lands, in the trace station's picture
       (% of the frame) — it is in the world from then on. */
   landing?: Framed<SceneRect>;
+  /** How far out of focus its stations are: the blur's σ as a share of the
+      picture's long side — what lands in the world is blurred to match. */
+  blur: number;
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
