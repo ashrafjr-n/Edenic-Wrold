@@ -143,7 +143,11 @@ function BuildDemo({ word, seed }: { word: string; seed: string }) {
 function FindDemo({ scene, target: looking }: { scene: Scene; target: Target }) {
   const target = scene.items.find((item) => isTarget(item, looking));
   return (
-    <div className="relative mx-auto aspect-[4/5] h-full overflow-hidden rounded-[1.35rem]">
+    /* The picture's own aspect: a picnic is 4:5, a world's tall frame 9:16. */
+    <div
+      className="relative mx-auto h-full overflow-hidden rounded-[1.35rem]"
+      style={{ aspectRatio: `${scene.background.width} / ${scene.background.height}` }}
+    >
       <Image src={scene.background} alt="" fill sizes="18rem" className="object-cover" />
       {scene.items.map((item) => (
         <span key={item.id} className="absolute" style={place(item.box)}>

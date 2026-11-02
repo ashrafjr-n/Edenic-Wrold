@@ -7,13 +7,21 @@ import { Check } from "lucide-react";
 import { format } from "@/lib/format-dict";
 import { Celebration } from "@/components/ui/celebration";
 import { isTarget } from "@/lib/target";
-import type { Scene, SceneItem, SceneRect, Target } from "@/types/course";
+import { useWide } from "@/lib/use-wide";
+import type { Framed, Scene, SceneItem, SceneRect, Target } from "@/types/course";
+import { worldCover } from "./lesson-world";
 
 /** Two misses on this board and the next thing to find starts to glow. */
 const HINT_AFTER = 2;
 
 interface FindShapesProps {
   scene: Scene;
+  /** The lesson's world (Pinki's shape garden): the Find is played in it,
+      over the whole screen, in the frame that fits it — not on a card. */
+  world?: Framed<Scene>;
+  /** Waiting for the camera to arrive (it pulls focus onto this very
+      picture) — laid out, not shown. */
+  hidden?: boolean;
   /** The shape or color to find. */
   target: Target;
   /** "Tap the {word}", naming each thing for a screen reader. */
@@ -70,11 +78,16 @@ export const place = ([left, top, width, height]: SceneRect): CSSProperties => (
  *
  * The scene is one render: an empty picnic with each thing laid over it at the
  * spot it was rendered in, so it reads as one picture but every thing can move
- * on its own. A right tap jumps, gets a ring and drops a copy into the tray of
+ * on its own. In a lesson's world (Pinki's shape garden) it is that world
+ * itself, sharp, over the whole screen — the camera has just pulled focus
+ * onto it — with the tray floating at its foot.
+ * A right tap jumps, gets a ring and drops a copy into the tray of
  * sockets under the picture (one per thing to find); a wrong one only wiggles. After two misses
  * the next thing to find glows. All found → the whole set jumps together.
  */
-export function FindShapes({ scene, target, itemAria, onSolved, onMiss }: FindShapesProps) {
+export function FindShapes({ scene: card, world, hidden = false, target, itemAria, onSolved, onMiss }: FindShapesProps) {
+  const wide = useWide();
+  const scene = world ? world[wide ? "landscape" : "portrait"] : card;
   const targets = scene.items.filter((item) => isTarget(item, target));
   const [found, setFound] = useState<string[]>([]);
   const [shake, setShake] = useState<{ id: string; n: number } | null>(null);
@@ -96,93 +109,115 @@ export function FindShapes({ scene, target, itemAria, onSolved, onMiss }: FindSh
     onMiss();
   };
 
+  const picture = (
+    <>
+      <Image
+        src={scene.background}
+        alt=""
+        fill
+        preload={!world}
+        sizes={world ? "100vw" : "(min-width: 1024px) 34rem, (min-width: 640px) 28rem, 92vw"}
+        className="select-none object-cover"
+      />
+
+      {scene.items.map((item) => {
+        const isFound = found.includes(item.id);
+        const isShaking = shake?.id === item.id;
+        return (
+          <span
+            key={isShaking ? `${item.id}.${shake.n}` : item.id}
+            className={`pointer-events-none absolute ${isFound ? "anim-jump" : ""} ${isShaking ? "anim-wiggle" : ""} ${
+              solved && isFound ? "find-cheer" : ""
+            }`}
+            style={{
+              ...place(item.box),
+              ...(solved && isFound ? { animationDelay: `${found.indexOf(item.id) * 0.12}s` } : {}),
+            }}
+          >
+            <Image src={item.src} alt="" fill sizes="30vw" className="select-none object-contain" />
+          </span>
+        );
+      })}
+
+      {/* The ring and tick on a found thing, and the glow on the hinted
+          one, sit over the thing itself (its hit box), not its shadow. */}
+      {scene.items.map((item) => {
+        const isFound = found.includes(item.id);
+        if (!isFound && item.id !== hinted) return null;
+        return (
+          <span key={`mark-${item.id}`} className="pointer-events-none absolute" style={place(item.hit)}>
+            {isFound ? (
+              <>
+                <svg
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  className="absolute left-[-8%] top-[-8%] h-[116%] w-[116%] overflow-visible"
+                  aria-hidden
+                >
+                  <ellipse className="find-ring find-ring--under" cx="50" cy="50" rx="48" ry="48" pathLength={100} />
+                  <ellipse className="find-ring" cx="50" cy="50" rx="48" ry="48" pathLength={100} />
+                </svg>
+                <span
+                  className="clay anim-pop-in absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full text-white lg:h-8 lg:w-8"
+                  style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
+                >
+                  <Check className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3.5} />
+                </span>
+              </>
+            ) : (
+              <span className="guide-target block h-full w-full" />
+            )}
+          </span>
+        );
+      })}
+
+      {scene.items.map((item) => (
+        <button
+          key={`tap-${item.id}`}
+          type="button"
+          aria-label={format(itemAria, { word: item.word })}
+          aria-pressed={found.includes(item.id)}
+          onClick={() => tap(item)}
+          /* The radius is the hit shape too: a round thing is only tappable
+             on its round part, so a corner of its box never steals a tap. */
+          className={`absolute focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)] ${
+            item.shape === "circle" ? "rounded-full" : "rounded-[18%]"
+          }`}
+          style={place(item.hit)}
+        />
+      ))}
+
+      {solved && <Celebration />}
+    </>
+  );
+  const tray = (
+    <SocketTray
+      count={targets.length}
+      filled={found.flatMap((id) => scene.items.find((item) => item.id === id)?.src ?? [])}
+    />
+  );
+
+  /* In the world: the picture is the screen (`.world-cover`, as the world
+     behind it is laid), the tray floating at its foot. */
+  if (world) {
+    return (
+      <div className={`world-frame world-find z-10 ${hidden ? "world-find--hidden" : ""}`}>
+        <div className="world-cover" style={worldCover(wide)}>
+          {picture}
+        </div>
+        <div className="world-tray">{tray}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col items-center gap-3">
       <div className={STAGE_CARD}>
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] lg:shadow-[0_20px_44px_-18px_rgb(var(--shadow-hue)/0.34)]">
-          <Image
-            src={scene.background}
-            alt=""
-            fill
-            preload
-            sizes="(min-width: 1024px) 34rem, (min-width: 640px) 28rem, 92vw"
-            className="select-none object-cover"
-          />
-
-          {scene.items.map((item) => {
-            const isFound = found.includes(item.id);
-            const isShaking = shake?.id === item.id;
-            return (
-              <span
-                key={isShaking ? `${item.id}.${shake.n}` : item.id}
-                className={`pointer-events-none absolute ${isFound ? "anim-jump" : ""} ${isShaking ? "anim-wiggle" : ""} ${
-                  solved && isFound ? "find-cheer" : ""
-                }`}
-                style={{
-                  ...place(item.box),
-                  ...(solved && isFound ? { animationDelay: `${found.indexOf(item.id) * 0.12}s` } : {}),
-                }}
-              >
-                <Image src={item.src} alt="" fill sizes="30vw" className="select-none object-contain" />
-              </span>
-            );
-          })}
-
-          {/* The ring and tick on a found thing, and the glow on the hinted
-              one, sit over the thing itself (its hit box), not its shadow. */}
-          {scene.items.map((item) => {
-            const isFound = found.includes(item.id);
-            if (!isFound && item.id !== hinted) return null;
-            return (
-              <span key={`mark-${item.id}`} className="pointer-events-none absolute" style={place(item.hit)}>
-                {isFound ? (
-                  <>
-                    <svg
-                      viewBox="0 0 100 100"
-                      preserveAspectRatio="none"
-                      className="absolute left-[-8%] top-[-8%] h-[116%] w-[116%] overflow-visible"
-                      aria-hidden
-                    >
-                      <ellipse className="find-ring find-ring--under" cx="50" cy="50" rx="48" ry="48" pathLength={100} />
-                      <ellipse className="find-ring" cx="50" cy="50" rx="48" ry="48" pathLength={100} />
-                    </svg>
-                    <span
-                      className="clay anim-pop-in absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full text-white lg:h-8 lg:w-8"
-                      style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
-                    >
-                      <Check className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3.5} />
-                    </span>
-                  </>
-                ) : (
-                  <span className="guide-target block h-full w-full" />
-                )}
-              </span>
-            );
-          })}
-
-          {scene.items.map((item) => (
-            <button
-              key={`tap-${item.id}`}
-              type="button"
-              aria-label={format(itemAria, { word: item.word })}
-              aria-pressed={found.includes(item.id)}
-              onClick={() => tap(item)}
-              /* The radius is the hit shape too: a round thing is only tappable
-                 on its round part, so a corner of its box never steals a tap. */
-              className={`absolute focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)] ${
-                item.shape === "circle" ? "rounded-full" : "rounded-[18%]"
-              }`}
-              style={place(item.hit)}
-            />
-          ))}
-
-          {solved && <Celebration />}
+          {picture}
         </div>
       </div>
-      <SocketTray
-        count={targets.length}
-        filled={found.flatMap((id) => scene.items.find((item) => item.id === id)?.src ?? [])}
-      />
+      {tray}
     </div>
   );
 }
