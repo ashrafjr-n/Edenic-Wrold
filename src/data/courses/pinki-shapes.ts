@@ -1,6 +1,7 @@
 import type { Face, LessonDef, Scene, SceneItem, ShapeId } from "@/types/course";
 import { picnic, rectangles, squares, triangles } from "@/data/scenes";
 import { SHAPE_BINS, SHAPES } from "@/data/shapes";
+import { GARDEN, GARDEN_FIND } from "@/data/shape-garden";
 import donut from "../../../public/assets/learn/pinki/shapes/find/donut.png";
 
 const circle: Face = { kind: "shape", shape: "circle" };
@@ -9,18 +10,23 @@ const triangle: Face = { kind: "shape", shape: "triangle" };
 const rectangle: Face = { kind: "shape", shape: "rectangle" };
 
 /** One shape, one lesson: watch its reel, meet its word, draw it, build its
-    word from shuffled letters, then find it in the world — each shape in
-    its own picnic (`edenic-plan.md` §5). Its stop on the course path wears
-    the thing the traced shape turns into, unless a clearer one is given. */
-function shapeLesson(n: number, shape: ShapeId, scene: Scene, cover = SHAPES[shape].thing.src): LessonDef {
+    word from shuffled letters, then find it in the world — in Pinki's shape
+    garden (2026-11-02: the course's world, `data/shape-garden.ts`; each lesson in
+    its shape's corner, the Find played in the garden itself; the picnic is
+    the Find until a lesson's garden is rendered). Its stop on the course
+    path wears the thing the traced shape turns into, unless a clearer one
+    is given. */
+function shapeLesson(n: number, shape: ShapeId, picnic: Scene, cover = SHAPES[shape].thing.src): LessonDef {
+  const garden = GARDEN_FIND[n];
   return {
     reel: `/assets/learn/pinki/shapes/reels/${n}.mp4`,
     cover: [cover],
+    world: GARDEN[n],
     questions: [
       { type: "word", ask: { key: "thisIs", vars: { shape } }, word: shape, shape },
       { type: "trace", ask: { key: "draw", vars: { shape } }, shape },
       { type: "spell", ask: { key: "spell", vars: { word: shape } }, word: shape },
-      { type: "find", ask: { key: "findAll", vars: { shape } }, target: { shape }, scene },
+      { type: "find", ask: { key: "findAll", vars: { shape } }, target: { shape }, scene: garden?.portrait ?? picnic, world: garden },
     ],
   };
 }
@@ -47,6 +53,8 @@ export const pinkiShapes: LessonDef[] = [
      step SHOWS what it is about — nothing depends on hearing the question. */
   {
     cover: [donut, SHAPES.square.thing.src, SHAPES.triangle.thing.src, SHAPES.rectangle.thing.src],
+    /* The review walks the whole garden: a step in each corner. */
+    world: GARDEN[5],
     questions: [
       {
         type: "sort",
