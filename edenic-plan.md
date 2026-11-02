@@ -647,10 +647,13 @@ deleted 2026-10-23): this time the world IS where the activities happen.
 pinki shapes" — Find's picnics may change for it; the lessons' phone
 design changes with it), checked by the user, then the other five, each
 with the user's OK on its look (a still) before it is built.
-- [ ] Shapes: the garden — art bible + renders (5 lessons, 2 frames)
-- [ ] Shapes: the activities over the garden, blurred; Find in it, sharp
-- [ ] Shapes: the camera moves (entry, step to step, focus pull)
-- [ ] Every course: the return to the board (the lesson's path)
+- [x] Shapes: the garden — art bible + renders (5 lessons, 2 frames) —
+      built 2026-11-02 (`render.cjs garden` + `crop.py garden`)
+- [x] Shapes: the activities over the garden, blurred; Find in it, sharp;
+      the traced thing lands in the garden and is found there
+- [x] Shapes: the camera moves (entry crane, step to step, focus pull)
+- [x] Every course: the return to the board (the lesson's path, what was
+      made, the next lesson's sheet)
 - [ ] The user checks Shapes → fixes
 - [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
 
