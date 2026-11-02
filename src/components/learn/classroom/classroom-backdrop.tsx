@@ -1,7 +1,7 @@
 import { ViewTransition } from "react";
 import Image from "next/image";
 import { WallPreload } from "@/components/learn/classroom/wall-preload";
-import type { Framed } from "@/data/classroom";
+import type { Framed } from "@/types/course";
 
 interface ClassroomBackdropProps {
   /** The friend's room — `CLASSROOMS[id]`. */

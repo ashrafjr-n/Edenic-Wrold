@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { StaticImageData } from "next/image";
 import type { CharacterId } from "@/types/character";
 import type { LessonId } from "@/types/lesson";
+import type { Framed } from "@/types/course";
 import courseShapes from "../../public/assets/learn/pinki/classroom/course-shapes.png";
 import courseColors from "../../public/assets/learn/pinki/classroom/course-colors.png";
 import pinkiWall from "../../public/assets/learn/pinki/classroom/portrait.jpg";
@@ -23,11 +24,6 @@ import blooDeskWide from "../../public/assets/learn/bloo/classroom/landscape-des
 import blooWithStick from "../../public/assets/learn/bloo/classroom/bloo-with-a-stick.png";
 import blooCheer from "../../public/assets/friends/bloo.png";
 
-/** A picture in both frames — the one that fits the screen shows. */
-export interface Framed {
-  portrait: StaticImageData;
-  landscape: StaticImageData;
-}
 
 /** A friend's classroom (2026-10-14 Pinki's; Nova's and Bloo's
     2026-10-23): the same board, chalk, paper sheets and loader for every

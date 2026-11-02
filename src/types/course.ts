@@ -62,6 +62,9 @@ export interface SceneItem extends Thing {
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */
   hit: SceneRect;
+  /** A course world's Find: the thing the child's trace turned into, landed
+      in the world (`LessonWorld.landing`). */
+  reward?: boolean;
 }
 
 /** A pre-rendered world to find things in: an empty background and the
@@ -113,7 +116,7 @@ export type Question =
       memory. */
   | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData; color?: ColorId }
   /** Find every thing in the scene that is this shape or color. */
-  | { type: "find"; ask: Ask; target: Target; scene: Scene }
+  | { type: "find"; ask: Ask; target: Target; scene: Scene; world?: Framed<Scene> }
   /** Put each thing, one at a time, in the box it belongs in. */
   | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
   /** Balloons of many colors float up; pop every one of `color` (four of
@@ -212,6 +215,31 @@ export interface Kitchen {
   friend: { picture: StaticImageData; cheer: StaticImageData };
 }
 
+/** A picture (or anything) in both frames — the one that fits the screen
+    shows: `landscape` on a screen wider than tall, `portrait` otherwise. */
+export interface Framed<T = StaticImageData> {
+  portrait: T;
+  landscape: T;
+}
+
+/** A lesson's world (2026-11-02, Pinki's Shapes first): where its steps
+    happen. The camera stands somewhere in it for each step after the reel
+    — out of focus behind a step that needs the child's focus, the world
+    itself, sharp, for a step played in it (a Find, `Question.world`) — and
+    every change of step is the camera moving there (`tools/picnic-scene`,
+    `render.cjs garden`). */
+export interface LessonWorld {
+  /** Each step's still, after the reel; `null` where the step plays in
+      the world itself. */
+  stations: readonly (Framed | null)[];
+  /** The camera's move INTO each station, a clip played by path (move 0
+      is the entry, after the reel); the last frame is that station. */
+  moves: readonly Framed<string>[];
+  /** Where the traced shape's thing lands, in the trace station's picture
+      (% of the frame) — it is in the world from then on. */
+  landing?: Framed<SceneRect>;
+}
+
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
   /** The lesson's reel, a path under `/public` (videos are played by path,
@@ -223,4 +251,7 @@ export interface LessonDef {
   cover: readonly StaticImageData[];
   /** Empty until the lesson is written; the page then says it is on its way. */
   questions: Question[];
+  /** Its course's world, when the course has one; without it the steps are
+      on the friend's board in their classroom. */
+  world?: LessonWorld;
 }
