@@ -591,6 +591,69 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       meadow under the weather with what a child wears for it. All 42
       lessons checked: each fetches its own backdrop, no errors.
 
+### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
+
+The user: after the reel everything sits on the same board — a lesson
+needs a world of its own: 3D, sometimes blurred, sometimes sharp,
+different per course and friend, the same through one course's
+activities; the moves between activities smooth and fitting the lesson
+(not just faster); and "Lesson complete" far better — back to the board,
+the lesson's path walked, then the way to the next lesson.
+
+**Not the 2026-10-13 backdrops again** (blurred wallpaper behind cards,
+deleted 2026-10-23): this time the world IS where the activities happen.
+
+1. **A world per course, a camera shot per activity.** One world for a
+   course, and every activity is a different shot of it — like a film
+   set. **Blur is a rule, not a look:** an activity that needs focus (the
+   word card, tracing, spelling, sorting, picking) sits over the world
+   out of focus; an activity that IS the world (Find, Pop, Feed…) has it
+   sharp, and the child plays in it. Pre-rendered 3D (`tools/picnic-scene`),
+   never live 3D on a phone. Each world has an art bible — palette,
+   light, time of day, 3–4 landmarks — and a quiet middle for the
+   activity; the friends stay their pictures, laid into the world.
+   - Shapes → **Pinki's shape garden**: four corners — round (a moon
+     gate, a round fountain, ball topiaries; blue), square (a chequered
+     lawn, box hedges, a shed with a square window; green), triangle
+     (cone topiaries, a tent, bunting, a sailboat pond; gold), rectangle
+     (a pergola, raised beds, a door in the wall, a bench; pink) — each
+     shape's own clay colour. A lesson stays in its corner; the review
+     walks through all four. Find is in the garden itself.
+   - Colors → **a simple forest**: Find in the forest itself — a
+     ladybug walking, a plant of the color; the balloons caught in the
+     branches, the mixing on a tree stump.
+   - Vegetables → Nova's garden and kitchen (the kitchen built already).
+   - Seasons → ONE hill and ONE tree through four seasons (its
+     activities still to decide).
+   - Animals → the videos' pastel world, a corner per animal.
+   - Weather → Bloo's hill under each sky.
+2. **The move between activities is a camera move** in that world —
+   pre-rendered short clips (real parallax, depth, a focus pull when the
+   world comes sharp), each course its own: walking the garden path,
+   deeper into the forest, the season turning, the sky changing, sliding
+   along the counter. **The cheer IS the move**: no dead pause after a
+   solve (the 1.9–2.9 s hold goes); ~1.2–1.6 s, input locked, the next
+   activity's controls arrive last. The made thing travels with the child
+   (the traced shape's thing lands in the world, to be found again).
+   Reduced motion → a plain cross-fade. Never over the header or nav.
+3. **The end of a lesson = back to the board.** The world gives way to
+   the friend's classroom; on the board the lesson's path is drawn in
+   chalk, stop by stop, each with what the child MADE (the word, their
+   own drawing, the spelled word, what they found) and a tick; then the
+   way on — "Next shape" big, Play again beside it. Short (3–4 s),
+   tap to skip, no stars.
+
+**Order:** Pinki · Shapes first (the user, 2026-11-02: "نفذ اولا على
+pinki shapes" — Find's picnics may change for it; the lessons' phone
+design changes with it), checked by the user, then the other five, each
+with the user's OK on its look (a still) before it is built.
+- [ ] Shapes: the garden — art bible + renders (5 lessons, 2 frames)
+- [ ] Shapes: the activities over the garden, blurred; Find in it, sharp
+- [ ] Shapes: the camera moves (entry, step to step, focus pull)
+- [ ] Every course: the return to the board (the lesson's path)
+- [ ] The user checks Shapes → fixes
+- [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
+
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
 
 **What is left, per course (the user's list, 2026-11-01)** — this order
