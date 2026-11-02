@@ -74,7 +74,7 @@ export function StrokeDemo({ strokes }: StrokeDemoProps) {
       <path
         d={path}
         fill="none"
-        stroke="rgb(251 248 240 / 22%)"
+        style={{ stroke: "var(--trace-ghost, rgb(251 248 240 / 22%))" }}
         strokeWidth={9}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -93,19 +93,19 @@ export function StrokeDemo({ strokes }: StrokeDemoProps) {
                  complete the moment it has drawn this one too. */
               "--stroke-from": length + offsets[index],
               "--stroke-to": offsets[index],
+              stroke: `var(--trace-pen, ${CHALK_PINK})`,
             } as CSSProperties
           }
           d={segment}
           fill="none"
           filter={`url(#${chalkId})`}
-          stroke={CHALK_PINK}
           strokeWidth={9}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       ))}
 
-      <circle className="pen-tip" style={vars} r={5.5} fill={CHALK_PINK} />
+      <circle className="pen-tip" style={{ ...vars, fill: `var(--trace-pen, ${CHALK_PINK})` }} r={5.5} />
     </svg>
   );
 }

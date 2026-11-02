@@ -23,7 +23,11 @@ interface TraceBoardProps {
   locked: boolean;
 }
 
-/** Chalk's two colours on her board: what is written, and her pink. */
+/** Chalk's two colours on her board: what is written, and her pink. In a
+    lesson's world the trace is on a white sheet instead, and `.world-stage`
+    turns the same parts to crayon: `--trace-line`, `--trace-fill`,
+    `--trace-guide`, `--trace-mark` (and the demo's `--trace-pen`,
+    `--trace-ghost`) — each falls back to the chalk. */
 const CHALK_WHITE = "#fbf8f0";
 export const CHALK_PINK = "#ffb0d4";
 
@@ -275,7 +279,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
               key={`guide-${index}`}
               d={path}
               fill="none"
-              stroke="rgb(251 248 240 / 55%)"
+              style={{ stroke: "var(--trace-guide, rgb(251 248 240 / 55%))" }}
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -287,13 +291,13 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
         <g filter={missed ? undefined : `url(#${chalkId})`}>
           {locked &&
             guidePaths.map((path, index) => (
-              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} fill={CHALK_PINK} />
+              <path key={`fill-${index}`} className="trace-fill" d={`${path} Z`} style={{ fill: `var(--trace-fill, ${CHALK_PINK})` }} />
             ))}
           {active.length >= MIN_STROKE_POINTS && (
             <polyline
               points={active.map(([x, y]) => `${x},${y}`).join(" ")}
               fill="none"
-              stroke={missed ? "var(--color-miss)" : CHALK_WHITE}
+              style={{ stroke: missed ? "var(--color-miss)" : `var(--trace-line, ${CHALK_WHITE})` }}
               strokeWidth={9}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -309,7 +313,7 @@ export function TraceBoard({ strokes, accent, minCoverage, onFinish, onMiss, loc
             <span
               key={at}
               aria-hidden
-              className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[#fbf8f0]/70"
+              className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 text-[var(--trace-mark,rgb(251_248_240/70%))]"
               style={{ left: `${mark.x}%`, top: `${mark.y}%`, rotate: `${mark.angle}deg` }}
             >
               <ChevronRight className="h-5 w-5 lg:h-6 lg:w-6" strokeWidth={3.25} />
