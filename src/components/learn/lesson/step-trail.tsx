@@ -10,6 +10,9 @@ interface StepTrailProps {
   at: number;
   /** What stands in the current step's place: its round task button. */
   current: ReactNode;
+  /** A lesson out in its world: the trail is a white clay strip, not a
+      strip of the friend's board. */
+  world?: boolean;
 }
 
 /**
@@ -19,9 +22,8 @@ interface StepTrailProps {
  * current one is its round task button (the how-to), the ones to come
  * show their icon, faint.
  */
-export function StepTrail({ kinds, at, current }: StepTrailProps) {
-  return (
-    <Chalkboard size="strip">
+export function StepTrail({ kinds, at, current, world = false }: StepTrailProps) {
+  const trail = (
       <ol className="chalk-trail">
         {kinds.map((kind, i) => {
           const Icon = TASK_ICONS[kind];
@@ -39,6 +41,7 @@ export function StepTrail({ kinds, at, current }: StepTrailProps) {
           );
         })}
       </ol>
-    </Chalkboard>
   );
+  if (world) return <div className="world-trail">{trail}</div>;
+  return <Chalkboard size="strip">{trail}</Chalkboard>;
 }
