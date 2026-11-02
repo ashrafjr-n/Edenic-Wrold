@@ -301,13 +301,14 @@ if NAME == "garden":
     # which is the garden itself, sharp, in layers (`find/ground.jpg` and a
     # PNG per thing); every camera move as an H.264 clip (`m<i>.mp4`), its
     # focus changing as the move goes (the entry lands out of focus; the
-    # walk to the Find pulls it sharp). Then writes `src/data/garden.ts`.
+    # walk to the Find pulls it sharp). Then writes `src/data/shape-garden.ts`
+    # (`--data` writes only that, from the last crop).
     import subprocess
     import tempfile
 
     BLUR = 0.009  # σ as a share of the picture's long side — the page's twin is `GARDEN_BLUR`
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:]] or [1, 2, 3, 4, 5]
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or [1, 2, 3, 4, 5]
     base = "public/assets/learn/pinki/shapes/garden"
 
     def sigma(lesson, move, t):
@@ -321,7 +322,8 @@ if NAME == "garden":
         return img if s * max(img.size) < 0.3 else img.filter(ImageFilter.GaussianBlur(s * max(img.size)))
 
     data = {}
-    for lesson in lessons:
+    # `--data`: only write `src/data/shape-garden.ts` again, from the last crop.
+    for lesson in [] if "--data" in sys.argv else lessons:
         data[lesson] = {}
         for frame in ("landscape", "portrait"):
             out = os.path.join(HERE, "out", f"garden-{lesson}-{frame}")
@@ -374,7 +376,7 @@ if NAME == "garden":
     data = {**({int(k): v for k, v in json.load(open(saved)).items()} if os.path.exists(saved) else {}), **data}
     json.dump(data, open(saved, "w"))
 
-    # `src/data/garden.ts`: every picture a static import (cache-busted),
+    # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
     # every clip a path with its hash.
     WORD = {"pennant": "flag", "rectFlag": "flag", "sailboat": "boat", "trough": "planter"}
     imports, worlds, finds = [], [], []
@@ -389,7 +391,7 @@ if NAME == "garden":
             stations.append("null" if still is None else f"{{ landscape: {pic(lesson, 'landscape', still)}, portrait: {pic(lesson, 'portrait', both['portrait']['stills'][i])} }}")
         moves = [f'{{ landscape: "/{base[len("public/"):]}/{lesson}/landscape/{m}", portrait: "/{base[len("public/"):]}/{lesson}/portrait/{both["portrait"]["moves"][i]}" }}' for i, m in enumerate(both["landscape"]["moves"])]
         landing = both["landscape"]["landing"]
-        worlds.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n"
+        worlds.append(f"  {lesson}: {{\n    blur: GARDEN_BLUR,\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n"
                       + (f"    landing: {{ landscape: {json.dumps(landing)}, portrait: {json.dumps(both['portrait']['landing'])} }},\n" if landing else "")
                       + "  },")
         if both["landscape"]["find"]:
@@ -414,7 +416,7 @@ if NAME == "garden":
         + "/** Each shape lesson's Find, in the garden itself: its ground and the\n    things to tap, in both frames (farthest first); `reward` is the traced\n    shape's thing, landed there. */\n"
         + "export const GARDEN_FIND: Record<number, { landscape: Scene; portrait: Scene }> = {\n" + "\n".join(finds) + "\n};\n"
     )
-    open(os.path.join(ROOT, "src/data/garden.ts"), "w").write(ts)
+    open(os.path.join(ROOT, "src/data/shape-garden.ts"), "w").write(ts)
     sys.exit()
 
 if NAME == "kitchen":
