@@ -86,6 +86,14 @@
  *
  *   node tools/picnic-scene/render.cjs backdrop circle square triangle rectangle review
  *
+ * Pinki's shape garden (2026-11-02) — the Shapes course's world: per
+ * lesson and frame, `out/garden-<n>-<frame>/` — each station's still, every
+ * frame of the camera's moves (`m<i>/`, 30 fps), the Find in layers. On the
+ * Mac's GPU. Then `crop.py garden`, which blurs, encodes the clips and
+ * writes `src/data/shape-garden.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs garden 1 2 3 4 5
+ *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
  * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
  * tipped one); then `crop.py playcard cups` (sharp, no blur):
