@@ -5387,61 +5387,468 @@ a.board-cell--now:focus-visible {
   color: color-mix(in srgb, var(--plate-face) 45%, #fff);
 }
 
-/* ---------- The done screen's party (`LessonDone`, 2026-11-02) ----------
-   Behind the step's content and buttons on the board: `z-index: -1` inside
-   `.stage-swap`'s own stacking context, so it paints over the slate but
-   under everything in flow. A size container, so the balloons rise its
-   full height (`.balloon-rise` reads `cqh`). */
-.done-party {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+/* ---------- A lesson's world (2026-11-02, Pinki's Shapes first) ----------
+   `LessonWorldView`: the world fixed under the page — the whole large
+   viewport, so the phone's bar never uncovers its edge — and the picture
+   laid in it as `object-fit: cover` would lay it, but as a BOX
+   (`.world-cover`, the picture's own aspect `--world-ar`), so a Find in it
+   can lay its things over the very same pixels. */
+.world-frame {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 100lvh;
   overflow: hidden;
-  border-radius: 1.05rem;
   container-type: size;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.world-cover {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, calc(100cqh * var(--world-ar)));
+  height: max(100cqh, calc(100cqw / var(--world-ar)));
+  translate: -50% -50%;
+}
+
+/* The lesson is over: the world gives way to the friend's classroom. */
+.world-gone {
+  opacity: 0;
+}
+
+/* A still that takes over from a clip (a restart, reduced motion). */
+.world-fade {
+  animation: world-fade 0.45s ease both;
+}
+
+@keyframes world-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A Find played in the world: its things take taps, the rest of the
+   picture lets them through to nothing. Shown once the camera has pulled
+   focus onto this very frame — no movement, the picture is already there. */
+.world-find button {
+  pointer-events: auto;
+}
+
+.world-find--hidden {
+  opacity: 0;
+}
+
+.world-find--hidden button {
   pointer-events: none;
 }
 
-.done-party .balloon-rise {
-  opacity: 0.92;
+/* The tray of found things, floating at the foot of the world — over the
+   phone's tab bar. */
+.world-tray {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(4rem + env(safe-area-inset-bottom) + 0.85rem);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 
-/* A doodle drawn on, then left there. */
+@media (width >= 40rem) {
+  .world-tray {
+    bottom: 1.75rem;
+  }
+}
+
+/* The traced thing on its way down into the world (`landInWorld`). */
+.world-landing {
+  position: fixed;
+  z-index: 0;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* The steps' stage in a world: the board's box with nothing of its own. */
+.world-stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0.25rem 0.75rem 1rem;
+}
+
+@media (width >= 40rem) {
+  .world-stage {
+    margin: 0.5rem 0 0.9rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .world-stage {
+    margin: 0.25rem 0 0.75rem;
+  }
+
+  .world-stage.lesson-board {
+    --stage-h: calc(100svh - 26.5rem);
+  }
+}
+
+/* Out in the world the trace is on a white sheet, in crayon (the board's
+   chalk on a white sheet would vanish): the friend's colour for the line,
+   a soft pink fill, the guide and its marks in faint ink. The sheet keeps
+   its card at every width — a step straight on a blurred world has
+   nothing under the finger. */
+.world-stage {
+  --trace-line: var(--page-accent-color);
+  --trace-pen: var(--page-accent-color);
+  --trace-fill: color-mix(in srgb, var(--page-accent-color) 38%, white);
+  --trace-guide: color-mix(in srgb, var(--color-ink-soft) 34%, transparent);
+  --trace-mark: color-mix(in srgb, var(--color-ink-soft) 55%, transparent);
+  --trace-ghost: color-mix(in srgb, var(--page-accent-color) 16%, transparent);
+}
+
+.world-stage .trace-sheet {
+  background: var(--surface);
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+[data-theme="dark"] .world-stage .trace-sheet {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* The desktop's step trail out in the world: a white clay strip, its
+   steps in faint ink, the done ones in the friend's colour. */
+.world-trail {
+  padding: 0.3rem;
+  border-radius: 9999px;
+  background: var(--surface);
+  box-shadow:
+    inset 0 6px 10px -6px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -6px rgb(var(--shadow-hue) / 18%),
+    0 12px 26px -14px rgb(var(--shadow-hue) / 40%);
+}
+
+[data-theme="dark"] .world-trail {
+  box-shadow:
+    inset 0 6px 10px -6px rgb(255 255 255 / 5%),
+    inset 0 -8px 12px -6px rgb(var(--shadow-hue) / 18%),
+    0 12px 26px -14px rgb(var(--shadow-hue) / 40%);
+}
+
+.world-trail .chalk-trail-dot,
+.world-trail .chalk-trail-line {
+  mask-image: none;
+}
+
+.world-trail .chalk-trail-dot {
+  border-color: color-mix(in srgb, var(--color-ink-soft) 30%, transparent);
+  color: color-mix(in srgb, var(--color-ink-soft) 55%, transparent);
+}
+
+.world-trail .chalk-trail-dot--done {
+  border-color: var(--page-accent-color);
+  color: var(--page-accent-color);
+  background-color: color-mix(in srgb, var(--page-accent-color) 12%, transparent);
+}
+
+.world-trail .chalk-trail-line {
+  border-top-color: color-mix(in srgb, var(--color-ink-soft) 25%, transparent);
+}
+
+.world-trail .chalk-trail-line--done {
+  border-color: var(--page-accent-color);
+}
+
+/* A step waits, laid out but unseen, while the camera walks to it; then
+   it comes in as every step does (`stage-in`). */
+.stage-swap.world-wait {
+  animation: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- The end of a lesson, back on the board (`LessonDone`,
+   redone 2026-11-02 — `edenic-plan.md` Phase 7) ----------
+   The friend and "Lesson complete!", then the lesson's path in chalk —
+   each stop ticked in the friend's chalk as the line reaches it (`--at`,
+   set per stop) — then what the child made, then the next lesson's sheet.
+   `--walked` is when the path is done (set on `.done`). A tap shows it all
+   (`.done--skip`). Doodles and the burst take the board itself (they are
+   laid in `.stage-swap`, the board's slate, not in `.done`). */
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(0.9rem, 1.6svh);
+  width: 100%;
+  margin-block: auto;
+}
+
+@media (width >= 64rem) {
+  .done {
+    flex-direction: row;
+    justify-content: center;
+    gap: clamp(2rem, 5vw, 5rem);
+  }
+}
+
+.done-doodles,
+.done-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A doodle drawn on once the path is walked, then left there. */
 .done-doodle {
   position: absolute;
   height: auto;
   translate: -50% -50%;
   opacity: 0.85;
-  animation: chalk-pop 0.5s ease-out both;
+  animation: chalk-pop 0.5s ease-out var(--walked) backwards;
 }
 
-/* A piece of confetti falling the board's height, turning, then again. */
-.done-rain {
+.done-friend {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  justify-content: center;
+  animation: chalk-pop 0.5s ease-out 0.05s backwards;
+}
+
+.done-friend .done-glow {
   position: absolute;
-  top: 0;
-  width: 0.55rem;
-  height: 0.8rem;
-  border-radius: 0.15rem;
-  animation: done-rain 5s linear infinite backwards;
+  bottom: 4%;
+  left: 50%;
+  height: 78%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 9999px;
 }
 
-@keyframes done-rain {
+.done-friend .done-hop {
+  position: relative;
+  width: auto;
+  height: min(7rem, 14svh);
+  filter: drop-shadow(0 12px 14px rgb(0 0 0 / 30%));
+}
+
+@media (width >= 40rem) {
+  .done-friend .done-hop {
+    height: min(10rem, 16svh);
+  }
+}
+
+@media (width >= 64rem) {
+  .done-friend .done-hop {
+    height: min(19rem, calc(var(--stage-h) * 0.95));
+  }
+}
+
+.done-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: min(1.1rem, 2svh);
+}
+
+.done-title {
+  animation: chalk-pop 0.5s ease-out 0.2s backwards;
+}
+
+/* The path: a chalk ring per step, a chalk line between. A ring waits
+   faint (the path to walk), then — its turn — takes the friend's chalk,
+   with a pop and a green tick. */
+.done-path {
+  display: flex;
+  align-items: center;
+}
+
+.done-stop {
+  display: flex;
+  align-items: center;
+}
+
+.done-path-line {
+  width: clamp(0.7rem, 3.2vw, 2.2rem);
+  border-top: 3px solid var(--chalk-accent);
+  mask-image: var(--chalk-grain);
+  mask-size: 6rem;
+  transform-origin: 0 50%;
+  animation: done-line 0.3s linear calc(var(--at) - 0.3s) backwards;
+}
+
+@keyframes done-line {
   from {
-    opacity: 0;
-    translate: 0 -2rem;
-    rotate: 0deg;
+    scale: 0 1;
   }
-  8% {
-    opacity: 1;
+}
+
+.done-stop-dot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2.6rem, 11.5vw, 3.6rem);
+  aspect-ratio: 1;
+  border: 3px solid var(--chalk-accent);
+  border-radius: 9999px;
+  color: var(--chalk-accent);
+  background-color: color-mix(in srgb, var(--chalk-accent) 14%, transparent);
+  animation: done-stop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) var(--at) backwards;
+}
+
+.done-stop-dot > svg {
+  width: 46%;
+  height: 46%;
+}
+
+@keyframes done-stop {
+  from {
+    scale: 0.82;
+    border-color: rgb(251 248 240 / 40%);
+    color: rgb(251 248 240 / 50%);
+    background-color: transparent;
   }
-  90% {
-    opacity: 1;
+}
+
+.done-stop-tick {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  color: #fff;
+  background-color: var(--color-go);
+  box-shadow:
+    inset 0 -2px 3px var(--color-go-dark),
+    0 2px 4px rgb(0 0 0 / 35%);
+  animation: done-tick 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) calc(var(--at) + 0.15s) backwards;
+}
+
+.done-stop-tick > svg {
+  width: 70%;
+  height: 70%;
+}
+
+@keyframes done-tick {
+  from {
+    scale: 0;
   }
-  to {
-    opacity: 0;
-    translate: 1.5rem 100cqh;
-    rotate: var(--rain-spin);
+}
+
+/* What was made, pinned up under the path once it is walked. */
+.done-made {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(0.6rem, 1.2svh);
+  animation: stage-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--walked) backwards;
+}
+
+.done-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.done-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(3.5rem, 8svh);
+  aspect-ratio: 1;
+}
+
+@media (width >= 64rem) {
+  .done-tile {
+    width: min(5.5rem, 10svh);
   }
+}
+
+/* The things found, side by side on one long tile. */
+.done-found {
+  aspect-ratio: auto;
+  width: auto;
+  height: min(3.5rem, 8svh);
+  gap: 0.15rem;
+  padding: 0.35rem 0.5rem;
+}
+
+@media (width >= 64rem) {
+  .done-found {
+    height: min(5.5rem, 10svh);
+  }
+}
+
+.done-found-thing {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 1;
+}
+
+/* The next lesson's sheet (the course page's `.board-next`), smaller and
+   always lying down — pinned up last. */
+.board-next.done-next {
+  flex-direction: row;
+  gap: 0.9rem;
+  width: auto;
+  min-width: 0;
+  max-width: min(100%, 24rem);
+  padding: 0.7rem 1.6rem 0.7rem 0.7rem;
+  text-align: start;
+  animation-delay: calc(var(--walked) + 0.3s);
+}
+
+.done-next > .board-cell-art {
+  width: min(5.25rem, 10svh);
+}
+
+.done-next .board-next-text {
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.done-next .board-next-word {
+  font-size: clamp(1.4rem, min(5vw, 4.4svh), 2.2rem);
+}
+
+.done-next .board-next-go {
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+}
+
+@media (width >= 64rem) {
+  .board-next.done-next {
+    max-width: 30rem;
+    padding: 0.9rem 2.2rem 0.9rem 0.9rem;
+  }
+
+  .done-next > .board-cell-art {
+    width: min(7.5rem, 13svh);
+  }
+}
+
+/* A tap: everything at once. */
+.done--skip :is(.done-doodle, .done-title, .done-path-line, .done-stop-dot, .done-stop-tick, .done-made, .done-next) {
+  animation-delay: 0s;
+  animation-duration: 0.01s;
 }
 
 /* The friend hops for joy, again and again, once it has popped in. */
@@ -5572,9 +5979,12 @@ a.board-cell--now:focus-visible {
   .class-cheer-smile,
   .class-teacher,
   .done-hop,
-  .done-rain,
-  .done-party .balloon-rise,
-  .done-party .balloon-sway,
+  .done-friend,
+  .done-doodle,
+  .done-path-line,
+  .done-stop-dot,
+  .done-stop-tick,
+  .done-made,
   .board-cell,
   .board-next {
     animation: none;
