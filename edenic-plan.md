@@ -674,7 +674,48 @@ with the user's OK on its look (a still) before it is built.
       it SHARP and goes out of focus as it arrives; a shape-flower blooms
       where each step was done; the end rises over the path in bloom,
       then the friend celebrates. Every other course's world does the same.
-- [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
+- [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather — the
+      plan, agreed 2026-11-04 (below, "Course worlds, the plan")
+
+#### Course worlds, the plan (agreed 2026-11-04)
+
+**The rule, every course:** one 3D world per course; each activity has a
+real PLACE in it; the camera goes there SHARP and goes out of focus as it
+arrives; a marker appears where each step was done; the end is a shot of
+the whole way, then the friend celebrates (`WorldDone`). The friends stay
+their pictures. **The camera does not only walk sideways** (the user,
+2026-11-04): it may turn where it stands — pan, tilt, orbit — the world
+all round it, in every direction; pick the move that fits the place.
+
+**Step 0, shared (once):** turn the garden builder into a general kit —
+a config per course (its places, its marker, its end shot, its scenery)
+for `render.cjs world <course> <n>` + `crop.py world`; the player is
+generic already; let more steps play IN the world like Find (Pop's
+balloons, Feed).
+
+**Order — one course at a time, each OK'd on a still before it is built,
+then checked by the user:**
+1. **Pinki · Colors (12): a simple forest** — the word on an easel, spell
+   among letter blocks, mix on a tree stump with paint pots, the balloons
+   tied in the branches (popped in the world), Find on a blanket in a
+   clearing; marker: a splash of paint opening into a flower of the
+   lesson's colour; end: the forest path in colour.
+2. **Nova · Vegetables (6): Nova's garden + her kitchen (built)** — the
+   word on a sign by the bed, spell with seed packets, then the camera
+   goes through the kitchen door to Basket Time at the counter; marker:
+   the vegetable sprouts in the bed; end: the bed grown.
+3. **Bloo · Animals (10): the videos' pastel world, a corner per animal**
+   — word on a sign, spell among blocks, Feed at the animal's home (in
+   the world); marker: the animal (its picture) settles at home; end: all
+   of them home.
+4. **Bloo · Weather (5): Bloo's hill** — the sky changes per lesson,
+   "Which weather?" with the four dressed Bloos on the hill; marker: the
+   weather's sign grows (sun, cloud, wind, snow).
+5. **Nova · Seasons (5): one hill, one tree** — the camera turns round the
+   tree; marker and end: the tree in the lesson's season.
+
+**Size:** ~2 MB a lesson per device frame; all courses ≈ 100–150 MB more
+in the repo — stronger video compression if that matters.
 
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
 
