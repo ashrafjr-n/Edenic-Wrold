@@ -5021,13 +5021,14 @@ if (THING) {
      stone and gravel; Pinki's pink on the wall's coping. The middle of
      every shot is calm lawn — an activity stands over it — and the big
      shapes (the moon gate, the fountain, the topiaries) read even out of
-     focus. Nothing to find stands in it (2026-11-04): a Shapes Find is
-     its picnic, on a card in front of the blurred garden.
+     focus. A lesson's Find is its picnic, on the lawn in its corner,
+     seen from above (2026-11-04).
 
      `?garden=<1-5>&frame=portrait|landscape[&px=]` builds lesson n's
      corner (with all four built, for the review's walk); the page then
-     answers `window.garden.station(i)` for each station and
-     `window.garden.move(i, t)` for each frame of a camera move. ---------- */
+     answers `window.garden.station(i)` for each station,
+     `window.garden.move(i, t)` for each frame of a camera move and
+     `window.garden.findLayers()` for the Find. ---------- */
   const LESSON = Number(GARDEN);
   const portrait = params.get("frame") === "portrait";
   const [w, h] = portrait ? [900, 1600] : [1600, 900];
@@ -5422,9 +5423,36 @@ if (THING) {
     border(x - 1.4, x + 1.4, 7.5, [0xffffff, 0xffa6cf, 0xffd45e], { k: 1.1, clear: false, tulips: false });
   }
 
-  /* Tufts of grass and clover over the open lawn. */
+  /* ---- The Find (2026-11-04, on request): the lesson's picnic — the
+     very blanket and things of `SCENES` — laid on the lawn in its corner.
+     The camera's last move tilts down onto it, and the Find is played
+     there, in the garden itself. ---- */
+  const PICNIC = { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
+  const FIND_Z = -1.6;
+  const things = {};
+  let blanketBox = null;
+  if (LESSON <= 4) {
+    const pic = SCENES[PICNIC[LESSON]];
+    const blanket = BLANKETS[pic.blanket]();
+    if (pic.deep) blanket.scale.set(pic.deep[0], 1, pic.deep[1]);
+    blanket.position.x += fx;
+    blanket.position.z += FIND_Z;
+    scene.add(blanket);
+    blanketBox = new THREE.Box3().setFromObject(blanket).expandByScalar(0.25);
+    for (const [name, it] of Object.entries(pic.items)) {
+      const thing = ITEMS[it.model ?? name](it.arg);
+      place(thing, it);
+      thing.position.x += fx;
+      thing.position.z += FIND_Z;
+      scene.add(thing);
+      things[name] = { group: thing, shape: SHAPE_OF[it.model ?? name] ?? null, y: it.at[1] };
+    }
+  }
+
+  /* Tufts of grass and clover over the open lawn — never under the blanket. */
   for (let i = 0; i < 900; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
+    if (blanketBox && x > blanketBox.min.x && x < blanketBox.max.x && z > blanketBox.min.z && z < blanketBox.max.z) continue;
     const tuft = new THREE.Group();
     const n = 3 + Math.floor(rand() * 3);
     for (let j = 0; j < n; j++) {
@@ -5439,13 +5467,16 @@ if (THING) {
 
   /* Everything that never moves, merged into one mesh per material — some
      ten thousand flowers, tufts and stones would otherwise be as many draw
-     calls a frame. */
+     calls a frame. The things to find stay apart (they are hidden and
+     shown one by one for the Find's layers). */
   (function freeze() {
+    const keep = new Set(Object.values(things).map((t) => t.group));
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
     scene.traverse((o) => {
       if (!o.isMesh || o === catcher || Array.isArray(o.material)) return;
+      for (let p = o; p; p = p.parent) if (keep.has(p)) return;
       const m = o.material;
       const key = [m.type, m.color?.getHexString(), m.roughness, m.metalness, m.clearcoat, m.clearcoatRoughness, m.sheen, m.sheenRoughness,
         m.sheenColor?.getHexString(), m.specularIntensity, m.map?.uuid, m.transparent, m.opacity, m.emissive?.getHexString(), m.emissiveIntensity, m.side, o.castShadow, o.receiveShadow].join("|");
@@ -5472,11 +5503,16 @@ if (THING) {
      each corner — and where the entry crane starts. A station is
      [camera x, y, z, look x, y, z]. ---- */
   const station = (x, look = x) => (portrait ? [x, 2.9, 11.5, look, 2.0, -6] : [x, 2.7, 11.2, look, 1.9, -6]);
+  /* The Find's: high over the picnic, looking down at it as the picnic's
+     own camera does (72° off level), far enough back that the blanket
+     sits clear of the screen's edges and of the page's bars. */
+  const DOWN = THREE.MathUtils.degToRad(72);
+  const overPicnic = (d, dz = 0) => [fx, d * Math.sin(DOWN), FIND_Z + dz + d * Math.cos(DOWN), fx, 0, FIND_Z + dz];
   const STATIONS =
     LESSON <= 4
       ? portrait
-        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), station(fx)]
-        : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), station(fx)]
+        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), overPicnic(15)]
+        : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), overPicnic(19)]
       : [station(-6), station(37), station(77), station(117)];
   const ENTRY = (() => {
     const [x, , , lx] = STATIONS[0];
@@ -5523,6 +5559,37 @@ if (THING) {
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
     },
+    /* The Find station, layered: the garden without its things, then each
+       thing alone on a shadow catcher (+ shadow-less, its hit area). */
+    findLayers() {
+      const out = {};
+      aim(STATIONS[3]);
+      out.all = render();
+      const all = Object.entries(things);
+      all.forEach(([, t]) => (t.group.visible = false));
+      out.background = render();
+      const world = scene.children.filter((o) => o !== catcher && !o.isLight && !all.some(([, t]) => t.group === o));
+      world.forEach((o) => (o.visible = false));
+      const bg = scene.background;
+      scene.background = null;
+      scene.fog = null;
+      renderer.setClearColor(0x000000, 0);
+      catcher.visible = true;
+      catcher.material.opacity = 0.26;
+      for (const [name, t] of all) {
+        t.group.visible = true;
+        catcher.position.set(t.group.position.x, t.y + 0.002, t.group.position.z);
+        out[name] = render();
+        catcher.visible = false;
+        out[name + "__hit"] = render();
+        catcher.visible = true;
+        t.group.visible = false;
+      }
+      scene.background = bg;
+      return out;
+    },
+    /* Which shape each thing is — the Find's answer key. */
+    meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape }])) }),
   };
   window.renderLayers = () => ({ preview: window.garden.station(0) });
 } else if (BACKDROP) {
