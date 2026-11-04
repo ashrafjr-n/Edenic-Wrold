@@ -88,7 +88,7 @@
  *
  * Pinki's shape garden (2026-11-02) — the Shapes course's world: per
  * lesson and frame, `out/garden-<n>-<frame>/` — each station's still, every
- * frame of the camera's moves (`m<i>/`, 30 fps). On the
+ * frame of the camera's moves (`m<i>/`, 30 fps), the Find in layers. On the
  * Mac's GPU. Then `crop.py garden`, which blurs, encodes the clips and
  * writes `src/data/shape-garden.ts`:
  *
@@ -191,8 +191,9 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     }
   } else if (mode === "garden") {
     /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
-       — each station's still and every frame of each camera move (`m<i>/`;
-       move 0 is the entry). */
+       — each station's still, every frame of each camera move (`m<i>/`;
+       move 0 is the entry), and a shape lesson's Find (its picnic on the
+       lawn, from above) in layers at 1.6x. */
     const SECONDS = { entry: 2.4, step: 1.5, walk: 2.6 };
     const FPS = 30;
     for (const lesson of specs) {
@@ -206,6 +207,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         await open(1);
         const stations = await page.evaluate(() => window.garden.stations);
         for (let i = 0; i < stations; i++) save(out, `s${i}`, await page.evaluate((i) => window.garden.station(i), i));
+        fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.garden.meta())));
         /* The moves, at 0.8x — they are seen moving, and mostly out of focus. */
         await open(0.8);
         for (let i = 0; i < stations; i++) {
@@ -218,6 +220,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
           }
           console.log(`garden ${lesson} ${frame} move ${i}: ${n} frames`);
+        }
+        if (Number(lesson) <= 4) {
+          await open(1.6);
+          const layers = await page.evaluate(() => window.garden.findLayers());
+          const find = path.join(out, "find");
+          fs.rmSync(find, { recursive: true, force: true });
+          fs.mkdirSync(find);
+          for (const [layer, url] of Object.entries(layers)) save(find, layer, url);
         }
       }
     }
