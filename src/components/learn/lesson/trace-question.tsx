@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image, { type StaticImageData } from "next/image";
 import type { Stroke, StrokePoint } from "@/types/stroke";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { Celebration } from "@/components/ui/celebration";
@@ -16,8 +15,6 @@ const TRACE_COVERAGE = [0.9, 0.85, 0.8];
 interface TraceQuestionProps {
   strokes: readonly Stroke[];
   accent: string;
-  /** What the finished shape becomes — a circle turns into a ball. */
-  reward: { src: StaticImageData; word: string };
   dict: Dictionary["lessonPlayer"];
   /** The demo is over and the board is up — the player's "Your turn!"
       button, in the action band like every other button. */
@@ -30,10 +27,10 @@ interface TraceQuestionProps {
 /**
  * Draw the shape, in two beats: Pinki draws it first (the pen travelling the
  * outline), then the child traces it — in ONE stroke — on the same outline.
- * A pass fills the shape with colour, and then it turns into a real thing
- * (`reward`), so the shape is something from the child's world.
+ * A pass fills the shape with colour — and it stays the shape (turning it
+ * into a real thing was removed on request, 2026-11-04).
  */
-export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, onMiss }: TraceQuestionProps) {
+export function TraceQuestion({ strokes, accent, dict, board, onSolved, onMiss }: TraceQuestionProps) {
   const [misses, setMisses] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -44,35 +41,23 @@ export function TraceQuestion({ strokes, accent, reward, dict, board, onSolved, 
       <div className="trace-sheet card card-clay-white card-bare-lg relative w-full max-w-[min(20rem,42svh)] p-4 sm:max-w-[min(30rem,40svh)] sm:p-6 lg:max-w-[min(34rem,var(--stage-h))]">
         <div className="relative aspect-square">
           {board ? (
-            <div className={`h-full w-full ${finished ? "trace-morph-out" : ""}`}>
-              <TraceBoard
-                strokes={strokes}
-                accent={accent}
-                minCoverage={TRACE_COVERAGE[Math.min(misses, TRACE_COVERAGE.length - 1)]}
-                onFinish={(stroke) => {
-                  setFinished(true);
-                  onSolved(stroke);
-                }}
-                onMiss={() => {
-                  setMisses((count) => count + 1);
-                  onMiss();
-                }}
-                locked={finished}
-                dict={dict}
-              />
-            </div>
+            <TraceBoard
+              strokes={strokes}
+              accent={accent}
+              minCoverage={TRACE_COVERAGE[Math.min(misses, TRACE_COVERAGE.length - 1)]}
+              onFinish={(stroke) => {
+                setFinished(true);
+                onSolved(stroke);
+              }}
+              onMiss={() => {
+                setMisses((count) => count + 1);
+                onMiss();
+              }}
+              locked={finished}
+              dict={dict}
+            />
           ) : (
             <StrokeDemo strokes={strokes} />
-          )}
-
-          {finished && (
-            <Image
-              src={reward.src}
-              alt={reward.word}
-              fill
-              sizes="(min-width: 1024px) 24rem, (min-width: 640px) 22rem, 17rem"
-              className="trace-morph-in object-contain lg:p-[12%]"
-            />
           )}
         </div>
         {finished && <Celebration />}
