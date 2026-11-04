@@ -113,7 +113,10 @@ export type Question =
       memory. */
   | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData; color?: ColorId }
   /** Find every thing in the scene that is this shape or color. */
-  | { type: "find"; ask: Ask; target: Target; scene: Scene }
+  /* `world`: the Find in the lesson's world itself, both frames (Shapes:
+     its picnic on the garden's lawn, seen from above); `scene` is then
+     the task button's demo picture. */
+  | { type: "find"; ask: Ask; target: Target; scene: Scene; world?: Framed<Scene> }
   /** Put each thing, one at a time, in the box it belongs in. */
   | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
   /** Balloons of many colors float up; pop every one of `color` (four of
@@ -221,9 +224,9 @@ export interface Framed<T = StaticImageData> {
 
 /** A lesson's world (2026-11-02, Pinki's Shapes first): where its steps
     happen, the end of the lesson too. The camera stands somewhere in it,
-    out of focus, behind each step after the reel, and every change of
-    step is the camera moving there (`tools/picnic-scene`, `render.cjs
-    garden`). */
+    out of focus, behind each step after the reel — sharp for a step
+    played in it (a Find, `Question.world`) — and every change of step is
+    the camera moving there (`tools/picnic-scene`, `render.cjs garden`). */
 export interface LessonWorld {
   /** Each step's still, after the reel. */
   stations: readonly Framed[];
