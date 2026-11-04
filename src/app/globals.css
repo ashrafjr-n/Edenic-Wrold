@@ -5078,6 +5078,177 @@ a.board-cell--now:focus-visible {
   }
 }
 
+/* ---------- A course page on a phone (2026-11-04, on request: "the
+   board the size of the hub's, the same design, the friend there, just
+   a little zoom") ----------
+   The classroom itself, the camera a little closer than on the hub: the
+   wall at 1.13 (the hub's 1.05) and sharp, the chairs in front, the board
+   the hub's width and a touch more, the friend at its corner, a touch
+   bigger. What is on the board is packed to fit it: the next lesson's
+   sheet lies down again (thing beside the words), the row's boxes small.
+   Wider screens keep the board up close: these are phone-only. */
+.class-course-stage {
+  display: contents;
+}
+
+.class-teacher--course,
+.class-desk--course {
+  display: none;
+}
+
+@media (width < 40rem) {
+  .class-course {
+    align-items: center;
+    padding: 0.5rem 0.6rem 11.6rem;
+  }
+
+  .class-course-stage {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  .class-course .chalkboard--course {
+    align-self: auto;
+  }
+
+  .class-teacher--course {
+    display: block;
+    right: -0.5rem;
+    bottom: -9.4rem;
+    width: min(46vw, 12rem);
+    animation: none;
+  }
+
+  .class-desk--course {
+    display: block;
+  }
+
+  .class-desk--course .class-desk-view {
+    scale: 1.13;
+    animation: none;
+  }
+
+  .class-wall-view--course {
+    scale: 1.13;
+    filter: none;
+  }
+
+  [data-theme="dark"] .class-wall-view--course {
+    filter: brightness(0.6) saturate(0.85);
+  }
+
+  .class-course .board-head {
+    gap: 0.4rem 0.7rem;
+    padding: 0.7rem 0.85rem 0.15rem;
+  }
+
+  .class-course .board-head-model {
+    width: 2.75rem;
+  }
+
+  .class-course .board-head .chalk-title {
+    font-size: 1.3rem;
+  }
+
+  .class-course .board-lessons {
+    gap: 0.6rem;
+    padding: 0.6rem 0.6rem 0.75rem;
+  }
+
+  .class-course .board-next {
+    flex-direction: row;
+    gap: 0.8rem;
+    max-width: none;
+    padding: 0.8rem 1rem 0.8rem 0.8rem;
+    text-align: start;
+  }
+
+  .class-course .board-next > .board-cell-art {
+    width: 5.5rem;
+  }
+
+  .class-course .board-next-text {
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .class-course .board-next-word {
+    font-size: 1.7rem;
+  }
+
+  .class-course .board-next-go {
+    margin-top: 0.15rem;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.95rem;
+  }
+
+  .class-course .board-row {
+    --box: 3.1rem;
+    gap: 0.5rem;
+    padding: 0.75rem 0.55rem 0.45rem;
+  }
+
+  .class-course .board-lessons--all .board-row {
+    --box: 3.9rem;
+  }
+
+  /* Going in from the hub: the friend and the chairs there fade into
+     these (a slide out would leave a second friend behind). */
+  ::view-transition-old(.teacher-exit),
+  ::view-transition-old(.desk-exit) {
+    animation: class-fade-out 0.3s ease both;
+  }
+}
+
+/* A short phone (360x640): everything a little tighter, so the board and
+   the friend fit without a scroll, as the hub does. */
+@media (width < 40rem) and (height < 45rem) {
+  .class-course {
+    padding-bottom: 9.4rem;
+  }
+
+  .class-teacher--course {
+    bottom: -8rem;
+    width: min(42vw, 10.5rem);
+  }
+
+  .class-course .board-head {
+    padding-top: 0.5rem;
+  }
+
+  .class-course .board-lessons {
+    gap: 0.45rem;
+    padding-block: 0.4rem 0.55rem;
+  }
+
+  .class-course .board-next {
+    padding-block: 0.6rem;
+  }
+
+  .class-course .board-next > .board-cell-art {
+    width: 4.6rem;
+  }
+
+  .class-course .board-next-word {
+    font-size: 1.45rem;
+  }
+
+  .class-course .board-next-go {
+    padding: 0.35rem 1rem;
+  }
+
+  .class-course .board-row {
+    --box: 2.8rem;
+  }
+}
+
+@keyframes class-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
 /* Wider: the sheet hugs what is on it, never a long empty strip. */
 @media (width >= 40rem) {
   .board-next {
