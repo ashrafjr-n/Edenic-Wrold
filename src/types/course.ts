@@ -223,12 +223,14 @@ export interface Framed<T = StaticImageData> {
 }
 
 /** A lesson's world (2026-11-02, Pinki's Shapes first): where its steps
-    happen, the end of the lesson too. The camera stands somewhere in it,
-    out of focus, behind each step after the reel — sharp for a step
-    played in it (a Find, `Question.world`) — and every change of step is
-    the camera moving there (`tools/picnic-scene`, `render.cjs garden`). */
+    happen, the end of the lesson too. The camera stands at each step's
+    place in it, out of focus, behind the step — sharp for a step played
+    in it (a Find, `Question.world`) — and every change of step is the
+    camera moving there, the flower of the step just done blooming first
+    (`tools/picnic-scene`, `render.cjs garden`). */
 export interface LessonWorld {
-  /** Each step's still, after the reel. */
+  /** Each step's still, after the reel — and one more, the lesson's end
+      (the path in bloom). */
   stations: readonly Framed[];
   /** The camera's move INTO each station, a clip played by path (move 0
       is the entry, after the reel); the last frame is that station. */
