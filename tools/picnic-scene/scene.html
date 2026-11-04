@@ -5021,13 +5021,13 @@ if (THING) {
      stone and gravel; Pinki's pink on the wall's coping. The middle of
      every shot is calm lawn — an activity stands over it — and the big
      shapes (the moon gate, the fountain, the topiaries) read even out of
-     focus. The things to find stand up facing the camera, so a square
-     looks square.
+     focus. Nothing to find stands in it (2026-11-04): a Shapes Find is
+     its picnic, on a card in front of the blurred garden.
 
      `?garden=<1-5>&frame=portrait|landscape[&px=]` builds lesson n's
      corner (with all four built, for the review's walk); the page then
-     answers `window.shot(...)` for each station, each frame of a camera
-     move, and `window.findLayers()` for the Find station. ---------- */
+     answers `window.garden.station(i)` for each station and
+     `window.garden.move(i, t)` for each frame of a camera move. ---------- */
   const LESSON = Number(GARDEN);
   const portrait = params.get("frame") === "portrait";
   const [w, h] = portrait ? [900, 1600] : [1600, 900];
@@ -5245,193 +5245,6 @@ if (THING) {
     add(g, x, 0, 0);
   }
 
-  /* ---- The things to find, standing up to face the camera ---- */
-  const T = {
-    ball: () => ITEMS.ball(),
-    orange: () => ITEMS.orange(),
-    gift: () => ITEMS.gift(0xb89cf0),
-    /* A sunflower in a blue pot — its face to the camera. */
-    sunflower() {
-      const g = pot(0.5, 0.8, 0xeb9a72);
-      const green = leafy(0x58b45a);
-      g.add(taperTube([[0, 0.75, 0], [0.05, 1.6, 0], [0, 2.35, 0.05]], 0.07, 0.06, green));
-      for (const s of [-1, 1]) {
-        const leaf = ball(0.22, green, 32);
-        leaf.scale.set(1.7, 0.5, 0.8);
-        leaf.position.set(s * 0.3, 1.45 + (s > 0 ? 0.25 : 0), 0.04);
-        leaf.rotation.z = s * 0.45;
-        g.add(leaf);
-      }
-      const head = new THREE.Group();
-      for (let i = 0; i < 18; i++) {
-        const a = (i / 18) * Math.PI * 2;
-        const petal = ball(0.15, soft(i % 2 ? 0xffcd3a : 0xffd85a), 24);
-        petal.scale.set(0.62, 1.55, 0.28);
-        petal.position.set(Math.sin(a) * 0.48, Math.cos(a) * 0.48, 0);
-        petal.rotation.z = -a;
-        head.add(petal);
-      }
-      const middle = mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.12, 48), soft(0x8b5a3a, { roughness: 0.95 }));
-      middle.rotation.x = Math.PI / 2;
-      middle.position.z = 0.06;
-      head.add(middle);
-      head.position.set(0, 2.55, 0.08);
-      g.add(head);
-      return g;
-    },
-    /* A hoop, up on its edge: pink and white bands round it. */
-    hoop() {
-      const g = new THREE.Group();
-      for (let i = 0; i < 12; i++) {
-        const arc = mesh(new THREE.TorusGeometry(0.85, 0.075, 16, 24, (Math.PI * 2) / 12 + 0.01), glaze(i % 2 ? 0xffffff : 0xff8fbf));
-        arc.rotation.z = (i / 12) * Math.PI * 2;
-        g.add(arc);
-      }
-      g.position.y = 0.93;
-      return group(g);
-    },
-    /* A slice of toast stood on its edge. */
-    toast() {
-      const t = ITEMS.toast();
-      t.rotation.x = Math.PI / 2;
-      return group(t);
-    },
-    /* A wooden toy block: a pale square framed in its own colour. */
-    block() {
-      const g = new THREE.Group();
-      g.add(at(rbox(1.2, 1.2, 1.2, glaze(0xffc93a), 0.12), 0, 0.6, 0));
-      g.add(at(rbox(0.82, 0.82, 0.05, glaze(0xfff4d6), 0.06), 0, 0.6, 0.6));
-      const dot = at(ball(0.2, glaze(0xff8fbf), 32), 0, 0.6, 0.64);
-      dot.scale.z = 0.4;
-      g.add(dot);
-      return g;
-    },
-    /* A wooden crate: slats with gaps, a square from the front. */
-    crate() {
-      const g = new THREE.Group();
-      const wood = soft(0xd9a873, { roughness: 0.75 });
-      const s = 1.3;
-      for (const z of [-s / 2, s / 2]) {
-        for (let i = 0; i < 4; i++) g.add(at(rbox(s, 0.24, 0.08, wood, 0.04), 0, 0.17 + i * 0.32, z));
-      }
-      for (const x of [-s / 2, s / 2]) for (const z of [-s / 2, s / 2]) g.add(at(rbox(0.14, s, 0.14, soft(0xc8925c), 0.05), x, s / 2, z));
-      g.add(at(rbox(s - 0.1, 0.06, s - 0.1, soft(0xc8925c), 0.02), 0, 0.05, 0));
-      return g;
-    },
-    /* A cheese stood up, its triangle to the camera. */
-    cheese() {
-      const s = new THREE.Shape();
-      s.moveTo(-0.75, 0);
-      s.lineTo(0.75, 0);
-      s.lineTo(-0.75, 1.35);
-      s.closePath();
-      const g = new THREE.Group();
-      const body = mesh(roundedShapeExtrude(s, 0.5, 0.07), glaze(0xffcc3d));
-      body.position.z = -0.25;
-      g.add(body);
-      for (const [x, y, r] of [[-0.45, 0.35, 0.11], [-0.15, 0.22, 0.08], [-0.5, 0.75, 0.08], [0.15, 0.18, 0.06]]) {
-        const hole = ball(r, glaze(0xe9ad22), 24);
-        hole.scale.z = 0.3;
-        hole.position.set(x, y, 0.32);
-        g.add(hole);
-      }
-      return g;
-    },
-    /* A pennant flag on a stick in the lawn. */
-    pennant(color = 0xffc93a) {
-      const g = new THREE.Group();
-      g.add(at(mesh(new THREE.CylinderGeometry(0.05, 0.06, 2.4, 12), soft(0xc98f55)), 0, 1.2, 0));
-      const s = new THREE.Shape();
-      s.moveTo(0, 0);
-      s.lineTo(1.25, -0.42);
-      s.lineTo(0, -0.84);
-      s.closePath();
-      g.add(at(mesh(roundedShapeExtrude(s, 0.05, 0.03), glaze(color)), 0.05, 2.35, -0.03));
-      g.add(at(ball(0.09, glaze(0xffffff), 16), 0, 2.42, 0));
-      return g;
-    },
-    /* A little play tent: a striped triangle, its door a darker triangle. */
-    tent() {
-      const g = new THREE.Group();
-      const tri = (half, ht) => {
-        const s = new THREE.Shape();
-        s.moveTo(-half, 0);
-        s.lineTo(half, 0);
-        s.lineTo(0, ht);
-        s.closePath();
-        return s;
-      };
-      const body = mesh(roundedShapeExtrude(tri(1.0, 1.6), 1.6, 0.06), soft(0xffd45e, { roughness: 0.7 }));
-      body.position.z = -0.8;
-      g.add(body);
-      const door = mesh(roundedShapeExtrude(tri(0.42, 0.95), 0.04, 0.02), soft(0xf49a3a));
-      door.position.set(0, 0.05, 0.86);
-      g.add(door);
-      g.add(at(ball(0.08, glaze(0xff8fbf), 16), 0, 1.66, 0.8));
-      return g;
-    },
-    /* A toy sailboat: a round-ended hull, a mast, a white triangle sail. */
-    sailboat() {
-      const g = new THREE.Group();
-      const hull = rbox(1.5, 0.32, 0.5, glaze(0xff8fbf), 0.15);
-      hull.position.y = 0.16;
-      g.add(hull);
-      g.add(at(mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.6, 10), soft(0xc98f55)), 0, 1.05, 0));
-      const s = new THREE.Shape();
-      s.moveTo(0, 0);
-      s.lineTo(0.95, 0);
-      s.lineTo(0, 1.25);
-      s.closePath();
-      g.add(at(mesh(roundedShapeExtrude(s, 0.03, 0.02), soft(0xfffaf0)), 0.06, 0.45, -0.02));
-      return g;
-    },
-    /* A blank sign board on two posts — a pink rectangle, framed white. */
-    sign() {
-      const g = new THREE.Group();
-      for (const x of [-0.7, 0.7]) g.add(at(mesh(new THREE.CylinderGeometry(0.07, 0.08, 1.9, 12), soft(0xc98f55)), x, 0.95, -0.08));
-      g.add(at(rbox(2.0, 1.15, 0.12, glaze(0xffffff), 0.08), 0, 1.35, 0));
-      g.add(at(rbox(1.78, 0.93, 0.06, glaze(0xff8fbf), 0.05), 0, 1.35, 0.06));
-      return g;
-    },
-    /* A rectangle flag on a pole, rippling a little. */
-    rectFlag() {
-      const g = new THREE.Group();
-      g.add(at(mesh(new THREE.CylinderGeometry(0.05, 0.06, 2.8, 12), soft(0xd8d2cc)), 0, 1.4, 0));
-      g.add(at(ball(0.1, glaze(0xffc93a), 16), 0, 2.85, 0));
-      const geo = new THREE.BoxGeometry(1.5, 0.92, 0.04, 24, 4, 1);
-      const pos = geo.attributes.position;
-      for (let i = 0; i < pos.count; i++) pos.setZ(i, pos.getZ(i) + Math.sin((pos.getX(i) + 0.75) * 3.2) * 0.07 * ((pos.getX(i) + 0.75) / 1.5));
-      geo.computeVertexNormals();
-      g.add(at(mesh(geo, soft(0xff8fbf, { side: THREE.DoubleSide })), 0.8, 2.3, 0));
-      return g;
-    },
-    /* A long wooden planter of soil, little shoots just showing. */
-    trough() {
-      const g = new THREE.Group();
-      g.add(at(rbox(2.2, 0.8, 0.7, soft(0x9fd1f2, { roughness: 0.7 }), 0.08), 0, 0.4, 0));
-      g.add(at(rbox(2.05, 0.06, 0.55, soft(0x8a6448), 0.02), 0, 0.78, 0));
-      for (let x = -0.8; x <= 0.81; x += 0.4) {
-        const shoot = ball(0.07, leafy(0x6cc46a), 16);
-        shoot.scale.set(1, 1.6, 1);
-        g.add(at(shoot, x, 0.85, 0));
-      }
-      return g;
-    },
-    /* A book stood up, its cover to the camera. */
-    book() {
-      const b = ITEMS.book(0x8d74e2);
-      b.rotation.x = Math.PI / 2;
-      return group(b);
-    },
-  };
-  /* Which shape each is — the Find's answer key. */
-  const SHAPE = {
-    ball: "circle", orange: "circle", sunflower: "circle", hoop: "circle",
-    toast: "square", block: "square", crate: "square", gift: "square",
-    cheese: "triangle", pennant: "triangle", tent: "triangle", sailboat: "triangle",
-    book: "rectangle", sign: "rectangle", rectFlag: "rectangle", trough: "rectangle",
-  };
-
   /* ---- The four corners ---- */
   const CORNER = { 1: 0, 2: 40, 3: 80, 4: 120 };
   /* Where this lesson's Find looks (its corner + 5): nothing planted
@@ -5507,8 +5320,7 @@ if (THING) {
     border(c - 18, c + 18, WALL_Z + 2.4, [0xffffff, 0xffd45e, 0xa9e6b9], { k: 1.3, clear: false });
   }
 
-  /* Triangle: cone topiaries, a greenhouse with a gable, bunting, a pond
-     for the sailboat. */
+  /* Triangle: cone topiaries, a greenhouse with a gable, bunting. */
   function triangleCorner(c) {
     const gold = 0xffc93a;
     /* The greenhouse: glass walls, a pitched glass roof, a white frame. */
@@ -5548,21 +5360,6 @@ if (THING) {
     for (let x = -18; x < 18; x += 1.9) add(at(mesh(new THREE.ConeGeometry(0.75, 2.1, 32), leafy(0x5fb768)), 0, 1.05, 0), c + x, 0, WALL_Z + 1.3);
     border(c - 18, c + 18, 2.95, [0xffd45e, 0xffffff, 0xffa6cf], { k: 0.9, gap: 0.7 });
     border(c - 18, c + 18, WALL_Z + 2.4, [0xffd45e, 0xffffff, 0xffa6cf], { k: 1.3, clear: false });
-  }
-
-  /* A kidney pond, for the sailboat to drift on. */
-  function pond(x, z, k = 1) {
-    const s = new THREE.Shape();
-    s.moveTo(-2.2, 0);
-    s.bezierCurveTo(-2.4, 1.5, -0.2, 1.4, 0.4, 0.9);
-    s.bezierCurveTo(1.2, 0.4, 2.6, 1.3, 2.6, 0);
-    s.bezierCurveTo(2.6, -1.4, -2.0, -1.6, -2.2, 0);
-    const rim = flat(s, 0.12, 0.08, stone(0xeadcc8));
-    rim.scale.set(k, k, 1);
-    add(rim, x, 0, z);
-    const water = flat(s, 0.04, 0.04, clay(0x8fcbef, { roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.05 }));
-    water.scale.set(k * 0.9, k * 0.88, 1);
-    add(water, x, 0.13, z);
   }
 
   /* Rectangle: a pergola of beams, raised beds, a pink door in the wall,
@@ -5625,45 +5422,9 @@ if (THING) {
     border(x - 1.4, x + 1.4, 7.5, [0xffffff, 0xffa6cf, 0xffd45e], { k: 1.1, clear: false, tulips: false });
   }
 
-  /* ---- The things to find, per lesson and frame: seven places, the
-     first nearest the camera (where the traced shape's thing lands — the
-     REWARD), relative to the Find's x (the corner + 5). ---- */
-  const SLOTS = {
-    landscape: [[-2.6, 0.5], [1.4, 1.0], [-0.2, -1.2], [-4.0, -1.6], [3.8, -0.6], [2.4, -3.2], [-1.6, -3.9]],
-    portrait: [[-0.95, 1.5], [1.0, 1.0], [0.0, -0.7], [-1.25, -2.1], [1.25, -2.4], [-0.4, -4.3], [1.1, -5.3]],
-  };
-  const FIND = {
-    1: ["ball", "book", "orange", "gift", "hoop", "sunflower", "pennant"],
-    2: ["toast", "orange", "block", "cheese", "gift", "crate", "book"],
-    3: ["cheese", "ball", "book", "gift", "tent", "sailboat", "pennant"],
-    4: ["book", "ball", "sign", "cheese", "trough", "rectFlag", "gift"],
-  };
-  const frameName = portrait ? "portrait" : "landscape";
-  const targets = {};
-  if (LESSON <= 4) {
-    FIND[LESSON].forEach((name, i) => {
-      /* A wide thing in the phone's narrow frame sits a little further in. */
-      const [dx, z] = SLOTS[frameName][i].map((v, j) => (j === 0 && portrait && name === "cheese" && i === 0 ? v + 0.3 : v));
-      const thing = T[name]();
-      thing.rotation.y = (rand() - 0.5) * 0.3;
-      const k = { orange: 1.25, ball: 0.95, tent: 0.8, sailboat: 1.35, gift: 0.95 }[name] ?? 1;
-      thing.scale.setScalar(k);
-      add(thing, fx + dx, 0, z);
-      targets[name] = { group: thing, shape: SHAPE[name], reward: i === 0 };
-      if (name === "sailboat") {
-        thing.position.y = 0.12;
-        pond(fx + dx + 0.3, z - 0.1, portrait ? 1.0 : 1.2);
-      }
-    });
-  }
-  const reward = Object.values(targets).find((t) => t.reward);
-
-  /* Tufts of grass and clover over the open lawn — never where a thing
-     to find stands (the Find lays each one over the garden). */
-  const taken = Object.values(targets).map((t) => [t.group.position.x, t.group.position.z]);
+  /* Tufts of grass and clover over the open lawn. */
   for (let i = 0; i < 900; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
-    if (taken.some(([a, b]) => Math.hypot(x - a, z - b) < 1.6)) continue;
     const tuft = new THREE.Group();
     const n = 3 + Math.floor(rand() * 3);
     for (let j = 0; j < n; j++) {
@@ -5678,16 +5439,13 @@ if (THING) {
 
   /* Everything that never moves, merged into one mesh per material — some
      ten thousand flowers, tufts and stones would otherwise be as many draw
-     calls a frame. The things to find stay apart (they are hidden and
-     shown one by one). */
+     calls a frame. */
   (function freeze() {
-    const keep = new Set(Object.values(targets).map((t) => t.group));
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
     scene.traverse((o) => {
       if (!o.isMesh || o === catcher || Array.isArray(o.material)) return;
-      for (let p = o; p; p = p.parent) if (keep.has(p)) return;
       const m = o.material;
       const key = [m.type, m.color?.getHexString(), m.roughness, m.metalness, m.clearcoat, m.clearcoatRoughness, m.sheen, m.sheenRoughness,
         m.sheenColor?.getHexString(), m.specularIntensity, m.map?.uuid, m.transparent, m.opacity, m.emissive?.getHexString(), m.emissiveIntensity, m.side, o.castShadow, o.receiveShadow].join("|");
@@ -5713,19 +5471,12 @@ if (THING) {
      word, trace, spell, find; the review's sort, pick, pick, trace, one in
      each corner — and where the entry crane starts. A station is
      [camera x, y, z, look x, y, z]. ---- */
-  const station = (x, look = x, find = false) =>
-    find
-      ? portrait
-        ? [x, 4.6, 7.6, x, -0.2, -2.6]
-        : [x, 3.7, 10.8, x, 0.85, -1.6]
-      : portrait
-        ? [x, 2.9, 11.5, look, 2.0, -6]
-        : [x, 2.7, 11.2, look, 1.9, -6];
+  const station = (x, look = x) => (portrait ? [x, 2.9, 11.5, look, 2.0, -6] : [x, 2.7, 11.2, look, 1.9, -6]);
   const STATIONS =
     LESSON <= 4
       ? portrait
-        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), station(fx, fx, true)]
-        : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), station(fx, fx, true)]
+        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), station(fx)]
+        : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), station(fx)]
       : [station(-6), station(37), station(77), station(117)];
   const ENTRY = (() => {
     const [x, , , lx] = STATIONS[0];
@@ -5755,10 +5506,6 @@ if (THING) {
     cam[1] += Math.sin(Math.PI * e) * Math.min(1.4, far * 0.03);
     return cam;
   }
-  /* The reward is in the garden from the move after the trace on — it
-     landed there when the child drew it (the lessons' step 2). */
-  const showReward = (on) => reward && (reward.group.visible = on);
-
   const render = (type = "image/png", quality) => {
     renderer.render(scene, view);
     return renderer.domElement.toDataURL(type, quality);
@@ -5768,68 +5515,16 @@ if (THING) {
     stations: STATIONS.length,
     /* Station i's still. */
     station(i) {
-      showReward(i >= 2);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
-      showReward(i >= 2);
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
     },
-    /* The Find station, layered: the garden without its things, then each
-       thing alone on a shadow catcher (+ shadow-less, its hit area). */
-    findLayers() {
-      const out = {};
-      showReward(true);
-      aim(STATIONS[3]);
-      out.all = render();
-      const all = Object.entries(targets);
-      all.forEach(([, t]) => (t.group.visible = false));
-      out.background = render();
-      const world = scene.children.filter((o) => o !== catcher && !o.isLight && !all.some(([, t]) => t.group === o));
-      world.forEach((o) => (o.visible = false));
-      const bg = scene.background;
-      scene.background = null;
-      scene.fog = null;
-      renderer.setClearColor(0x000000, 0);
-      catcher.visible = true;
-      catcher.material.opacity = 0.26;
-      for (const [name, t] of all) {
-        t.group.visible = true;
-        catcher.position.set(t.group.position.x, 0.002 + (name === "sailboat" ? 0.12 : 0), t.group.position.z);
-        out[name] = render();
-        catcher.visible = false;
-        out[name + "__hit"] = render();
-        catcher.visible = true;
-        t.group.visible = false;
-      }
-      scene.background = bg;
-      return out;
-    },
-    meta() {
-      /* Where the reward stands in the trace station's picture (% of the
-         frame) — the traced thing flies there before the next move. */
-      let landing = null;
-      if (reward) {
-        reward.group.visible = true;
-        aim(STATIONS[1]);
-        const box = new THREE.Box3().setFromObject(reward.group);
-        const pts = [];
-        for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push(new THREE.Vector3(x, y, z).project(view));
-        const xs = pts.map((p) => ((p.x + 1) / 2) * 100), ys = pts.map((p) => ((1 - p.y) / 2) * 100);
-        const l = Math.min(...xs), t = Math.min(...ys);
-        landing = [l, t, Math.max(...xs) - l, Math.max(...ys) - t].map((v) => Math.round(v * 100) / 100);
-      }
-      return {
-        items: Object.fromEntries(Object.entries(targets).map(([k, t]) => [k, { shape: t.shape, reward: t.reward }])),
-        landing,
-      };
-    },
   };
   window.renderLayers = () => ({ preview: window.garden.station(0) });
-  window.itemsMeta = () => window.garden.meta();
 } else if (BACKDROP) {
   /* ---------- A course's backdrop (2026-10-13): its world behind every
      step, rendered sharp here and blurred by `crop.py backdrop`. Shapes:
