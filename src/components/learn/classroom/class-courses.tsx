@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, ViewTransition, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Play, RotateCcw } from "lucide-react";
-import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
@@ -21,11 +20,8 @@ interface ClassCourse extends UpNextCourse {
   model: StaticImageData;
 }
 
-interface FriendClassroomProps {
+interface ClassCoursesProps {
   characterId: string;
-  /** The friend at the board, and celebrating (`CLASSROOMS[id]`). */
-  teacher: StaticImageData;
-  cheer: StaticImageData;
   courses: readonly ClassCourse[];
   labels: {
     /** "{n} lessons", under a course's name. */
@@ -43,8 +39,6 @@ interface FriendClassroomProps {
     replayCourse: string;
     /** On the board, in place of the cheer, once every lesson is learned. */
     allDone: string;
-    /** The friend's name, for their button (tap: they jump). */
-    friend: string;
   };
   dir: "rtl" | "ltr";
 }
@@ -67,28 +61,23 @@ function Doodles({ side }: { side: keyof typeof DOODLES }) {
 }
 
 /**
- * A friend's hub as their classroom (Pinki's 2026-10-14; Nova's and Bloo's
- * 2026-10-23 — the same classroom, their own room and chalk): the board, a
- * square paper sheet per course pinned to it side by side — the course's
- * name on a clay tag, "5 lessons", its one 3D thing, a dot per lesson, one
- * button (Start / Continue / Play again). What a course teaches stays
- * inside it: a sheet never lists its lessons. The next course's sheet
- * glows. Chalk doodles drawn by hand round the sheets and "You can do it!"
- * under them.
+ * What a friend's hub writes on their board (Pinki's 2026-10-14; Nova's and
+ * Bloo's 2026-10-23): a square paper sheet per course pinned up side by
+ * side — the course's name on a clay tag, "5 lessons", its one 3D thing, a
+ * dot per lesson, one button (Start / Continue / Play again). What a
+ * course teaches stays inside it: a sheet never lists its lessons. The
+ * next course's sheet glows. Chalk doodles drawn by hand round the sheets
+ * and "You can do it!" under them; once every lesson is learned the board
+ * says so.
  *
- * The friend stands beside the board, their stick raised to it (their own
- * pose; it does not move — direct request), and jumps when tapped; they
- * say nothing. When every lesson is learned they celebrate instead, and
- * the board says so.
- *
- * A sheet is the course's link: the board zooms up into the course page
- * (`Chalkboard`'s view transition) as the friend steps out of the picture.
+ * The board, the room and the friend are the classroom's
+ * (`ClassroomShell`, the layout): a sheet is the course's link, and the
+ * same board then shows that course's lessons, a little closer.
  */
-export function FriendClassroom({ characterId, teacher, cheer, courses, labels, dir }: FriendClassroomProps) {
+export function ClassCourses({ characterId, courses, labels, dir }: ClassCoursesProps) {
   const items = useProgress((state) => state.items);
   const hydrated = useProgress((state) => state.hydrated);
   const next = useUpNext(characterId, courses);
-  const [jumps, setJumps] = useState(0);
   const nextIndex = next ? courses.indexOf(next.course) : -1;
   const allDone = hydrated && !next;
 
@@ -98,90 +87,62 @@ export function FriendClassroom({ characterId, teacher, cheer, courses, labels, 
   );
 
   return (
-    <div className="class-hub">
-      <div className="class-stage">
-        <Chalkboard size="hub" className="class-board">
-          {allDone && <Celebration />}
-          <div className="class-cards">
-            <Doodles side="left" />
-            {courses.map((course, i) => {
-              const done = learned[i];
-              const finished = done === course.titles.length;
-              const announce = finished ? labels.replayCourse : done ? labels.continueCourse : labels.startCourse;
-              return (
-                <Link
-                  key={course.id}
-                  href={`/learn/${characterId}/${course.id}`}
-                  aria-label={format(announce, { name: course.name })}
-                  className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
-                  style={{ animationDelay: `${0.7 + i * 0.18}s` }}
-                >
-                  <span dir={dir} className="class-card-tag" style={{ "--chars": course.name.length } as CSSProperties}>
-                    {course.name}
-                  </span>
-                  <span dir={dir} className="class-card-count">
-                    {format(labels.lessons, { n: course.titles.length })}
-                  </span>
-                  <span className="class-card-model">
-                    <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 15rem, 30vw" className="object-contain" />
-                  </span>
-                  {/* One dot per lesson: pink once learned, ringed where
-                      the child carries on. */}
-                  <span className="class-card-dots" aria-hidden>
-                    {course.titles.map((_, k) => (
-                      <span
-                        key={k}
-                        className={`class-card-dot ${k < done ? "class-card-dot--done" : k === done ? "class-card-dot--next" : ""}`}
-                      />
-                    ))}
-                  </span>
-                  <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
-                    {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
-                    <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
-                  </span>
-                </Link>
-              );
-            })}
-            <Doodles side="right" />
-          </div>
-
-          <p dir={dir} className={`class-cheer ${allDone ? "class-cheer--done" : ""}`}>
-            <Image src={chalkStar} alt="" width={36} height={36} className="class-cheer-doodle" />
-            <span className="class-cheer-words">
-              <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
-              <span className="class-cheer-line" aria-hidden>
-                <Image src={chalkUnderline} alt="" fill sizes="24rem" />
-              </span>
-            </span>
-            <Image src={chalkSmile} alt="" width={44} height={44} className="class-cheer-smile" />
-            <Image src={chalkHeart} alt="" width={36} height={36} className="class-cheer-doodle class-cheer-doodle--heart" />
-          </p>
-        </Chalkboard>
-
-        {/* The friend, their stick raised to the board — or celebrating,
-            once everything is learned. They step out of the picture when
-            the board zooms into a course. */}
-        <ViewTransition exit="teacher-exit" default="none">
-          <div className="class-teacher">
-            <button
-              type="button"
-              aria-label={labels.friend}
-              className="class-teacher-body"
-              onClick={() => setJumps((n) => n + 1)}
+    <>
+      {allDone && <Celebration />}
+      <div className="class-cards">
+        <Doodles side="left" />
+        {courses.map((course, i) => {
+          const done = learned[i];
+          const finished = done === course.titles.length;
+          const announce = finished ? labels.replayCourse : done ? labels.continueCourse : labels.startCourse;
+          return (
+            <Link
+              key={course.id}
+              href={`/learn/${characterId}/${course.id}`}
+              aria-label={format(announce, { name: course.name })}
+              className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
+              style={{ animationDelay: `${0.7 + i * 0.18}s` }}
             >
-              <span key={jumps} className={`block ${jumps ? "anim-jump" : ""}`}>
-                <Image
-                  src={allDone ? cheer : teacher}
-                  alt=""
-                  preload
-                  sizes="(min-width: 1024px) 340px, 40vw"
-                  className="anim-breathe h-auto w-full"
-                />
+              <span dir={dir} className="class-card-tag" style={{ "--chars": course.name.length } as CSSProperties}>
+                {course.name}
               </span>
-            </button>
-          </div>
-        </ViewTransition>
+              <span dir={dir} className="class-card-count">
+                {format(labels.lessons, { n: course.titles.length })}
+              </span>
+              <span className="class-card-model">
+                <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 15rem, 30vw" className="object-contain" />
+              </span>
+              {/* One dot per lesson: pink once learned, ringed where
+                  the child carries on. */}
+              <span className="class-card-dots" aria-hidden>
+                {course.titles.map((_, k) => (
+                  <span
+                    key={k}
+                    className={`class-card-dot ${k < done ? "class-card-dot--done" : k === done ? "class-card-dot--next" : ""}`}
+                  />
+                ))}
+              </span>
+              <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
+                {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
+                <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
+              </span>
+            </Link>
+          );
+        })}
+        <Doodles side="right" />
       </div>
-    </div>
+
+      <p dir={dir} className={`class-cheer ${allDone ? "class-cheer--done" : ""}`}>
+        <Image src={chalkStar} alt="" width={36} height={36} className="class-cheer-doodle" />
+        <span className="class-cheer-words">
+          <span className="chalk-title">{allDone ? labels.allDone : labels.cheer}</span>
+          <span className="class-cheer-line" aria-hidden>
+            <Image src={chalkUnderline} alt="" fill sizes="24rem" />
+          </span>
+        </span>
+        <Image src={chalkSmile} alt="" width={44} height={44} className="class-cheer-smile" />
+        <Image src={chalkHeart} alt="" width={36} height={36} className="class-cheer-doodle class-cheer-doodle--heart" />
+      </p>
+    </>
   );
 }
