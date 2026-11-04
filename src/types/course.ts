@@ -62,9 +62,6 @@ export interface SceneItem extends Thing {
   box: SceneRect;
   /** The thing itself, without its shadow — what a tap has to land on. */
   hit: SceneRect;
-  /** A course world's Find: the thing the child's trace turned into, landed
-      in the world (`LessonWorld.landing`). */
-  reward?: boolean;
 }
 
 /** A pre-rendered world to find things in: an empty background and the
@@ -116,7 +113,7 @@ export type Question =
       memory. */
   | { type: "spell"; ask: Ask; word: string; picture?: StaticImageData; color?: ColorId }
   /** Find every thing in the scene that is this shape or color. */
-  | { type: "find"; ask: Ask; target: Target; scene: Scene; world?: Framed<Scene> }
+  | { type: "find"; ask: Ask; target: Target; scene: Scene }
   /** Put each thing, one at a time, in the box it belongs in. */
   | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
   /** Balloons of many colors float up; pop every one of `color` (four of
@@ -223,24 +220,16 @@ export interface Framed<T = StaticImageData> {
 }
 
 /** A lesson's world (2026-11-02, Pinki's Shapes first): where its steps
-    happen. The camera stands somewhere in it for each step after the reel
-    — out of focus behind a step that needs the child's focus, the world
-    itself, sharp, for a step played in it (a Find, `Question.world`) — and
-    every change of step is the camera moving there (`tools/picnic-scene`,
-    `render.cjs garden`). */
+    happen, the end of the lesson too. The camera stands somewhere in it,
+    out of focus, behind each step after the reel, and every change of
+    step is the camera moving there (`tools/picnic-scene`, `render.cjs
+    garden`). */
 export interface LessonWorld {
-  /** Each step's still, after the reel; `null` where the step plays in
-      the world itself. */
-  stations: readonly (Framed | null)[];
+  /** Each step's still, after the reel. */
+  stations: readonly Framed[];
   /** The camera's move INTO each station, a clip played by path (move 0
       is the entry, after the reel); the last frame is that station. */
   moves: readonly Framed<string>[];
-  /** Where the traced shape's thing lands, in the trace station's picture
-      (% of the frame) — it is in the world from then on. */
-  landing?: Framed<SceneRect>;
-  /** How far out of focus its stations are: the blur's σ as a share of the
-      picture's long side — what lands in the world is blurred to match. */
-  blur: number;
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
