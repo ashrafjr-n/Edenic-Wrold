@@ -158,6 +158,9 @@ export const en = {
     nextShape: "Next shape",
     finish: "Finish",
     lessonDone: "Lesson complete!",
+    /** Under it, at the end of a lesson in a world. `{word}` stays English. */
+    learnedWord: "You learned the word {word}!",
+    learnedAll: "You learned them all!",
     skip: "Skip",
     help: "Help",
     startOver: "Start over",
