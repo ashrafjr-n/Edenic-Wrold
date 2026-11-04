@@ -300,9 +300,12 @@ if NAME == "garden":
     # lesson and frame, into `public/assets/learn/pinki/shapes/garden/<n>/
     # <frame>/`: every station out of focus (`s<i>.jpg` — the Find's too,
     # for the lesson's end); every camera move as an H.264 clip (`m<i>.mp4`)
-    # — the entry lands out of focus, the tilt down onto a shape lesson's
-    # picnic pulls it sharp; and that Find in layers (`find/ground.jpg`, a
-    # PNG per thing). Then writes `src/data/shape-garden.ts`
+    # — the entry lands out of focus; a walk comes sharp at once (a
+    # flower blooms where the step was done, the camera goes to the next
+    # step's place, seen) and goes out of focus as it arrives; the tilt
+    # down onto a shape lesson's picnic stays sharp; the end (the last
+    # move) goes out of focus as it rises over the path in bloom — and
+    # that Find in layers (`find/ground.jpg`, a PNG per thing). Then writes `src/data/shape-garden.ts`
     # (`--data` writes only that, from the last crop).
     import subprocess
     import tempfile
@@ -312,12 +315,12 @@ if NAME == "garden":
     lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or [1, 2, 3, 4, 5]
     base = "public/assets/learn/pinki/shapes/garden"
 
-    def sigma(lesson, move, t):
+    def sigma(lesson, move, last, t):
         if move == 0:
             return BLUR * smooth(0.5, 1.0, t)
-        if lesson <= 4 and move == 3:
-            return BLUR * (1 - smooth(0.35, 0.95, t))
-        return BLUR
+        come_in = 0 if lesson <= 4 and move == last else 1 - smooth(0.0, 0.12, t)
+        go_out = 0 if lesson <= 4 and move == 3 else smooth(0.84, 1.0, t)
+        return BLUR * max(come_in, go_out)
 
     def blurred(img, s):
         return img if s * max(img.size) < 0.3 else img.filter(ImageFilter.GaussianBlur(s * max(img.size)))
@@ -343,7 +346,7 @@ if NAME == "garden":
                 with tempfile.TemporaryDirectory() as tmp:
                     for k, name in enumerate(frames):
                         img = Image.open(f"{out}/m{i}/{name}").convert("RGB")
-                        blurred(img, sigma(lesson, i, k / (len(frames) - 1))).save(f"{tmp}/{k:04d}.png")
+                        blurred(img, sigma(lesson, i, stations[-1], k / (len(frames) - 1))).save(f"{tmp}/{k:04d}.png")
                     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "30", "-i", f"{tmp}/%04d.png",
                                     "-c:v", "libx264", "-preset", "slow", "-crf", "25", "-pix_fmt", "yuv420p",
                                     "-movflags", "+faststart", "-an", f"{to}/m{i}.mp4"], check=True)
