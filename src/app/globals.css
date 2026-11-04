@@ -4148,7 +4148,9 @@ button:disabled,
   max-width: 36rem;
 }
 
-.chalkboard--hub {
+/* The classroom's board comes up once, when the classroom is entered —
+   not again between the hub and a course (the same board). */
+.class-board {
   animation: class-board-in 1s cubic-bezier(0.2, 0.8, 0.3, 1) 0.15s both;
 }
 
@@ -5086,14 +5088,32 @@ a.board-cell--now:focus-visible {
    the hub's width and a touch more, the friend at its corner, a touch
    bigger. What is on the board is packed to fit it: the next lesson's
    sheet lies down again (thing beside the words), the row's boxes small.
-   Wider screens keep the board up close: these are phone-only. */
+   Wider: the board up close, the friend and the chairs out of the
+   picture. It is ONE classroom (`ClassroomShell`, a layout) —
+   `.class-page--course` is the course page's state of it, and each part's
+   view transition animates the change. */
 .class-course-stage {
   display: contents;
 }
 
-.class-teacher--course,
-.class-desk--course {
-  display: none;
+.class-page--course .class-wall-view {
+  scale: 1.45;
+  filter: blur(2px);
+}
+
+[data-theme="dark"] .class-page--course .class-wall-view {
+  filter: brightness(0.6) saturate(0.85) blur(2px);
+}
+
+.class-page--course .class-desk {
+  translate: 0 100%;
+  opacity: 0;
+}
+
+.class-page--course .class-teacher {
+  translate: 130% 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (width < 40rem) {
@@ -5112,29 +5132,30 @@ a.board-cell--now:focus-visible {
     align-self: auto;
   }
 
-  .class-teacher--course {
-    display: block;
+  .class-page--course .class-teacher {
     right: -0.5rem;
     bottom: -9.4rem;
     width: min(46vw, 12rem);
-    animation: none;
+    translate: none;
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  .class-desk--course {
-    display: block;
+  .class-page--course .class-desk {
+    translate: none;
+    opacity: 1;
   }
 
-  .class-desk--course .class-desk-view {
+  .class-page--course .class-desk-view {
     scale: 1.13;
-    animation: none;
   }
 
-  .class-wall-view--course {
+  .class-page--course .class-wall-view {
     scale: 1.13;
     filter: none;
   }
 
-  [data-theme="dark"] .class-wall-view--course {
+  [data-theme="dark"] .class-page--course .class-wall-view {
     filter: brightness(0.6) saturate(0.85);
   }
 
@@ -5192,13 +5213,6 @@ a.board-cell--now:focus-visible {
   .class-course .board-lessons--all .board-row {
     --box: 3.9rem;
   }
-
-  /* Going in from the hub: the friend and the chairs there fade into
-     these (a slide out would leave a second friend behind). */
-  ::view-transition-old(.teacher-exit),
-  ::view-transition-old(.desk-exit) {
-    animation: class-fade-out 0.3s ease both;
-  }
 }
 
 /* A short phone (360x640): everything a little tighter, so the board and
@@ -5208,7 +5222,7 @@ a.board-cell--now:focus-visible {
     padding-bottom: 9.4rem;
   }
 
-  .class-teacher--course {
+  .class-page--course .class-teacher {
     bottom: -8rem;
     width: min(42vw, 10.5rem);
   }
@@ -5243,11 +5257,6 @@ a.board-cell--now:focus-visible {
   }
 }
 
-@keyframes class-fade-out {
-  to {
-    opacity: 0;
-  }
-}
 
 /* Wider: the sheet hugs what is on it, never a long empty strip. */
 @media (width >= 40rem) {
@@ -6121,31 +6130,10 @@ a.board-cell--now:focus-visible {
   animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
 }
 
-::view-transition-old(.teacher-exit) {
-  animation: class-teacher-out 0.35s ease-in both;
-}
-
-::view-transition-old(.desk-exit) {
-  animation: class-desk-out 0.4s ease-in both;
-}
-
-@keyframes class-teacher-out {
-  to {
-    opacity: 0;
-    translate: 120% 0;
-  }
-}
-
-@keyframes class-desk-out {
-  to {
-    translate: 0 100%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .class-wall-view,
   .class-desk-view,
-  .chalkboard--hub,
+  .class-board,
   .class-card,
   .class-doodles img,
   .class-cheer-doodle,
@@ -6168,9 +6156,7 @@ a.board-cell--now:focus-visible {
   }
 
   ::view-transition-group(.board-morph),
-  ::view-transition-group(.class-morph),
-  ::view-transition-old(.teacher-exit),
-  ::view-transition-old(.desk-exit) {
+  ::view-transition-group(.class-morph) {
     animation: none;
   }
 }
