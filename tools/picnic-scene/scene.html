@@ -5430,7 +5430,8 @@ if (THING) {
   const PICNIC = { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
   const FIND_Z = -1.6;
   const things = {};
-  let blanketBox = null;
+  /* What the lawn's tufts keep off (the blanket, each activity's place). */
+  const keepClear = [];
   if (LESSON <= 4) {
     const pic = SCENES[PICNIC[LESSON]];
     const blanket = BLANKETS[pic.blanket]();
@@ -5438,7 +5439,7 @@ if (THING) {
     blanket.position.x += fx;
     blanket.position.z += FIND_Z;
     scene.add(blanket);
-    blanketBox = new THREE.Box3().setFromObject(blanket).expandByScalar(0.25);
+    keepClear.push(new THREE.Box3().setFromObject(blanket).expandByScalar(0.25));
     for (const [name, it] of Object.entries(pic.items)) {
       const thing = ITEMS[it.model ?? name](it.arg);
       place(thing, it);
@@ -5449,10 +5450,215 @@ if (THING) {
     }
   }
 
-  /* Tufts of grass and clover over the open lawn — never under the blanket. */
+  /* ---- Each activity's PLACE (2026-11-04, on request: "the camera's
+     move needs a purpose"): the camera walks to where the next activity
+     happens, sharp, and goes out of focus as it arrives and the activity
+     comes up over it — the word on an easel, the drawing at a little
+     table, the spelling among letter blocks, the Find on the picnic; the
+     review's sorting at four shape boxes. ---- */
+  const WOOD = soft(0xf3d3a6, { roughness: 0.8 });
+  const PLACE_Z = 0.6;
+  const SHAPE_OF_LESSON = ["circle", "square", "triangle", "rectangle"];
+  const SHAPE_COLOR = { circle: 0x5aa9ee, square: 0x58c27d, triangle: 0xffc93a, rectangle: 0xff8fbf };
+  /* A shape's outline, about `k` across, centred. */
+  function outline(shape, k = 1) {
+    const s = new THREE.Shape();
+    if (shape === "circle") s.absarc(0, 0, 0.5 * k, 0, Math.PI * 2, false);
+    else if (shape === "triangle") {
+      s.moveTo(0, 0.5 * k);
+      s.lineTo(0.55 * k, -0.42 * k);
+      s.lineTo(-0.55 * k, -0.42 * k);
+      s.closePath();
+    } else {
+      const [hw, hh] = shape === "square" ? [0.45 * k, 0.45 * k] : [0.6 * k, 0.36 * k];
+      s.moveTo(-hw, -hh);
+      s.lineTo(hw, -hh);
+      s.lineTo(hw, hh);
+      s.lineTo(-hw, hh);
+      s.closePath();
+    }
+    return s;
+  }
+  /* The shape standing up, facing the camera (+z). */
+  const upright = (shape, k, depth, material) => {
+    const m = mesh(roundedShapeExtrude(outline(shape, k), depth, Math.min(0.05, depth / 2)), material);
+    m.geometry.center();
+    return m;
+  };
+
+  /* The word's easel: a white board in a pink frame on three legs. */
+  function easel() {
+    const g = new THREE.Group();
+    for (const sx of [-1, 1]) {
+      const leg = at(rbox(0.13, 3.0, 0.13, WOOD, 0.05), sx * 0.85, 1.45, 0.05);
+      leg.rotation.set(-0.1, 0, sx * -0.1);
+      g.add(leg);
+    }
+    const back = at(rbox(0.13, 2.9, 0.13, WOOD, 0.05), 0, 1.38, -0.55);
+    back.rotation.x = 0.36;
+    g.add(back);
+    const board = new THREE.Group();
+    board.add(rbox(2.5, 1.85, 0.1, glaze(0xff8fbf), 0.07));
+    board.add(at(rbox(2.25, 1.6, 0.06, glaze(0xffffff), 0.05), 0, 0, 0.05));
+    board.position.set(0, 2.05, 0.2);
+    board.rotation.x = -0.1;
+    g.add(board);
+    g.add(at(rbox(2.6, 0.1, 0.32, WOOD, 0.04), 0, 1.07, 0.3));
+    return g;
+  }
+  /* The drawing table: a low table, a sheet of paper, three crayons. */
+  function drawingTable() {
+    const g = new THREE.Group();
+    g.add(at(rbox(2.6, 0.16, 1.6, WOOD, 0.07), 0, 0.86, 0));
+    for (const x of [-1.1, 1.1]) for (const z of [-0.6, 0.6]) g.add(at(rbox(0.15, 0.86, 0.15, WOOD, 0.05), x, 0.43, z));
+    const paper = at(rbox(1.5, 0.03, 1.05, glaze(0xffffff), 0.01), -0.15, 0.955, 0.02);
+    paper.rotation.y = 0.12;
+    g.add(paper);
+    [0xff8fbf, 0x5aa9ee, 0xffc93a].forEach((color, i) => {
+      const crayon = new THREE.Group();
+      crayon.add(mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.42, 20), glaze(color)));
+      crayon.add(at(mesh(new THREE.ConeGeometry(0.05, 0.12, 20), glaze(color)), 0, 0.27, 0));
+      crayon.rotation.set(0, 0.3 + i * 0.35, Math.PI / 2);
+      crayon.position.set(0.85 + i * 0.12, 0.99, -0.35 + i * 0.3);
+      g.add(crayon);
+    });
+    return g;
+  }
+  /* The spelling's letter blocks: the lesson's word, jumbled, on the grass. */
+  function letterBlocks(word) {
+    const g = new THREE.Group();
+    const letters = [...word.toUpperCase()];
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    const tints = [0xff8fbf, 0x5aa9ee, 0xffc93a, 0x58c27d, 0xb89cf0];
+    const perRow = Math.ceil(letters.length / 2);
+    letters.forEach((letter, i) => {
+      const row = Math.floor(i / perRow), col = i % perRow;
+      const block = new THREE.Group();
+      block.add(rbox(0.56, 0.56, 0.56, soft(tints[i % tints.length]), 0.09));
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = 128;
+      const cx = cv.getContext("2d");
+      cx.fillStyle = "#ffffff";
+      cx.font = "bold 92px 'Arial Rounded MT Bold', Arial, sans-serif";
+      cx.textAlign = "center";
+      cx.textBaseline = "middle";
+      cx.fillText(letter, 64, 70);
+      const tex = new THREE.CanvasTexture(cv);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.44), new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: 0.6 }));
+      face.position.z = 0.285;
+      block.add(face);
+      const top = face.clone();
+      top.rotation.x = -Math.PI / 2;
+      top.position.set(0, 0.285, 0);
+      block.add(top);
+      block.position.set((col - (perRow - 1) / 2) * 0.72 + (row ? 0.3 : 0) + (rand() - 0.5) * 0.12, 0.28, row * 0.85 - 0.3 + (rand() - 0.5) * 0.15);
+      block.rotation.y = (rand() - 0.5) * 0.5;
+      g.add(block);
+    });
+    return g;
+  }
+  /* The review's sorting: four open boxes, each with its shape on the front. */
+  function shapeBoxes() {
+    const g = new THREE.Group();
+    SHAPE_OF_LESSON.forEach((shape, i) => {
+      const box = new THREE.Group();
+      const m = soft(SHAPE_COLOR[shape]);
+      box.add(at(rbox(0.95, 0.08, 0.95, m, 0.03), 0, 0.04, 0));
+      for (const [x, z, wd, dp] of [[0, 0.44, 0.95, 0.08], [0, -0.44, 0.95, 0.08], [0.44, 0, 0.08, 0.95], [-0.44, 0, 0.08, 0.95]]) box.add(at(rbox(wd, 0.7, dp, m, 0.03), x, 0.35, z));
+      box.add(at(upright(shape, 0.42, 0.04, glaze(0xffffff)), 0, 0.38, 0.5));
+      box.position.set((i - 1.5) * 1.15, 0, 0);
+      box.rotation.y = (i - 1.5) * -0.08;
+      g.add(box);
+    });
+    return g;
+  }
+
+  /* The shape-flower that blooms where an activity was done — its stem
+     grows, then its head (the shape, in its colour, in a ring of petals)
+     springs open. `bloom(b)`, b 0..1; 0 is not there at all. */
+  function shapeFlower(shape) {
+    const g = new THREE.Group();
+    const stem = at(mesh(new THREE.CylinderGeometry(0.05, 0.07, 1, 16), leafy(0x5fb565)), 0, 0.5, 0);
+    const grow = new THREE.Group();
+    grow.add(stem);
+    for (const sx of [-1, 1]) {
+      const leaf = at(ball(0.2, leafy(0x6cc46a), 24), sx * 0.2, 0.42, 0);
+      leaf.scale.set(1.3, 0.45, 0.8);
+      leaf.rotation.z = sx * -0.5;
+      grow.add(leaf);
+    }
+    g.add(grow);
+    const head = new THREE.Group();
+    const petal = soft(new THREE.Color(SHAPE_COLOR[shape]).lerp(new THREE.Color(0xffffff), 0.6).getHex());
+    const petals = [];
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const p = at(ball(0.2, petal, 24), Math.cos(a) * 0.42, Math.sin(a) * 0.42, -0.06);
+      p.scale.set(1, 1, 0.45);
+      head.add(p);
+      petals.push([p, a]);
+    }
+    head.add(at(upright(shape, 0.62, 0.14, glaze(SHAPE_COLOR[shape])), 0, 0, 0.06));
+    g.add(head);
+    const backOut = (t) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2;
+    g.bloom = (b) => {
+      g.visible = b > 0;
+      const up = Math.min(1, b / 0.5);
+      grow.scale.set(1, Math.max(0.001, up * (2 - up)) * 1.35, 1);
+      const open = Math.max(0, Math.min(1, (b - 0.38) / 0.62));
+      head.position.y = 1.35 * up * (2 - up) + 0.05;
+      head.scale.setScalar(Math.max(0.001, backOut(open)));
+      head.rotation.z = (1 - open) * -0.9;
+      for (const [p, a] of petals) p.position.set(Math.cos(a) * 0.42 * (0.4 + 0.6 * open), Math.sin(a) * 0.42 * (0.4 + 0.6 * open), -0.06);
+    };
+    g.bloom(0);
+    return g;
+  }
+
+  /* Where each step happens, and its flower beside it (a little in front,
+     to the right — out of the activity's way, in the camera's view). */
+  const PLACES =
+    LESSON <= 4
+      ? [
+          { x: fx - 16, make: easel },
+          { x: fx - 10.6, make: drawingTable },
+          { x: fx - 5.6, make: () => letterBlocks(SHAPE_OF_LESSON[LESSON - 1]) },
+          { x: fx, z: FIND_Z, flower: [fx + 1.6, FIND_Z + 4.5] },
+        ]
+      : [
+          { x: -6, make: shapeBoxes, shape: "circle" },
+          { x: 37, make: easel, shape: "square" },
+          { x: 77, make: easel, shape: "triangle" },
+          { x: 117, make: drawingTable, shape: "rectangle" },
+        ];
+  const flowers = PLACES.map((place) => {
+    if (place.make) {
+      const prop = place.make();
+      prop.position.set(place.x, 0, PLACE_Z);
+      scene.add(prop);
+      keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
+    }
+    const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
+    const flower = shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
+    flower.position.set(x, 0, z);
+    flower.rotation.y = -0.15;
+    scene.add(flower);
+    keepClear.push(new THREE.Box3(new THREE.Vector3(x - 0.6, -1, z - 0.6), new THREE.Vector3(x + 0.6, 3, z + 0.6)));
+    return flower;
+  });
+  /* The flowers out: those of the steps done (`done`), and the next one
+     part-way (`b`). */
+  const blooms = (done, b = 0) => flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
+
+  /* Tufts of grass and clover over the open lawn — never under the
+     blanket or an activity's place. */
   for (let i = 0; i < 900; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
-    if (blanketBox && x > blanketBox.min.x && x < blanketBox.max.x && z > blanketBox.min.z && z < blanketBox.max.z) continue;
+    if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
     const tuft = new THREE.Group();
     const n = 3 + Math.floor(rand() * 3);
     for (let j = 0; j < n; j++) {
@@ -5470,7 +5676,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set(Object.values(things).map((t) => t.group));
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
@@ -5508,12 +5714,20 @@ if (THING) {
      sits clear of the screen's edges and of the page's bars. */
   const DOWN = THREE.MathUtils.degToRad(72);
   const overPicnic = (d, dz = 0) => [fx, d * Math.sin(DOWN), FIND_Z + dz + d * Math.cos(DOWN), fx, 0, FIND_Z + dz];
-  const STATIONS =
+  /* A step's station: its place straight ahead; the Find's over the
+     picnic. Then the END: the camera rises and looks back over the
+     lesson's places, every flower out — the path it walked, in bloom. */
+  const steps = PLACES.map((place) => (place.make ? station(place.x) : portrait ? overPicnic(15) : overPicnic(19)));
+  const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
+  const END =
     LESSON <= 4
       ? portrait
-        ? [station(fx - 8.5), station(fx - 2.4), station(fx - 0.6), overPicnic(15)]
-        : [station(fx - 10), station(fx - 5.2), station(fx - 2.2), overPicnic(19)]
-      : [station(-6), station(37), station(77), station(117)];
+        ? [mid - 1, 11, 22, mid - 1, 0, -1]
+        : [mid, 8.5, 17.5, mid, 0.2, -1.5]
+      : portrait
+        ? [117, 9, 19, 117, 0.5, -2]
+        : [117, 7.5, 17, 117, 0.5, -2];
+  const STATIONS = [...steps, END];
   const ENTRY = (() => {
     const [x, , , lx] = STATIONS[0];
     return [x + 4, 13, 24, lx - 1, 0.5, -10];
@@ -5532,11 +5746,14 @@ if (THING) {
   const settle = (t) => 1 - (1 - t) ** 4;
   /* Move `i`'s camera at `t` (0..1): move 0 is the entry crane, move i
      the walk from station i-1 to station i — a little lift in the middle
-     of a long one. */
+     of a long one. A walk first holds still while the flower of the step
+     just done blooms (`BLOOM`), then goes. */
+  const BLOOM = [0.03, 0.33];
+  const HOLD = 0.27;
   function moveCam(i, t) {
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
     const a = STATIONS[i - 1], b = STATIONS[i];
-    const e = smooth(t);
+    const e = smooth(Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
     const cam = lerp(a, b, e);
     const far = Math.abs(b[0] - a[0]);
     cam[1] += Math.sin(Math.PI * e) * Math.min(1.4, far * 0.03);
@@ -5551,11 +5768,13 @@ if (THING) {
     stations: STATIONS.length,
     /* Station i's still. */
     station(i) {
+      blooms(i);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
+      blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - BLOOM[0]) / (BLOOM[1] - BLOOM[0]))));
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
     },
@@ -5563,12 +5782,13 @@ if (THING) {
        thing alone on a shadow catcher (+ shadow-less, its hit area). */
     findLayers() {
       const out = {};
+      blooms(3);
       aim(STATIONS[3]);
       out.all = render();
       const all = Object.entries(things);
       all.forEach(([, t]) => (t.group.visible = false));
       out.background = render();
-      const world = scene.children.filter((o) => o !== catcher && !o.isLight && !all.some(([, t]) => t.group === o));
+      const world = scene.children.filter((o) => o !== catcher && !o.isLight && o.visible && !all.some(([, t]) => t.group === o));
       world.forEach((o) => (o.visible = false));
       const bg = scene.background;
       scene.background = null;
