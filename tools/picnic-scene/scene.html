@@ -281,7 +281,8 @@ const ITEMS = {
     return g;
   },
   // a beach ball, segments round the pole so from above it is a pinwheel circle
-  ball() {
+  // (`beachBall`: the Colors' plain `ball` further down had the same name)
+  beachBall() {
     const geo = new THREE.SphereGeometry(0.72, 128, 96);
     const cv = document.createElement("canvas");
     cv.width = 1024; cv.height = 512;
@@ -3175,53 +3176,61 @@ const SCENES = {
       },
     },
   },
+  /* The Shapes picnics (2026-11-04, on request: "on the ground, on a
+     blanket — never at the edge"): every thing ON the blanket, which is
+     stretched to fill the picture with a strip of grass round it — rows
+     down it, two a row, one in the middle of the second. */
   picnic: {
     blanket: "pinkStripes",
+    deep: [0.98, 1.45],
     items: {
-      plate: { at: [-1.4, ON_BLANKET, -1.15] },
-      donut: { at: [1.45, ON_BLANKET, -1.2] },
-      cookie: { at: [1.45, ON_BLANKET, 1.3] },
-      ball: { at: [2.0, 0, 3.15] },
-      toast: { at: [-1.45, ON_BLANKET, 1.3], rotY: 0.25 },
-      cheese: { at: [0.0, ON_BLANKET, 0.1], rotY: -0.35, scale: 0.8 },
-      book: { at: [-2.0, 0, 3.15], rotY: 0.35 },
-      kite: { at: [-0.6, 0, -3.3], rotY: 1.35, scale: 0.72 },
+      plate: { at: [-1.35, ON_BLANKET, -2.4], scale: 0.8 },
+      donut: { at: [1.4, ON_BLANKET, -2.45] },
+      kite: { at: [-1.3, ON_BLANKET, -0.75], rotY: 1.35, scale: 0.55 },
+      cheese: { at: [1.35, ON_BLANKET, -0.8], rotY: -0.35, scale: 0.8 },
+      toast: { at: [-1.4, ON_BLANKET, 0.85], rotY: 0.25 },
+      cookie: { at: [1.4, ON_BLANKET, 0.9] },
+      book: { at: [-1.35, ON_BLANKET, 2.5], rotY: 0.35, scale: 0.9 },
+      ball: { model: "beachBall", at: [1.4, ON_BLANKET, 2.45], scale: 0.85 },
     },
   },
   squares: {
     blanket: "mintBands",
+    deep: [0.98, 1.43],
     items: {
-      toast: { at: [-1.5, ON_BLANKET, -1.15], rotY: -0.2 },
-      gift: { at: [1.5, ON_BLANKET, -1.2], rotY: 0.3, scale: 0.95 },
-      cracker: { at: [1.45, ON_BLANKET, 1.25], rotY: -0.35 },
-      dice: { at: [-2.25, 0, 3.2], rotY: 0.4 },
-      donut: { at: [-1.4, ON_BLANKET, 1.3] },
-      cheese: { at: [0.05, ON_BLANKET, 0.05], rotY: 0.6, scale: 0.8 },
-      orange: { at: [2.25, 0, 3.2] },
+      toast: { at: [-1.4, ON_BLANKET, -2.35], rotY: -0.2 },
+      gift: { at: [1.4, ON_BLANKET, -2.4], rotY: 0.3, scale: 0.95 },
+      cheese: { at: [0.0, ON_BLANKET, -0.75], rotY: 0.6, scale: 0.8 },
+      donut: { at: [-1.45, ON_BLANKET, 0.85] },
+      cracker: { at: [1.45, ON_BLANKET, 0.8], rotY: -0.35 },
+      dice: { at: [-1.3, ON_BLANKET, 2.45], rotY: 0.4 },
+      orange: { at: [1.35, ON_BLANKET, 2.45] },
     },
   },
   triangles: {
     blanket: "blueStripes",
+    deep: [0.98, 1.43],
     items: {
-      cheese: { at: [-1.45, ON_BLANKET, -1.15], rotY: 0.2, scale: 0.85 },
-      pizza: { at: [1.45, ON_BLANKET, -1.1], rotY: 3.3, scale: 0.95 },
-      sandwich: { at: [-1.4, ON_BLANKET, 1.3], rotY: -0.5, scale: 0.9 },
-      flag: { at: [0.9, 0, -3.35], rotY: 0.2, scale: 0.8 },
-      cookie: { at: [1.45, ON_BLANKET, 1.3] },
-      toast: { at: [0.0, ON_BLANKET, 0.1], rotY: 0.35, scale: 0.85 },
-      book: { at: [-2.25, 0, 3.15], rotY: 0.35, scale: 0.9 },
+      cheese: { at: [-1.4, ON_BLANKET, -2.35], rotY: 0.2, scale: 0.85 },
+      pizza: { at: [1.4, ON_BLANKET, -2.35], rotY: 3.3, scale: 0.95 },
+      toast: { at: [0.0, ON_BLANKET, -0.75], rotY: 0.35, scale: 0.85 },
+      sandwich: { at: [-1.45, ON_BLANKET, 0.6], rotY: -0.5, scale: 0.85 },
+      cookie: { at: [1.45, ON_BLANKET, 0.85] },
+      book: { at: [-1.2, ON_BLANKET, 2.6], rotY: 0.35, scale: 0.85 },
+      flag: { at: [1.35, ON_BLANKET, 2.4], rotY: 0.2, scale: 0.8 },
     },
   },
   rectangles: {
     blanket: "yellowRound",
+    deep: [1.1, 1.45],
     items: {
-      book: { at: [-1.2, ON_BLANKET, -1.1], rotY: -0.3 },
-      chocolate: { at: [1.2, ON_BLANKET, -1.05], rotY: 0.35, scale: 0.95 },
-      juice: { at: [1.3, ON_BLANKET, 1.25], rotY: -0.2, scale: 0.95 },
-      ruler: { at: [-1.3, 0, -3.35], rotY: 1.45, scale: 0.9 },
-      plate: { at: [-1.35, ON_BLANKET, 1.3], scale: 0.85 },
-      cheese: { at: [0.05, ON_BLANKET, 0.15], rotY: 2.4, scale: 0.8 },
-      donut: { at: [2.25, 0, 3.15] },
+      book: { at: [-1.2, ON_BLANKET, -2.3], rotY: -0.3 },
+      chocolate: { at: [1.2, ON_BLANKET, -2.3], rotY: 0.35, scale: 0.95 },
+      ruler: { at: [0.0, ON_BLANKET, -0.7], rotY: 1.45, scale: 0.8 },
+      plate: { at: [-1.4, ON_BLANKET, 0.7], scale: 0.75 },
+      juice: { at: [1.4, ON_BLANKET, 0.85], rotY: -0.2, scale: 0.95 },
+      cheese: { at: [-0.95, ON_BLANKET, 2.55], rotY: 2.4, scale: 0.75 },
+      donut: { at: [1.15, ON_BLANKET, 2.35] },
     },
   },
   /* The Colors course: four things of the lesson's color, three of others.
@@ -3361,7 +3370,7 @@ const SCENES = {
 /* What each thing IS — its shape (`null` for no taught shape) and, for the
    Colors course, its color. */
 const SHAPE_OF = {
-  plate: "circle", donut: "circle", cookie: "circle", ball: "circle", orange: "circle",
+  plate: "circle", donut: "circle", cookie: "circle", ball: "circle", beachBall: "circle", orange: "circle",
   toast: "square", cracker: "square", gift: "square", dice: "square",
   cheese: "triangle", pizza: "triangle", sandwich: "triangle", flag: "triangle",
   book: "rectangle", chocolate: "rectangle", juice: "rectangle", ruler: "rectangle",
@@ -6768,7 +6777,8 @@ if (THING) {
   const onGrass = Object.values(def.items).filter((it) => it.at[1] === 0).map((it) => [it.at[0], it.at[2]]);
   for (let i = 0; i < 70; i++) {
     const x = (rand() - 0.5) * 7.5, z = (rand() - 0.5) * 9.5;
-    if (Math.abs(x) < 3.0 && Math.abs(z - 0.05) < 2.5) continue;
+    const [sx, sz] = def.deep ?? [1, 1];
+    if (Math.abs(x) < 3.0 * sx && Math.abs(z - 0.05) < 2.5 * sz) continue;
     if (onGrass.some(([a, c]) => Math.hypot(x - a, z - c) < 1.2)) continue;
     const tuft = new THREE.Group();
     const n = 3 + Math.floor(rand() * 3);
@@ -6783,7 +6793,11 @@ if (THING) {
     world.add(tuft);
   }
 
-  world.add(BLANKETS[def.blanket]());
+  const blanket = BLANKETS[def.blanket]();
+  /* `deep`: the blanket stretched [across, down] — the Shapes picnics'
+     fill the picture, every thing on them, none at its edge. */
+  if (def.deep) blanket.scale.set(def.deep[0], 1, def.deep[1]);
+  world.add(blanket);
 
   const items = {};
   for (const [name, it] of Object.entries(def.items)) {
