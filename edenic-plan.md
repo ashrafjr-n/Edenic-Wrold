@@ -667,6 +667,13 @@ with the user's OK on its look (a still) before it is built.
       stays the shape; Find = the camera tilting down onto the picnic on
       the lawn, every thing on a stretched blanket; the done screen in
       the world, blurred again, simple)
+- [x] Shapes: a PURPOSE for every move (2026-11-04, the user OK'd the
+      idea): each activity has its place in the garden (the word's easel,
+      the drawing table, the letter blocks of the word, the picnic; the
+      review: four shape boxes, easels, the table); the camera walks to
+      it SHARP and goes out of focus as it arrives; a shape-flower blooms
+      where each step was done; the end rises over the path in bloom,
+      then the friend celebrates. Every other course's world does the same.
 - [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
 
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
