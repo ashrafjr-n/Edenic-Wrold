@@ -618,7 +618,9 @@ deleted 2026-10-23): this time the world IS where the activities happen.
      (cone topiaries, a tent, bunting, a sailboat pond; gold), rectangle
      (a pergola, raised beds, a door in the wall, a bench; pink) — each
      shape's own clay colour. A lesson stays in its corner; the review
-     walks through all four. Find is in the garden itself.
+     walks through all four. Find was in the garden itself — back on its
+     picnic card since 2026-11-04 (the user: "things on the ground, on a
+     blanket, simple, never at the edge"), the garden blurred behind.
    - Colors → **a simple forest**: Find in the forest itself — a
      ladybug walking, a plant of the color; the balloons caught in the
      branches, the mixing on a tree stump.
@@ -633,10 +635,16 @@ deleted 2026-10-23): this time the world IS where the activities happen.
    deeper into the forest, the season turning, the sky changing, sliding
    along the counter. **The cheer IS the move**: no dead pause after a
    solve (the 1.9–2.9 s hold goes); ~1.2–1.6 s, input locked, the next
-   activity's controls arrive last. The made thing travels with the child
-   (the traced shape's thing lands in the world, to be found again).
+   activity's controls arrive last. (The traced shape turning into a
+   thing and landing in the world was built, then removed 2026-11-04 on
+   request.)
    Reduced motion → a plain cross-fade. Never over the header or nav.
-3. **The end of a lesson = back to the board.** The world gives way to
+3. **The end of a lesson = back to the board** — EXCEPT a lesson with a
+   world (2026-11-04, the user: "lesson complete in the same world,
+   simpler: her picture celebrating, a button on, short lines in the
+   site's clay"): it stays in the world, blurred — the friend cheering,
+   "Lesson complete!" + one line on a white clay card, Next. Without a
+   world: The world gives way to
    the friend's classroom; on the board the lesson's path is drawn in
    chalk, stop by stop, each with what the child MADE (the word, their
    own drawing, the spelled word, what they found) and a tick; then the
@@ -654,7 +662,9 @@ with the user's OK on its look (a still) before it is built.
 - [x] Shapes: the camera moves (entry crane, step to step, focus pull)
 - [x] Every course: the return to the board (the lesson's path, what was
       made, the next lesson's sheet)
-- [ ] The user checks Shapes → fixes
+- [x] The user checks Shapes → fixes (2026-11-04: garden kept; trace
+      stays the shape; Find back on the picnics, every thing on a
+      stretched blanket; the done screen in the world, simple)
 - [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
 
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
