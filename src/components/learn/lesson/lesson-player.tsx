@@ -11,7 +11,7 @@ import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import type { LessonDef, Question, SceneRect } from "@/types/course";
+import type { LessonDef, Question } from "@/types/course";
 import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
@@ -36,6 +36,7 @@ import { FeedAnimal } from "./feed-animal";
 import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
 import { LessonWorldView } from "./lesson-world";
+import { WorldDone } from "./world-done";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
 
@@ -53,11 +54,9 @@ const GO_TONE = {
 const STEP_LEAVE_MS = 200;
 
 /* A solved step goes on BY ITSELF once its cheer has played — no Next
-   (direct request 2026-11-02). How long each cheer runs: a trace turns
-   into its thing (`.trace-morph-in` ends at 1.65s) and is looked at; a
+   (direct request 2026-11-02). How long each cheer runs: a
    feed/basket/make has already played its own ending before it reports. */
 const SOLVED_HOLD_MS: Partial<Record<Question["type"], number>> = {
-  trace: 2900,
   spell: 2100,
   feed: 700,
   basket: 700,
@@ -67,56 +66,14 @@ const SOLVED_HOLD_DEFAULT_MS = 1900;
 
 /* In a lesson with a world the camera's move to the next step is part of
    the cheer (`edenic-plan.md` Phase 7: no dead pause after a solve) — a
-   step is held only for its own ending: a trace's thing popping in (it
-   ends at 1.65s), a word built, every circle found jumping. */
+   step is held only for its own ending: a shape filling, a word built,
+   every circle found jumping. */
 const WORLD_HOLD_MS: Partial<Record<Question["type"], number>> = {
-  trace: 1750,
+  trace: 1300,
   spell: 1250,
   find: 1300,
 };
 const WORLD_HOLD_DEFAULT_MS = 1100;
-
-/** The traced thing's flight from its sheet down into the world, where
-    the next move finds it already standing (`LessonWorld.landing`). */
-const LAND_MS = 700;
-
-/**
- * Flies the thing the child's trace turned into out of its sheet, in an
- * arc, to the spot it stands on in the world (`spot`, % of the world's
- * picture), going out of focus as it lands — as far as the world is. The
- * sheet's own picture hides; the flying one is left in place until the
- * camera's next move, whose first frame has it standing there, has begun.
- * Returns false (nothing to fly) when anything is missing or motion is
- * reduced.
- */
-function landInWorld(src: string, spot: SceneRect, blur: number): boolean {
-  const from = document.querySelector<HTMLElement>(".lesson-board .trace-morph-in");
-  const cover = document.querySelector<HTMLElement>(".world-frame:not(.world-find) .world-cover");
-  if (!from || !cover || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  const a = from.getBoundingClientRect();
-  const c = cover.getBoundingClientRect();
-  const to = { left: c.left + (spot[0] / 100) * c.width, top: c.top + (spot[1] / 100) * c.height, width: (spot[2] / 100) * c.width, height: (spot[3] / 100) * c.height };
-  const dx = a.left + a.width / 2 - (to.left + to.width / 2);
-  const dy = a.top + a.height / 2 - (to.top + to.height / 2);
-  const k = Math.min(a.width / to.width, a.height / to.height) * 0.78;
-  const thing = document.createElement("img");
-  thing.src = src;
-  thing.alt = "";
-  thing.className = "world-landing";
-  Object.assign(thing.style, { left: `${to.left}px`, top: `${to.top}px`, width: `${to.width}px`, height: `${to.height}px` });
-  from.closest("main")?.append(thing);
-  from.style.opacity = "0";
-  thing.animate(
-    [
-      { translate: `${dx}px ${dy}px`, scale: `${k}`, filter: "blur(0px)" },
-      { translate: `${dx * 0.45}px ${dy * 0.45 - Math.min(90, Math.abs(dy) * 0.5)}px`, scale: `${(k + 1) / 2}`, filter: "blur(0px)", offset: 0.5 },
-      { translate: "0px 0px", scale: "1", filter: `blur(${blur * Math.max(c.width, c.height)}px)` },
-    ],
-    { duration: LAND_MS, easing: "cubic-bezier(0.45, 0, 0.35, 1)", fill: "forwards" },
-  );
-  window.setTimeout(() => thing.remove(), LAND_MS + STEP_LEAVE_MS + 600);
-  return true;
-}
 
 interface LessonPlayerProps {
   lesson: LessonDef;
@@ -278,17 +235,7 @@ export function LessonPlayer({
       setArrived(true);
     });
 
-  /* A trace in a world: its thing flies down into the world first. */
-  const onHeld = useEffectEvent(() => {
-    const frame = window.matchMedia("(orientation: landscape)").matches ? "landscape" : "portrait";
-    const spot = world?.landing?.[frame];
-    const thing = lesson.questions.flatMap((q) => (q.type === "find" && q.world ? q.world[frame].items.filter((item) => item.reward) : []))[0];
-    if (world && spot && thing && question?.type === "trace" && landInWorld(thing.src.src, spot, world.blur)) {
-      leaveTimer.current = window.setTimeout(advance, LAND_MS);
-      return;
-    }
-    advance();
-  });
+  const onHeld = useEffectEvent(advance);
   const holdMs = world
     ? ((question && WORLD_HOLD_MS[question.type]) ?? WORLD_HOLD_DEFAULT_MS)
     : ((question && SOLVED_HOLD_MS[question.type]) ?? SOLVED_HOLD_DEFAULT_MS);
@@ -372,9 +319,6 @@ export function LessonPlayer({
      first, the way onward last. */
   let footStart: ReactNode = null;
   let footEnd: ReactNode = null;
-  /* A step played in the world itself (a Find in it): over the whole
-     screen, outside the stage. */
-  let inWorld: ReactNode = null;
 
   if (finished) {
     /* Onward goes straight on to the next lesson (direct request
@@ -391,38 +335,62 @@ export function LessonPlayer({
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
         }
       : undefined;
-    /* What the child found, the Find's things — in the frame they saw. */
-    const found = lesson.questions.flatMap((q) =>
-      q.type === "find" ? (q.world?.portrait ?? q.scene).items.filter((item) => isTarget(item, q.target)).map((item) => item.src) : [],
-    );
-    body = (
-      <LessonDone
-        title={lines.lessonDone}
-        path={kinds}
-        words={lesson.questions.flatMap((q) =>
-          q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : [],
-        )}
-        faces={lessonFaces(lesson)}
-        drawing={drawing}
-        found={found}
-        accent={tone.face}
-        cheer={cheer}
-        next={next}
-        dir={dir}
-      />
-    );
-    const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
-    const finish = next ? null : (
-      <NextButton label={lines.finish} tone={GO_TONE} href={coursePath} dir={dir} className="lesson-onward" />
-    );
-    action = (
-      <div className="flex items-center gap-3 sm:gap-4">
-        {again}
-        {finish}
-      </div>
-    );
-    footStart = again;
-    footEnd = finish;
+    if (world) {
+      /* In the world (2026-11-04, on request): the friend cheering, two
+         short lines, and the one way on — no Play again. */
+      const words = lesson.questions.flatMap((q) => (q.type === "word" ? [q.word] : []));
+      body = (
+        <WorldDone
+          title={lines.lessonDone}
+          line={words.length === 1 ? format(lines.learnedWord, { word: words[0] }) : lines.learnedAll}
+          cheer={cheer}
+          dir={dir}
+        />
+      );
+      action = (
+        <NextButton
+          label={next ? next.go : lines.finish}
+          tone={GO_TONE}
+          href={next ? next.href : coursePath}
+          dir={dir}
+          className="lesson-onward"
+        />
+      );
+      footEnd = action;
+    } else {
+      /* What the child found, the Find's things. */
+      const found = lesson.questions.flatMap((q) =>
+        q.type === "find" ? q.scene.items.filter((item) => isTarget(item, q.target)).map((item) => item.src) : [],
+      );
+      body = (
+        <LessonDone
+          title={lines.lessonDone}
+          path={kinds}
+          words={lesson.questions.flatMap((q) =>
+            q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : [],
+          )}
+          faces={lessonFaces(lesson)}
+          drawing={drawing}
+          found={found}
+          accent={tone.face}
+          cheer={cheer}
+          next={next}
+          dir={dir}
+        />
+      );
+      const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
+      const finish = next ? null : (
+        <NextButton label={lines.finish} tone={GO_TONE} href={coursePath} dir={dir} className="lesson-onward" />
+      );
+      action = (
+        <div className="flex items-center gap-3 sm:gap-4">
+          {again}
+          {finish}
+        </div>
+      );
+      footStart = again;
+      footEnd = finish;
+    }
   } else if (step.kind === "watch" && lesson.reel) {
     body = (
       <ReelVideo
@@ -554,27 +522,15 @@ export function LessonPlayer({
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
-      const find = (
-        <FindShapes
-          key={seed}
-          scene={q.scene}
-          world={world && q.world}
-          hidden={!arrived}
-          target={q.target}
-          itemAria={lines.findItemAria}
-          onSolved={onSolved}
-          onMiss={onMiss}
-        />
+      body = (
+        <FindShapes key={seed} scene={q.scene} target={q.target} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />
       );
-      if (world && q.world) inWorld = find;
-      else body = find;
     } else {
       body = (
         <TraceQuestion
           key={seed}
           strokes={SHAPES[q.shape].strokes}
           accent={tone.face}
-          reward={SHAPES[q.shape].thing}
           dict={lines}
           board={board}
           onSolved={(stroke) => {
@@ -608,7 +564,7 @@ export function LessonPlayer({
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-end lg:hidden">{task}</div>
         <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
-          <StepTrail kinds={kinds} at={at} current={current} world={Boolean(world) && !finished} />
+          <StepTrail kinds={kinds} at={at} current={current} world={Boolean(world)} />
         </div>
       </BackRow>
       {/* After the back row (it must be `<main>`'s first child): the page's
@@ -640,9 +596,8 @@ export function LessonPlayer({
            lesson side by side above the board. Desktop: the board as wide
            as the page's content column. */
         <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:flex lg:max-w-5xl lg:flex-col lg:py-4">
-          {/* A step played in the world has the screen to itself. */}
-          {!inWorld && panel}
-          {!finished && !inWorld && (
+          {panel}
+          {!finished && (
             <LessonAbout
               courseName={courseName}
               title={title}
@@ -658,7 +613,7 @@ export function LessonPlayer({
               world (2026-11-02) has its steps out in the world instead, on
               a stage with no board of its own, and comes back to the board
               for its end. */}
-          <StageFrame world={Boolean(world) && !finished}>
+          <StageFrame world={Boolean(world)}>
             <div
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
@@ -695,10 +650,8 @@ export function LessonPlayer({
           world={world}
           station={finished ? world.stations.length - 1 : step.kind === "watch" ? -1 : step.index}
           onArrive={() => setArrived(true)}
-          gone={finished}
         />
       )}
-      {inWorld}
     </>
   );
 }
