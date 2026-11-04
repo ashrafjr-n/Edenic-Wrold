@@ -297,26 +297,20 @@ if NAME == "basket":
 if NAME == "garden":
     # Pinki's shape garden — run after `render.cjs garden <n…>`: for each
     # lesson and frame, into `public/assets/learn/pinki/shapes/garden/<n>/
-    # <frame>/`: every station out of focus (`s<i>.jpg`) but the Find's,
-    # which is the garden itself, sharp, in layers (`find/ground.jpg` and a
-    # PNG per thing); every camera move as an H.264 clip (`m<i>.mp4`), its
-    # focus changing as the move goes (the entry lands out of focus; the
-    # walk to the Find pulls it sharp). Then writes `src/data/shape-garden.ts`
+    # <frame>/`: every station out of focus (`s<i>.jpg`); every camera move
+    # as an H.264 clip (`m<i>.mp4`) — the entry lands out of focus, the
+    # rest stay out of it. Then writes `src/data/shape-garden.ts`
     # (`--data` writes only that, from the last crop).
     import subprocess
     import tempfile
 
-    BLUR = 0.009  # σ as a share of the picture's long side — the page's twin is `GARDEN_BLUR`
+    BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
     lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or [1, 2, 3, 4, 5]
     base = "public/assets/learn/pinki/shapes/garden"
 
     def sigma(lesson, move, t):
-        if move == 0:
-            return BLUR * smooth(0.5, 1.0, t)
-        if lesson <= 4 and move == 3:
-            return BLUR * (1 - smooth(0.35, 0.95, t))
-        return BLUR
+        return BLUR * smooth(0.5, 1.0, t) if move == 0 else BLUR
 
     def blurred(img, s):
         return img if s * max(img.size) < 0.3 else img.filter(ImageFilter.GaussianBlur(s * max(img.size)))
@@ -329,13 +323,9 @@ if NAME == "garden":
             out = os.path.join(HERE, "out", f"garden-{lesson}-{frame}")
             to = os.path.join(ROOT, base, str(lesson), frame)
             os.makedirs(to, exist_ok=True)
-            meta = json.load(open(f"{out}/meta.json"))
             stations = sorted(int(f[1:-4]) for f in os.listdir(out) if f.startswith("s") and f.endswith(".png"))
             stills = []
             for i in stations:
-                if lesson <= 4 and i == 3:
-                    stills.append(None)
-                    continue
                 img = Image.open(f"{out}/s{i}.png").convert("RGB")
                 img.thumbnail((1280, 1280), Image.LANCZOS)
                 blurred(img, BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
@@ -351,25 +341,7 @@ if NAME == "garden":
                                     "-c:v", "libx264", "-preset", "slow", "-crf", "25", "-pix_fmt", "yuv420p",
                                     "-movflags", "+faststart", "-an", f"{to}/m{i}.mp4"], check=True)
                 moves.append(f"m{i}.mp4?v={zlib.crc32(open(f'{to}/m{i}.mp4', 'rb').read()):08x}")
-            find = None
-            if lesson <= 4:
-                fdir = f"{out}/find"
-                os.makedirs(f"{to}/find", exist_ok=True)
-                ground = Image.open(f"{fdir}/background.png").convert("RGB")
-                W, H = ground.size
-                ground.save(f"{to}/find/ground.jpg", quality=84, optimize=True, progressive=True)
-                sized = lambda r: [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2), round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
-                items = []
-                for name, item in meta["items"].items():
-                    layer = Image.open(f"{fdir}/{name}.png")
-                    box = alpha_box(layer)
-                    layer.crop(box).save(f"{to}/find/{name}.png", optimize=True)
-                    hit = Image.open(f"{fdir}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
-                    items.append({"id": name, "shape": item["shape"], "reward": item["reward"], "box": sized(box), "hit": sized(hit)})
-                # Farthest first, so a nearer thing lies over a farther one.
-                items.sort(key=lambda it: it["hit"][1] + it["hit"][3])
-                find = {"size": [W, H], "items": items}
-            data[lesson][frame] = {"stills": stills, "moves": moves, "landing": meta["landing"], "find": find}
+            data[lesson][frame] = {"stills": stills, "moves": moves}
         print(f"garden {lesson}: done")
     # Keep what an earlier run wrote for the lessons not cropped this time.
     saved = os.path.join(HERE, "out", "garden.json")
@@ -378,8 +350,7 @@ if NAME == "garden":
 
     # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
     # every clip a path with its hash.
-    WORD = {"pennant": "flag", "rectFlag": "flag", "sailboat": "boat", "trough": "planter"}
-    imports, worlds, finds = [], [], []
+    imports, worlds = [], []
     def pic(lesson, frame, rel):
         name = f"{frame[0]}{lesson}_" + rel.replace("/", "_").replace(".", "_").replace("-", "_")
         imports.append(f'import {name} from "../../{base}/{lesson}/{frame}/{rel}";')
@@ -388,33 +359,17 @@ if NAME == "garden":
         both = data[lesson]
         stations = []
         for i, still in enumerate(both["landscape"]["stills"]):
-            stations.append("null" if still is None else f"{{ landscape: {pic(lesson, 'landscape', still)}, portrait: {pic(lesson, 'portrait', both['portrait']['stills'][i])} }}")
+            stations.append(f"{{ landscape: {pic(lesson, 'landscape', still)}, portrait: {pic(lesson, 'portrait', both['portrait']['stills'][i])} }}")
         moves = [f'{{ landscape: "/{base[len("public/"):]}/{lesson}/landscape/{m}", portrait: "/{base[len("public/"):]}/{lesson}/portrait/{both["portrait"]["moves"][i]}" }}' for i, m in enumerate(both["landscape"]["moves"])]
-        landing = both["landscape"]["landing"]
-        worlds.append(f"  {lesson}: {{\n    blur: GARDEN_BLUR,\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n"
-                      + (f"    landing: {{ landscape: {json.dumps(landing)}, portrait: {json.dumps(both['portrait']['landing'])} }},\n" if landing else "")
-                      + "  },")
-        if both["landscape"]["find"]:
-            scenes = []
-            for frame in ("landscape", "portrait"):
-                f = both[frame]["find"]
-                rows = []
-                for it in f["items"]:
-                    rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{WORD.get(it["id"], it["id"])}", shape: "{it["shape"]}", box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])}' + (", reward: true" if it["reward"] else "") + " },")
-                scenes.append(f"    {frame}: {{\n      background: {pic(lesson, frame, 'find/ground.jpg')},\n      items: [\n" + "\n".join(rows) + "\n      ],\n    },")
-            finds.append(f"  {lesson}: {{\n" + "\n".join(scenes) + "\n  },")
+        worlds.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n  }},")
     ts = (
         "/* GENERATED by `python3 tools/picnic-scene/crop.py garden` (after\n"
         "   `render.cjs garden`) — Pinki's shape garden, the Shapes course's world\n"
         "   (2026-11-02). Edit the scene, not this file. */\n"
-        'import type { LessonWorld, Scene } from "@/types/course";\n'
+        'import type { LessonWorld } from "@/types/course";\n'
         + "\n".join(imports)
-        + "\n\n/** How far out of focus a station is: σ as a share of the picture's long\n    side (`crop.py`'s `BLUR`) — what lands in the garden is blurred to match. */\n"
-        + f"export const GARDEN_BLUR = {BLUR};\n\n"
-        + "/** Each Shapes lesson's camera through the garden: a still per step after\n    the reel (none for the Find — the garden itself, in layers) and the\n    move into each (0: the entry). */\n"
-        + "export const GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
-        + "/** Each shape lesson's Find, in the garden itself: its ground and the\n    things to tap, in both frames (farthest first); `reward` is the traced\n    shape's thing, landed there. */\n"
-        + "export const GARDEN_FIND: Record<number, { landscape: Scene; portrait: Scene }> = {\n" + "\n".join(finds) + "\n};\n"
+        + "\n\n/** Each Shapes lesson's camera through the garden: a still per step after\n    the reel and the move into each (0: the entry). */\n"
+        + "export const GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data/shape-garden.ts"), "w").write(ts)
     sys.exit()
