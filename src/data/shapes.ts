@@ -26,8 +26,8 @@ interface ShapeDef {
   /** Its clay colour on a tile, and the darker edge its clay shades to. */
   color: string;
   edge: string;
-  /** A real thing that is this shape — what a traced shape turns into. From
-      the picnic scene, so it is the same world as the Find activity. */
+  /** A real thing that is this shape — its lesson's stop on the course
+      path wears it. From the picnic scene, the Find's own world. */
   thing: { src: StaticImageData; word: string };
 }
 
