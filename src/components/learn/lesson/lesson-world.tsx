@@ -20,11 +20,15 @@ interface LessonWorldViewProps {
   station: number;
   /** The camera has arrived at `station` — its step may show. */
   onArrive: () => void;
+  /** The lesson is over: the camera stays, the world goes out of focus
+      again (its clip fades off the blurred still under it). */
+  done?: boolean;
 }
 
 /** The world's frame as a `fixed` cover box: the picture's own aspect,
-    covering the whole (large) viewport (`.world-cover`). */
-function worldCover(wide: boolean): CSSProperties {
+    covering the whole (large) viewport — what a Find in it lays its things
+    over (`.world-cover`). */
+export function worldCover(wide: boolean): CSSProperties {
   return { "--world-ar": wide ? 16 / 9 : 9 / 16 } as CSSProperties;
 }
 
@@ -35,12 +39,14 @@ function worldCover(wide: boolean): CSSProperties {
  * rendered in the world, its last frame that step's still. The next move
  * is always loaded already, so a step's end goes straight into it.
  *
- * Out of focus behind every step, and behind the lesson's end, which
- * stays where the last step was. Reduced motion, a stall or a refused
- * play: the next still fades in instead. Fixed to the whole viewport under
- * the page (`-z-[5]`, over the classroom's wall), never over the header.
+ * Out of focus behind a step that needs the child's attention; for a step
+ * played IN the world (a Find) the clip pulls focus and the step lays its
+ * things over the same frame. The lesson's end stays where the last step
+ * was, out of focus again. Reduced motion, a stall or a refused play: the
+ * next still fades in instead. Fixed to the whole viewport under the page
+ * (`-z-[5]`, over the classroom's wall), never over the header.
  */
-export function LessonWorldView({ world, station, onArrive }: LessonWorldViewProps) {
+export function LessonWorldView({ world, station, onArrive, done = false }: LessonWorldViewProps) {
   const wide = useWide();
   const frame = wide ? "landscape" : "portrait";
   /* The still under the clips: the last station the camera reached. */
@@ -96,7 +102,7 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
   }, [station, frame]);
 
   /* During the reel (again, after Play again) the entry's first frame waits. */
-  const onTop = station < 0 ? 0 : top;
+  const onTop = station < 0 ? 0 : done ? null : top;
   const stillAt = world.stations[shown];
   /* The clips kept in the page: the one on top and the next one, loading.
      Before the entry its first frame is on top (behind the reel on a wide
@@ -136,7 +142,7 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
               setShown(i);
               if (i === station) arrive(i);
             }}
-            className={`absolute inset-0 h-full w-full object-cover ${i === onTop ? "" : "opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${i === onTop ? "" : "opacity-0"}`}
           />
         ))}
       </div>
