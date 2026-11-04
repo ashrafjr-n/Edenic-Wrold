@@ -5393,6 +5393,39 @@ a.board-cell--now:focus-visible {
   }
 }
 
+/* A Find played in the world (its picnic on the lawn, the camera looking
+   down at it): its things take taps, the rest of the picture lets them
+   through to nothing. Shown once the camera has pulled focus onto this
+   very frame — no movement, the picture is already there. */
+.world-find button {
+  pointer-events: auto;
+}
+
+.world-find--hidden {
+  opacity: 0;
+}
+
+.world-find--hidden button {
+  pointer-events: none;
+}
+
+/* The tray of found things, floating at the foot of the world — over the
+   phone's tab bar. */
+.world-tray {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(4rem + env(safe-area-inset-bottom) + 0.85rem);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+@media (width >= 40rem) {
+  .world-tray {
+    bottom: 1.75rem;
+  }
+}
+
 /* The steps' stage in a world: the board's box with nothing of its own. */
 .world-stage {
   display: flex;
