@@ -618,9 +618,10 @@ deleted 2026-10-23): this time the world IS where the activities happen.
      (cone topiaries, a tent, bunting, a sailboat pond; gold), rectangle
      (a pergola, raised beds, a door in the wall, a bench; pink) — each
      shape's own clay colour. A lesson stays in its corner; the review
-     walks through all four. Find was in the garden itself — back on its
-     picnic card since 2026-11-04 (the user: "things on the ground, on a
-     blanket, simple, never at the edge"), the garden blurred behind.
+     walks through all four. Find is in the garden itself: since
+     2026-11-04 its picnic (the user: "things on the ground, on a
+     blanket, simple, never at the edge") lies on the lawn and the
+     camera tilts down onto it, the same view as the picnic.
    - Colors → **a simple forest**: Find in the forest itself — a
      ladybug walking, a plant of the color; the balloons caught in the
      branches, the mixing on a tree stump.
@@ -663,8 +664,9 @@ with the user's OK on its look (a still) before it is built.
 - [x] Every course: the return to the board (the lesson's path, what was
       made, the next lesson's sheet)
 - [x] The user checks Shapes → fixes (2026-11-04: garden kept; trace
-      stays the shape; Find back on the picnics, every thing on a
-      stretched blanket; the done screen in the world, simple)
+      stays the shape; Find = the camera tilting down onto the picnic on
+      the lawn, every thing on a stretched blanket; the done screen in
+      the world, blurred again, simple)
 - [ ] Colors (forest) · Vegetables · Seasons · Animals · Weather
 
 ### Phase 6 — Finish Learn (the user's list, 2026-10-13)
