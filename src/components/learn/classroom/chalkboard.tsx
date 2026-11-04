@@ -27,10 +27,12 @@ interface ChalkboardProps {
 /**
  * Pinki's chalkboard (2026-10-14): a slate, wiped but never quite clean, in
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
- * language. The SAME view transition (`class-board`) on the hub and on a
- * course page: tapping a course zooms the board up to fill the screen with
- * its lessons on it, and back. A lesson's boards (`stage`, `strip`) take
- * no part in it — a lesson opens through its loader, nothing grows.
+ * language. ONE board for the hub and its course pages (`ClassroomShell`,
+ * a layout): tapping a course changes its size and what is written on it,
+ * and its view transition (`class-board`) animates that `update` — up
+ * close on a wide screen, a touch bigger on a phone — and back. A lesson's
+ * boards (`stage`, `strip`) take no part in it — a lesson opens through
+ * its loader, nothing grows.
  */
 export function Chalkboard({ size, className = "", children }: ChalkboardProps) {
   const board = (
@@ -48,7 +50,7 @@ export function Chalkboard({ size, className = "", children }: ChalkboardProps) 
   );
   if (size === "stage" || size === "strip") return board;
   return (
-    <ViewTransition name="class-board" share="board-morph" default="none">
+    <ViewTransition name="class-board" share="board-morph" update="board-morph" default="none">
       {board}
     </ViewTransition>
   );
