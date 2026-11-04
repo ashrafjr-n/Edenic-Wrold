@@ -319,6 +319,9 @@ export function LessonPlayer({
      first, the way onward last. */
   let footStart: ReactNode = null;
   let footEnd: ReactNode = null;
+  /* A step played in the world itself (a Find in it): over the whole
+     screen, outside the stage. */
+  let inWorld: ReactNode = null;
 
   if (finished) {
     /* Onward goes straight on to the next lesson (direct request
@@ -522,9 +525,20 @@ export function LessonPlayer({
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
-      body = (
-        <FindShapes key={seed} scene={q.scene} target={q.target} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />
+      const find = (
+        <FindShapes
+          key={seed}
+          scene={q.scene}
+          world={world && q.world}
+          hidden={!arrived}
+          target={q.target}
+          itemAria={lines.findItemAria}
+          onSolved={onSolved}
+          onMiss={onMiss}
+        />
       );
+      if (world && q.world) inWorld = find;
+      else body = find;
     } else {
       body = (
         <TraceQuestion
@@ -596,8 +610,9 @@ export function LessonPlayer({
            lesson side by side above the board. Desktop: the board as wide
            as the page's content column. */
         <div className="contents sm:mx-auto sm:grid sm:w-full sm:max-w-3xl sm:flex-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:px-8 sm:pt-6 lg:flex lg:max-w-5xl lg:flex-col lg:py-4">
-          {panel}
-          {!finished && (
+          {/* A step played in the world has the screen to itself. */}
+          {!inWorld && panel}
+          {!finished && !inWorld && (
             <LessonAbout
               courseName={courseName}
               title={title}
@@ -650,8 +665,10 @@ export function LessonPlayer({
           world={world}
           station={finished ? world.stations.length - 1 : step.kind === "watch" ? -1 : step.index}
           onArrive={() => setArrived(true)}
+          done={finished}
         />
       )}
+      {inWorld}
     </>
   );
 }
