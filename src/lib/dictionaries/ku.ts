@@ -149,6 +149,8 @@ export const ku: Dictionary = {
     nextShape: "شێوەیێ دی",
     finish: "بدووماهی بینە",
     lessonDone: "وانە ب دووماهی هات!",
+    learnedWord: "تە پەیڤا {word} فێربوو!",
+    learnedAll: "تە هەمی فێربوو!",
     skip: "دەرباز ببە",
     help: "هاریکاری",
     startOver: "ژ نوی",
