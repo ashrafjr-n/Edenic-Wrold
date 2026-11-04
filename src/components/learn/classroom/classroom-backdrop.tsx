@@ -8,7 +8,8 @@ interface ClassroomBackdropProps {
   wall: Framed;
   desk: Framed;
   /** A course page: the camera is up close on the board — the wall
-      zoomed in past it, the child's desk out of the picture. */
+      zoomed in past it, the child's desk out of the picture. On a phone
+      only a little closer, the desk still in front (2026-11-04). */
   zoomed?: boolean;
   /** Behind a lesson (and its loading screen): the zoomed wall, still, and
       NOT the `class-wall` transition — the lesson's wall is fixed to the
@@ -37,9 +38,17 @@ interface ClassroomBackdropProps {
  * header for the length of the transition.
  */
 export function ClassroomBackdrop({ wall: room, desk: chairs, zoomed = false, still = false }: ClassroomBackdropProps) {
+  const desk = (
+    <div className={`class-desk ${zoomed ? "class-desk--course" : ""}`}>
+      <div className="class-desk-view">
+        <Image src={chairs.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
+        <Image src={chairs.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+      </div>
+    </div>
+  );
   const wall = (
     <div className="class-wall">
-      <div className={`class-wall-view ${zoomed || still ? "class-wall-view--zoomed" : ""}`}>
+      <div className={`class-wall-view ${zoomed || still ? "class-wall-view--zoomed" : ""} ${zoomed ? "class-wall-view--course" : ""}`}>
         <Image src={room.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
         <Image src={room.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
       </div>
@@ -55,16 +64,8 @@ export function ClassroomBackdrop({ wall: room, desk: chairs, zoomed = false, st
           {wall}
         </ViewTransition>
       )}
-      {!zoomed && !still && (
-        <ViewTransition exit="desk-exit" default="none">
-          <div className="class-desk">
-            <div className="class-desk-view">
-              <Image src={chairs.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
-              <Image src={chairs.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
-            </div>
-          </div>
-        </ViewTransition>
-      )}
+      {!zoomed && !still && <ViewTransition exit="desk-exit" default="none">{desk}</ViewTransition>}
+      {zoomed && desk}
     </div>
   );
 }
