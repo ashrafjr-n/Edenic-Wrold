@@ -338,9 +338,10 @@ export function LessonPlayer({
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
         }
       : undefined;
-    if (world) {
-      /* In the world (2026-11-04, on request): the friend cheering, two
-         short lines, and the one way on — no Play again. */
+    if (world && arrived) {
+      /* In the world (2026-11-04, on request): once the camera has risen
+         over the lesson's path in bloom, the friend cheering, two short
+         lines, and the one way on — no Play again. */
       const words = lesson.questions.flatMap((q) => (q.type === "word" ? [q.word] : []));
       body = (
         <WorldDone
@@ -360,7 +361,7 @@ export function LessonPlayer({
         />
       );
       footEnd = action;
-    } else {
+    } else if (!world) {
       /* What the child found, the Find's things. */
       const found = lesson.questions.flatMap((q) =>
         q.type === "find" ? q.scene.items.filter((item) => isTarget(item, q.target)).map((item) => item.src) : [],
@@ -633,7 +634,7 @@ export function LessonPlayer({
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
                 leaving ? "stage-swap--out" : ""
-              } ${world && !finished && !arrived ? "world-wait" : ""}`}
+              } ${world && !arrived ? "world-wait" : ""}`}
             >
               <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
                 {body}
@@ -665,7 +666,6 @@ export function LessonPlayer({
           world={world}
           station={finished ? world.stations.length - 1 : step.kind === "watch" ? -1 : step.index}
           onArrive={() => setArrived(true)}
-          done={finished}
         />
       )}
       {inWorld}
