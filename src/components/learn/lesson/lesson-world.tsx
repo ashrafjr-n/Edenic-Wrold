@@ -20,9 +20,6 @@ interface LessonWorldViewProps {
   station: number;
   /** The camera has arrived at `station` — its step may show. */
   onArrive: () => void;
-  /** The lesson is over: the camera stays, the world goes out of focus
-      again (its clip fades off the blurred still under it). */
-  done?: boolean;
 }
 
 /** The world's frame as a `fixed` cover box: the picture's own aspect,
@@ -41,12 +38,13 @@ export function worldCover(wide: boolean): CSSProperties {
  *
  * Out of focus behind a step that needs the child's attention; for a step
  * played IN the world (a Find) the clip pulls focus and the step lays its
- * things over the same frame. The lesson's end stays where the last step
- * was, out of focus again. Reduced motion, a stall or a refused play: the
+ * things over the same frame. A walk opens on the flower of the step just
+ * done blooming; the lesson's end is one more station — the camera rising
+ * over the path in bloom. Reduced motion, a stall or a refused play: the
  * next still fades in instead. Fixed to the whole viewport under the page
  * (`-z-[5]`, over the classroom's wall), never over the header.
  */
-export function LessonWorldView({ world, station, onArrive, done = false }: LessonWorldViewProps) {
+export function LessonWorldView({ world, station, onArrive }: LessonWorldViewProps) {
   const wide = useWide();
   const frame = wide ? "landscape" : "portrait";
   /* The still under the clips: the last station the camera reached. */
@@ -102,7 +100,7 @@ export function LessonWorldView({ world, station, onArrive, done = false }: Less
   }, [station, frame]);
 
   /* During the reel (again, after Play again) the entry's first frame waits. */
-  const onTop = station < 0 ? 0 : done ? null : top;
+  const onTop = station < 0 ? 0 : top;
   const stillAt = world.stations[shown];
   /* The clips kept in the page: the one on top and the next one, loading.
      Before the entry its first frame is on top (behind the reel on a wide
@@ -142,7 +140,7 @@ export function LessonWorldView({ world, station, onArrive, done = false }: Less
               setShown(i);
               if (i === station) arrive(i);
             }}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${i === onTop ? "" : "opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover ${i === onTop ? "" : "opacity-0"}`}
           />
         ))}
       </div>
