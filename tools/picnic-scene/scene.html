@@ -6177,7 +6177,11 @@ if (THING) {
      vegetable grows on — part by part, from the soil — and it is ripe in
      the end shot, over the whole bed. ---- */
   const VEG_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-  const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] : null;
+  /* Lesson 6 is the review: no one vegetable, the bed mixed. */
+  const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] ?? null : null;
+  const VEG_MIX = ["carrot", "tomato", "broccoli", "pepper", "potato", "tomato", "carrot"];
+  /* The station at the counter: a lesson's last step, the review's first. */
+  const KITCHEN_AT = VEG_KIND ? 2 : 0;
   const KX = 16, KY = 1.5, KK = 0.5, ROOM_Z = -10, FRONT_Z = -4.2;
   const BED_TOP = 0.72;
   const toWorld = ([x, y, z]) => [KX + x * KK, KY + y * KK, ROOM_Z + z * KK];
@@ -6354,6 +6358,15 @@ if (THING) {
     });
     return g;
   }
+  /* The review's "Do you like…?": a garden table, two plates, a chair. */
+  function gardenTable() {
+    const g = new THREE.Group();
+    const white = soft(0xfff8ec);
+    g.add(at(rbox(3.2, 0.14, 1.8, white, 0.06), 0, 1.25, 0));
+    for (const x of [-1.35, 1.35]) for (const z of [-0.7, 0.7]) g.add(at(rbox(0.14, 1.2, 0.14, white, 0.05), x, 0.6, z));
+    for (const [x, tint_] of [[-0.75, 0xbfe8bd], [0.75, 0xffc2d2]]) g.add(at(mesh(new THREE.CylinderGeometry(0.5, 0.38, 0.08, 40), glaze(tint_)), x, 1.36, 0.05));
+    return g;
+  }
   /* Lavender: a clump of stems, each with its purple spike. */
   function lavender(k) {
     const g = new THREE.Group();
@@ -6410,7 +6423,7 @@ if (THING) {
       add(clump, BED[0] + 0.3 + rand() * (bedW - 0.6), BED_TOP, BED[2] + 0.25 + rand() * (bedD - 0.5));
     }
     for (let i = 0; i < 7; i++) {
-      const plant = vegPlant(VEG_KIND);
+      const plant = vegPlant(VEG_KIND ?? VEG_MIX[i]);
       add(plant, BED[0] + 1.3 + (i * (bedW - 2.6)) / 6, BED_TOP - 0.02, bedZ + (i % 2 ? -0.28 : 0.28), { k: 1.12, ry: (i % 3) * 0.5 - 0.5 });
       vegPlants.push(plant);
     }
@@ -6551,11 +6564,20 @@ if (THING) {
   /* Where each step happens, and its flower beside it (a little in front,
      to the right — out of the activity's way, in the camera's view). */
   const PLACES = VEG
-    ? [
-        { x: 0, make: () => vegSign(VEG_KIND) },
-        { x: 7, make: () => seedPackets(VEG_KIND), k: 1.05 },
-        { x: KX, cam: portrait ? "portrait" : "landscape" },
-      ]
+    ? VEG_KIND
+      ? [
+          { x: 0, make: () => vegSign(VEG_KIND) },
+          { x: 7, make: () => seedPackets(VEG_KIND), k: 1.05 },
+          { x: KX, cam: "kitchen" },
+        ]
+      : [
+          { x: KX, cam: "kitchen" },
+          { x: 11, make: gardenTable },
+          { x: 5.5, make: () => seedPackets("carrot"), k: 1.05 },
+          { x: -0.5, make: () => seedPackets("pepper"), k: 1.05 },
+          { x: 1, cam: "bed" },
+          { x: 8, cam: "bed" },
+        ]
     : FOREST
     ? COLOR_ID
       ? [
@@ -6683,7 +6705,9 @@ if (THING) {
     const a = THREE.MathUtils.degToRad(lift);
     return [...toWorld([look[0], look[1] + Math.sin(a) * d, look[2] + Math.cos(a) * d]), ...toWorld(look)];
   };
-  const steps = PLACES.map((place) => (VEG && place.cam ? kitchenCam() : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  /* The review's exam: looking down at the bed from over the path. */
+  const bedCam = (x) => (portrait ? [x, 6.4, 8.4, x, 0.9, -2.1] : [x, 5, 7.4, x, 1, -2.1]);
+  const steps = PLACES.map((place) => (place.cam === "kitchen" ? kitchenCam() : place.cam === "bed" ? bedCam(place.x) : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const END = VEG
     ? portrait
@@ -6702,6 +6726,8 @@ if (THING) {
         : [117, 7.5, 17, 117, 0.5, -2];
   const STATIONS = [...steps, END];
   const ENTRY = (() => {
+    /* The review opens indoors: in at the door. */
+    if (VEG && !VEG_KIND) return [KX, 2.6, -4.2, KX, 2.2, -10];
     const [x, , , lx] = STATIONS[0];
     return [x + 4, 13, 24, lx - 1, 0.5, -10];
   })();
@@ -6734,16 +6760,18 @@ if (THING) {
   /* Nova's garden: up the way and in at the door; out again, backing through
      it, rising over the bed. */
   const IN_DOOR = [KX, 2.6, FRONT_Z, KX, 2.2, ROOM_Z];
-  const VEG_WAY = {
-    2: [[13, 2.8, 7, 15, 2.0, -6], [KX, 2.7, 1.2, KX, 2.2, -8], IN_DOOR],
-    3: [IN_DOOR, [KX, 3.2, 2.4, KX, 2.4, -8], [11, 6, 12, 9, 1, -3]],
-  };
+  const OUT_DOOR = [IN_DOOR, [KX, 3.2, 2.4, KX, 2.4, -8], [11, 6, 12, 9, 1, -3]];
+  const VEG_WAY = VEG_KIND
+    ? { 2: [[13, 2.8, 7, 15, 2.0, -6], [KX, 2.7, 1.2, KX, 2.2, -8], IN_DOOR], 3: OUT_DOOR }
+    : { 1: OUT_DOOR };
+  /* The move that leaves the kitchen. */
+  const VEG_OUT = VEG_KIND ? 3 : 1;
   function moveCam(i, t) {
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
     if (VEG) {
       const a = STATIONS[i - 1], b = STATIONS[i];
       /* Leaving the kitchen there is nothing to wait for. */
-      const e = smooth(i === 3 ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
+      const e = smooth(i === VEG_OUT ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
       return VEG_WAY[i] ? along([a, ...VEG_WAY[i], b], e) : lerp(a, b, e);
     }
     const a = STATIONS[i - 1], b = STATIONS[i];
@@ -6761,6 +6789,7 @@ if (THING) {
   /* The way out of the kitchen: what the child put in the basket, the
      friend cheering. */
   const showBasket = (on) => {
+    if (!VEG_KIND) return;
     kitchen.inBasket(on);
     if (kitchen.friend) kitchen.friend.fit(on ? kitchen.friend.joy : kitchen.friend.pic);
   };
@@ -6777,7 +6806,7 @@ if (THING) {
     move(i, t) {
       if (VEG) showBasket(i === 3);
       /* Out of the kitchen the bed ripens as it comes into view. */
-      const [b0, b1] = VEG && i === 3 ? [0.55, 0.97] : BLOOM;
+      const [b0, b1] = VEG && i === VEG_OUT ? [0.55, 0.97] : BLOOM;
       blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
@@ -6827,7 +6856,7 @@ if (THING) {
       const [pic, joy] = await Promise.all([load(picture), load(cheer)]);
       const [fx_, fz, fh] = kitchen.F.friend;
       const height = fh * KK;
-      aim(STATIONS[2]);
+      aim(STATIONS[KITCHEN_AT]);
       const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: pic, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
       plane.quaternion.copy(view.quaternion);
       plane.userData.noMerge = true;
