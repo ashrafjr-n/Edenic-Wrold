@@ -10,6 +10,7 @@ import { useWide } from "@/lib/use-wide";
 import type { Basket, Kitchen, SceneRect } from "@/types/course";
 import { ClayWord, type LetterTone } from "./clay-word";
 import { place } from "./find-shapes";
+import { worldCover } from "./lesson-world";
 
 /** Over the basket, then down into it. */
 const FLY_MS = 620;
@@ -21,11 +22,6 @@ const MISS_MS = 480;
 const DRAG_THRESHOLD = 8;
 /** A finger let go this close (px) to the basket still drops it in. */
 const REACH = 18;
-
-/* The height a step has, `--room` (as Feed the animal has it); the
-   picture is as big as it and the board's width allow. */
-const ROOM =
-  "[--room:calc(100svh-21rem-min(2.5rem,4svh))] sm:[--room:calc(100svh-38rem)] lg:[--room:var(--stage-h)]";
 
 /* The word's one quiet ink — it is read, not matched. Fixed: its paper
    is light in dark mode too. */
@@ -56,6 +52,9 @@ interface BasketTimeProps {
   /** The lesson's vegetable, in English — up on the kitchen wall. */
   word: string;
   kitchen: Kitchen;
+  /** Waiting for the camera to come in at the door (it ends on this very
+      picture) — laid out, not shown. */
+  hidden?: boolean;
   /** "Tap the {word}", naming each thing for a screen reader. */
   itemAria: string;
   onSolved: () => void;
@@ -64,14 +63,16 @@ interface BasketTimeProps {
 
 /**
  * Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find It!
- * merged into it): the kitchen, Pinki behind the counter, the word up on
- * the wall, and on the counter the five vegetables among a blender, milk,
- * cheese and garlic, and a basket. Read the word, then drag its vegetable
- * into the basket, or tap it. It flies up over the basket and drops in,
- * under the rim; the basket bounces, Pinki cheers, the word is said,
- * confetti. Anything else shakes, goes home and greys.
+ * merged into it): the kitchen in Nova's cottage, the world's last place
+ * (2026-11-05), played over the whole screen as a Find in a world is. Pinki
+ * behind the counter, the word over the wall, and on the counter the five
+ * vegetables among a blender, milk, cheese and garlic, and a basket. Read
+ * the word, then drag its vegetable into the basket, or tap it. It flies up
+ * over the basket and drops in, under the rim; the basket bounces, Pinki
+ * cheers, the word is said, confetti. Anything else shakes, goes home and
+ * greys.
  */
-export function BasketTime({ word, kitchen, itemAria, onSolved, onMiss }: BasketTimeProps) {
+export function BasketTime({ word, kitchen, hidden = false, itemAria, onSolved, onMiss }: BasketTimeProps) {
   /* A wide board gets the wide frame; a phone's or an upright tablet's,
      the tall one. */
   const wide = useWide();
@@ -190,30 +191,21 @@ export function BasketTime({ word, kitchen, itemAria, onSolved, onMiss }: Basket
     }
   };
 
-  const ratio = frame.ground.width / frame.ground.height;
-  const thingSizes = wide ? "(min-width: 1024px) 12rem, 22vw" : "(min-width: 640px) 8rem, 28vw";
-  const basketSizes = wide ? "(min-width: 1024px) 14rem, 24vw" : "(min-width: 640px) 10rem, 34vw";
+  const thingSizes = wide ? "18vw" : "30vw";
+  const basketSizes = wide ? "22vw" : "36vw";
 
   return (
-    <div
-      className={`card card-clay-white card-bare-lg pic-card relative p-2 sm:p-3 ${ROOM}`}
-      style={{ width: `min(100%, calc((var(--room) - 1.5rem) * ${ratio} + 1.5rem))` } as CSSProperties}
-    >
-      <div className="relative w-full overflow-hidden rounded-[1.35rem] [container-type:inline-size]" style={{ aspectRatio: String(ratio) }}>
-        <Image src={frame.ground} alt="" fill preload sizes="(min-width: 1024px) 56rem, 92vw" className="select-none object-cover" />
+    <div className={`world-frame world-find z-10 ${hidden ? "world-find--hidden" : ""}`}>
+      <div className="world-cover" style={worldCover(wide)}>
+        <Image src={frame.ground} alt="" fill preload sizes="100vw" className="select-none object-cover" />
 
         {/* Pinki behind the counter: its edge hides her lower half. */}
         <span className={`pointer-events-none absolute ${landed ? "anim-jump" : ""}`} style={place(frame.friend)}>
-          <Image src={landed ? kitchen.friend.cheer : kitchen.friend.picture} alt="" fill preload sizes="(min-width: 1024px) 20rem, 40vw" className="select-none object-contain object-bottom" />
+          <Image src={landed ? kitchen.friend.cheer : kitchen.friend.picture} alt="" fill preload sizes={wide ? "24vw" : "40vw"} className="select-none object-contain object-bottom" />
         </span>
         <span className="pointer-events-none absolute" style={place(frame.counter.box)}>
-          <Image src={frame.counter.src} alt="" fill preload sizes="(min-width: 1024px) 56rem, 92vw" className="select-none" />
+          <Image src={frame.counter.src} alt="" fill preload sizes="100vw" className="select-none" />
         </span>
-
-        {/* The word, up on the wall: English in every locale. */}
-        <div dir="ltr" className={`kitchen-word absolute left-[4%] top-[5%] ${landed ? "anim-jump" : ""}`} style={{ "--word": wide ? "6.5cqi" : "10cqi" } as CSSProperties}>
-          <ClayWord word={word} size="demo" tone={INK} />
-        </div>
 
         {/* The things on the counter, back to front. */}
         {items.map((item, index) => {
@@ -228,7 +220,7 @@ export function BasketTime({ word, kitchen, itemAria, onSolved, onMiss }: Basket
               }}
               className={`pointer-events-none absolute transition-[filter,opacity] duration-300 ${held ? "feed-food--held z-20" : ""} ${
                 flying && index === answer ? "z-20" : ""
-              } ${off ? "brightness-[0.8] saturate-0" : ""} ${landed && !gone ? "opacity-60" : ""} ${gone ? "opacity-0" : ""} ${
+              } ${off ? "brightness-[0.8] saturate-0" : ""} ${gone ? "opacity-0" : ""} ${
                 shaking === index ? "anim-wiggle" : ""
               }`}
               style={{ ...place(item.box), ...(held ? { translate: `${held.dx}px ${held.dy}px` } : {}) }}
@@ -278,6 +270,14 @@ export function BasketTime({ word, kitchen, itemAria, onSolved, onMiss }: Basket
         ))}
 
         {landed && <Celebration />}
+      </div>
+
+      {/* The word, over the kitchen wall in every frame: English in every
+          locale. Outside the picture, which a phone crops at its sides. */}
+      <div dir="ltr" className="world-kitchen-word">
+        <div className={`kitchen-word ${landed ? "anim-jump" : ""}`} style={{ "--word": wide ? "4.4cqi" : "9.5cqi" } as CSSProperties}>
+          <ClayWord word={word} size="demo" tone={INK} />
+        </div>
       </div>
     </div>
   );
