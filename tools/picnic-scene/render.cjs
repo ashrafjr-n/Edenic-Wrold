@@ -166,11 +166,15 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops`);
       await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
-      const pinki = "data:image/png;base64," + fs.readFileSync(path.join(__dirname, "../../public/assets/friends/pinki.png")).toString("base64");
-      await page.evaluate((url) => window.garden.setFriend(url), pinki);
       for (let f = 0; f < FRAMES; f++) {
+        const name = String(f).padStart(3, "0");
         const url = await page.evaluate((t) => window.garden.frameAt(t), f / (FRAMES - 1));
-        fs.writeFileSync(path.join(out, `f${String(f).padStart(3, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+        fs.writeFileSync(path.join(out, `f${name}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+        /* Where each way's stones are in this frame. */
+        for (let k = 0; k < 4; k++) {
+          const mask = await page.evaluate(([t, k]) => window.garden.wayMask(t, k), [f / (FRAMES - 1), k]);
+          fs.writeFileSync(path.join(out, `w${name}-${k}.png`), Buffer.from(mask.split(",")[1], "base64"));
+        }
       }
       const keys = [];
       for (let k = 0; k < KEYS; k++) keys.push(await page.evaluate((t) => window.garden.boxes(t), k / (KEYS - 1)));
