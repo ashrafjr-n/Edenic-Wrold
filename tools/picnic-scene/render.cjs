@@ -101,6 +101,13 @@
  *
  *   node tools/picnic-scene/render.cjs veg 1 2 3 4 5 6
  *
+ * Nova's hill (2026-11-05) — The Seasons' world, the same kit
+ * (`scene.html?garden=<1-5>&world=hill`, the seasons in order, 5 the review):
+ * `out/hill-<n>-<frame>/`, then `crop.py hill`, which writes
+ * `src/data/season-hill.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs hill 1 2 3 4 5
+ *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
  * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
  * tipped one); then `crop.py playcard cups` (sharp, no blur):
@@ -140,7 +147,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = mode === "garden" || mode === "forest" || mode === "veg" ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "veg", "hill"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -196,14 +203,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${name}&frame=${frame}`)).backdrop);
     }
-  } else if (mode === "garden" || mode === "forest" || mode === "veg") {
+  } else if (["garden", "forest", "veg", "hill"].includes(mode)) {
     /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
        — each station's still, every frame of each camera move (`m<i>/`;
        move 0 is the entry, the last the end's rise over the path in
        bloom; a walk opens on the flower of the step just done blooming),
        and a shape lesson's Find (its picnic on the lawn, from above) in
        layers at 1.6x. */
-    const SECONDS = mode === "veg" ? { entry: 2.4, step: 2.6, indoors: 4.4, end: 4.2 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
+    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, indoors: 4.4, end: 4.2 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
     const FPS = 30;
     for (const lesson of specs) {
       for (const frame of ["landscape", "portrait"]) {
@@ -243,7 +250,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.mkdirSync(kitchen);
           fs.writeFileSync(path.join(out, "kitchen.json"), JSON.stringify(await page.evaluate(() => window.garden.kitchenMeta())));
           for (const [layer, url] of Object.entries(await page.evaluate(() => window.garden.kitchenLayers()))) save(kitchen, layer, url);
-        } else if (Number(lesson) <= (mode === "forest" ? 10 : 4)) {
+        } else if (mode !== "hill" && Number(lesson) <= (mode === "forest" ? 10 : 4)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");
