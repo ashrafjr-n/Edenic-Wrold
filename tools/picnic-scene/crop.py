@@ -21,14 +21,14 @@ not behind the front) and the front's box — paste them into
 
     python3 tools/picnic-scene/crop.py harvest-vegetables --grain
 
-The kitchen (the Vegetables lessons' Kitchen step) — run after `render.cjs
-kitchen`: for each frame (landscape, portrait), the room blurred under the
-sharp counter (`ground.jpg`), the counter alone (`counter.png`, over the
-friend behind it), each thing, and the basket with its near half, into
-`<dest>/<frame>/`; prints the boxes for `data/kitchen.ts`. `dest` defaults
-to `public/assets/learn/nova/fruits/kitchen`.
+Nova's vegetable garden — run after `render.cjs veg`: the same as the shape
+garden below, plus Basket Time's kitchen from lesson 1's layers: the room and
+counter (`ground.jpg`), the counter alone (`counter.png`, over the friend
+behind it), each thing, and the basket with its near half, into
+`public/assets/learn/nova/fruits/kitchen/<frame>/`. Writes
+`src/data/veg-garden.ts`.
 
-    python3 tools/picnic-scene/crop.py kitchen
+    python3 tools/picnic-scene/crop.py veg
 
 Nova's basket — run after `render.cjs basket`: writes the basket
 (`basket.png`) and its near half, which goes over what is piled in it
@@ -295,8 +295,9 @@ if NAME == "basket":
     print(json.dumps({"mouth": [round(v * 100, 2) for v in mouth]}))
     sys.exit()
 
-if NAME in ("garden", "forest"):
+if NAME in ("garden", "forest", "veg"):
     FOREST = NAME == "forest"  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
+    VEG = NAME == "veg"  # Nova's vegetable garden (2026-11-05): the same; its last step is indoors, Basket Time in layers
     # Pinki's shape garden — run after `render.cjs garden <n…>`: for each
     # lesson and frame, into `public/assets/learn/pinki/shapes/garden/<n>/
     # <frame>/`: every station out of focus (`s<i>.jpg` — the Find's too,
@@ -314,9 +315,10 @@ if NAME in ("garden", "forest"):
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
     lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 12)) if FOREST else [1, 2, 3, 4, 5])
-    base = "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/pinki/shapes/garden"
-    has_find = lambda lesson: lesson <= (10 if FOREST else 4)
-    GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/shape-garden.ts"
+    base = "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/pinki/shapes/garden"
+    # A step played sharp in the world: a Find, or Nova's kitchen.
+    has_find = lambda lesson: VEG or lesson <= (10 if FOREST else 4)
+    GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/veg-garden.ts" if VEG else "src/data/shape-garden.ts"
 
     def sigma(lesson, move, last, t):
         if move == 0:
@@ -358,7 +360,7 @@ if NAME in ("garden", "forest"):
                                     "-movflags", "+faststart", "-an", f"{to}/m{i}.mp4"], check=True)
                 moves.append(f"m{i}.mp4?v={zlib.crc32(open(f'{to}/m{i}.mp4', 'rb').read()):08x}")
             find = None
-            if has_find(lesson):
+            if has_find(lesson) and not VEG:
                 fdir = f"{out}/find"
                 shutil.rmtree(f"{to}/find", ignore_errors=True)
                 os.makedirs(f"{to}/find")
@@ -408,6 +410,80 @@ if NAME in ("garden", "forest"):
                     rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{WORD.get(it["id"], it["id"])}", shape: {shape}{color}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
                 scenes.append(f"    {frame}: {{\n      background: {pic(lesson, frame, 'find/ground.jpg')},\n      items: [\n" + "\n".join(rows) + "\n      ],\n    },")
             finds.append(f"  {lesson}: {{\n" + "\n".join(scenes) + "\n  },")
+    if VEG:
+        # Basket Time's kitchen, one for all five lessons (lesson 1's layers):
+        # the room and counter sharp (`ground.jpg`), the counter alone (laid
+        # over the friend standing behind it), each thing cropped to its
+        # pixels, the basket and its near half, into `kitchen/<frame>/`.
+        kitchen = "public/assets/learn/nova/fruits/kitchen"
+        saved_k = os.path.join(HERE, "out", "veg-kitchen.json")
+        layout = json.load(open(saved_k)) if "--data" in sys.argv else {}
+        for frame in [] if "--data" in sys.argv else ("landscape", "portrait"):
+            out = os.path.join(HERE, "out", f"veg-1-{frame}")
+            fdir = f"{out}/kitchen"
+            to = os.path.join(ROOT, kitchen, frame)
+            shutil.rmtree(to, ignore_errors=True)
+            os.makedirs(to)
+            meta = json.load(open(f"{out}/kitchen.json"))
+            scene = Image.open(f"{fdir}/background.png").convert("RGB")
+            W, H = scene.size
+            scene.save(f"{to}/ground.jpg", quality=84, optimize=True, progressive=True)
+            mask = Image.open(f"{fdir}/countermask.png").convert("L")
+            counter = scene.convert("RGBA")
+            counter.putalpha(mask)
+            box = mask.getbbox()
+            counter.crop(box).save(f"{to}/counter.png", optimize=True)
+            sized = lambda r: [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2), round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
+            one = {"counter": sized(box), "friend": meta["friend"], "items": []}
+            for name in meta["items"]:
+                layer = Image.open(f"{fdir}/{name}.png")
+                box = alpha_box(layer)
+                layer.crop(box).save(f"{to}/{name}.png", optimize=True)
+                hit = Image.open(f"{fdir}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
+                one["items"].append({"id": name, "box": sized(box), "hit": sized(hit)})
+            one["items"].sort(key=lambda it: it["hit"][1] + it["hit"][3])
+            basket = Image.open(f"{fdir}/basket.png")
+            rim = basket.copy()
+            rim.putalpha(ImageChops.multiply(basket.split()[-1], Image.open(f"{fdir}/rimmask.png").convert("L")))
+            box = alpha_box(basket, pad=2)
+            bw, bh = box[2] - box[0], box[3] - box[1]
+            l, t, w, h = meta["mouth"]
+            mouth = [(l / 100 * W - box[0]) / bw, (t / 100 * H - box[1]) / bh, w / 100 * W / bw, h / 100 * H / bh]
+            basket.crop(box).save(f"{to}/basket.png", optimize=True)
+            rim.crop(box).save(f"{to}/basket-rim.png", optimize=True)
+            one["basket"] = {"box": sized(box), "mouth": [round(v * 100, 2) for v in mouth]}
+            layout[frame] = one
+        json.dump(layout, open(saved_k, "w"))
+        VEGETABLES = ("carrot", "broccoli", "potato", "tomato", "pepper")
+        frames = []
+        def kpic(frame, rel):
+            name = f"k{frame[0]}_" + rel.replace(".", "_").replace("-", "_")
+            imports.append(f'import {name} from "../../{kitchen}/{frame}/{rel}";')
+            return name
+        for frame in ("landscape", "portrait"):
+            one = layout[frame]
+            rows = []
+            for it in one["items"]:
+                group = f', group: "{it["id"]}"' if it["id"] in VEGETABLES else ""
+                rows.append(f'      {{ id: "{it["id"]}", src: {kpic(frame, it["id"] + ".png")}, word: "{it["id"]}", shape: null{group}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
+            frames.append(
+                f"  {frame}: {{\n    ground: {kpic(frame, 'ground.jpg')},\n    counter: {{ src: {kpic(frame, 'counter.png')}, box: {json.dumps(one['counter'])} }},\n"
+                f"    friend: {json.dumps(one['friend'])},\n    basket: {{ src: {kpic(frame, 'basket.png')}, rim: {kpic(frame, 'basket-rim.png')}, mouth: {json.dumps(one['basket']['mouth'])}, box: {json.dumps(one['basket']['box'])} }},\n"
+                "    items: [\n" + "\n".join(rows) + "\n    ],\n  },"
+            )
+        ts = (
+            "/* GENERATED by `python3 tools/picnic-scene/crop.py veg` (after\n"
+            "   `render.cjs veg`) — Nova's vegetable garden, the Vegetables course's\n"
+            "   world (2026-11-05). Edit the scene, not this file. */\n"
+            'import type { Framed, KitchenFrame, LessonWorld } from "@/types/course";\n'
+            + "\n".join(imports)
+            + "\n\n/** Each vegetable lesson's camera through the garden: a still per step after\n    the reel and the move into each (0: the entry). */\n"
+            + "export const VEG_GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
+            + "/** Basket Time's kitchen, the frame the camera comes in to, in layers. */\n"
+            + "export const KITCHEN_FRAMES: Framed<KitchenFrame> = {\n" + "\n".join(frames) + "\n};\n"
+        )
+        open(os.path.join(ROOT, GENERATED), "w").write(ts)
+        sys.exit()
     if FOREST:
         ts = (
             "/* GENERATED by `python3 tools/picnic-scene/crop.py forest` (after\n"
@@ -434,51 +510,6 @@ if NAME in ("garden", "forest"):
         + "export const GARDEN_FIND: Record<number, Framed<Scene>> = {\n" + "\n".join(finds) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data/shape-garden.ts"), "w").write(ts)
-    sys.exit()
-
-if NAME == "kitchen":
-    # The kitchen, both frames — run after `render.cjs kitchen`: the room
-    # blurred under the sharp counter (`ground.jpg`), the counter alone
-    # (`counter.png`, laid over the friend standing behind it), each thing
-    # cropped to its pixels, the basket and its near half (`basket.png`,
-    # `basket-rim.png`, one box), into `<dest>/<frame>/`. Prints each frame's
-    # boxes (% of the scene) — paste them into `data/kitchen.ts`.
-    dest = os.path.join(ROOT, sys.argv[2] if len(sys.argv) > 2 else "public/assets/learn/nova/fruits/kitchen")
-    layout = {}
-    for frame in ("landscape", "portrait"):
-        out = os.path.join(HERE, "out", f"kitchen-{frame}")
-        to = os.path.join(dest, frame)
-        os.makedirs(to, exist_ok=True)
-        meta = json.load(open(f"{out}/meta.json"))
-        scene = Image.open(f"{out}/background.png").convert("RGB")
-        W, H = scene.size
-        mask = Image.open(f"{out}/countermask.png").convert("L")
-        room = Image.open(f"{out}/back.png").convert("RGB").filter(ImageFilter.GaussianBlur(W / 150))
-        Image.composite(scene, room, mask).save(f"{to}/ground.jpg", quality=84, optimize=True, progressive=True)
-        counter = scene.convert("RGBA")
-        counter.putalpha(mask)
-        box = mask.getbbox()
-        counter.crop(box).save(f"{to}/counter.png", optimize=True)
-        sized = lambda r: [round(r[0] / W * 100, 2), round(r[1] / H * 100, 2), round((r[2] - r[0]) / W * 100, 2), round((r[3] - r[1]) / H * 100, 2)]
-        frame_layout = {"counter": sized(box), "friend": meta["friend"], "items": {}}
-        for name in meta["items"]:
-            layer = Image.open(f"{out}/{name}.png")
-            box = alpha_box(layer)
-            layer.crop(box).save(f"{to}/{name}.png", optimize=True)
-            hit = Image.open(f"{out}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
-            frame_layout["items"][name] = {"box": sized(box), "hit": sized(hit)}
-        basket = Image.open(f"{out}/basket.png")
-        rim = basket.copy()
-        rim.putalpha(ImageChops.multiply(basket.split()[-1], Image.open(f"{out}/rimmask.png").convert("L")))
-        box = alpha_box(basket, pad=2)
-        bw, bh = box[2] - box[0], box[3] - box[1]
-        l, t, w, h = meta["mouth"]
-        mouth = [(l / 100 * W - box[0]) / bw, (t / 100 * H - box[1]) / bh, w / 100 * W / bw, h / 100 * H / bh]
-        basket.crop(box).save(f"{to}/basket.png", optimize=True)
-        rim.crop(box).save(f"{to}/basket-rim.png", optimize=True)
-        frame_layout["basket"] = {"box": sized(box), "mouth": [round(v * 100, 2) for v in mouth]}
-        layout[frame] = frame_layout
-    print(json.dumps(layout))
     sys.exit()
 
 OUT = os.path.join(HERE, "out", NAME)
