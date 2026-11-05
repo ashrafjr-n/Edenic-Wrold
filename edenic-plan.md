@@ -591,6 +591,13 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       meadow under the weather with what a child wears for it. All 42
       lessons checked: each fetches its own backdrop, no errors.
 
+### A course as a world of stops (the user, 2026-11-05) — Shapes on trial
+
+Instead of the board, a course page can be a 3D world (the user's picture):
+pedestals with each lesson's shape on them, stepping stones, a treasure chest
+for the review; pink clouds on the way in; the scroll takes the camera up and
+in. Built for Shapes. **The user decides whether it goes to the other courses.**
+
 ### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
 
 Animals, Seasons and Weather are **POSTPONED**: their activities wait until
