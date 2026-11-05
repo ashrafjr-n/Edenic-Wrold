@@ -1,6 +1,7 @@
 import type { ColorId, Face, LessonDef, Question, Scene, SceneItem } from "@/types/course";
 import { COLOR_ORDER, COLORS, colorBin, potFace } from "@/data/colors";
 import * as scenes from "@/data/color-scenes";
+import { FOREST, FOREST_FIND } from "@/data/color-forest";
 
 const text = (value: string): Face => ({ kind: "text", text: value });
 
@@ -39,7 +40,9 @@ function othersFor(color: ColorId, count: number): ColorId[] {
 /**
  * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (its
  * pot, the word in its own color), spell it, mix it (the three made
- * colors), pop its balloons, then find it in its picnic.
+ * colors), pop its balloons, then find it in its picnic — all in Pinki's
+ * forest (2026-11-05: the course's world, `data/color-forest.ts`; the
+ * picnic lies on the forest floor and the camera tilts down onto it).
  * Every step is about this one color; the others are only there to choose
  * between.
  */
@@ -61,9 +64,9 @@ function colorLesson(color: ColorId, n: number): LessonDef {
   }
   questions.push(
     { type: "pop", ask: { key: "popColor", vars: { color } }, color, others: othersFor(color, 5) },
-    { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: SCENES[color] },
+    { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: SCENES[color], world: FOREST_FIND[n] },
   );
-  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].pot], questions };
+  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].pot], world: FOREST[n], questions };
 }
 
 /** One thing out of a picnic, for the review's boxes. */
@@ -83,6 +86,8 @@ export const pinkiColors: LessonDef[] = [
      colors spelled from the pot alone, with no word on screen. */
   {
     cover: [COLORS.red.pot, COLORS.yellow.pot, COLORS.green.pot, COLORS.purple.pot],
+    /* The review walks the forest: a place for each of its five steps. */
+    world: FOREST[11],
     questions: [
       {
         type: "sort",
