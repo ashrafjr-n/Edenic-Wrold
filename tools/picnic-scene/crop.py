@@ -295,7 +295,8 @@ if NAME == "basket":
     print(json.dumps({"mouth": [round(v * 100, 2) for v in mouth]}))
     sys.exit()
 
-if NAME == "garden":
+if NAME in ("garden", "forest"):
+    FOREST = NAME == "forest"  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
     # Pinki's shape garden — run after `render.cjs garden <n…>`: for each
     # lesson and frame, into `public/assets/learn/pinki/shapes/garden/<n>/
     # <frame>/`: every station out of focus (`s<i>.jpg` — the Find's too,
@@ -312,14 +313,16 @@ if NAME == "garden":
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or [1, 2, 3, 4, 5]
-    base = "public/assets/learn/pinki/shapes/garden"
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 12)) if FOREST else [1, 2, 3, 4, 5])
+    base = "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/pinki/shapes/garden"
+    has_find = lambda lesson: lesson <= (10 if FOREST else 4)
+    GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/shape-garden.ts"
 
     def sigma(lesson, move, last, t):
         if move == 0:
             return BLUR * smooth(0.5, 1.0, t)
-        come_in = 0 if lesson <= 4 and move == last else 1 - smooth(0.0, 0.12, t)
-        go_out = 0 if lesson <= 4 and move == 3 else smooth(0.84, 1.0, t)
+        come_in = 0 if has_find(lesson) and move == last else 1 - smooth(0.0, 0.12, t)
+        go_out = 0 if has_find(lesson) and move == last - 1 else smooth(0.84, 1.0, t)
         return BLUR * max(come_in, go_out)
 
     def blurred(img, s):
@@ -330,7 +333,7 @@ if NAME == "garden":
     for lesson in [] if "--data" in sys.argv else lessons:
         data[lesson] = {}
         for frame in ("landscape", "portrait"):
-            out = os.path.join(HERE, "out", f"garden-{lesson}-{frame}")
+            out = os.path.join(HERE, "out", f"{NAME}-{lesson}-{frame}")
             to = os.path.join(ROOT, base, str(lesson), frame)
             os.makedirs(to, exist_ok=True)
             stations = sorted(int(f[1:-4]) for f in os.listdir(out) if f.startswith("s") and f.endswith(".png"))
@@ -352,7 +355,7 @@ if NAME == "garden":
                                     "-movflags", "+faststart", "-an", f"{to}/m{i}.mp4"], check=True)
                 moves.append(f"m{i}.mp4?v={zlib.crc32(open(f'{to}/m{i}.mp4', 'rb').read()):08x}")
             find = None
-            if lesson <= 4:
+            if has_find(lesson):
                 fdir = f"{out}/find"
                 shutil.rmtree(f"{to}/find", ignore_errors=True)
                 os.makedirs(f"{to}/find")
@@ -366,20 +369,20 @@ if NAME == "garden":
                     box = alpha_box(layer)
                     layer.crop(box).save(f"{to}/find/{name}.png", optimize=True)
                     hit = Image.open(f"{fdir}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
-                    items.append({"id": name, "shape": item["shape"], "box": sized(box), "hit": sized(hit)})
+                    items.append({"id": name, "shape": item["shape"], "color": item.get("color"), "box": sized(box), "hit": sized(hit)})
                 # Farthest first, so a nearer thing lies over a farther one.
                 items.sort(key=lambda it: it["hit"][1] + it["hit"][3])
                 find = {"items": items}
             data[lesson][frame] = {"stills": stills, "moves": moves, "find": find}
         print(f"garden {lesson}: done")
     # Keep what an earlier run wrote for the lessons not cropped this time.
-    saved = os.path.join(HERE, "out", "garden.json")
+    saved = os.path.join(HERE, "out", f"{NAME}.json")
     data = {**({int(k): v for k, v in json.load(open(saved)).items()} if os.path.exists(saved) else {}), **data}
     json.dump(data, open(saved, "w"))
 
     # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
     # every clip a path with its hash.
-    WORD = {"juice": "juice box"}
+    WORD = {"juice": "juice box", "icecream": "ice cream", "bowling": "bowling ball"}
     imports, worlds, finds = [], [], []
     def pic(lesson, frame, rel):
         name = f"{frame[0]}{lesson}_" + rel.replace("/", "_").replace(".", "_").replace("-", "_")
@@ -397,10 +400,25 @@ if NAME == "garden":
             for frame in ("landscape", "portrait"):
                 rows = []
                 for it in both[frame]["find"]["items"]:
-                    shape = "null" if it["shape"] is None else f'"{it["shape"]}"'
-                    rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{WORD.get(it["id"], it["id"])}", shape: {shape}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
+                    shape = "null" if FOREST or it["shape"] is None else f'"{it["shape"]}"'
+                    color = f', color: "{it["color"]}"' if it.get("color") else ""
+                    rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{WORD.get(it["id"], it["id"])}", shape: {shape}{color}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
                 scenes.append(f"    {frame}: {{\n      background: {pic(lesson, frame, 'find/ground.jpg')},\n      items: [\n" + "\n".join(rows) + "\n      ],\n    },")
             finds.append(f"  {lesson}: {{\n" + "\n".join(scenes) + "\n  },")
+    if FOREST:
+        ts = (
+            "/* GENERATED by `python3 tools/picnic-scene/crop.py forest` (after\n"
+            "   `render.cjs forest`) — Pinki's colour forest, the Colors course's world\n"
+            "   (2026-11-05). Edit the scene, not this file. */\n"
+            'import type { Framed, LessonWorld, Scene } from "@/types/course";\n'
+            + "\n".join(imports)
+            + "\n\n/** Each Colors lesson's camera through the forest (11 is the review): a still\n    per step after the reel and the move into each (0: the entry). */\n"
+            + "export const FOREST: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
+            + "/** Each colour lesson's Find, in the forest itself — its picnic on the\n    forest floor, seen from above: the ground and the things to tap, in both\n    frames (farthest first). */\n"
+            + "export const FOREST_FIND: Record<number, Framed<Scene>> = {\n" + "\n".join(finds) + "\n};\n"
+        )
+        open(os.path.join(ROOT, GENERATED), "w").write(ts)
+        sys.exit()
     ts = (
         "/* GENERATED by `python3 tools/picnic-scene/crop.py garden` (after\n"
         "   `render.cjs garden`) — Pinki's shape garden, the Shapes course's world\n"
