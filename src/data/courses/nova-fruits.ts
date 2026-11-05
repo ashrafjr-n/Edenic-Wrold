@@ -84,9 +84,13 @@ export const novaFruits: LessonDef[] = [
      garden — a carrot bed, a tomato plant, a potato bed — and one basket,
      "1 potato, 3 carrots, 2 tomatoes" — never in the plants' order, so
      every line is read, and more on each plant than the note asks for, so
-     every line is counted. (The juice went with the fruits, 2026-10-12.) */
+     every line is counted. (The juice went with the fruits, 2026-10-12.)
+     In her world: the soup at the kitchen counter, out at the door to the
+     likes at a garden table, the spells among seed packets, the exam over
+     the bed, all five growing in it. */
   {
     cover: [carrot, broccoli, tomato, pepper],
+    world: VEG_GARDEN[6],
     questions: [
       { type: "make", ask: { key: "makeSoup" }, list: ["carrot", "potato", "broccoli"], stall: ["carrot", "potato", "broccoli", "pepper"].map(face), full: potMix },
       { type: "likes", ask: { key: "likeThem" }, items: ["tomato", "broccoli", "pepper", "carrot"].map((word) => ({ face: face(word), things: food(word).things })) },
