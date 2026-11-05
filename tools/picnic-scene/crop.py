@@ -314,10 +314,10 @@ if NAME in ("garden", "forest", "veg"):
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 12)) if FOREST else [1, 2, 3, 4, 5])
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 12)) if FOREST else [1, 2, 3, 4, 5, 6] if VEG else [1, 2, 3, 4, 5])
     base = "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
-    has_find = lambda lesson: VEG or lesson <= (10 if FOREST else 4)
+    has_find = lambda lesson: lesson <= (10 if FOREST else 5 if VEG else 4)
     GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/veg-garden.ts" if VEG else "src/data/shape-garden.ts"
 
     def sigma(lesson, move, last, t):
