@@ -591,6 +591,33 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       meadow under the weather with what a child wears for it. All 42
       lessons checked: each fetches its own backdrop, no errors.
 
+### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
+
+Animals, Seasons and Weather are **POSTPONED**: their activities wait until
+better ideas come (Seasons' hill world is built and stays; Animals' and
+Weather's worlds wait with them). Nothing is built for them until then.
+
+1. **Now: improve the design of the other courses** (Shapes, Colors,
+   Vegetables), until better ideas come for the three.
+2. **Then build the three postponed courses**, once the ideas are found
+   (the proposals so far are below; nothing is chosen).
+3. **Then put in the audio and the videos** — and Learn is finished.
+4. **Then think about Play**: what to do in it, and how to link it
+   INDIRECTLY with Learn and with **Watch**, a section to be built along
+   with Play.
+
+**Proposals so far, undecided (2026-11-05):**
+- Animals (replaces Feed the animal): hide and seek — read the word, find
+  it among 4 hidden animals; bath time — rub the mud off with a finger; walk
+  it home along a path; build it from 3 pieces.
+- Seasons (a third step; it has word → spell only): what's wrong? — things of
+  another season in the scene, tap them away; catch the season's things as
+  they fall; a game per season (butterflies, ice creams, raking leaves, a
+  snowman).
+- Weather (replaces Which weather?): help Bloo in it (hang the washing, hold
+  the umbrella over him, hold the kite's string, roll a snowball); pack his
+  bag; open the right window; the weather reporter.
+
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
 The user: after the reel everything sits on the same board — a lesson
@@ -688,10 +715,10 @@ with the user's OK on its look (a still) before it is built.
       the bed
 - [x] Seasons: Nova's hill, one tree, all 5 lessons — built 2026-11-05
       (`render.cjs hill`, `crop.py hill`): the camera turns round the tree, the
-      season comes over it by itself, the review turns through the year. The
-      season activities are still to add (the user: not now)
-- [ ] Animals · Weather — the
-      plan, agreed 2026-11-04 (below, "Course worlds, the plan")
+      season comes over it by itself, the review turns through the year. Its
+      activity is POSTPONED ("The road from here", above)
+- [ ] Animals · Weather — POSTPONED ("The road from here", above); their
+      world plan, agreed 2026-11-04, is below ("Course worlds, the plan")
 
 #### Course worlds, the plan (agreed 2026-11-04)
 
