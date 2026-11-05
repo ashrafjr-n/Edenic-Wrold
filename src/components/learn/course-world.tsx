@@ -59,8 +59,9 @@ interface CourseWorldProps {
  * has height, but nothing slides — the frames of the camera's way in, going
  * up a little and further in, are painted on a canvas as it moves. Each stop
  * is a real link laid over its pedestal, carried along by the render's own
- * numbers. It opens where the child carries on; the first lesson is the
- * farthest, the chest the nearest.
+ * numbers. It opens where the child carries on: the first lesson is the
+ * farthest, at the top of the page; down the page the camera zooms out, to the
+ * chest, the nearest, at the bottom.
  *
  * The stepping stones are white until the lesson before them is done, then
  * pink: each frame comes with a mask of each way's stones, and the page
@@ -91,6 +92,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   }, [pinkWays]);
 
   const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+  /* Where on the page the camera stands nearest stop `i`. */
+  const scrollFor = (i: number) => (1 - data.focus[i]) * maxScroll();
 
   /* The camera: load the frames, follow the scroll with a glide, paint the
      nearest frame loaded, carry the links along. */
@@ -166,7 +169,9 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const tick = () => {
       raf = 0;
       const top = maxScroll();
-      const target = top > 0 ? Math.min(1, Math.max(0, window.scrollY / top)) : 0;
+      /* The top of the page is the camera far in, at the first lesson; going
+         down the page zooms it out, to the chest at the bottom. */
+      const target = top > 0 ? 1 - Math.min(1, Math.max(0, window.scrollY / top)) : 1;
       current = current < 0 || still ? target : current + (target - current) * GLIDE;
       if (Math.abs(target - current) < 0.0004) current = target;
       paint(current);
@@ -176,10 +181,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
+    /* The frames nearest where the camera stands first. */
+    const top = maxScroll();
+    const standing = (1 - (top > 0 ? window.scrollY / top : 0)) * (world.frames - 1);
+    const order = Array.from({ length: world.frames }, (_, f) => f).sort((a, b) => Math.abs(a - standing) - Math.abs(b - standing));
     let nextToLoad = 0;
     const loadNext = () => {
       if (cancelled || nextToLoad >= world.frames) return;
-      const f = nextToLoad++;
+      const f = order[nextToLoad++];
       const picture = new window.Image();
       picture.onload = () => {
         pictures[f] = picture;
@@ -213,7 +222,9 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   useEffect(() => {
     if (!hydrated || opened.current) return;
     opened.current = true;
-    window.scrollTo(0, data.focus[nextIndex < 0 ? data.focus.length - 1 : nextIndex] * maxScroll());
+    /* A new child stays at the very top, the first lesson; all done, the chest. */
+    if (nextIndex !== 0) window.scrollTo(0, scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [hydrated, nextIndex, data]);
 
   /* Back from a lesson just done: stand at it, turn its way pink stone by
@@ -221,7 +232,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   useEffect(() => {
     if (unlocking < 1) return;
     const way = unlocking - 1;
-    window.scrollTo(0, data.focus[way] * maxScroll());
+    window.scrollTo(0, scrollFor(way));
     turning.current = [way, 0];
     redraw.current();
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -236,13 +247,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         return;
       }
       turning.current = null;
-      window.scrollTo({ top: data.focus[unlocking] * maxScroll(), behavior: still ? "auto" : "smooth" });
+      window.scrollTo({ top: scrollFor(unlocking), behavior: still ? "auto" : "smooth" });
     };
     raf = requestAnimationFrame(step);
     return () => {
       cancelAnimationFrame(raf);
       turning.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [unlocking, data]);
 
   return (
@@ -264,7 +276,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             const isNext = hydrated && i === nextIndex;
             const locked = !done && !isNext;
             const n = i + 1;
-            const box = data.keys[0][i];
+            const box = data.keys[data.keys.length - 1][i];
             const ref = (element: HTMLElement | null) => {
               stopRefs.current[i] = element;
             };
@@ -293,7 +305,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 }}
                 href={`${basePath}/${n}`}
                 aria-label={format(dict.startLessonAria, { n, title })}
-                onFocus={() => window.scrollTo(0, data.focus[i] * maxScroll())}
+                onFocus={() => window.scrollTo(0, scrollFor(i))}
                 className="course-stop"
                 style={place(box)}
               >
