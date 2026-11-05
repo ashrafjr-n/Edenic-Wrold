@@ -19,12 +19,16 @@ interface PageTransitionState {
       unlike `theme`/`progress`, nothing is persisted, so server and first
       client render always agree on `false`. */
   active: boolean;
-  start: () => void;
+  /** The clouds' colour: white, or the friend's (going in to their course's
+      world). */
+  tint: "white" | "pink";
+  start: (tint?: "white" | "pink") => void;
   reset: () => void;
 }
 
 export const usePageTransition = create<PageTransitionState>((set) => ({
   active: false,
-  start: () => set({ active: true }),
+  tint: "white",
+  start: (tint = "white") => set({ active: true, tint }),
   reset: () => set({ active: false }),
 }));

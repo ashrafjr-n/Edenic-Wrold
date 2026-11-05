@@ -113,6 +113,7 @@ const BANKS: VeilBank[] = [
 export function PageTransitionOverlay() {
   const active = usePageTransition((state) => state.active);
   const reset = usePageTransition((state) => state.reset);
+  const tint = usePageTransition((state) => state.tint);
   const pathname = usePathname();
   const [revealing, setRevealing] = useState(false);
 
@@ -144,7 +145,7 @@ export function PageTransitionOverlay() {
   return createPortal(
     <div
       aria-hidden
-      className={`page-veil ${revealing ? "page-veil--out" : "page-veil--in"}`}
+      className={`page-veil page-veil--${tint} ${revealing ? "page-veil--out" : "page-veil--in"}`}
     >
       {BANKS.map((bank, index) => (
         <Cloud
