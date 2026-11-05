@@ -46,8 +46,13 @@ interface SpellWordProps {
   ref?: Ref<SpellWordHandle>;
 }
 
-/** Which tile sits in each space; `null` is an empty space. */
+/** Which tile sits in each space (or each cell of the tray below);
+    `null` is an empty one. */
 type Slots = (number | null)[];
+
+/** Where a drag can end: a space of the word, a cell of the tray, or
+    "home" — the tray cell the letter started in. */
+type Target = { zone: "slot" | "tray"; i: number } | { zone: "home" };
 
 interface Drag {
   id: number;
@@ -71,7 +76,9 @@ export function deal(word: string, seed: string): string[] {
  * - **Tap** a letter and it flies to the first empty space; tap a placed
  *   letter and it flies home again.
  * - **Drag** a letter and it can go in ANY space. A space that is taken swaps
- *   (or sends its letter home, if the dragged one came from below). A drop
+ *   (or sends its letter home, if the dragged one came from below). A letter
+ *   dragged out of the word goes back below — to the cell it came from, or
+ *   any other empty one; below, letters can also be rearranged. A drop
  *   anywhere else springs back.
  * - **Type** it, on a keyboard: a letter key taps the first tile in the tray
  *   with that letter, Backspace taps the one in the last filled space.
@@ -91,6 +98,9 @@ export function deal(word: string, seed: string): string[] {
 export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolved, onMiss, onStarted, ref }: SpellWordProps) {
   const [dealt] = useState(() => deal(word, seed));
   const [slots, setSlots] = useState<Slots>(() => Array(word.length).fill(null));
+  /* The tray's cells: tile `i` starts in cell `i`; a letter may be put back
+     in any empty cell. */
+  const [tray, setTray] = useState<Slots>(() => Array.from({ length: word.length }, (_, i) => i));
   const [drag, setDrag] = useState<Drag | null>(null);
   const [wrong, setWrong] = useState<number[]>([]);
   const [shake, setShake] = useState(0);
@@ -100,6 +110,11 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
 
   const tileEls = useRef(new Map<number, HTMLButtonElement>());
   const slotEls = useRef<(HTMLDivElement | null)[]>([]);
+  const cellEls = useRef<(HTMLSpanElement | null)[]>([]);
+  /* The drag, mirrored in a ref: pointer moves arrive faster than React
+     renders, and a drop must see where the finger really is and whether it
+     really moved — not the last render's idea of it. */
+  const dragRef = useRef<Drag | null>(null);
   const before = useRef<Map<number, DOMRect> | null>(null);
   const dragged = useRef(false);
   const timers = useRef<number[]>([]);
@@ -133,23 +148,33 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         easing: "cubic-bezier(0.34, 1.25, 0.5, 1)",
       });
     });
-  }, [slots, drag]);
+  }, [slots, tray, drag]);
 
   /* ---- Moves ---- */
-  /** Every change of the spaces goes through here, animated. */
-  const fill = (next: Slots) => {
+  /** Every change of the spaces and the tray goes through here, animated. */
+  const fill = (nextSlots: Slots, nextTray: Slots) => {
     snapshot();
-    setSlots(next);
-    onStarted(next.some((id) => id !== null));
+    setSlots(nextSlots);
+    setTray(nextTray);
+    onStarted(nextSlots.some((id) => id !== null));
   };
 
-  const place = (next: Slots) => {
-    fill(next);
-    if (next.some((id) => id === null)) {
+  /** Put `ids` back in the tray: each in its own first cell, or the first
+      empty one. */
+  const sendHome = (cells: Slots, ids: number[]): Slots => {
+    const next = [...cells];
+    for (const id of ids) next[next[id] === null ? id : next.indexOf(null)] = id;
+    return next;
+  };
+
+  /** Judge the word once every space is full. */
+  const place = (nextSlots: Slots, nextTray: Slots) => {
+    fill(nextSlots, nextTray);
+    if (nextSlots.some((id) => id === null)) {
       setWrong([]);
       return;
     }
-    const misplaced = next.flatMap((id, i) => (dealt[id as number] === word[i] ? [] : [i]));
+    const misplaced = nextSlots.flatMap((id, i) => (dealt[id as number] === word[i] ? [] : [i]));
     if (misplaced.length === 0) {
       setWrong([]);
       setSolved(true);
@@ -161,7 +186,10 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
       onMiss();
       timers.current.push(
         window.setTimeout(() => {
-          fill(next.map((id, i) => (misplaced.includes(i) ? null : id)));
+          fill(
+            nextSlots.map((id, i) => (misplaced.includes(i) ? null : id)),
+            sendHome(nextTray, misplaced.map((i) => nextSlots[i] as number)),
+          );
           setWrong([]);
           setReturning(false);
         }, WIGGLE_MS),
@@ -169,44 +197,64 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
     }
   };
 
-  /** `id` into space `to`, or home to the tray when `to` is null. */
-  const moveTo = (id: number, to: number | null) => {
-    const from = slots.indexOf(id);
-    const next = [...slots];
-    if (from !== -1) next[from] = null;
-    if (to !== null) {
-      const displaced = next[to];
-      /* A taken space swaps: its letter goes where the dragged one came from
-         (a space, or home if it came from the tray). */
-      if (displaced !== null && from !== -1) next[from] = displaced;
-      next[to] = id;
+  /** `id` to `target`. A taken space or cell swaps with the dragged letter
+      (from the tray, the letter it displaces takes the cell left free). */
+  const moveTo = (id: number, target: Target) => {
+    const nextSlots = [...slots];
+    const nextTray = [...tray];
+    const fromSlot = nextSlots.indexOf(id);
+    const fromCell = nextTray.indexOf(id);
+    if (fromSlot !== -1) nextSlots[fromSlot] = null;
+    if (fromCell !== -1) nextTray[fromCell] = null;
+    const home = () => (nextTray[id] === null ? id : nextTray.indexOf(null));
+
+    if (target.zone === "slot") {
+      const displaced = nextSlots[target.i];
+      nextSlots[target.i] = id;
+      if (displaced !== null) {
+        if (fromSlot !== -1) nextSlots[fromSlot] = displaced;
+        else nextTray[fromCell] = displaced;
+      }
+    } else if (target.zone === "tray") {
+      const occupant = nextTray[target.i];
+      if (occupant === null) nextTray[target.i] = id;
+      else if (fromCell !== -1) {
+        nextTray[fromCell] = occupant;
+        nextTray[target.i] = id;
+      } else nextTray[home()] = id;
+    } else {
+      nextTray[home()] = id;
     }
-    place(next);
+    place(nextSlots, nextTray);
   };
 
   const tap = (id: number) => {
     if (locked) return;
     if (slots.includes(id)) {
-      moveTo(id, null);
+      moveTo(id, { zone: "home" });
       return;
     }
     const empty = slots.indexOf(null);
-    if (empty !== -1) moveTo(id, empty);
+    if (empty !== -1) moveTo(id, { zone: "slot", i: empty });
   };
 
-  /** The space under the finger: the nearest one, if it is close enough. */
-  const spaceAt = (x: number, y: number): number | null => {
-    let best: number | null = null;
+  /** What is under the finger: the nearest space or tray cell, if it is
+      close enough. */
+  const targetAt = (x: number, y: number): Target | null => {
+    let best: Target | null = null;
     let bestDistance = Infinity;
-    slotEls.current.forEach((el, i) => {
-      if (!el) return;
-      const box = el.getBoundingClientRect();
-      const distance = Math.hypot(x - (box.left + box.width / 2), y - (box.top + box.height / 2));
-      if (distance < Math.max(box.width, 40) && distance < bestDistance) {
-        best = i;
-        bestDistance = distance;
-      }
-    });
+    const look = (els: (HTMLElement | null)[], zone: "slot" | "tray") =>
+      els.forEach((el, i) => {
+        if (!el) return;
+        const box = el.getBoundingClientRect();
+        const distance = Math.hypot(x - (box.left + box.width / 2), y - (box.top + box.height / 2));
+        if (distance < Math.max(box.width, 40) && distance < bestDistance) {
+          best = { zone, i };
+          bestDistance = distance;
+        }
+      });
+    look(slotEls.current, "slot");
+    look(cellEls.current, "tray");
     return best;
   };
 
@@ -216,32 +264,41 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
     dragged.current = false;
     if (locked) return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    setDrag({ id, startX: event.clientX, startY: event.clientY, dx: 0, dy: 0, moved: false });
+    dragRef.current = { id, startX: event.clientX, startY: event.clientY, dx: 0, dy: 0, moved: false };
+    setDrag(dragRef.current);
   };
 
   const onPointerMove = (event: ReactPointerEvent<HTMLButtonElement>, id: number) => {
-    if (drag?.id !== id) return;
-    const dx = event.clientX - drag.startX;
-    const dy = event.clientY - drag.startY;
-    setDrag({ ...drag, dx, dy, moved: drag.moved || Math.hypot(dx, dy) > DRAG_THRESHOLD });
+    const current = dragRef.current;
+    if (current?.id !== id) return;
+    const dx = event.clientX - current.startX;
+    const dy = event.clientY - current.startY;
+    dragRef.current = { ...current, dx, dy, moved: current.moved || Math.hypot(dx, dy) > DRAG_THRESHOLD };
+    setDrag(dragRef.current);
+  };
+
+  const endDrag = () => {
+    dragRef.current = null;
+    setDrag(null);
   };
 
   const onPointerUp = (event: ReactPointerEvent<HTMLButtonElement>, id: number) => {
-    if (drag?.id !== id) return;
+    const current = dragRef.current;
+    if (current?.id !== id) return;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    if (!drag.moved) {
-      setDrag(null);
+    if (!current.moved) {
+      endDrag();
       return;
     }
     dragged.current = true;
-    const to = spaceAt(event.clientX, event.clientY);
+    const to = targetAt(event.clientX, event.clientY);
     /* Snapshot WITH the drag offset still applied, so the tile flies on from
-       where the finger let go — into its space, or back home. */
+       where the finger let go — into its space, or back where it was. */
     if (to === null) snapshot();
     else moveTo(id, to);
-    setDrag(null);
+    endDrag();
   };
 
   const onClick = (id: number) => {
@@ -281,7 +338,11 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
   /* ---- Help ---- */
   useImperativeHandle(ref, () => ({
     reset: () => {
-      if (!locked) fill(Array(word.length).fill(null));
+      if (!locked)
+        fill(
+          Array(word.length).fill(null),
+          Array.from({ length: word.length }, (_, i) => i),
+        );
     },
     help: () => {
       if (locked) return;
@@ -290,7 +351,8 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
 
       /* Right letters stay; the rest go home first. */
       const kept: Slots = slots.map((id, i) => (id !== null && dealt[id] === word[i] ? id : null));
-      const used = new Set(kept.filter((id): id is number => id !== null));
+      const keptIds = kept.filter((id): id is number => id !== null);
+      const used = new Set(keptIds);
       const steps: Slots[] = [];
       let state = kept;
       kept.forEach((id, i) => {
@@ -301,13 +363,20 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         steps.push(state);
       });
 
+      /* Everything not kept is in the tray, each where it can go. */
+      const trayNow = sendHome(
+        tray,
+        dealt.flatMap((_, id) => (slots.includes(id) && !keptIds.includes(id) ? [id] : [])),
+      );
       snapshot();
       setSlots(kept);
+      setTray(trayNow);
       steps.forEach((step, k) => {
         timers.current.push(
           window.setTimeout(() => {
             snapshot();
             setSlots(step);
+            setTray(trayNow.map((id) => (id !== null && step.includes(id) ? null : id)));
             if (k === steps.length - 1) {
               setSolved(true);
               onSolved();
@@ -342,7 +411,7 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         onPointerDown={(event) => onPointerDown(event, id)}
         onPointerMove={(event) => onPointerMove(event, id)}
         onPointerUp={(event) => onPointerUp(event, id)}
-        onPointerCancel={() => setDrag(null)}
+        onPointerCancel={endDrag}
         /* `touch-action: none` or a drag scrolls the page instead. */
         className={`clay flex h-full w-full touch-none select-none items-center justify-center rounded-[28%] pb-[6%] text-[length:62cqi] font-bold leading-none text-white focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--page-accent-color)] ${
           isDragging ? "relative z-10 cursor-grabbing" : locked ? "cursor-default" : "cursor-grab hover:brightness-105"
@@ -402,17 +471,20 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         className="flex max-w-xl flex-wrap justify-center gap-2 sm:gap-3 lg:grid lg:w-full lg:gap-2.5 lg:px-5"
         style={{ gridTemplateColumns: `repeat(${word.length}, minmax(0, 4.5rem))` }}
       >
-        {dealt.map((_, id) => (
+        {tray.map((id, cell) => (
           <span
-            key={id}
+            key={cell}
+            ref={(el) => {
+              cellEls.current[cell] = el;
+            }}
             className={`@container relative block h-[3.25rem] w-[3.25rem] sm:h-[4.5rem] sm:w-[4.5rem] lg:aspect-square lg:h-auto lg:w-full ${
               showHint && id === firstLetterTile ? "guide-target" : ""
             }`}
           >
-            {slots.includes(id) ? (
-              <span className="letter-gap block h-full w-full rounded-[28%] border-2 border-dashed border-[color-mix(in_srgb,var(--color-ink-soft)_30%,transparent)]" />
-            ) : (
+            {id !== null ? (
               tileFor(id, null)
+            ) : (
+              <span className="letter-gap block h-full w-full rounded-[28%] border-2 border-dashed border-[color-mix(in_srgb,var(--color-ink-soft)_30%,transparent)]" />
             )}
           </span>
         ))}
