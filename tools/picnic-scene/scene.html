@@ -4236,6 +4236,9 @@ const VEG = params.get("world") === "veg";
 /* Nova's seasons (`?garden=<1-5>&world=hill`, 2026-11-05): one hill, one tree,
    the camera turning round it. */
 const YEAR_HILL = params.get("world") === "hill";
+/* A course's world of stops (`?garden=1&world=stops`, 2026-11-05, Shapes
+   first): its lessons on pedestals, the camera going in as the page scrolls. */
+const STOPS = params.get("world") === "stops";
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -5145,16 +5148,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, STOPS ? "#ffd3e4" : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, STOPS ? "#ffdceb" : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, STOPS ? "#ffe3ee" : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, STOPS ? "#ffe3ee" : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = STOPS ? new THREE.Fog(0xffe3ee, 60, 135) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -5219,8 +5222,8 @@ if (THING) {
   gravel.position.set(60, 0.03, (PATH[0] + PATH[1]) / 2);
   gravel.castShadow = false;
   scene.add(gravel);
-  if (YEAR_HILL) scene.remove(gravel);
-  for (const z of FOREST || YEAR_HILL ? [] : PATH) {
+  if (YEAR_HILL || STOPS) scene.remove(gravel);
+  for (const z of FOREST || YEAR_HILL || STOPS ? [] : PATH) {
     for (let x = -60; x < 300; x += 0.92) {
       /* Nova's: the way up to her door leaves the path here. */
       if (VEG && z === PATH[0] && Math.abs(x - 16) < 1.7) continue;
@@ -5358,7 +5361,7 @@ if (THING) {
      places and no Find. */
   const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
-  const fx = VEG || YEAR_HILL ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = VEG || YEAR_HILL || STOPS ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -5508,7 +5511,7 @@ if (THING) {
     scene.add(at(ball(0.1, glaze(0xffc93a), 16), c + 2.65, 1.6, WALL_Z));
   }
 
-  if (VEG || YEAR_HILL) {
+  if (VEG || YEAR_HILL || STOPS) {
     /* Nova's garden and hill are built further down, once their helpers are
        in scope. */
   } else if (FOREST) {
@@ -5753,7 +5756,7 @@ if (THING) {
      The camera's last move tilts down onto it, and the Find is played
      there, in the garden itself. ---- */
   const PICNIC = FOREST ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
-  const HAS_FIND = VEG || YEAR_HILL ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
+  const HAS_FIND = VEG || YEAR_HILL || STOPS ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
   const FIND_Z = -1.6;
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
@@ -6781,6 +6784,212 @@ if (THING) {
     }
   }
 
+  /* ---- A course's world of stops (2026-11-05, Shapes first; the user's
+     picture): no map and no board — soft clay pedestals, each in its lesson's
+     shape with that shape standing on it, stepping stones between them, a
+     treasure chest on the last (the review). The ground and sky one pale
+     pink, Pinki's; the shape garden's soul round about: its lawns, lollipop,
+     cone and box topiaries, a round fountain, flowers, the shapes' own clay
+     colours. The camera goes up a little and IN as the page scrolls
+     (`frameAt(t)`, played by `CourseWorld`), never a flat scroll. ---- */
+  const stopsApi = {};
+  if (STOPS) {
+    lawn.material = soft(0xffe3ee, { roughness: 0.95, sheen: 0.2 });
+    lawn.scale.set(1, 3, 1);
+    lawn.position.set(0, 0, -40);
+    lawn.userData.noMerge = true;
+    sun.intensity = 1.9;
+    sky.intensity = 1.25;
+    sky.color.set(0xfff4f8);
+    sky.groundColor.set(0xffd0e0);
+    Object.assign(sun.shadow.camera, { left: -38, right: 38, top: 38, bottom: -38, far: 130 });
+    sun.shadow.camera.updateProjectionMatrix();
+
+    const SPOTS = portrait
+      ? [[-2.5, 4.5], [2.6, -6.5], [-2.7, -17.5], [2.6, -28.5], [0, -41]]
+      : [[-5.2, 3.5], [5, -6.5], [-5.2, -17], [5.2, -27.5], [0, -40]];
+    const KINDS = ["circle", "square", "triangle", "rectangle"];
+    const base = soft(0xf48fbb, { roughness: 0.78 });
+    const green = soft(0x93d67a, { roughness: 0.88 });
+    const pedestal = (kind, k) => {
+      const g = new THREE.Group();
+      const thick = 0.75;
+      const body = mesh(roundedShapeExtrude(outline(kind, k), thick, 0.3), base);
+      body.geometry.center();
+      body.rotation.x = -Math.PI / 2;
+      body.position.y = (thick + 0.6) / 2;
+      const top = mesh(roundedShapeExtrude(outline(kind, k * 0.84), 0.1, 0.06), green);
+      top.geometry.center();
+      top.rotation.x = -Math.PI / 2;
+      top.position.y = thick + 0.62;
+      g.add(body, top);
+      g.top = thick + 0.72;
+      return g;
+    };
+    const stops = [];
+    KINDS.forEach((kind, i) => {
+      const [x, z] = SPOTS[i];
+      const g = new THREE.Group();
+      const ped = pedestal(kind, 3.0);
+      g.add(ped);
+      const statue = new THREE.Group();
+      const body = mesh(roundedShapeExtrude(outline(kind, 2.0), 0.4, 0.2), soft(SHAPE_COLOR[kind], { roughness: 0.58 }));
+      body.geometry.center();
+      statue.add(body);
+      const box = new THREE.Box3().setFromObject(body);
+      const face = kawaii(kind === "triangle" ? 1.5 : 1.9);
+      face.position.set(0, kind === "triangle" ? -0.35 : 0.02, box.max.z + 0.02);
+      statue.add(face);
+      statue.position.y = ped.top - box.min.y;
+      statue.rotation.y = x < 0 ? 0.22 : -0.22;
+      g.add(statue);
+      add(g, x, 0, z);
+      stops.push(g);
+    });
+    /* The review: a treasure chest, shut, on a big round pedestal. */
+    {
+      const [x, z] = SPOTS[4];
+      const g = new THREE.Group();
+      const ped = pedestal("circle", 4.0);
+      g.add(ped);
+      const gold = soft(0xffc94f, { roughness: 0.55 });
+      const deep = soft(0xf2a23c, { roughness: 0.7 });
+      const chest = new THREE.Group();
+      chest.add(at(rbox(3.6, 1.8, 2.5, gold, 0.26), 0, 0.9, 0));
+      chest.add(at(rbox(3.0, 1.3, 0.1, deep, 0.05), 0, 0.9, 1.26));
+      const lid = mesh(new THREE.CylinderGeometry(1.25, 1.25, 3.6, 64), gold);
+      lid.rotation.z = Math.PI / 2;
+      lid.scale.z = 0.82;
+      lid.position.y = 1.8;
+      chest.add(lid);
+      for (const sx of [-1.25, 1.25]) {
+        chest.add(at(rbox(0.36, 1.9, 2.62, deep, 0.1), sx, 0.95, 0));
+        const strap = mesh(new THREE.CylinderGeometry(1.31, 1.31, 0.38, 64), deep);
+        strap.rotation.z = Math.PI / 2;
+        strap.scale.z = 0.84;
+        strap.position.set(sx, 1.8, 0);
+        chest.add(strap);
+      }
+      const lock = at(rbox(0.86, 1.05, 0.28, gold, 0.16), 0, 1.68, 1.28);
+      chest.add(lock);
+      chest.add(at(ball(0.12, soft(0x8a5a22), 16), 0, 1.76, 1.44));
+      chest.add(at(rbox(0.09, 0.26, 0.04, soft(0x8a5a22), 0.02), 0, 1.56, 1.43));
+      chest.position.y = ped.top;
+      g.add(chest);
+      add(g, x, 0, z);
+      stops.push(g);
+    }
+    /* Stepping stones along a soft curve from one pedestal to the next. */
+    const stoneM = soft(0xf8b4d0, { roughness: 0.82 });
+    const stonesAt = [];
+    for (let i = 0; i < SPOTS.length - 1; i++) {
+      const [ax, az] = SPOTS[i], [bx, bz] = SPOTS[i + 1];
+      const curve = new THREE.QuadraticBezierCurve(new THREE.Vector2(ax, az), new THREE.Vector2((ax + bx) / 2 + (bx > ax ? -1.2 : 1.2), (az + bz) / 2), new THREE.Vector2(bx, bz));
+      for (let k = 0; k < 5; k++) {
+        const u = 0.25 + (k / 4) * 0.5;
+        const p = curve.getPoint(u), t = curve.getTangent(u);
+        const st = rbox(1.7, 0.34, 1.35, stoneM, 0.16);
+        add(st, p.x, 0.17, p.y, { ry: Math.atan2(t.x, t.y) });
+        stonesAt.push([p.x, p.y]);
+      }
+    }
+    /* Round about: clay hills, the garden's topiaries, lawns and flowers,
+       the shapes' colours. Nothing near a pedestal or the way between them. */
+    const nearStop = (x, z, r = 5.2) => SPOTS.some(([sx, sz]) => Math.hypot(x - sx, z - sz) < r);
+    const dome = (r, ht, color) => {
+      const m = mesh(new THREE.SphereGeometry(r, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), soft(color, { roughness: 0.85 }));
+      m.scale.y = ht / r;
+      return m;
+    };
+    const side = portrait ? 9.5 : 17;
+    for (const [sx, z, r, ht, color] of [[-1, -10, 4.5, 5, 0xf7bcd4], [1, -20, 5, 6, 0xb9e3a4], [-1, -26, 5.5, 7, 0xc6e8b2], [1, -34, 5.5, 7, 0xf7bcd4], [-1, -42, 6, 8, 0xf7bcd4], [1, -47, 6, 8, 0xb9e3a4]]) {
+      add(dome(r, ht, color), sx * (side + r * 0.6), 0, z);
+    }
+    /* Far off, past the chest: a bow in the shapes' colours between two
+       hills (the moon gate grown large), and a tall hill with a golden top. */
+    [[10.6, 0xf9a8c6], [8.9, 0xffd267], [7.2, 0x8cc4f2]].forEach(([r, color]) => {
+      const bow = mesh(new THREE.TorusGeometry(r, 0.95, 28, 96, Math.PI), soft(color, { roughness: 0.72 }));
+      add(bow, 0, 0, -56);
+    });
+    add(dome(6.5, 5.5, 0xf4bfd8), -9.5, 0, -52);
+    add(dome(6, 5, 0xc9e7b4), 9.5, 0, -51.5);
+    add(dome(9, 16, 0xf4bfd8), portrait ? 12 : 22, 0, -60);
+    const cap = mesh(new THREE.SphereGeometry(9, 64, 24, 0, Math.PI * 2, 0, 0.72), soft(0xffd267, { roughness: 0.75 }));
+    cap.scale.y = 16 / 9;
+    add(cap, portrait ? 12 : 22, 0.08, -60);
+    const flowerColors = [0xffffff, 0xff8fa8, 0xffd267, 0x9ccaf5];
+    /* The picture's flower: chubby, one bloom on a short stem, a round leaf. */
+    const chubby = (color) => {
+      const g = new THREE.Group();
+      g.add(at(mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.75, 14), soft(0x7fcb70)), 0, 0.37, 0));
+      const leafL = ball(0.2, soft(0x8fd67c), 18);
+      leafL.scale.set(1.5, 0.5, 0.9);
+      g.add(at(leafL, 0.24, 0.24, 0));
+      const bloom = blossom(color);
+      bloom.scale.setScalar(2.1);
+      bloom.position.y = 0.86;
+      bloom.rotation.x = -0.55;
+      g.add(bloom);
+      return g;
+    };
+    /* And its sprig: a stem with round leaves up both sides. */
+    const sprig = () => {
+      const g = new THREE.Group();
+      g.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.13, 2, 14), soft(0x7fcb70)), 0, 1, 0));
+      for (const [y, sx] of [[0.7, 1], [0.75, -1], [1.35, 1], [1.4, -1], [2.05, 0]]) {
+        const l = ball(0.3, soft(0x8fd67c), 20);
+        l.scale.set(sx ? 1.45 : 0.9, sx ? 0.7 : 1.3, 0.7);
+        g.add(at(l, sx * 0.42, y, 0));
+      }
+      return g;
+    };
+    const patch = (x, z, r) => {
+      const lawnPatch = mesh(new THREE.CylinderGeometry(r, r * 1.04, 0.1, 48), green);
+      lawnPatch.scale.z = 0.72;
+      lawnPatch.castShadow = false;
+      add(lawnPatch, x, 0.06, z);
+      for (let i = 0; i < 4; i++) {
+        const a = rand() * 6.28, d = rand() * r * 0.75;
+        add(chubby(flowerColors[i % 4]), x + Math.cos(a) * d, 0.1, z + Math.sin(a) * d * 0.72, { k: 1.1 + rand() * 0.4, ry: rand() * 0.8 - 0.4 });
+      }
+    };
+    const inner = portrait ? 7 : 12.5;
+    const dressing = [
+      () => lollipop(0x5aa9ee), () => coneTopiary(3.4, 0xffc93a), () => boxTopiary(1.8, 0x58c27d), () => group(hedgeBall(1.4)), () => lollipop(0xff8fbf), () => coneTopiary(3, 0x5aa9ee),
+    ];
+    let which = 0;
+    for (let z = 10; z > -50; z -= 4.6 + rand() * 2.4) {
+      for (const sx of [-1, 1]) {
+        const x = sx * (inner + rand() * 3.5);
+        if (nearStop(x, z)) continue;
+        if (rand() > 0.42) add(dressing[which++ % dressing.length](), x, 0, z, { k: 1.1 + rand() * 0.3 });
+        else patch(x, z, 2 + rand() * 1.2);
+      }
+    }
+    /* Little flowers over the bare ground, off the way. */
+    for (let i = 0; i < 46; i++) {
+      const x = (rand() - 0.5) * (portrait ? 15 : 25), z = 9 - rand() * 54;
+      if (nearStop(x, z, 4.8) || stonesAt.some(([a, b]) => Math.hypot(x - a, z - b) < 2)) continue;
+      add(i % 5 === 0 ? sprig() : chubby(flowerColors[i % 4]), x, 0, z, { k: i % 5 === 0 ? 0.9 + rand() * 0.3 : 1.1 + rand() * 0.5, ry: rand() * 0.8 - 0.4 });
+    }
+    /* A round fountain beside the first stops, the garden's. */
+    {
+      const blue = soft(0xbfe0fb, { roughness: 0.5 });
+      const white = soft(0xfff6ee);
+      const f = group(at(mesh(new THREE.CylinderGeometry(2.2, 2.4, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.3, 0.45, 1.6, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(1, 0.8, 0.3, 40), white), 0, 2.4, 0), at(ball(0.42, soft(0xff8fbf), 24), 0, 2.9, 0));
+      add(f, portrait ? 7.5 : 13.5, 0, -11);
+    }
+    /* Clouds with the friends' face, up above the far side. */
+    for (const [x, y, z, k] of [[-11, 13, -24, 2.1], [10, 15, -38, 2.4], [-9, 16, -56, 2.6], [8, 12, -10, 1.8]]) {
+      const c = cloud(k);
+      const look = kawaii(1.1 * k);
+      look.position.set(0, 0.9 * k, 1.05 * k);
+      add(group(c, look), portrait ? x * 0.6 : x, y, z);
+    }
+    stopsApi.stops = stops;
+    stopsApi.spots = SPOTS;
+  }
+
   /* Where each step happens, and its flower beside it (a little in front,
      to the right — out of the activity's way, in the camera's view). */
   /* A hill camera: [degrees round the tree, its distance, its height, how
@@ -6795,7 +7004,9 @@ if (THING) {
     return { pos: [x, hillY(x, z), z], ry: THREE.MathUtils.degToRad(deg), make, k };
   };
   const faraway = portrait ? 3 : 0;
-  const PLACES = YEAR_HILL
+  const PLACES = STOPS
+    ? [{ cam: [0, 10, 20, 0, 0, 0] }]
+    : YEAR_HILL
     ? HILL_SEASON
       ? [
           { ...onHill(40, 10, () => vegSign(HILL_SEASON), 0.9), pose: hillPose(10, 18 + faraway, 5.6, 1.2, 5.2) },
@@ -6862,7 +7073,7 @@ if (THING) {
       scene.add(prop);
       keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
     }
-    if (VEG || YEAR_HILL) return null;
+    if (VEG || YEAR_HILL || STOPS) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
     const flower = FOREST ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
@@ -6892,7 +7103,7 @@ if (THING) {
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
-  for (let i = 0; i < 900 && !YEAR_HILL; i++) {
+  for (let i = 0; i < 900 && !YEAR_HILL && !STOPS; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
     if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
     const tuft = new THREE.Group();
@@ -6912,7 +7123,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket]);
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? [])]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
@@ -7212,7 +7423,48 @@ if (THING) {
     /* Which shape each thing is — the Find's answer key. */
     meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape, color: t.color }])) }),
   };
-  window.renderLayers = () => ({ preview: window.garden.station(0) });
+  if (STOPS) {
+    /* The camera through the stops: `t` 0 at the first, 1 at the chest. */
+    const [FROM, TO] = portrait
+      ? [[0, 16, 18.5, 0, 1.2, -3], [0, 19, -20.5, 0, 1.5, -42]]
+      : [[0, 15.5, 19.5, 0, 1, -6], [0, 13.5, -20, 0, 3.5, -45]];
+    const camAt = (t) => lerp(FROM, TO, t);
+    window.garden = {
+      async setFriend(picture) {
+        const tex = await new Promise((done) => new THREE.TextureLoader().load(picture, done));
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 8;
+        const height = 3.9;
+        const friend = new THREE.Mesh(new THREE.PlaneGeometry(height * (tex.image.width / tex.image.height), height), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
+        const [sx, sz] = stopsApi.spots[0];
+        friend.position.set(sx + (portrait ? 3.8 : 5.4), height / 2 - 0.1, sz + (portrait ? 1.6 : 1.2));
+        friend.userData.noMerge = true;
+        scene.add(friend);
+        stopsApi.friend = friend;
+      },
+      frameAt(t) {
+        aim(camAt(t));
+        if (stopsApi.friend) stopsApi.friend.rotation.y = Math.atan2(view.position.x - stopsApi.friend.position.x, view.position.z - stopsApi.friend.position.z);
+        return render("image/jpeg", 0.95);
+      },
+      /* Each stop's box on the picture at `t`, % — what the page lays its
+         link over. */
+      boxes(t) {
+        aim(camAt(t));
+        return stopsApi.stops.map((g) => {
+          const b = new THREE.Box3().setFromObject(g);
+          let [l, tp, r, bt] = [Infinity, Infinity, -Infinity, -Infinity];
+          for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+            const p = new THREE.Vector3(x, y, z).project(view);
+            const [px, py] = [((p.x + 1) / 2) * 100, ((1 - p.y) / 2) * 100];
+            [l, tp, r, bt] = [Math.min(l, px), Math.min(tp, py), Math.max(r, px), Math.max(bt, py)];
+          }
+          return [l, tp, r - l, bt - tp].map((v) => Math.round(v * 10) / 10);
+        });
+      },
+    };
+  }
+  window.renderLayers = () => ({ preview: window.garden.station ? window.garden.station(0) : window.garden.frameAt(0) });
 } else if (BACKDROP) {
   /* ---------- A course's backdrop (2026-10-13): its world behind every
      step, rendered sharp here and blurred by `crop.py backdrop`. Shapes:
