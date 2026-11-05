@@ -94,6 +94,13 @@
  *
  *   node tools/picnic-scene/render.cjs garden 1 2 3 4 5
  *
+ * Pinki's colour forest (2026-11-05) — the Colors course's world, the
+ * same kit as the garden (`scene.html?garden=<1-11>&world=forest`; lessons 1-10
+ * the colours in order, 11 the review): `out/forest-<n>-<frame>/`, then
+ * `crop.py forest`, which writes `src/data/color-forest.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs forest 1 2 3 4 5 6 7 8 9 10 11
+ *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
  * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
  * tipped one); then `crop.py playcard cups` (sharp, no blur):
@@ -115,7 +122,7 @@
  * Needs Playwright with Chromium (`npx playwright install chromium`); not a
  * project dependency — the site only ships the finished images.
  */
-const { chromium } = require("playwright");
+const { chromium } = require(process.env.PW || "playwright");
 const fs = require("fs");
 const path = require("path");
 
@@ -133,7 +140,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = mode === "garden" ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = mode === "garden" || mode === "forest" ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -189,7 +196,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${name}&frame=${frame}`)).backdrop);
     }
-  } else if (mode === "garden") {
+  } else if (mode === "garden" || mode === "forest") {
     /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
        — each station's still, every frame of each camera move (`m<i>/`;
        move 0 is the entry, the last the end's rise over the path in
@@ -200,10 +207,10 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     const FPS = 30;
     for (const lesson of specs) {
       for (const frame of ["landscape", "portrait"]) {
-        const out = path.join(__dirname, "out", `garden-${lesson}-${frame}`);
+        const out = path.join(__dirname, "out", `${mode}-${lesson}-${frame}`);
         fs.mkdirSync(out, { recursive: true });
         const open = async (px) => {
-          await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=${lesson}&frame=${frame}&px=${px}`);
+          await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=${lesson}&frame=${frame}&px=${px}${mode === "forest" ? "&world=forest" : ""}`);
           await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
         };
         await open(1);
@@ -216,14 +223,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : i === stations - 1 ? SECONDS.end : lesson === "5" ? SECONDS.walk : SECONDS.step));
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
           }
-          console.log(`garden ${lesson} ${frame} move ${i}: ${n} frames`);
+          console.log(`${mode} ${lesson} ${frame} move ${i}: ${n} frames`);
         }
-        if (Number(lesson) <= 4) {
+        if (Number(lesson) <= (mode === "forest" ? 10 : 4)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");
