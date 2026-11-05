@@ -95,11 +95,11 @@
  *   node tools/picnic-scene/render.cjs forest 1 2 3 4 5 6 7 8 9 10 11
  *
  * Nova's vegetable garden (2026-11-05) — the Vegetables course's world, the
- * same kit (`scene.html?garden=<1-5>&world=veg`, the lessons' vegetables in
- * order): `out/veg-<n>-<frame>/`, lesson 1's with Basket Time's kitchen in
- * layers; then `crop.py veg`, which writes `src/data/veg-garden.ts`:
+ * same kit (`scene.html?garden=<1-6>&world=veg`, the lessons' vegetables in
+ * order, 6 the review): `out/veg-<n>-<frame>/`, lesson 1's with Basket Time's
+ * kitchen in layers; then `crop.py veg`, which writes `src/data/veg-garden.ts`:
  *
- *   node tools/picnic-scene/render.cjs veg 1 2 3 4 5
+ *   node tools/picnic-scene/render.cjs veg 1 2 3 4 5 6
  *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
  * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
@@ -228,7 +228,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : mode === "veg" && i === 2 ? SECONDS.indoors : SECONDS.step));
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : mode === "veg" && i === (lesson === "6" ? 1 : 2) ? SECONDS.indoors : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
