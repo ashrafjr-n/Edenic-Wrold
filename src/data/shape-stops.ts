@@ -2,8 +2,8 @@
    `render.cjs stops`) — the Shapes course's world of stops (2026-11-05).
    Edit the scene, not this file. */
 import type { CourseStops } from "@/types/course";
-import landscape from "../../public/assets/learn/pinki/shapes/stops/landscape/f000.jpg";
-import portrait from "../../public/assets/learn/pinki/shapes/stops/portrait/f000.jpg";
+import landscape from "../../public/assets/learn/pinki/shapes/stops/landscape/f089.jpg";
+import portrait from "../../public/assets/learn/pinki/shapes/stops/portrait/f089.jpg";
 
 /** The camera going in as the page scrolls: 90 frames, each stop's box
     (% of the frame) at even steps along the way. */

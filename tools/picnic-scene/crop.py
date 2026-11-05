@@ -340,7 +340,7 @@ if NAME == "stops":
         for stop in range(len(keys[0])):
             dist = [abs(k[stop][1] + k[stop][3] / 2 - 58) for k in keys]
             focus.append(round(dist.index(min(dist)) / (len(keys) - 1), 3))
-        imports.append(f'import {frame} from "../../{dest}/{frame}/f000.jpg";')
+        imports.append(f'import {frame} from "../../{dest}/{frame}/f{meta["frames"] - 1:03d}.jpg";')
         parts.append(
             f'  {frame}: {{\n    first: {frame},\n    path: "/{dest[len("public/"):]}/{frame}/",\n    version: "{crc:08x}",\n    focus: {json.dumps(focus)},\n'
             f'    keys: {json.dumps(keys, separators=(",", ":"))},\n  }},'
