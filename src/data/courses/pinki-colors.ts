@@ -1,9 +1,7 @@
-import type { ColorId, Face, LessonDef, Question, Scene, SceneItem } from "@/types/course";
-import { COLOR_ORDER, COLORS, colorBin, potFace } from "@/data/colors";
+import type { ColorId, LessonDef, Question, Scene, SceneItem } from "@/types/course";
+import { COLOR_ORDER, COLORS, colorBin, dotFace } from "@/data/colors";
 import * as scenes from "@/data/color-scenes";
 import { FOREST, FOREST_FIND } from "@/data/color-forest";
-
-const text = (value: string): Face => ({ kind: "text", text: value });
 
 /** Each color's picnic, where its lesson ends with Find. (Its two things
     to paint went with the Paint step — removed on direct request,
@@ -38,8 +36,8 @@ function othersFor(color: ColorId, count: number): ColorId[] {
 }
 
 /**
- * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (its
- * pot, the word in its own color), spell it, mix it (the three made
+ * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (the
+ * word in its own color, under its splash on the forest's easel), spell it, mix it (the three made
  * colors), pop its balloons, then find it in its picnic — all in Pinki's
  * forest (2026-11-05: the course's world, `data/color-forest.ts`; the
  * picnic lies on the forest floor and the camera tilts down onto it).
@@ -49,23 +47,24 @@ function othersFor(color: ColorId, count: number): ColorId[] {
 function colorLesson(color: ColorId, n: number): LessonDef {
   const mix = MIXES[color];
   const questions: Question[] = [
-    { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color, picture: COLORS[color].pot },
+    { type: "word", ask: { key: "thisColor", vars: { color } }, word: color, color },
     { type: "spell", ask: { key: "spell", vars: { word: color } }, word: color, color },
   ];
   if (mix) {
     const [a, b] = mix;
     questions.push({
-      type: "pick",
+      type: "mix",
       ask: { key: "mix", vars: { a, b } },
-      show: [potFace(a), text("+"), potFace(b), text("="), text("?")],
-      options: [color, ...othersFor(color, 9).filter((c) => !mix.includes(c)).slice(0, 2)].map(potFace),
-      answer: 0,
+      a,
+      b,
+      color,
+      others: othersFor(color, 9).filter((c) => !mix.includes(c)).slice(0, 2),
     });
   }
   questions.push(
     { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: SCENES[color], world: FOREST_FIND[n] },
   );
-  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].pot], world: FOREST[n], questions };
+  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].dot], world: FOREST[n], questions };
 }
 
 /** One thing out of a picnic, for the review's boxes. */
@@ -84,7 +83,7 @@ export const pinkiColors: LessonDef[] = [
      a color named by its word (plain letters — it must be read), then two
      colors spelled from the pot alone, with no word on screen. */
   {
-    cover: [COLORS.red.pot, COLORS.yellow.pot, COLORS.green.pot, COLORS.purple.pot],
+    cover: [COLORS.red.dot, COLORS.yellow.dot, COLORS.green.dot, COLORS.purple.dot],
     /* The review walks the forest: a place for each of its five steps. */
     world: FOREST[11],
     questions: [
@@ -103,10 +102,10 @@ export const pinkiColors: LessonDef[] = [
           thing(scenes.purpleThings, "eggplant"),
         ],
       },
-      { type: "pick", ask: { key: "whichColor", vars: { color: "brown" } }, word: "brown", plain: true, options: [potFace("brown"), potFace("orange"), potFace("black"), potFace("pink")], answer: 0 },
-      { type: "pick", ask: { key: "whichColor", vars: { color: "orange" } }, word: "orange", plain: true, options: [potFace("purple"), potFace("orange"), potFace("red"), potFace("yellow")], answer: 1 },
-      { type: "spell", ask: { key: "spellColor" }, word: "green", picture: COLORS.green.pot },
-      { type: "spell", ask: { key: "spellColor" }, word: "pink", picture: COLORS.pink.pot },
+      { type: "pick", ask: { key: "whichColor", vars: { color: "brown" } }, word: "brown", plain: true, options: [dotFace("brown"), dotFace("orange"), dotFace("black"), dotFace("pink")], answer: 0 },
+      { type: "pick", ask: { key: "whichColor", vars: { color: "orange" } }, word: "orange", plain: true, options: [dotFace("purple"), dotFace("orange"), dotFace("red"), dotFace("yellow")], answer: 1 },
+      { type: "spell", ask: { key: "spellColor" }, word: "green", picture: COLORS.green.dot },
+      { type: "spell", ask: { key: "spellColor" }, word: "pink", picture: COLORS.pink.dot },
     ],
   },
 ];

@@ -9,10 +9,13 @@ interface WordCardProps {
   word: string;
   /** The shape the word names, drawn above it — word and shape together. */
   shape?: ShapeId;
-  /** Or a picture of what it names — a color's paint pot. */
+  /** Or a picture of what it names. */
   picture?: StaticImageData;
   /** The picture leans toward the finger (`TiltPicture`). */
   tilt?: boolean;
+  /** What it names is in the world behind it (a color's splash on the
+      forest's easel): just the speaker and the word, on a card under it. */
+  onScene?: boolean;
   /** One tone for all its letters — a color word in its own color. */
   tone?: LetterTone;
   /** The word's own clip — `lessonCue.word`. */
@@ -27,7 +30,16 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, tilt, tone, cue, label }: WordCardProps) {
+export function WordCard({ word, shape, picture, tilt, onScene = false, tone, cue, label }: WordCardProps) {
+  if (onScene) {
+    return (
+      <div className="card card-clay-white anim-pop-in mt-auto flex items-center gap-4 px-5 py-3 sm:gap-6 sm:px-8 sm:py-4">
+        <CueButton cue={cue} label={label} size="lg" invite />
+        <ClayWord word={word} size="md" tone={tone} />
+      </div>
+    );
+  }
+
   /* Desktop: side by side — the shape big on the left, the speaker above
      the word on the right. The two wrappers are `contents` below `lg`, so
      the phone's column is exactly what it was. */
