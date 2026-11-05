@@ -683,8 +683,9 @@ with the user's OK on its look (a still) before it is built.
       (`render.cjs veg`, `crop.py veg`): sign, seed packets, in at the door to
       Basket Time played in the kitchen; the bed grows the lesson's vegetable,
       ripe in the end shot; the user checks it
-- [ ] Vegetables: the review in the world (phase 3 — soup in the kitchen,
-      likes at a garden table, spells at the packets, the exam among the beds)
+- [x] Vegetables: the review in the world — built 2026-11-05: soup at the
+      counter, likes at a garden table, spells at the packets, the exam over
+      the bed
 - [ ] Seasons · Animals · Weather — the
       plan, agreed 2026-11-04 (below, "Course worlds, the plan")
 
