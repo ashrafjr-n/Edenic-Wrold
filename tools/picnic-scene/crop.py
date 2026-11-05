@@ -324,6 +324,17 @@ if NAME == "stops":
             name = f"f{f:03d}.jpg"
             Image.open(f"{out}/{name}").convert("RGB").save(f"{to}/{name}", quality=80, optimize=True, progressive=True)
             crc = zlib.crc32(open(f"{to}/{name}", "rb").read(), crc)
+            # The four ways' stones, one tile each, down one small PNG: white,
+            # the mask as its alpha.
+            masks = [Image.open(f"{out}/w{f:03d}-{k}.png").convert("L") for k in range(4)]
+            tw, th = (800, 450) if frame == "landscape" else (450, 800)
+            sheet = Image.new("LA", (tw, th * 4), (255, 0))
+            for k, mask in enumerate(masks):
+                alpha = mask.resize((tw, th), Image.LANCZOS)
+                tile = Image.merge("LA", (Image.new("L", (tw, th), 255), alpha))
+                sheet.paste(tile, (0, th * k))
+            sheet.save(f"{to}/w{f:03d}.png", optimize=True)
+            crc = zlib.crc32(open(f"{to}/w{f:03d}.png", "rb").read(), crc)
         keys = meta["keys"]
         focus = []
         for stop in range(len(keys[0])):
