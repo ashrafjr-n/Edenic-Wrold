@@ -677,7 +677,8 @@ with the user's OK on its look (a still) before it is built.
 - [x] Colors (forest) — built 2026-11-05 (`render.cjs forest`, `crop.py forest`;
       11 worlds); same day on request: Pop deleted, the Find part of the
       forest (the camera walks on, things of a colour stand in it), the
-      forest made over, a crayon instead of the paint pot; the user checks it
+      forest made over, a plain dot instead of the paint pot, the word step's splash on the easel,
+      Mix redesigned (`mix-colors.tsx`); the user checks it
 - [ ] Vegetables · Seasons · Animals · Weather — the
       plan, agreed 2026-11-04 (below, "Course worlds, the plan")
 
@@ -753,8 +754,8 @@ leads; the older items below fold into it:
        steps (letters, tiles, buttons, boxes), one course at a time; the
        Spell's faint dashed slots over the backdrops on a desktop.
 2. [x] **Redesign the course page** — done 2026-11-02 (`BoardLessons`):
-       the next lesson big in the middle, every lesson in order one
-       under the other (2026-11-05; numbered, learned ticked, the next ringed,
+       the next lesson big in the middle, every lesson in order in
+       rows of cards (2026-11-05; numbered, learned ticked, the next ringed,
        the review a paper sheet).
 3. [ ] **Audio** — every taught word and line recorded (§7), `playCue`
        wired (`lib/cue.ts`, howler.js — a new dependency, ask first); one
