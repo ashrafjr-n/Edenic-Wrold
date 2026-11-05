@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import { BASKET, GARDENS } from "@/data/garden";
 import { KITCHEN } from "@/data/kitchen";
+import { VEG_GARDEN } from "@/data/veg-garden";
 import type { Face, Food, LessonDef, Vegetable } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
@@ -44,11 +45,13 @@ const line = (word: string, count: number) => ({ word, things: food(word).things
 const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
 
 /**
- * Nova's garden — one thing, one lesson: watch its reel, meet it (its
- * picture, its word, its speaker), build its word, then Basket Time —
- * read its word and put it from the kitchen counter, among everything
- * else on it, into the basket (the user's design, 2026-11-01: Find It!
- * merged into it). Its demo carries another vegetable. (Grow it, the
+ * Nova's garden (2026-11-05: the course's world, `data/veg-garden.ts`; its
+ * bed grows the lesson's vegetable as the steps are done) — one thing, one
+ * lesson: watch its reel, meet it (its picture, its word, its speaker) by
+ * the bed's sign, build its word among the seed packets, then go in at her
+ * door to Basket Time — read its word and put it from the kitchen counter,
+ * among everything else on it, into the basket (the user's design,
+ * 2026-11-01: Find It! merged into it). Its demo carries another vegetable. (Grow it, the
  * third step from 2026-10-24, was removed 2026-11-01; Nova's cups,
  * before it, are a game on `/play`.) Picking in her garden is the
  * review's exam, with several foods to tell apart.
@@ -60,6 +63,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
+    world: VEG_GARDEN[i + 1],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
