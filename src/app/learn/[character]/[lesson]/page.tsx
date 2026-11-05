@@ -47,7 +47,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <CourseWorld
           world={world}
           titles={course.items}
-          stops={stops}
           characterId={character.id}
           lessonId={lesson.id}
           basePath={basePath}
