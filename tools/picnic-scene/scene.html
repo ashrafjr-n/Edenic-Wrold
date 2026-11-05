@@ -1497,33 +1497,6 @@ const ITEMS = {
     g.rotation.y = -0.22;
     return g;
   },
-  // Colors (2026-11-05): a crayon of the color, standing, leaning a little —
-  // replaces the paint pot as the color's picture. Paper wrapper in a
-  // darker tone of it, two stripes, a rounded cone tip.
-  crayon(color = "red") {
-    const paint = PAINT[color];
-    const tone = new THREE.Color(paint);
-    const wrap = tone.clone().lerp(new THREE.Color(color === "white" ? 0x9aa0a8 : 0x000000), color === "white" ? 0.35 : 0.28);
-    const wax = { clearcoat: 0.5, clearcoatRoughness: 0.28, roughness: 0.4, sheen: 0 };
-    const crayon = new THREE.Group();
-    const R = 0.36;
-    // the wrapper: the lower two thirds
-    crayon.add(mesh(new THREE.CylinderGeometry(R, R, 1.5, 96, 1), clay(wrap.getHex(), { roughness: 0.55, clearcoat: 0.15 })).translateY(0.75));
-    for (const y of [0.3, 1.2]) {
-      const band = mesh(new THREE.CylinderGeometry(R + 0.006, R + 0.006, 0.1, 96, 1, true), clay(0xffffff, { roughness: 0.6 }));
-      band.position.y = y;
-      crayon.add(band);
-    }
-    // the flat base, a little pale
-    crayon.add(mesh(new THREE.CylinderGeometry(R, R, 0.04, 96), clay(tone.clone().lerp(new THREE.Color(0xffffff), 0.3).getHex(), wax)).translateY(0.02));
-    // the wax: the top third, then the cone, its point rounded
-    crayon.add(mesh(new THREE.CylinderGeometry(R - 0.012, R - 0.012, 0.55, 96), clay(paint, wax)).translateY(1.5 + 0.275 - 0.02));
-    crayon.add(mesh(smoothLathe([[0, 0], [R - 0.012, 0], [R - 0.05, 0.3], [0.16, 0.62], [0.09, 0.72], [0.04, 0.745], [0, 0.75]]), clay(paint, wax)).translateY(2.03));
-    crayon.rotation.z = -0.28;
-    const g = new THREE.Group();
-    g.add(crayon);
-    return g;
-  },
   // Colors: a painter's palette, six paints on it and a brush across it
   palette() {
     const g = new THREE.Group();
@@ -5288,7 +5261,7 @@ if (THING) {
      spelling, (a mix), then the Find; the review has five
      places and no Find. */
   const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
-  const STEP_DX = 5.6;
+  const STEP_DX = 6.8;
   const fx = FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
@@ -5899,7 +5872,30 @@ if (THING) {
   };
 
   /* The word's easel: a white board in a pink frame on three legs. */
-  function easel(swatch) {
+  /* A splash of paint, about 2 across, facing +z: no shape of its own, like a
+     spilled drop of water, with a few droplets round it. */
+  function paintBlob(color) {
+    const g = new THREE.Group();
+    const [p, q, r] = [rand() * 6, rand() * 6, rand() * 6];
+    const radius = (a) => 1 + 0.17 * Math.sin(3 * a + p) + 0.1 * Math.sin(5 * a + q) + 0.05 * Math.sin(8 * a + r);
+    const pts = [];
+    for (let i = 0; i < 64; i++) {
+      const a = (i / 64) * Math.PI * 2;
+      pts.push(new THREE.Vector2(Math.cos(a) * radius(a), Math.sin(a) * radius(a) * 0.86));
+    }
+    const shape = new THREE.Shape();
+    shape.moveTo(pts[0].x, pts[0].y);
+    shape.splineThru([...pts.slice(1), pts[0]]);
+    const paint = clay(color, { clearcoat: 0.8, clearcoatRoughness: 0.2, roughness: 0.35, sheen: 0 });
+    g.add(mesh(roundedShapeExtrude(shape, 0.07, 0.05), paint));
+    for (const [a, d, k] of [[0.5, 1.42, 0.13], [2.5, 1.4, 0.1], [4.1, 1.38, 0.15], [5.5, 1.36, 0.08]]) {
+      const drop = at(ball(k, paint, 24), Math.cos(a + p) * d, Math.sin(a + p) * d * 0.8, 0.04);
+      drop.scale.z = 0.5;
+      g.add(drop);
+    }
+    return g;
+  }
+  function easel(splash) {
     const g = new THREE.Group();
     for (const sx of [-1, 1]) {
       const leg = at(rbox(0.13, 3.0, 0.13, WOOD, 0.05), sx * 0.85, 1.45, 0.05);
@@ -5911,8 +5907,14 @@ if (THING) {
     g.add(back);
     const board = new THREE.Group();
     board.add(rbox(2.5, 1.85, 0.1, glaze(0xff8fbf), 0.07));
-    board.add(at(rbox(2.25, 1.6, 0.06, glaze(0xffffff), 0.05), 0, 0, 0.05));
-    if (swatch !== undefined) board.add(at(rbox(1.3, 1.0, 0.05, glaze(swatch), 0.3), 0, 0, 0.1));
+    /* White paint needs a paper that is not white. */
+    board.add(at(rbox(2.25, 1.6, 0.06, glaze(splash === PAINT.white ? 0xbfcfe6 : 0xffffff), 0.05), 0, 0, 0.05));
+    if (splash !== undefined) {
+      const blob = paintBlob(splash);
+      blob.scale.setScalar(0.56);
+      blob.position.z = 0.09;
+      board.add(blob);
+    }
     board.position.set(0, 2.05, 0.2);
     board.rotation.x = -0.1;
     g.add(board);
@@ -6040,7 +6042,7 @@ if (THING) {
   }
 
   /* ---- The forest's props (Colors, 2026-11-05) ---- */
-  /* The mix: a tree stump with the two crayons to mix. */
+  /* The mix: a tree stump with the two paints spilled on it. */
   function stumpMix(a, b) {
     const g = new THREE.Group();
     g.add(at(mesh(new THREE.CylinderGeometry(1.75, 1.95, 0.8, 64), soft(0xb08a66, { roughness: 0.9 })), 0, 0.4, 0));
@@ -6050,11 +6052,12 @@ if (THING) {
       ring.rotation.x = Math.PI / 2;
       g.add(ring);
     }
-    for (const [color, x] of [[a, -0.85], [b, 0.85]]) {
-      const potA = ITEMS.crayon(color);
-      potA.scale.setScalar(1.15);
-      potA.position.set(x, 0.84, 0);
-      g.add(potA);
+    for (const [color, x] of [[a, -0.8], [b, 0.8]]) {
+      const puddle = paintBlob(PAINT[color]);
+      puddle.scale.setScalar(0.62);
+      puddle.rotation.x = -Math.PI / 2;
+      puddle.position.set(x, 0.86, 0);
+      g.add(puddle);
     }
     return g;
   }
@@ -6078,15 +6081,15 @@ if (THING) {
   const PLACES = FOREST
     ? COLOR_ID
       ? [
-          { x: 0, make: () => easel(PAINT[COLOR_ID]), color: PAINT[COLOR_ID] },
+          { x: 0, make: () => easel(PAINT[COLOR_ID]), k: 1.25, cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: PAINT[COLOR_ID] },
           { x: STEP_DX, make: () => letterBlocks(COLOR_ID), k: 1.7, color: PAINT[COLOR_ID] },
           ...(MIXES[COLOR_ID] ? [{ x: STEP_DX * 2, make: () => stumpMix(...MIXES[COLOR_ID]), color: PAINT[COLOR_ID] }] : []),
           { x: fx, z: FIND_Z, flower: [fx + 3.6, 3.6], color: PAINT[COLOR_ID] },
         ]
       : [
           { x: 0, make: colorBoxes, k: 1.4, color: PAINT.red },
-          { x: STEP_DX, make: () => easel(PAINT.brown), color: PAINT.yellow },
-          { x: STEP_DX * 2, make: () => easel(PAINT.orange), color: PAINT.green },
+          { x: STEP_DX, make: () => easel(), color: PAINT.yellow },
+          { x: STEP_DX * 2, make: () => easel(), color: PAINT.green },
           { x: STEP_DX * 3, make: () => letterBlocks("green"), k: 1.7, color: PAINT.pink },
           { x: STEP_DX * 4, make: () => letterBlocks("pink"), k: 1.7, color: PAINT.purple },
         ]
@@ -6188,7 +6191,7 @@ if (THING) {
      picnic. Then the END: the camera rises and looks back over the
      lesson's places, every flower out — the path it walked, in bloom. */
   const forestFind = portrait ? [fx, 4.4, 9.0, fx, 0.9, -1.5] : [fx, 3.7, 8.2, fx, 1.0, -1.5];
-  const steps = PLACES.map((place) => (place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  const steps = PLACES.map((place) => (place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const END = FOREST
     ? portrait

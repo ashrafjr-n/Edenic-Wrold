@@ -41,7 +41,7 @@
  * pixels, for fine detail — the videos' vegetables). Then
  * `crop.py things <dest>`.
  *
- *   node tools/picnic-scene/render.cjs thing red=pot:red apple=apple apple-blank=apple@blank
+ *   node tools/picnic-scene/render.cjs thing apple=apple apple-blank=apple@blank
  *
  * Where Bloo's animals live (`homes/`, renamed `home-cat.png` → `cat.png`
  * after cropping; the animals themselves are the videos' own — `cut.py`)

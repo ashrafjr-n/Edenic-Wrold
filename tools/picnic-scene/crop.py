@@ -84,7 +84,7 @@ into `dest`. `--grain` lays the clay buttons' grain over each (the
 friends' look and the videos': Nova's vegetables and her cup; Bloo's
 animals and their homes).
 
-    python3 tools/picnic-scene/crop.py things public/assets/learn/pinki/colors/pots red blue
+    python3 tools/picnic-scene/crop.py things public/assets/learn/pinki/shapes/things donut
     python3 tools/picnic-scene/crop.py things public/assets/learn/nova/fruits/things carrot --grain
 """
 import json
@@ -320,7 +320,10 @@ if NAME in ("garden", "forest"):
 
     def sigma(lesson, move, last, t):
         if move == 0:
-            return BLUR * smooth(0.5, 1.0, t)
+            return 0 if FOREST and lesson <= 10 else BLUR * smooth(0.5, 1.0, t)
+        # The colour lessons' first station stays sharp: its splash is the step.
+        if FOREST and lesson <= 10 and move == 1:
+            return BLUR * smooth(0.84, 1.0, t)
         come_in = 0 if has_find(lesson) and move == last else 1 - smooth(0.0, 0.12, t)
         go_out = 0 if has_find(lesson) and move == last - 1 else smooth(0.84, 1.0, t)
         return BLUR * max(come_in, go_out)
@@ -341,7 +344,7 @@ if NAME in ("garden", "forest"):
             for i in stations:
                 img = Image.open(f"{out}/s{i}.png").convert("RGB")
                 img.thumbnail((1280, 1280), Image.LANCZOS)
-                blurred(img, BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
+                blurred(img, 0 if FOREST and lesson <= 10 and i == 0 else BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
                 stills.append(f"s{i}.jpg")
             moves = []
             for i in stations:
