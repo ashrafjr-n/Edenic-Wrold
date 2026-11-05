@@ -686,7 +686,11 @@ with the user's OK on its look (a still) before it is built.
 - [x] Vegetables: the review in the world — built 2026-11-05: soup at the
       counter, likes at a garden table, spells at the packets, the exam over
       the bed
-- [ ] Seasons · Animals · Weather — the
+- [x] Seasons: Nova's hill, one tree, all 5 lessons — built 2026-11-05
+      (`render.cjs hill`, `crop.py hill`): the camera turns round the tree, the
+      season comes over it by itself, the review turns through the year. The
+      season activities are still to add (the user: not now)
+- [ ] Animals · Weather — the
       plan, agreed 2026-11-04 (below, "Course worlds, the plan")
 
 #### Course worlds, the plan (agreed 2026-11-04)
