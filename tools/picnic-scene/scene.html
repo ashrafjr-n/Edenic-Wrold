@@ -5450,7 +5450,7 @@ if (THING) {
   const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
   if (fx !== null) placeXs.push(fx);
   /* A spot an activity, or the Find, stands on. */
-  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.6 && z > -2.2 && z < 3.2) || (fx !== null && Math.abs(x - fx) < 6 && z > -6.5);
+  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.6 && z > -2.2 && z < 3.2) || (fx !== null && Math.abs(x - fx) < 6 && z > -10);
   const pick = (list) => list[Math.floor(rand() * list.length)];
 
   /* The path: flat stepping stones and worn earth, winding a little —
@@ -5823,12 +5823,15 @@ if (THING) {
     const first = (LESSON * 2) % KIND_LIST.length;
     const mine = [0, 1, 2, 3].map((j) => KIND_LIST[(first + j) % KIND_LIST.length]);
     const rest = KIND_LIST.filter((k) => !mine.includes(k));
-    const K = 0.7;
+    const K = 0.65;
     /* Each kind always in its own spot (short ones in front, tall ones
        behind), so nothing hides anything; only the colours change. */
+    /* Kept to the middle of the picture (the page crops its sides on a
+       4:3 tablet or a narrow phone, and covers its top and bottom with the
+       header and the tray) — rows in depth, tall things behind. */
     const SPOT = portrait
-      ? { bug: [-0.9, 3.0], ball: [1.0, 3.0], mushroom: [-1.7, 0.9], basket: [1.5, 0.9], bird: [-2.3, -1.3], butterfly: [0, -1.3], flower: [2.4, -1.3] }
-      : { bug: [-3.2, 2.2], ball: [-0.2, 2.4], mushroom: [3.0, 2.2], basket: [-4.4, -0.2], bird: [-1.6, -0.2], butterfly: [1.4, -0.2], flower: [4.2, -0.2] };
+      ? { bug: [-0.55, 2.0], ball: [0.65, 2.0], mushroom: [-0.7, -0.2], basket: [0.8, -0.2], bird: [-1.0, -2.2], flower: [1.0, -2.2], butterfly: [0, -4.7] }
+      : { bug: [-0.9, 1.0], ball: [0.9, 1.0], mushroom: [-1.8, -1.5], basket: [0, -1.5], bird: [1.8, -1.5], butterfly: [-1.0, -4.0], flower: [1.0, -4.0] };
     const entries = [...mine.map((k) => [k, COLOR_ID]), ...rest.map((k, i) => [k, DECOYS[COLOR_ID][i]])];
     entries.forEach(([kind, c], i) => {
       const [sx, sz] = SPOT[kind];
@@ -6184,7 +6187,7 @@ if (THING) {
   /* A step's station: its place straight ahead; the Find's over the
      picnic. Then the END: the camera rises and looks back over the
      lesson's places, every flower out — the path it walked, in bloom. */
-  const forestFind = portrait ? [fx, 3.4, 9.0, fx, 0.6, -2.5] : [fx, 3.0, 9.0, fx, 0.7, -2.2];
+  const forestFind = portrait ? [fx, 4.4, 9.0, fx, 0.9, -1.5] : [fx, 3.7, 8.2, fx, 1.0, -1.5];
   const steps = PLACES.map((place) => (place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const END = FOREST
