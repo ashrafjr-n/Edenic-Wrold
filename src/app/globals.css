@@ -1584,8 +1584,7 @@ bdi {
 /* ---------------------------------------------------------------
    A course's world of stops (`CourseWorld`, 2026-11-05, Shapes first): the
    run of the scroll, the links laid over the pedestals (each its own
-   container, so what is on it keeps its size with the stop), a hint to
-   scroll. Fixed colours: the world is the same picture in dark mode. */
+   container, so what is on it keeps its size with the stop). Fixed colours: the world is the same picture in dark mode. */
 .course-world-run {
   height: 340svh;
 }
@@ -1607,23 +1606,6 @@ bdi {
   outline: 4px solid var(--page-accent-color);
 }
 
-.course-stop-tag {
-  position: absolute;
-  left: 50%;
-  bottom: 12%;
-  translate: -50% 0;
-  padding: 0.15em 0.75em 0.2em;
-  border-radius: 999px;
-  background: #fffafc;
-  box-shadow: 0 6px 10px -4px rgb(190 60 120 / 45%);
-  color: var(--color-ink-fixed);
-  font-size: clamp(0.8rem, 12cqi, 1.6rem);
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-  transition: opacity 0.2s ease;
-}
-
 .course-stop-mark {
   position: absolute;
   right: 8%;
@@ -1642,19 +1624,6 @@ bdi {
 .course-stop-mark svg {
   width: 58%;
   height: 58%;
-}
-
-.course-stop-mark--done {
-  background: var(--color-go);
-  color: #fff;
-}
-
-/* A stop still to come: a pale haze over it, as if not yet reached. */
-.course-stop-haze {
-  position: absolute;
-  inset: -4%;
-  border-radius: 45%;
-  background: radial-gradient(closest-side, rgb(255 236 244 / 30%) 60%, rgb(255 236 244 / 0%));
 }
 
 .course-stop-go {
@@ -1686,48 +1655,6 @@ bdi {
   }
   to {
     translate: -50% -0.35em;
-  }
-}
-
-/* Far off: only a dot of what it will say. */
-.course-stop[data-far] .course-stop-tag {
-  opacity: 0;
-}
-
-/* The way in: scrolling takes the camera further. */
-.course-world-hint {
-  position: fixed;
-  left: 50%;
-  bottom: calc(4rem + env(safe-area-inset-bottom) + 0.9rem);
-  z-index: 10;
-  display: flex;
-  width: 2.75rem;
-  height: 2.75rem;
-  translate: -50% 0;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #fffafc;
-  box-shadow: 0 8px 14px -5px rgb(190 60 120 / 50%);
-  color: var(--color-pinki);
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  animation: course-world-hint 1s ease-in-out infinite alternate;
-}
-
-.course-world-hint[data-gone] {
-  opacity: 0;
-}
-
-@media (width >= 40rem) {
-  .course-world-hint {
-    bottom: 1.5rem;
-  }
-}
-
-@keyframes course-world-hint {
-  to {
-    translate: -50% 0.4rem;
   }
 }
 
