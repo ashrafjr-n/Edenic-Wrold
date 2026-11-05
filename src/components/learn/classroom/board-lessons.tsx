@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Lock, Play } from "lucide-react";
@@ -34,10 +34,10 @@ const SPRING_DELAY = 1.1;
  * - The lesson to play next, big in the middle — the one thing to look at:
  *   a paper sheet pinned up by one magnet, its thing, "Lesson 3", its word,
  *   one Start button. A lock that opened since the last visit springs off.
- * - Under it, EVERY lesson in order on one line, all the same size: the
- *   learned ones a chalk box with a tick, the next one ringed in the
- *   friend's chalk, the ones to come dashed and dim with a "?". A line that
- *   doesn't fit scrolls sideways, centred on the next one — never wraps.
+ * - Under it, EVERY lesson in order, one under the other (2026-11-05, the
+ *   board grows tall): the learned ones a chalk row with a tick, the next
+ *   one ringed in the friend's chalk, the ones to come dashed and dim with
+ *   a "?". The review (last) is a paper sheet, not a chalk row.
  *
  * No stars (direct request 2026-11-02: no stars or rewards) — learned is
  * learned.
@@ -45,7 +45,6 @@ const SPRING_DELAY = 1.1;
 export function BoardLessons({ titles, stops, characterId, lessonId, basePath, dict, allDone, dir }: BoardLessonsProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLAnchorElement>(null);
-  const rowRef = useRef<HTMLOListElement>(null);
   const { stars, nextIndex, unlocking } = useCourseUnlock({
     characterId,
     lessonId,
@@ -56,13 +55,6 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
   });
   const hydrated = useProgress((state) => state.hydrated);
 
-  /* The row may scroll: bring the lesson the child is on to its middle. */
-  useEffect(() => {
-    const row = rowRef.current;
-    const now = row?.querySelector<HTMLElement>(".board-cell--now");
-    if (row && now) row.scrollLeft = now.offsetLeft - (row.clientWidth - now.offsetWidth) / 2;
-  }, [nextIndex]);
-
   /** Lesson `i`'s word and its thing(s) as magnets. */
   const lessonAt = (i: number) => {
     const title = titles[i];
@@ -72,7 +64,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
        by its title. */
     const word = review || stop.word === undefined ? title : stop.word;
     const art = (locked: boolean, springing: boolean, sizes: string) => (
-      <span className={`board-cell-art ${review ? "board-cell-art--row" : ""}`}>
+      <span className="board-cell-art">
         {stop.pictures.map((picture) => (
           <span key={picture.src} className="board-magnet">
             <Image
@@ -124,20 +116,18 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     const done = stars[i] > 0;
     const now = i === nextIndex;
     const open = done || now;
-    const state = now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked";
-    /* A review's small box is its things, two by two — its long name
-       ("Animals review") has no room under them; the label reads it out. */
+    const kind = review ? "board-cell--review " : "";
+    const state = kind + (now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked");
+    /* A review is a paper sheet, not a chalk box: its title always shows. */
     const inner = (
       <>
         <span className="board-cell-n" aria-hidden>
           {n}
         </span>
         {art(!open, false, "(min-width: 1024px) 5rem, 3rem")}
-        {!review && (
-          <span dir={dir} className="board-cell-word">
-            {open ? word : "?"}
-          </span>
-        )}
+        <span dir={dir} className="board-cell-word">
+          {open || review ? word : "?"}
+        </span>
         {done && (
           <span className="board-cell-tick" aria-hidden>
             <Check strokeWidth={3.5} />
@@ -180,7 +170,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           {allDone}
         </p>
       )}
-      <ol ref={rowRef} className="board-row">
+      <ol className="board-row">
         {cells}
       </ol>
     </div>

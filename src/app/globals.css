@@ -4656,7 +4656,7 @@ button:disabled,
 
   .chalkboard--course {
     display: flex;
-    height: max(30rem, calc(100svh - 12.5rem));
+    min-height: max(30rem, calc(100svh - 12.5rem));
   }
 
   .chalkboard--course .chalkboard-slate {
@@ -4669,81 +4669,44 @@ button:disabled,
   .board-lessons {
     flex: 1;
     min-height: 0;
-    justify-content: center;
-    gap: min(1.6rem, 2svh);
-    padding-block: 0.25rem 1.1rem;
+    gap: 1.6rem;
+    padding-block: 0.25rem 1.6rem;
   }
 }
 
-/* Every lesson, in order, under the next one (2026-11-02): small chalk
-   boxes side by side, all one size, each its thing held up by a clay
-   magnet and its word. */
+/* Every lesson, in order, under the next one — a list, one under the other
+   (2026-11-05, on request: "the board taller, all the stages under each
+   other"): each a chalk row — number, its thing held up by a clay magnet,
+   its word. The board grows with the list. */
 .board-row {
-  --box: 3.9rem;
+  --box: 3.2rem;
   display: flex;
-  flex-shrink: 0;
-  gap: 0.6rem;
-  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
   margin: 0;
   list-style: none;
-  /* ONE line, side by side — never stacked (direct request): what does not
-     fit scrolls sideways (a phone with ten lessons), a thin chalk scrollbar
-     showing there is more. The padding is the room the chalk frame's
-     outset and the stars badge stand out into. */
-  padding: 0.9rem 0.7rem 0.7rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(251 248 240 / 35%) transparent;
-}
-
-/* Centred while they fit, from the start once they don't (an auto margin,
-   unlike `justify-content: center`, never pushes the first one out of
-   reach). */
-.board-row > :first-child {
-  margin-inline-start: auto;
-}
-
-.board-row > :last-child {
-  margin-inline-end: auto;
+  /* The room the chalk frame's outset and the tick stand out into. */
+  padding: 0.6rem 0.7rem 0.4rem;
 }
 
 .board-row > * {
   display: flex;
-  flex-shrink: 0;
-  scroll-snap-align: center;
+  width: 100%;
+  max-width: 30rem;
 }
 
 @media (width >= 40rem) {
   .board-row {
-    --box: 5.25rem;
-    gap: 0.85rem;
+    --box: 3.8rem;
+    gap: 1rem;
   }
 }
 
 @media (width >= 64rem) {
   .board-row {
-    --box: clamp(4rem, min(10svh, 6vw), 6.5rem);
-    gap: 0.9rem;
-    padding-block: 0.9rem 0.5rem;
-  }
-}
-
-/* Every lesson learned: they are all there is, a size up. */
-.board-lessons--all .board-row {
-  --box: 5rem;
-}
-
-@media (width >= 40rem) {
-  .board-lessons--all .board-row {
-    --box: 7rem;
-  }
-}
-
-@media (width >= 64rem) {
-  .board-lessons--all .board-row {
-    --box: clamp(6rem, 16svh, 10rem);
+    --box: 4.2rem;
   }
 }
 
@@ -4763,13 +4726,12 @@ button:disabled,
   border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 0.15rem;
-  width: var(--box);
-  aspect-ratio: 5 / 6;
-  padding: 0.45rem 0.2rem 0.3rem;
+  gap: 0.9rem;
+  width: 100%;
+  min-height: calc(var(--box) + 1rem);
+  padding: 0.5rem 1rem 0.5rem 0.9rem;
   border-radius: 1rem;
   border-image-width: 1.6rem;
   border-image-outset: 0.4rem;
@@ -4805,12 +4767,10 @@ a.board-cell:focus-visible {
   min-height: 0;
 }
 
-/* A review's things: two by two in a small box. */
-.board-cell-art--row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  place-items: center;
-  gap: 0.1rem;
+.board-row .board-cell-art {
+  flex: 0 0 auto;
+  width: var(--box);
+  aspect-ratio: 1;
 }
 
 .board-magnet {
@@ -4822,9 +4782,6 @@ a.board-cell:focus-visible {
   filter: drop-shadow(0 4px 4px rgb(0 0 0 / 35%));
 }
 
-.board-cell-art--row .board-magnet {
-  width: 100%;
-}
 
 /* A clay magnet holds each thing to the board. */
 .board-magnet::before {
@@ -4845,10 +4802,6 @@ a.board-cell:focus-visible {
     0 2px 3px rgb(0 0 0 / 35%);
 }
 
-.board-cell-art--row .board-magnet::before {
-  display: none;
-}
-
 .board-cell:nth-child(3n + 2) .board-magnet {
   --magnet: #4da3ec;
 }
@@ -4863,12 +4816,13 @@ a.board-cell:focus-visible {
 }
 
 .board-cell-word {
-  max-width: 100%;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   font-weight: 700;
-  font-size: calc(var(--box) * 0.2);
+  font-size: clamp(1.15rem, calc(var(--box) * 0.42), 1.7rem);
   line-height: 1.1;
-  text-align: center;
+  text-align: start;
   overflow-wrap: anywhere;
   color: #fbf8f0;
 }
@@ -4880,11 +4834,12 @@ a.board-cell:focus-visible {
 /* A learned lesson's tick, on its top corner, in the friend's chalk. */
 .board-cell-tick {
   position: absolute;
-  top: -0.55rem;
-  right: -0.45rem;
+  top: 50%;
+  right: 0.9rem;
+  translate: 0 -50%;
   display: grid;
   place-items: center;
-  width: max(1.25rem, calc(var(--box) * 0.27));
+  width: 1.9rem;
   aspect-ratio: 1;
   border-radius: 9999px;
   color: #24463f;
@@ -4901,17 +4856,72 @@ a.board-cell:focus-visible {
 
 /* Its number, small chalk in the top corner — the order reads at a glance. */
 .board-cell-n {
-  position: absolute;
-  top: 0.2rem;
-  left: 0.45rem;
-  font-size: max(0.65rem, calc(var(--box) * 0.17));
+  flex: 0 0 1.4rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1;
+  text-align: center;
   color: rgb(247 243 233 / 60%);
 }
 
 .board-cell--locked .board-cell-n {
   color: rgb(247 243 233 / 35%);
+}
+
+/* The review, the last one: a paper sheet pinned up like the next lesson's,
+   not a chalk box — its things small in a row, its title in ink. */
+.board-cell--review {
+  border-image: none;
+  border-color: transparent;
+  border-radius: 1.2rem;
+  color: var(--color-ink-fixed);
+  background-color: #fbf8f0;
+  background-image: var(--noise);
+  background-blend-mode: soft-light;
+  box-shadow: 0 10px 18px -10px rgb(0 0 0 / 60%);
+}
+
+a.board-cell--review:hover,
+a.board-cell--review:focus-visible {
+  background-color: #fffdf8;
+}
+
+.board-cell--review.board-cell--now {
+  box-shadow: 0 0 0 3px var(--chalk-accent), 0 10px 18px -10px rgb(0 0 0 / 60%);
+}
+
+.board-cell--review.board-cell--locked {
+  opacity: 0.55;
+}
+
+.board-cell--review .board-cell-n {
+  color: color-mix(in srgb, var(--color-ink-fixed) 55%, transparent);
+}
+
+.board-cell--review .board-cell-word {
+  color: var(--color-ink-fixed);
+}
+
+.board-cell--review .board-cell-lock {
+  color: var(--color-ink-fixed);
+}
+
+.board-cell--review .board-cell-art {
+  width: auto;
+  max-width: 45%;
+  flex-wrap: wrap;
+  aspect-ratio: auto;
+  gap: 0.15rem;
+}
+
+.board-cell--review .board-magnet {
+  width: calc(var(--box) * 0.6);
+  max-width: none;
+  filter: drop-shadow(0 3px 3px rgb(90 40 70 / 25%));
+}
+
+.board-cell--review .board-magnet::before {
+  display: none;
 }
 
 /* The lesson the child is on, in the line: ringed in their chalk, the
@@ -4934,8 +4944,9 @@ a.board-cell--now:focus-visible {
 
 .board-cell-lock {
   position: absolute;
-  right: 0.3rem;
-  bottom: 0.25rem;
+  right: 1rem;
+  top: 50%;
+  translate: 0 -50%;
   color: rgb(247 243 233 / 55%);
 }
 
@@ -5054,6 +5065,7 @@ a.board-cell--now:focus-visible {
 }
 
 .board-next .board-cell-lock {
+  translate: none;
   top: 0.8rem;
   right: 1rem;
   bottom: auto;
@@ -5205,13 +5217,9 @@ a.board-cell--now:focus-visible {
   }
 
   .class-course .board-row {
-    --box: 3.1rem;
-    gap: 0.5rem;
-    padding: 0.75rem 0.55rem 0.45rem;
-  }
-
-  .class-course .board-lessons--all .board-row {
-    --box: 3.9rem;
+    --box: 2.9rem;
+    gap: 0.65rem;
+    padding: 0.5rem 0.4rem 0.3rem;
   }
 }
 
@@ -5253,7 +5261,7 @@ a.board-cell--now:focus-visible {
   }
 
   .class-course .board-row {
-    --box: 2.8rem;
+    --box: 2.6rem;
   }
 }
 
