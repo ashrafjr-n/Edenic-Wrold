@@ -5148,16 +5148,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, STOPS ? "#ffd3e4" : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, STOPS ? "#ffdceb" : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, STOPS ? "#ffe3ee" : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, STOPS ? "#ffe3ee" : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = STOPS ? new THREE.Fog(0xffe3ee, 60, 135) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = STOPS ? new THREE.Fog(0xf7b9d5, 42, 110) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -6794,199 +6794,229 @@ if (THING) {
      (`frameAt(t)`, played by `CourseWorld`), never a flat scroll. ---- */
   const stopsApi = {};
   if (STOPS) {
-    lawn.material = soft(0xffe3ee, { roughness: 0.95, sheen: 0.2 });
+    const GROUND = 0xf5b2d0, LIGHT = 0xfccfe2;
+    lawn.material = soft(GROUND, { roughness: 0.98, sheen: 0.1 });
     lawn.scale.set(1, 3, 1);
-    lawn.position.set(0, 0, -40);
+    lawn.position.set(0, 0, -30);
     lawn.userData.noMerge = true;
-    sun.intensity = 1.9;
-    sky.intensity = 1.25;
-    sky.color.set(0xfff4f8);
-    sky.groundColor.set(0xffd0e0);
-    Object.assign(sun.shadow.camera, { left: -38, right: 38, top: 38, bottom: -38, far: 130 });
+    sun.color.set(0xfff4ee);
+    sun.intensity = 1.55;
+    sky.intensity = 1.5;
+    sky.color.set(0xfff2f7);
+    sky.groundColor.set(0xf8c2da);
+    scene.environmentIntensity = 0.35;
+    sun.shadow.radius = 14;
+    Object.assign(sun.shadow.camera, { left: -32, right: 32, top: 32, bottom: -32, far: 120 });
     sun.shadow.camera.updateProjectionMatrix();
 
+    /* Lessons in order: the first is the farthest, the chest the nearest. */
     const SPOTS = portrait
-      ? [[-2.5, 4.5], [2.6, -6.5], [-2.7, -17.5], [2.6, -28.5], [0, -41]]
-      : [[-5.2, 3.5], [5, -6.5], [-5.2, -17], [5.2, -27.5], [0, -40]];
+      ? [[-2.3, -39], [2.4, -28], [-2.4, -17], [2.4, -6], [0, 6]]
+      : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
     const KINDS = ["circle", "square", "triangle", "rectangle"];
-    const base = soft(0xf48fbb, { roughness: 0.78 });
-    const green = soft(0x93d67a, { roughness: 0.88 });
-    const pedestal = (kind, k) => {
+    const slabM = soft(LIGHT, { roughness: 0.9 });
+    const INK = soft(0x6a5898, { roughness: 0.7 });
+    /* The picture's face: two plain dots, a small smile. */
+    const dotFace = (k) => {
       const g = new THREE.Group();
-      const thick = 0.75;
-      const body = mesh(roundedShapeExtrude(outline(kind, k), thick, 0.3), base);
-      body.geometry.center();
-      body.rotation.x = -Math.PI / 2;
-      body.position.y = (thick + 0.6) / 2;
-      const top = mesh(roundedShapeExtrude(outline(kind, k * 0.84), 0.1, 0.06), green);
-      top.geometry.center();
-      top.rotation.x = -Math.PI / 2;
-      top.position.y = thick + 0.62;
-      g.add(body, top);
-      g.top = thick + 0.72;
+      for (const sx of [-1, 1]) {
+        const eye = mesh(new THREE.SphereGeometry(0.14 * k, 28, 20), INK);
+        eye.scale.set(0.9, 1.08, 0.35);
+        eye.position.set(sx * 0.36 * k, 0.08 * k, 0);
+        g.add(eye);
+      }
+      const smile = mesh(new THREE.TorusGeometry(0.14 * k, 0.034 * k, 12, 32, Math.PI), INK);
+      smile.rotation.z = Math.PI;
+      smile.position.set(0, -0.04 * k, 0);
+      g.add(smile);
+      return g;
+    };
+    /* A low soft slab, the same family as the ground, a little lighter. */
+    const slab = (wd, dp) => {
+      const g = new THREE.Group();
+      const r = Math.min(wd, dp) * 0.26;
+      const shape = new THREE.Shape();
+      const [x0, y0, x1, y1] = [-wd / 2 + r, -dp / 2 + r, wd / 2 - r, dp / 2 - r];
+      shape.moveTo(x0, y0 - r);
+      shape.lineTo(x1, y0 - r);
+      shape.quadraticCurveTo(x1 + r, y0 - r, x1 + r, y0);
+      shape.lineTo(x1 + r, y1);
+      shape.quadraticCurveTo(x1 + r, y1 + r, x1, y1 + r);
+      shape.lineTo(x0, y1 + r);
+      shape.quadraticCurveTo(x0 - r, y1 + r, x0 - r, y1);
+      shape.lineTo(x0 - r, y0);
+      shape.quadraticCurveTo(x0 - r, y0 - r, x0, y0 - r);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.42, bevelSize: 0.42, bevelSegments: 16, curveSegments: 40 });
+      geo.center();
+      const m = mesh(geo, slabM);
+      m.rotation.x = -Math.PI / 2;
+      m.position.y = 0.77;
+      g.add(m);
+      g.top = 1.5;
+      return g;
+    };
+    /* The little things on a slab's corner, as in the picture. */
+    const flowerColors = [0xff8fa8, 0xffffff, 0xffd267];
+    const chubby = (color) => {
+      const g = new THREE.Group();
+      g.add(at(mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.85, 14), soft(0x8fd67c)), 0, 0.42, 0));
+      const leaf = ball(0.24, soft(0x8fd67c), 20);
+      leaf.scale.set(1.55, 0.5, 0.9);
+      g.add(at(leaf, 0.3, 0.16, 0.05));
+      const bloom = blossom(color);
+      bloom.scale.setScalar(2.6);
+      bloom.position.y = 1;
+      bloom.rotation.x = -0.3;
+      g.add(bloom);
+      return g;
+    };
+    const sprig = () => {
+      const g = new THREE.Group();
+      g.add(at(mesh(new THREE.CylinderGeometry(0.11, 0.15, 2.2, 14), soft(0x8fd67c)), 0, 1.1, 0));
+      for (const [y, sx] of [[0.75, 1], [0.8, -1], [1.45, 1], [1.5, -1], [2.25, 0]]) {
+        const l = ball(0.34, soft(0x8fd67c), 22);
+        l.scale.set(sx ? 1.5 : 0.95, sx ? 0.7 : 1.35, 0.7);
+        g.add(at(l, sx * 0.46, y, 0));
+      }
       return g;
     };
     const stops = [];
     KINDS.forEach((kind, i) => {
       const [x, z] = SPOTS[i];
       const g = new THREE.Group();
-      const ped = pedestal(kind, 3.0);
+      const ped = slab(5.8, 5);
       g.add(ped);
+      /* The shape: chubby, soft, its front still plainly the shape. */
+      const clayM = soft(SHAPE_COLOR[kind], { roughness: 0.68, sheen: 0.45 });
+      const body = kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
+      if (kind === "circle") body.scale.z = 0.8;
+      else body.geometry.center();
       const statue = new THREE.Group();
-      const body = mesh(roundedShapeExtrude(outline(kind, 2.0), 0.4, 0.2), soft(SHAPE_COLOR[kind], { roughness: 0.58 }));
-      body.geometry.center();
       statue.add(body);
       const box = new THREE.Box3().setFromObject(body);
-      const face = kawaii(kind === "triangle" ? 1.5 : 1.9);
-      face.position.set(0, kind === "triangle" ? -0.35 : 0.02, box.max.z + 0.02);
+      const face = dotFace(kind === "triangle" ? 1.15 : 1.5);
+      face.position.set(0, kind === "triangle" ? -0.42 : 0.02, box.max.z - 0.02);
       statue.add(face);
-      statue.position.y = ped.top - box.min.y;
-      statue.rotation.y = x < 0 ? 0.22 : -0.22;
+      statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
+      statue.rotation.y = x < 0 ? 0.26 : -0.26;
       g.add(statue);
+      /* A flower or a sprig on the slab's far corner. */
+      const beside = i % 2 ? sprig() : chubby(flowerColors[i % 3]);
+      beside.position.set(x < 0 ? -2.1 : 2.1, ped.top - 0.06, -1.1);
+      beside.scale.setScalar(i % 2 ? 0.72 : 0.85);
+      g.add(beside);
       add(g, x, 0, z);
       stops.push(g);
     });
-    /* The review: a treasure chest, shut, on a big round pedestal. */
+    /* The review: the chest — a gold frame, orange panels, a round lid, a
+       keyhole plate — shut, on the nearest slab. */
     {
       const [x, z] = SPOTS[4];
       const g = new THREE.Group();
-      const ped = pedestal("circle", 4.0);
+      const ped = slab(7.4, 5.8);
       g.add(ped);
-      const gold = soft(0xffc94f, { roughness: 0.55 });
-      const deep = soft(0xf2a23c, { roughness: 0.7 });
+      const gold = soft(0xffcb55, { roughness: 0.62, sheen: 0.4 });
+      const panel = soft(0xf7a948, { roughness: 0.72 });
       const chest = new THREE.Group();
-      chest.add(at(rbox(3.6, 1.8, 2.5, gold, 0.26), 0, 0.9, 0));
-      chest.add(at(rbox(3.0, 1.3, 0.1, deep, 0.05), 0, 0.9, 1.26));
-      const lid = mesh(new THREE.CylinderGeometry(1.25, 1.25, 3.6, 64), gold);
-      lid.rotation.z = Math.PI / 2;
-      lid.scale.z = 0.82;
-      lid.position.y = 1.8;
-      chest.add(lid);
-      for (const sx of [-1.25, 1.25]) {
-        chest.add(at(rbox(0.36, 1.9, 2.62, deep, 0.1), sx, 0.95, 0));
-        const strap = mesh(new THREE.CylinderGeometry(1.31, 1.31, 0.38, 64), deep);
-        strap.rotation.z = Math.PI / 2;
-        strap.scale.z = 0.84;
-        strap.position.set(sx, 1.8, 0);
-        chest.add(strap);
+      const [W, H, D, R] = [3.8, 1.7, 2.7, 1.32];
+      chest.add(at(rbox(W, H, D, gold, 0.26), 0, H / 2, 0));
+      chest.add(at(rbox(W - 0.76, H - 0.5, 0.1, panel, 0.05), 0, H / 2 - 0.05, D / 2 + 0.01));
+      for (const sx of [-1, 1]) chest.add(at(rbox(0.1, H - 0.5, D - 0.7, panel, 0.04), sx * (W / 2 + 0.01), H / 2 - 0.05, 0));
+      const lidM = mesh(new THREE.CylinderGeometry(R, R, W - 0.72, 64), panel);
+      lidM.rotation.z = Math.PI / 2;
+      lidM.position.y = H;
+      chest.add(lidM);
+      for (const sx of [-1, 1]) {
+        const end = mesh(new THREE.CylinderGeometry(R + 0.05, R + 0.05, 0.42, 64), gold);
+        end.rotation.z = Math.PI / 2;
+        end.position.set(sx * (W / 2 - 0.2), H, 0);
+        chest.add(end);
+        const cap = mesh(new THREE.SphereGeometry(R + 0.05, 48, 24), gold);
+        cap.scale.x = 0.14;
+        cap.position.set(sx * (W / 2), H, 0);
+        chest.add(cap);
       }
-      const lock = at(rbox(0.86, 1.05, 0.28, gold, 0.16), 0, 1.68, 1.28);
-      chest.add(lock);
-      chest.add(at(ball(0.12, soft(0x8a5a22), 16), 0, 1.76, 1.44));
-      chest.add(at(rbox(0.09, 0.26, 0.04, soft(0x8a5a22), 0.02), 0, 1.56, 1.43));
-      chest.position.y = ped.top;
+      chest.add(at(rbox(W + 0.06, 0.34, D + 0.08, gold, 0.14), 0, H - 0.02, 0));
+      const plate = rbox(1, 1.2, 0.3, gold, 0.2);
+      chest.add(at(plate, 0, H - 0.08, D / 2 + 0.12));
+      const hole = soft(0xa96a22);
+      chest.add(at(ball(0.15, hole, 20), 0, H + 0.02, D / 2 + 0.27));
+      chest.add(at(rbox(0.13, 0.32, 0.05, hole, 0.03), 0, H - 0.24, D / 2 + 0.27));
+      chest.position.y = ped.top - 0.04;
+      chest.rotation.y = 0.1;
       g.add(chest);
+      const beside = chubby(0xff8fa8);
+      beside.position.set(-2.85, ped.top - 0.06, -1.2);
+      g.add(beside);
       add(g, x, 0, z);
       stops.push(g);
     }
-    /* Stepping stones along a soft curve from one pedestal to the next. */
-    const stoneM = soft(0xf8b4d0, { roughness: 0.82 });
-    const stonesAt = [];
+    /* The stepping stones, white: a group a way between two lessons (the
+       page turns a way pink, stone by stone, once its lesson is done). */
+    const stoneM = soft(0xffffff, { roughness: 0.85 });
+    const ways = [];
     for (let i = 0; i < SPOTS.length - 1; i++) {
       const [ax, az] = SPOTS[i], [bx, bz] = SPOTS[i + 1];
-      const curve = new THREE.QuadraticBezierCurve(new THREE.Vector2(ax, az), new THREE.Vector2((ax + bx) / 2 + (bx > ax ? -1.2 : 1.2), (az + bz) / 2), new THREE.Vector2(bx, bz));
-      for (let k = 0; k < 5; k++) {
-        const u = 0.25 + (k / 4) * 0.5;
-        const p = curve.getPoint(u), t = curve.getTangent(u);
-        const st = rbox(1.7, 0.34, 1.35, stoneM, 0.16);
-        add(st, p.x, 0.17, p.y, { ry: Math.atan2(t.x, t.y) });
-        stonesAt.push([p.x, p.y]);
+      const way = new THREE.Group();
+      const curve = new THREE.QuadraticBezierCurve(new THREE.Vector2(ax, az), new THREE.Vector2((ax + bx) / 2 + (bx > ax ? 1.6 : -1.6), (az + bz) / 2), new THREE.Vector2(bx, bz));
+      const n = 4;
+      for (let k = 0; k < n; k++) {
+        const u = 0.21 + (k / (n - 1)) * 0.58;
+        const pt = curve.getPoint(u), t = curve.getTangent(u);
+        const st = rbox(2, 0.5, 1.55, stoneM, 0.24);
+        st.position.set(pt.x, 0.25, pt.y);
+        st.rotation.y = Math.atan2(t.x, t.y) * 0.35;
+        way.add(st);
       }
+      scene.add(way);
+      ways.push(way);
     }
-    /* Round about: clay hills, the garden's topiaries, lawns and flowers,
-       the shapes' colours. Nothing near a pedestal or the way between them. */
-    const nearStop = (x, z, r = 5.2) => SPOTS.some(([sx, sz]) => Math.hypot(x - sx, z - sz) < r);
-    const dome = (r, ht, color) => {
-      const m = mesh(new THREE.SphereGeometry(r, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), soft(color, { roughness: 0.85 }));
-      m.scale.y = ht / r;
-      return m;
-    };
-    const side = portrait ? 9.5 : 17;
-    for (const [sx, z, r, ht, color] of [[-1, -10, 4.5, 5, 0xf7bcd4], [1, -20, 5, 6, 0xb9e3a4], [-1, -26, 5.5, 7, 0xc6e8b2], [1, -34, 5.5, 7, 0xf7bcd4], [-1, -42, 6, 8, 0xf7bcd4], [1, -47, 6, 8, 0xb9e3a4]]) {
-      add(dome(r, ht, color), sx * (side + r * 0.6), 0, z);
-    }
-    /* Far off, past the chest: a bow in the shapes' colours between two
-       hills (the moon gate grown large), and a tall hill with a golden top. */
-    [[10.6, 0xf9a8c6], [8.9, 0xffd267], [7.2, 0x8cc4f2]].forEach(([r, color]) => {
-      const bow = mesh(new THREE.TorusGeometry(r, 0.95, 28, 96, Math.PI), soft(color, { roughness: 0.72 }));
-      add(bow, 0, 0, -56);
+    /* Round about, the same pink: bell hills. */
+    const bell = (r, ht, color = 0xf2a6c8) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
+    const side = portrait ? 11.5 : 15.5;
+    for (const [sx, z, r, ht] of [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]]) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
+    /* Past the first lesson: the bow in the shapes' colours, the hills at its
+       feet, a tall hill with a wavy golden top. */
+    [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]].forEach(([r, color]) => {
+      add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56);
     });
-    add(dome(6.5, 5.5, 0xf4bfd8), -9.5, 0, -52);
-    add(dome(6, 5, 0xc9e7b4), 9.5, 0, -51.5);
-    add(dome(9, 16, 0xf4bfd8), portrait ? 12 : 22, 0, -60);
-    const cap = mesh(new THREE.SphereGeometry(9, 64, 24, 0, Math.PI * 2, 0, 0.72), soft(0xffd267, { roughness: 0.75 }));
-    cap.scale.y = 16 / 9;
-    add(cap, portrait ? 12 : 22, 0.08, -60);
-    const flowerColors = [0xffffff, 0xff8fa8, 0xffd267, 0x9ccaf5];
-    /* The picture's flower: chubby, one bloom on a short stem, a round leaf. */
-    const chubby = (color) => {
-      const g = new THREE.Group();
-      g.add(at(mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.75, 14), soft(0x7fcb70)), 0, 0.37, 0));
-      const leafL = ball(0.2, soft(0x8fd67c), 18);
-      leafL.scale.set(1.5, 0.5, 0.9);
-      g.add(at(leafL, 0.24, 0.24, 0));
-      const bloom = blossom(color);
-      bloom.scale.setScalar(2.1);
-      bloom.position.y = 0.86;
-      bloom.rotation.x = -0.55;
-      g.add(bloom);
-      return g;
-    };
-    /* And its sprig: a stem with round leaves up both sides. */
-    const sprig = () => {
-      const g = new THREE.Group();
-      g.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.13, 2, 14), soft(0x7fcb70)), 0, 1, 0));
-      for (const [y, sx] of [[0.7, 1], [0.75, -1], [1.35, 1], [1.4, -1], [2.05, 0]]) {
-        const l = ball(0.3, soft(0x8fd67c), 20);
-        l.scale.set(sx ? 1.45 : 0.9, sx ? 0.7 : 1.3, 0.7);
-        g.add(at(l, sx * 0.42, y, 0));
-      }
-      return g;
-    };
-    const patch = (x, z, r) => {
-      const lawnPatch = mesh(new THREE.CylinderGeometry(r, r * 1.04, 0.1, 48), green);
-      lawnPatch.scale.z = 0.72;
-      lawnPatch.castShadow = false;
-      add(lawnPatch, x, 0.06, z);
-      for (let i = 0; i < 4; i++) {
-        const a = rand() * 6.28, d = rand() * r * 0.75;
-        add(chubby(flowerColors[i % 4]), x + Math.cos(a) * d, 0.1, z + Math.sin(a) * d * 0.72, { k: 1.1 + rand() * 0.4, ry: rand() * 0.8 - 0.4 });
-      }
-    };
-    const inner = portrait ? 7 : 12.5;
-    const dressing = [
-      () => lollipop(0x5aa9ee), () => coneTopiary(3.4, 0xffc93a), () => boxTopiary(1.8, 0x58c27d), () => group(hedgeBall(1.4)), () => lollipop(0xff8fbf), () => coneTopiary(3, 0x5aa9ee),
-    ];
-    let which = 0;
-    for (let z = 10; z > -50; z -= 4.6 + rand() * 2.4) {
-      for (const sx of [-1, 1]) {
-        const x = sx * (inner + rand() * 3.5);
-        if (nearStop(x, z)) continue;
-        if (rand() > 0.42) add(dressing[which++ % dressing.length](), x, 0, z, { k: 1.1 + rand() * 0.3 });
-        else patch(x, z, 2 + rand() * 1.2);
-      }
+    add(bell(7.5, 8.5), -7.5, 0, -51);
+    add(bell(6.5, 7), 7.5, 0, -50.5);
+    {
+      const top = 18, r = 11;
+      const geo = smoothLathe([[r, 0], [r * 0.82, top * 0.4], [r * 0.56, top * 0.78], [r * 0.25, top * 0.98], [0, top]], 256);
+      const golden = new THREE.Color(0xffd77a), pink = new THREE.Color(0xf2a6c8);
+      tint(geo, (v) => {
+        const a = Math.atan2(v.z, v.x);
+        return [v.y > top * 0.62 + Math.sin(a * 7) * 0.9 ? golden : pink, 0];
+      });
+      const peak = mesh(geo, new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.9, sheen: 0.3, sheenColor: 0xffffff }));
+      add(peak, portrait ? 14 : 24, 0, -62);
+      vegKeep.push(peak);
     }
-    /* Little flowers over the bare ground, off the way. */
-    for (let i = 0; i < 46; i++) {
-      const x = (rand() - 0.5) * (portrait ? 15 : 25), z = 9 - rand() * 54;
-      if (nearStop(x, z, 4.8) || stonesAt.some(([a, b]) => Math.hypot(x - a, z - b) < 2)) continue;
-      add(i % 5 === 0 ? sprig() : chubby(flowerColors[i % 4]), x, 0, z, { k: i % 5 === 0 ? 0.9 + rand() * 0.3 : 1.1 + rand() * 0.5, ry: rand() * 0.8 - 0.4 });
-    }
-    /* A round fountain beside the first stops, the garden's. */
+    /* The shape garden's soul: a few of its topiaries and its fountain, off
+       to the sides, the only other colours about. */
+    const dressing = [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
+    const inner = portrait ? 7.4 : 12;
+    for (const [sx, z, make] of dressing) add(make(), sx * inner, 0, z);
     {
       const blue = soft(0xbfe0fb, { roughness: 0.5 });
       const white = soft(0xfff6ee);
-      const f = group(at(mesh(new THREE.CylinderGeometry(2.2, 2.4, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.3, 0.45, 1.6, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(1, 0.8, 0.3, 40), white), 0, 2.4, 0), at(ball(0.42, soft(0xff8fbf), 24), 0, 2.9, 0));
-      add(f, portrait ? 7.5 : 13.5, 0, -11);
+      const f = group(at(mesh(new THREE.CylinderGeometry(2.1, 2.3, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 1.5, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(0.95, 0.75, 0.3, 40), white), 0, 2.35, 0), at(ball(0.4, soft(0xff8fbf), 24), 0, 2.85, 0));
+      add(f, portrait ? -8 : -12.5, 0, -22);
     }
-    /* Clouds with the friends' face, up above the far side. */
-    for (const [x, y, z, k] of [[-11, 13, -24, 2.1], [10, 15, -38, 2.4], [-9, 16, -56, 2.6], [8, 12, -10, 1.8]]) {
+    for (const [x, z, make] of [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]]) {
+      add(make(), portrait ? x * 0.72 : x, 0, z, { k: 1.2 });
+    }
+    /* The cloud with a face, cream, over the far side. */
+    for (const [x, y, z, k] of [[-11, 13, -46, 2.8], [12, 16, -30, 2.2]]) {
       const c = cloud(k);
-      const look = kawaii(1.1 * k);
-      look.position.set(0, 0.9 * k, 1.05 * k);
-      add(group(c, look), portrait ? x * 0.6 : x, y, z);
+      const look = dotFace(1.05 * k);
+      look.position.set(0, 0.75 * k, 1.05 * k);
+      add(group(c, look), portrait ? x * 0.55 : x, y, z);
     }
     stopsApi.stops = stops;
+    stopsApi.ways = ways;
     stopsApi.spots = SPOTS;
   }
 
@@ -7123,7 +7153,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? [])]);
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? []), ...(stopsApi.ways ?? [])]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
@@ -7424,28 +7454,29 @@ if (THING) {
     meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape, color: t.color }])) }),
   };
   if (STOPS) {
-    /* The camera through the stops: `t` 0 at the first, 1 at the chest. */
+    /* The camera through the stops: `t` 0 over the chest (the nearest), 1 far
+       in at the first lesson — low, as in the picture, going up a little. */
     const [FROM, TO] = portrait
-      ? [[0, 16, 18.5, 0, 1.2, -3], [0, 19, -20.5, 0, 1.5, -42]]
-      : [[0, 15.5, 19.5, 0, 1, -6], [0, 13.5, -20, 0, 3.5, -45]];
+      ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, -18, 0, 2.6, -41]]
+      : [[0, 8.4, 20.5, 0, 1.8, 3], [0, 9.6, -21, 0, 2.8, -40]];
     const camAt = (t) => lerp(FROM, TO, t);
     window.garden = {
-      async setFriend(picture) {
-        const tex = await new Promise((done) => new THREE.TextureLoader().load(picture, done));
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = 8;
-        const height = 3.9;
-        const friend = new THREE.Mesh(new THREE.PlaneGeometry(height * (tex.image.width / tex.image.height), height), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
-        const [sx, sz] = stopsApi.spots[0];
-        friend.position.set(sx + (portrait ? 3.8 : 5.4), height / 2 - 0.1, sz + (portrait ? 1.6 : 1.2));
-        friend.userData.noMerge = true;
-        scene.add(friend);
-        stopsApi.friend = friend;
-      },
       frameAt(t) {
         aim(camAt(t));
-        if (stopsApi.friend) stopsApi.friend.rotation.y = Math.atan2(view.position.x - stopsApi.friend.position.x, view.position.z - stopsApi.friend.position.z);
         return render("image/jpeg", 0.95);
+      },
+      /* Way `k`'s stones at `t`: white where they are the nearest thing, black
+         elsewhere. The page multiplies pink through it, so a white stone
+         turns pink with all its shading. */
+      wayMask(t, k) {
+        aim(camAt(t));
+        const [bg, fog] = [scene.background, scene.fog];
+        scene.background = null;
+        scene.fog = null;
+        const url = maskOf([[stopsApi.ways[k], -Infinity]], view);
+        scene.background = bg;
+        scene.fog = fog;
+        return url;
       },
       /* Each stop's box on the picture at `t`, % — what the page lays its
          link over. */
