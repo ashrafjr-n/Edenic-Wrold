@@ -2,11 +2,14 @@ import { notFound, redirect } from "next/navigation";
 import { resolveLessonRoute } from "@/lib/learn-route";
 import { courseCovers, courseStops } from "@/data/courses";
 import { BoardLessons } from "@/components/learn/classroom/board-lessons";
+import { CourseWorld } from "@/components/learn/course-world";
+import { BackRow, characterAccent } from "@/components/ui/back-button";
+import { COURSE_STOPS } from "@/data/course-stops";
 import { BoardProgress } from "@/components/learn/classroom/board-progress";
 import { classroomModels } from "@/data/classroom";
 import Image from "next/image";
 import { getDictionary } from "@/lib/locale";
-import { dirFor } from "@/lib/format-dict";
+import { dirFor, format } from "@/lib/format-dict";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
@@ -32,6 +35,28 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const course = dict.lessons[lesson.id];
   const basePath = `/learn/${character.id}/${lesson.id}`;
   const stops = courseStops(lesson.id);
+
+  /* A course with a world of stops (2026-11-05, Shapes first) has that
+     instead of the friend's board (`ClassroomShell` lets it through). */
+  const world = COURSE_STOPS[lesson.id];
+  if (world) {
+    return (
+      <main className="relative flex flex-1 flex-col overflow-x-clip" style={characterAccent(character)}>
+        <BackRow href={`/learn/${character.id}`} label={format(dict.lessonPicker.backTo, { characterName: character.name })} />
+        <h1 className="sr-only">{course.name}</h1>
+        <CourseWorld
+          world={world}
+          titles={course.items}
+          stops={stops}
+          characterId={character.id}
+          lessonId={lesson.id}
+          basePath={basePath}
+          dict={dict.lessonPicker}
+          dir={dir}
+        />
+      </main>
+    );
+  }
 
   return (
     <>

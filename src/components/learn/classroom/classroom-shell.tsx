@@ -5,7 +5,9 @@ import { useSelectedLayoutSegments } from "next/navigation";
 import type { StaticImageData } from "next/image";
 import { BackRow } from "@/components/ui/back-button";
 import type { UpNextCourse } from "@/components/learn/up-next";
+import { COURSE_STOPS } from "@/data/course-stops";
 import type { Framed } from "@/types/course";
+import type { LessonId } from "@/types/lesson";
 import { ClassroomBackdrop } from "./classroom-backdrop";
 import { Chalkboard } from "./chalkboard";
 import { ClassroomTeacher } from "./classroom-teacher";
@@ -39,12 +41,13 @@ interface ClassroomShellProps {
  * a touch bigger on a phone), the friend and the chairs step back or come
  * closer — each a view transition animating its `update`.
  *
- * A lesson (`[lesson]/[item]`) and anything that is not one of the
- * friend's courses (a 404) are not in the classroom: the page alone.
+ * A lesson (`[lesson]/[item]`), a course with a world of stops
+ * (`CourseWorld`) and anything that is not one of the friend's courses (a
+ * 404) are not in the classroom: the page alone.
  */
 export function ClassroomShell({ characterId, style, room, courses, labels, children }: ClassroomShellProps) {
   const segments = useSelectedLayoutSegments();
-  if (segments.length > 1 || (segments.length === 1 && !courses.some((course) => course.id === segments[0]))) return children;
+  if (segments.length > 1 || (segments.length === 1 && (!courses.some((course) => course.id === segments[0]) || COURSE_STOPS[segments[0] as LessonId]))) return children;
   const course = segments.length === 1;
   return (
     <main className={`class-page relative flex flex-1 flex-col ${course ? "class-page--course" : ""}`} style={style}>
