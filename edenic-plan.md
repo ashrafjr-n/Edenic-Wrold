@@ -594,9 +594,10 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
 ### A course as a world of stops (the user, 2026-11-05) — Shapes on trial
 
 Instead of the board, a course page can be a 3D world (the user's picture):
-pedestals with each lesson's shape on them, stepping stones, a treasure chest
-for the review; pink clouds on the way in; the scroll takes the camera up and
-in. Built for Shapes. **The user decides whether it goes to the other courses.**
+slabs with each lesson's shape on them, the first the farthest, a treasure chest
+the nearest; white stepping stones that turn pink as lessons are done; pink
+clouds on the way in; the scroll moves the camera, low, in and out. Pinki's
+picture comes back when the user brings better ones. Built for Shapes. **The user decides whether it goes to the other courses.**
 
 ### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
 
