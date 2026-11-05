@@ -300,6 +300,13 @@
   --font-sans: Fredoka, var(--font-rtl), var(--font-fredoka);
 }
 
+/* The page never bounces past its ends (2026-11-05): a rubber-band scroll
+   dragged the sticky header off the top and showed what is behind it. */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
 /* Flat, single-color ground. The pastel radial gradients that used to live
    here are gone on purpose: a neumorphic surface has to be an even color, or
    the raised/inset shadows stop reading as one consistent light source and
