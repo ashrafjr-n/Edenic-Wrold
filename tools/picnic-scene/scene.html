@@ -5285,11 +5285,11 @@ if (THING) {
   /* Where this lesson's Find looks (its corner + 5): nothing planted
      there stands in front of the things to find. */
   /* The forest: the places along the path, 5.6 apart — the word, the
-     spelling, (a mix), the balloons, then the Find; the review has five
+     spelling, (a mix), then the Find; the review has five
      places and no Find. */
-  const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 4 : 3;
+  const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 5.6;
-  const fx = FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -5440,93 +5440,215 @@ if (THING) {
   }
 
   if (FOREST) {
-  /* ---- The FOREST (2026-11-05, Pinki · Colors' world): a clearing on a
-     forest path — tall trees all round, mushrooms, ferns, a fallen log,
-     the lesson's colour in the mushrooms' caps and the flowers by the
-     path. The middle stays open lawn for the activity. ---- */
+  /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
+     day — "not professional enough"): a sunlit clearing on a winding
+     path. Layered trees in soft haze, dappled light on the floor and
+     shafts of sun through the canopy, leafy undergrowth, moss, mushroom
+     clumps and flower clusters. The middle stays open for the activity;
+     what is of the lesson's colour stays out of the Find's view. ---- */
+  scene.remove(gravel);
+  const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
+  if (fx !== null) placeXs.push(fx);
+  /* A spot an activity, or the Find, stands on. */
+  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.6 && z > -2.2 && z < 3.2) || (fx !== null && Math.abs(x - fx) < 6 && z > -6.5);
+  const pick = (list) => list[Math.floor(rand() * list.length)];
+
+  /* The path: flat stepping stones and worn earth, winding a little —
+     not a road. */
+  const pathZ = (x) => 6.4 + Math.sin(x * 0.09) * 0.6 + Math.sin(x * 0.31) * 0.12;
+  for (let x = -34; x < 128; x += 3.4 + rand() * 1.5) {
+    const earth = mesh(new THREE.CylinderGeometry(0.9 + rand() * 0.5, 0.9 + rand() * 0.5, 0.05, 40), soft(pick([0xcdb58b, 0xc6ad82, 0xd3bb90]), { roughness: 0.95 }));
+    earth.scale.z = 0.55;
+    earth.castShadow = false;
+    add(earth, x, 0.025, pathZ(x) + (rand() - 0.5) * 0.4);
+  }
+  for (let x = -34; x < 128; x += 0.85 + rand() * 0.35) {
+    const st = mesh(new THREE.CylinderGeometry(0.3 + rand() * 0.14, 0.33 + rand() * 0.14, 0.08, 28), stone(pick([0xf0e4d0, 0xe9dcc6, 0xf5ebdb])));
+    st.scale.z = 0.8 + rand() * 0.2;
+    st.castShadow = false;
+    add(st, x, 0.06, pathZ(x) + (rand() - 0.5) * 1.1, { ry: rand() * 3 });
+  }
+
+  /* Trees. A trunk with a root flare, leaning a little; a crown of soft
+     lobes, lighter on top and darker underneath; or a round-tiered pine. */
+  const greens = [[0x6cbf6c, 0x4fa862], [0x78c777, 0x58b06a], [0x62b968, 0x479f5f], [0x82cc7a, 0x5ab36c]];
   function forestTree(k, pine) {
     const t = new THREE.Group();
-    t.add(at(mesh(new THREE.CylinderGeometry(0.26, 0.4, pine ? 5 : 3.6, 16), soft(rand() > 0.5 ? 0xa9825f : 0xb08a66)), 0, pine ? 2.5 : 1.8, 0));
-    const crown = [0x5fb06a, 0x6cbb6c, 0x54a863, 0x78c477][Math.floor(rand() * 4)];
+    const bark = soft(pick([0xa9825f, 0xb08a66, 0x9d7a58]), { roughness: 0.9 });
+    const lean = new THREE.Group();
+    lean.rotation.z = (rand() - 0.5) * 0.1;
+    t.add(lean);
+    t.add(at(mesh(new THREE.CylinderGeometry(0.38, 0.52, 0.5, 20), bark), 0, 0.25, 0));
+    lean.add(at(mesh(new THREE.CylinderGeometry(0.27, 0.4, pine ? 5.2 : 3.8, 18), bark), 0, pine ? 2.6 : 1.9, 0));
+    const [light, dark] = pick(greens);
     if (pine) {
-      for (let i = 0; i < 4; i++) t.add(at(mesh(new THREE.ConeGeometry(2.1 - i * 0.42, 2.6, 40), leafy(crown)), 0, 3.4 + i * 1.5, 0));
+      for (let i = 0; i < 4; i++) {
+        const r = 2.15 - i * 0.42, y = 3.0 + i * 1.4;
+        lean.add(at(mesh(new THREE.ConeGeometry(r, 2.4, 40), leafy(i % 2 ? light : dark)), 0, y + 1.0, 0));
+        const skirt = at(mesh(new THREE.SphereGeometry(r * 0.98, 40, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), leafy(dark)), 0, y - 0.18, 0);
+        skirt.scale.y = 0.22;
+        lean.add(skirt);
+      }
     } else {
-      for (const [dx, dy, r] of [[0, 4.9, 1.9], [-1.4, 4.0, 1.4], [1.5, 4.1, 1.45], [0.3, 6.0, 1.3], [-0.7, 5.6, 1.1]]) t.add(at(ball(r * (0.85 + rand() * 0.3), leafy(crown), 32), dx, dy, (rand() - 0.5) * 0.8));
+      const lobes = 8;
+      for (let i = 0; i < lobes; i++) {
+        const a = rand() * Math.PI * 2, h = rand();
+        const r = (1.05 + rand() * 0.75) * (1 - h * 0.25);
+        const y = 4.0 + h * 2.3;
+        lean.add(at(ball(r, leafy(h > 0.45 ? light : dark), 28), Math.cos(a) * (1.5 - h) * 1.2, y, Math.sin(a) * (1.5 - h) * 0.9));
+      }
+      lean.add(at(ball(1.7, leafy(dark), 28), 0, 4.2, 0));
     }
     t.scale.setScalar(k);
     return t;
   }
-  /* Trees: rows behind the clearing, the nearest rows' trunks big, then
-     the haze. Nothing stands in the middle band (z -9 .. 10). */
-  for (let row = 0; row < 7; row++) {
-    const z0 = -11 - row * 6.5;
-    for (let x = -34; x < 120; x += 2.6 + rand() * 2.8) {
-      add(forestTree((1.0 + row * 0.07) * (0.85 + rand() * 0.5), rand() > 0.62), x + (rand() - 0.5) * 2, 0, z0 - rand() * 3);
+  /* Rows behind the clearing; the farther, the hazier (the fog). */
+  for (let row = 0; row < 8; row++) {
+    const z0 = -11 - row * 6;
+    for (let x = -36; x < 124; x += 3 + rand() * 3.2) {
+      add(forestTree((1.0 + row * 0.08) * (0.82 + rand() * 0.5), rand() > 0.6), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3);
     }
   }
-  /* A few trunks beside the camera's way, outside the stations' sight. */
-  for (const [x, z, k] of [[-27, 8.5, 1.5], [-18, 3, 1.4], [-30, -4, 1.6], [92, 5, 1.5], [96, -3, 1.6]]) add(forestTree(k, rand() > 0.5), x, 0, z);
-  /* Mushrooms: cream stems, caps in the lesson's colour (or all colours
-     in the review). */
+  /* Trunks at the edges of the way, outside the stations' sight. */
+  for (const [x, z, k] of [[-27, 8.5, 1.5], [-19, 3, 1.4], [-31, -4, 1.6], [96, 5, 1.5], [100, -3, 1.6]]) add(forestTree(k, rand() > 0.5), x, 0, z);
+
+  /* Leafy undergrowth: broad blades fanning out of a clump. */
+  function leafBush(k) {
+    const g = new THREE.Group();
+    const n = 9;
+    for (let i = 0; i < n; i++) {
+      const blade = mesh(new THREE.SphereGeometry(0.5, 20, 12), leafy(pick([0x5fb76a, 0x6cc271, 0x57ad65, 0x72c878])));
+      blade.scale.set(0.2, 0.05, 0.85 + rand() * 0.4);
+      const arm = new THREE.Group();
+      blade.position.set(0, 0, 0.55);
+      arm.add(blade);
+      arm.rotation.y = (i / n) * Math.PI * 2 + rand() * 0.4;
+      arm.rotation.x = -(0.15 + rand() * 0.4);
+      blade.rotation.x = 0.2;
+      g.add(arm);
+    }
+    g.position.y = 0.16;
+    const w = new THREE.Group();
+    w.add(g);
+    w.scale.setScalar(k);
+    return w;
+  }
+  /* Mushrooms in clumps of two or three, caps in the lesson's colour. */
   const capColor = (i) => (COLOR_ID ? PAINT[COLOR_ID] : PAINT[["red", "yellow", "green", "purple", "pink"][i % 5]]);
   function mushroom(k, color) {
     const m = new THREE.Group();
-    m.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.4, 16), soft(0xf7eedd)), 0, 0.2, 0));
-    const cap = mesh(new THREE.SphereGeometry(0.3, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), glaze(color));
-    cap.position.y = 0.38;
+    m.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.15, 0.42, 16), soft(0xf7eedd)), 0, 0.21, 0));
+    const cap = mesh(new THREE.SphereGeometry(0.31, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), glaze(color));
+    cap.position.y = 0.4;
     cap.scale.y = 0.8;
     m.add(cap);
-    for (const [dx, dz] of [[0.1, 0.08], [-0.12, 0.02], [0.02, -0.14]]) m.add(at(ball(0.04, soft(0xffffff), 12), dx, 0.62, dz));
+    for (const [dx, dz] of [[0.1, 0.08], [-0.12, 0.02], [0.02, -0.14]]) m.add(at(ball(0.04, soft(0xffffff), 12), dx, 0.64, dz));
     m.scale.setScalar(k);
     return m;
-  }
-  function fern(k) {
-    const f = new THREE.Group();
-    for (let i = 0; i < 7; i++) {
-      const frond = mesh(new THREE.ConeGeometry(0.1, 1.3, 8), leafy(i % 2 ? 0x5fb76a : 0x6cc271));
-      frond.position.y = 0.55;
-      frond.rotation.set(0, 0, 0);
-      const arm = new THREE.Group();
-      arm.add(frond);
-      arm.rotation.set(0.9 + rand() * 0.2, (i / 7) * Math.PI * 2, 0, "YXZ");
-      f.add(arm);
-    }
-    f.scale.setScalar(k);
-    return f;
   }
   function logPile(k) {
     const g = new THREE.Group();
     const bark = soft(0xa77b55, { roughness: 0.9 });
-    const log = mesh(new THREE.CylinderGeometry(0.42, 0.42, 3.2, 32), bark);
+    const log = mesh(new THREE.CylinderGeometry(0.45, 0.5, 3.4, 32), bark);
     log.rotation.z = Math.PI / 2;
-    log.position.y = 0.42;
+    log.position.y = 0.46;
     g.add(log);
-    for (const sx of [-1, 1]) {
-      const cut = at(mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.03, 32), soft(0xf1d9b0)), sx * 1.6, 0.42, 0);
-      cut.rotation.z = Math.PI / 2;
-      g.add(cut);
+    const cut = at(mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 32), soft(0xf1d9b0)), 1.7, 0.46, 0);
+    cut.rotation.z = Math.PI / 2;
+    g.add(cut);
+    for (let i = 0; i < 5; i++) {
+      const tuft = at(ball(0.2 + rand() * 0.12, leafy(0x6fbf6e), 16), -1.3 + rand() * 2.4, 0.9, (rand() - 0.5) * 0.3);
+      tuft.scale.y = 0.45;
+      g.add(tuft);
     }
     g.scale.setScalar(k);
     return g;
   }
-  for (let i = 0; i < 70; i++) {
-    const x = -22 + rand() * 128, z = -8.5 + rand() * 11;
-    const r = rand();
-    /* Nothing of the lesson's colour in the Find's view. */
-    if (inFind(x, 10)) continue;
-    const thing = r < 0.3 ? mushroom(0.8 + rand() * 0.8, capColor(i)) : r < 0.75 ? fern(0.8 + rand() * 0.7) : ball(0.3 + rand() * 0.3, stone(0xd9d2c0));
-    if (!r || r >= 0.75) thing.scale.y = 0.6;
-    add(thing, x, r >= 0.75 ? 0.12 : 0, z, { ry: rand() * 6 });
+  /* A boulder with moss on top. */
+  function boulder(k) {
+    const g = new THREE.Group();
+    const rock = ball(0.9, stone(pick([0xdcd5c4, 0xd0c8b8, 0xe3dccb])), 32);
+    rock.scale.set(1.2, 0.8, 0.95);
+    rock.position.y = 0.5;
+    g.add(rock);
+    const moss = ball(0.7, leafy(0x6fbf6e), 24);
+    moss.scale.set(1.0, 0.35, 0.8);
+    moss.position.set(-0.1, 1.0, 0);
+    g.add(moss);
+    g.scale.setScalar(k);
+    return g;
   }
-  for (const [x, z, k] of [[-5, -9.2, 1.2], [38, -9.6, 1.3], [60, -9.0, 1.1]]) add(logPile(k), x, 0, z, { ry: 0.15 });
-  /* Flowers by the path, in the lesson's colour (or every colour). */
-  for (let x = -26; x < 120; x += 0.9 + rand() * 0.9) {
-    const colors = COLOR_ID ? [PAINT[COLOR_ID], 0xffffff] : [PAINT.red, PAINT.yellow, PAINT.purple, PAINT.pink, 0xffffff];
-    add(hillFlower(inFind(x, 10) ? 0xffffff : colors[Math.floor(rand() * colors.length)]), x, 0, 2.3 + rand() * 0.8, { k: 0.95 + rand() * 0.35 });
+  const colorsHere = COLOR_ID ? [PAINT[COLOR_ID], PAINT[COLOR_ID], 0xffffff] : [PAINT.red, PAINT.yellow, PAINT.purple, PAINT.pink, 0xffffff];
+  /* Clusters: mushrooms, leaf bushes, flowers and boulders gather — never
+     spread out evenly. */
+  for (let i = 0; i < 46; i++) {
+    const cx = -26 + rand() * 128, cz = rand() > 0.5 ? -8 + rand() * 4 : 1.2 + rand() * 1.8;
+    const kind = rand();
+    const n = 3 + Math.floor(rand() * 4);
+    for (let j = 0; j < n; j++) {
+      const x = cx + (rand() - 0.5) * 2.4, z = cz + (rand() - 0.5) * 1.6;
+      if (busy(x, z)) continue;
+      if (kind < 0.28) add(mushroom(0.8 + rand() * 0.6, capColor(i + j)), x, 0, z, { ry: rand() * 6 });
+      else if (kind < 0.55) add(hillFlower(pick(colorsHere)), x, 0, z, { k: 1.0 + rand() * 0.5 });
+      else if (kind < 0.8) add(leafBush(0.8 + rand() * 0.7), x, 0, z, { ry: rand() * 6 });
+      else add(ball(0.2 + rand() * 0.2, stone(0xdcd5c4), 16), x, 0.08, z).scale.y = 0.6;
+    }
   }
-  /* Near the camera, in front of the path: low ferns that slide past in a walk. */
-  for (let x = -26; x < 120; x += 6 + rand() * 4) add(fern(1.1 + rand() * 0.5), x, 0, 8.6 + rand() * 1.2, { ry: rand() * 6 });
-  for (const [x, y, z, k] of [[-10, 15, -70, 3.4], [20, 17, -80, 4], [52, 14, -72, 3.2], [85, 16, -78, 3.8]]) add(cloud(k), x, y, z);
+  for (const [x, z, k] of [[-5, -9.2, 1.2], [38, -9.6, 1.3], [60, -9.0, 1.1], [84, -8.6, 1.2]]) add(logPile(k), x, 0, z, { ry: 0.15 });
+  for (const [x, z, k] of [[-12, -7, 1.5], [14, -9, 1.4], [46, -8.2, 1.6], [70, -7.6, 1.5], [102, -8, 1.5]]) if (!busy(x, z)) add(boulder(k), x, 0, z, { ry: rand() * 6 });
+  /* Near the camera, in front of the path: leafy fronds sliding past in a walk. */
+  for (let x = -28; x < 124; x += 5 + rand() * 4) add(leafBush(1.5 + rand() * 0.6), x, 0, 8.6 + rand() * 1.2, { ry: rand() * 6 });
+
+  /* Light: soft patches of sun on the floor and shafts through the canopy. */
+  function glow(w, h, stops) {
+    const cv = document.createElement("canvas");
+    cv.width = 128;
+    cv.height = 128;
+    const cx = cv.getContext("2d");
+    const grd = cx.createRadialGradient(64, 64, 4, 64, 64, 62);
+    stops.forEach(([p, c]) => grd.addColorStop(p, c));
+    cx.fillStyle = grd;
+    cx.fillRect(0, 0, 128, 128);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+  const patchTex = glow(1, 1, [[0, "rgba(255,246,200,0.3)"], [0.6, "rgba(255,240,190,0.1)"], [1, "rgba(255,240,190,0)"]]);
+  const patchMat = new THREE.MeshBasicMaterial({ map: patchTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
+  for (let i = 0; i < 26; i++) {
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(3 + rand() * 3, 2 + rand() * 2), patchMat);
+    p.rotation.x = -Math.PI / 2;
+    p.position.set(-24 + rand() * 126, 0.04, -9 + rand() * 12);
+    p.userData.noMerge = true;
+    scene.add(p);
+  }
+  const shaftCv = document.createElement("canvas");
+  shaftCv.width = 32;
+  shaftCv.height = 256;
+  const shx = shaftCv.getContext("2d");
+  const shg = shx.createLinearGradient(0, 0, 0, 256);
+  shg.addColorStop(0, "rgba(255,248,214,0.5)");
+  shg.addColorStop(1, "rgba(255,248,214,0)");
+  shx.fillStyle = shg;
+  shx.fillRect(0, 0, 32, 256);
+  const side = shx.createLinearGradient(0, 0, 32, 0);
+  side.addColorStop(0, "rgba(0,0,0,1)");
+  side.addColorStop(0.5, "rgba(0,0,0,0)");
+  side.addColorStop(1, "rgba(0,0,0,1)");
+  shx.globalCompositeOperation = "destination-out";
+  shx.fillStyle = side;
+  shx.fillRect(0, 0, 32, 256);
+  const shaftTex = new THREE.CanvasTexture(shaftCv);
+  shaftTex.colorSpace = THREE.SRGBColorSpace;
+  const shaftMat = new THREE.MeshBasicMaterial({ map: shaftTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, side: THREE.DoubleSide });
+  for (let i = 0; i < 16; i++) {
+    const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.6 + rand() * 2.2, 15), shaftMat);
+    sh.position.set(-20 + rand() * 124, 7, -9 - rand() * 5);
+    sh.rotation.z = 0.3 + rand() * 0.12;
+    sh.userData.noMerge = true;
+    scene.add(sh);
+  }
+  for (const [x, y, z, k] of [[-10, 15, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
 
   } else {
   /* The whole garden: the wall (the moon gate and the door cut through
@@ -5564,8 +5686,163 @@ if (THING) {
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
   const keepClear = [];
-  if (HAS_FIND) {
-    const pic = SCENES[FOREST ? COLOR_ID : PICNIC[LESSON]];
+  /* ---- The forest's Find (2026-11-05, on request: "part of the forest —
+     the camera turns to the right and sees flowers, a basket, an insect of
+     a colour"): seven things standing on the forest floor in front of the
+     camera that has walked on to the Find's place — four of the lesson's
+     colour, three of other colours, each of a different kind. ---- */
+  if (HAS_FIND && FOREST) {
+    const hex = (c) => PAINT[c];
+    const dark = soft(0x2e2b35, { roughness: 0.6 });
+    const KINDS = {
+      flower: (c) => {
+        const f = hillFlower(hex(c));
+        f.scale.setScalar(3.2);
+        return f;
+      },
+      mushroom: (c) => {
+        const m = new THREE.Group();
+        m.add(at(mesh(new THREE.CylinderGeometry(0.16, 0.23, 0.7, 24), soft(0xf7eedd)), 0, 0.35, 0));
+        const cap = mesh(new THREE.SphereGeometry(0.56, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), glaze(hex(c)));
+        cap.position.y = 0.66;
+        cap.scale.y = 0.8;
+        m.add(cap);
+        for (const [dx, dz, r] of [[0.2, 0.18, 0.07], [-0.24, 0.06, 0.06], [0.02, -0.26, 0.07], [0.04, 0.3, 0.05]]) m.add(at(ball(r, soft(c === "white" ? 0xdad5cc : 0xffffff), 12), dx, 0.62 + Math.sqrt(Math.max(0, 0.3 - dx * dx - dz * dz)) * 0.55, dz));
+        m.scale.setScalar(1.3);
+        return m;
+      },
+      butterfly: (c) => {
+        const g = new THREE.Group();
+        g.add(at(mesh(new THREE.CylinderGeometry(0.025, 0.04, 1.2, 12), leafy(0x5fb565)), 0, 0.6, -0.05));
+        const b = new THREE.Group();
+        const wing = glaze(hex(c));
+        const spot = soft(c === "white" ? 0xcfd8e6 : 0xffffff);
+        for (const s of [-1, 1]) {
+          const up = at(ball(0.42, wing, 32), s * 0.4, 0.2, 0);
+          up.scale.set(1, 0.85, 0.12);
+          up.rotation.z = s * -0.3;
+          b.add(up);
+          const low = at(ball(0.3, wing, 32), s * 0.3, -0.22, 0);
+          low.scale.set(1, 0.9, 0.12);
+          low.rotation.z = s * 0.35;
+          b.add(low);
+          b.add(at(ball(0.1, spot, 16), s * 0.5, 0.26, 0.06));
+          const feeler = at(mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.42, 6), dark), s * 0.09, 0.48, 0);
+          feeler.rotation.z = s * -0.35;
+          b.add(feeler);
+        }
+        b.add(at(mesh(new THREE.CapsuleGeometry(0.055, 0.28, 8, 16), dark), 0, 0, 0.05));
+        b.position.y = 1.35;
+        g.add(b);
+        g.scale.setScalar(1.15);
+        return g;
+      },
+      bug: (c) => {
+        const g = new THREE.Group();
+        const body = mesh(new THREE.SphereGeometry(0.5, 40, 24, 0, Math.PI * 2, 0, Math.PI / 2), glaze(hex(c)));
+        body.scale.y = 0.78;
+        body.position.y = 0.05;
+        g.add(body);
+        g.add(at(mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.06, 40), dark), 0, 0.04, 0));
+        const seam = mesh(new THREE.TorusGeometry(0.5, 0.012, 8, 48, Math.PI), dark);
+        seam.rotation.y = Math.PI / 2;
+        seam.scale.y = 0.78;
+        seam.position.y = 0.05;
+        g.add(seam);
+        const dot = c === "black" ? soft(0xffffff) : dark;
+        for (const [x, z] of [[0.24, 0.1], [-0.24, 0.1], [0.2, -0.22], [-0.2, -0.22]]) g.add(at(ball(0.075, dot, 16), x, 0.05 + Math.sqrt(0.25 - x * x - z * z) * 0.78, z));
+        g.add(at(ball(0.16, dark, 24), 0, 0.12, 0.46));
+        for (const s of [-1, 1]) {
+          const ant = mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.34, 6), dark);
+          ant.position.set(s * 0.1, 0.34, 0.68);
+          ant.rotation.set(0.5, 0, s * -0.3);
+          g.add(ant);
+        }
+        g.scale.setScalar(1.7);
+        return g;
+      },
+      basket: (c) => {
+        const g = new THREE.Group();
+        const col = glaze(hex(c));
+        g.add(mesh(lathe([[0, 0], [0.5, 0], [0.62, 0.06], [0.8, 0.55], [0.84, 0.62], [0.8, 0.68], [0.74, 0.62], [0.58, 0.14], [0, 0.1]], 64), col));
+        for (const y of [0.22, 0.4]) {
+          const ring = mesh(new THREE.TorusGeometry(0.62 + (y - 0.1) * 0.55, 0.025, 8, 64), soft(0xffffff, { roughness: 0.5 }));
+          ring.rotation.x = Math.PI / 2;
+          ring.position.y = y;
+          g.add(ring);
+        }
+        const handle = mesh(new THREE.TorusGeometry(0.8, 0.05, 12, 48, Math.PI), col);
+        handle.position.y = 0.62;
+        g.add(handle);
+        g.scale.setScalar(1.15);
+        return g;
+      },
+      bird: (c) => {
+        const g = new THREE.Group();
+        const body = glaze(hex(c));
+        const belly = soft(new THREE.Color(hex(c)).lerp(new THREE.Color(0xffffff), 0.55).getHex(), { roughness: 0.6 });
+        const orange = soft(0xffa63d);
+        const b = at(ball(0.5, body, 40), 0, 0.82, 0);
+        b.scale.set(0.95, 1.05, 1.1);
+        g.add(b);
+        const bl = at(ball(0.4, belly, 32), 0, 0.72, 0.2);
+        bl.scale.set(0.9, 1, 0.8);
+        g.add(bl);
+        g.add(at(ball(0.3, body, 32), 0, 1.4, 0.2));
+        const beak = at(mesh(new THREE.ConeGeometry(0.09, 0.26, 16), orange), 0, 1.36, 0.58);
+        beak.rotation.x = Math.PI / 2;
+        g.add(beak);
+        for (const s of [-1, 1]) {
+          g.add(at(ball(0.05, dark, 12), s * 0.13, 1.46, 0.45));
+          const wing = at(ball(0.3, glaze(new THREE.Color(hex(c)).lerp(new THREE.Color(0x000000), 0.18).getHex()), 28), s * 0.46, 0.85, -0.05);
+          wing.scale.set(0.3, 1.0, 0.8);
+          g.add(wing);
+          g.add(at(mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.3, 8), orange), s * 0.14, 0.15, 0.05));
+        }
+        const tail = at(mesh(new THREE.ConeGeometry(0.2, 0.55, 20), body), 0, 0.82, -0.62);
+        tail.rotation.x = -Math.PI / 2 - 0.5;
+        g.add(tail);
+        g.rotation.y = 0.55;
+        g.scale.setScalar(1.1);
+        return g;
+      },
+      ball: (c) => {
+        const b = ITEMS.ball(hex(c));
+        b.scale.setScalar(1.35);
+        return b;
+      },
+    };
+    const KIND_LIST = Object.keys(KINDS);
+    const DECOYS = {
+      red: ["blue", "green", "yellow"], blue: ["red", "yellow", "green"], yellow: ["blue", "purple", "red"],
+      green: ["red", "purple", "orange"], orange: ["blue", "purple", "green"], purple: ["yellow", "green", "orange"],
+      pink: ["green", "blue", "yellow"], brown: ["blue", "yellow", "pink"], black: ["red", "yellow", "blue"], white: ["red", "blue", "green"],
+    };
+    /* Four kinds in the lesson's colour (a different four each lesson), the
+       other three in decoy colours. */
+    const first = (LESSON * 2) % KIND_LIST.length;
+    const mine = [0, 1, 2, 3].map((j) => KIND_LIST[(first + j) % KIND_LIST.length]);
+    const rest = KIND_LIST.filter((k) => !mine.includes(k));
+    const K = 0.7;
+    /* Each kind always in its own spot (short ones in front, tall ones
+       behind), so nothing hides anything; only the colours change. */
+    const SPOT = portrait
+      ? { bug: [-0.9, 3.0], ball: [1.0, 3.0], mushroom: [-1.7, 0.9], basket: [1.5, 0.9], bird: [-2.3, -1.3], butterfly: [0, -1.3], flower: [2.4, -1.3] }
+      : { bug: [-3.2, 2.2], ball: [-0.2, 2.4], mushroom: [3.0, 2.2], basket: [-4.4, -0.2], bird: [-1.6, -0.2], butterfly: [1.4, -0.2], flower: [4.2, -0.2] };
+    const entries = [...mine.map((k) => [k, COLOR_ID]), ...rest.map((k, i) => [k, DECOYS[COLOR_ID][i]])];
+    entries.forEach(([kind, c], i) => {
+      const [sx, sz] = SPOT[kind];
+      const thing = KINDS[kind](c);
+      thing.scale.multiplyScalar(K);
+      thing.rotation.y += (rand() - 0.5) * 0.5;
+      thing.position.set(fx + sx + (rand() - 0.5) * 0.3, 0, sz + (rand() - 0.5) * 0.3);
+      scene.add(thing);
+      things[kind] = { group: thing, shape: null, color: c, y: 0 };
+    });
+    keepClear.push(new THREE.Box3(new THREE.Vector3(fx - 6, -1, -4), new THREE.Vector3(fx + 6, 4, 5)));
+  }
+  if (HAS_FIND && !FOREST) {
+    const pic = SCENES[PICNIC[LESSON]];
     const blanket = BLANKETS[pic.blanket]();
     if (pic.deep) blanket.scale.set(pic.deep[0], 1, pic.deep[1]);
     blanket.position.x += fx;
@@ -5760,8 +6037,7 @@ if (THING) {
   }
 
   /* ---- The forest's props (Colors, 2026-11-05) ---- */
-  /* The mix: a tree stump with the two paint pots to mix, a brush, and a
-     puddle of paint between them. */
+  /* The mix: a tree stump with the two crayons to mix. */
   function stumpMix(a, b) {
     const g = new THREE.Group();
     g.add(at(mesh(new THREE.CylinderGeometry(1.75, 1.95, 0.8, 64), soft(0xb08a66, { roughness: 0.9 })), 0, 0.4, 0));
@@ -5772,34 +6048,11 @@ if (THING) {
       g.add(ring);
     }
     for (const [color, x] of [[a, -0.85], [b, 0.85]]) {
-      const potA = ITEMS.pot(color);
-      potA.scale.setScalar(0.8);
+      const potA = ITEMS.crayon(color);
+      potA.scale.setScalar(1.15);
       potA.position.set(x, 0.84, 0);
       g.add(potA);
     }
-    return g;
-  }
-  /* The balloons' tree: a tall tree with three branches reaching out, a
-     balloon or two tied to each (the lesson's colour among others). */
-  function balloonTree(color, others) {
-    const g = new THREE.Group();
-    g.add(at(mesh(new THREE.CylinderGeometry(0.34, 0.5, 3.4, 20), soft(0xb08a66)), 0, 1.7, -1.4));
-    for (const [dx, dy, dz, r] of [[0, 4.7, -1.5, 1.9], [-1.5, 3.9, -1.7, 1.4], [1.6, 4.0, -1.6, 1.45], [0.2, 5.8, -1.6, 1.25]]) g.add(at(ball(r, leafy(0x62b66b), 32), dx, dy, dz));
-    const colors = [color, others[0], color, others[1], color, others[2]];
-    [[-1.9, 2.9], [0.2, 3.3], [2.0, 2.8]].forEach(([tx, ty], i) => {
-      const len = Math.hypot(tx, 1.3);
-      const branch = mesh(new THREE.CylinderGeometry(0.07, 0.12, len, 12), soft(0xa77b55));
-      branch.position.set(tx / 2, 2.6 + (ty - 2.6) / 2, -1.4 + 0.65);
-      branch.rotation.set(Math.PI / 2 - 0.3, 0, -Math.atan2(tx, 1.3));
-      g.add(branch);
-      for (const k of [0, 1]) {
-        const bl = ITEMS.balloon(colors[i * 2 + k]);
-        bl.position.set(tx + (k ? 0.5 : -0.1), ty - 0.1 + k * 0.3, -0.7 + k * 0.2);
-        bl.scale.setScalar(0.95);
-        bl.rotation.z = (k ? -1 : 1) * 0.08;
-        g.add(bl);
-      }
-    });
     return g;
   }
   /* The review's sorting: four open boxes, one per colour. */
@@ -5819,15 +6072,13 @@ if (THING) {
 
   /* Where each step happens, and its flower beside it (a little in front,
      to the right — out of the activity's way, in the camera's view). */
-  const ORDER_OTHERS = COLOR_ID ? COLOR_LESSONS.filter((c) => c !== COLOR_ID) : [];
   const PLACES = FOREST
     ? COLOR_ID
       ? [
           { x: 0, make: () => easel(PAINT[COLOR_ID]), color: PAINT[COLOR_ID] },
           { x: STEP_DX, make: () => letterBlocks(COLOR_ID), k: 1.7, color: PAINT[COLOR_ID] },
           ...(MIXES[COLOR_ID] ? [{ x: STEP_DX * 2, make: () => stumpMix(...MIXES[COLOR_ID]), color: PAINT[COLOR_ID] }] : []),
-          { x: STEP_DX * (FOREST_STEPS - 1), make: () => balloonTree(COLOR_ID, ORDER_OTHERS.slice(0, 3)), color: PAINT[COLOR_ID] },
-          { x: fx, z: FIND_Z, flower: [fx + 1.6, FIND_Z + 4.5], color: PAINT[COLOR_ID] },
+          { x: fx, z: FIND_Z, flower: [fx + 3.6, 3.6], color: PAINT[COLOR_ID] },
         ]
       : [
           { x: 0, make: colorBoxes, k: 1.4, color: PAINT.red },
@@ -5896,7 +6147,7 @@ if (THING) {
     const buckets = new Map();
     const merged = [];
     scene.traverse((o) => {
-      if (!o.isMesh || o === catcher || Array.isArray(o.material)) return;
+      if (!o.isMesh || o === catcher || Array.isArray(o.material) || o.userData.noMerge) return;
       for (let p = o; p; p = p.parent) if (keep.has(p)) return;
       const m = o.material;
       const key = [m.type, m.color?.getHexString(), m.roughness, m.metalness, m.clearcoat, m.clearcoatRoughness, m.sheen, m.sheenRoughness,
@@ -5933,7 +6184,8 @@ if (THING) {
   /* A step's station: its place straight ahead; the Find's over the
      picnic. Then the END: the camera rises and looks back over the
      lesson's places, every flower out — the path it walked, in bloom. */
-  const steps = PLACES.map((place) => (place.make ? station(place.x) : portrait ? overPicnic(15) : overPicnic(19)));
+  const forestFind = portrait ? [fx, 3.4, 9.0, fx, 0.6, -2.5] : [fx, 3.0, 9.0, fx, 0.7, -2.2];
+  const steps = PLACES.map((place) => (place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const END = FOREST
     ? portrait
