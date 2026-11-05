@@ -679,7 +679,13 @@ with the user's OK on its look (a still) before it is built.
       forest (the camera walks on, things of a colour stand in it), the
       forest made over, a plain dot instead of the paint pot, the word step's splash on the easel,
       Mix redesigned (`mix-colors.tsx`); the user checks it
-- [ ] Vegetables · Seasons · Animals · Weather — the
+- [x] Vegetables: Nova's garden and cottage, lessons 1–5 — built 2026-11-05
+      (`render.cjs veg`, `crop.py veg`): sign, seed packets, in at the door to
+      Basket Time played in the kitchen; the bed grows the lesson's vegetable,
+      ripe in the end shot; the user checks it
+- [ ] Vegetables: the review in the world (phase 3 — soup in the kitchen,
+      likes at a garden table, spells at the packets, the exam among the beds)
+- [ ] Seasons · Animals · Weather — the
       plan, agreed 2026-11-04 (below, "Course worlds, the plan")
 
 #### Course worlds, the plan (agreed 2026-11-04)
