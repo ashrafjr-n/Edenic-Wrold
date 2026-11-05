@@ -1,3 +1,4 @@
+import { dotFace } from "@/data/colors";
 import type { Face, LessonDef, Question, Target } from "@/types/course";
 import type { TaskKind } from "./task-chip";
 import type { TaskDemoDef } from "./task-demo";
@@ -51,6 +52,8 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "feed" };
     case "basket":
       return { kind: "basket" };
+    case "mix":
+      return { kind: "pick" };
     case "pick": {
       const named = q.ask.vars?.shape ?? q.ask.vars?.color;
       return { kind: "pick", target: named === undefined ? undefined : String(named) };
@@ -88,6 +91,14 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "feed", ...q.demo };
     case "basket":
       return { kind: "basket", food: q.demo, basket: q.basket };
+    /* Blind: the demo shows the two paints and how to answer, not the answer. */
+    case "mix":
+      return {
+        kind: "pick",
+        show: [dotFace(q.a), { kind: "text", text: "+" }, dotFace(q.b), { kind: "text", text: "=" }, { kind: "text", text: "?" }],
+        options: [q.color, ...q.others].map(() => ({ kind: "text", text: "" })),
+        answer: 1,
+      };
     case "pick":
       if (q.blind) return { kind: "pick", word: q.word, plain: q.plain, options: q.options.map(() => ({ kind: "text", text: "" })), answer: 1 };
       return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;

@@ -22,6 +22,7 @@ import type { StaticImageData } from "next/image";
 import { demoFor, lessonFaces, starsFor, taskFor, type Step } from "./lesson-steps";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
+import { MixColors } from "./mix-colors";
 import { PickQuestion } from "./pick-question";
 import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
@@ -71,6 +72,7 @@ const WORLD_HOLD_MS: Partial<Record<Question["type"], number>> = {
   trace: 1300,
   spell: 1250,
   find: 1300,
+  mix: 2100,
 };
 const WORLD_HOLD_DEFAULT_MS = 1100;
 
@@ -437,9 +439,12 @@ export function LessonPlayer({
       action = showing ? (
         <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} className="lesson-onward" />
       ) : null;
+    } else if (q.type === "mix") {
+      body = <MixColors key={seed} a={q.a} b={q.b} color={q.color} others={q.others} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "word") {
       body = (
         <WordCard
+          onScene={Boolean(world && q.color)}
           word={q.word}
           shape={q.shape}
           picture={q.picture}
