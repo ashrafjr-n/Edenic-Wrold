@@ -351,7 +351,8 @@ export function LessonPlayer({
           dir={dir}
         />
       );
-      action = (
+      const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
+      const onward = (
         <NextButton
           label={next ? next.go : lines.finish}
           tone={GO_TONE}
@@ -360,7 +361,14 @@ export function LessonPlayer({
           className="lesson-onward"
         />
       );
-      footEnd = action;
+      action = (
+        <div className="flex items-center gap-3 sm:gap-4">
+          {again}
+          {onward}
+        </div>
+      );
+      footStart = again;
+      footEnd = onward;
     } else if (!world) {
       /* What the child found, the Find's things. */
       const found = lesson.questions.flatMap((q) =>
@@ -405,6 +413,7 @@ export function LessonPlayer({
         skipLabel={lines.skip}
         playLabel={lines.playReel}
         tone={onward}
+        replay={round > 0}
         onDone={advance}
       />
     );
