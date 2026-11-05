@@ -195,8 +195,8 @@ export interface Basket {
   mouth: SceneRect;
 }
 
-/** One frame of the kitchen (`tools/picnic-scene`, `render.cjs kitchen`):
-    the room blurred under the sharp counter, the counter alone (laid over
+/** One frame of the kitchen (`tools/picnic-scene`, `render.cjs veg`):
+    the room and the counter, the counter alone (laid over
     the friend standing behind it), where the friend stands, the basket on
     the counter and the things on it — boxes are % of the picture. */
 export interface KitchenFrame {
