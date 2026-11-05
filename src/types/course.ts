@@ -237,6 +237,23 @@ export interface LessonWorld {
   moves: readonly Framed<string>[];
 }
 
+/** A frame of a course's world of stops (`CourseWorld`): the first picture
+    (shown at once), where the rest are, and each stop's box at even steps
+    along the camera's way. `focus`: the scroll (0..1) that brings each stop
+    nearest the middle. */
+export interface CourseStopsFrame {
+  first: StaticImageData;
+  path: string;
+  version: string;
+  focus: readonly number[];
+  keys: readonly (readonly SceneRect[])[];
+}
+
+/** A course's world of stops, its camera's way in, in both frames. */
+export interface CourseStops extends Framed<CourseStopsFrame> {
+  frames: number;
+}
+
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
 export interface LessonDef {
   /** The lesson's reel, a path under `/public` (videos are played by path,
