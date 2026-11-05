@@ -108,6 +108,13 @@
  *
  *   node tools/picnic-scene/render.cjs hill 1 2 3 4 5
  *
+ * A course's world of stops (2026-11-05, Shapes) — the page behind its lessons'
+ * pedestals, the camera going in as it scrolls: `out/stops-<frame>/`, a frame
+ * per step of the scroll and each stop's box along the way. Then `crop.py
+ * stops`, which writes `src/data/shape-stops.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs stops
+ *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
  * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
  * tipped one); then `crop.py playcard cups` (sharp, no blur):
@@ -147,11 +154,30 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "veg", "hill"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
-  if (mode === "thing") {
+  if (mode === "stops") {
+    const FRAMES = 90, KEYS = 31;
+    for (const frame of ["landscape", "portrait"]) {
+      const out = path.join(__dirname, "out", `stops-${frame}`);
+      fs.rmSync(out, { recursive: true, force: true });
+      fs.mkdirSync(out, { recursive: true });
+      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops`);
+      await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+      const pinki = "data:image/png;base64," + fs.readFileSync(path.join(__dirname, "../../public/assets/friends/pinki.png")).toString("base64");
+      await page.evaluate((url) => window.garden.setFriend(url), pinki);
+      for (let f = 0; f < FRAMES; f++) {
+        const url = await page.evaluate((t) => window.garden.frameAt(t), f / (FRAMES - 1));
+        fs.writeFileSync(path.join(out, `f${String(f).padStart(3, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+      }
+      const keys = [];
+      for (let k = 0; k < KEYS; k++) keys.push(await page.evaluate((t) => window.garden.boxes(t), k / (KEYS - 1)));
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ frames: FRAMES, keys }));
+      console.log(`stops ${frame}: done`);
+    }
+  } else if (mode === "thing") {
     const out = path.join(__dirname, "out", "things");
     fs.mkdirSync(out, { recursive: true });
     for (const spec of specs) {
