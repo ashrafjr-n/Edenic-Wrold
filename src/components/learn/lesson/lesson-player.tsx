@@ -37,6 +37,8 @@ import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
 import { LessonWorldView } from "./lesson-world";
 import { WorldDone } from "./world-done";
+import { COURSE_STOPS } from "@/data/course-stops";
+import type { LessonId } from "@/types/lesson";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
 
@@ -358,7 +360,9 @@ export function LessonPlayer({
         <NextButton
           label={next ? next.go : lines.finish}
           tone={GO_TONE}
-          href={next ? next.href : coursePath}
+          /* A course with a world of stops: back to it, where the way to the
+             next lesson turns pink. */
+          href={next && !COURSE_STOPS[courseId as LessonId] ? next.href : coursePath}
           dir={dir}
           className="lesson-onward"
         />
