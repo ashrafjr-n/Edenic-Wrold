@@ -1497,6 +1497,33 @@ const ITEMS = {
     g.rotation.y = -0.22;
     return g;
   },
+  // Colors (2026-11-05): a crayon of the color, standing, leaning a little —
+  // replaces the paint pot as the color's picture. Paper wrapper in a
+  // darker tone of it, two stripes, a rounded cone tip.
+  crayon(color = "red") {
+    const paint = PAINT[color];
+    const tone = new THREE.Color(paint);
+    const wrap = tone.clone().lerp(new THREE.Color(color === "white" ? 0x9aa0a8 : 0x000000), color === "white" ? 0.35 : 0.28);
+    const wax = { clearcoat: 0.5, clearcoatRoughness: 0.28, roughness: 0.4, sheen: 0 };
+    const crayon = new THREE.Group();
+    const R = 0.36;
+    // the wrapper: the lower two thirds
+    crayon.add(mesh(new THREE.CylinderGeometry(R, R, 1.5, 96, 1), clay(wrap.getHex(), { roughness: 0.55, clearcoat: 0.15 })).translateY(0.75));
+    for (const y of [0.3, 1.2]) {
+      const band = mesh(new THREE.CylinderGeometry(R + 0.006, R + 0.006, 0.1, 96, 1, true), clay(0xffffff, { roughness: 0.6 }));
+      band.position.y = y;
+      crayon.add(band);
+    }
+    // the flat base, a little pale
+    crayon.add(mesh(new THREE.CylinderGeometry(R, R, 0.04, 96), clay(tone.clone().lerp(new THREE.Color(0xffffff), 0.3).getHex(), wax)).translateY(0.02));
+    // the wax: the top third, then the cone, its point rounded
+    crayon.add(mesh(new THREE.CylinderGeometry(R - 0.012, R - 0.012, 0.55, 96), clay(paint, wax)).translateY(1.5 + 0.275 - 0.02));
+    crayon.add(mesh(smoothLathe([[0, 0], [R - 0.012, 0], [R - 0.05, 0.3], [0.16, 0.62], [0.09, 0.72], [0.04, 0.745], [0, 0.75]]), clay(paint, wax)).translateY(2.03));
+    crayon.rotation.z = -0.28;
+    const g = new THREE.Group();
+    g.add(crayon);
+    return g;
+  },
   // Colors: a painter's palette, six paints on it and a brush across it
   palette() {
     const g = new THREE.Group();
