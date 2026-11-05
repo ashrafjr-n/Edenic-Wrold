@@ -27,6 +27,9 @@ interface ReelVideoProps {
   playLabel: string;
   /** Skip and Play wear the course's colour. */
   tone: { face: string; edge: string; text: string };
+  /** Watched again ("Play again"): the clip is already in the browser, so no
+      loader first. */
+  replay?: boolean;
   /** The reel ended, or the child skipped it. Called once. */
   onDone: () => void;
 }
@@ -43,7 +46,7 @@ interface ReelVideoProps {
  * exception: there it sits in the lesson's middle column, on the board the
  * steps after it play on, with the watch and lesson panels either side.
  */
-export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabel, tone, onDone }: ReelVideoProps) {
+export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabel, tone, replay = false, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
   const done = useRef(false);
   const timer = useRef<number | undefined>(undefined);
@@ -54,7 +57,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
   /* The loader first — for `LOADER_MS` AND until the clip can play — and
      only then the clip, fading in (no movement) and starting from its
      first frame. A clip that fails shows the lesson's art instead. */
-  const [waited, setWaited] = useState(false);
+  const [waited, setWaited] = useState(replay);
   const [canPlay, setCanPlay] = useState(false);
   const [failed, setFailed] = useState(false);
   const ready = waited && canPlay;
