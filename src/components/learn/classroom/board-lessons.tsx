@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Lock, Play } from "lucide-react";
@@ -34,10 +34,10 @@ const SPRING_DELAY = 1.1;
  * - The lesson to play next, big in the middle — the one thing to look at:
  *   a paper sheet pinned up by one magnet, its thing, "Lesson 3", its word,
  *   one Start button. A lock that opened since the last visit springs off.
- * - Under it, EVERY lesson in order, one under the other (2026-11-05, the
- *   board grows tall): the learned ones a chalk row with a tick, the next
- *   one ringed in the friend's chalk, the ones to come dashed and dim with
- *   a "?". The review (last) is a paper sheet, not a chalk row.
+ * - Under it, EVERY lesson in order, in rows of equal chalk cards (2026-11-05;
+ *   the board grows tall): the learned ones with a tick, the next one ringed
+ *   in the friend's chalk, the ones to come dashed and dim with a "?". The
+ *   review (last) is a paper sheet, a row of its own.
  *
  * No stars (direct request 2026-11-02: no stars or rewards) — learned is
  * learned.
@@ -142,7 +142,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     );
     const style = { animationDelay: `${0.35 + i * 0.04}s` };
     return (
-      <li key={n} className="board-row-item">
+      <li key={n} className={review ? "board-row-item--review" : undefined}>
         {open ? (
           <Link
             href={`${basePath}/${n}`}
@@ -162,6 +162,13 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     );
   });
 
+  /* Never one card alone on the last row: a column more where it would be. */
+  const lessons = stops.filter((stop) => !stop.review).length;
+  const columns = {
+    "--cols-phone": lessons % 3 === 1 ? 4 : 3,
+    "--cols-tablet": lessons % 4 === 1 ? 5 : 4,
+  } as CSSProperties;
+
   return (
     <div ref={rootRef} className={`board-lessons ${next ? "" : "board-lessons--all"}`}>
       {next}
@@ -170,7 +177,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           {allDone}
         </p>
       )}
-      <ol className="board-row">
+      <ol className="board-row" style={columns}>
         {cells}
       </ol>
     </div>

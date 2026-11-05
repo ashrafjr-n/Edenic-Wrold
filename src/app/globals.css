@@ -4576,39 +4576,46 @@ button:disabled,
   }
 }
 
-/* Every lesson, in order, under the next one — a list, one under the other
-   (2026-11-05, on request: "the board taller, all the stages under each
-   other"): each a chalk row — number, its thing held up by a clay magnet,
-   its word. The board grows with the list. */
+/* Every lesson, in order, under the next one (2026-11-05, on request:
+   "tidier, more than one in a row"): rows of equal chalk cards, a last row
+   that is not full centred; the review, a paper sheet, a row of its own.
+   The board grows with them. */
 .board-row {
-  --box: 3.2rem;
+  --cols: var(--cols-phone, 3);
+  --gap: 0.8rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap);
   width: 100%;
+  max-width: 54rem;
   margin: 0;
   list-style: none;
   /* The room the chalk frame's outset and the tick stand out into. */
-  padding: 0.6rem 0.7rem 0.4rem;
+  padding: 0.6rem 0.5rem 0.4rem;
 }
 
 .board-row > * {
   display: flex;
-  width: 100%;
-  max-width: 30rem;
+  flex: 0 0 calc((100% - var(--gap) * (var(--cols) - 1)) / var(--cols));
+  min-width: 0;
+}
+
+.board-row > .board-row-item--review {
+  flex-basis: 100%;
 }
 
 @media (width >= 40rem) {
   .board-row {
-    --box: 3.8rem;
-    gap: 1rem;
+    --cols: var(--cols-tablet, 4);
+    --gap: 1rem;
   }
 }
 
 @media (width >= 64rem) {
   .board-row {
-    --box: 4.2rem;
+    --cols: 5;
+    --gap: 1.15rem;
   }
 }
 
@@ -4628,12 +4635,12 @@ button:disabled,
   border-image: var(--chalk-frame) 80 / 2.6rem / 0.625rem round;
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  justify-content: center;
+  gap: 0.35rem;
   width: 100%;
-  min-height: calc(var(--box) + 1rem);
-  padding: 0.5rem 1rem 0.5rem 0.9rem;
+  padding: 0.85rem 0.35rem 0.6rem;
   border-radius: 1rem;
   border-image-width: 1.6rem;
   border-image-outset: 0.4rem;
@@ -4671,7 +4678,7 @@ a.board-cell:focus-visible {
 
 .board-row .board-cell-art {
   flex: 0 0 auto;
-  width: var(--box);
+  width: min(68%, 5.5rem);
   aspect-ratio: 1;
 }
 
@@ -4718,13 +4725,12 @@ a.board-cell:focus-visible {
 }
 
 .board-cell-word {
-  flex: 1;
-  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   font-weight: 700;
-  font-size: clamp(1.15rem, calc(var(--box) * 0.42), 1.7rem);
-  line-height: 1.1;
-  text-align: start;
+  font-size: clamp(0.85rem, 2.6vw, 1.2rem);
+  line-height: 1.15;
+  text-align: center;
   overflow-wrap: anywhere;
   color: #fbf8f0;
 }
@@ -4736,12 +4742,11 @@ a.board-cell:focus-visible {
 /* A learned lesson's tick, on its top corner, in the friend's chalk. */
 .board-cell-tick {
   position: absolute;
-  top: 50%;
-  right: 0.9rem;
-  translate: 0 -50%;
+  top: -0.5rem;
+  right: -0.4rem;
   display: grid;
   place-items: center;
-  width: 1.9rem;
+  width: 1.55rem;
   aspect-ratio: 1;
   border-radius: 9999px;
   color: #24463f;
@@ -4758,11 +4763,12 @@ a.board-cell:focus-visible {
 
 /* Its number, small chalk in the top corner — the order reads at a glance. */
 .board-cell-n {
-  flex: 0 0 1.4rem;
-  font-size: 1.15rem;
+  position: absolute;
+  top: 0.45rem;
+  left: 0.6rem;
+  font-size: 0.85rem;
   font-weight: 700;
   line-height: 1;
-  text-align: center;
   color: rgb(247 243 233 / 60%);
 }
 
@@ -4775,12 +4781,19 @@ a.board-cell:focus-visible {
 .board-cell--review {
   border-image: none;
   border-color: transparent;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 0.7rem 1.25rem 0.7rem 2.2rem;
   border-radius: 1.2rem;
   color: var(--color-ink-fixed);
   background-color: #fbf8f0;
   background-image: var(--noise);
   background-blend-mode: soft-light;
   box-shadow: 0 10px 18px -10px rgb(0 0 0 / 60%);
+}
+
+.board-row .board-cell--review .board-cell-word {
+  font-size: clamp(1.05rem, 3vw, 1.4rem);
 }
 
 a.board-cell--review:hover,
@@ -4797,6 +4810,9 @@ a.board-cell--review:focus-visible {
 }
 
 .board-cell--review .board-cell-n {
+  top: 50%;
+  left: 0.85rem;
+  translate: 0 -50%;
   color: color-mix(in srgb, var(--color-ink-fixed) 55%, transparent);
 }
 
@@ -4808,16 +4824,14 @@ a.board-cell--review:focus-visible {
   color: var(--color-ink-fixed);
 }
 
-.board-cell--review .board-cell-art {
+.board-row .board-cell--review .board-cell-art {
   width: auto;
-  max-width: 45%;
-  flex-wrap: wrap;
   aspect-ratio: auto;
-  gap: 0.15rem;
+  gap: 0.2rem;
 }
 
 .board-cell--review .board-magnet {
-  width: calc(var(--box) * 0.6);
+  width: clamp(1.9rem, 6vw, 2.75rem);
   max-width: none;
   filter: drop-shadow(0 3px 3px rgb(90 40 70 / 25%));
 }
@@ -4846,9 +4860,8 @@ a.board-cell--now:focus-visible {
 
 .board-cell-lock {
   position: absolute;
-  right: 1rem;
-  top: 50%;
-  translate: 0 -50%;
+  top: 0.45rem;
+  right: 0.5rem;
   color: rgb(247 243 233 / 55%);
 }
 
@@ -4967,7 +4980,6 @@ a.board-cell--now:focus-visible {
 }
 
 .board-next .board-cell-lock {
-  translate: none;
   top: 0.8rem;
   right: 1rem;
   bottom: auto;
@@ -5119,8 +5131,7 @@ a.board-cell--now:focus-visible {
   }
 
   .class-course .board-row {
-    --box: 2.9rem;
-    gap: 0.65rem;
+    --gap: 0.65rem;
     padding: 0.5rem 0.4rem 0.3rem;
   }
 }
@@ -5162,9 +5173,6 @@ a.board-cell--now:focus-visible {
     padding: 0.35rem 1rem;
   }
 
-  .class-course .board-row {
-    --box: 2.6rem;
-  }
 }
 
 
@@ -6068,5 +6076,180 @@ a.board-cell--now:focus-visible {
   ::view-transition-group(.board-morph),
   ::view-transition-group(.class-morph) {
     animation: none;
+  }
+}
+
+/* ---------- Mix two paints (`MixColors`, 2026-11-05) ----------
+   A splash of paint: no shape of its own, slowly wobbling, lit like clay.
+   The sum is laid out by hand (`--b` a splash, `--s` a sign, `--g` a gap)
+   because the two splashes slide to its exact middle to run together. */
+.paint-blob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 58% 42% 53% 47% / 46% 56% 44% 54%;
+  background-color: var(--paint);
+  box-shadow:
+    inset -0.35rem -0.45rem 0.8rem rgb(0 0 0 / 16%),
+    inset 0.35rem 0.4rem 0.7rem rgb(255 255 255 / 38%);
+  animation: paint-wobble 4.5s ease-in-out infinite alternate;
+}
+
+.paint-blob--wobble {
+  animation: paint-wobble 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes paint-wobble {
+  from {
+    border-radius: 58% 42% 53% 47% / 46% 56% 44% 54%;
+  }
+  to {
+    border-radius: 44% 56% 46% 54% / 57% 43% 57% 43%;
+  }
+}
+
+.mix-sum {
+  --b: min(19vw, 6.5rem, 14svh);
+  --s: min(6vw, 2.1rem);
+  --g: min(1.4vw, 0.7rem);
+  --w: calc(var(--b) * 3 + var(--s) * 2 + var(--g) * 4);
+  position: relative;
+  width: var(--w);
+  height: var(--b);
+}
+
+.mix-op {
+  position: absolute;
+  top: calc((var(--b) - var(--s)) / 2);
+  width: var(--s);
+  height: var(--s);
+  color: var(--color-ink-soft);
+  transition: opacity 0.25s;
+}
+
+.mix-op--plus {
+  left: calc(var(--b) + var(--g));
+}
+
+.mix-op--equal {
+  left: calc(var(--b) * 2 + var(--s) + var(--g) * 3);
+}
+
+.mix-q {
+  position: absolute;
+  right: 0;
+  width: var(--b);
+  height: var(--b);
+  display: grid;
+  place-items: center;
+  border: 3px dashed color-mix(in srgb, var(--color-ink-soft) 45%, transparent);
+  font-size: calc(var(--b) * 0.42);
+  font-weight: 700;
+  color: var(--color-ink-soft);
+  transition: opacity 0.25s;
+}
+
+.mix-goo {
+  position: absolute;
+  inset: 0;
+}
+
+.mix-goo > * {
+  position: absolute;
+  top: 0;
+  width: var(--b);
+  height: var(--b);
+}
+
+.mix-a {
+  left: 0;
+  transition: translate 0.8s cubic-bezier(0.5, 0, 0.3, 1);
+}
+
+.mix-b {
+  left: calc(var(--b) + var(--s) + var(--g) * 2);
+  animation-delay: -2s;
+  transition: translate 0.8s cubic-bezier(0.5, 0, 0.3, 1);
+}
+
+/* What they make: nothing, until the two have met in the middle. */
+.mix-result {
+  left: calc((var(--w) - var(--b)) / 2);
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity 0.45s 0.55s,
+    scale 0.6s 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.mix--done .mix-op,
+.mix--done .mix-q {
+  opacity: 0;
+}
+
+.mix--done .mix-a {
+  translate: calc((var(--w) - var(--b)) / 2) 0;
+}
+
+.mix--done .mix-b {
+  translate: calc((var(--w) - var(--b)) / 2 - var(--b) - var(--s) - var(--g) * 2) 0;
+}
+
+.mix--done .mix-result {
+  opacity: 1;
+  scale: 1.25;
+}
+
+.mix-answers {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.mix-answers > * {
+  grid-area: 1 / 1;
+}
+
+.mix-options {
+  display: flex;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  transition: opacity 0.25s;
+}
+
+.mix--done .mix-options {
+  opacity: 0;
+}
+
+.mix-option {
+  display: block;
+  width: min(23vw, 7rem, 15svh);
+  aspect-ratio: 1;
+  padding: 16%;
+  transition: scale 0.15s;
+}
+
+.mix-option:hover:not(:disabled) {
+  scale: 1.05;
+}
+
+.mix-option:active:not(:disabled) {
+  scale: 0.95;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paint-blob,
+  .paint-blob--wobble {
+    animation: none;
+  }
+
+  .mix-a,
+  .mix-b,
+  .mix-result {
+    transition: none;
+  }
+
+  .mix--done .mix-a,
+  .mix--done .mix-b {
+    opacity: 0;
   }
 }
