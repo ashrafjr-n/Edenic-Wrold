@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { ColorId, Face, LessonDef, Season, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
+import { SEASON_HILL } from "@/data/season-hill";
 import spring from "../../../public/assets/learn/nova/seasons/scenes/spring.png";
 import summer from "../../../public/assets/learn/nova/seasons/scenes/summer.png";
 import fall from "../../../public/assets/learn/nova/seasons/scenes/fall.png";
@@ -31,13 +32,17 @@ const face = (season: Season): Face => ({ kind: "picture", src: picture(season),
  * One season, one lesson — and every step about IT (the rule since Fruits:
  * no choosing between things inside a one-thing lesson): watch its reel,
  * meet it (its picture, its word, its speaker), build its word. (Make it
- * come, the third step, was removed 2026-10-12.)
+ * come, the third step, was removed 2026-10-12.) On Nova's hill (2026-11-05:
+ * the course's world, `data/season-hill.ts`): the camera turns round the tree
+ * from the word's sign to the letters' stones, and the season comes over the
+ * tree by itself as the steps are done.
  */
 function seasonLesson(season: Season, n: number): LessonDef {
   const full = picture(season);
   return {
     reel: `/assets/learn/nova/seasons/reels/${n}.mp4`,
     cover: [full],
+    world: SEASON_HILL[n],
     questions: [
       { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture: full },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
@@ -61,9 +66,11 @@ export const novaSeasons: LessonDef[] = [
   ...ORDER.map((season, i) => seasonLesson(season, i + 1)),
   /* The review, no reel — its exam, where the seasons are told apart:
      things into their season's box, the four put in order, then two
-     spelled from their picture alone. */
+     spelled from their picture alone. On the hill, a side of it per step,
+     the tree turning through the year. */
   {
     cover: ORDER.map(picture),
+    world: SEASON_HILL[5],
     questions: [
       {
         type: "sort",
