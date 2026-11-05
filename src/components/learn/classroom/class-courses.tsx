@@ -1,10 +1,14 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Play, RotateCcw } from "lucide-react";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
+import { COURSE_STOPS } from "@/data/course-stops";
+import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
+import type { LessonId } from "@/types/lesson";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import { itemKey, useProgress } from "@/store/progress";
@@ -80,6 +84,17 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
   const next = useUpNext(characterId, courses);
   const nextIndex = next ? courses.indexOf(next.course) : -1;
   const allDone = hydrated && !next;
+  const router = useRouter();
+  const startVeil = usePageTransition((state) => state.start);
+
+  /* A course with a world of stops: pink clouds rise over the page (a plain
+     click only — a new tab goes as any link goes), then the world. */
+  const intoWorld = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    startVeil("pink");
+    window.setTimeout(() => router.push(href), TRAIL_COVER_MS);
+  };
 
   const learned = courses.map(
     (course) =>
@@ -99,6 +114,7 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
             <Link
               key={course.id}
               href={`/learn/${characterId}/${course.id}`}
+              onClick={COURSE_STOPS[course.id as LessonId] ? (event) => intoWorld(event, `/learn/${characterId}/${course.id}`) : undefined}
               aria-label={format(announce, { name: course.name })}
               className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
               style={{ animationDelay: `${0.7 + i * 0.18}s` }}
