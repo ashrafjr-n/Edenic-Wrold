@@ -73,6 +73,7 @@ const WORLD_HOLD_MS: Partial<Record<Question["type"], number>> = {
   spell: 1250,
   find: 1300,
   mix: 2100,
+  basket: 300,
 };
 const WORLD_HOLD_DEFAULT_MS = 1100;
 
@@ -531,7 +532,8 @@ export function LessonPlayer({
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "basket") {
-      body = <BasketTime key={seed} word={q.word} kitchen={q.kitchen} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
+      /* In Nova's cottage (the world's last place): over the whole screen. */
+      inWorld = <BasketTime key={seed} word={q.word} kitchen={q.kitchen} hidden={!arrived} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "harvest") {
       body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
