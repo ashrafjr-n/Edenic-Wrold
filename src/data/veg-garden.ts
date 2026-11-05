@@ -42,6 +42,20 @@ import l5_s2_jpg from "../../public/assets/learn/nova/fruits/world/5/landscape/s
 import p5_s2_jpg from "../../public/assets/learn/nova/fruits/world/5/portrait/s2.jpg";
 import l5_s3_jpg from "../../public/assets/learn/nova/fruits/world/5/landscape/s3.jpg";
 import p5_s3_jpg from "../../public/assets/learn/nova/fruits/world/5/portrait/s3.jpg";
+import l6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s0.jpg";
+import p6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s0.jpg";
+import l6_s1_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s1.jpg";
+import p6_s1_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s1.jpg";
+import l6_s2_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s2.jpg";
+import p6_s2_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s2.jpg";
+import l6_s3_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s3.jpg";
+import p6_s3_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s3.jpg";
+import l6_s4_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s4.jpg";
+import p6_s4_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s4.jpg";
+import l6_s5_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s5.jpg";
+import p6_s5_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s5.jpg";
+import l6_s6_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s6.jpg";
+import p6_s6_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s6.jpg";
 import kl_potato_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/potato.png";
 import kl_pepper_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/pepper.png";
 import kl_milk_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/milk.png";
@@ -140,6 +154,26 @@ export const VEG_GARDEN: Record<number, LessonWorld> = {
       { landscape: "/assets/learn/nova/fruits/world/5/landscape/m1.mp4?v=37100db6", portrait: "/assets/learn/nova/fruits/world/5/portrait/m1.mp4?v=b508b997" },
       { landscape: "/assets/learn/nova/fruits/world/5/landscape/m2.mp4?v=af8ee15b", portrait: "/assets/learn/nova/fruits/world/5/portrait/m2.mp4?v=80167ead" },
       { landscape: "/assets/learn/nova/fruits/world/5/landscape/m3.mp4?v=0f6894b8", portrait: "/assets/learn/nova/fruits/world/5/portrait/m3.mp4?v=0037b013" },
+    ],
+  },
+  6: {
+    stations: [
+      { landscape: l6_s0_jpg, portrait: p6_s0_jpg },
+      { landscape: l6_s1_jpg, portrait: p6_s1_jpg },
+      { landscape: l6_s2_jpg, portrait: p6_s2_jpg },
+      { landscape: l6_s3_jpg, portrait: p6_s3_jpg },
+      { landscape: l6_s4_jpg, portrait: p6_s4_jpg },
+      { landscape: l6_s5_jpg, portrait: p6_s5_jpg },
+      { landscape: l6_s6_jpg, portrait: p6_s6_jpg },
+    ],
+    moves: [
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m0.mp4?v=27d12290", portrait: "/assets/learn/nova/fruits/world/6/portrait/m0.mp4?v=4961b626" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m1.mp4?v=37ca97aa", portrait: "/assets/learn/nova/fruits/world/6/portrait/m1.mp4?v=e9e4241a" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m2.mp4?v=c5ea40c5", portrait: "/assets/learn/nova/fruits/world/6/portrait/m2.mp4?v=1cb094cf" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m3.mp4?v=18bfcc96", portrait: "/assets/learn/nova/fruits/world/6/portrait/m3.mp4?v=0467fb7a" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m4.mp4?v=d2a679eb", portrait: "/assets/learn/nova/fruits/world/6/portrait/m4.mp4?v=0665a873" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m5.mp4?v=f1f0bbb7", portrait: "/assets/learn/nova/fruits/world/6/portrait/m5.mp4?v=680fc8ae" },
+      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m6.mp4?v=3c79de2e", portrait: "/assets/learn/nova/fruits/world/6/portrait/m6.mp4?v=cd4b9287" },
     ],
   },
 };
