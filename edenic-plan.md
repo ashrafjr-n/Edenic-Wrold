@@ -675,7 +675,9 @@ with the user's OK on its look (a still) before it is built.
       where each step was done; the end rises over the path in bloom,
       then the friend celebrates. Every other course's world does the same.
 - [x] Colors (forest) — built 2026-11-05 (`render.cjs forest`, `crop.py forest`;
-      11 worlds, the user checks it)
+      11 worlds); same day on request: Pop deleted, the Find part of the
+      forest (the camera walks on, things of a colour stand in it), the
+      forest made over, a crayon instead of the paint pot; the user checks it
 - [ ] Vegetables · Seasons · Animals · Weather — the
       plan, agreed 2026-11-04 (below, "Course worlds, the plan")
 
