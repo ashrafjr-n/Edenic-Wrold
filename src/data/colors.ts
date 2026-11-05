@@ -1,25 +1,24 @@
 import type { StaticImageData } from "next/image";
 import type { ColorId, Face, SortBin } from "@/types/course";
-import red from "../../public/assets/learn/pinki/colors/pots/red.png";
-import blue from "../../public/assets/learn/pinki/colors/pots/blue.png";
-import yellow from "../../public/assets/learn/pinki/colors/pots/yellow.png";
-import green from "../../public/assets/learn/pinki/colors/pots/green.png";
-import orange from "../../public/assets/learn/pinki/colors/pots/orange.png";
-import purple from "../../public/assets/learn/pinki/colors/pots/purple.png";
-import pink from "../../public/assets/learn/pinki/colors/pots/pink.png";
-import brown from "../../public/assets/learn/pinki/colors/pots/brown.png";
-import black from "../../public/assets/learn/pinki/colors/pots/black.png";
-import white from "../../public/assets/learn/pinki/colors/pots/white.png";
-import empty from "../../public/assets/learn/pinki/colors/pots/empty.png";
+import red from "../../public/assets/learn/pinki/colors/dots/red.png";
+import blue from "../../public/assets/learn/pinki/colors/dots/blue.png";
+import yellow from "../../public/assets/learn/pinki/colors/dots/yellow.png";
+import green from "../../public/assets/learn/pinki/colors/dots/green.png";
+import orange from "../../public/assets/learn/pinki/colors/dots/orange.png";
+import purple from "../../public/assets/learn/pinki/colors/dots/purple.png";
+import pink from "../../public/assets/learn/pinki/colors/dots/pink.png";
+import brown from "../../public/assets/learn/pinki/colors/dots/brown.png";
+import black from "../../public/assets/learn/pinki/colors/dots/black.png";
+import white from "../../public/assets/learn/pinki/colors/dots/white.png";
+import empty from "../../public/assets/learn/pinki/colors/dots/empty.png";
 
-/** A pot with no color yet, in plain grey clay — a color still to learn. */
-export const EMPTY_POT = empty;
+/** A dot with no color yet, plain grey — a color still to learn. */
+export const EMPTY_DOT = empty;
 
 interface ColorDef {
-  /** A paint pot of this color — how the course SHOWS a color: on the word
-      card, as the Paint step's buttons, on the sort boxes and done screen.
-      Rendered by `tools/picnic-scene` with the same paint as the things. */
-  pot: StaticImageData;
+  /** A plain dot of this color (2026-11-05, on request) — how the course
+      SHOWS a color: its stop on the board, answer tiles, sort boxes. */
+  dot: StaticImageData;
   /** The color as clay (a sort box), its shaded edge, and the text on it. */
   face: string;
   edge: string;
@@ -32,8 +31,8 @@ const INK = "var(--color-ink-fixed)";
 
 /** The ten taught colors. These are content, not theme: red is red in dark
     mode too. Kept close to the paint the pictures were rendered with. */
-const color = (pot: StaticImageData, face: string, edge: string, text = "#fff", letterEdge = edge): ColorDef => ({
-  pot,
+const color = (dot: StaticImageData, face: string, edge: string, text = "#fff", letterEdge = edge): ColorDef => ({
+  dot,
   face,
   edge,
   text,
@@ -60,11 +59,11 @@ export const COLORS: Record<ColorId, ColorDef> = {
     the rest. */
 export const COLOR_ORDER: ColorId[] = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 
-/** A color as something to look at: its paint pot. */
-export const potFace = (color: ColorId): Face => ({ kind: "picture", src: COLORS[color].pot, word: color });
+/** A color as something to look at: its dot. */
+export const dotFace = (color: ColorId): Face => ({ kind: "picture", src: COLORS[color].dot, word: color });
 
 /** A Sort box for a color, in that color's own clay. */
 export const colorBin = (color: ColorId): SortBin => {
   const { face, edge, text } = COLORS[color];
-  return { target: { color }, word: color, face: potFace(color), tone: { face, edge, text } };
+  return { target: { color }, word: color, face: dotFace(color), tone: { face, edge, text } };
 };

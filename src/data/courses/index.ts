@@ -1,7 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef, Question } from "@/types/course";
-import { COLORS, EMPTY_POT } from "@/data/colors";
+import { COLORS, EMPTY_DOT } from "@/data/colors";
 import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
@@ -47,7 +47,7 @@ export interface BoxStop {
     a lesson not written yet (no such step, one cover) is a plain cell
     under its title. A color still to learn is an empty pot. */
 export function courseStops(id: LessonId): BoxStop[] {
-  const blank = id === "colors" ? EMPTY_POT : undefined;
+  const blank = id === "colors" ? EMPTY_DOT : undefined;
   return courseLessons[id].map(({ cover, questions }) => {
     const meets = questions.filter((q): q is Extract<Question, { type: "word" }> => q.type === "word");
     const meet = meets.length === 1 ? meets[0] : undefined;
