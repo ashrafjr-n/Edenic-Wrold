@@ -48,7 +48,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 /* ACES for the Shapes picnics; the Colors art (single things, and the
    scenes that stand things on their own boxes) uses Neutral, which keeps a
    color's hue and saturation — ACES washes yellows into mustard. */
-const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("classroom") || params.has("garden") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white", "kitchen"].includes(params.get("scene"));
+const VIVID = params.has("thing") || params.has("harvest") || params.has("basket") || params.has("season") || params.has("classroom") || params.has("garden") || ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"].includes(params.get("scene"));
 renderer.toneMapping = VIVID ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = VIVID ? 0.86 : 0.92;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -3136,15 +3136,14 @@ const SCENES = {
      a blender, milk, cheese and garlic, a basket — and, behind the counter,
      the room's friend (a picture the page lays in, never 3D: `friend` is
      her place, [x, z, height] — she stands behind the counter, her lower
-     half hidden by it). One scene, two frames: `landscape` for a wide
-     board, `portrait` for a phone's. `at` is [x, height, z]. */
+     half hidden by it). Its layout in Nova's cottage (`?world=veg`), two
+     frames: `landscape` for a wide screen, `portrait` for a phone's. `at` is
+     [x, height, z]. */
   kitchen: {
-    world: "kitchen",
-    autoGround: true,
     frames: {
       landscape: {
         size: [1600, 1000], view: 11.6, lift: 28, look: [0, 1.35, -1],
-        counter: [-2.4, 2.2], friend: [3.6, -3.3, 4.1],
+        counter: [-2.4, 2.2], friend: [3.6, -2.75, 4.1],
         basket: [3.9, 1.2, 1.2],
         items: {
           blender: { model: "kitchen", arg: "blender", at: [-4.6, 0, -1.45], rotY: 0.3, scale: 1.0 },
@@ -3160,18 +3159,18 @@ const SCENES = {
       },
       portrait: {
         size: [1000, 1333], view: 7.4, lift: 40, look: [0, 2.65, -0.4],
-        counter: [-3.1, 2.75], friend: [2.05, -4.0, 3.5],
-        basket: [2.15, 1.95, 1.1],
+        counter: [-3.1, 2.75], friend: [2.05, -3.45, 3.5],
+        basket: [1.72, 1.95, 1.0],
         items: {
-          blender: { model: "kitchen", arg: "blender", at: [-2.75, 0, -2.2], rotY: 0.3, scale: 0.9 },
+          blender: { model: "kitchen", arg: "blender", at: [-2.4, 0, -2.2], rotY: 0.3, scale: 0.9 },
           milk: { model: "kitchen", arg: "milkBottle", at: [-1.5, 0, -2.35], scale: 0.9 },
           garlic: { model: "kitchen", arg: "garlic", at: [-0.25, 0, -2.0], scale: 0.95 },
-          tomato: { model: "video", arg: "tomato", at: [-2.7, 0, -0.15], scale: 0.9 },
-          potato: { model: "video", arg: "potato", at: [-1.1, 0, -0.1], rotY: 0.6, scale: 0.9 },
-          pepper: { model: "video", arg: "pepper", at: [0.45, 0, -0.2], rotY: -0.4, scale: 0.9 },
-          cheese: { model: "food", arg: "cheese", at: [2.45, 0, -0.45], rotY: 0.8, scale: 0.85 },
-          broccoli: { model: "video", arg: "broccoli", at: [-2.6, 0, 1.85], scale: 0.9 },
-          carrot: { model: "video", arg: "carrot", at: [-0.55, 0, 2.0], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.9 },
+          tomato: { model: "video", arg: "tomato", at: [-2.35, 0, -0.15], scale: 0.9 },
+          potato: { model: "video", arg: "potato", at: [-0.85, 0, -0.1], rotY: 0.6, scale: 0.9 },
+          pepper: { model: "video", arg: "pepper", at: [0.6, 0, -0.2], rotY: -0.4, scale: 0.9 },
+          cheese: { model: "food", arg: "cheese", at: [2.2, 0, -0.45], rotY: 0.8, scale: 0.85 },
+          broccoli: { model: "video", arg: "broccoli", at: [-2.2, 0, 1.75], scale: 0.85 },
+          carrot: { model: "video", arg: "carrot", at: [-0.45, 0, 2.0], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.9 },
         },
       },
     },
@@ -3983,8 +3982,8 @@ ITEMS.food = (what) => ANIMAL_FOODS[what]();
 /* ---------- Nova's kitchen — Find It! (2026-11-01) ----------
    What else is on her counter besides the vegetables, in the videos'
    satin look: a blender, a bottle of milk, a bulb of garlic (the cheese
-   is Feed the animal's). `?thing=kitchen&arg=` alone; the scene is
-   `?scene=kitchen`. */
+   is Feed the animal's). `?thing=kitchen&arg=` alone; the room is
+   `kitchenRoom`, in Nova's cottage (`?world=veg`). */
 const KITCHEN = {
   /* A blender: a round mint base with a dial, a frosted jar with a white
      lid, a little milk swirled in its bottom. */
@@ -4067,6 +4066,90 @@ const KITCHEN = {
 };
 ITEMS.kitchen = (what) => KITCHEN[what]();
 
+/* The kitchen's room and counter (the Vegetables lessons' Basket Time): a
+   wooden counter seen from the front, its top at y 0, `back`..`front` in z;
+   the room behind it. Nova's cottage holds them (`?world=veg`). */
+function kitchenRoom(back, front) {
+  const matte = (color, extra = {}) => clay(color, { clearcoat: 0.1, roughness: 0.8, sheen: 0.2, ...extra });
+  const slab = (wd, ht, dp, material, r = 0.05) => mesh(new RoundedBoxGeometry(wd, ht, dp, 4, r), material);
+  const add = (parent, thing, x, y, z) => { thing.position.set(x, y, z); parent.add(thing); return thing; };
+  /* The room behind: a cream wall, a mint back counter with canisters and
+     a kettle, an open shelf with jars and a plant, a sunny window, upper
+     cupboards. */
+  const room = new THREE.Group();
+  const WALL = back - 3.4;
+  const wall = mesh(new THREE.PlaneGeometry(34, 20), matte(0xfbefdc));
+  wall.position.set(0, 7, WALL);
+  wall.castShadow = false;
+  room.add(wall);
+  /* Tiles between the back counter and the shelf. */
+  for (let r = 0; r < 4; r++) {
+    for (let c = -16; c <= 16; c++) {
+      const tile = slab(0.56, 0.56, 0.06, matte((r + c) % 2 ? 0xdff3ec : 0xfffaf0, { roughness: 0.45, clearcoat: 0.5 }), 0.04);
+      add(room, tile, c * 0.6, 0.95 + r * 0.6, WALL + 0.04).castShadow = false;
+    }
+  }
+  const BACK_TOP = 0.65;
+  add(room, slab(32, 3.4, 1.3, matte(0xbfe5d8)), 0, BACK_TOP - 1.85, WALL + 0.65);
+  add(room, slab(32, 0.16, 1.4, matte(0xe8c08e, { roughness: 0.6 })), 0, BACK_TOP - 0.08, WALL + 0.7);
+  const canister = (x, color, height) => {
+    const c = mesh(new THREE.CylinderGeometry(0.28, 0.28, height, 40), matte(color, { clearcoat: 0.4, roughness: 0.4 }));
+    add(room, c, x, BACK_TOP + height / 2, WALL + 0.6);
+    add(room, mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.1, 40), matte(0xffffff, { clearcoat: 0.4 })), x, BACK_TOP + height + 0.05, WALL + 0.6);
+  };
+  canister(-5.2, 0xffb3c4, 0.9);
+  canister(-4.5, 0xffd98a, 0.7);
+  canister(-3.85, 0x9fd8ff, 0.55);
+  const kettle = mesh(new THREE.SphereGeometry(0.5, 40, 30), matte(0xff8fa8, { clearcoat: 0.7, roughness: 0.3 }));
+  kettle.scale.y = 0.85;
+  add(room, kettle, 5.4, BACK_TOP + 0.42, WALL + 0.65);
+  /* A sunny window at the left. */
+  const WIN_Y = 3.4;
+  add(room, slab(3.2, 2.6, 0.12, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.06);
+  const glass = mesh(new THREE.PlaneGeometry(2.8, 2.2), clay(0xcfeaff, { roughness: 0.3, clearcoat: 0.6, emissive: 0xbfe2ff, emissiveIntensity: 0.55 }));
+  add(room, glass, -3.2, WIN_Y + 0.9, WALL + 0.13).castShadow = false;
+  add(room, slab(0.1, 2.2, 0.06, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.16);
+  add(room, slab(2.8, 0.1, 0.06, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.16);
+  add(room, slab(3.5, 0.14, 0.4, matte(0xffffff)), -3.2, WIN_Y - 0.4, WALL + 0.2);
+  /* An open shelf with jars and a plant at the right. */
+  add(room, slab(5.5, 0.14, 0.7, matte(0xe8c08e, { roughness: 0.6 })), 3.4, WIN_Y + 0.2, WALL + 0.35);
+  [[1.4, 0xffd98a, 0.55], [2.0, 0xc9f0d9, 0.7], [2.55, 0xffc2d2, 0.5]].forEach(([x, color, ht]) => {
+    add(room, mesh(new THREE.CylinderGeometry(0.22, 0.22, ht, 32), matte(color, { clearcoat: 0.6, roughness: 0.3 })), x, WIN_Y + 0.27 + ht / 2, WALL + 0.35);
+  });
+  const pot = mesh(new THREE.CylinderGeometry(0.42, 0.32, 0.65, 40), matte(0xf2a36a));
+  add(room, pot, 4.3, WIN_Y + 0.6, WALL + 0.35);
+  for (let i = 0; i < 9; i++) {
+    const leaf = mesh(new THREE.SphereGeometry(0.3, 24, 16), matte(i % 2 ? 0x6cc47a : 0x58b46a));
+    leaf.scale.set(0.6, 1.5, 0.35);
+    const a = (i / 9) * Math.PI - Math.PI / 2;
+    leaf.rotation.z = -a * 0.8;
+    add(room, leaf, 4.3 + Math.sin(a) * 0.45, WIN_Y + 1.25 + Math.cos(a) * 0.35, WALL + 0.35 + (i % 3) * 0.08);
+  }
+  /* Upper cupboards, pale mint with round knobs. */
+  for (let i = -5; i <= 5; i++) {
+    add(room, slab(1.9, 2.2, 0.5, matte(0xd6efe6)), i * 2, WIN_Y + 3.6, WALL + 0.25);
+    add(room, mesh(new THREE.SphereGeometry(0.09, 20, 14), matte(0xf2c46a, { clearcoat: 0.6 })), i * 2 + (i % 2 ? 0.7 : -0.7), WIN_Y + 2.75, WALL + 0.55);
+  }
+
+  /* The counter: a butcher-block top (strips of warm wood) on a cream
+     cupboard with mint doors. */
+  const counter = new THREE.Group();
+  const wood = [0xe6b47c, 0xdcaa72, 0xe9bb85, 0xdfae76];
+  const depth = front - back;
+  const strips = 7;
+  for (let i = 0; i < strips; i++) {
+    const strip = slab(30, 0.42, depth / strips + 0.004, matte(wood[i % 4], { roughness: 0.6, clearcoat: 0.25 }), 0.02);
+    add(counter, strip, 0, -0.21, back + (depth / strips) * (i + 0.5)).castShadow = false;
+  }
+  add(counter, slab(30, 0.44, 0.16, matte(0xd9a46c, { roughness: 0.55, clearcoat: 0.3 }), 0.07), 0, -0.21, front + 0.02).castShadow = false;
+  add(counter, slab(30, 4, 0.3, matte(0xfbf3e6)), 0, -2.44, front - 0.2);
+  for (let i = -7; i <= 7; i++) {
+    add(counter, slab(2.3, 3.1, 0.08, matte(0xcfeadf)), i * 2.5, -2.4, front - 0.02);
+    add(counter, mesh(new THREE.SphereGeometry(0.1, 20, 14), matte(0xf2c46a, { clearcoat: 0.6 })), i * 2.5 + 0.85, -1.2, front + 0.08);
+  }
+  return { room, counter };
+}
+
 /* A see-through floor that only shows shadows, for the item layers. */
 const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.3 }));
 catcher.rotation.x = -Math.PI / 2;
@@ -4092,10 +4175,10 @@ function place(group, it) {
    else: the whole world drawn black (for its depth), then each part again
    in white, cut at its z, wherever it is the nearest. */
 const black = new THREE.MeshBasicMaterial({ color: 0x000000, toneMapped: false, side: THREE.DoubleSide });
-function maskOf(parts) {
+function maskOf(parts, cam = camera) {
   renderer.setClearColor(0x000000, 1);
   scene.overrideMaterial = black;
-  renderer.render(scene, camera);
+  renderer.render(scene, cam);
   scene.overrideMaterial = null;
   const layer = new THREE.Scene();
   for (const [thing, cut] of parts) {
@@ -4116,19 +4199,19 @@ function maskOf(parts) {
     });
   }
   renderer.autoClear = false;
-  renderer.render(layer, camera);
+  renderer.render(layer, cam);
   renderer.autoClear = true;
   return renderer.domElement.toDataURL("image/png");
 }
 
 /* A basket's mouth on the picture, % — where what is picked piles up. */
-function mouthOf(basket) {
+function mouthOf(basket, cam = camera) {
   basket.updateMatrixWorld(true);
   const p = new THREE.Vector3();
   let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
   for (let i = 0; i < 96; i++) {
     const a = (i / 96) * Math.PI * 2;
-    basket.localToWorld(p.set(Math.cos(a) * 0.84, 0.66, Math.sin(a) * 0.84)).project(camera);
+    basket.localToWorld(p.set(Math.cos(a) * 0.84, 0.66, Math.sin(a) * 0.84)).project(cam);
     const x = ((p.x + 1) / 2) * 100;
     const y = ((1 - p.y) / 2) * 100;
     [l, t, r, b] = [Math.min(l, x), Math.min(t, y), Math.max(r, x), Math.max(b, y)];
@@ -4147,6 +4230,9 @@ const GARDEN = params.get("garden");
 /* Pinki's colour forest (`?garden=<1-11>&world=forest`) lays a colour scene's
    things on their own boxes, like the colour scenes do. */
 const FOREST = params.get("world") === "forest";
+/* Nova's vegetable garden (`?garden=<1-5>&world=veg`, 2026-11-05): the same
+   kit, her garden and cottage; the camera goes indoors for Basket Time. */
+const VEG = params.get("world") === "veg";
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -5052,16 +5138,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -5106,9 +5192,9 @@ if (THING) {
   lawnCanvas.width = 4;
   lawnCanvas.height = 64;
   const lctx = lawnCanvas.getContext("2d");
-  lctx.fillStyle = FOREST ? "#7fc068" : "#9cd67f";
+  lctx.fillStyle = VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
   lctx.fillRect(0, 0, 4, 64);
-  lctx.fillStyle = FOREST ? "#78ba62" : "#93cf77";
+  lctx.fillStyle = VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
   lctx.fillRect(0, 0, 4, 32);
   const lawnTex = new THREE.CanvasTexture(lawnCanvas);
   lawnTex.colorSpace = THREE.SRGBColorSpace;
@@ -5128,6 +5214,8 @@ if (THING) {
   scene.add(gravel);
   for (const z of FOREST ? [] : PATH) {
     for (let x = -60; x < 300; x += 0.92) {
+      /* Nova's: the way up to her door leaves the path here. */
+      if (VEG && z === PATH[0] && Math.abs(x - 16) < 1.7) continue;
       add(rbox(0.86, 0.16, 0.3, stone(rand() > 0.5 ? 0xe9d3b4 : 0xe4cdac), 0.07), x, 0.06, z).castShadow = false;
     }
   }
@@ -5262,7 +5350,7 @@ if (THING) {
      places and no Find. */
   const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
-  const fx = FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = VEG ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -5412,7 +5500,9 @@ if (THING) {
     scene.add(at(ball(0.1, glaze(0xffc93a), 16), c + 2.65, 1.6, WALL_Z));
   }
 
-  if (FOREST) {
+  if (VEG) {
+    /* Nova's garden is built further down, once its helpers are in scope. */
+  } else if (FOREST) {
   /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
      day — "not professional enough"): a sunlit clearing on a winding
      path. Layered trees in soft haze, dappled light on the floor and
@@ -5654,7 +5744,7 @@ if (THING) {
      The camera's last move tilts down onto it, and the Find is played
      there, in the garden itself. ---- */
   const PICNIC = FOREST ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
-  const HAS_FIND = FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
+  const HAS_FIND = VEG ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
   const FIND_Z = -1.6;
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
@@ -5843,6 +5933,8 @@ if (THING) {
      review's sorting at four shape boxes. ---- */
   const WOOD = soft(0xf3d3a6, { roughness: 0.8 });
   const PLACE_Z = 0.6;
+  /* What the lawn's tufts keep off in Nova's garden. */
+  const vegClear = [];
   const SHAPE_OF_LESSON = ["circle", "square", "triangle", "rectangle"];
   const SHAPE_COLOR = { circle: 0x5aa9ee, square: 0x58c27d, triangle: 0xffc93a, rectangle: 0xff8fbf };
   /* A shape's outline, about `k` across, centred. */
@@ -6076,9 +6168,395 @@ if (THING) {
     return g;
   }
 
+  /* ---- Nova's vegetable garden (2026-11-05, Vegetables' world): a warm
+     afternoon, lavender rows and a cream picket fence, one long raised bed
+     along the path and her cottage at its end. A lesson: the word's sign by
+     the bed, the seed packets of its letters, then the camera goes up the
+     path, in at the door, to the kitchen counter — Basket Time, played in
+     the room. The marker is the bed itself: every step done, the lesson's
+     vegetable grows on — part by part, from the soil — and it is ripe in
+     the end shot, over the whole bed. ---- */
+  const VEG_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
+  const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] : null;
+  const KX = 16, KY = 1.5, KK = 0.5, ROOM_Z = -10, FRONT_Z = -4.2;
+  const BED_TOP = 0.72;
+  const toWorld = ([x, y, z]) => [KX + x * KK, KY + y * KK, ROOM_Z + z * KK];
+  const vegPlants = [];
+  const vegKeep = [];
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const easeOut = (t) => 1 - (1 - t) ** 3;
+
+  /* One plant of the lesson's vegetable. `grow(v)`, v 0..1: its parts come
+     one after another — the first leaves out of the soil, the stem, more
+     leaves, then the vegetable itself swelling, last of all ripening. */
+  function vegPlant(kind) {
+    const g = new THREE.Group();
+    const parts = [];
+    const part = (obj, from, to, fade = false) => {
+      parts.push({ obj, from, to, fade, full: obj.scale.clone() });
+      g.add(obj);
+      return obj;
+    };
+    /* A leaf from its stalk: `yaw` round the stem, `up` its rise off level. */
+    const leaf = (len, wd, color, y, yaw, up, from, to) => {
+      const l = plumpLeaf(len, wd, clay(color, { clearcoat: 0.3, roughness: 0.58 }));
+      l.rotation.set(0, 0, up);
+      const arm = new THREE.Group();
+      arm.position.y = y;
+      arm.rotation.y = yaw;
+      arm.add(l);
+      return part(arm, from, to);
+    };
+    const greens = [0x5fbf58, 0x7fd06a, 0x54b254];
+    /* A stem that climbs, with leaves opening up it. */
+    const climbing = (height, leaves) => {
+      const stake = taperTube([[0.18, 0, -0.18], [0.18, height * 0.6, -0.18], [0.18, height * 1.04, -0.18]], 0.05, 0.04, clay(0xc9a06e, { roughness: 0.8 }));
+      part(stake, 0, 0.02);
+      const stem = taperTube([[0, 0, 0], [0.05, height * 0.5, 0.02], [0, height, 0]], 0.075, 0.04, clay(0x5a9a3a, { roughness: 0.6, clearcoat: 0.2 }));
+      part(stem, 0.02, 0.62);
+      for (let i = 0; i < leaves; i++) {
+        const a = i / leaves;
+        const y = (0.14 + a * 0.84) * height;
+        leaf(0.82 - a * 0.26, 0.34 - a * 0.1, greens[i % 3], y, (i % 2 ? Math.PI : 0) + (i % 4 < 2 ? 0.5 : -0.5), 0.5, 0.04 + a * 0.5, 0.26 + a * 0.5);
+      }
+    };
+    /* The fruit on the stem: green, swelling, then its ripe twin fades in. */
+    const fruit = (unripe, ripe, spots) => {
+      spots.forEach(([x, y, z, k], i) => {
+        const place = (o) => {
+          o.position.set(x, y, z);
+          o.scale.setScalar(k);
+          return o;
+        };
+        const green = place(unripe());
+        part(green, 0.56 + i * 0.03, 0.82 + i * 0.03);
+        const red = place(ripe());
+        red.traverse((o) => {
+          if (o.isMesh) o.material = Object.assign(o.material.clone(), { transparent: true });
+        });
+        part(red, 0.87, 0.985, true);
+      });
+    };
+    if (kind === "carrot") {
+      /* The root grows under the soil; only its shoulder ever shows. */
+      for (let i = 0; i < 9; i++) leaf(0.95 + (i % 3) * 0.2, 0.17, i % 2 ? 0xa7b14c : 0x8fa53f, 0.06, (i / 9) * Math.PI * 2, 1.05 + (i % 2) * 0.28, 0.02 + i * 0.03, 0.36 + i * 0.05);
+      const root = new THREE.Group();
+      const body = videoCarrot(0, false);
+      body.position.y = -1.3;
+      root.add(body);
+      root.scale.setScalar(0.92);
+      part(root, 0.42, 1);
+    } else if (kind === "broccoli") {
+      for (let i = 0; i < 9; i++) leaf(1.15, 0.42, i % 2 ? 0x5f9f5a : 0x71ad62, 0.08, (i / 9) * Math.PI * 2, 0.55 + (i % 2) * 0.3, i * 0.035, 0.38 + i * 0.035);
+      const head = videoBroccoli();
+      head.position.y = 0.16;
+      head.scale.setScalar(0.92);
+      part(head, 0.5, 1);
+    } else if (kind === "potato") {
+      for (const [x, z, h] of [[0, 0, 1.05], [-0.26, 0.14, 0.82], [0.28, -0.1, 0.9]]) {
+        part(taperTube([[x * 0.3, 0, z * 0.3], [x * 0.7, h * 0.55, z * 0.7], [x, h, z]], 0.055, 0.03, clay(0x5f9e36, { roughness: 0.6 })), 0.02, 0.5);
+        for (let i = 0; i < 5; i++) {
+          const a = i / 5;
+          const l = leaf(0.5, 0.2, greens[i % 3], 0, (i / 5) * Math.PI * 2 + x * 4, 0.42, 0.08 + a * 0.32, 0.34 + a * 0.32);
+          l.position.set(x * (0.4 + a * 0.6), h * (0.4 + a * 0.6), z * (0.4 + a * 0.6));
+        }
+      }
+      /* Dug-up potatoes, half out of the soil at its foot. */
+      for (const [x, z, k] of [[-0.56, 0.34, 0.92], [0.5, 0.36, 1.0], [0.02, 0.62, 0.8]]) {
+        const potato = videoPotato();
+        potato.position.set(x, 0.1, z);
+        potato.scale.setScalar(k);
+        part(potato, 0.58, 1);
+      }
+    } else if (kind === "tomato") {
+      climbing(2.05, 10);
+      fruit(() => videoTomato(true), () => videoTomato(), [[-0.34, 1.32, 0.3, 0.44], [0.36, 0.95, 0.32, 0.5], [0.05, 1.72, 0.3, 0.38]]);
+    } else {
+      climbing(1.9, 10);
+      fruit(() => videoPepper("green"), () => videoPepper("red"), [[-0.38, 0.86, 0.3, 0.5], [0.36, 1.18, 0.3, 0.46]]);
+    }
+    g.grow = (v) => {
+      for (const { obj, from, to, fade, full } of parts) {
+        const p = clamp01((v - from) / (to - from));
+        obj.visible = p > 0;
+        if (!obj.visible) continue;
+        if (fade) obj.traverse((o) => o.isMesh && (o.material.opacity = p));
+        else obj.scale.copy(full).multiplyScalar(Math.max(0.001, easeOut(p)));
+      }
+    };
+    g.grow(0);
+    return g;
+  }
+
+  /* A jumbled word on things: `make(letter, i)` for each letter, in rows. */
+  const jumbled = (word) => {
+    const letters = [...word.toUpperCase()];
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    return letters;
+  };
+  const textMat = (text, { size = 92, w = 128, ink = "#ffffff", paper = null } = {}) => {
+    const cv = document.createElement("canvas");
+    cv.width = w;
+    cv.height = 128;
+    const cx = cv.getContext("2d");
+    if (paper) {
+      cx.fillStyle = paper;
+      cx.fillRect(0, 0, w, 128);
+    }
+    cx.fillStyle = ink;
+    cx.font = `bold ${size}px 'Arial Rounded MT Bold', Arial, sans-serif`;
+    cx.textAlign = "center";
+    cx.textBaseline = "middle";
+    cx.fillText(text, w / 2, 70);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    return new THREE.MeshStandardMaterial({ map: tex, transparent: !paper, roughness: 0.7 });
+  };
+  /* The word's sign, on a post by the bed, the vegetable sat on top. */
+  function vegSign(word) {
+    const g = new THREE.Group();
+    g.add(at(rbox(0.26, 3.1, 0.26, WOOD, 0.08), 0, 1.5, 0));
+    g.add(at(rbox(3.5, 1.45, 0.16, soft(0xf6e6c8), 0.1), 0, 2.45, 0.14));
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.15), textMat(word, { w: 356, size: word.length > 6 ? 62 : 80, ink: "#7a5f9e" }));
+    board.position.set(0, 2.45, 0.235);
+    g.add(board);
+    const thing = VIDEO_THINGS[VEG_KIND]();
+    thing.scale.setScalar(0.78);
+    thing.position.set(0, 3.25, 0.14);
+    g.add(thing);
+    /* Coloured per vertex: never merged. */
+    vegKeep.push(thing);
+    return g;
+  }
+  /* The spelling's seed packets: a paper packet on a stick for each letter
+     of the word, jumbled, stuck in the ground in two rows. */
+  function seedPackets(word) {
+    const g = new THREE.Group();
+    const letters = jumbled(word);
+    const tints = [0xffb4c6, 0xbcd9ff, 0xffdf8f, 0xbfe8bd, 0xd8c6f7];
+    const perRow = Math.ceil(letters.length / 2);
+    letters.forEach((letter, i) => {
+      const row = Math.floor(i / perRow), col = i % perRow;
+      const packet = new THREE.Group();
+      packet.add(at(rbox(0.07, 1.1, 0.07, WOOD, 0.03), 0, 0.5, -0.05));
+      packet.add(at(rbox(0.86, 1.08, 0.07, soft(tints[i % 5]), 0.05), 0, 1.25, 0));
+      packet.add(at(rbox(0.86, 0.12, 0.09, soft(0xffffff), 0.03), 0, 1.72, 0));
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.72), textMat(letter, { ink: "#5f4a86" }));
+      face.position.set(0, 1.2, 0.045);
+      packet.add(face);
+      packet.position.set((col - (perRow - 1) / 2) * 1.08 + (row ? 0.42 : 0), 0, row * 1.05 - 0.5);
+      packet.rotation.set(-0.08, (rand() - 0.5) * 0.45, (rand() - 0.5) * 0.14);
+      g.add(packet);
+    });
+    return g;
+  }
+  /* Lavender: a clump of stems, each with its purple spike. */
+  function lavender(k) {
+    const g = new THREE.Group();
+    const stemM = leafy(0x83a878);
+    const purple = [0xa98be0, 0x9a7bd6, 0xb79aea];
+    g.add(at(ball(0.42, leafy(0x8ab27d), 18), 0, 0.2, 0));
+    for (let i = 0; i < 9; i++) {
+      const a = (i / 9) * Math.PI * 2, r = 0.1 + (i % 3) * 0.12;
+      const stem = new THREE.Group();
+      stem.add(at(mesh(new THREE.CylinderGeometry(0.018, 0.024, 0.75, 6), stemM), 0, 0.37, 0));
+      const spike = mesh(new THREE.CapsuleGeometry(0.075, 0.26, 4, 10), soft(purple[i % 3]));
+      stem.add(at(spike, 0, 0.86, 0));
+      stem.position.set(Math.cos(a) * r, 0.1, Math.sin(a) * r);
+      stem.rotation.set(Math.sin(a) * 0.28, 0, -Math.cos(a) * 0.28);
+      g.add(stem);
+    }
+    g.scale.setScalar(k);
+    return g;
+  }
+  /* A watering can, for the bed. */
+  function wateringCan() {
+    const g = new THREE.Group();
+    const tin = glaze(0x9db8e8);
+    g.add(at(mesh(new THREE.CylinderGeometry(0.42, 0.48, 0.8, 40), tin), 0, 0.4, 0));
+    g.add(taperTube([[0.42, 0.3, 0], [0.8, 0.62, 0], [1.02, 0.98, 0]], 0.08, 0.06, tin));
+    g.add(at(mesh(new THREE.CylinderGeometry(0.15, 0.08, 0.1, 24), tin), 1.05, 1.02, 0));
+    const handle = mesh(new THREE.TorusGeometry(0.34, 0.04, 12, 40, Math.PI), tin);
+    handle.position.y = 0.72;
+    g.add(handle);
+    return g;
+  }
+
+  const kitchen = {};
+  if (VEG) {
+    const F = SCENES.kitchen.frames[portrait ? "portrait" : "landscape"];
+    kitchen.F = F;
+    const noShadow = (m) => {
+      m.castShadow = false;
+      return m;
+    };
+    /* ---- The bed: planks, soil, the plants in a row ---- */
+    const BED = [-5.4, 12.6, -3.5, -0.75];
+    const bedW = BED[1] - BED[0], bedD = BED[3] - BED[2];
+    const bedX = (BED[0] + BED[1]) / 2, bedZ = (BED[2] + BED[3]) / 2;
+    const plank = soft(0xc9985f, { roughness: 0.8 });
+    for (const z of [BED[2], BED[3]]) add(rbox(bedW + 0.3, 0.86, 0.26, plank, 0.08), bedX, 0.43, z);
+    for (const x of [BED[0], BED[1]]) add(rbox(0.26, 0.86, bedD + 0.3, plank, 0.08), x, 0.43, bedZ);
+    const earth = soft(0x7d5536, { roughness: 0.96 });
+    add(rbox(bedW, BED_TOP, bedD, earth, 0.06), bedX, BED_TOP / 2, bedZ).castShadow = false;
+    for (let i = 0; i < 260; i++) {
+      const clump = ball(0.05 + rand() * 0.07, soft(rand() > 0.5 ? 0x7d5536 : 0x8a6240, { roughness: 0.96 }), 10);
+      clump.scale.y = 0.55;
+      clump.castShadow = false;
+      add(clump, BED[0] + 0.3 + rand() * (bedW - 0.6), BED_TOP, BED[2] + 0.25 + rand() * (bedD - 0.5));
+    }
+    for (let i = 0; i < 7; i++) {
+      const plant = vegPlant(VEG_KIND);
+      add(plant, BED[0] + 1.3 + (i * (bedW - 2.6)) / 6, BED_TOP - 0.02, bedZ + (i % 2 ? -0.28 : 0.28), { k: 1.12, ry: (i % 3) * 0.5 - 0.5 });
+      vegPlants.push(plant);
+    }
+    vegClear.push(new THREE.Box3(new THREE.Vector3(BED[0] - 0.5, -1, BED[2] - 0.5), new THREE.Vector3(BED[1] + 0.5, 3, BED[3] + 0.5)));
+    add(wateringCan(), 3.5, 0, 1.0, { k: 0.95, ry: 0.7 });
+    add(pot(0.42, 0.62, 0xd9c6f2), -2.7, 0, 0.45);
+    add(pot(0.34, 0.5, 0xf6c7d4), -3.4, 0, 0.9);
+
+    /* ---- The way up to the door ---- */
+    const way = rbox(2.5, 0.06, 7.7, stone(0xf2e2c8), 0.02);
+    way.castShadow = false;
+    add(way, KX, 0.03, -0.35);
+    vegClear.push(new THREE.Box3(new THREE.Vector3(KX - 1.6, -1, -4.5), new THREE.Vector3(KX + 1.6, 3, 3.6)));
+
+    /* ---- Nova's cottage: a shell that casts no shadow, so the sun still
+       falls on the counter inside ---- */
+    const X0 = KX - 8.2, X1 = KX + 8.2, BACK_Z = -13.8, H = 8.4;
+    vegClear.push(new THREE.Box3(new THREE.Vector3(X0 - 0.4, -1, BACK_Z), new THREE.Vector3(X1 + 0.4, 3, FRONT_Z + 0.4)));
+    const cream = stone(0xfbf0dd);
+    const face = new THREE.Shape();
+    face.moveTo(X0, 0);
+    face.lineTo(X1, 0);
+    face.lineTo(X1, H);
+    face.lineTo(X0, H);
+    face.closePath();
+    const hole = new THREE.Path();
+    const DOOR = [KX - 1.45, KX + 1.45, 3.7];
+    hole.moveTo(DOOR[0], 0);
+    hole.lineTo(DOOR[0], DOOR[2]);
+    hole.lineTo(DOOR[1], DOOR[2]);
+    hole.lineTo(DOOR[1], 0);
+    hole.closePath();
+    face.holes.push(hole);
+    const front = noShadow(mesh(new THREE.ExtrudeGeometry(face, { depth: 0.34, bevelEnabled: false }), cream));
+    add(front, 0, 0, FRONT_Z - 0.34);
+    for (const x of [X0, X1]) add(noShadow(rbox(0.34, H, FRONT_Z - BACK_Z, cream, 0.03)), x, H / 2, (FRONT_Z + BACK_Z) / 2);
+    add(noShadow(rbox(X1 - X0, H, 0.3, cream, 0.03)), KX, H / 2, BACK_Z);
+    add(noShadow(rbox(X1 - X0, 0.04, FRONT_Z - BACK_Z, soft(0xdcb88a), 0.01)), KX, 0.04, (FRONT_Z + BACK_Z) / 2);
+    add(noShadow(rbox(X1 - X0, 0.1, FRONT_Z - BACK_Z, cream, 0.02)), KX, H - 0.05, (FRONT_Z + BACK_Z) / 2);
+    /* The roof: a soft lavender gable, a chimney. */
+    const roof = new THREE.Shape();
+    roof.moveTo(-(FRONT_Z - BACK_Z) / 2 - 0.5, 0);
+    roof.lineTo((FRONT_Z - BACK_Z) / 2 + 0.5, 0);
+    roof.lineTo(0, 4.6);
+    roof.closePath();
+    const roofMesh = noShadow(mesh(new THREE.ExtrudeGeometry(roof, { depth: X1 - X0 + 1.6, bevelEnabled: true, bevelSize: 0.1, bevelThickness: 0.1, bevelSegments: 3 }), soft(0xb7a0e4, { roughness: 0.7 })));
+    roofMesh.rotation.y = Math.PI / 2;
+    add(roofMesh, X0 - 0.8, H, (FRONT_Z + BACK_Z) / 2);
+    add(noShadow(rbox(1.3, 3.4, 1.3, soft(0xe9c4a8), 0.08)), X1 - 3.2, H + 3.2, BACK_Z + 3);
+    /* The door standing open, its frame, a step. */
+    const frameM = soft(0xa98be0);
+    for (const x of [DOOR[0] - 0.14, DOOR[1] + 0.14]) add(noShadow(rbox(0.28, DOOR[2] + 0.2, 0.48, frameM, 0.05)), x, DOOR[2] / 2 + 0.1, FRONT_Z - 0.17);
+    add(noShadow(rbox(DOOR[1] - DOOR[0] + 0.56, 0.28, 0.48, frameM, 0.05)), KX, DOOR[2] + 0.14, FRONT_Z - 0.17);
+    const leafDoor = noShadow(rbox(2.85, 3.62, 0.12, soft(0xc0a9ee), 0.05));
+    leafDoor.geometry.translate(1.42, 1.81, 0);
+    add(leafDoor, DOOR[0], 0.02, FRONT_Z - 0.2, { ry: Math.PI / 2 + 0.2 });
+    add(noShadow(rbox(3.5, 0.14, 1.1, stone(0xeadcc4), 0.04)), KX, 0.07, FRONT_Z + 0.52);
+    /* Two windows, each with a box of lavender. */
+    for (const x of [KX - 5, KX + 5]) {
+      add(noShadow(rbox(3, 2.5, 0.16, soft(0xffffff), 0.06)), x, 2.75, FRONT_Z + 0.04);
+      add(noShadow(rbox(2.6, 2.1, 0.06, clay(0xcfe6ff, { roughness: 0.3, clearcoat: 0.6, emissive: 0xbfdcff, emissiveIntensity: 0.4 }), 0.02)), x, 2.75, FRONT_Z + 0.13);
+      add(noShadow(rbox(0.09, 2.1, 0.06, soft(0xffffff), 0.02)), x, 2.75, FRONT_Z + 0.17);
+      add(noShadow(rbox(2.6, 0.09, 0.06, soft(0xffffff), 0.02)), x, 2.75, FRONT_Z + 0.17);
+      add(rbox(3.1, 0.42, 0.56, soft(0xa98be0), 0.08), x, 1.34, FRONT_Z + 0.3);
+      for (let i = 0; i < 5; i++) add(lavender(0.62), x - 1.2 + i * 0.6, 1.4, FRONT_Z + 0.3);
+    }
+
+    /* ---- Inside: the kitchen's room and counter, at KK ---- */
+    const root = new THREE.Group();
+    root.position.set(KX, KY, ROOM_Z);
+    root.scale.setScalar(KK);
+    scene.add(root);
+    const { room, counter } = kitchenRoom(F.counter[0], F.counter[1]);
+    root.add(room, counter);
+    kitchen.root = root;
+    kitchen.counter = counter;
+
+    /* The things on the counter: each stands on its top, in the same place
+       in every lesson. */
+    for (const [name, it] of Object.entries(F.items)) {
+      const thing = ITEMS[it.model ?? name](it.arg);
+      place(thing, it);
+      thing.updateMatrixWorld(true);
+      thing.position.y = -new THREE.Box3().setFromObject(thing).min.y;
+      root.add(thing);
+      things[name] = { group: thing, shape: null, color: null, y: KY };
+    }
+    const [bx, bz, bs] = F.basket;
+    kitchen.basket = ITEMS.basket();
+    kitchen.basket.scale.setScalar(bs);
+    kitchen.basket.position.set(bx, 0, bz);
+    root.add(kitchen.basket);
+    renderer.localClippingEnabled = true;
+    /* The vegetable the child put in: rendered in the basket for the way
+       out, so the room is as they left it. */
+    kitchen.inBasket = (on) => {
+      const t = things[VEG_KIND].group;
+      t.userData.home ??= { at: t.position.clone(), k: t.scale.clone() };
+      if (on) {
+        t.position.set(bx, 0.5 * bs, bz);
+        t.scale.copy(t.userData.home.k).multiplyScalar(0.68);
+      } else {
+        t.position.copy(t.userData.home.at);
+        t.scale.copy(t.userData.home.k);
+      }
+    };
+
+    /* ---- Around the garden ---- */
+    beyond(-40, 74);
+    for (const [x, y, z, k] of [[-14, 15, -70, 3.4], [10, 17, -78, 4], [38, 14, -72, 3.2], [60, 16, -76, 3.8]]) add(cloud(k), x, y, z);
+    const picket = soft(0xfff6e6);
+    const FENCE_Z = -6.6;
+    for (const [x0, x1] of [[-42, X0 - 0.2], [X1 + 0.2, 72]]) {
+      for (const y of [0.62, 1.2]) add(rbox(x1 - x0, 0.12, 0.08, picket, 0.03), (x0 + x1) / 2, y, FENCE_Z);
+      for (let x = x0 + 0.2; x < x1; x += 0.56) {
+        add(rbox(0.3, 1.55, 0.07, picket, 0.1), x, 0.78, FENCE_Z + 0.06);
+      }
+    }
+    vegClear.push(new THREE.Box3(new THREE.Vector3(-42, -1, FENCE_Z - 0.2), new THREE.Vector3(72, 3, FENCE_Z + 0.2)));
+    for (const z of [-5.0, -8.3, -9.8]) {
+      for (let x = -40; x < 70; x += 0.86 + rand() * 0.3) {
+        if (z > FENCE_Z && x > X0 - 1 && x < X1 + 1) continue;
+        if (z <= FENCE_Z && x > X0 - 1 && x < X1 + 1) continue;
+        add(lavender(1.05 + rand() * 0.35), x, 0, z + (rand() - 0.5) * 0.4, { ry: rand() * 6 });
+      }
+    }
+    border(-30, 13, 2.6, [0xffffff, 0xd8c6f7, 0xffd98a], { clear: false, tulips: false, gap: 0.7 });
+    /* Low shrubs sliding past near the camera (a tall frame's end shot would
+       look down on them). */
+    for (let x = -30; x < 60 && !portrait; x += 6 + rand() * 5) {
+      if (x > 10 && x < 20) continue;
+      const near = at(ball(1.0 + rand() * 0.5, leafy(rand() > 0.5 ? 0x7ccb74 : 0x8ad27e)), 0, 0.6, 0);
+      near.scale.y = 0.75;
+      add(group(near), x, 0, 8.7 + rand() * 1.1);
+    }
+  }
+
   /* Where each step happens, and its flower beside it (a little in front,
      to the right — out of the activity's way, in the camera's view). */
-  const PLACES = FOREST
+  const PLACES = VEG
+    ? [
+        { x: 0, make: () => vegSign(VEG_KIND) },
+        { x: 7, make: () => seedPackets(VEG_KIND), k: 1.05 },
+        { x: KX, cam: portrait ? "portrait" : "landscape" },
+      ]
+    : FOREST
     ? COLOR_ID
       ? [
           { x: 0, make: () => easel(PAINT[COLOR_ID]), k: 1.25, cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: PAINT[COLOR_ID] },
@@ -6114,6 +6592,7 @@ if (THING) {
       scene.add(prop);
       keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
     }
+    if (VEG) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
     const flower = FOREST ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
@@ -6124,7 +6603,11 @@ if (THING) {
   });
   /* The flowers out: those of the steps done (`done`), and the next one
      part-way (`b`). */
-  const blooms = (done, b = 0) => flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
+  const blooms = (done, b = 0) =>
+    VEG
+      ? vegPlants.forEach((p) => p.grow(Math.min(1, (done + b) / PLACES.length)))
+      : flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
+  keepClear.push(...vegClear);
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
@@ -6148,7 +6631,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers]);
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
@@ -6191,9 +6674,22 @@ if (THING) {
      picnic. Then the END: the camera rises and looks back over the
      lesson's places, every flower out — the path it walked, in bloom. */
   const forestFind = portrait ? [fx, 4.4, 9.0, fx, 0.9, -1.5] : [fx, 3.7, 8.2, fx, 1.0, -1.5];
-  const steps = PLACES.map((place) => (place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  /* The kitchen's: its camera looks down at the counter as the old picture
+     did, from just inside the door. */
+  const kitchenCam = () => {
+    const [view_, lift, look] = portrait ? [8.0, 40, [0, 2.65, -0.4]] : [14.4, 28, [0, 1.35, -1]];
+    const half = Math.tan(THREE.MathUtils.degToRad(portrait ? 28 : 17)) * (w / h);
+    const d = view_ / 2 / half;
+    const a = THREE.MathUtils.degToRad(lift);
+    return [...toWorld([look[0], look[1] + Math.sin(a) * d, look[2] + Math.cos(a) * d]), ...toWorld(look)];
+  };
+  const steps = PLACES.map((place) => (VEG && place.cam ? kitchenCam() : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
-  const END = FOREST
+  const END = VEG
+    ? portrait
+      ? [4.5, 12, 27, 4.5, 1, -2]
+      : [4.5, 7.2, 16.2, 4.5, 0.9, -2]
+    : FOREST
     ? portrait
       ? [mid - 1, 15, 31, mid - 1, 0, -1]
       : [mid + 1, 12, 29, mid + 1, 0.2, -1.5]
@@ -6227,8 +6723,29 @@ if (THING) {
      just done blooms (`BLOOM`), then goes. */
   const BLOOM = [0.03, 0.33];
   const HOLD = 0.27;
+  /* A smooth way through several points (Catmull-Rom), each [camera, look]. */
+  function along(pts, e) {
+    const n = pts.length - 1;
+    const s = Math.min(n - 1e-6, e * n);
+    const k = Math.floor(s), u = s - k;
+    const [p0, p1, p2, p3] = [pts[Math.max(0, k - 1)], pts[k], pts[k + 1], pts[Math.min(n, k + 2)]];
+    return p1.map((_, c) => 0.5 * (2 * p1[c] + (p2[c] - p0[c]) * u + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * u * u + (3 * p1[c] - p0[c] - 3 * p2[c] + p3[c]) * u * u * u));
+  }
+  /* Nova's garden: up the way and in at the door; out again, backing through
+     it, rising over the bed. */
+  const IN_DOOR = [KX, 2.6, FRONT_Z, KX, 2.2, ROOM_Z];
+  const VEG_WAY = {
+    2: [[13, 2.8, 7, 15, 2.0, -6], [KX, 2.7, 1.2, KX, 2.2, -8], IN_DOOR],
+    3: [IN_DOOR, [KX, 3.2, 2.4, KX, 2.4, -8], [11, 6, 12, 9, 1, -3]],
+  };
   function moveCam(i, t) {
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
+    if (VEG) {
+      const a = STATIONS[i - 1], b = STATIONS[i];
+      /* Leaving the kitchen there is nothing to wait for. */
+      const e = smooth(i === 3 ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
+      return VEG_WAY[i] ? along([a, ...VEG_WAY[i], b], e) : lerp(a, b, e);
+    }
     const a = STATIONS[i - 1], b = STATIONS[i];
     const e = smooth(Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
     const cam = lerp(a, b, e);
@@ -6241,17 +6758,27 @@ if (THING) {
     return renderer.domElement.toDataURL(type, quality);
   };
 
+  /* The way out of the kitchen: what the child put in the basket, the
+     friend cheering. */
+  const showBasket = (on) => {
+    kitchen.inBasket(on);
+    if (kitchen.friend) kitchen.friend.fit(on ? kitchen.friend.joy : kitchen.friend.pic);
+  };
   window.garden = {
     stations: STATIONS.length,
     /* Station i's still. */
     station(i) {
+      if (VEG) showBasket(i === 3);
       blooms(i);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
-      blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - BLOOM[0]) / (BLOOM[1] - BLOOM[0]))));
+      if (VEG) showBasket(i === 3);
+      /* Out of the kitchen the bed ripens as it comes into view. */
+      const [b0, b1] = VEG && i === 3 ? [0.55, 0.97] : BLOOM;
+      blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
     },
@@ -6284,6 +6811,97 @@ if (THING) {
       }
       scene.background = bg;
       return out;
+    },
+    /* Nova's kitchen: the friend's two pictures, as data URLs (a file: image
+       would taint the canvas). She stands in the room behind the counter —
+       always a picture — so the camera comes in and finds her there. */
+    async setFriend(picture, cheer) {
+      const load = (url) =>
+        new Promise((done) => {
+          new THREE.TextureLoader().load(url, (tex) => {
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 8;
+            done(tex);
+          });
+        });
+      const [pic, joy] = await Promise.all([load(picture), load(cheer)]);
+      const [fx_, fz, fh] = kitchen.F.friend;
+      const height = fh * KK;
+      aim(STATIONS[2]);
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: pic, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
+      plane.quaternion.copy(view.quaternion);
+      plane.userData.noMerge = true;
+      /* Its foot well under the counter's edge. */
+      const up = new THREE.Vector3(0, 1, 0).applyQuaternion(view.quaternion);
+      const foot = new THREE.Vector3(KX + fx_ * KK, KY - height * 0.38, ROOM_Z + fz * KK);
+      const fit = (tex) => {
+        plane.material.map = tex;
+        plane.material.needsUpdate = true;
+        const aspect = tex.image.width / tex.image.height;
+        plane.scale.set(height * aspect, height, 1);
+        plane.position.copy(foot).addScaledVector(up, height / 2);
+      };
+      fit(pic);
+      plane.renderOrder = 1;
+      scene.add(plane);
+      kitchen.friend = { plane, fit, pic, joy };
+    },
+    /* Basket Time's frame, layered like the Find's: the room and counter
+       with nothing on it, the counter alone (it lies over the friend), each
+       thing, the basket and its near half. */
+    kitchenLayers() {
+      const out = {};
+      showBasket(false);
+      blooms(2);
+      aim(STATIONS[2]);
+      out.all = render();
+      const { plane } = kitchen.friend;
+      plane.visible = false;
+      const all = Object.entries(things);
+      all.forEach(([, t]) => (t.group.visible = false));
+      kitchen.basket.visible = false;
+      out.background = render();
+      out.countermask = maskOf([[kitchen.counter, -Infinity]], view);
+      const world = scene.children.filter((o) => o !== catcher && !o.isLight && o !== kitchen.root && o.visible);
+      world.forEach((o) => (o.visible = false));
+      kitchen.counter.visible = false;
+      kitchen.root.children.forEach((o) => {
+        if (o !== kitchen.basket && !all.some(([, t]) => t.group === o)) o.visible = false;
+      });
+      scene.background = null;
+      scene.fog = null;
+      renderer.setClearColor(0x000000, 0);
+      catcher.visible = true;
+      catcher.material.opacity = 0.26;
+      catcher.position.set(KX, KY + 0.002, ROOM_Z);
+      const layer = (name, group_) => {
+        group_.visible = true;
+        out[name] = render();
+        catcher.visible = false;
+        out[name + "__hit"] = render();
+        catcher.visible = true;
+        group_.visible = false;
+      };
+      for (const [name, t] of all) layer(name, t.group);
+      layer("basket", kitchen.basket);
+      catcher.visible = false;
+      kitchen.basket.visible = true;
+      const [, bz, bs] = kitchen.F.basket;
+      out.rimmask = maskOf(kitchen.basket.children.filter((m) => m.geometry?.type !== "CircleGeometry").map((m) => [m, ROOM_Z + (bz + 0.1 * bs) * KK]), view);
+      return out;
+    },
+    kitchenMeta() {
+      aim(STATIONS[2]);
+      const { plane, pic, fit } = kitchen.friend;
+      fit(pic);
+      plane.updateMatrixWorld(true);
+      const pts = [[-0.5, 0.5], [0.5, -0.5]].map(([x, y]) => plane.localToWorld(new THREE.Vector3(x, y, 0)).project(view));
+      const box = [((pts[0].x + 1) / 2) * 100, ((1 - pts[0].y) / 2) * 100, ((pts[1].x - pts[0].x) / 2) * 100, ((pts[0].y - pts[1].y) / 2) * 100];
+      return {
+        items: Object.fromEntries(Object.keys(things).map((k) => [k, { shape: null, color: null }])),
+        mouth: mouthOf(kitchen.basket, view),
+        friend: box.map((v) => Math.round(v * 100) / 100),
+      };
     },
     /* Which shape each thing is — the Find's answer key. */
     meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape, color: t.color }])) }),
@@ -7047,180 +7665,6 @@ if (THING) {
     return { backdrop: renderer.domElement.toDataURL("image/png") };
   };
   window.itemsMeta = () => ({});
-} else if (def.world === "kitchen") {
-  /* ---------- The kitchen: a wooden counter seen from the front, a room
-     behind it (`crop.py kitchen` blurs it — never sharp enough to pull the
-     eye), the friend's place behind the counter, then the things on it
-     and the basket, layered as a Find scene is. `&frame=portrait|landscape`.
-     In the videos' warm light, like the vegetables themselves. ---------- */
-  const F = def.frames[params.get("frame") ?? "landscape"];
-  const [w, h] = F.size;
-  renderer.setSize(w, h);
-  Object.assign(camera, { left: -F.view / 2, right: F.view / 2, top: (F.view * h) / w / 2, bottom: -(F.view * h) / w / 2 });
-  const lift = THREE.MathUtils.degToRad(F.lift);
-  const [lx, ly, lz] = F.look;
-  camera.position.set(lx, ly + Math.sin(lift) * 30, lz + Math.cos(lift) * 30);
-  camera.lookAt(lx, ly, lz);
-  camera.updateProjectionMatrix();
-  sun.color.set(0xfff0e4);
-  sun.intensity = 1.8;
-  sun.position.set(-4, 9, 10);
-  Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14 });
-  sky.color.set(0xfff4ea);
-  sky.groundColor.set(0xd6dcff);
-  sky.intensity = 1.25;
-  scene.environmentIntensity = 0.5;
-  const rim = new THREE.DirectionalLight(0xffe6f2, 1.2);
-  rim.position.set(4, 6, -8);
-  scene.add(rim);
-
-  const matte = (color, extra = {}) => clay(color, { clearcoat: 0.1, roughness: 0.8, sheen: 0.2, ...extra });
-  const slab = (wd, ht, dp, material, r = 0.05) => mesh(new RoundedBoxGeometry(wd, ht, dp, 4, r), material);
-  const add = (parent, thing, x, y, z) => { thing.position.set(x, y, z); parent.add(thing); return thing; };
-  const [back, front] = F.counter;
-
-  /* The room behind: a cream wall, a mint back counter with canisters and
-     a kettle, an open shelf with jars and a plant, a sunny window, upper
-     cupboards. */
-  const room = new THREE.Group();
-  scene.add(room);
-  const WALL = back - 3.4;
-  const wall = mesh(new THREE.PlaneGeometry(60, 30), matte(0xfbefdc));
-  wall.position.set(0, 9, WALL);
-  wall.castShadow = false;
-  room.add(wall);
-  /* Tiles between the back counter and the shelf. */
-  for (let r = 0; r < 4; r++) {
-    for (let c = -16; c <= 16; c++) {
-      const tile = slab(0.56, 0.56, 0.06, matte((r + c) % 2 ? 0xdff3ec : 0xfffaf0, { roughness: 0.45, clearcoat: 0.5 }), 0.04);
-      add(room, tile, c * 0.6, 0.95 + r * 0.6, WALL + 0.04).castShadow = false;
-    }
-  }
-  const BACK_TOP = 0.65;
-  add(room, slab(40, 3.4, 1.3, matte(0xbfe5d8)), 0, BACK_TOP - 1.85, WALL + 0.65);
-  add(room, slab(40, 0.16, 1.4, matte(0xe8c08e, { roughness: 0.6 })), 0, BACK_TOP - 0.08, WALL + 0.7);
-  const canister = (x, color, height) => {
-    const c = mesh(new THREE.CylinderGeometry(0.28, 0.28, height, 40), matte(color, { clearcoat: 0.4, roughness: 0.4 }));
-    add(room, c, x, BACK_TOP + height / 2, WALL + 0.6);
-    add(room, mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.1, 40), matte(0xffffff, { clearcoat: 0.4 })), x, BACK_TOP + height + 0.05, WALL + 0.6);
-  };
-  canister(-5.2, 0xffb3c4, 0.9);
-  canister(-4.5, 0xffd98a, 0.7);
-  canister(-3.85, 0x9fd8ff, 0.55);
-  const kettle = mesh(new THREE.SphereGeometry(0.5, 40, 30), matte(0xff8fa8, { clearcoat: 0.7, roughness: 0.3 }));
-  kettle.scale.y = 0.85;
-  add(room, kettle, 5.4, BACK_TOP + 0.42, WALL + 0.65);
-  /* A sunny window at the left. */
-  const WIN_Y = 3.4;
-  add(room, slab(3.2, 2.6, 0.12, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.06);
-  const glass = mesh(new THREE.PlaneGeometry(2.8, 2.2), clay(0xcfeaff, { roughness: 0.3, clearcoat: 0.6, emissive: 0xbfe2ff, emissiveIntensity: 0.55 }));
-  add(room, glass, -3.2, WIN_Y + 0.9, WALL + 0.13).castShadow = false;
-  add(room, slab(0.1, 2.2, 0.06, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.16);
-  add(room, slab(2.8, 0.1, 0.06, matte(0xffffff)), -3.2, WIN_Y + 0.9, WALL + 0.16);
-  add(room, slab(3.5, 0.14, 0.4, matte(0xffffff)), -3.2, WIN_Y - 0.4, WALL + 0.2);
-  /* An open shelf with jars and a plant at the right. */
-  add(room, slab(5.5, 0.14, 0.7, matte(0xe8c08e, { roughness: 0.6 })), 3.4, WIN_Y + 0.2, WALL + 0.35);
-  [[1.4, 0xffd98a, 0.55], [2.0, 0xc9f0d9, 0.7], [2.55, 0xffc2d2, 0.5]].forEach(([x, color, ht]) => {
-    add(room, mesh(new THREE.CylinderGeometry(0.22, 0.22, ht, 32), matte(color, { clearcoat: 0.6, roughness: 0.3 })), x, WIN_Y + 0.27 + ht / 2, WALL + 0.35);
-  });
-  const pot = mesh(new THREE.CylinderGeometry(0.42, 0.32, 0.65, 40), matte(0xf2a36a));
-  add(room, pot, 4.3, WIN_Y + 0.6, WALL + 0.35);
-  for (let i = 0; i < 9; i++) {
-    const leaf = mesh(new THREE.SphereGeometry(0.3, 24, 16), matte(i % 2 ? 0x6cc47a : 0x58b46a));
-    leaf.scale.set(0.6, 1.5, 0.35);
-    const a = (i / 9) * Math.PI - Math.PI / 2;
-    leaf.rotation.z = -a * 0.8;
-    add(room, leaf, 4.3 + Math.sin(a) * 0.45, WIN_Y + 1.25 + Math.cos(a) * 0.35, WALL + 0.35 + (i % 3) * 0.08);
-  }
-  /* Upper cupboards, pale mint with round knobs. */
-  for (let i = -5; i <= 5; i++) {
-    add(room, slab(1.9, 2.2, 0.5, matte(0xd6efe6)), i * 2, WIN_Y + 3.6, WALL + 0.25);
-    add(room, mesh(new THREE.SphereGeometry(0.09, 20, 14), matte(0xf2c46a, { clearcoat: 0.6 })), i * 2 + (i % 2 ? 0.7 : -0.7), WIN_Y + 2.75, WALL + 0.55);
-  }
-
-  /* The counter: a butcher-block top (strips of warm wood) on a cream
-     cupboard with mint doors. */
-  const counter = new THREE.Group();
-  scene.add(counter);
-  const wood = [0xe6b47c, 0xdcaa72, 0xe9bb85, 0xdfae76];
-  const depth = front - back;
-  const strips = 7;
-  for (let i = 0; i < strips; i++) {
-    const strip = slab(30, 0.42, depth / strips + 0.004, matte(wood[i % 4], { roughness: 0.6, clearcoat: 0.25 }), 0.02);
-    add(counter, strip, 0, -0.21, back + (depth / strips) * (i + 0.5)).castShadow = false;
-  }
-  add(counter, slab(30, 0.44, 0.16, matte(0xd9a46c, { roughness: 0.55, clearcoat: 0.3 }), 0.07), 0, -0.21, front + 0.02).castShadow = false;
-  add(counter, slab(30, 4, 0.3, matte(0xfbf3e6)), 0, -2.44, front - 0.2);
-  for (let i = -7; i <= 7; i++) {
-    add(counter, slab(2.3, 3.1, 0.08, matte(0xcfeadf)), i * 2.5, -2.4, front - 0.02);
-    add(counter, mesh(new THREE.SphereGeometry(0.1, 20, 14), matte(0xf2c46a, { clearcoat: 0.6 })), i * 2.5 + 0.85, -1.2, front + 0.08);
-  }
-
-  const items = {};
-  for (const [name, it] of Object.entries(F.items)) {
-    const group = ITEMS[it.model ?? name](it.arg);
-    place(group, it);
-    scene.add(group);
-    items[name] = { group, at: it.at };
-  }
-  const [bx, bz, bs] = F.basket;
-  const basket = ITEMS.basket();
-  basket.scale.setScalar(bs);
-  basket.position.set(bx, 0, bz);
-  scene.add(basket);
-  renderer.localClippingEnabled = true;
-
-  /* The friend's picture: [left, top, width, height] %, its bottom well
-     under the counter's edge. Square-ish, so its width is its height. */
-  const [fx, fz, fh] = F.friend;
-  const friendBox = () => {
-    const corner = (x, y) => {
-      const p = new THREE.Vector3(x, y, fz).project(camera);
-      return [((p.x + 1) / 2) * 100, ((1 - p.y) / 2) * 100];
-    };
-    const [l, t] = corner(fx - fh / 2, fh * 0.62);
-    const [r, b] = corner(fx + fh / 2, -fh * 0.38);
-    return [l, t, r - l, b - t].map((v) => Math.round(v * 100) / 100);
-  };
-
-  window.renderLayers = () => {
-    const out = {};
-    catcher.visible = false;
-    renderer.setClearColor(0xfbefdc, 1);
-    out.all = frame();
-    Object.values(items).forEach((it) => (it.group.visible = false));
-    basket.visible = false;
-    out.background = frame();
-    counter.visible = false;
-    out.back = frame();
-    counter.visible = true;
-    out.countermask = maskOf([[counter, -Infinity]]);
-    room.visible = false;
-    counter.visible = false;
-    catcher.visible = true;
-    renderer.setClearColor(0x000000, 0);
-    const layer = (name, thing, y) => {
-      thing.visible = true;
-      catcher.position.y = y + 0.001;
-      out[name] = frame();
-      catcher.visible = false;
-      out[name + "__hit"] = frame();
-      catcher.visible = true;
-      thing.visible = false;
-    };
-    for (const [name, it] of Object.entries(items)) layer(name, it.group, it.at[1]);
-    layer("basket", basket, 0);
-    basket.visible = true;
-    catcher.visible = false;
-    /* The wicker's near half, over what is put in — the floor inside lies under it. */
-    out.rimmask = maskOf(basket.children.filter((m) => m.geometry.type !== "CircleGeometry").map((m) => [m, bz + 0.1 * bs]));
-    return out;
-  };
-  window.itemsMeta = () => ({
-    items: Object.fromEntries(Object.keys(F.items).map((k) => [k, { shape: null, color: null }])),
-    mouth: mouthOf(basket),
-    friend: friendBox(),
-  });
 } else {
   /* ---------- The world ---------- */
   const world = new THREE.Group();
