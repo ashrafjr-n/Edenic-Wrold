@@ -4233,6 +4233,9 @@ const FOREST = params.get("world") === "forest";
 /* Nova's vegetable garden (`?garden=<1-5>&world=veg`, 2026-11-05): the same
    kit, her garden and cottage; the camera goes indoors for Basket Time. */
 const VEG = params.get("world") === "veg";
+/* Nova's seasons (`?garden=<1-5>&world=hill`, 2026-11-05): one hill, one tree,
+   the camera turning round it. */
+const YEAR_HILL = params.get("world") === "hill";
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -5122,6 +5125,10 @@ if (THING) {
   const LESSON = Number(GARDEN);
   /* The forest's colour lesson (1-10), or null for its review (11). */
   const COLOR_ID = FOREST ? COLOR_LESSONS[LESSON - 1] ?? null : null;
+  /* The hill's season; lesson 5 is the review, all four in turn. */
+  const YEAR = ["spring", "summer", "fall", "winter"];
+  const HILL_SEASON = YEAR_HILL ? YEAR[LESSON - 1] ?? null : null;
+  const HILL_SKY = { spring: ["#9fd0f4", "#cfe6f5", "#f4efdf", "#fbf3df"], summer: ["#6fb9f0", "#a9d8f5", "#e6f3e6", "#f4f4d8"], fall: ["#a9c4e6", "#e6d4cf", "#f8dcc0", "#fbe6c6"], winter: ["#b6cbe6", "#d6e0ee", "#eaeef5", "#f4f6fa"] }[HILL_SEASON ?? "spring"];
   const MIXES = { green: ["blue", "yellow"], orange: ["red", "yellow"], purple: ["red", "blue"] };
   const portrait = params.get("frame") === "portrait";
   const [w, h] = portrait ? [900, 1600] : [1600, 900];
@@ -5138,16 +5145,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -5212,7 +5219,8 @@ if (THING) {
   gravel.position.set(60, 0.03, (PATH[0] + PATH[1]) / 2);
   gravel.castShadow = false;
   scene.add(gravel);
-  for (const z of FOREST ? [] : PATH) {
+  if (YEAR_HILL) scene.remove(gravel);
+  for (const z of FOREST || YEAR_HILL ? [] : PATH) {
     for (let x = -60; x < 300; x += 0.92) {
       /* Nova's: the way up to her door leaves the path here. */
       if (VEG && z === PATH[0] && Math.abs(x - 16) < 1.7) continue;
@@ -5350,7 +5358,7 @@ if (THING) {
      places and no Find. */
   const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
-  const fx = VEG ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = VEG || YEAR_HILL ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -5500,8 +5508,9 @@ if (THING) {
     scene.add(at(ball(0.1, glaze(0xffc93a), 16), c + 2.65, 1.6, WALL_Z));
   }
 
-  if (VEG) {
-    /* Nova's garden is built further down, once its helpers are in scope. */
+  if (VEG || YEAR_HILL) {
+    /* Nova's garden and hill are built further down, once their helpers are
+       in scope. */
   } else if (FOREST) {
   /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
      day — "not professional enough"): a sunlit clearing on a winding
@@ -5744,7 +5753,7 @@ if (THING) {
      The camera's last move tilts down onto it, and the Find is played
      there, in the garden itself. ---- */
   const PICNIC = FOREST ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
-  const HAS_FIND = VEG ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
+  const HAS_FIND = VEG || YEAR_HILL ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
   const FIND_Z = -1.6;
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
@@ -6154,9 +6163,9 @@ if (THING) {
     return g;
   }
   /* The review's sorting: four open boxes, one per colour. */
-  function colorBoxes() {
+  function colorBoxes(list = ["red", "yellow", "green", "purple"]) {
     const g = new THREE.Group();
-    ["red", "yellow", "green", "purple"].forEach((c, i) => {
+    list.forEach((c, i) => {
       const box = new THREE.Group();
       const m = soft(PAINT[c]);
       box.add(at(rbox(0.95, 0.08, 0.95, m, 0.03), 0, 0.04, 0));
@@ -6328,12 +6337,14 @@ if (THING) {
     const board = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.15), textMat(word, { w: 356, size: word.length > 6 ? 62 : 80, ink: "#7a5f9e" }));
     board.position.set(0, 2.45, 0.235);
     g.add(board);
-    const thing = VIDEO_THINGS[VEG_KIND]();
-    thing.scale.setScalar(0.78);
-    thing.position.set(0, 3.25, 0.14);
-    g.add(thing);
-    /* Coloured per vertex: never merged. */
-    vegKeep.push(thing);
+    if (VEG_KIND) {
+      const thing = VIDEO_THINGS[VEG_KIND]();
+      thing.scale.setScalar(0.78);
+      thing.position.set(0, 3.25, 0.14);
+      g.add(thing);
+      /* Coloured per vertex: never merged. */
+      vegKeep.push(thing);
+    }
     return g;
   }
   /* The spelling's seed packets: a paper packet on a stick for each letter
@@ -6561,9 +6572,242 @@ if (THING) {
     }
   }
 
+  /* ---- Nova's hill (2026-11-05, The Seasons' world): one low hill, one
+     tree — the islands' tree with the friends' face, grown large — and the
+     camera turning round it, not walking. Each lesson is its season. The
+     marker is the season itself: every step done, more of it comes over the
+     tree and the ground by itself, part by part; the end shot sweeps round
+     and up with all of it there. The review's camera goes all the way round,
+     a season a side, the year coming back to spring at the end. ---- */
+  const HILL_H = 2.4, HILL_R = 36, TREE_K = 2;
+  const hillY = (x, z) => HILL_H * Math.sqrt(Math.max(0, 1 - (x * x + z * z) / (HILL_R * HILL_R)));
+  const onRing = (deg, r) => {
+    const a = THREE.MathUtils.degToRad(deg);
+    return [Math.sin(a) * r, Math.cos(a) * r];
+  };
+  const hillStates = {};
+  /* Letters on stones, jumbled, in the grass. */
+  function letterStones(word) {
+    const g = new THREE.Group();
+    const letters = jumbled(word);
+    const perRow = Math.ceil(letters.length / 2);
+    letters.forEach((letter, i) => {
+      const row = Math.floor(i / perRow), col = i % perRow;
+      const one = new THREE.Group();
+      const rock = ball(0.56, stone(0xe9e1d0), 32);
+      rock.scale.set(1.1, 0.78, 0.8);
+      rock.position.y = 0.36;
+      one.add(rock);
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.72), textMat(letter, { ink: "#5f4a86" }));
+      face.position.set(0, 0.42, 0.45);
+      one.add(face);
+      one.position.set((col - (perRow - 1) / 2) * 1.32 + (row ? 0.5 : 0), 0, row * 1.5 - 1.5);
+      one.rotation.y = (rand() - 0.5) * 0.3;
+      g.add(one);
+    });
+    return g;
+  }
+  /* The review's order: four saplings, a season each. */
+  function fourSaplings() {
+    const g = new THREE.Group();
+    [0xffb7d5, 0x5cbd57, 0xf2863a, 0xf4f8ff].forEach((color, i) => {
+      const t = new THREE.Group();
+      t.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.15, 1.1, 14), soft(0xb07b50)), 0, 0.55, 0));
+      t.add(at(ball(0.62, leafy(color), 28), 0, 1.45, 0));
+      t.position.x = (i - 1.5) * 1.5;
+      g.add(t);
+    });
+    return g;
+  }
+  /* A tree far off on the ring, dressed for its season. */
+  function ringTree(k, season) {
+    const t = new THREE.Group();
+    t.add(at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 3.8, 14), soft(0xa9825f, { roughness: 0.9 })), 0, 1.9, 0));
+    const colors = { spring: [0xa9e38a, 0x9adb7c, 0xffc4dc], summer: [0x5cbd57, 0x52b450, 0x66c45f], fall: [0xff9a3c, 0xf2683a, 0xffc24a], winter: [0xf6f9ff, 0xeaf1fb, 0xdfe9f6] }[season];
+    const lobes = season === "winter" ? 5 : 8;
+    for (let i = 0; i < lobes; i++) {
+      const a = rand() * Math.PI * 2, up = rand();
+      t.add(at(ball((1.05 + rand() * 0.7) * (1 - up * 0.25) * (season === "winter" ? 0.72 : 1), leafy(colors[i % 3]), 22), Math.cos(a) * (1.5 - up), 4 + up * 2.2, Math.sin(a) * (1.5 - up) * 0.9));
+    }
+    t.scale.setScalar(k);
+    return t;
+  }
+
+  if (YEAR_HILL) {
+    /* The ground, one colour the season turns (`grow`). */
+    const groundMat = soft(0xa3e07e, { roughness: 0.92, sheen: 0.2 });
+    lawn.material = groundMat;
+    lawn.scale.set(1, 3, 1);
+    lawn.position.set(0, -0.01, 0);
+    lawn.userData.noMerge = true;
+    const mound = (r, height, x, z) => {
+      const m = mesh(new THREE.SphereGeometry(r, 96, 48), groundMat);
+      m.scale.y = height / r;
+      m.position.set(x, 0, z);
+      m.castShadow = false;
+      m.userData.noMerge = true;
+      scene.add(m);
+    };
+    mound(HILL_R, HILL_H, 0, 0);
+    for (let i = 0; i < 7; i++) {
+      const [x, z] = onRing(i * 51 + 10, 112);
+      mound(32, 7 + (i % 3) * 2.5, x, z);
+    }
+
+    /* The tree. */
+    const root = new THREE.Group();
+    root.scale.setScalar(TREE_K);
+    root.position.y = HILL_H - SOIL_Y * TREE_K;
+    scene.add(root);
+    const tree = seasonTree();
+    tree.position.set(0, SOIL_Y, -0.45);
+    root.add(tree);
+
+    /* What comes of each season, over `v` 0..1: a part scales in, fades in,
+       falls into place, or turns from one colour to its own. */
+    const stateOf = (season) => {
+      const [, one, two, three] = SEASON_DEFS[season].steps;
+      const crownOr = one.make();
+      tree.add(crownOr);
+      const second = two.make();
+      (two.onTree ? tree : root).add(second);
+      const third = three.make();
+      root.add(third);
+      const parts = [];
+      const stagger = (list, from, to, kind, extra = {}) => list.forEach((obj, i) => {
+        const span = (to - from) * 0.5;
+        const start = from + ((to - from - span) * i) / Math.max(1, list.length - 1);
+        parts.push({ obj, from: start, to: start + span, kind, full: obj.scale.clone(), y: obj.position.y, own: obj.material?.color.clone(), ...extra });
+      });
+      if (season === "spring") {
+        stagger(crownOr.children, 0, 0.5, "scale");
+        stagger(second.children, 0.48, 0.85, "scale");
+        stagger(third.children, 0.6, 1, "scale");
+      } else if (season === "summer") {
+        stagger(crownOr.children, 0, 0.4, "tint", { from_: new THREE.Color(0xb5e596) });
+        stagger(second.children, 0.35, 0.85, "scale");
+        stagger([third], 0.55, 1, "rise", { by: -1.6 });
+      } else if (season === "fall") {
+        stagger(crownOr.children, 0, 0.55, "tint", { from_: new THREE.Color(0x74c95c) });
+        stagger(second.children, 0.2, 0.92, "fall", { by: 2.4 });
+        stagger([third], 0.7, 1, "scale");
+      } else {
+        crownOr.traverse((o) => {
+          if (o.isMesh) o.material = Object.assign(o.material.clone(), { transparent: true });
+        });
+        stagger([crownOr], 0.25, 1, "fade");
+        stagger(second.children, 0, 0.72, "fall", { by: 4.5 });
+        stagger([third], 0.7, 1, "scale");
+      }
+      const [g0, g1] = { spring: [0xc8d596, 0xa3e07e], summer: [0x9fdb7a, 0x74cd5c], fall: [0x8dcb6a, 0xc2d36a], winter: [0xc2cda6, 0xfbfdff] }[season];
+      const things = [crownOr, second, third];
+      return {
+        things,
+        show(on) {
+          things.forEach((t) => (t.visible = on));
+        },
+        grow(v) {
+          groundMat.color.setHex(g0).lerp(new THREE.Color(g1), clamp01(v / 0.75));
+          for (const part of parts) {
+            const p = clamp01((v - part.from) / (part.to - part.from));
+            const { obj, kind } = part;
+            if (kind === "tint") {
+              obj.material.color.copy(part.from_).lerp(part.own, p);
+            } else if (kind === "fade") {
+              obj.visible = p > 0;
+              obj.traverse((o) => o.isMesh && (o.material.opacity = p));
+            } else {
+              obj.visible = p > 0;
+              const e = easeOut(p);
+              obj.scale.copy(part.full).multiplyScalar(kind === "scale" || kind === "rise" ? Math.max(0.001, e) : Math.max(0.001, Math.min(1, p * 5)));
+              if (kind === "fall" || kind === "rise") obj.position.y = part.y + part.by * (1 - e);
+            }
+          }
+        },
+      };
+    };
+    for (const season of HILL_SEASON ? [HILL_SEASON] : YEAR) {
+      hillStates[season] = stateOf(season);
+      vegKeep.push(...hillStates[season].things);
+    }
+
+    /* What stands round about: a side of the ring per season in the review
+       (the side the camera sees over the tree). */
+    const seasonAt = (deg) => HILL_SEASON ?? YEAR[Math.round(((deg + 180) % 360) / 90) % 4];
+    for (let row = 0; row < 3; row++) {
+      for (let deg = 0; deg < 360; deg += 7.5 + rand() * 6) {
+        const r = 44 + row * 13 + rand() * 7;
+        const [x, z] = onRing(deg, r);
+        add(ringTree((0.95 + row * 0.1) * (0.85 + rand() * 0.5), seasonAt(deg)), x, 0, z);
+      }
+    }
+    for (let i = 0; i < 7; i++) {
+      const [x, z] = onRing(i * 51 + 25, 135);
+      add(cloud(3 + (i % 3) * 0.6), x, 24 + (i % 3) * 4, z);
+    }
+    /* A ring of stepping stones round the tree. */
+    for (let deg = 0; deg < 360; deg += 4.2 + rand() * 1.2) {
+      const [x, z] = onRing(deg, 11.5 + (rand() - 0.5) * 0.6);
+      const st = mesh(new THREE.CylinderGeometry(0.32 + rand() * 0.12, 0.36 + rand() * 0.12, 0.08, 24), stone(0xf0e6d4));
+      st.castShadow = false;
+      add(st, x, hillY(x, z) + 0.03, z, { ry: rand() * 3 });
+    }
+    /* Little things in the grass, in clusters, clear of each step's place. */
+    const clear = HILL_SEASON ? [40, 115] : [0, 90, 180, 270];
+    const small = {
+      spring: () => (rand() > 0.5 ? tulip([0xff6f7d, 0xffd23a, 0xff8cc6][Math.floor(rand() * 3)]) : hillFlower([0xffffff, 0xffc4dc, 0xffe08a][Math.floor(rand() * 3)])),
+      summer: () => hillFlower([0xffd23a, 0xffffff, 0xff9d5c][Math.floor(rand() * 3)]),
+      fall: () => {
+        const leaf_ = mapleLeaf([0xf2683a, 0xffb43a, 0xff8a2e][Math.floor(rand() * 3)]);
+        leaf_.rotation.set(-Math.PI / 2, 0, rand() * 6);
+        leaf_.position.y = 0.08;
+        return group(leaf_);
+      },
+      winter: () => {
+        const heap = ball(0.34 + rand() * 0.3, soft(0xf6f9ff, { sheen: 0.9 }), 20);
+        heap.scale.y = 0.45;
+        return group(heap);
+      },
+    };
+    for (let i = 0; i < 90; i++) {
+      const deg = rand() * 360, r = 7 + rand() * 30;
+      if (r < 13.5 && clear.some((c) => Math.abs(((deg - c + 540) % 360) - 180) < 34)) continue;
+      const here = seasonAt(deg);
+      for (let j = 0, n = 3 + Math.floor(rand() * 4); j < n; j++) {
+        const [cx, cz] = onRing(deg, r);
+        const x = cx + (rand() - 0.5) * 2.6, z = cz + (rand() - 0.5) * 2.6;
+        add(small[here](), x, hillY(x, z), z, { k: 1.15 + rand() * 0.5, ry: rand() * 6 });
+      }
+    }
+  }
+
   /* Where each step happens, and its flower beside it (a little in front,
      to the right — out of the activity's way, in the camera's view). */
-  const PLACES = VEG
+  /* A hill camera: [degrees round the tree, its distance, its height, how
+     far out from the tree it looks, the height it looks at]. */
+  const hillPose = (deg, r, y, lookR, lookY) => [deg, r, y, lookR, lookY];
+  const fromPose = ([deg, r, y, lookR, lookY]) => {
+    const [x, z] = onRing(deg, r), [lx, lz] = onRing(deg, lookR);
+    return [x, y, z, lx, lookY, lz];
+  };
+  const onHill = (deg, r, make, k = 1) => {
+    const [x, z] = onRing(deg, r);
+    return { pos: [x, hillY(x, z), z], ry: THREE.MathUtils.degToRad(deg), make, k };
+  };
+  const faraway = portrait ? 3 : 0;
+  const PLACES = YEAR_HILL
+    ? HILL_SEASON
+      ? [
+          { ...onHill(40, 10, () => vegSign(HILL_SEASON), 0.9), pose: hillPose(10, 18 + faraway, 5.6, 1.2, 5.2) },
+          { ...onHill(115, 8.5, () => letterStones(HILL_SEASON), 1.15), pose: hillPose(115, 17 + faraway, 5, 5, 3.2) },
+        ]
+      : [
+          { ...onHill(0, 8, () => colorBoxes(["green", "yellow", "orange", "blue"]), 1.4), pose: hillPose(0, 18 + faraway, 5.2, 3, 3.8) },
+          { ...onHill(90, 8, fourSaplings, 1.2), pose: hillPose(90, 18 + faraway, 5.2, 3, 3.8) },
+          { ...onHill(180, 8.5, () => letterStones("fall"), 1.15), pose: hillPose(180, 17 + faraway, 5, 5, 3.2) },
+          { ...onHill(270, 8.5, () => letterStones("winter"), 1.15), pose: hillPose(270, 17 + faraway, 5, 5, 3.2) },
+        ]
+    : VEG
     ? VEG_KIND
       ? [
           { x: 0, make: () => vegSign(VEG_KIND) },
@@ -6611,10 +6855,14 @@ if (THING) {
       const prop = place.make();
       prop.scale.multiplyScalar(place.k ?? 1);
       prop.position.set(place.x, 0, PLACE_Z);
+      if (place.pos) {
+        prop.position.set(...place.pos);
+        prop.rotation.y = place.ry;
+      }
       scene.add(prop);
       keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
     }
-    if (VEG) return null;
+    if (VEG || YEAR_HILL) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
     const flower = FOREST ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
@@ -6625,15 +6873,26 @@ if (THING) {
   });
   /* The flowers out: those of the steps done (`done`), and the next one
      part-way (`b`). */
+  /* The hill: a lesson's season comes on as its steps are done; the review
+     is the year turning, one season giving way to the next. */
+  const hillGrow = (done, b) => {
+    if (HILL_SEASON) return hillStates[HILL_SEASON].grow(clamp01((done + b) / PLACES.length));
+    const now = YEAR[Math.max(0, done) % 4], next = YEAR[(Math.max(0, done) + 1) % 4];
+    const leaving = b < 0.5;
+    YEAR.forEach((season) => hillStates[season].show(season === (leaving ? now : next)));
+    hillStates[leaving ? now : next].grow(leaving ? 1 - 2 * b : 2 * b - 1);
+  };
   const blooms = (done, b = 0) =>
-    VEG
+    YEAR_HILL
+      ? hillGrow(done, b)
+      : VEG
       ? vegPlants.forEach((p) => p.grow(Math.min(1, (done + b) / PLACES.length)))
       : flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
   keepClear.push(...vegClear);
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 900 && !YEAR_HILL; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
     if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
     const tuft = new THREE.Group();
@@ -6707,9 +6966,12 @@ if (THING) {
   };
   /* The review's exam: looking down at the bed from over the path. */
   const bedCam = (x) => (portrait ? [x, 6.4, 8.4, x, 0.9, -2.1] : [x, 5, 7.4, x, 1, -2.1]);
-  const steps = PLACES.map((place) => (place.cam === "kitchen" ? kitchenCam() : place.cam === "bed" ? bedCam(place.x) : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  const steps = PLACES.map((place) => (place.pose ? fromPose(place.pose) : place.cam === "kitchen" ? kitchenCam() : place.cam === "bed" ? bedCam(place.x) : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
-  const END = VEG
+  const HILL_END = portrait ? hillPose(HILL_SEASON ? 380 : 380, 36, 15, 0, 7) : hillPose(380, 28, 11, 0, 6);
+  const END = YEAR_HILL
+    ? fromPose(HILL_END)
+    : VEG
     ? portrait
       ? [4.5, 12, 27, 4.5, 1, -2]
       : [4.5, 7.2, 16.2, 4.5, 0.9, -2]
@@ -6726,6 +6988,10 @@ if (THING) {
         : [117, 7.5, 17, 117, 0.5, -2];
   const STATIONS = [...steps, END];
   const ENTRY = (() => {
+    if (YEAR_HILL) {
+      const [deg, r, y, lookR, lookY] = PLACES[0].pose;
+      return fromPose([deg - 35, r + 16, y + 10, lookR, lookY]);
+    }
     /* The review opens indoors: in at the door. */
     if (VEG && !VEG_KIND) return [KX, 2.6, -4.2, KX, 2.2, -10];
     const [x, , , lx] = STATIONS[0];
@@ -6767,6 +7033,17 @@ if (THING) {
   /* The move that leaves the kitchen. */
   const VEG_OUT = VEG_KIND ? 3 : 1;
   function moveCam(i, t) {
+    if (YEAR_HILL) {
+      /* Round the tree, not across it. The way to the end has nothing to
+         wait for: the season comes on as it sweeps. */
+      const poses = [...PLACES.map((place) => place.pose), HILL_END];
+      if (i === 0) {
+        const [deg, r, y, lookR, lookY] = poses[0];
+        return fromPose(lerp([deg - 35, r + 16, y + 10, lookR, lookY], poses[0], settle(t)));
+      }
+      const last = i === poses.length - 1;
+      return fromPose(lerp(poses[i - 1], poses[i], smooth(last ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))))));
+    }
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
     if (VEG) {
       const a = STATIONS[i - 1], b = STATIONS[i];
@@ -6806,7 +7083,7 @@ if (THING) {
     move(i, t) {
       if (VEG) showBasket(i === 3);
       /* Out of the kitchen the bed ripens as it comes into view. */
-      const [b0, b1] = VEG && i === VEG_OUT ? [0.55, 0.97] : BLOOM;
+      const [b0, b1] = VEG && i === VEG_OUT ? [0.55, 0.97] : YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
       blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
