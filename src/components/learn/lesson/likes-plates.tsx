@@ -102,7 +102,7 @@ export function LikesPlates({ items, likeAria, dislikeAria, hearLabel, onSolved 
       <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-4 gap-y-3 [grid-template-areas:'like_thing_dislike'_'line_line_line'] sm:flex sm:w-auto sm:flex-col sm:gap-5 lg:gap-4 [@media(max-height:700px)]:gap-2">
         {/* The thing being asked about. */}
         <div
-          className={`card card-clay-white card-bare-lg relative flex aspect-square w-[min(9.5rem,18svh)] items-center justify-center [grid-area:thing] sm:w-[min(11rem,17svh)] lg:w-[min(11rem,calc(var(--stage-h)*0.3))] ${
+          className={`card card-clay-white relative flex aspect-square w-[min(9.5rem,18svh)] items-center justify-center [grid-area:thing] sm:w-[min(11rem,17svh)] lg:w-[min(11rem,calc(var(--stage-h)*0.3))] ${
             done ? "max-sm:hidden" : ""
           }`}
         >
