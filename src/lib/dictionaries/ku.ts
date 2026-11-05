@@ -162,7 +162,6 @@ export const ku: Dictionary = {
     findItemAria: "دەست بدە {word}",
     likeAria: "ئەز حەز ژێ دکەم",
     dislikeAria: "ئەز حەز ژێ ناکەم",
-    balloonAria: "بالۆنا {color}",
   },
   asks: {
     whichShape: "{shape} کیژە؟",
@@ -177,7 +176,6 @@ export const ku: Dictionary = {
     whichColor: "{color} کیژە؟",
     spellColor: "پەیڤا ڤی ڕەنگی چێ بکە!",
     sortColors: "هەر تشتەکی بکە د سندوقا ڕەنگێ وی دا!",
-    popColor: "بالۆنێن {color} بتەقینە!",
     spellPicture: "پەیڤا ڤی وێنەی چێ بکە!",
     thisSeason: "ئەڤە وەرزێ {season}ە!",
     sortSeasons: "هەر تشتەکی بکە د سندوقا وەرزێ وی دا!",
@@ -201,7 +199,6 @@ export const ku: Dictionary = {
     find: "بدۆزە",
     pick: "هەلبژێرە",
     sort: "ڕێک بێخە",
-    pop: "بتەقینە",
     order: "ڕیز بکە",
     cook: "چێ بکە",
     like: "حەز دکەی؟",

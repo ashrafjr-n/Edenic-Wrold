@@ -119,9 +119,6 @@ export type Question =
   | { type: "find"; ask: Ask; target: Target; scene: Scene; world?: Framed<Scene> }
   /** Put each thing, one at a time, in the box it belongs in. */
   | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
-  /** Balloons of many colors float up; pop every one of `color` (four of
-      them) and leave the `others` be. */
-  | { type: "pop"; ask: Ask; color: ColorId; others: ColorId[] }
   /** Tap the things in their order — each lands in the next space of the
       line. `items` are in the right order. */
   | { type: "order"; ask: Ask; items: Face[] }

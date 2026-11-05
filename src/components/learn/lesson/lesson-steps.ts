@@ -37,8 +37,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "find", target: findLabel(q.target) };
     case "sort":
       return { kind: "sort" };
-    case "pop":
-      return { kind: "pop", target: q.color };
     case "order":
       return { kind: "order" };
     case "make":
@@ -78,8 +76,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "find", scene: q.scene, target: q.target };
     case "sort":
       return { kind: "sort", item: q.items[0], bins: q.bins };
-    case "pop":
-      return { kind: "pop", color: q.color, others: q.others };
     case "order":
       return { kind: "order", items: q.items, seed };
     case "make":

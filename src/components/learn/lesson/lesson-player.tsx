@@ -27,7 +27,6 @@ import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
-import { PopBalloons } from "./pop-balloons";
 import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
@@ -505,10 +504,6 @@ export function LessonPlayer({
     } else if (q.type === "sort") {
       body = (
         <SortShapes key={seed} items={q.items} bins={q.bins} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
-      );
-    } else if (q.type === "pop") {
-      body = (
-        <PopBalloons key={seed} color={q.color} others={q.others} seed={seed} balloonAria={lines.balloonAria} onSolved={onSolved} onMiss={onMiss} />
       );
     } else if (q.type === "order") {
       body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;

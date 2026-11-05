@@ -158,7 +158,6 @@ export const ar: Dictionary = {
     findItemAria: "المس {word}",
     likeAria: "أحبّه",
     dislikeAria: "لا أحبّه",
-    balloonAria: "بالون {color}",
   },
   asks: {
     whichShape: "أين {shape}؟",
@@ -173,7 +172,6 @@ export const ar: Dictionary = {
     whichColor: "أين اللون {color}؟",
     spellColor: "كوّن كلمة هذا اللون!",
     sortColors: "ضع كل شيء في صندوق لونه!",
-    popColor: "فرقع البالونات {color}!",
     spellPicture: "كوّن كلمة هذه الصورة!",
     thisSeason: "هذا فصل {season}!",
     sortSeasons: "ضع كل شيء في صندوق فصله!",
@@ -197,7 +195,6 @@ export const ar: Dictionary = {
     find: "ابحث",
     pick: "اختر",
     sort: "رتّب",
-    pop: "فرقع",
     order: "صُفّ",
     cook: "اطبخ",
     like: "تحبّه؟",

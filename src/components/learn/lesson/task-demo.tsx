@@ -1,12 +1,11 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
-import { COLORS } from "@/data/colors";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { Basket, ColorId, Face, Food, Garden, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { Basket, Face, Food, Garden, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
@@ -28,7 +27,6 @@ export type TaskDemoDef =
   | { kind: "find"; scene: Scene; target: Target }
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: Thing; bins: SortBin[] }
-  | { kind: "pop"; color: ColorId; others: ColorId[] }
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "like"; face: Face }
@@ -255,31 +253,6 @@ function SortDemo({ item, bins }: { item: Thing; bins: SortBin[] }) {
           </span>
           {b === i && (
             <span className="absolute left-1/2 top-1/2">
-              <Finger />
-            </span>
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/** Pop: three balloons in a pale sky; the finger taps the one of the color
-    and it bursts. */
-function PopDemo({ color, others }: { color: ColorId; others: ColorId[] }) {
-  const row = [others[0], color, others[1] ?? others[0]];
-  return (
-    <div
-      className="relative flex h-full w-full items-center justify-center gap-[6%] overflow-hidden rounded-[1.35rem]"
-      style={{ backgroundColor: "color-mix(in srgb, var(--brand) 16%, var(--surface))" }}
-    >
-      {row.map((c, i) => (
-        <span key={i} className={`relative block w-[24%] ${i === 1 ? "-mt-[12%]" : "mt-[8%]"}`}>
-          <span className={`block ${i === 1 ? "demo-pop" : ""}`}>
-            <Image src={COLORS[c].balloon} alt="" sizes="6rem" className="h-auto w-full" />
-          </span>
-          {i === 1 && (
-            <span className="absolute left-1/2 top-[28%]">
               <Finger />
             </span>
           )}
@@ -553,8 +526,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
     case "sort":
       return <SortDemo item={demo.item} bins={demo.bins} />;
-    case "pop":
-      return <PopDemo color={demo.color} others={demo.others} />;
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "make":

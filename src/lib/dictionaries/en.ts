@@ -172,7 +172,6 @@ export const en = {
     findItemAria: "Tap the {word}",
     likeAria: "I like it",
     dislikeAria: "I don't like it",
-    balloonAria: "{color} balloon",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -188,7 +187,6 @@ export const en = {
     whichColor: "Which one is {color}?",
     spellColor: "Build the word for this color!",
     sortColors: "Put each thing in its color's box!",
-    popColor: "Pop the {color} balloons!",
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
     sortSeasons: "Put each thing in its season's box!",
@@ -213,7 +211,6 @@ export const en = {
     find: "Find",
     pick: "Pick",
     sort: "Sort",
-    pop: "Pop",
     order: "Line up",
     cook: "Cook",
     like: "Like?",
