@@ -51,6 +51,10 @@ function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: 
   return [0, 1, 2, 3].map((i) => a[i] + (b[i] - a[i]) * mix) as unknown as SceneRect;
 }
 
+/** The course a stop was just tapped in: only coming back from its lesson does
+    the page open at the child's place; any other way in, at the first lesson. */
+let leftForLesson: string | null = null;
+
 /** Multiplies `tint` through the given ways' tiles of a frame's mask, so white
     stones keep their light and shade. `circle` (x, y, r) limits it: a way
     turning grows out from its lesson. */
@@ -141,6 +145,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const rekey = useRef<() => void>(() => undefined);
   /* The next camera position is a jump, not a glide (opening at a stop). */
   const jump = useRef(false);
+  const returning = useRef(false);
 
   /* A way is pink once the lesson before it is done. */
   const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
@@ -422,17 +427,20 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   useEffect(() => {
     if (!hydrated || opened.current) return;
     opened.current = true;
-    /* A new child at the very top, the first lesson, the farthest from the
-       chest; each lesson done, a stop nearer; all done, the chest. */
+    /* Coming in (the user, 2026-11-06), whatever is done: the very top, the
+       first lesson, the farthest from the chest. Back from a lesson: the
+       child's place, a stop nearer the chest; all done, the chest. */
+    returning.current = leftForLesson === lessonId;
+    leftForLesson = null;
     jump.current = true;
-    window.scrollTo(0, nextIndex === 0 ? 0 : scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
+    window.scrollTo(0, !returning.current || nextIndex === 0 ? 0 : scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
-  }, [hydrated, nextIndex, data]);
+  }, [hydrated, nextIndex, data, lessonId]);
 
   /* Back from a lesson just done: stand at it, turn its way pink stone by
      stone, then the camera goes on to the next one. */
   useEffect(() => {
-    if (unlocking < 1) return;
+    if (unlocking < 1 || !returning.current) return;
     const way = unlocking - 1;
     jump.current = true;
     window.scrollTo(0, scrollFor(way));
@@ -509,6 +517,9 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 href={`${basePath}/${n}`}
                 aria-label={format(dict.startLessonAria, { n, title })}
                 onFocus={() => window.scrollTo(0, scrollFor(i))}
+                onClick={() => {
+                  leftForLesson = lessonId;
+                }}
                 className="course-stop"
                 style={place(box)}
               >
