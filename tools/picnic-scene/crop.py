@@ -319,7 +319,7 @@ if NAME == "stops":
     # How the picture moves between frames (where it grows from, % of the frame,
     # and how much), measured by best fit on neighbouring frames: re-measure if
     # the camera's way or the number of frames changes.
-    flows = {"landscape": [50, -16, 1.024], "portrait": [50, 20, 1.03]} if colors else {"landscape": [50, -28, 1.017], "portrait": [50, 16, 1.022]}
+    flows = {"landscape": [50, 8, 1.023], "portrait": [50, 20, 1.03]} if colors else {"landscape": [50, 6, 1.021], "portrait": [50, 16, 1.022]}
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-colors-{frame}" if colors else f"stops-{frame}")
         to = os.path.join(ROOT, dest, frame)
