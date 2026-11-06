@@ -6069,7 +6069,7 @@ if (THING) {
     }
     return g;
   }
-  function easel(splash) {
+  function easel(splash, shape) {
     const g = new THREE.Group();
     for (const sx of [-1, 1]) {
       const leg = at(rbox(0.13, 3.0, 0.13, WOOD, 0.05), sx * 0.85, 1.45, 0.05);
@@ -6089,6 +6089,8 @@ if (THING) {
       blob.position.z = 0.09;
       board.add(blob);
     }
+    /* A shape lesson's word: the shape itself drawn on the board, in its colour. */
+    if (shape) board.add(at(upright(shape, 1.05, 0.06, glaze(SHAPE_COLOR[shape])), 0, 0, 0.12));
     board.position.set(0, 2.05, 0.2);
     board.rotation.x = -0.1;
     g.add(board);
@@ -6947,7 +6949,7 @@ if (THING) {
         ]
     : LESSON <= 4
       ? [
-          { x: fx - 16, make: easel },
+          { x: fx - 16, make: () => easel(undefined, SHAPE_OF_LESSON[LESSON - 1]), k: 1.25 },
           { x: fx - 10.6, make: drawingTable },
           { x: fx - 5.6, make: () => letterBlocks(SHAPE_OF_LESSON[LESSON - 1]) },
           { x: fx, z: FIND_Z, flower: [fx + 1.6, FIND_Z + 4.5] },
