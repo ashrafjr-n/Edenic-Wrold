@@ -6928,7 +6928,7 @@ if (THING) {
        moving once for the steps and once for Basket Time): a lesson's word and
        spelling at one wide view; the basket at the counter. The review stays wide. */
     ? VEG_KIND
-      ? [{ cam: "wide" }, { cam: "kitchen" }]
+      ? [{ cam: "wide" }, { cam: "kitchen" }, { cam: "kitchen" }]
       : [{ cam: "wide" }]
     : FOREST
     ? COLOR_ID
@@ -7061,12 +7061,12 @@ if (THING) {
      lesson's places, every flower out — the path it walked, in bloom. */
   const forestFind = portrait ? [fx, 4.4, 9.0, fx, 0.9, -1.5] : [fx, 3.7, 8.2, fx, 1.0, -1.5];
   /* The kitchen's: its camera looks down at the counter. `close` is Basket
-     Time's, `wide` the room for the steps before it, `entry` the crane it comes
-     down from. */
+     Time's, `wide` the room the word and the spelling are blurred behind
+     (a little further back than the counter). */
   const kitchenCam = (shot = "close") => {
     const [view_, lift, look] = portrait
-      ? { close: [8.0, 40, [0, 2.65, -0.4]], wide: [12, 33, [0, 3.0, -0.4]], entry: [18, 38, [0, 3.2, -0.4]] }[shot]
-      : { close: [14.4, 28, [0, 1.35, -1]], wide: [21, 22, [0, 2.2, -1]], entry: [27, 34, [0, 2.4, -1]] }[shot];
+      ? { close: [8.0, 40, [0, 2.65, -0.4]], wide: [10.5, 37, [0, 2.9, -0.4]] }[shot]
+      : { close: [14.4, 28, [0, 1.35, -1]], wide: [18, 25, [0, 1.8, -1]] }[shot];
     const half = Math.tan(THREE.MathUtils.degToRad(portrait ? 28 : 17)) * (w / h);
     const d = view_ / 2 / half;
     const a = THREE.MathUtils.degToRad(lift);
@@ -7092,14 +7092,14 @@ if (THING) {
       : portrait
         ? [117, 9, 19, 117, 0.5, -2]
         : [117, 7.5, 17, 117, 0.5, -2];
-  /* The kitchen has no end shot: the lesson ends at its last station. */
+  /* The kitchen's end is the counter again, blurred: the lesson's third station. */
   const STATIONS = VEG ? steps : [...steps, END];
   const ENTRY = (() => {
     if (YEAR_HILL) {
       const [deg, r, y, lookR, lookY] = PLACES[0].pose;
       return fromPose([deg - 35, r + 16, y + 10, lookR, lookY]);
     }
-    if (VEG) return kitchenCam("entry");
+    if (VEG) return STATIONS[0];
     const [x, , , lx] = STATIONS[0];
     return [x + 4, 13, 24, lx - 1, 0.5, -10];
   })();
@@ -7176,11 +7176,13 @@ if (THING) {
     },
     /* Station i's still. */
     station(i) {
+      showBasket(VEG && i === 2);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
+      showBasket(VEG && i === 2);
       if (!VEG) {
         const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
         blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));

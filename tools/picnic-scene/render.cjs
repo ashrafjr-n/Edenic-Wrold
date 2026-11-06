@@ -272,7 +272,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        bloom; a walk opens on the flower of the step just done blooming),
        and a shape lesson's Find (its picnic on the lawn, from above) in
        layers at 1.6x. */
-    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
+    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, blur: 1.6 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
     const FPS = 30;
     for (const lesson of specs) {
       for (const frame of ["landscape", "portrait"]) {
@@ -281,10 +281,10 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         const open = async (px) => {
           await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=${lesson}&frame=${frame}&px=${px}${mode === "garden" ? "" : `&world=${mode}`}`);
           await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
-          /* Nova's kitchen has Pinki's picture standing in it. */
+          /* Nova's kitchen has Nova standing in it (2026-11-06; it was Pinki's by mistake). */
           if (mode === "veg") {
             const dataUrl = (file) => "data:image/png;base64," + fs.readFileSync(path.join(__dirname, "../../public/assets", file)).toString("base64");
-            await page.evaluate(([a, b]) => window.garden.setFriend(a, b), [dataUrl("friends/pinki.png"), dataUrl("learn-with-pinki/pinki/pinki-celebrate.png")]);
+            await page.evaluate(([a, b]) => window.garden.setFriend(a, b), [dataUrl("friends/nova.png"), dataUrl("friends/nova.png")]);
           }
         };
         await open(1);
@@ -294,10 +294,12 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         /* The moves, at 0.8x — they are seen moving, and mostly out of focus. */
         await open(0.8);
         for (let i = 0; i < stations; i++) {
+          /* The kitchen has no entry clip: the first station is a still, never moving. */
+          if (mode === "veg" && i === 0) continue;
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? SECONDS.step : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : SECONDS.step));
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? (i === 2 ? SECONDS.blur : SECONDS.step) : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));

@@ -431,10 +431,11 @@ if NAME in ("garden", "forest", "veg", "hill"):
     GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     def sigma(lesson, move, last, t):
-        # Nova's kitchen (2026-11-06): the entry lands out of focus; the move
-        # in to the counter starts out of focus and comes sharp, for Basket Time.
+        # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
+        # still that never moves); move 1 goes in to the counter and comes into
+        # focus for Basket Time; move 2 (the lesson's end) blurs it out again.
         if VEG:
-            return BLUR * smooth(0.5, 1.0, t) if move == 0 else BLUR * (1 - smooth(0.0, 0.12, t))
+            return BLUR * (1 - smooth(0.05, 0.85, t)) if move == 1 else BLUR * smooth(0.0, 0.85, t)
         if move == 0:
             return 0 if FOREST and lesson <= 10 else BLUR * smooth(0.5, 1.0, t)
         # The colour lessons' first station stays sharp: its splash is the step.
@@ -464,6 +465,9 @@ if NAME in ("garden", "forest", "veg", "hill"):
                 stills.append(f"s{i}.jpg")
             moves = []
             for i in stations:
+                if VEG and i == 0:
+                    moves.append(None)
+                    continue
                 frames = sorted(os.listdir(f"{out}/m{i}"))
                 with tempfile.TemporaryDirectory() as tmp:
                     for k, name in enumerate(frames):
@@ -512,7 +516,10 @@ if NAME in ("garden", "forest", "veg", "hill"):
         stations = []
         for i, still in enumerate(both["landscape"]["stills"]):
             stations.append(f"{{ landscape: {pic(lesson, 'landscape', still)}, portrait: {pic(lesson, 'portrait', both['portrait']['stills'][i])} }}")
-        moves = [f'{{ landscape: "/{base[len("public/"):]}/{lesson}/landscape/{m}", portrait: "/{base[len("public/"):]}/{lesson}/portrait/{both["portrait"]["moves"][i]}" }}' for i, m in enumerate(both["landscape"]["moves"])]
+        moves = [
+            (f'{{ landscape: "/{base[len("public/"):]}/{lesson}/landscape/{m}", portrait: "/{base[len("public/"):]}/{lesson}/portrait/{both["portrait"]["moves"][i]}" }}' if m else "null")
+            for i, m in enumerate(both["landscape"]["moves"])
+        ]
         worlds.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n  }},")
         if both["landscape"].get("find"):
             scenes = []
