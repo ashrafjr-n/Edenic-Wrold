@@ -1605,6 +1605,8 @@ bdi {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* The middle of the screen, a little up: the drop under it keeps its face. */
+  padding-bottom: 7svh;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;

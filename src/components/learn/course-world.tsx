@@ -8,6 +8,7 @@ import { Button3D } from "@/components/ui/button-3d";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
+import { usePageTransition } from "@/store/page-transition";
 import { useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { CourseStops, CourseStopsFrame, SceneRect } from "@/types/course";
@@ -71,34 +72,46 @@ function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: 
     the page open at the child's place; any other way in, at the first lesson. */
 let leftForLesson: string | null = null;
 
-/** Multiplies `tint` through the given ways' tiles of a frame's mask, so white
-    stones keep their light and shade. `circle` (x, y, r) limits it: a way
-    turning grows out from its lesson. */
-function tintWays(target: CanvasRenderingContext2D, layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], ways: readonly number[], tint: string, circle?: readonly [number, number, number]) {
-  const { width, height } = layer.canvas;
+/** Lays the tiles (of a frame's mask sheet) that are asked for on `layer`, at
+    the mask's own size — half the picture's, so a quarter of the pixels to
+    move. Whether any was there. */
+function stampTiles(layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], wanted: readonly number[]) {
   const tile = mask.height / tiles.length;
+  if (layer.canvas.width !== mask.width || layer.canvas.height !== tile) {
+    layer.canvas.width = mask.width;
+    layer.canvas.height = tile;
+  }
   layer.globalCompositeOperation = "source-over";
-  layer.clearRect(0, 0, width, height);
+  layer.clearRect(0, 0, mask.width, tile);
   let any = false;
-  for (const way of ways) {
-    const at = tiles.indexOf(way);
+  for (const one of wanted) {
+    const at = tiles.indexOf(one);
     if (at < 0) continue;
-    layer.drawImage(mask, 0, tile * at, mask.width, tile, 0, 0, width, height);
+    layer.drawImage(mask, 0, tile * at, mask.width, tile, 0, 0, mask.width, tile);
     any = true;
   }
-  if (!any) return;
+  return any;
+}
+
+/** Multiplies `tint` through the given ways' tiles of a frame's mask, so white
+    stones keep their light and shade. `circle` (x, y, r, in the picture's
+    pixels) limits it: a way turning grows out from its lesson. */
+function tintWays(target: CanvasRenderingContext2D, layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], ways: readonly number[], tint: string, circle?: readonly [number, number, number]) {
+  if (!stampTiles(layer, mask, tiles, ways)) return;
+  const { width, height } = layer.canvas;
   layer.globalCompositeOperation = "source-in";
   layer.fillStyle = tint;
   layer.fillRect(0, 0, width, height);
   if (circle) {
+    const k = width / target.canvas.width;
     layer.globalCompositeOperation = "destination-in";
     layer.beginPath();
-    layer.arc(circle[0], circle[1], Math.max(0.5, circle[2]), 0, Math.PI * 2);
+    layer.arc(circle[0] * k, circle[1] * k, Math.max(0.5, circle[2] * k), 0, Math.PI * 2);
     layer.fillStyle = "#000";
     layer.fill();
   }
   target.globalCompositeOperation = "multiply";
-  target.drawImage(layer.canvas, 0, 0);
+  target.drawImage(layer.canvas, 0, 0, width, height, 0, 0, target.canvas.width, target.canvas.height);
   target.globalCompositeOperation = "source-over";
 }
 
@@ -106,34 +119,30 @@ function tintWays(target: CanvasRenderingContext2D, layer: CanvasRenderingContex
     taken out keeping the clay's light, then a light silver laid over it, `amount`
     1 closed .. 0 open. */
 function silverDrops(target: CanvasRenderingContext2D, layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], drops: readonly number[], amount: number) {
+  if (!stampTiles(layer, mask, tiles, drops)) return;
   const { width, height } = layer.canvas;
-  const tile = mask.height / tiles.length;
-  layer.globalCompositeOperation = "source-over";
-  layer.clearRect(0, 0, width, height);
-  let any = false;
-  for (const drop of drops) {
-    const at = tiles.indexOf(drop);
-    if (at < 0) continue;
-    layer.drawImage(mask, 0, tile * at, mask.width, tile, 0, 0, width, height);
-    any = true;
-  }
-  if (!any) return;
+  const [w, h] = [target.canvas.width, target.canvas.height];
   layer.globalCompositeOperation = "source-in";
   layer.fillStyle = SILVER;
   layer.fillRect(0, 0, width, height);
   target.globalAlpha = amount;
   target.globalCompositeOperation = "color";
-  target.drawImage(layer.canvas, 0, 0);
+  target.drawImage(layer.canvas, 0, 0, width, height, 0, 0, w, h);
   layer.fillStyle = SILVER_LIGHT;
   layer.fillRect(0, 0, width, height);
   target.globalCompositeOperation = "source-over";
   target.globalAlpha = amount * SILVER_FLAT;
-  target.drawImage(layer.canvas, 0, 0);
+  target.drawImage(layer.canvas, 0, 0, width, height, 0, 0, w, h);
   target.globalAlpha = 1;
 }
 
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - (-2 * p + 2) ** 3 / 2);
 const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+/** Until the clouds that brought the child here have cleared (at most 4 s):
+    what plays when the page opens is seen, not played under them. */
+async function cloudsGone() {
+  for (let i = 0; i < 40 && usePageTransition.getState().active; i++) await wait(100);
+}
 
 /** The guided camera's state, held outside the engine so it survives the
     engine being built again (a turned screen, a double mount in development). */
@@ -258,8 +267,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const layer = document.createElement("canvas");
     const layerContext = layer.getContext("2d");
     if (!canvas || !context || !blendContext || !underContext || !layerContext) return;
-    canvas.width = blend.width = under.width = layer.width = data.first.width;
-    canvas.height = blend.height = under.height = layer.height = data.first.height;
+    canvas.width = blend.width = under.width = data.first.width;
+    canvas.height = blend.height = under.height = data.first.height;
     const growFrom = [(data.flow[0] / 100) * canvas.width, (data.flow[1] / 100) * canvas.height];
     /* A frame grown by `scale` from where the picture grows from. */
     const drawGrown = (source: HTMLCanvasElement, scale: number) => {
@@ -377,8 +386,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
           const picture = await fetchBitmap(fileUrl(data, "f", f, "jpg"), gone.signal, { resizeWidth: KEY_WIDTH, resizeQuality: "medium" });
           const card = document.createElement("canvas");
           const cardContext = card.getContext("2d");
-          card.width = small.width = smallLayer.canvas.width = picture.width;
-          card.height = small.height = smallLayer.canvas.height = picture.height;
+          card.width = small.width = picture.width;
+          card.height = small.height = picture.height;
           cardContext?.drawImage(picture, 0, 0);
           picture.close();
           const done = tilesOf(f).filter((way) => way < donePink.current);
@@ -621,6 +630,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     lockedFrom.current = to;
     turning.current = [from, 0];
     kick.current();
+    await cloudsGone();
     await wait(reduced() ? 0 : TURN_DELAY_MS);
     if (!alive.current) return;
     await new Promise<void>((done) => {
