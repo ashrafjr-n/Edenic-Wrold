@@ -58,8 +58,12 @@ const GROUND = "#f7b9d5";
 const WAY_PINK = "#ff86b4";
 /** A way turning pink, stone by stone, from the lesson just done. */
 const TURN_MS = 1500;
-/** Before it starts; then the camera goes on to the next lesson. */
-const TURN_DELAY_MS = 500;
+/** Before the camera sets off for the next lesson, ms. */
+const TURN_DELAY_MS = 300;
+/** The camera's move to it; the stones start turning this long after it sets
+    off, so the camera is ahead of the colour. */
+const CAMERA_RUN_MS = 1900;
+const STONES_LAG_MS = 350;
 
 /** Each stop's box at `progress`, between the render's key positions. */
 function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: number): SceneRect {
@@ -692,32 +696,41 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` and `playUnlock` only read what is here.
   }, [hydrated, nextIndex, data, lessonId]);
 
-  /* Scrolling: back from a lesson just done, stand at it, turn its way pink
-     stone by stone, then the camera goes on to the next one. */
+  /* Scrolling: back from a lesson just done, stand at it, then the camera goes
+     on to the next one and the way turns pink stone by stone just BEHIND it
+     (the user, 2026-11-06: the camera led late, on a phone worst). Its own
+     eased scroll, never the browser's smooth one — a phone's lags and cannot
+     be timed against the stones. */
   useEffect(() => {
     if (world.guided || unlocking < 1 || !returning.current) return;
     const way = unlocking - 1;
     jump.current = true;
-    window.scrollTo(0, scrollFor(way));
+    const [from, to] = [scrollFor(way), scrollFor(unlocking)];
+    window.scrollTo(0, from);
     turning.current = [way, 0];
     redraw.current();
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const started = performance.now() + TURN_DELAY_MS;
     let raf = 0;
+    const stop = () => cancelAnimationFrame(raf);
     const step = (now: number) => {
-      const p = still ? 1 : Math.min(1, Math.max(0, (now - started) / TURN_MS));
-      turning.current = [way, p];
+      const t = Math.max(0, now - started);
+      const move = still ? 1 : Math.min(1, t / CAMERA_RUN_MS);
+      const turn = still ? 1 : Math.min(1, Math.max(0, (t - STONES_LAG_MS) / TURN_MS));
+      window.scrollTo(0, from + (to - from) * easeInOut(move));
+      turning.current = [way, turn];
       redraw.current();
-      if (p < 1) {
-        raf = requestAnimationFrame(step);
-        return;
-      }
-      turning.current = null;
-      window.scrollTo({ top: scrollFor(unlocking), behavior: still ? "auto" : "smooth" });
+      if (move < 1 || turn < 1) raf = requestAnimationFrame(step);
+      else turning.current = null;
     };
     raf = requestAnimationFrame(step);
+    /* A finger or wheel takes the camera back. */
+    window.addEventListener("wheel", stop, { passive: true, once: true });
+    window.addEventListener("touchstart", stop, { passive: true, once: true });
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchstart", stop);
       turning.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
