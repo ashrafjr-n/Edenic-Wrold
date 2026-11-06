@@ -4239,6 +4239,9 @@ const YEAR_HILL = params.get("world") === "hill";
 /* A course's world of stops (`?garden=1&world=stops`, 2026-11-05, Shapes
    first): its lessons on pedestals, the camera going in as the page scrolls. */
 const STOPS = params.get("world") === "stops";
+/* Pinki's Colors as a world of stops (`&course=colors`, 2026-11-06): ten
+   paint drops and the chest, a much longer way than Shapes' four. */
+const COLORS_STOPS = STOPS && params.get("course") === "colors";
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -6810,22 +6813,27 @@ if (THING) {
     sun.shadow.camera.updateProjectionMatrix();
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
-    const SPOTS = portrait
+    const SPOTS = COLORS_STOPS
+      ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
+      : portrait
       ? [[-2.3, -39], [2.4, -28], [-2.4, -17], [2.4, -6], [0, 6]]
       : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
-    const KINDS = ["circle", "square", "triangle", "rectangle"];
+    const FIRST_Z = SPOTS[0][1];
+    /* How far the Shapes world's far scenery moves back for a longer way. */
+    const DZ = COLORS_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
+    const KINDS = COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
     const slabM = soft(LIGHT, { roughness: 0.9 });
     const INK = soft(0x6a5898, { roughness: 0.7 });
     /* The picture's face: two plain dots, a small smile. */
-    const dotFace = (k) => {
+    const dotFace = (k, ink = INK) => {
       const g = new THREE.Group();
       for (const sx of [-1, 1]) {
-        const eye = mesh(new THREE.SphereGeometry(0.14 * k, 28, 20), INK);
+        const eye = mesh(new THREE.SphereGeometry(0.14 * k, 28, 20), ink);
         eye.scale.set(0.9, 1.08, 0.35);
         eye.position.set(sx * 0.36 * k, 0.08 * k, 0);
         g.add(eye);
       }
-      const smile = mesh(new THREE.TorusGeometry(0.14 * k, 0.034 * k, 12, 32, Math.PI), INK);
+      const smile = mesh(new THREE.TorusGeometry(0.14 * k, 0.034 * k, 12, 32, Math.PI), ink);
       smile.rotation.z = Math.PI;
       smile.position.set(0, -0.04 * k, 0);
       g.add(smile);
@@ -6887,15 +6895,25 @@ if (THING) {
       const ped = slab(5.8, 5);
       g.add(ped);
       /* The shape: chubby, soft, its front still plainly the shape. */
-      const clayM = soft(SHAPE_COLOR[kind], { roughness: 0.68, sheen: 0.45 });
-      const body = kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
-      if (kind === "circle") body.scale.z = 0.8;
+      const clayM = soft(COLORS_STOPS ? PAINT[kind] : SHAPE_COLOR[kind], { roughness: 0.68, sheen: 0.45 });
+      /* Colors: a drop of paint, plump, its tip curling up. */
+      const drop = () => {
+        const geo = smoothLathe([[1.5, 0], [1.66, 0.5], [1.42, 1.35], [0.9, 2.15], [0.42, 2.8], [0.1, 3.2], [0, 3.32]], 128);
+        geo.center();
+        const m = mesh(geo, clayM);
+        m.scale.z = 0.86;
+        return m;
+      };
+      const body = COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
+      if (COLORS_STOPS) body.scale.setScalar(0.92);
+      else if (kind === "circle") body.scale.z = 0.8;
       else body.geometry.center();
       const statue = new THREE.Group();
       statue.add(body);
       const box = new THREE.Box3().setFromObject(body);
-      const face = dotFace(kind === "triangle" ? 1.15 : 1.5);
-      face.position.set(0, kind === "triangle" ? -0.42 : 0.02, box.max.z - 0.02);
+      /* Dark paints wear a white face; the rest the usual plum. */
+      const face = dotFace(COLORS_STOPS ? 1.45 : kind === "triangle" ? 1.15 : 1.5, COLORS_STOPS && ["red", "blue", "purple", "brown", "black", "green"].includes(kind) ? soft(0xffffff, { roughness: 0.7 }) : INK);
+      face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.93 : box.max.z - 0.02);
       statue.add(face);
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
       statue.rotation.y = x < 0 ? 0.26 : -0.26;
@@ -6974,14 +6992,17 @@ if (THING) {
     /* Round about, the same pink: bell hills. */
     const bell = (r, ht, color = 0xf2a6c8) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
     const side = portrait ? 11.5 : 15.5;
-    for (const [sx, z, r, ht] of [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]]) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
+    const hills = COLORS_STOPS
+      ? Array.from({ length: 12 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 10.5, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
+      : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]];
+    for (const [sx, z, r, ht] of hills) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
     /* Past the first lesson: the bow in the shapes' colours, the hills at its
        feet, a tall hill with a wavy golden top. */
     [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]].forEach(([r, color]) => {
-      add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56);
+      add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56 + DZ);
     });
-    add(bell(7.5, 8.5), -7.5, 0, -51);
-    add(bell(6.5, 7), 7.5, 0, -50.5);
+    add(bell(7.5, 8.5), -7.5, 0, -51 + DZ);
+    add(bell(6.5, 7), 7.5, 0, -50.5 + DZ);
     {
       const top = 18, r = 11;
       const geo = smoothLathe([[r, 0], [r * 0.82, top * 0.4], [r * 0.56, top * 0.78], [r * 0.25, top * 0.98], [0, top]], 256);
@@ -6991,29 +7012,31 @@ if (THING) {
         return [v.y > top * 0.62 + Math.sin(a * 7) * 0.9 ? golden : pink, 0];
       });
       const peak = mesh(geo, new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.9, sheen: 0.3, sheenColor: 0xffffff }));
-      add(peak, portrait ? 14 : 24, 0, -62);
+      add(peak, portrait ? 14 : 24, 0, -62 + DZ);
       vegKeep.push(peak);
     }
     /* The shape garden's soul: a few of its topiaries and its fountain, off
        to the sides, the only other colours about. */
     const dressing = [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
     const inner = portrait ? 7.4 : 12;
-    for (const [sx, z, make] of dressing) add(make(), sx * inner, 0, z);
-    {
+    /* A longer way repeats the garden's dressing, every 46 units. */
+    const REPEATS = COLORS_STOPS ? [0, -46, -92, -138] : [0];
+    for (const dz of REPEATS) for (const [sx, z, make] of dressing) add(make(), sx * inner * (dz % 92 ? -1 : 1), 0, z + dz);
+    for (const dz of REPEATS) {
       const blue = soft(0xbfe0fb, { roughness: 0.5 });
       const white = soft(0xfff6ee);
       const f = group(at(mesh(new THREE.CylinderGeometry(2.1, 2.3, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 1.5, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(0.95, 0.75, 0.3, 40), white), 0, 2.35, 0), at(ball(0.4, soft(0xff8fbf), 24), 0, 2.85, 0));
-      add(f, portrait ? -8 : -12.5, 0, -22);
+      add(f, (portrait ? -8 : -12.5) * (dz % 92 ? -1 : 1), 0, -22 + dz);
     }
-    for (const [x, z, make] of [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]]) {
-      add(make(), portrait ? x * 0.72 : x, 0, z, { k: 1.2 });
+    for (const dz of REPEATS) for (const [x, z, make] of [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]]) {
+      add(make(), (portrait ? x * 0.72 : x) * (dz % 92 ? -1 : 1), 0, z + dz, { k: 1.2 });
     }
     /* The cloud with a face, cream, over the far side. */
-    for (const [x, y, z, k] of [[-11, 13, -46, 2.8], [12, 16, -30, 2.2]]) {
+    for (const dz of REPEATS) for (const [x, y, z, k] of [[-11, 13, -46, 2.8], [12, 16, -30, 2.2]]) {
       const c = cloud(k);
       const look = dotFace(1.05 * k);
       look.position.set(0, 0.75 * k, 1.05 * k);
-      add(group(c, look), portrait ? x * 0.55 : x, y, z);
+      add(group(c, look), portrait ? x * 0.55 : x, y, z + dz);
     }
     stopsApi.stops = stops;
     stopsApi.ways = ways;
@@ -7456,9 +7479,10 @@ if (THING) {
   if (STOPS) {
     /* The camera through the stops: `t` 0 over the chest (the nearest), 1 far
        in at the first lesson — low, as in the picture, going up a little. */
+    const first = stopsApi.spots[0][1];
     const [FROM, TO] = portrait
-      ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, -18, 0, 2.6, -41]]
-      : [[0, 8.4, 20.5, 0, 1.8, 3], [0, 9.6, -21, 0, 2.8, -40]];
+      ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, first + 21, 0, 2.6, first - 2]]
+      : [[0, 8.4, 20.5, 0, 1.8, 3], [0, 9.6, first + 17, 0, 2.8, first - 2]];
     const camAt = (t) => lerp(FROM, TO, t);
     window.garden = {
       frameAt(t) {
@@ -7468,6 +7492,8 @@ if (THING) {
       /* Way `k`'s stones at `t`: white where they are the nearest thing, black
          elsewhere. The page multiplies pink through it, so a white stone
          turns pink with all its shading. */
+      ways: stopsApi.ways.length,
+      stopCount: stopsApi.stops.length,
       wayMask(t, k) {
         aim(camAt(t));
         const [bg, fog] = [scene.background, scene.fog];
