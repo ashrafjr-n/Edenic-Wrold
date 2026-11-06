@@ -173,7 +173,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = colors && specs[1] === "drops";
     const [FRAMES, KEYS] = colors ? [180, 61] : [90, 31];
-    for (const frame of ["landscape", "portrait"]) {
+    /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
+    for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-colors-${frame}` : `stops-${frame}`);
       if (!dropsOnly) {
         fs.rmSync(out, { recursive: true, force: true });

@@ -7484,9 +7484,16 @@ if (THING) {
     /* The camera through the stops: `t` 0 over the chest (the nearest), 1 far
        in at the first lesson — low, as in the picture, going up a little. */
     const first = stopsApi.spots[0][1];
+    /* The wide frame (a desktop): further back, higher and a wider lens than the
+       first take, whose camera was too close with everything too big. */
+    const [FOV, BACK, UP] = [Number(params.get("fov") ?? 42), Number(params.get("back") ?? 6), Number(params.get("up") ?? 1.5)];
+    if (!portrait) {
+      view.fov = FOV;
+      view.updateProjectionMatrix();
+    }
     const [FROM, TO] = portrait
       ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, first + 21, 0, 2.6, first - 2]]
-      : [[0, 8.4, 20.5, 0, 1.8, 3], [0, 9.6, first + 17, 0, 2.8, first - 2]];
+      : [[0, 8.4 + UP, 20.5 + BACK, 0, 1.8, 3], [0, 9.6 + UP, first + 17 + BACK, 0, 2.8, first - 2]];
     const camAt = (t) => lerp(FROM, TO, t);
     window.garden = {
       frameAt(t) {
