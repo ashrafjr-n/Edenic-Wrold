@@ -64,7 +64,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
-    world: { ...VEG_KITCHEN[1], stepStation: [0, 0, 1] },
+    world: { ...VEG_KITCHEN[i + 1], stepStation: [0, 0, 1] },
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
