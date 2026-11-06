@@ -120,7 +120,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     let cancelled = false;
     let raf = 0;
     let current = -1;
-    let standing = 0;
+    /* The frame the camera stands at; none until the first paint. */
+    let standing = -1;
     let loading = 0;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
