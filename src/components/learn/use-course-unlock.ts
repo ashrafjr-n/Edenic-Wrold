@@ -7,7 +7,10 @@ import { useCourseStars, useProgress } from "@/store/progress";
    lesson opened since the last visit can spring its lock off once. */
 const SEEN_KEY = "edenic-path-seen";
 
-function readSeen(): Record<string, number> {
+/** The furthest lesson of a course the child has seen open, if any. */
+export const seenOf = (characterId: string, lessonId: string): number | undefined => readSeen()[`${characterId}.${lessonId}`];
+
+export function readSeen(): Record<string, number> {
   try {
     return JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}");
   } catch {

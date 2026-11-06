@@ -1596,6 +1596,41 @@ bdi {
   pointer-events: auto;
 }
 
+/* A guided course's one Start button (Colors): the middle of the screen, over
+   everything, there only while the camera stands still at the next lesson. */
+.course-start {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.course-start[data-shown="true"] {
+  opacity: 1;
+}
+
+.course-start[data-shown="true"] .course-start-button {
+  pointer-events: auto;
+}
+
+.course-start-button {
+  gap: 0.45em;
+  min-width: 11rem;
+  padding: 0.55em 1.6em 0.6em 1.3em;
+  font-size: clamp(1.5rem, 6.5cqmin, 2.4rem);
+  font-weight: 700;
+}
+
+.course-start-icon {
+  width: 0.95em;
+  height: 0.95em;
+}
+
 .course-stop {
   position: absolute;
   container-type: inline-size;

@@ -250,6 +250,9 @@ export interface CourseStopsFrame {
   /** Per frame, which ways the tiles of its mask sheet hold, in order (a long
       course shows only some ways in a frame). Absent: every way, in order. */
   maskWays?: readonly (readonly number[])[];
+  /** Per frame, which drops its sheet of drop pixels (`d<nnn>.png`) holds, in
+      order: the page greys the drops not yet open through them. Guided only. */
+  dropWays?: readonly (readonly number[])[];
   /** How the picture moves from one frame to the next, measured off the
       frames: the point it grows from (% of the frame) and how much. */
   flow: readonly [number, number, number];
@@ -262,6 +265,11 @@ export interface CourseStops extends Framed<CourseStopsFrame> {
   tint?: string;
   /** How tall the scroll is, in `svh` (default 340, Shapes'). */
   run?: number;
+  /** Played one lesson at a time (Colors, 2026-11-06): no scroll while there is
+      a lesson left — the camera stands at the next lesson, the ones after it
+      grey, one Start button; back from a lesson its way turns, the camera goes
+      on and the next one gets its colour. All done, the scroll opens. */
+  guided?: boolean;
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */

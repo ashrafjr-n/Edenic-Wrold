@@ -329,6 +329,8 @@ if NAME == "stops":
         ways = meta.get("ways", 4)
         crc = 0
         shown = []
+        dropsShown = []
+        drops = len([n for n in os.listdir(out) if n.startswith('d000-')]) if colors else 0
         for f in range(meta["frames"]):
             name = f"f{f:03d}.jpg"
             Image.open(f"{out}/{name}").convert("RGB").save(f"{to}/{name}", quality=80, optimize=True, progressive=True)
@@ -343,13 +345,27 @@ if NAME == "stops":
                     continue
                 tiles.append((k, alpha))
             shown.append([k for k, _ in tiles])
-            if colors and not tiles:
-                continue
-            sheet = Image.new("LA", (tw, th * len(tiles)), (255, 0))
-            for i, (_, alpha) in enumerate(tiles):
-                sheet.paste(Image.merge("LA", (Image.new("L", (tw, th), 255), alpha)), (0, th * i))
-            sheet.save(f"{to}/w{f:03d}.png", optimize=True)
-            crc = zlib.crc32(open(f"{to}/w{f:03d}.png", "rb").read(), crc)
+            if not (colors and not tiles):
+                sheet = Image.new("LA", (tw, th * len(tiles)), (255, 0))
+                for i, (_, alpha) in enumerate(tiles):
+                    sheet.paste(Image.merge("LA", (Image.new("L", (tw, th), 255), alpha)), (0, th * i))
+                sheet.save(f"{to}/w{f:03d}.png", optimize=True)
+                crc = zlib.crc32(open(f"{to}/w{f:03d}.png", "rb").read(), crc)
+            # Colors: each drop's pixels the same way (`d<frame>.png`), so the
+            # page can grey the drops not yet open; only the ones in the frame.
+            if drops:
+                tiles = []
+                for k in range(drops):
+                    alpha = Image.open(f"{out}/d{f:03d}-{k}.png").convert("L").resize((tw, th), Image.LANCZOS)
+                    if alpha.getbbox() is not None:
+                        tiles.append((k, alpha))
+                dropsShown.append([k for k, _ in tiles])
+                if tiles:
+                    sheet = Image.new("LA", (tw, th * len(tiles)), (255, 0))
+                    for i, (_, alpha) in enumerate(tiles):
+                        sheet.paste(Image.merge("LA", (Image.new("L", (tw, th), 255), alpha)), (0, th * i))
+                    sheet.save(f"{to}/d{f:03d}.png", optimize=True)
+                    crc = zlib.crc32(open(f"{to}/d{f:03d}.png", "rb").read(), crc)
         keys = meta["keys"]
         focus = []
         for stop in range(len(keys[0])):
@@ -359,6 +375,7 @@ if NAME == "stops":
         parts.append(
             f'  {frame}: {{\n    first: {frame},\n    path: "/{dest[len("public/"):]}/{frame}/",\n    flow: {json.dumps(flows[frame])},\n    version: "{crc:08x}",\n    focus: {json.dumps(focus)},\n'
             + (f'    maskWays: {json.dumps(shown, separators=(",", ":"))},\n' if colors else "")
+            + (f'    dropWays: {json.dumps(dropsShown, separators=(",", ":"))},\n' if colors else "")
             + f'    keys: {json.dumps(keys, separators=(",", ":"))},\n  }},'
         )
     what, const, file = ("Pinki's Colors course", "COLOR_STOPS", "color-stops.ts") if colors else ("the Shapes course", "SHAPE_STOPS", "shape-stops.ts")
@@ -369,7 +386,7 @@ if NAME == "stops":
         'import type { CourseStops } from "@/types/course";\n'
         + "\n".join(imports)
         + f"\n\n/** The camera going in as the page scrolls: {meta['frames']} frames, each stop's box\n    (% of the frame) at even steps along the way. */\nexport const {const}: CourseStops = {{\n  frames: {meta['frames']},\n"
-        + ('  tint: "#ffc72e",\n  run: 720,\n' if colors else "")
+        + ('  tint: "#ffc72e",\n  run: 720,\n  guided: true,\n' if colors else "")
         + "\n".join(parts) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)

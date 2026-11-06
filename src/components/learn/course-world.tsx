@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
-import { useCourseUnlock } from "@/components/learn/use-course-unlock";
+import { Button3D } from "@/components/ui/button-3d";
+import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import { useProgress } from "@/store/progress";
@@ -35,6 +36,21 @@ const KEYS_AFTER_MS = 400;
 const DEFAULT_RUN = 290;
 /** Wider than this (% of the frame) it is passing the camera, or behind it. */
 const PAST = 75;
+/** The stage a guided course stands the lesson at: where its box is centred
+    (% of the frame down) — under the middle, where the Start button is. */
+const STAGE_Y = 70;
+/** The camera's move from one lesson to the next, ms. */
+const MOVE_MS = 2300;
+/** A closed lesson's colour coming back, ms. */
+const REVEAL_MS = 700;
+/** The longest the camera waits for the frames of its way to arrive, ms. */
+const WAIT_FRAMES_MS = 2500;
+/** A closed lesson: its colour taken out, then a flat light silver over it. */
+const SILVER = "#c9cdd6";
+const SILVER_LIGHT = "#e4e7ee";
+const SILVER_FLAT = 0.68;
+/** The ground behind the picture while it loads (the scene's own pink). */
+const GROUND = "#f7b9d5";
 /** What a done way's white stones are multiplied by, unless the course says: Pinki's pink. */
 const WAY_PINK = "#ff86b4";
 /** A way turning pink, stone by stone, from the lesson just done. */
@@ -84,6 +100,49 @@ function tintWays(target: CanvasRenderingContext2D, layer: CanvasRenderingContex
   target.globalCompositeOperation = "multiply";
   target.drawImage(layer.canvas, 0, 0);
   target.globalCompositeOperation = "source-over";
+}
+
+/** Greys the given drops (their tiles of a frame's drop sheet): the colour is
+    taken out keeping the clay's light, then a light silver laid over it, `amount`
+    1 closed .. 0 open. */
+function silverDrops(target: CanvasRenderingContext2D, layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], drops: readonly number[], amount: number) {
+  const { width, height } = layer.canvas;
+  const tile = mask.height / tiles.length;
+  layer.globalCompositeOperation = "source-over";
+  layer.clearRect(0, 0, width, height);
+  let any = false;
+  for (const drop of drops) {
+    const at = tiles.indexOf(drop);
+    if (at < 0) continue;
+    layer.drawImage(mask, 0, tile * at, mask.width, tile, 0, 0, width, height);
+    any = true;
+  }
+  if (!any) return;
+  layer.globalCompositeOperation = "source-in";
+  layer.fillStyle = SILVER;
+  layer.fillRect(0, 0, width, height);
+  target.globalAlpha = amount;
+  target.globalCompositeOperation = "color";
+  target.drawImage(layer.canvas, 0, 0);
+  layer.fillStyle = SILVER_LIGHT;
+  layer.fillRect(0, 0, width, height);
+  target.globalCompositeOperation = "source-over";
+  target.globalAlpha = amount * SILVER_FLAT;
+  target.drawImage(layer.canvas, 0, 0);
+  target.globalAlpha = 1;
+}
+
+const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - (-2 * p + 2) ** 3 / 2);
+const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+
+/** The guided camera's state, held outside the engine so it survives the
+    engine being built again (a turned screen, a double mount in development). */
+interface Guide {
+  /** The lesson the camera stands at; -1 until it is told. */
+  stop: number;
+  /** A move to another lesson: the frames of its way are waited for first
+      (`start` < 0), then it runs; `done` when it arrives. */
+  tween: { from: number; to: number; ms: number; asked: number; start: number; onStep: (p: number) => void; done: () => void } | null;
 }
 
 /** A frame off the network, decoded off the main thread (a picture decoded on
@@ -137,6 +196,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const stopRefs = useRef<(HTMLElement | null)[]>([]);
   const { stars, nextIndex, unlocking } = useCourseUnlock({ characterId, lessonId, count: titles.length, rootRef, nextRef, scroll: false });
   const hydrated = useProgress((state) => state.hydrated);
+  /* Played one lesson at a time while one is left; when all are done, the scroll. */
+  const guided = Boolean(world.guided) && (!hydrated || nextIndex >= 0);
   const opened = useRef(false);
   /* The ways pink by now, and the one turning: [its index, how far 0..1]. */
   const donePink = useRef(0);
@@ -146,6 +207,19 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   /* The next camera position is a jump, not a glide (opening at a stop). */
   const jump = useRef(false);
   const returning = useRef(false);
+  /* Guided (Colors): where the camera stands, which lessons are still closed
+     (grey from this one on), the one getting its colour back, whether it
+     is guided right now, and the engine's hooks. */
+  const guide = useRef<Guide>({ stop: -1, tween: null });
+  const lockedFrom = useRef(Infinity);
+  const reveal = useRef<{ stop: number; amount: number } | null>(null);
+  const guidedNow = useRef(false);
+  const kick = useRef<() => void>(() => undefined);
+  const resync = useRef<() => void>(() => undefined);
+  const painted = useRef<() => void>(() => undefined);
+  const alive = useRef(false);
+  const [settled, setSettled] = useState(false);
+  const [shown, setShown] = useState(false);
 
   /* A way is pink once the lesson before it is done. */
   const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
@@ -196,10 +270,28 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
 
     const pictures = new Map<number, ImageBitmap>();
     const masks = new Map<number, ImageBitmap>();
+    const dropMasks = new Map<number, ImageBitmap>();
     const keys = new Map<number, HTMLCanvasElement>();
     const loading = new Map<string, { frame: number; stop: AbortController }>();
     const everyWay = Array.from({ length: ways }, (_, way) => way);
     const tilesOf = (f: number) => data.maskWays?.[f] ?? everyWay;
+    const dropsOf = (f: number) => data.dropWays?.[f] ?? [];
+    /* The camera at a lesson, stood where its box is centred under the middle
+       (a whole frame, so it is sharp). */
+    const stageAt = Array.from({ length: data.keys[0].length }, (_, stop) => {
+      let best = 0;
+      let off = Infinity;
+      for (let f = 0; f < world.frames; f++) {
+        const [, y, , h] = boxAt(data.keys, f / (world.frames - 1), stop);
+        if (Math.abs(y + h / 2 - STAGE_Y) < off) [best, off] = [f, Math.abs(y + h / 2 - STAGE_Y)];
+      }
+      return best / (world.frames - 1);
+    });
+    const framesOf = (from: number, to: number): [number, number] => {
+      const [a, b] = [stageAt[from], stageAt[to]].map((t) => Math.round(t * (world.frames - 1)));
+      return [Math.max(0, Math.min(a, b) - 1), Math.min(world.frames - 1, Math.max(a, b) + 1)];
+    };
+    let corridor: [number, number] | null = null;
     const parked = stopRefs.current.map(() => false);
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const gone = new AbortController();
@@ -218,9 +310,13 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
 
     const pinkNow = () => Math.max(donePink.current, turning.current ? turning.current[0] + 1 : 0);
     const needsMask = (f: number) => tilesOf(f).some((way) => way < pinkNow());
-    /* A frame shows only with its mask: stones never flash white. */
-    const ready = (f: number) => pictures.has(f) && (!needsMask(f) || masks.has(f));
-    const held = (f: number) => (heading > 0 ? f - standing <= AHEAD && standing - f <= BEHIND : standing - f <= AHEAD && f - standing <= BEHIND);
+    /* The drops still closed in a frame (grey), and the one getting its colour. */
+    const closedIn = (f: number) => (guidedNow.current ? dropsOf(f).filter((drop) => drop >= lockedFrom.current && drop < ways) : []);
+    const needsDrops = (f: number) => closedIn(f).length > 0 || (guidedNow.current && reveal.current !== null && dropsOf(f).includes(reveal.current.stop));
+    /* A frame shows only with its masks: stones never flash white, a closed
+       lesson never flashes its colour. */
+    const ready = (f: number) => pictures.has(f) && (!needsMask(f) || masks.has(f)) && (!needsDrops(f) || dropMasks.has(f));
+    const held = (f: number) => (corridor !== null && f >= corridor[0] && f <= corridor[1]) || (heading > 0 ? f - standing <= AHEAD && standing - f <= BEHIND : standing - f <= AHEAD && f - standing <= BEHIND);
 
     const ask = (name: string, f: number, map: Map<number, ImageBitmap>) => {
       if (map.has(f) || loading.has(name + f) || loading.size >= LOADING_AT_ONCE) return;
@@ -248,7 +344,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
        for what it is near, nearest first. */
     const ensure = () => {
       if (standing < 0) return;
-      for (const map of [pictures, masks]) {
+      for (const map of [pictures, masks, dropMasks]) {
         for (const [f, bitmap] of map) {
           if (held(f)) continue;
           bitmap.close();
@@ -256,12 +352,18 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         }
       }
       for (const { frame, stop } of loading.values()) if (!held(frame)) stop.abort();
+      const want = (f: number) => {
+        if (f < 0 || f >= world.frames) return;
+        ask("f", f, pictures);
+        if (needsMask(f)) ask("w", f, masks);
+        if (needsDrops(f)) ask("d", f, dropMasks);
+      };
+      /* The frames of the camera's coming move first, nearest where it stands. */
+      if (corridor) {
+        for (const f of Array.from({ length: corridor[1] - corridor[0] + 1 }, (_, i) => corridor![0] + i).sort((a, b) => Math.abs(a - standing) - Math.abs(b - standing))) want(f);
+      }
       for (let d = 0; d <= AHEAD; d++) {
-        for (const f of d <= BEHIND && d > 0 ? [standing + heading * d, standing - heading * d] : [standing + heading * d]) {
-          if (f < 0 || f >= world.frames) continue;
-          ask("f", f, pictures);
-          if (needsMask(f)) ask("w", f, masks);
-        }
+        for (const f of d <= BEHIND && d > 0 ? [standing + heading * d, standing - heading * d] : [standing + heading * d]) want(f);
       }
     };
 
@@ -296,6 +398,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       window.clearTimeout(keyTimer);
       const run = keyRun;
       keyTimer = window.setTimeout(() => {
+        /* Guided, nobody flicks the camera: no small pictures. */
+        if (guidedNow.current) return;
         const at = Math.max(0, standing);
         const order = Array.from({ length: Math.ceil(world.frames / KEY_EVERY) }, (_, k) => k * KEY_EVERY).sort((a, b) => Math.abs(a - at) - Math.abs(b - at));
         for (let i = 0; i < KEYS_AT_ONCE; i++) void loadKeys(run, order);
@@ -304,6 +408,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
 
     const compose = (target: CanvasRenderingContext2D, f: number, progress: number) => {
       target.drawImage(pictures.get(f)!, 0, 0);
+      const drops = dropMasks.get(f);
+      if (drops && guidedNow.current) {
+        const closed = closedIn(f);
+        if (closed.length > 0) silverDrops(target, layerContext, drops, dropsOf(f), closed, 1);
+        if (reveal.current && reveal.current.amount > 0) silverDrops(target, layerContext, drops, dropsOf(f), [reveal.current.stop], reveal.current.amount);
+      }
       const mask = masks.get(f);
       if (!mask) return;
       const turn = turning.current;
@@ -336,6 +446,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       const low = Math.floor(at);
       const high = Math.min(world.frames - 1, low + 1);
       const mix = at - low;
+      let drew = true;
       if (ready(low) && ready(high) && mix > 0.01 && high !== low) {
         /* Both frames carried to where the camera really is, so what stands
            in them lines up as one, then the nearer showing through. */
@@ -350,11 +461,15 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         compose(context, low, progress);
       } else {
         const close = nearest(wanted, ready, 2);
-        const key = close < 0 ? nearest(wanted, (f) => keys.has(f), world.frames) : -1;
-        const far = close < 0 && key < 0 ? nearest(wanted, ready, world.frames) : -1;
+        /* Guided: only a frame next to where it stands, never a small or a far
+           one — a closed lesson must not show its colour. */
+        const key = close < 0 && !guidedNow.current ? nearest(wanted, (f) => keys.has(f), world.frames) : -1;
+        const far = close < 0 && key < 0 && !guidedNow.current ? nearest(wanted, ready, world.frames) : -1;
         if (close >= 0 || far >= 0) compose(context, close >= 0 ? close : far, progress);
         else if (key >= 0) context.drawImage(keys.get(key)!, 0, 0, canvas.width, canvas.height);
+        else if (guidedNow.current) drew = false;
       }
+      if (drew) painted.current();
       stopRefs.current.forEach((element, i) => {
         if (!element) return;
         const box = boxAt(data.keys, progress, i);
@@ -367,8 +482,40 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       });
     };
 
+    /* Guided: the camera stands at a lesson, or goes from one to the next once
+       the frames of its way are here; the page tells it with `guide`. */
+    const guidedTick = (now: number) => {
+      const g = guide.current;
+      const tw = g.tween;
+      let t = -1;
+      if (tw) {
+        if (tw.start < 0 && (still || now - tw.asked > WAIT_FRAMES_MS || (corridor !== null && Array.from({ length: corridor[1] - corridor[0] + 1 }, (_, i) => corridor![0] + i).every(ready)))) tw.start = now;
+        if (tw.start >= 0) {
+          const p = still || tw.ms <= 0 ? 1 : Math.min(1, (now - tw.start) / tw.ms);
+          t = stageAt[tw.from] + (stageAt[tw.to] - stageAt[tw.from]) * easeInOut(p);
+          tw.onStep(p);
+          if (p >= 1) {
+            g.stop = tw.to;
+            g.tween = null;
+            corridor = null;
+            t = stageAt[tw.to];
+            tw.done();
+          }
+        } else t = stageAt[tw.from];
+      } else if (g.stop >= 0) t = stageAt[g.stop];
+      if (t >= 0) {
+        current = t;
+        paint(t);
+      }
+      if (g.tween || reveal.current) raf = requestAnimationFrame(tick);
+    };
+
     const tick = (now: number) => {
       raf = 0;
+      if (guidedNow.current) {
+        guidedTick(now);
+        return;
+      }
       /* The top of the page is the camera far in, at the first lesson; going
          down the page zooms it out, to the chest at the bottom. */
       const scroll = top > 0 ? 1 - Math.min(1, Math.max(0, window.scrollY / top)) : 1;
@@ -401,6 +548,20 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     window.addEventListener("resize", onResize);
     lastTick = performance.now();
     wake();
+    kick.current = () => {
+      /* A new place or a move: the frames of its way are asked for now. */
+      const g = guide.current;
+      if (g.tween) corridor = framesOf(g.tween.from, g.tween.to);
+      else if (g.stop >= 0) corridor = null;
+      if (g.stop >= 0 && standing < 0) standing = Math.round(stageAt[g.stop] * (world.frames - 1));
+      ensure();
+      wake();
+    };
+    resync.current = () => {
+      top = maxScroll();
+      current = -1;
+      wake();
+    };
     redraw.current = () => {
       if (current < 0) return;
       ensure();
@@ -415,32 +576,110 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       for (const { stop } of loading.values()) stop.abort();
-      for (const map of [pictures, masks]) {
+      for (const map of [pictures, masks, dropMasks]) {
         for (const bitmap of map.values()) bitmap.close();
         map.clear();
       }
-      redraw.current = rekey.current = () => undefined;
+      redraw.current = rekey.current = kick.current = resync.current = () => undefined;
     };
   }, [data, world.frames, ways, tint]);
 
-  /* Once progress is known: open at the stop the child carries on from. */
+  /* Only mounted while it is (a double mount in development mounts twice). */
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+
+  /* Guided: nothing scrolls while a lesson is left. */
+  useEffect(() => {
+    guidedNow.current = guided;
+    if (!guided) return;
+    const page = document.documentElement;
+    const was = page.style.overflow;
+    page.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+    kick.current();
+    return () => {
+      page.style.overflow = was;
+    };
+  }, [guided]);
+
+  /* Guided: the camera to a lesson, and a lesson getting its colour back. */
+  const stand = (stop: number) => {
+    guide.current = { stop, tween: null };
+    lockedFrom.current = stop + 1;
+    reveal.current = null;
+    kick.current();
+  };
+  const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const playUnlock = async (to: number) => {
+    const from = to - 1;
+    guide.current = { stop: from, tween: null };
+    /* The lesson it opens is still closed; its way still white. */
+    lockedFrom.current = to;
+    turning.current = [from, 0];
+    kick.current();
+    await wait(reduced() ? 0 : TURN_DELAY_MS);
+    if (!alive.current) return;
+    await new Promise<void>((done) => {
+      guide.current.tween = { from, to, ms: reduced() ? 0 : MOVE_MS, asked: performance.now(), start: -1, onStep: (p) => (turning.current = [from, p]), done };
+      kick.current();
+    });
+    turning.current = null;
+    if (!alive.current) return;
+    /* There: the next lesson gets its colour (the chest never was grey). */
+    lockedFrom.current = to + 1;
+    if (to < ways) {
+      const started = performance.now();
+      reveal.current = { stop: to, amount: 1 };
+      kick.current();
+      await new Promise<void>((done) => {
+        const step = (now: number) => {
+          const p = reduced() ? 1 : Math.min(1, (now - started) / REVEAL_MS);
+          if (reveal.current) reveal.current.amount = 1 - p;
+          if (p < 1 && alive.current) requestAnimationFrame(step);
+          else done();
+        };
+        requestAnimationFrame(step);
+      });
+      reveal.current = null;
+      kick.current();
+    }
+    if (alive.current) setSettled(true);
+  };
+
+  /* Once progress is known: where it opens. */
   useEffect(() => {
     if (!hydrated || opened.current) return;
     opened.current = true;
-    /* Coming in (the user, 2026-11-06), whatever is done: the very top, the
-       first lesson, the farthest from the chest. Back from a lesson: the
-       child's place, a stop nearer the chest; all done, the chest. */
     returning.current = leftForLesson === lessonId;
     leftForLesson = null;
+    if (world.guided && nextIndex >= 0) {
+      /* Guided: at the child's lesson, nothing to scroll; back from a lesson
+         that opened the next, its way turns and the camera goes on. */
+      const seen = seenOf(characterId, lessonId);
+      if (nextIndex > 0 && seen !== undefined && seen < nextIndex) void playUnlock(nextIndex);
+      else {
+        stand(nextIndex);
+        window.setTimeout(() => alive.current && setSettled(true), 0);
+      }
+      return;
+    }
+    /* Scrolling: coming in (the user, 2026-11-06), whatever is done, the very
+       top, the first lesson, the farthest from the chest. Back from a lesson:
+       the child's place; all done, the chest. */
+    resync.current();
     jump.current = true;
     window.scrollTo(0, !returning.current || nextIndex === 0 ? 0 : scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` and `playUnlock` only read what is here.
   }, [hydrated, nextIndex, data, lessonId]);
 
-  /* Back from a lesson just done: stand at it, turn its way pink stone by
-     stone, then the camera goes on to the next one. */
+  /* Scrolling: back from a lesson just done, stand at it, turn its way pink
+     stone by stone, then the camera goes on to the next one. */
   useEffect(() => {
-    if (unlocking < 1 || !returning.current) return;
+    if (world.guided || unlocking < 1 || !returning.current) return;
     const way = unlocking - 1;
     jump.current = true;
     window.scrollTo(0, scrollFor(way));
@@ -468,14 +707,27 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [unlocking, data]);
 
+  /* The first picture painted: the Start button may come. */
+  useEffect(() => {
+    painted.current = () => {
+      painted.current = () => undefined;
+      setShown(true);
+    };
+  }, []);
+
+  /* The one Start button, in the middle of the screen over everything. */
+  const showStart = guided && hydrated && settled && shown && nextIndex >= 0;
+
   return (
     <div ref={rootRef}>
-      {/* The height the scroll runs through; nothing is laid on it. */}
-      <div className="course-world-run" style={{ height: `${world.run ?? DEFAULT_RUN}svh` }} />
+      {/* The height the scroll runs through; nothing is laid on it. Guided, none. */}
+      <div className="course-world-run" style={{ height: guided ? 0 : `${world.run ?? DEFAULT_RUN}svh` }} />
 
       <div className="world-frame -z-[5]" aria-hidden>
-        <div className="world-cover" style={worldCover(wide)}>
-          <Image src={data.first} alt="" fill preload sizes="100vw" className="object-cover" />
+        <div className="world-cover" style={{ ...worldCover(wide), ...(world.guided ? { backgroundColor: GROUND } : null) }}>
+          {/* A guided course paints its first frame itself: it must not show
+              what is closed (or already done) for a moment. */}
+          {!world.guided && <Image src={data.first} alt="" fill preload sizes="100vw" className="object-cover" />}
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
         </div>
       </div>
@@ -501,9 +753,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                   className="course-stop course-stop--locked"
                   style={place(box)}
                 >
-                  <span className="course-stop-mark">
-                    <Lock strokeWidth={2.75} />
-                  </span>
+                  {/* Guided: the grey is the sign it is closed. */}
+                  {!world.guided && (
+                    <span className="course-stop-mark">
+                      <Lock strokeWidth={2.75} />
+                    </span>
+                  )}
                 </span>
               );
             }
@@ -516,14 +771,16 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 }}
                 href={`${basePath}/${n}`}
                 aria-label={format(dict.startLessonAria, { n, title })}
-                onFocus={() => window.scrollTo(0, scrollFor(i))}
+                onFocus={() => {
+                  if (!guided) window.scrollTo(0, scrollFor(i));
+                }}
                 onClick={() => {
                   leftForLesson = lessonId;
                 }}
                 className="course-stop"
                 style={place(box)}
               >
-                {isNext && (
+                {isNext && !world.guided && (
                   <span className="course-stop-go" style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
                     <span dir={dir}>{dict.ctaStart}</span>
@@ -534,6 +791,24 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
           })}
         </div>
       </div>
+
+      {world.guided && (
+        <div className="course-start" data-shown={showStart}>
+          <Button3D
+            href={`${basePath}/${Math.max(0, nextIndex) + 1}`}
+            tone={{ face: "var(--page-accent-color)", edge: "var(--page-accent-edge)", text: "var(--page-accent-ink)" }}
+            aria-label={format(dict.startLessonAria, { n: Math.max(0, nextIndex) + 1, title: titles[Math.max(0, nextIndex)] })}
+            onClick={() => {
+              leftForLesson = lessonId;
+            }}
+            tabIndex={showStart ? 0 : -1}
+            className="course-start-button"
+          >
+            <Play className="course-start-icon fill-current" strokeWidth={2.5} />
+            <span dir={dir}>{dict.ctaStart}</span>
+          </Button3D>
+        </div>
+      )}
     </div>
   );
 }
