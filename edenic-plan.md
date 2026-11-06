@@ -249,7 +249,7 @@ about 3 minutes.
 | ~~Match the shadow~~: four animals onto their 3D shadows on a paper | removed 2026-11-01 (the same day — "keep only the food") | Animals |
 | **Feed the animal**: the animal over three foods — its own and two it would never eat; drag (or tap) the right one into its mouth | built (`feed`, 2026-11-01) | Animals |
 | **Which weather?**: read the word, pick the 3D Bloo dressed for it (sunglasses, umbrella, kite, woolly hat + scarf) — a Pick, its demo blind | built (`pick` + `blind`, 2026-11-01) | Weather |
-| **Basket Time** (Find It! merged in): the 3D kitchen, Pinki's picture behind the counter, the word on the wall; drag the right vegetable from the counter (blender, milk, cheese, garlic, the five vegetables) into the basket | built (`basket` + `KITCHEN`, 2026-11-01) | Vegetables |
+| **Basket Time** (Find It! merged in): the 3D kitchen, Nova's picture behind the counter, the word on the wall; drag the right vegetable from the counter (blender, milk, cheese, garlic, the five vegetables) into the basket | built (`basket` + `KITCHEN`, 2026-11-01) | Vegetables |
 | ~~The magic button~~: the picture starts bare; each tap on the glowing spot spreads the next part of the season over it | removed 2026-10-12 | Seasons, its last course (Fruits' Grow it and Months' wheel went 2026-10-08) |
 | **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
 | **Pick Nova's list** (an exam): three plants, one basket, a list — "3 apples · 2 oranges · 1 banana" — read each line and count; one too many wiggles back | built (`harvest`) | Fruits review |
@@ -720,9 +720,9 @@ with the user's OK on its look (a still) before it is built.
       forest made over, a plain dot instead of the paint pot, the word step's splash on the easel,
       Mix redesigned (`mix-colors.tsx`); the user checks it
 - [x] **Vegetables moved INDOORS, 2026-11-06 (the user): the whole course is in Nova's
-      kitchen** — one entry crane into a wide view, the word and the spelling there with
-      no camera move, ONE move in to the counter for Basket Time; the review all at the
-      wide view, its exam picked from a pantry of crates; no progress marker; the garden
+      kitchen** — a blurred wide view that never moves for the word and the spelling,
+      the blur going and the camera a little closer for Basket Time, blurring again for
+      the end; Nova (not Pinki) behind the counter; the review all at the wide view, its exam picked from a pantry of crates; no progress marker; the garden
       world (29 MB) deleted. (Built 2026-11-05 before that:)
 - [x] Vegetables: Nova's garden and cottage, lessons 1–5 — built 2026-11-05
       (`render.cjs veg`, `crop.py veg`): sign, seed packets, in at the door to
