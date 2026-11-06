@@ -1621,7 +1621,9 @@ bdi {
   border-radius: 999px;
   background: #fffafc;
   box-shadow: 0 5px 9px -3px rgb(190 60 120 / 45%);
-  color: var(--color-ink-soft-fixed);
+  /* Black on the white chip in both themes (the user, 2026-11-06): the ink
+     tokens turn light in dark mode and the icon vanished on the chip. */
+  color: #14111f;
 }
 
 .course-stop-mark svg {
