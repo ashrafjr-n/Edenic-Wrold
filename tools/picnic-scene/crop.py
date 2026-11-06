@@ -316,6 +316,10 @@ if NAME == "stops":
     colors = len(sys.argv) > 2 and sys.argv[2] == "colors"
     dest = "public/assets/learn/pinki/colors/stops" if colors else "public/assets/learn/pinki/shapes/stops"
     imports, parts = [], []
+    # How the picture moves between frames (where it grows from, % of the frame,
+    # and how much), measured by best fit on neighbouring frames: re-measure if
+    # the camera's way or the number of frames changes.
+    flows = {"landscape": [50, -16, 1.024], "portrait": [50, 20, 1.03]} if colors else {"landscape": [50, -28, 1.017], "portrait": [50, 16, 1.022]}
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-colors-{frame}" if colors else f"stops-{frame}")
         to = os.path.join(ROOT, dest, frame)
@@ -353,7 +357,7 @@ if NAME == "stops":
             focus.append(round(dist.index(min(dist)) / (len(keys) - 1), 3))
         imports.append(f'import {frame} from "../../{dest}/{frame}/f{meta["frames"] - 1:03d}.jpg";')
         parts.append(
-            f'  {frame}: {{\n    first: {frame},\n    path: "/{dest[len("public/"):]}/{frame}/",\n    version: "{crc:08x}",\n    focus: {json.dumps(focus)},\n'
+            f'  {frame}: {{\n    first: {frame},\n    path: "/{dest[len("public/"):]}/{frame}/",\n    flow: {json.dumps(flows[frame])},\n    version: "{crc:08x}",\n    focus: {json.dumps(focus)},\n'
             + (f'    maskWays: {json.dumps(shown, separators=(",", ":"))},\n' if colors else "")
             + f'    keys: {json.dumps(keys, separators=(",", ":"))},\n  }},'
         )
@@ -365,7 +369,7 @@ if NAME == "stops":
         'import type { CourseStops } from "@/types/course";\n'
         + "\n".join(imports)
         + f"\n\n/** The camera going in as the page scrolls: {meta['frames']} frames, each stop's box\n    (% of the frame) at even steps along the way. */\nexport const {const}: CourseStops = {{\n  frames: {meta['frames']},\n"
-        + ('  tint: "#ffc72e",\n  run: 820,\n' if colors else "")
+        + ('  tint: "#ffc72e",\n  run: 720,\n' if colors else "")
         + "\n".join(parts) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)
