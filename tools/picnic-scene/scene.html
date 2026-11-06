@@ -6889,6 +6889,8 @@ if (THING) {
       return g;
     };
     const stops = [];
+    /* The drops alone (Colors): the page greys the ones not yet open. */
+    const statues = [];
     KINDS.forEach((kind, i) => {
       const [x, z] = SPOTS[i];
       const g = new THREE.Group();
@@ -6918,6 +6920,7 @@ if (THING) {
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
       statue.rotation.y = x < 0 ? 0.26 : -0.26;
       g.add(statue);
+      statues.push(statue);
       /* A flower or a sprig on the slab's far corner. */
       const beside = i % 2 ? sprig() : chubby(flowerColors[i % 3]);
       beside.position.set(x < 0 ? -2.1 : 2.1, ped.top - 0.06, -1.1);
@@ -7039,6 +7042,7 @@ if (THING) {
       add(group(c, look), portrait ? x * 0.55 : x, y, z + dz);
     }
     stopsApi.stops = stops;
+    stopsApi.statues = statues;
     stopsApi.ways = ways;
     stopsApi.spots = SPOTS;
   }
@@ -7493,6 +7497,7 @@ if (THING) {
          elsewhere. The page multiplies pink through it, so a white stone
          turns pink with all its shading. */
       ways: stopsApi.ways.length,
+      drops: stopsApi.statues.length,
       stopCount: stopsApi.stops.length,
       wayMask(t, k) {
         aim(camAt(t));
@@ -7500,6 +7505,18 @@ if (THING) {
         scene.background = null;
         scene.fog = null;
         const url = maskOf([[stopsApi.ways[k], -Infinity]], view);
+        scene.background = bg;
+        scene.fog = fog;
+        return url;
+      },
+      /* Drop `k`'s pixels at `t`: white where it is the nearest thing. The page
+         greys the ones not yet open through it. */
+      dropMask(t, k) {
+        aim(camAt(t));
+        const [bg, fog] = [scene.background, scene.fog];
+        scene.background = null;
+        scene.fog = null;
+        const url = maskOf([[stopsApi.statues[k], -Infinity]], view);
         scene.background = bg;
         scene.fog = fog;
         return url;
