@@ -115,6 +115,9 @@
  *
  *   node tools/picnic-scene/render.cjs stops
  *
+ * Nova's Vegetables (2026-11-06): `node tools/picnic-scene/render.cjs stops fruits`, then
+ * `crop.py stops fruits` → `src/data/veg-stops.ts`.
+ *
  * Colors' (2026-11-06) — 180 frames, ten ways; then `crop.py stops colors`,
  * which writes `src/data/color-stops.ts`:
  *
@@ -168,19 +171,22 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
   if (mode === "stops") {
     /* `stops` is Shapes' (2026-11-05); `stops colors` Colors' (2026-11-06):
        its own `out/stops-colors-<frame>/`, longer, a mask per way (ten). */
-    const colors = specs[0] === "colors";
+    /* `stops fruits` (2026-11-06) is Nova's Vegetables: `out/stops-fruits-<frame>/`,
+       100 frames, five ways. */
+    const course = specs[0] === "colors" || specs[0] === "fruits" ? specs[0] : "shapes";
+    const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
-    const dropsOnly = colors && specs[1] === "drops";
-    const [FRAMES, KEYS] = colors ? [180, 61] : [90, 31];
+    const dropsOnly = course === "colors" && specs[1] === "drops";
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
-      const out = path.join(__dirname, "out", colors ? `stops-colors-${frame}` : `stops-${frame}`);
+      const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
       if (!dropsOnly) {
         fs.rmSync(out, { recursive: true, force: true });
         fs.mkdirSync(out, { recursive: true });
       }
-      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops${colors ? "&course=colors" : ""}`);
+      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops${colors ? `&course=${course}` : ""}`);
       await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
       const [ways, drops] = await page.evaluate(() => [window.garden.ways, window.garden.drops]);
       for (let f = 0; f < FRAMES; f++) {
@@ -205,7 +211,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         for (let k = 0; k < KEYS; k++) keys.push(await page.evaluate((t) => window.garden.boxes(t), k / (KEYS - 1)));
         fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ frames: FRAMES, ways, keys }));
       }
-      console.log(`stops ${colors ? "colors " : ""}${dropsOnly ? "drops " : ""}${frame}: done`);
+      console.log(`stops ${colors ? course + " " : ""}${dropsOnly ? "drops " : ""}${frame}: done`);
     }
   } else if (mode === "thing") {
     const out = path.join(__dirname, "out", "things");
