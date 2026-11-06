@@ -719,6 +719,11 @@ with the user's OK on its look (a still) before it is built.
       forest (the camera walks on, things of a colour stand in it), the
       forest made over, a plain dot instead of the paint pot, the word step's splash on the easel,
       Mix redesigned (`mix-colors.tsx`); the user checks it
+- [x] **Vegetables moved INDOORS, 2026-11-06 (the user): the whole course is in Nova's
+      kitchen** — one entry crane into a wide view, the word and the spelling there with
+      no camera move, ONE move in to the counter for Basket Time; the review all at the
+      wide view, its exam picked from a pantry of crates; no progress marker; the garden
+      world (29 MB) deleted. (Built 2026-11-05 before that:)
 - [x] Vegetables: Nova's garden and cottage, lessons 1–5 — built 2026-11-05
       (`render.cjs veg`, `crop.py veg`): sign, seed packets, in at the door to
       Basket Time played in the kitchen; the bed grows the lesson's vegetable,
