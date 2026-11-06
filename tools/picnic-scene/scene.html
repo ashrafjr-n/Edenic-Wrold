@@ -3218,7 +3218,7 @@ const SCENES = {
           potato: { model: "video", arg: "potato", at: [2.0, 0, -1.35], rotY: 0.6, scale: 0.95 },
           cheese: { model: "food", arg: "cheese", at: [-4.4, 0, 1.15], rotY: 0.8, scale: 0.9 },
           broccoli: { model: "video", arg: "broccoli", at: [-2.5, 0, 1.0], scale: 0.95 },
-          carrot: { model: "video", arg: "carrot", at: [-0.2, 0, 1.2], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.95 },
+          carrot: { model: "video", arg: "carrot", at: [0.3, 0, 2.3], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.95 },
           garlic: { model: "kitchen", arg: "garlic", at: [1.8, 0, 1.1], scale: 1.05 },
         },
       },
@@ -3235,7 +3235,7 @@ const SCENES = {
           pepper: { model: "video", arg: "pepper", at: [0.6, 0, -0.2], rotY: -0.4, scale: 0.9 },
           cheese: { model: "food", arg: "cheese", at: [2.2, 0, -0.45], rotY: 0.8, scale: 0.85 },
           broccoli: { model: "video", arg: "broccoli", at: [-2.2, 0, 1.75], scale: 0.85 },
-          carrot: { model: "video", arg: "carrot", at: [-0.45, 0, 2.0], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.9 },
+          carrot: { model: "video", arg: "carrot", at: [0.5, 0, 2.5], rot: [0, 0, Math.PI / 2 - 0.25], rotY: 0.35, scale: 0.9 },
         },
       },
     },
@@ -7176,13 +7176,11 @@ if (THING) {
     },
     /* Station i's still. */
     station(i) {
-      showBasket(VEG && i === 2);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
-      showBasket(VEG && i === 2);
       if (!VEG) {
         const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
         blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
