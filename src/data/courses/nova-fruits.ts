@@ -1,7 +1,7 @@
 import type { StaticImageData } from "next/image";
 import { BASKET, GARDENS } from "@/data/garden";
 import { KITCHEN } from "@/data/kitchen";
-import { VEG_GARDEN } from "@/data/veg-garden";
+import { VEG_KITCHEN } from "@/data/veg-kitchen";
 import type { Face, Food, LessonDef, Vegetable } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
@@ -45,15 +45,16 @@ const line = (word: string, count: number) => ({ word, things: food(word).things
 const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
 
 /**
- * Nova's garden (2026-11-05: the course's world, `data/veg-garden.ts`; its
- * bed grows the lesson's vegetable as the steps are done) — one thing, one
- * lesson: watch its reel, meet it (its picture, its word, its speaker) by
- * the bed's sign, build its word among the seed packets, then go in at her
- * door to Basket Time — read its word and put it from the kitchen counter,
+ * Nova's kitchen (2026-11-06: the whole course's world, `data/veg-kitchen.ts`
+ * — the user: all of it indoors, the camera moving once for the steps and once
+ * for Basket Time, no progress marker) — one thing, one lesson: watch its reel,
+ * then the camera comes down into the kitchen and stays there while it is met
+ * (its picture, its word, its speaker) and its word is built; then ONE move in
+ * to the counter for Basket Time — read its word and put it from the counter,
  * among everything else on it, into the basket (the user's design,
- * 2026-11-01: Find It! merged into it). Its demo carries another vegetable. (Grow it, the
- * third step from 2026-10-24, was removed 2026-11-01; Nova's cups,
- * before it, are a game on `/play`.) Picking in her garden is the
+ * 2026-11-01: Find It! merged into it). Its demo carries another vegetable.
+ * (Grow it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
+ * cups, before it, are a game on `/play`.) Picking from the pantry shelves is the
  * review's exam, with several foods to tell apart.
  */
 function foodLesson(veg: Veg, i: number): LessonDef {
@@ -63,7 +64,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
   return {
     reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
     cover: [picture],
-    world: VEG_GARDEN[i + 1],
+    world: { ...VEG_KITCHEN[1], stepStation: [0, 0, 1] },
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word, picture },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
@@ -80,17 +81,16 @@ export const novaFruits: LessonDef[] = [
   /* The review, no reel: a vegetable soup from a recipe of words alone
      (the fourth thing beside the pot is a vegetable too, so every word has
      to be read), "Do you like…?" (I like / I don't like), two words spelled
-     from the picture alone, then the exam, twice: Nova's note in her
-     garden — a carrot bed, a tomato plant, a potato bed — and one basket,
-     "1 potato, 3 carrots, 2 tomatoes" — never in the plants' order, so
-     every line is read, and more on each plant than the note asks for, so
+     from the picture alone, then the exam, twice: Nova's note at her pantry
+     — a crate of carrots, a crate of tomatoes, a crate of potatoes (the
+     user, 2026-11-06: moved in from the garden) — and one basket,
+     "1 potato, 3 carrots, 2 tomatoes" — never in the crates' order, so
+     every line is read, and more in each crate than the note asks for, so
      every line is counted. (The juice went with the fruits, 2026-10-12.)
-     In her world: the soup at the kitchen counter, out at the door to the
-     likes at a garden table, the spells among seed packets, the exam over
-     the bed, all five growing in it. */
+     In her world: all of it at the one wide view of the kitchen. */
   {
     cover: [carrot, broccoli, tomato, pepper],
-    world: VEG_GARDEN[6],
+    world: { ...VEG_KITCHEN[6], stepStation: [0] },
     questions: [
       { type: "make", ask: { key: "makeSoup" }, list: ["carrot", "potato", "broccoli"], stall: ["carrot", "potato", "broccoli", "pepper"].map(face), full: potMix },
       { type: "likes", ask: { key: "likeThem" }, items: ["tomato", "broccoli", "pepper", "carrot"].map((word) => ({ face: face(word), things: food(word).things })) },
