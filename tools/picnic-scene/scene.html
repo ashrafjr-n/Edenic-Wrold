@@ -4242,6 +4242,9 @@ const STOPS = params.get("world") === "stops";
 /* Pinki's Colors as a world of stops (`&course=colors`, 2026-11-06): ten
    paint drops and the chest, a much longer way than Shapes' four. */
 const COLORS_STOPS = STOPS && params.get("course") === "colors";
+/* Nova's Vegetables as a world of stops (`&course=fruits`, 2026-11-06): five
+   vegetables of the videos and the chest, on a lavender and milk-white garden. */
+const FRUITS_STOPS = STOPS && params.get("course") === "fruits";
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -5151,16 +5154,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, STOPS ? "#f7b9d5" : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = STOPS ? new THREE.Fog(0xf7b9d5, 42, 110) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = STOPS ? new THREE.Fog(FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -6797,7 +6800,9 @@ if (THING) {
      (`frameAt(t)`, played by `CourseWorld`), never a flat scroll. ---- */
   const stopsApi = {};
   if (STOPS) {
-    const GROUND = 0xf5b2d0, LIGHT = 0xfccfe2;
+    /* Pinki's pink; Nova's lavender and milk. */
+    const GROUND = FRUITS_STOPS ? 0xd7c9f2 : 0xf5b2d0, LIGHT = FRUITS_STOPS ? 0xfbf6ee : 0xfccfe2;
+    const PAL_HILL = FRUITS_STOPS ? 0xc6b5ee : 0xf2a6c8;
     lawn.material = soft(GROUND, { roughness: 0.98, sheen: 0.1 });
     lawn.scale.set(1, 3, 1);
     lawn.position.set(0, 0, -30);
@@ -6805,23 +6810,26 @@ if (THING) {
     sun.color.set(0xfff4ee);
     sun.intensity = 1.55;
     sky.intensity = 1.5;
-    sky.color.set(0xfff2f7);
-    sky.groundColor.set(0xf8c2da);
+    sky.color.set(FRUITS_STOPS ? 0xfbf7ff : 0xfff2f7);
+    sky.groundColor.set(FRUITS_STOPS ? 0xcdbfee : 0xf8c2da);
     scene.environmentIntensity = 0.35;
     sun.shadow.radius = 14;
     Object.assign(sun.shadow.camera, { left: -32, right: 32, top: 32, bottom: -32, far: 120 });
     sun.shadow.camera.updateProjectionMatrix();
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
-    const SPOTS = COLORS_STOPS
+    const FRUIT_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
+    const SPOTS = FRUITS_STOPS
+      ? [...FRUIT_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (FRUIT_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
+      : COLORS_STOPS
       ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
       : portrait
       ? [[-2.3, -39], [2.4, -28], [-2.4, -17], [2.4, -6], [0, 6]]
       : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
     const FIRST_Z = SPOTS[0][1];
     /* How far the Shapes world's far scenery moves back for a longer way. */
-    const DZ = COLORS_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
-    const KINDS = COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
+    const DZ = COLORS_STOPS || FRUITS_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
+    const KINDS = FRUITS_STOPS ? FRUIT_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
     const slabM = soft(LIGHT, { roughness: 0.9 });
     const INK = soft(0x6a5898, { roughness: 0.7 });
     /* The picture's face: two plain dots, a small smile. */
@@ -6906,8 +6914,24 @@ if (THING) {
         m.scale.z = 0.86;
         return m;
       };
-      const body = COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
-      if (COLORS_STOPS) body.scale.setScalar(0.92);
+      /* Nova's: the vegetable of the videos, faceless and satin, standing on
+         the slab, scaled to one size. */
+      const veggie = () => {
+        const v = VIDEO_THINGS[kind]();
+        const b = new THREE.Box3().setFromObject(v);
+        const size = b.getSize(new THREE.Vector3());
+        /* Each to its own size, so none towers over the slab or hides on it. */
+        const reach = { carrot: 4.6, broccoli: 3.4, potato: 2.7, tomato: 2.7, pepper: 3.1 }[kind];
+        v.scale.setScalar(reach / Math.max(size.y, size.x * 0.9, size.z * 0.9));
+        const holder = new THREE.Group();
+        holder.add(v);
+        /* The carrot leans, rather than balancing on its tip. */
+        if (kind === "carrot") holder.rotation.z = 0.9;
+        return holder;
+      };
+      const body = FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
+      if (FRUITS_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
+      else if (COLORS_STOPS) body.scale.setScalar(0.92);
       else if (kind === "circle") body.scale.z = 0.8;
       else body.geometry.center();
       const statue = new THREE.Group();
@@ -6916,9 +6940,9 @@ if (THING) {
       /* Dark paints wear a white face; the rest the usual plum. */
       const face = dotFace(COLORS_STOPS ? 1.45 : kind === "triangle" ? 1.15 : 1.5, COLORS_STOPS && ["red", "blue", "purple", "brown", "black", "green"].includes(kind) ? soft(0xffffff, { roughness: 0.7 }) : INK);
       face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.985 : box.max.z - 0.02);
-      statue.add(face);
+      if (!FRUITS_STOPS) statue.add(face);
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
-      statue.rotation.y = x < 0 ? 0.26 : -0.26;
+      statue.rotation.y = FRUITS_STOPS ? 0 : x < 0 ? 0.26 : -0.26;
       g.add(statue);
       statues.push(statue);
       /* A flower or a sprig on the slab's far corner. */
@@ -6993,15 +7017,17 @@ if (THING) {
       ways.push(way);
     }
     /* Round about, the same pink: bell hills. */
-    const bell = (r, ht, color = 0xf2a6c8) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
+    const bell = (r, ht, color = PAL_HILL) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
     const side = portrait ? 11.5 : 15.5;
-    const hills = COLORS_STOPS
+    const hills = FRUITS_STOPS
+      ? Array.from({ length: 7 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 11, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
+      : COLORS_STOPS
       ? Array.from({ length: 12 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 10.5, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
       : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]];
     for (const [sx, z, r, ht] of hills) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
     /* Past the first lesson: the bow in the shapes' colours, the hills at its
        feet, a tall hill with a wavy golden top. */
-    [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]].forEach(([r, color]) => {
+    (FRUITS_STOPS ? [[8.6, 0xb9a3ec], [6.9, 0xf5d98a], [5.2, 0xfbf6ee]] : [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]]).forEach(([r, color]) => {
       add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56 + DZ);
     });
     add(bell(7.5, 8.5), -7.5, 0, -51 + DZ);
@@ -7009,7 +7035,7 @@ if (THING) {
     {
       const top = 18, r = 11;
       const geo = smoothLathe([[r, 0], [r * 0.82, top * 0.4], [r * 0.56, top * 0.78], [r * 0.25, top * 0.98], [0, top]], 256);
-      const golden = new THREE.Color(0xffd77a), pink = new THREE.Color(0xf2a6c8);
+      const golden = new THREE.Color(FRUITS_STOPS ? 0xfbf6ee : 0xffd77a), pink = new THREE.Color(PAL_HILL);
       tint(geo, (v) => {
         const a = Math.atan2(v.z, v.x);
         return [v.y > top * 0.62 + Math.sin(a * 7) * 0.9 ? golden : pink, 0];
@@ -7020,18 +7046,53 @@ if (THING) {
     }
     /* The shape garden's soul: a few of its topiaries and its fountain, off
        to the sides, the only other colours about. */
-    const dressing = [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
+    /* Nova's garden in place of the topiaries: raised beds of lettuce, a milk-white
+       fence, small round trees in lavender and gold pots, her cottage far off. */
+    const gardenBed = () => {
+      const g = new THREE.Group();
+      g.add(at(rbox(3.6, 0.7, 1.6, soft(0xe8c9a0, { roughness: 0.75 }), 0.1), 0, 0.35, 0));
+      g.add(at(rbox(3.2, 0.12, 1.2, soft(0x8a6240, { roughness: 0.95 }), 0.05), 0, 0.72, 0));
+      for (let i = 0; i < 5; i++) g.add(at(ball(0.3, leafy(i % 2 ? 0x7fd06e : 0x6bc468), 24), -1.3 + i * 0.65, 0.95, 0));
+      return g;
+    };
+    const fenceRun = (n) => {
+      const g = new THREE.Group();
+      const wood = soft(0xfbf6ee, { roughness: 0.8 });
+      for (let i = 0; i <= n; i++) g.add(at(rbox(0.24, 1.35, 0.24, wood, 0.07), i * 1.15, 0.68, 0));
+      for (const y of [0.5, 1.0]) g.add(at(rbox(n * 1.15 + 0.3, 0.14, 0.12, wood, 0.04), (n * 1.15) / 2, y, 0));
+      return g;
+    };
+    const cottage = () => {
+      const g = new THREE.Group();
+      g.add(at(rbox(5.4, 3.4, 4.2, soft(0xfbf6ee, { roughness: 0.85 }), 0.25), 0, 1.7, 0));
+      const tri = new THREE.Shape();
+      tri.moveTo(-3.4, 0);
+      tri.lineTo(3.4, 0);
+      tri.lineTo(0, 2.6);
+      tri.closePath();
+      const roofGeo = new THREE.ExtrudeGeometry(tri, { depth: 4.8, bevelEnabled: true, bevelThickness: 0.2, bevelSize: 0.2, bevelSegments: 6 });
+      roofGeo.translate(0, 0, -2.4);
+      g.add(at(mesh(roofGeo, soft(0xb9a3ec, { roughness: 0.8 })), 0, 3.2, 0));
+      g.add(at(rbox(1.0, 1.9, 0.2, soft(0xf5d98a, { roughness: 0.7 }), 0.08), 0.6, 0.95, 2.1));
+      g.add(at(rbox(1.0, 1.0, 0.2, soft(0xbfe0fb, { roughness: 0.5 }), 0.08), -1.5, 1.9, 2.1));
+      g.add(at(rbox(0.7, 1.4, 0.7, soft(0xe0d4f5, { roughness: 0.8 }), 0.1), 1.6, 5.1, -0.4));
+      return g;
+    };
+    const dressing = FRUITS_STOPS
+      ? [[-1, 2, () => lollipop(0xb9a3ec)], [1, -4, gardenBed], [-1, -14, () => fenceRun(3)], [1, -24, () => lollipop(0xf5d98a)], [-1, -32, gardenBed], [1, -40, () => fenceRun(3)], [-1, -48, () => lollipop(0xb9a3ec)]]
+      : [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
     const inner = portrait ? 7.4 : 12;
     /* A longer way repeats the garden's dressing, every 46 units. */
-    const REPEATS = COLORS_STOPS ? [0, -46, -92, -138] : [0];
+    const REPEATS = COLORS_STOPS ? [0, -46, -92, -138] : FRUITS_STOPS ? [0, -46] : [0];
+    if (FRUITS_STOPS) add(cottage(), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { ry: 0.5 });
     for (const dz of REPEATS) for (const [sx, z, make] of dressing) add(make(), sx * inner * (dz % 92 ? -1 : 1), 0, z + dz);
-    for (const dz of REPEATS) {
+    for (const dz of FRUITS_STOPS ? [] : REPEATS) {
       const blue = soft(0xbfe0fb, { roughness: 0.5 });
       const white = soft(0xfff6ee);
       const f = group(at(mesh(new THREE.CylinderGeometry(2.1, 2.3, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 1.5, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(0.95, 0.75, 0.3, 40), white), 0, 2.35, 0), at(ball(0.4, soft(0xff8fbf), 24), 0, 2.85, 0));
       add(f, (portrait ? -8 : -12.5) * (dz % 92 ? -1 : 1), 0, -22 + dz);
     }
-    for (const dz of REPEATS) for (const [x, z, make] of [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]]) {
+    for (const dz of REPEATS) for (const [x, z, make] of (FRUITS_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xf5d98a)], [-9, -21, () => chubby(0xffffff)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xf5d98a)]] : [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]])) {
       add(make(), (portrait ? x * 0.72 : x) * (dz % 92 ? -1 : 1), 0, z + dz, { k: 1.2 });
     }
     /* The cloud with a face, cream, over the far side. */
@@ -7039,7 +7100,7 @@ if (THING) {
       const c = cloud(k);
       const look = dotFace(1.05 * k);
       look.position.set(0, 0.75 * k, 1.05 * k);
-      add(group(c, look), portrait ? x * 0.55 : x, y, z + dz);
+      add(FRUITS_STOPS ? c : group(c, look), portrait ? x * 0.55 : x, y, z + dz);
     }
     stopsApi.stops = stops;
     stopsApi.statues = statues;
