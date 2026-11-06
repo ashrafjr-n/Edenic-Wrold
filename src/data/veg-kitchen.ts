@@ -17,8 +17,8 @@ import kl_tomato_png from "../../public/assets/learn/nova/fruits/kitchen/landsca
 import kl_blender_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/blender.png";
 import kl_broccoli_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/broccoli.png";
 import kl_garlic_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/garlic.png";
-import kl_carrot_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/carrot.png";
 import kl_cheese_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/cheese.png";
+import kl_carrot_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/carrot.png";
 import kl_ground_jpg from "../../public/assets/learn/nova/fruits/kitchen/landscape/ground.jpg";
 import kl_counter_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/counter.png";
 import kl_basket_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/basket.png";
@@ -49,8 +49,8 @@ export const VEG_KITCHEN: Record<number, LessonWorld> = {
     ],
     moves: [
       null,
-      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m1.mp4?v=74ed05ab", portrait: "/assets/learn/nova/fruits/world/1/portrait/m1.mp4?v=4d6f4311" },
-      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m2.mp4?v=99fd83b3", portrait: "/assets/learn/nova/fruits/world/1/portrait/m2.mp4?v=3b0cf2b9" },
+      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m1.mp4?v=025b4798", portrait: "/assets/learn/nova/fruits/world/1/portrait/m1.mp4?v=36a75091" },
+      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m2.mp4?v=6fcdb7a3", portrait: "/assets/learn/nova/fruits/world/1/portrait/m2.mp4?v=d4226f29" },
     ],
   },
   6: {
@@ -78,8 +78,8 @@ export const KITCHEN_FRAMES: Framed<KitchenFrame> = {
       { id: "blender", src: kl_blender_png, word: "blender", shape: null, box: [14.3, 38.54, 18.59, 26.6], hit: [14.53, 38.96, 10.74, 25.76] },
       { id: "broccoli", src: kl_broccoli_png, word: "broccoli", shape: null, group: "broccoli", box: [24.49, 58.82, 17.3, 21.32], hit: [24.73, 59.24, 10.82, 20.14] },
       { id: "garlic", src: kl_garlic_png, word: "garlic", shape: null, box: [59.73, 67.71, 9.88, 15.69], hit: [59.96, 68.12, 8.09, 13.54] },
-      { id: "carrot", src: kl_carrot_png, word: "carrot", shape: null, group: "carrot", box: [32.07, 68.19, 19.18, 17.57], hit: [32.3, 68.61, 16.25, 13.82] },
       { id: "cheese", src: kl_cheese_png, word: "cheese", shape: null, box: [8.48, 69.38, 15.7, 18.4], hit: [8.71, 69.79, 12.23, 17.57] },
+      { id: "carrot", src: kl_carrot_png, word: "carrot", shape: null, group: "carrot", box: [35.0, 78.12, 20.39, 18.96], hit: [35.23, 78.54, 17.5, 15.35] },
     ],
   },
   portrait: {
@@ -96,7 +96,7 @@ export const KITCHEN_FRAMES: Framed<KitchenFrame> = {
       { id: "tomato", src: kp_tomato_png, word: "tomato", shape: null, group: "tomato", box: [16.18, 58.28, 18.47, 7.62], hit: [16.6, 58.52, 13.12, 6.64] },
       { id: "cheese", src: kp_cheese_png, word: "cheese", shape: null, box: [65.76, 57.77, 16.25, 8.52], hit: [66.18, 58.01, 13.19, 8.05] },
       { id: "broccoli", src: kp_broccoli_png, word: "broccoli", shape: null, group: "broccoli", box: [12.85, 65.66, 25.49, 9.1], hit: [13.26, 65.9, 15.9, 8.52] },
-      { id: "carrot", src: kp_carrot_png, word: "carrot", shape: null, group: "carrot", box: [18.82, 71.02, 30.0, 7.81], hit: [19.24, 71.25, 25.14, 6.95] },
+      { id: "carrot", src: kp_carrot_png, word: "carrot", shape: null, group: "carrot", box: [31.25, 74.18, 29.58, 7.93], hit: [31.67, 74.41, 25.21, 7.23] },
     ],
   },
 };
