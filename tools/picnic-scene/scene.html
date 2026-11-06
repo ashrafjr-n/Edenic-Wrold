@@ -6017,7 +6017,6 @@ if (THING) {
   const WOOD = soft(0xf3d3a6, { roughness: 0.8 });
   const PLACE_Z = 0.6;
   /* What the lawn's tufts keep off in Nova's garden. */
-  const vegClear = [];
   const SHAPE_OF_LESSON = ["circle", "square", "triangle", "rectangle"];
   const SHAPE_COLOR = { circle: 0x5aa9ee, square: 0x58c27d, triangle: 0xffc93a, rectangle: 0xff8fbf };
   /* A shape's outline, about `k` across, centred. */
@@ -6260,13 +6259,10 @@ if (THING) {
      vegetable grows on — part by part, from the soil — and it is ripe in
      the end shot, over the whole bed. ---- */
   const VEG_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-  /* Lesson 6 is the review: no one vegetable, the bed mixed. */
+  /* Lesson 6 is the review: no one vegetable. */
   const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] ?? null : null;
-  const VEG_MIX = ["carrot", "tomato", "broccoli", "pepper", "potato", "tomato", "carrot"];
   const KX = 16, KY = 1.5, KK = 0.5, ROOM_Z = -10, FRONT_Z = -4.2;
-  const BED_TOP = 0.72;
   const toWorld = ([x, y, z]) => [KX + x * KK, KY + y * KK, ROOM_Z + z * KK];
-  const vegPlants = [];
   const vegKeep = [];
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   const easeOut = (t) => 1 - (1 - t) ** 3;
@@ -6998,10 +6994,7 @@ if (THING) {
   const blooms = (done, b = 0) =>
     YEAR_HILL
       ? hillGrow(done, b)
-      : VEG
-      ? vegPlants.forEach((p) => p.grow(Math.min(1, (done + b) / PLACES.length)))
       : flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
-  keepClear.push(...vegClear);
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
@@ -7025,7 +7018,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegPlants, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? []), ...(stopsApi.ways ?? [])]);
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? []), ...(stopsApi.ways ?? [])]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
