@@ -5675,6 +5675,27 @@ a.board-cell--now:focus-visible {
   pointer-events: none;
 }
 
+/* Basket Time's end: the same scene, blurred (a hair larger, so the blur's
+   edge never shows), the way on over it. */
+.world-find--done button {
+  pointer-events: none;
+}
+
+.world-find--done .world-cover {
+  filter: blur(0.9cqmax);
+  scale: 1.05;
+  transition:
+    filter 0.7s ease,
+    scale 0.7s ease;
+}
+
+@starting-style {
+  .world-find--done .world-cover {
+    filter: blur(0);
+    scale: 1;
+  }
+}
+
 /* The tray of found things, floating at the foot of the world — over the
    phone's tab bar. */
 .world-tray {

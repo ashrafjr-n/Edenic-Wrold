@@ -55,6 +55,10 @@ interface BasketTimeProps {
   /** Waiting for the camera to come in at the door (it ends on this very
       picture) — laid out, not shown. */
   hidden?: boolean;
+  /** The lesson is over (2026-11-06, the user): the scene stays exactly as
+      the child left it — the vegetable in the basket — and only blurs, the
+      way on over it. */
+  done?: boolean;
   /** "Tap the {word}", naming each thing for a screen reader. */
   itemAria: string;
   onSolved: () => void;
@@ -72,7 +76,7 @@ interface BasketTimeProps {
  * cheers, the word is said, confetti. Anything else shakes, goes home and
  * greys.
  */
-export function BasketTime({ word, kitchen, hidden = false, itemAria, onSolved, onMiss }: BasketTimeProps) {
+export function BasketTime({ word, kitchen, hidden = false, done = false, itemAria, onSolved, onMiss }: BasketTimeProps) {
   /* A wide board gets the wide frame; a phone's or an upright tablet's,
      the tall one. */
   const wide = useWide();
@@ -195,7 +199,7 @@ export function BasketTime({ word, kitchen, hidden = false, itemAria, onSolved, 
   const basketSizes = wide ? "22vw" : "36vw";
 
   return (
-    <div className={`world-frame world-find z-10 ${hidden ? "world-find--hidden" : ""}`}>
+    <div className={`world-frame world-find ${done ? "world-find--done -z-[4]" : "z-10"} ${hidden ? "world-find--hidden" : ""}`}>
       <div className="world-cover" style={worldCover(wide)}>
         <Image src={frame.ground} alt="" fill preload sizes="100vw" className="select-none object-cover" />
 
