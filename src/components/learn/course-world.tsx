@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
-import { Button3D } from "@/components/ui/button-3d";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
@@ -42,6 +41,9 @@ const PAST = 75;
 const STAGE_Y = 70;
 /** The camera's move from one lesson to the next, ms. */
 const MOVE_MS = 2300;
+/** After the clouds have cleared and the picture is there, Start waits this
+    long, then comes in gently, ms. */
+const START_AFTER_MS = 450;
 /** A closed lesson's colour coming back, ms. */
 const REVEAL_MS = 700;
 /** The longest the camera waits for the frames of its way to arrive, ms. */
@@ -657,6 +659,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       reveal.current = null;
       kick.current();
     }
+    await wait(reduced() ? 0 : START_AFTER_MS);
     if (alive.current) setSettled(true);
   };
 
@@ -673,7 +676,10 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       if (nextIndex > 0 && seen !== undefined && seen < nextIndex) void playUnlock(nextIndex);
       else {
         stand(nextIndex);
-        window.setTimeout(() => alive.current && setSettled(true), 0);
+        /* Start comes once the clouds are gone, never over them. */
+        void cloudsGone()
+          .then(() => wait(reduced() ? 0 : START_AFTER_MS))
+          .then(() => alive.current && setSettled(true));
       }
       return;
     }
@@ -725,7 +731,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     };
   }, []);
 
-  /* The one Start button, in the middle of the screen over everything. */
+  /* Guided: Shapes' Start above the lesson, but it only comes in once the clouds are gone and the camera is still. */
   const showStart = guided && hydrated && settled && shown && nextIndex >= 0;
 
   return (
@@ -790,8 +796,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 className="course-stop"
                 style={place(box)}
               >
-                {isNext && !world.guided && (
-                  <span className="course-stop-go" style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
+                {isNext && (
+                  <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
                     <span dir={dir}>{dict.ctaStart}</span>
                   </span>
@@ -802,23 +808,6 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         </div>
       </div>
 
-      {world.guided && (
-        <div className="course-start" data-shown={showStart}>
-          <Button3D
-            href={`${basePath}/${Math.max(0, nextIndex) + 1}`}
-            tone={{ face: "var(--page-accent-color)", edge: "var(--page-accent-edge)", text: "var(--page-accent-ink)" }}
-            aria-label={format(dict.startLessonAria, { n: Math.max(0, nextIndex) + 1, title: titles[Math.max(0, nextIndex)] })}
-            onClick={() => {
-              leftForLesson = lessonId;
-            }}
-            tabIndex={showStart ? 0 : -1}
-            className="course-start-button"
-          >
-            <Play className="course-start-icon fill-current" strokeWidth={2.5} />
-            <span dir={dir}>{dict.ctaStart}</span>
-          </Button3D>
-        </div>
-      )}
     </div>
   );
 }
