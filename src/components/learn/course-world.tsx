@@ -21,6 +21,8 @@ const LOADING_AT_ONCE = 4;
 /** Frames kept either side of where the camera stands; the rest are let go
     (a long course's frames, all held, would not fit a phone). */
 const WINDOW = 8;
+/** The masks (heavier, ten tiles a sheet) are held nearer still. */
+const MASK_WINDOW = 5;
 /** Shapes' scroll height, `svh`. */
 const DEFAULT_RUN = 340;
 /** Wider than this (% of the frame) it is passing the camera, or behind it. */
@@ -124,14 +126,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
 
     /* The ways whose stones are pink now, or turning: 0..n. */
     const pinkNow = () => Math.max(donePink.current, turning.current ? turning.current[0] + 1 : 0);
-    const needsMask = (f: number) => (wayLists ? wayLists[f].length > 0 && wayLists[f][0] < pinkNow() : pinkNow() > 0);
+    const needsMask = (f: number) => Math.abs(f - standing) <= MASK_WINDOW && (wayLists ? wayLists[f].length > 0 && wayLists[f][0] < pinkNow() : pinkNow() > 0);
 
     /* Let go what the camera has left; ask for what it is near, nearest first. */
     const ensure = () => {
       if (cancelled) return;
-      for (const [kind, map] of [["p", pictures], ["m", masks]] as const) {
+      for (const [kind, map, reach] of [["p", pictures, WINDOW], ["m", masks, MASK_WINDOW]] as const) {
         for (const f of [...map.keys()]) {
-          if (Math.abs(f - standing) <= WINDOW + 2) continue;
+          if (Math.abs(f - standing) <= reach + 2) continue;
           map.delete(f);
           asked.delete(kind + f);
         }
@@ -154,7 +156,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         ensure();
       };
       picture.onload = () => {
-        if (Math.abs(f - standing) <= WINDOW + 2) map.set(f, picture);
+        if (Math.abs(f - standing) <= (kind === "p" ? WINDOW : MASK_WINDOW) + 2) map.set(f, picture);
         else asked.delete(kind + f);
         wake();
         done();
