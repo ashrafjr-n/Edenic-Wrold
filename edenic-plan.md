@@ -607,6 +607,8 @@ Weather's worlds wait with them). Nothing is built for them until then.
 
 1. **Now: improve the design of the other courses** (Shapes, Colors,
    Vegetables), until better ideas come for the three.
+   Colors got Shapes' world of stops on 2026-11-06 (gold stones); Vegetables
+   is next.
 2. **Then build the three postponed courses**, once the ideas are found
    (the proposals so far are below; nothing is chosen).
 3. **Then put in the audio and the videos** — and Learn is finished.
