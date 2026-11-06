@@ -1675,19 +1675,84 @@ function plants(list) {
    `tilt` turns each food (°, about its top) where the picture is shown —
    the renders are all one food, alike. */
 const GARDENS = {
+  /* Nova's pantry (2026-11-06, in place of her garden's beds: the whole course
+     is in her kitchen now): a crate of carrots, a crate of tomatoes, a crate
+     of potatoes on a counter under the tiles. */
   vegetables: {
-    size: [1200, 690],
-    view: 9.4,
-    centreY: 2.25,
-    lift: 18,
-    world: plants([[gardenBed, -3.05, 0.52], [tomatoPlant, 0, 0.62], [gardenBed, 3.05, 0.52]]),
+    size: [1200, 560],
+    view: 9.8,
+    centreY: 1.5,
+    lift: 16,
+    backdrop: pantryBackdrop,
+    world: plants([[() => pantryCrate(5.0, 1.45), -3.15, 0.6], [() => pantryCrate(5.0, 1.0), 0, 0.6], [() => pantryCrate(5.0, 1.2), 3.15, 0.6]]),
     foods: [
-      { food: "carrot", make: () => videoCarrot(0), scale: 0.62, at: [[-4.1, 0.22, 0], [-3.4, 0.22, 0], [-2.7, 0.22, 0], [-2.0, 0.22, 0]] },
-      { food: "tomato", make: () => videoTomato(), scale: 0.42, at: [[-0.55, 1.62, 0.7], [0.5, 1.48, 0.7], [-0.4, 0.92, 0.75], [0.52, 0.8, 0.75]], tilt: [-6, 5, 7, -4] },
-      { food: "potato", make: videoPotatoPlant, scale: 0.78, at: [[2.1, 0.55, 0], [3.05, 0.55, 0], [4.0, 0.55, 0]] },
+      { food: "carrot", make: () => videoCarrot(0), scale: 0.68, at: [[-4.2, 0.22, 0], [-3.5, 0.22, 0], [-2.8, 0.22, 0], [-2.1, 0.22, 0]] },
+      { food: "tomato", make: () => videoTomato(), scale: 0.46, at: [[-0.78, 0.5, 0.1], [0.06, 0.52, 0.3], [0.8, 0.5, 0.1], [0.0, 0.95, 0.0]], tilt: [-6, 5, 7, -4] },
+      { food: "potato", make: videoPotato, scale: 0.82, at: [[2.2, 0.62, 0.1], [3.15, 0.62, 0.25], [4.1, 0.62, 0.1]] },
     ],
   },
 };
+
+/* An open wooden crate: slatted front and back, end boards, a floor. Its near
+   half (the front slats and the near halves of the ends) lies over what is in
+   it, so the food stands IN it. */
+function pantryCrate(w = 5.4, h = 1.4, d = 2.1) {
+  const g = new THREE.Group();
+  const wood = clay(0xe0b07a, { roughness: 0.66, clearcoat: 0.22 });
+  const post = clay(0xc98f55, { roughness: 0.7, clearcoat: 0.2 });
+  for (const z of [-d / 2, d / 2]) {
+    for (let i = 0; i < 3; i++) {
+      const slat = mesh(new RoundedBoxGeometry(w, h / 3 - 0.07, 0.2, 4, 0.05), wood);
+      slat.position.set(0, h / 6 + i * (h / 3), z);
+      g.add(slat);
+    }
+  }
+  for (const x of [-w / 2 + 0.12, w / 2 - 0.12]) {
+    const end = mesh(new RoundedBoxGeometry(0.24, h, d + 0.2, 4, 0.06), post);
+    end.position.set(x, h / 2, 0);
+    g.add(end);
+  }
+  const floor = mesh(new RoundedBoxGeometry(w - 0.3, 0.14, d - 0.2, 4, 0.04), post);
+  floor.position.y = 0.1;
+  g.add(floor);
+  return { group: g, front: [[g, 0]], far: 7 };
+}
+
+/* The counter and the wall behind the crates: butcher-block top, a mint back
+   band, tiles, a shelf of jars — the kitchen's, as the page's other pictures. */
+function pantryBackdrop() {
+  const g = new THREE.Group();
+  const matte = (color, extra = {}) => clay(color, { clearcoat: 0.1, roughness: 0.8, sheen: 0.2, ...extra });
+  const top = mesh(new THREE.PlaneGeometry(30, 12), matte(0xe9b985, { roughness: 0.6, clearcoat: 0.25 }));
+  top.rotation.x = -Math.PI / 2;
+  top.position.set(0, 0, 2);
+  top.castShadow = false;
+  g.add(top);
+  for (let i = -7; i <= 7; i++) {
+    const seam = mesh(new THREE.PlaneGeometry(0.03, 12), matte(0xd29a62));
+    seam.rotation.x = -Math.PI / 2;
+    seam.position.set(i * 1.1, 0.002, 2);
+    seam.castShadow = false;
+    g.add(seam);
+  }
+  const wall = mesh(new THREE.PlaneGeometry(40, 16), matte(0xfbefdc));
+  wall.position.set(0, 5, -4);
+  wall.castShadow = false;
+  g.add(wall);
+  const band = mesh(new THREE.PlaneGeometry(40, 0.9), matte(0xbfe5d8));
+  band.position.set(0, 0.45, -3.98);
+  band.castShadow = false;
+  g.add(band);
+  for (let r = 0; r < 3; r++) {
+    for (let c = -16; c <= 16; c++) {
+      const tile = mesh(new RoundedBoxGeometry(0.56, 0.56, 0.06, 3, 0.04), matte((r + c) % 2 ? 0xdff3ec : 0xfffaf0, { roughness: 0.45, clearcoat: 0.5 }));
+      tile.position.set(c * 0.6, 1.2 + r * 0.6, -3.95);
+      tile.castShadow = false;
+      g.add(tile);
+    }
+  }
+  return g;
+}
 
 /* ---------- Nova's seasons: one tree through the year ----------
    `?season=<spring|summer|fall|winter>` — a round clay island, its side in
@@ -4322,7 +4387,7 @@ if (THING) {
   const world = new THREE.Group();
   scene.add(world);
   const { group: grown, front = [], far } = garden.world();
-  world.add(gardenGround(far, garden.size ? 16 : 6), grown);
+  world.add(garden.backdrop ? garden.backdrop() : gardenGround(far, garden.size ? 16 : 6), grown);
   /* A one-food garden has its basket on the grass; the exams' gardens have
      none — their basket stands beside the garden (`?basket`). */
   const basket = garden.basket && ITEMS.basket();
