@@ -7176,11 +7176,13 @@ if (THING) {
     },
     /* Station i's still. */
     station(i) {
+      showBasket(VEG && i === 2);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
+      showBasket(VEG && i === 2);
       if (!VEG) {
         const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
         blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
