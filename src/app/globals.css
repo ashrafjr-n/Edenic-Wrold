@@ -1592,10 +1592,6 @@ bdi {
    A course's world of stops (`CourseWorld`, 2026-11-05, Shapes first): the
    run of the scroll, the links laid over the pedestals (each its own
    container, so what is on it keeps its size with the stop). Fixed colours: the world is the same picture in dark mode. */
-.course-world-run {
-  height: 340svh;
-}
-
 .course-world-stops a {
   pointer-events: auto;
 }

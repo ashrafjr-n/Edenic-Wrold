@@ -13,18 +13,26 @@ import type { CourseStops, CourseStopsFrame, SceneRect } from "@/types/course";
 import { place } from "./lesson/find-shapes";
 import { worldCover } from "./lesson/lesson-world";
 
-/** How far the camera catches up with the scroll each frame (0..1): the
-    glide that makes it a camera rather than a scrubber. */
-const GLIDE = 0.16;
-/** Pictures loading at once. */
+/** How long the camera takes to catch up with the scroll (its time constant,
+    ms): the glide that makes it a camera rather than a scrubber, the same on
+    any screen's refresh rate. */
+const CAMERA_MS = 90;
+/** The scroll still this long (ms) is at rest: the camera settles on a whole
+    frame, sharp, never between two. */
+const REST_MS = 110;
+/** Sharp frames held, the way the camera is going and behind it. */
+const AHEAD = 10;
+const BEHIND = 3;
+/** Sharp frames loading at once. */
 const LOADING_AT_ONCE = 4;
-/** Frames kept either side of where the camera stands; the rest are let go
-    (a long course's frames, all held, would not fit a phone). */
-const WINDOW = 8;
-/** The masks (heavier, ten tiles a sheet) are held nearer still. */
-const MASK_WINDOW = 5;
-/** Shapes' scroll height, `svh`. */
-const DEFAULT_RUN = 340;
+/** Every this many frames, a small picture held for good: what a fast flick
+    shows (it reads as motion blur) until the sharp ones arrive. */
+const KEY_EVERY = 6;
+const KEY_WIDTH = 400;
+const KEYS_AT_ONCE = 2;
+const KEYS_AFTER_MS = 400;
+/** The scroll per way, `svh`, unless the course says: Shapes' four. */
+const DEFAULT_RUN = 290;
 /** Wider than this (% of the frame) it is passing the camera, or behind it. */
 const PAST = 75;
 /** What a done way's white stones are multiplied by, unless the course says: Pinki's pink. */
@@ -41,6 +49,45 @@ function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: 
   const mix = at - low;
   const [a, b] = [keys[low][stop], keys[low + 1][stop]];
   return [0, 1, 2, 3].map((i) => a[i] + (b[i] - a[i]) * mix) as unknown as SceneRect;
+}
+
+/** Multiplies `tint` through the given ways' tiles of a frame's mask, so white
+    stones keep their light and shade. `circle` (x, y, r) limits it: a way
+    turning grows out from its lesson. */
+function tintWays(target: CanvasRenderingContext2D, layer: CanvasRenderingContext2D, mask: ImageBitmap, tiles: readonly number[], ways: readonly number[], tint: string, circle?: readonly [number, number, number]) {
+  const { width, height } = layer.canvas;
+  const tile = mask.height / tiles.length;
+  layer.globalCompositeOperation = "source-over";
+  layer.clearRect(0, 0, width, height);
+  let any = false;
+  for (const way of ways) {
+    const at = tiles.indexOf(way);
+    if (at < 0) continue;
+    layer.drawImage(mask, 0, tile * at, mask.width, tile, 0, 0, width, height);
+    any = true;
+  }
+  if (!any) return;
+  layer.globalCompositeOperation = "source-in";
+  layer.fillStyle = tint;
+  layer.fillRect(0, 0, width, height);
+  if (circle) {
+    layer.globalCompositeOperation = "destination-in";
+    layer.beginPath();
+    layer.arc(circle[0], circle[1], Math.max(0.5, circle[2]), 0, Math.PI * 2);
+    layer.fillStyle = "#000";
+    layer.fill();
+  }
+  target.globalCompositeOperation = "multiply";
+  target.drawImage(layer.canvas, 0, 0);
+  target.globalCompositeOperation = "source-over";
+}
+
+/** A frame off the network, decoded off the main thread (a picture decoded on
+    first draw is the scroll's worst hitch). */
+async function fetchBitmap(url: string, signal: AbortSignal, options?: ImageBitmapOptions) {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error(url);
+  return createImageBitmap(await response.blob(), options);
 }
 
 const fileUrl = (data: CourseStopsFrame, name: string, f: number, type: string) => `${data.path}${name}${String(f).padStart(3, "0")}.${type}?v=${data.version}`;
@@ -91,11 +138,15 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const donePink = useRef(0);
   const turning = useRef<[number, number] | null>(null);
   const redraw = useRef<() => void>(() => undefined);
+  const rekey = useRef<() => void>(() => undefined);
+  /* The next camera position is a jump, not a glide (opening at a stop). */
+  const jump = useRef(false);
 
   /* A way is pink once the lesson before it is done. */
   const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
   useEffect(() => {
     donePink.current = pinkWays;
+    rekey.current();
     redraw.current();
   }, [pinkWays]);
 
@@ -103,179 +154,278 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   /* Where on the page the camera stands nearest stop `i`. */
   const scrollFor = (i: number) => (1 - data.focus[i]) * maxScroll();
 
-  /* The camera: load the frames, follow the scroll with a glide, paint the
-     nearest frame loaded, carry the links along. */
+  /* Always opened by progress below, never where the browser last was (a
+     reload left near the chest would open there). */
+  useEffect(() => {
+    const was = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    return () => {
+      history.scrollRestoration = was;
+    };
+  }, []);
+
+  /* The camera: follows the scroll with a glide; paints the two frames it
+     stands between, lined up and the nearer showing through, so the 3D moves
+     without steps;
+     settles on a whole frame at rest. Sharp frames are held round it, the way
+     it is going first; a fast flick that outruns them shows the small ones. */
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
-    /* Only the frames near the camera are held (`WINDOW`); a mask only while a
-       way it shows is pink or turning pink. */
-    const pictures = new Map<number, HTMLImageElement>();
-    const masks = new Map<number, HTMLImageElement>();
-    const asked = new Set<string>();
+    const blend = document.createElement("canvas");
+    const blendContext = blend.getContext("2d");
+    const under = document.createElement("canvas");
+    const underContext = under.getContext("2d");
     const layer = document.createElement("canvas");
     const layerContext = layer.getContext("2d");
-    const wayLists = data.maskWays;
-    let cancelled = false;
+    if (!canvas || !context || !blendContext || !underContext || !layerContext) return;
+    canvas.width = blend.width = under.width = layer.width = data.first.width;
+    canvas.height = blend.height = under.height = layer.height = data.first.height;
+    const growFrom = [(data.flow[0] / 100) * canvas.width, (data.flow[1] / 100) * canvas.height];
+    /* A frame grown by `scale` from where the picture grows from. */
+    const drawGrown = (source: HTMLCanvasElement, scale: number) => {
+      context.setTransform(scale, 0, 0, scale, growFrom[0] * (1 - scale), growFrom[1] * (1 - scale));
+      context.drawImage(source, 0, 0);
+      context.setTransform(1, 0, 0, 1, 0, 0);
+    };
+
+    const pictures = new Map<number, ImageBitmap>();
+    const masks = new Map<number, ImageBitmap>();
+    const keys = new Map<number, HTMLCanvasElement>();
+    const loading = new Map<string, { frame: number; stop: AbortController }>();
+    const everyWay = Array.from({ length: ways }, (_, way) => way);
+    const tilesOf = (f: number) => data.maskWays?.[f] ?? everyWay;
+    const parked = stopRefs.current.map(() => false);
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const gone = new AbortController();
     let raf = 0;
     let current = -1;
-    /* The frame the camera stands at; none until the first paint. */
     let standing = -1;
-    let loading = 0;
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let heading = 1;
+    let lastTick = 0;
+    let lastScroll = -Infinity;
+    let width = window.innerWidth;
+    /* Read once: `scrollHeight` every frame forces a layout, and a phone's bar
+       sliding away must not move the camera. */
+    let top = maxScroll();
+    let keyRun = 0;
+    let keyTimer = 0;
 
-    /* The ways whose stones are pink now, or turning: 0..n. */
     const pinkNow = () => Math.max(donePink.current, turning.current ? turning.current[0] + 1 : 0);
-    const needsMask = (f: number) => Math.abs(f - standing) <= MASK_WINDOW && (wayLists ? wayLists[f].length > 0 && wayLists[f][0] < pinkNow() : pinkNow() > 0);
+    const needsMask = (f: number) => tilesOf(f).some((way) => way < pinkNow());
+    /* A frame shows only with its mask: stones never flash white. */
+    const ready = (f: number) => pictures.has(f) && (!needsMask(f) || masks.has(f));
+    const held = (f: number) => (heading > 0 ? f - standing <= AHEAD && standing - f <= BEHIND : standing - f <= AHEAD && f - standing <= BEHIND);
 
-    /* Let go what the camera has left; ask for what it is near, nearest first. */
+    const ask = (name: string, f: number, map: Map<number, ImageBitmap>) => {
+      if (map.has(f) || loading.has(name + f) || loading.size >= LOADING_AT_ONCE) return;
+      const stop = new AbortController();
+      loading.set(name + f, { frame: f, stop });
+      fetchBitmap(fileUrl(data, name, f, name === "f" ? "jpg" : "png"), stop.signal)
+        .then((bitmap) => {
+          if (gone.signal.aborted) bitmap.close();
+          else {
+            map.get(f)?.close();
+            map.set(f, bitmap);
+          }
+        })
+        /* Called off, or missing: the frame just isn't there; others cover. */
+        .catch(() => undefined)
+        .finally(() => {
+          loading.delete(name + f);
+          if (gone.signal.aborted) return;
+          ensure();
+          wake();
+        });
+    };
+
+    /* Let go what the camera has left, call off what it no longer needs, ask
+       for what it is near, nearest first. */
     const ensure = () => {
-      if (cancelled) return;
-      for (const [kind, map, reach] of [["p", pictures, WINDOW], ["m", masks, MASK_WINDOW]] as const) {
-        for (const f of [...map.keys()]) {
-          if (Math.abs(f - standing) <= reach + 2) continue;
+      if (standing < 0) return;
+      for (const map of [pictures, masks]) {
+        for (const [f, bitmap] of map) {
+          if (held(f)) continue;
+          bitmap.close();
           map.delete(f);
-          asked.delete(kind + f);
         }
       }
-      for (let d = 0; d <= WINDOW && loading < LOADING_AT_ONCE; d++) {
-        for (const f of d ? [standing - d, standing + d] : [standing]) {
+      for (const { frame, stop } of loading.values()) if (!held(frame)) stop.abort();
+      for (let d = 0; d <= AHEAD; d++) {
+        for (const f of d <= BEHIND && d > 0 ? [standing + heading * d, standing - heading * d] : [standing + heading * d]) {
           if (f < 0 || f >= world.frames) continue;
-          ask("p", f, "jpg", pictures);
-          if (needsMask(f)) ask("m", f, "png", masks);
+          ask("f", f, pictures);
+          if (needsMask(f)) ask("w", f, masks);
         }
       }
     };
-    const ask = (kind: "p" | "m", f: number, type: string, map: Map<number, HTMLImageElement>) => {
-      if (asked.has(kind + f) || loading >= LOADING_AT_ONCE) return;
-      asked.add(kind + f);
-      loading++;
-      const picture = new window.Image();
-      const done = () => {
-        loading--;
-        ensure();
-      };
-      picture.onload = () => {
-        if (Math.abs(f - standing) <= (kind === "p" ? WINDOW : MASK_WINDOW) + 2) map.set(f, picture);
-        else asked.delete(kind + f);
-        wake();
-        done();
-      };
-      picture.onerror = () => {
-        asked.delete(kind + f);
-        done();
-      };
-      picture.src = fileUrl(data, kind === "p" ? "f" : "w", f, type);
+
+    /* The small pictures, done ways tinted in. Again whenever a way is done. */
+    const loadKeys = async (run: number, order: number[]) => {
+      const small = document.createElement("canvas");
+      const smallLayer = document.createElement("canvas").getContext("2d");
+      while (run === keyRun && order.length > 0 && smallLayer) {
+        const f = order.shift()!;
+        try {
+          const picture = await fetchBitmap(fileUrl(data, "f", f, "jpg"), gone.signal, { resizeWidth: KEY_WIDTH, resizeQuality: "medium" });
+          const card = document.createElement("canvas");
+          const cardContext = card.getContext("2d");
+          card.width = small.width = smallLayer.canvas.width = picture.width;
+          card.height = small.height = smallLayer.canvas.height = picture.height;
+          cardContext?.drawImage(picture, 0, 0);
+          picture.close();
+          const done = tilesOf(f).filter((way) => way < donePink.current);
+          if (cardContext && done.length > 0) {
+            const mask = await fetchBitmap(fileUrl(data, "w", f, "png"), gone.signal);
+            tintWays(cardContext, smallLayer, mask, tilesOf(f), done, tint);
+            mask.close();
+          }
+          if (run === keyRun) keys.set(f, card);
+        } catch {
+          /* Called off, or missing: the sharp frames still play. */
+        }
+      }
+    };
+    rekey.current = () => {
+      keyRun++;
+      window.clearTimeout(keyTimer);
+      const run = keyRun;
+      keyTimer = window.setTimeout(() => {
+        const at = Math.max(0, standing);
+        const order = Array.from({ length: Math.ceil(world.frames / KEY_EVERY) }, (_, k) => k * KEY_EVERY).sort((a, b) => Math.abs(a - at) - Math.abs(b - at));
+        for (let i = 0; i < KEYS_AT_ONCE; i++) void loadKeys(run, order);
+      }, KEYS_AFTER_MS);
+    };
+
+    const compose = (target: CanvasRenderingContext2D, f: number, progress: number) => {
+      target.drawImage(pictures.get(f)!, 0, 0);
+      const mask = masks.get(f);
+      if (!mask) return;
+      const turn = turning.current;
+      const whole = everyWay.filter((way) => way < donePink.current && way !== turn?.[0]);
+      tintWays(target, layerContext, mask, tilesOf(f), whole, tint);
+      if (!turn) return;
+      const [ax, ay, aw, ah] = boxAt(data.keys, progress, turn[0]);
+      const [bx, by, bw, bh] = boxAt(data.keys, progress, turn[0] + 1);
+      const [cx, cy] = [((ax + aw / 2) * canvas.width) / 100, ((ay + ah) * canvas.height) / 100];
+      const [dx, dy] = [((bx + bw / 2) * canvas.width) / 100, ((by + bh) * canvas.height) / 100];
+      tintWays(target, layerContext, mask, tilesOf(f), [turn[0]], tint, [cx, cy, Math.hypot(dx - cx, dy - cy) * 1.15 * turn[1]]);
+    };
+
+    const nearest = (at: number, has: (f: number) => boolean, reach: number) => {
+      for (let d = 0; d <= reach; d++) {
+        if (has(at - d)) return at - d;
+        if (has(at + d)) return at + d;
+      }
+      return -1;
     };
 
     const paint = (progress: number) => {
-      const wanted = Math.round(progress * (world.frames - 1));
+      const at = progress * (world.frames - 1);
+      const wanted = Math.round(at);
       if (wanted !== standing) {
+        if (standing >= 0) heading = wanted > standing ? 1 : -1;
         standing = wanted;
         ensure();
       }
-      let found = -1;
-      for (let d = 0; d <= WINDOW + 2 && found < 0; d++) {
-        if (pictures.has(wanted - d)) found = wanted - d;
-        else if (pictures.has(wanted + d)) found = wanted + d;
-      }
-      if (found >= 0) {
-        const picture = pictures.get(found)!;
-        if (canvas.width !== picture.naturalWidth) {
-          canvas.width = layer.width = picture.naturalWidth;
-          canvas.height = layer.height = picture.naturalHeight;
-        }
-        context.drawImage(picture, 0, 0);
-        const mask = masks.get(found);
-        if (mask && layerContext) {
-          /* The ways turned pink: white stones multiplied by the tint keep
-             their light and shade. All the done ways go through the layer at
-             once; a way turning grows out from its lesson, on its own. */
-          const turn = turning.current;
-          const list = wayLists ? wayLists[found] : Array.from({ length: ways }, (_, way) => way);
-          const tile = mask.naturalHeight / list.length;
-          const lay = (wanted: number[], circle?: [number, number, number]) => {
-            layerContext.globalCompositeOperation = "source-over";
-            layerContext.clearRect(0, 0, layer.width, layer.height);
-            let any = false;
-            for (const way of wanted) {
-              const at = list.indexOf(way);
-              if (at < 0) continue;
-              layerContext.drawImage(mask, 0, tile * at, mask.naturalWidth, tile, 0, 0, layer.width, layer.height);
-              any = true;
-            }
-            if (!any) return;
-            layerContext.globalCompositeOperation = "source-in";
-            layerContext.fillStyle = tint;
-            layerContext.fillRect(0, 0, layer.width, layer.height);
-            if (circle) {
-              layerContext.globalCompositeOperation = "destination-in";
-              layerContext.beginPath();
-              layerContext.arc(circle[0], circle[1], Math.max(0.5, circle[2]), 0, Math.PI * 2);
-              layerContext.fillStyle = "#000";
-              layerContext.fill();
-            }
-            context.globalCompositeOperation = "multiply";
-            context.drawImage(layer, 0, 0);
-            context.globalCompositeOperation = "source-over";
-          };
-          lay(Array.from({ length: donePink.current }, (_, way) => way).filter((way) => way !== turn?.[0]));
-          if (turn) {
-            const way = turn[0];
-            const [ax, ay, aw, ah] = boxAt(data.keys, progress, way);
-            const [bx, by, bw, bh] = boxAt(data.keys, progress, way + 1);
-            const [cx, cy] = [((ax + aw / 2) * layer.width) / 100, ((ay + ah) * layer.height) / 100];
-            const [dx, dy] = [((bx + bw / 2) * layer.width) / 100, ((by + bh) * layer.height) / 100];
-            lay([way], [cx, cy, Math.hypot(dx - cx, dy - cy) * 1.15 * turn[1]]);
-          }
-        }
+      const low = Math.floor(at);
+      const high = Math.min(world.frames - 1, low + 1);
+      const mix = at - low;
+      if (ready(low) && ready(high) && mix > 0.01 && high !== low) {
+        /* Both frames carried to where the camera really is, so what stands
+           in them lines up as one, then the nearer showing through. */
+        const growth = data.flow[2] - 1;
+        compose(underContext, low, progress);
+        compose(blendContext, high, progress);
+        drawGrown(under, 1 + mix * growth);
+        context.globalAlpha = mix;
+        drawGrown(blend, 1 / (1 + (1 - mix) * growth));
+        context.globalAlpha = 1;
+      } else if (ready(low)) {
+        compose(context, low, progress);
+      } else {
+        const close = nearest(wanted, ready, 2);
+        const key = close < 0 ? nearest(wanted, (f) => keys.has(f), world.frames) : -1;
+        const far = close < 0 && key < 0 ? nearest(wanted, ready, world.frames) : -1;
+        if (close >= 0 || far >= 0) compose(context, close >= 0 ? close : far, progress);
+        else if (key >= 0) context.drawImage(keys.get(key)!, 0, 0, canvas.width, canvas.height);
       }
       stopRefs.current.forEach((element, i) => {
         if (!element) return;
         const box = boxAt(data.keys, progress, i);
-        Object.assign(element.style, place(box));
+        /* Off the picture it is left where it is: nothing to lay out. */
+        const off = box[1] + box[3] < 0 || box[1] > 100 || box[0] + box[2] < 0 || box[0] > 100;
+        if (!off || !parked[i]) Object.assign(element.style, place(box));
+        parked[i] = off;
         /* The camera has gone past it. */
         element.style.visibility = box[2] > PAST || box[1] > 100 ? "hidden" : "";
       });
     };
 
-    const tick = () => {
+    const tick = (now: number) => {
       raf = 0;
-      const top = maxScroll();
       /* The top of the page is the camera far in, at the first lesson; going
          down the page zooms it out, to the chest at the bottom. */
-      const target = top > 0 ? 1 - Math.min(1, Math.max(0, window.scrollY / top)) : 1;
-      current = current < 0 || still ? target : current + (target - current) * GLIDE;
+      const scroll = top > 0 ? 1 - Math.min(1, Math.max(0, window.scrollY / top)) : 1;
+      const resting = now - lastScroll > REST_MS;
+      const target = resting ? Math.round(scroll * (world.frames - 1)) / (world.frames - 1) : scroll;
+      const elapsed = Math.min(64, now - lastTick);
+      lastTick = now;
+      current = current < 0 || still || jump.current ? target : current + (target - current) * (1 - Math.exp(-elapsed / CAMERA_MS));
+      jump.current = false;
       if (Math.abs(target - current) < 0.0004) current = target;
       paint(current);
-      if (current !== target) raf = requestAnimationFrame(tick);
+      if (current !== target || !resting) raf = requestAnimationFrame(tick);
     };
     function wake() {
       if (!raf) raf = requestAnimationFrame(tick);
     }
+    const onScroll = () => {
+      lastScroll = performance.now();
+      wake();
+    };
+    const onResize = () => {
+      if (window.innerWidth !== width) {
+        width = window.innerWidth;
+        top = maxScroll();
+      }
+      wake();
+    };
 
-    window.addEventListener("scroll", wake, { passive: true });
-    window.addEventListener("resize", wake);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    lastTick = performance.now();
     wake();
     redraw.current = () => {
+      if (current < 0) return;
       ensure();
-      paint(Math.max(0, current));
+      paint(current);
     };
+    rekey.current();
     return () => {
-      cancelled = true;
+      gone.abort();
+      keyRun++;
+      window.clearTimeout(keyTimer);
       cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", wake);
-      window.removeEventListener("resize", wake);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      for (const { stop } of loading.values()) stop.abort();
+      for (const map of [pictures, masks]) {
+        for (const bitmap of map.values()) bitmap.close();
+        map.clear();
+      }
+      redraw.current = rekey.current = () => undefined;
     };
-  }, [data, world.frames, wide, ways, tint]);
+  }, [data, world.frames, ways, tint]);
 
   /* Once progress is known: open at the stop the child carries on from. */
   useEffect(() => {
     if (!hydrated || opened.current) return;
     opened.current = true;
-    /* A new child stays at the very top, the first lesson; all done, the chest. */
-    if (nextIndex !== 0) window.scrollTo(0, scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
+    /* A new child at the very top, the first lesson, the farthest from the
+       chest; each lesson done, a stop nearer; all done, the chest. */
+    jump.current = true;
+    window.scrollTo(0, nextIndex === 0 ? 0 : scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [hydrated, nextIndex, data]);
 
@@ -284,6 +434,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   useEffect(() => {
     if (unlocking < 1) return;
     const way = unlocking - 1;
+    jump.current = true;
     window.scrollTo(0, scrollFor(way));
     turning.current = [way, 0];
     redraw.current();
