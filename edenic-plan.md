@@ -610,7 +610,8 @@ Weather's worlds wait with them). Nothing is built for them until then.
    Colors got Shapes' world of stops on 2026-11-06 (gold stones), scrolling
    like Shapes (a guided, no-scroll version with silver closed lessons was built
    and the user chose scrolling instead; it stays off, `CourseStops.guided`);
-   Vegetables is next.
+   Nova's Vegetables got it the same day (lavender and milk-white garden, gold
+   stones, lavender clouds); the other courses stay on the board.
 2. **Then build the three postponed courses**, once the ideas are found
    (the proposals so far are below; nothing is chosen).
 3. **Then put in the audio and the videos** — and Learn is finished.
