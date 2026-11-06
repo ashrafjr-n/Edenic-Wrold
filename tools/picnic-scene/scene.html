@@ -6913,7 +6913,7 @@ if (THING) {
       const box = new THREE.Box3().setFromObject(body);
       /* Dark paints wear a white face; the rest the usual plum. */
       const face = dotFace(COLORS_STOPS ? 1.45 : kind === "triangle" ? 1.15 : 1.5, COLORS_STOPS && ["red", "blue", "purple", "brown", "black", "green"].includes(kind) ? soft(0xffffff, { roughness: 0.7 }) : INK);
-      face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.93 : box.max.z - 0.02);
+      face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.985 : box.max.z - 0.02);
       statue.add(face);
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
       statue.rotation.y = x < 0 ? 0.26 : -0.26;
@@ -6929,7 +6929,7 @@ if (THING) {
     /* The review: the chest — a gold frame, orange panels, a round lid, a
        keyhole plate — shut, on the nearest slab. */
     {
-      const [x, z] = SPOTS[4];
+      const [x, z] = SPOTS[SPOTS.length - 1];
       const g = new THREE.Group();
       const ped = slab(7.4, 5.8);
       g.add(ped);
