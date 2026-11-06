@@ -272,7 +272,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        bloom; a walk opens on the flower of the step just done blooming),
        and a shape lesson's Find (its picnic on the lawn, from above) in
        layers at 1.6x. */
-    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, indoors: 4.4, end: 4.2 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
+    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
     const FPS = 30;
     for (const lesson of specs) {
       for (const frame of ["landscape", "portrait"]) {
@@ -297,7 +297,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : mode === "veg" && i === (lesson === "6" ? 1 : 2) ? SECONDS.indoors : SECONDS.step));
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? SECONDS.step : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));

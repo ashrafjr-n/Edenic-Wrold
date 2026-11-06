@@ -6198,8 +6198,6 @@ if (THING) {
   /* Lesson 6 is the review: no one vegetable, the bed mixed. */
   const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] ?? null : null;
   const VEG_MIX = ["carrot", "tomato", "broccoli", "pepper", "potato", "tomato", "carrot"];
-  /* The station at the counter: a lesson's last step, the review's first. */
-  const KITCHEN_AT = VEG_KIND ? 2 : 0;
   const KX = 16, KY = 1.5, KK = 0.5, ROOM_Z = -10, FRONT_Z = -4.2;
   const BED_TOP = 0.72;
   const toWorld = ([x, y, z]) => [KX + x * KK, KY + y * KK, ROOM_Z + z * KK];
@@ -6208,109 +6206,6 @@ if (THING) {
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   const easeOut = (t) => 1 - (1 - t) ** 3;
 
-  /* One plant of the lesson's vegetable. `grow(v)`, v 0..1: its parts come
-     one after another — the first leaves out of the soil, the stem, more
-     leaves, then the vegetable itself swelling, last of all ripening. */
-  function vegPlant(kind) {
-    const g = new THREE.Group();
-    const parts = [];
-    const part = (obj, from, to, fade = false) => {
-      parts.push({ obj, from, to, fade, full: obj.scale.clone() });
-      g.add(obj);
-      return obj;
-    };
-    /* A leaf from its stalk: `yaw` round the stem, `up` its rise off level. */
-    const leaf = (len, wd, color, y, yaw, up, from, to) => {
-      const l = plumpLeaf(len, wd, clay(color, { clearcoat: 0.3, roughness: 0.58 }));
-      l.rotation.set(0, 0, up);
-      const arm = new THREE.Group();
-      arm.position.y = y;
-      arm.rotation.y = yaw;
-      arm.add(l);
-      return part(arm, from, to);
-    };
-    const greens = [0x5fbf58, 0x7fd06a, 0x54b254];
-    /* A stem that climbs, with leaves opening up it. */
-    const climbing = (height, leaves) => {
-      const stake = taperTube([[0.18, 0, -0.18], [0.18, height * 0.6, -0.18], [0.18, height * 1.04, -0.18]], 0.05, 0.04, clay(0xc9a06e, { roughness: 0.8 }));
-      part(stake, 0, 0.02);
-      const stem = taperTube([[0, 0, 0], [0.05, height * 0.5, 0.02], [0, height, 0]], 0.075, 0.04, clay(0x5a9a3a, { roughness: 0.6, clearcoat: 0.2 }));
-      part(stem, 0.02, 0.62);
-      for (let i = 0; i < leaves; i++) {
-        const a = i / leaves;
-        const y = (0.14 + a * 0.84) * height;
-        leaf(0.82 - a * 0.26, 0.34 - a * 0.1, greens[i % 3], y, (i % 2 ? Math.PI : 0) + (i % 4 < 2 ? 0.5 : -0.5), 0.5, 0.04 + a * 0.5, 0.26 + a * 0.5);
-      }
-    };
-    /* The fruit on the stem: green, swelling, then its ripe twin fades in. */
-    const fruit = (unripe, ripe, spots) => {
-      spots.forEach(([x, y, z, k], i) => {
-        const place = (o) => {
-          o.position.set(x, y, z);
-          o.scale.setScalar(k);
-          return o;
-        };
-        const green = place(unripe());
-        part(green, 0.56 + i * 0.03, 0.82 + i * 0.03);
-        const red = place(ripe());
-        red.traverse((o) => {
-          if (o.isMesh) o.material = Object.assign(o.material.clone(), { transparent: true });
-        });
-        part(red, 0.87, 0.985, true);
-      });
-    };
-    if (kind === "carrot") {
-      /* The root grows under the soil; only its shoulder ever shows. */
-      for (let i = 0; i < 9; i++) leaf(0.95 + (i % 3) * 0.2, 0.17, i % 2 ? 0xa7b14c : 0x8fa53f, 0.06, (i / 9) * Math.PI * 2, 1.05 + (i % 2) * 0.28, 0.02 + i * 0.03, 0.36 + i * 0.05);
-      const root = new THREE.Group();
-      const body = videoCarrot(0, false);
-      body.position.y = -1.3;
-      root.add(body);
-      root.scale.setScalar(0.92);
-      part(root, 0.42, 1);
-    } else if (kind === "broccoli") {
-      for (let i = 0; i < 9; i++) leaf(1.15, 0.42, i % 2 ? 0x5f9f5a : 0x71ad62, 0.08, (i / 9) * Math.PI * 2, 0.55 + (i % 2) * 0.3, i * 0.035, 0.38 + i * 0.035);
-      const head = videoBroccoli();
-      head.position.y = 0.16;
-      head.scale.setScalar(0.92);
-      part(head, 0.5, 1);
-    } else if (kind === "potato") {
-      for (const [x, z, h] of [[0, 0, 1.05], [-0.26, 0.14, 0.82], [0.28, -0.1, 0.9]]) {
-        part(taperTube([[x * 0.3, 0, z * 0.3], [x * 0.7, h * 0.55, z * 0.7], [x, h, z]], 0.055, 0.03, clay(0x5f9e36, { roughness: 0.6 })), 0.02, 0.5);
-        for (let i = 0; i < 5; i++) {
-          const a = i / 5;
-          const l = leaf(0.5, 0.2, greens[i % 3], 0, (i / 5) * Math.PI * 2 + x * 4, 0.42, 0.08 + a * 0.32, 0.34 + a * 0.32);
-          l.position.set(x * (0.4 + a * 0.6), h * (0.4 + a * 0.6), z * (0.4 + a * 0.6));
-        }
-      }
-      /* Dug-up potatoes, half out of the soil at its foot. */
-      for (const [x, z, k] of [[-0.56, 0.34, 0.92], [0.5, 0.36, 1.0], [0.02, 0.62, 0.8]]) {
-        const potato = videoPotato();
-        potato.position.set(x, 0.1, z);
-        potato.scale.setScalar(k);
-        part(potato, 0.58, 1);
-      }
-    } else if (kind === "tomato") {
-      climbing(2.05, 10);
-      fruit(() => videoTomato(true), () => videoTomato(), [[-0.34, 1.32, 0.3, 0.44], [0.36, 0.95, 0.32, 0.5], [0.05, 1.72, 0.3, 0.38]]);
-    } else {
-      climbing(1.9, 10);
-      fruit(() => videoPepper("green"), () => videoPepper("red"), [[-0.38, 0.86, 0.3, 0.5], [0.36, 1.18, 0.3, 0.46]]);
-    }
-    g.grow = (v) => {
-      for (const { obj, from, to, fade, full } of parts) {
-        const p = clamp01((v - from) / (to - from));
-        obj.visible = p > 0;
-        if (!obj.visible) continue;
-        if (fade) obj.traverse((o) => o.isMesh && (o.material.opacity = p));
-        else obj.scale.copy(full).multiplyScalar(Math.max(0.001, easeOut(p)));
-      }
-    };
-    g.grow(0);
-    return g;
-  }
-
-  /* A jumbled word on things: `make(letter, i)` for each letter, in rows. */
   const jumbled = (word) => {
     const letters = [...word.toUpperCase()];
     for (let i = letters.length - 1; i > 0; i--) {
@@ -6356,161 +6251,10 @@ if (THING) {
     }
     return g;
   }
-  /* The spelling's seed packets: a paper packet on a stick for each letter
-     of the word, jumbled, stuck in the ground in two rows. */
-  function seedPackets(word) {
-    const g = new THREE.Group();
-    const letters = jumbled(word);
-    const tints = [0xffb4c6, 0xbcd9ff, 0xffdf8f, 0xbfe8bd, 0xd8c6f7];
-    const perRow = Math.ceil(letters.length / 2);
-    letters.forEach((letter, i) => {
-      const row = Math.floor(i / perRow), col = i % perRow;
-      const packet = new THREE.Group();
-      packet.add(at(rbox(0.07, 1.1, 0.07, WOOD, 0.03), 0, 0.5, -0.05));
-      packet.add(at(rbox(0.86, 1.08, 0.07, soft(tints[i % 5]), 0.05), 0, 1.25, 0));
-      packet.add(at(rbox(0.86, 0.12, 0.09, soft(0xffffff), 0.03), 0, 1.72, 0));
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.72), textMat(letter, { ink: "#5f4a86" }));
-      face.position.set(0, 1.2, 0.045);
-      packet.add(face);
-      packet.position.set((col - (perRow - 1) / 2) * 1.08 + (row ? 0.42 : 0), 0, row * 1.05 - 0.5);
-      packet.rotation.set(-0.08, (rand() - 0.5) * 0.45, (rand() - 0.5) * 0.14);
-      g.add(packet);
-    });
-    return g;
-  }
-  /* The review's "Do you like…?": a garden table, two plates, a chair. */
-  function gardenTable() {
-    const g = new THREE.Group();
-    const white = soft(0xfff8ec);
-    g.add(at(rbox(3.2, 0.14, 1.8, white, 0.06), 0, 1.25, 0));
-    for (const x of [-1.35, 1.35]) for (const z of [-0.7, 0.7]) g.add(at(rbox(0.14, 1.2, 0.14, white, 0.05), x, 0.6, z));
-    for (const [x, tint_] of [[-0.75, 0xbfe8bd], [0.75, 0xffc2d2]]) g.add(at(mesh(new THREE.CylinderGeometry(0.5, 0.38, 0.08, 40), glaze(tint_)), x, 1.36, 0.05));
-    return g;
-  }
-  /* Lavender: a clump of stems, each with its purple spike. */
-  function lavender(k) {
-    const g = new THREE.Group();
-    const stemM = leafy(0x83a878);
-    const purple = [0xa98be0, 0x9a7bd6, 0xb79aea];
-    g.add(at(ball(0.42, leafy(0x8ab27d), 18), 0, 0.2, 0));
-    for (let i = 0; i < 9; i++) {
-      const a = (i / 9) * Math.PI * 2, r = 0.1 + (i % 3) * 0.12;
-      const stem = new THREE.Group();
-      stem.add(at(mesh(new THREE.CylinderGeometry(0.018, 0.024, 0.75, 6), stemM), 0, 0.37, 0));
-      const spike = mesh(new THREE.CapsuleGeometry(0.075, 0.26, 4, 10), soft(purple[i % 3]));
-      stem.add(at(spike, 0, 0.86, 0));
-      stem.position.set(Math.cos(a) * r, 0.1, Math.sin(a) * r);
-      stem.rotation.set(Math.sin(a) * 0.28, 0, -Math.cos(a) * 0.28);
-      g.add(stem);
-    }
-    g.scale.setScalar(k);
-    return g;
-  }
-  /* A watering can, for the bed. */
-  function wateringCan() {
-    const g = new THREE.Group();
-    const tin = glaze(0x9db8e8);
-    g.add(at(mesh(new THREE.CylinderGeometry(0.42, 0.48, 0.8, 40), tin), 0, 0.4, 0));
-    g.add(taperTube([[0.42, 0.3, 0], [0.8, 0.62, 0], [1.02, 0.98, 0]], 0.08, 0.06, tin));
-    g.add(at(mesh(new THREE.CylinderGeometry(0.15, 0.08, 0.1, 24), tin), 1.05, 1.02, 0));
-    const handle = mesh(new THREE.TorusGeometry(0.34, 0.04, 12, 40, Math.PI), tin);
-    handle.position.y = 0.72;
-    g.add(handle);
-    return g;
-  }
-
   const kitchen = {};
   if (VEG) {
     const F = SCENES.kitchen.frames[portrait ? "portrait" : "landscape"];
     kitchen.F = F;
-    const noShadow = (m) => {
-      m.castShadow = false;
-      return m;
-    };
-    /* ---- The bed: planks, soil, the plants in a row ---- */
-    const BED = [-5.4, 12.6, -3.5, -0.75];
-    const bedW = BED[1] - BED[0], bedD = BED[3] - BED[2];
-    const bedX = (BED[0] + BED[1]) / 2, bedZ = (BED[2] + BED[3]) / 2;
-    const plank = soft(0xc9985f, { roughness: 0.8 });
-    for (const z of [BED[2], BED[3]]) add(rbox(bedW + 0.3, 0.86, 0.26, plank, 0.08), bedX, 0.43, z);
-    for (const x of [BED[0], BED[1]]) add(rbox(0.26, 0.86, bedD + 0.3, plank, 0.08), x, 0.43, bedZ);
-    const earth = soft(0x7d5536, { roughness: 0.96 });
-    add(rbox(bedW, BED_TOP, bedD, earth, 0.06), bedX, BED_TOP / 2, bedZ).castShadow = false;
-    for (let i = 0; i < 260; i++) {
-      const clump = ball(0.05 + rand() * 0.07, soft(rand() > 0.5 ? 0x7d5536 : 0x8a6240, { roughness: 0.96 }), 10);
-      clump.scale.y = 0.55;
-      clump.castShadow = false;
-      add(clump, BED[0] + 0.3 + rand() * (bedW - 0.6), BED_TOP, BED[2] + 0.25 + rand() * (bedD - 0.5));
-    }
-    for (let i = 0; i < 7; i++) {
-      const plant = vegPlant(VEG_KIND ?? VEG_MIX[i]);
-      add(plant, BED[0] + 1.3 + (i * (bedW - 2.6)) / 6, BED_TOP - 0.02, bedZ + (i % 2 ? -0.28 : 0.28), { k: 1.12, ry: (i % 3) * 0.5 - 0.5 });
-      vegPlants.push(plant);
-    }
-    vegClear.push(new THREE.Box3(new THREE.Vector3(BED[0] - 0.5, -1, BED[2] - 0.5), new THREE.Vector3(BED[1] + 0.5, 3, BED[3] + 0.5)));
-    add(wateringCan(), 3.5, 0, 1.0, { k: 0.95, ry: 0.7 });
-    add(pot(0.42, 0.62, 0xd9c6f2), -2.7, 0, 0.45);
-    add(pot(0.34, 0.5, 0xf6c7d4), -3.4, 0, 0.9);
-
-    /* ---- The way up to the door ---- */
-    const way = rbox(2.5, 0.06, 7.7, stone(0xf2e2c8), 0.02);
-    way.castShadow = false;
-    add(way, KX, 0.03, -0.35);
-    vegClear.push(new THREE.Box3(new THREE.Vector3(KX - 1.6, -1, -4.5), new THREE.Vector3(KX + 1.6, 3, 3.6)));
-
-    /* ---- Nova's cottage: a shell that casts no shadow, so the sun still
-       falls on the counter inside ---- */
-    const X0 = KX - 8.2, X1 = KX + 8.2, BACK_Z = -13.8, H = 8.4;
-    vegClear.push(new THREE.Box3(new THREE.Vector3(X0 - 0.4, -1, BACK_Z), new THREE.Vector3(X1 + 0.4, 3, FRONT_Z + 0.4)));
-    const cream = stone(0xfbf0dd);
-    const face = new THREE.Shape();
-    face.moveTo(X0, 0);
-    face.lineTo(X1, 0);
-    face.lineTo(X1, H);
-    face.lineTo(X0, H);
-    face.closePath();
-    const hole = new THREE.Path();
-    const DOOR = [KX - 1.45, KX + 1.45, 3.7];
-    hole.moveTo(DOOR[0], 0);
-    hole.lineTo(DOOR[0], DOOR[2]);
-    hole.lineTo(DOOR[1], DOOR[2]);
-    hole.lineTo(DOOR[1], 0);
-    hole.closePath();
-    face.holes.push(hole);
-    const front = noShadow(mesh(new THREE.ExtrudeGeometry(face, { depth: 0.34, bevelEnabled: false }), cream));
-    add(front, 0, 0, FRONT_Z - 0.34);
-    for (const x of [X0, X1]) add(noShadow(rbox(0.34, H, FRONT_Z - BACK_Z, cream, 0.03)), x, H / 2, (FRONT_Z + BACK_Z) / 2);
-    add(noShadow(rbox(X1 - X0, H, 0.3, cream, 0.03)), KX, H / 2, BACK_Z);
-    add(noShadow(rbox(X1 - X0, 0.04, FRONT_Z - BACK_Z, soft(0xdcb88a), 0.01)), KX, 0.04, (FRONT_Z + BACK_Z) / 2);
-    add(noShadow(rbox(X1 - X0, 0.1, FRONT_Z - BACK_Z, cream, 0.02)), KX, H - 0.05, (FRONT_Z + BACK_Z) / 2);
-    /* The roof: a soft lavender gable, a chimney. */
-    const roof = new THREE.Shape();
-    roof.moveTo(-(FRONT_Z - BACK_Z) / 2 - 0.5, 0);
-    roof.lineTo((FRONT_Z - BACK_Z) / 2 + 0.5, 0);
-    roof.lineTo(0, 4.6);
-    roof.closePath();
-    const roofMesh = noShadow(mesh(new THREE.ExtrudeGeometry(roof, { depth: X1 - X0 + 1.6, bevelEnabled: true, bevelSize: 0.1, bevelThickness: 0.1, bevelSegments: 3 }), soft(0xb7a0e4, { roughness: 0.7 })));
-    roofMesh.rotation.y = Math.PI / 2;
-    add(roofMesh, X0 - 0.8, H, (FRONT_Z + BACK_Z) / 2);
-    add(noShadow(rbox(1.3, 3.4, 1.3, soft(0xe9c4a8), 0.08)), X1 - 3.2, H + 3.2, BACK_Z + 3);
-    /* The door standing open, its frame, a step. */
-    const frameM = soft(0xa98be0);
-    for (const x of [DOOR[0] - 0.14, DOOR[1] + 0.14]) add(noShadow(rbox(0.28, DOOR[2] + 0.2, 0.48, frameM, 0.05)), x, DOOR[2] / 2 + 0.1, FRONT_Z - 0.17);
-    add(noShadow(rbox(DOOR[1] - DOOR[0] + 0.56, 0.28, 0.48, frameM, 0.05)), KX, DOOR[2] + 0.14, FRONT_Z - 0.17);
-    const leafDoor = noShadow(rbox(2.85, 3.62, 0.12, soft(0xc0a9ee), 0.05));
-    leafDoor.geometry.translate(1.42, 1.81, 0);
-    add(leafDoor, DOOR[0], 0.02, FRONT_Z - 0.2, { ry: Math.PI / 2 + 0.2 });
-    add(noShadow(rbox(3.5, 0.14, 1.1, stone(0xeadcc4), 0.04)), KX, 0.07, FRONT_Z + 0.52);
-    /* Two windows, each with a box of lavender. */
-    for (const x of [KX - 5, KX + 5]) {
-      add(noShadow(rbox(3, 2.5, 0.16, soft(0xffffff), 0.06)), x, 2.75, FRONT_Z + 0.04);
-      add(noShadow(rbox(2.6, 2.1, 0.06, clay(0xcfe6ff, { roughness: 0.3, clearcoat: 0.6, emissive: 0xbfdcff, emissiveIntensity: 0.4 }), 0.02)), x, 2.75, FRONT_Z + 0.13);
-      add(noShadow(rbox(0.09, 2.1, 0.06, soft(0xffffff), 0.02)), x, 2.75, FRONT_Z + 0.17);
-      add(noShadow(rbox(2.6, 0.09, 0.06, soft(0xffffff), 0.02)), x, 2.75, FRONT_Z + 0.17);
-      add(rbox(3.1, 0.42, 0.56, soft(0xa98be0), 0.08), x, 1.34, FRONT_Z + 0.3);
-      for (let i = 0; i < 5; i++) add(lavender(0.62), x - 1.2 + i * 0.6, 1.4, FRONT_Z + 0.3);
-    }
-
     /* ---- Inside: the kitchen's room and counter, at KK ---- */
     const root = new THREE.Group();
     root.position.set(KX, KY, ROOM_Z);
@@ -6520,6 +6264,18 @@ if (THING) {
     root.add(room, counter);
     kitchen.root = root;
     kitchen.counter = counter;
+    /* All indoors: no lawn — a floor under the cupboards and the wall running
+       on past the room's own, so a wide shot never sees out. */
+    scene.remove(lawn);
+    const floor = mesh(new THREE.PlaneGeometry(200, 120), soft(0xf3dfbd, { roughness: 0.7 }));
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set(KX, KY - 2.24, ROOM_Z);
+    floor.castShadow = false;
+    scene.add(floor);
+    const wallOn = mesh(new THREE.PlaneGeometry(200, 80), soft(0xfbefdc, { roughness: 0.8 }));
+    wallOn.position.set(0, 7, F.counter[0] - 3.4 - 0.03);
+    wallOn.castShadow = false;
+    root.add(wallOn);
 
     /* The things on the counter: each stands on its top, in the same place
        in every lesson. */
@@ -6550,35 +6306,6 @@ if (THING) {
         t.scale.copy(t.userData.home.k);
       }
     };
-
-    /* ---- Around the garden ---- */
-    beyond(-40, 74);
-    for (const [x, y, z, k] of [[-14, 15, -70, 3.4], [10, 17, -78, 4], [38, 14, -72, 3.2], [60, 16, -76, 3.8]]) add(cloud(k), x, y, z);
-    const picket = soft(0xfff6e6);
-    const FENCE_Z = -6.6;
-    for (const [x0, x1] of [[-42, X0 - 0.2], [X1 + 0.2, 72]]) {
-      for (const y of [0.62, 1.2]) add(rbox(x1 - x0, 0.12, 0.08, picket, 0.03), (x0 + x1) / 2, y, FENCE_Z);
-      for (let x = x0 + 0.2; x < x1; x += 0.56) {
-        add(rbox(0.3, 1.55, 0.07, picket, 0.1), x, 0.78, FENCE_Z + 0.06);
-      }
-    }
-    vegClear.push(new THREE.Box3(new THREE.Vector3(-42, -1, FENCE_Z - 0.2), new THREE.Vector3(72, 3, FENCE_Z + 0.2)));
-    for (const z of [-5.0, -8.3, -9.8]) {
-      for (let x = -40; x < 70; x += 0.86 + rand() * 0.3) {
-        if (z > FENCE_Z && x > X0 - 1 && x < X1 + 1) continue;
-        if (z <= FENCE_Z && x > X0 - 1 && x < X1 + 1) continue;
-        add(lavender(1.05 + rand() * 0.35), x, 0, z + (rand() - 0.5) * 0.4, { ry: rand() * 6 });
-      }
-    }
-    border(-30, 13, 2.6, [0xffffff, 0xd8c6f7, 0xffd98a], { clear: false, tulips: false, gap: 0.7 });
-    /* Low shrubs sliding past near the camera (a tall frame's end shot would
-       look down on them). */
-    for (let x = -30; x < 60 && !portrait; x += 6 + rand() * 5) {
-      if (x > 10 && x < 20) continue;
-      const near = at(ball(1.0 + rand() * 0.5, leafy(rand() > 0.5 ? 0x7ccb74 : 0x8ad27e)), 0, 0.6, 0);
-      near.scale.y = 0.75;
-      add(group(near), x, 0, 8.7 + rand() * 1.1);
-    }
   }
 
   /* ---- Nova's hill (2026-11-05, The Seasons' world): one low hill, one
@@ -7137,20 +6864,12 @@ if (THING) {
           { ...onHill(270, 8.5, () => letterStones("winter"), 1.15), pose: hillPose(270, 17 + faraway, 5, 5, 3.2) },
         ]
     : VEG
+    /* Nova's kitchen (2026-11-06, the user: all of it indoors, the camera
+       moving once for the steps and once for Basket Time): a lesson's word and
+       spelling at one wide view; the basket at the counter. The review stays wide. */
     ? VEG_KIND
-      ? [
-          { x: 0, make: () => vegSign(VEG_KIND) },
-          { x: 7, make: () => seedPackets(VEG_KIND), k: 1.05 },
-          { x: KX, cam: "kitchen" },
-        ]
-      : [
-          { x: KX, cam: "kitchen" },
-          { x: 11, make: gardenTable },
-          { x: 5.5, make: () => seedPackets("carrot"), k: 1.05 },
-          { x: -0.5, make: () => seedPackets("pepper"), k: 1.05 },
-          { x: 1, cam: "bed" },
-          { x: 8, cam: "bed" },
-        ]
+      ? [{ cam: "wide" }, { cam: "kitchen" }]
+      : [{ cam: "wide" }]
     : FOREST
     ? COLOR_ID
       ? [
@@ -7221,7 +6940,7 @@ if (THING) {
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
-  for (let i = 0; i < 900 && !YEAR_HILL && !STOPS; i++) {
+  for (let i = 0; i < 900 && !YEAR_HILL && !STOPS && !VEG; i++) {
     const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
     if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
     const tuft = new THREE.Group();
@@ -7284,18 +7003,19 @@ if (THING) {
      picnic. Then the END: the camera rises and looks back over the
      lesson's places, every flower out — the path it walked, in bloom. */
   const forestFind = portrait ? [fx, 4.4, 9.0, fx, 0.9, -1.5] : [fx, 3.7, 8.2, fx, 1.0, -1.5];
-  /* The kitchen's: its camera looks down at the counter as the old picture
-     did, from just inside the door. */
-  const kitchenCam = () => {
-    const [view_, lift, look] = portrait ? [8.0, 40, [0, 2.65, -0.4]] : [14.4, 28, [0, 1.35, -1]];
+  /* The kitchen's: its camera looks down at the counter. `close` is Basket
+     Time's, `wide` the room for the steps before it, `entry` the crane it comes
+     down from. */
+  const kitchenCam = (shot = "close") => {
+    const [view_, lift, look] = portrait
+      ? { close: [8.0, 40, [0, 2.65, -0.4]], wide: [12, 33, [0, 3.0, -0.4]], entry: [18, 38, [0, 3.2, -0.4]] }[shot]
+      : { close: [14.4, 28, [0, 1.35, -1]], wide: [21, 22, [0, 2.2, -1]], entry: [27, 34, [0, 2.4, -1]] }[shot];
     const half = Math.tan(THREE.MathUtils.degToRad(portrait ? 28 : 17)) * (w / h);
     const d = view_ / 2 / half;
     const a = THREE.MathUtils.degToRad(lift);
     return [...toWorld([look[0], look[1] + Math.sin(a) * d, look[2] + Math.cos(a) * d]), ...toWorld(look)];
   };
-  /* The review's exam: looking down at the bed from over the path. */
-  const bedCam = (x) => (portrait ? [x, 6.4, 8.4, x, 0.9, -2.1] : [x, 5, 7.4, x, 1, -2.1]);
-  const steps = PLACES.map((place) => (place.pose ? fromPose(place.pose) : place.cam === "kitchen" ? kitchenCam() : place.cam === "bed" ? bedCam(place.x) : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  const steps = PLACES.map((place) => (place.pose ? fromPose(place.pose) : place.cam === "kitchen" ? kitchenCam() : place.cam === "wide" ? kitchenCam("wide") : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const HILL_END = portrait ? hillPose(HILL_SEASON ? 380 : 380, 36, 15, 0, 7) : hillPose(380, 28, 11, 0, 6);
   const END = YEAR_HILL
@@ -7315,14 +7035,14 @@ if (THING) {
       : portrait
         ? [117, 9, 19, 117, 0.5, -2]
         : [117, 7.5, 17, 117, 0.5, -2];
-  const STATIONS = [...steps, END];
+  /* The kitchen has no end shot: the lesson ends at its last station. */
+  const STATIONS = VEG ? steps : [...steps, END];
   const ENTRY = (() => {
     if (YEAR_HILL) {
       const [deg, r, y, lookR, lookY] = PLACES[0].pose;
       return fromPose([deg - 35, r + 16, y + 10, lookR, lookY]);
     }
-    /* The review opens indoors: in at the door. */
-    if (VEG && !VEG_KIND) return [KX, 2.6, -4.2, KX, 2.2, -10];
+    if (VEG) return kitchenCam("entry");
     const [x, , , lx] = STATIONS[0];
     return [x + 4, 13, 24, lx - 1, 0.5, -10];
   })();
@@ -7352,15 +7072,6 @@ if (THING) {
     const [p0, p1, p2, p3] = [pts[Math.max(0, k - 1)], pts[k], pts[k + 1], pts[Math.min(n, k + 2)]];
     return p1.map((_, c) => 0.5 * (2 * p1[c] + (p2[c] - p0[c]) * u + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * u * u + (3 * p1[c] - p0[c] - 3 * p2[c] + p3[c]) * u * u * u));
   }
-  /* Nova's garden: up the way and in at the door; out again, backing through
-     it, rising over the bed. */
-  const IN_DOOR = [KX, 2.6, FRONT_Z, KX, 2.2, ROOM_Z];
-  const OUT_DOOR = [IN_DOOR, [KX, 3.2, 2.4, KX, 2.4, -8], [11, 6, 12, 9, 1, -3]];
-  const VEG_WAY = VEG_KIND
-    ? { 2: [[13, 2.8, 7, 15, 2.0, -6], [KX, 2.7, 1.2, KX, 2.2, -8], IN_DOOR], 3: OUT_DOOR }
-    : { 1: OUT_DOOR };
-  /* The move that leaves the kitchen. */
-  const VEG_OUT = VEG_KIND ? 3 : 1;
   function moveCam(i, t) {
     if (YEAR_HILL) {
       /* Round the tree, not across it. The way to the end has nothing to
@@ -7374,12 +7085,7 @@ if (THING) {
       return fromPose(lerp(poses[i - 1], poses[i], smooth(last ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))))));
     }
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
-    if (VEG) {
-      const a = STATIONS[i - 1], b = STATIONS[i];
-      /* Leaving the kitchen there is nothing to wait for. */
-      const e = smooth(i === VEG_OUT ? Math.min(1, t / 0.96) : Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
-      return VEG_WAY[i] ? along([a, ...VEG_WAY[i], b], e) : lerp(a, b, e);
-    }
+    if (VEG) return lerp(STATIONS[i - 1], STATIONS[i], smooth(Math.min(1, t / 0.96)));
     const a = STATIONS[i - 1], b = STATIONS[i];
     const e = smooth(Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
     const cam = lerp(a, b, e);
@@ -7401,19 +7107,27 @@ if (THING) {
   };
   window.garden = {
     stations: STATIONS.length,
+    /* A still from any camera ([x, y, z, lookX, lookY, lookZ], an optional
+       lens) — to find a shot before it is made a station. */
+    shot(cam, fov) {
+      if (fov) {
+        view.fov = fov;
+        view.updateProjectionMatrix();
+      }
+      aim(cam);
+      return render("image/jpeg", 0.92);
+    },
     /* Station i's still. */
     station(i) {
-      if (VEG) showBasket(i === 3);
-      blooms(i);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
-      if (VEG) showBasket(i === 3);
-      /* Out of the kitchen the bed ripens as it comes into view. */
-      const [b0, b1] = VEG && i === VEG_OUT ? [0.55, 0.97] : YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
-      blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
+      if (!VEG) {
+        const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
+        blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
+      }
       aim(moveCam(i, t));
       return render("image/jpeg", 0.93);
     },
@@ -7462,7 +7176,7 @@ if (THING) {
       const [pic, joy] = await Promise.all([load(picture), load(cheer)]);
       const [fx_, fz, fh] = kitchen.F.friend;
       const height = fh * KK;
-      aim(STATIONS[KITCHEN_AT]);
+      aim(kitchenCam());
       const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: pic, transparent: true, depthWrite: false, toneMapped: false, fog: false }));
       plane.quaternion.copy(view.quaternion);
       plane.userData.noMerge = true;
@@ -7487,8 +7201,7 @@ if (THING) {
     kitchenLayers() {
       const out = {};
       showBasket(false);
-      blooms(2);
-      aim(STATIONS[2]);
+      aim(kitchenCam());
       out.all = render();
       const { plane } = kitchen.friend;
       plane.visible = false;
@@ -7526,7 +7239,7 @@ if (THING) {
       return out;
     },
     kitchenMeta() {
-      aim(STATIONS[2]);
+      aim(kitchenCam());
       const { plane, pic, fit } = kitchen.friend;
       fit(pic);
       plane.updateMatrixWorld(true);
