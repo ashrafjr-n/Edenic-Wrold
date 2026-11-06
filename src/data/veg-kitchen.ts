@@ -6,6 +6,8 @@ import l1_s0_jpg from "../../public/assets/learn/nova/fruits/world/1/landscape/s
 import p1_s0_jpg from "../../public/assets/learn/nova/fruits/world/1/portrait/s0.jpg";
 import l1_s1_jpg from "../../public/assets/learn/nova/fruits/world/1/landscape/s1.jpg";
 import p1_s1_jpg from "../../public/assets/learn/nova/fruits/world/1/portrait/s1.jpg";
+import l1_s2_jpg from "../../public/assets/learn/nova/fruits/world/1/landscape/s2.jpg";
+import p1_s2_jpg from "../../public/assets/learn/nova/fruits/world/1/portrait/s2.jpg";
 import l6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s0.jpg";
 import p6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s0.jpg";
 import kl_potato_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/potato.png";
@@ -43,10 +45,12 @@ export const VEG_KITCHEN: Record<number, LessonWorld> = {
     stations: [
       { landscape: l1_s0_jpg, portrait: p1_s0_jpg },
       { landscape: l1_s1_jpg, portrait: p1_s1_jpg },
+      { landscape: l1_s2_jpg, portrait: p1_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m0.mp4?v=d9648c44", portrait: "/assets/learn/nova/fruits/world/1/portrait/m0.mp4?v=ebbe638b" },
-      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m1.mp4?v=4ba9c53d", portrait: "/assets/learn/nova/fruits/world/1/portrait/m1.mp4?v=30c29750" },
+      null,
+      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m1.mp4?v=74ed05ab", portrait: "/assets/learn/nova/fruits/world/1/portrait/m1.mp4?v=4d6f4311" },
+      { landscape: "/assets/learn/nova/fruits/world/1/landscape/m2.mp4?v=99fd83b3", portrait: "/assets/learn/nova/fruits/world/1/portrait/m2.mp4?v=3b0cf2b9" },
     ],
   },
   6: {
@@ -54,7 +58,7 @@ export const VEG_KITCHEN: Record<number, LessonWorld> = {
       { landscape: l6_s0_jpg, portrait: p6_s0_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/fruits/world/6/landscape/m0.mp4?v=d9648c44", portrait: "/assets/learn/nova/fruits/world/6/portrait/m0.mp4?v=ebbe638b" },
+      null,
     ],
   },
 };
@@ -64,7 +68,7 @@ export const KITCHEN_FRAMES: Framed<KitchenFrame> = {
   landscape: {
     ground: kl_ground_jpg,
     counter: { src: kl_counter_png, box: [0.0, 55.83, 100.0, 44.17] },
-    friend: [59.94, 26.17, 21.12, 41.5],
+    friend: [60.47, 26.17, 20.05, 41.5],
     basket: { src: kl_basket_png, rim: kl_basket_rim_png, mouth: [3.46, 17.08, 87.85, 59.0], box: [72.15, 58.96, 19.1, 28.47] },
     items: [
       { id: "potato", src: kl_potato_png, word: "potato", shape: null, group: "potato", box: [59.38, 49.44, 9.61, 14.17], hit: [59.61, 49.86, 7.15, 11.11] },
@@ -81,7 +85,7 @@ export const KITCHEN_FRAMES: Framed<KitchenFrame> = {
   portrait: {
     ground: kp_ground_jpg,
     counter: { src: kp_counter_png, box: [0.0, 51.64, 100.0, 43.12] },
-    friend: [54.27, 37.59, 28.98, 18.02],
+    friend: [55, 37.59, 27.51, 18.02],
     basket: { src: kp_basket_png, rim: kp_basket_rim_png, mouth: [3.47, 4.14, 80.78, 83.28], box: [60.49, 66.88, 27.22, 12.19] },
     items: [
       { id: "milk", src: kp_milk_png, word: "milk", shape: null, box: [30.56, 49.18, 12.78, 6.68], hit: [30.97, 49.41, 7.36, 6.21] },
