@@ -63,6 +63,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
         style={{ ...characterAccent(character), ...classroomStyle(room) }}
       >
         <LessonPlayer
+          key={`${lesson.id}-${n}`}
           lesson={def}
           characterId={character.id}
           courseId={lesson.id}
