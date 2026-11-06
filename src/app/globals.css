@@ -1588,6 +1588,32 @@ bdi {
   --cloud-deep: color-mix(in srgb, var(--color-pinki) 74%, #ffffff);
 }
 
+/* The same clouds, lavender: going in to Nova's course world (2026-11-06). Fixed
+   in dark mode too — it is her colour, not the sky's. */
+.page-veil--lavender .page-veil-cloud--far,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--far {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 58%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 82%, #ffffff);
+  --cloud-deep: var(--color-nova);
+}
+
+.page-veil--lavender .page-veil-cloud--mid,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--mid {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 42%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 68%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 88%, #ffffff);
+}
+
+.page-veil--lavender .page-veil-cloud--near,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--near {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 26%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 52%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 74%, #ffffff);
+}
+
 /* ---------------------------------------------------------------
    A course's world of stops (`CourseWorld`, 2026-11-05, Shapes first): the
    run of the scroll, the links laid over the pedestals (each its own
@@ -1620,7 +1646,7 @@ bdi {
   justify-content: center;
   border-radius: 999px;
   background: #fffafc;
-  box-shadow: 0 5px 9px -3px rgb(190 60 120 / 45%);
+  box-shadow: 0 5px 9px -3px var(--mark-shadow, rgb(190 60 120 / 45%));
   /* Black on the white chip in both themes (the user, 2026-11-06): the ink
      tokens turn light in dark mode and the icon vanished on the chip. */
   color: #14111f;
@@ -1641,8 +1667,8 @@ bdi {
   padding: 0.35em 0.9em 0.4em 0.75em;
   border-radius: 999px;
   background: var(--go);
-  box-shadow: 0 8px 14px -5px rgb(190 60 120 / 60%);
-  color: #fff;
+  box-shadow: 0 8px 14px -5px var(--go-shadow, rgb(190 60 120 / 60%));
+  color: var(--page-accent-ink, #fff);
   font-size: clamp(0.9rem, 13cqi, 1.7rem);
   font-weight: 700;
   white-space: nowrap;

@@ -748,7 +748,11 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         </div>
       </div>
 
-      <div className="world-frame course-world-stops z-10">
+      <div
+        className="world-frame course-world-stops z-10"
+        /* Pinki's pink shadows stay hers; Nova's badge and lock chip cast her own. */
+        style={characterId === "pinki" ? undefined : ({ "--go-shadow": "color-mix(in srgb, var(--page-accent-edge) 65%, transparent)", "--mark-shadow": "rgb(70 50 120 / 35%)" } as CSSProperties)}
+      >
         <div className="world-cover" style={worldCover(wide)}>
           {titles.map((title, i) => {
             const done = hydrated && stars[i] > 0;
