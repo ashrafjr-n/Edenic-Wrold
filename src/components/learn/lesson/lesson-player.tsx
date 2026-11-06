@@ -214,7 +214,7 @@ export function LessonPlayer({
   const stationAt = (i: number) => {
     if (!world) return -1;
     const own = world.stepStation;
-    if (i >= steps.length) return own ? own[own.length - 1] : world.stations.length - 1;
+    if (i >= steps.length) return world.stations.length - 1;
     const there = steps[i];
     if (there.kind === "watch") return -1;
     return own ? own[Math.min(there.index, own.length - 1)] : there.index;

@@ -105,7 +105,7 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
   /* The clips kept in the page: the one on top and the next one, loading.
      Before the entry its first frame is on top (behind the reel on a wide
      screen). */
-  const mounted = [...new Set([onTop ?? -1, station, station + 1])].filter((i) => i >= 0 && i < world.moves.length);
+  const mounted = [...new Set([onTop ?? -1, station, station + 1])].filter((i) => i >= 0 && i < world.moves.length && world.moves[i]);
 
   return (
     <div className="world-frame -z-[5]" aria-hidden>
@@ -128,7 +128,7 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
               if (element) videos.current.set(i, element);
               else videos.current.delete(i);
             }}
-            src={world.moves[i][frame]}
+            src={world.moves[i]?.[frame]}
             muted
             playsInline
             preload="auto"

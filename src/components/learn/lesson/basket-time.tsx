@@ -63,12 +63,12 @@ interface BasketTimeProps {
 
 /**
  * Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find It!
- * merged into it): the kitchen in Nova's cottage, the world's last place
- * (2026-11-05), played over the whole screen as a Find in a world is. Pinki
- * behind the counter, the word over the wall, and on the counter the five
+ * merged into it): Nova's kitchen, the lesson's last place (the
+ * whole course is in it since 2026-11-06), played over the whole screen as a
+ * Find in a world is. Nova behind the counter, the word over the wall, and on the counter the five
  * vegetables among a blender, milk, cheese and garlic, and a basket. Read
  * the word, then drag its vegetable into the basket, or tap it. It flies up
- * over the basket and drops in, under the rim; the basket bounces, Pinki
+ * over the basket and drops in, under the rim; the basket bounces, Nova
  * cheers, the word is said, confetti. Anything else shakes, goes home and
  * greys.
  */
@@ -199,7 +199,7 @@ export function BasketTime({ word, kitchen, hidden = false, itemAria, onSolved, 
       <div className="world-cover" style={worldCover(wide)}>
         <Image src={frame.ground} alt="" fill preload sizes="100vw" className="select-none object-cover" />
 
-        {/* Pinki behind the counter: its edge hides her lower half. */}
+        {/* Nova behind the counter: its edge hides her lower half. */}
         <span className={`pointer-events-none absolute ${landed ? "anim-jump" : ""}`} style={place(frame.friend)}>
           <Image src={landed ? kitchen.friend.cheer : kitchen.friend.picture} alt="" fill preload sizes={wide ? "24vw" : "40vw"} className="select-none object-contain object-bottom" />
         </span>

@@ -234,12 +234,14 @@ export interface LessonWorld {
   stations: readonly Framed[];
   /** The camera's move INTO each station, a clip played by path (move 0
       is the entry, after the reel); the last frame is that station. */
-  moves: readonly Framed<string>[];
-  /** The station each step plays at (the last holds for the steps after it)
-      and the lesson ends at: absent, step `i` is at station `i` and the end
-      is one more. Several steps at one station never move the camera between
-      them — Nova's kitchen (2026-11-06): the word and the spelling at one wide
-      view, then one move in to the counter for Basket Time. */
+  moves: readonly (Framed<string> | null)[];
+  /** The station each step plays at (the last holds for the steps after it):
+      absent, step `i` is at station `i`. Several steps at one station never
+      change the picture between them — Nova's kitchen (2026-11-06): a blurred
+      wide view that never moves for the word and the spelling (its station has
+      no clip, `null`: it just fades in), one move in to the counter, the focus
+      coming, for Basket Time, and the counter blurring again for the end.
+      The lesson's end is always the last station. */
   stepStation?: readonly number[];
 }
 
