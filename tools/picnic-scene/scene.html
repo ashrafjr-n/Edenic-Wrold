@@ -4295,8 +4295,8 @@ const GARDEN = params.get("garden");
 /* Pinki's colour forest (`?garden=<1-11>&world=forest`) lays a colour scene's
    things on their own boxes, like the colour scenes do. */
 const FOREST = params.get("world") === "forest";
-/* Nova's vegetable garden (`?garden=<1-5>&world=veg`, 2026-11-05): the same
-   kit, her garden and cottage; the camera goes indoors for Basket Time. */
+/* Nova's kitchen (`?garden=<1-6>&world=veg`, 2026-11-06): the Vegetables
+   course's world, all indoors (it was her garden and cottage before). */
 const VEG = params.get("world") === "veg";
 /* Nova's seasons (`?garden=<1-5>&world=hill`, 2026-11-05): one hill, one tree,
    the camera turning round it. */
@@ -6250,14 +6250,13 @@ if (THING) {
     return g;
   }
 
-  /* ---- Nova's vegetable garden (2026-11-05, Vegetables' world): a warm
-     afternoon, lavender rows and a cream picket fence, one long raised bed
-     along the path and her cottage at its end. A lesson: the word's sign by
-     the bed, the seed packets of its letters, then the camera goes up the
-     path, in at the door, to the kitchen counter — Basket Time, played in
-     the room. The marker is the bed itself: every step done, the lesson's
-     vegetable grows on — part by part, from the soil — and it is ripe in
-     the end shot, over the whole bed. ---- */
+  /* ---- Nova's kitchen (2026-11-06, Vegetables' world — it was her garden and
+     cottage on 2026-11-05; the user then moved the whole course indoors): the
+     room alone, the counter with the five vegetables and the basket, Pinki's
+     picture behind it. Three cameras (`kitchenCam`): the entry crane, the wide
+     view the word and the spelling are blurred behind, and the counter Basket
+     Time is played at. A lesson is the entry and one move in; the review the
+     entry alone. `?garden=<1-6>&world=veg`, `render.cjs veg 1 6`. ---- */
   const VEG_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
   /* Lesson 6 is the review: no one vegetable. */
   const VEG_KIND = VEG ? VEG_KINDS[LESSON - 1] ?? null : null;
