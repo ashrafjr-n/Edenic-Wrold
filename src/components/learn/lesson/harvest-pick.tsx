@@ -12,9 +12,9 @@ import type { Basket, Garden, SceneRect } from "@/types/course";
 import { CueButton } from "./cue-button";
 import { place } from "./find-shapes";
 
-/** How long a food takes from its branch (its bed) into the basket… */
+/** How long a food takes from its crate (or branch) into the basket… */
 const FLY_MS = 900;
-/** …the first part of it coming off — pulled up out of a bed — and the
+/** …the first part of it coming off — lifted up out of its crate — and the
     last, dropping into the basket from over it. */
 const OFF = 0.25;
 const DROP = 0.75;

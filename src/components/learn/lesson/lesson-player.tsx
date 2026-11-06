@@ -209,13 +209,26 @@ export function LessonPlayer({
     if (finished) complete(itemKey(characterId, courseId, n), starsFor(mistakes));
   }, [finished, complete, characterId, courseId, n, mistakes]);
 
-  const go = (change: () => void) => {
+  /* The station of the world the camera stands at for step `i` of `steps` (-1
+     during the reel; one past the last step is the lesson's end). */
+  const stationAt = (i: number) => {
+    if (!world) return -1;
+    const own = world.stepStation;
+    if (i >= steps.length) return own ? own[own.length - 1] : world.stations.length - 1;
+    const there = steps[i];
+    if (there.kind === "watch") return -1;
+    return own ? own[Math.min(there.index, own.length - 1)] : there.index;
+  };
+
+  /* `to`: the step it goes to. The next step waits for the camera only if the
+     camera is going somewhere. */
+  const go = (change: () => void, to?: number) => {
     setLeaving(true);
     window.clearTimeout(leaveTimer.current);
     leaveTimer.current = window.setTimeout(() => {
       change();
       setSolved(false);
-      if (world) setArrived(false);
+      if (world && (to === undefined || stationAt(to) !== stationAt(at))) setArrived(false);
       setStepMisses(0);
       setSpelling(false);
       setBoard(false);
@@ -223,7 +236,7 @@ export function LessonPlayer({
     }, STEP_LEAVE_MS);
   };
 
-  const advance = () => go(() => setAt((value) => value + 1));
+  const advance = () => go(() => setAt((value) => value + 1), at + 1);
   const restart = () =>
     go(() => {
       setAt(0);
@@ -231,7 +244,7 @@ export function LessonPlayer({
       setDrawing(undefined);
       setDemo(true);
       setRound((value) => value + 1);
-    });
+    }, 0);
   /* Out of the demo, the camera stays where it is. */
   const endDemo = () =>
     go(() => {
@@ -679,7 +692,7 @@ export function LessonPlayer({
       {world && (
         <LessonWorldView
           world={world}
-          station={finished ? world.stations.length - 1 : step.kind === "watch" ? -1 : step.index}
+          station={stationAt(at)}
           onArrive={() => setArrived(true)}
         />
       )}
