@@ -607,10 +607,10 @@ Weather's worlds wait with them). Nothing is built for them until then.
 
 1. **Now: improve the design of the other courses** (Shapes, Colors,
    Vegetables), until better ideas come for the three.
-   Colors got Shapes' world of stops on 2026-11-06 (gold stones), **guided**:
-   one lesson at a time, no scroll, the closed colours light silver, one Start,
-   the scroll only when all is done; Vegetables is next. Shapes still scrolls
-   (to be asked whether it goes guided too).
+   Colors got Shapes' world of stops on 2026-11-06 (gold stones), scrolling
+   like Shapes (a guided, no-scroll version with silver closed lessons was built
+   and the user chose scrolling instead; it stays off, `CourseStops.guided`);
+   Vegetables is next.
 2. **Then build the three postponed courses**, once the ideas are found
    (the proposals so far are below; nothing is chosen).
 3. **Then put in the audio and the videos** — and Learn is finished.
