@@ -18,16 +18,19 @@ import { worldCover } from "./lesson/lesson-world";
 const GLIDE = 0.16;
 /** Pictures loading at once. */
 const LOADING_AT_ONCE = 4;
+/** Frames kept either side of where the camera stands; the rest are let go
+    (a long course's frames, all held, would not fit a phone). */
+const WINDOW = 8;
+/** Shapes' scroll height, `svh`. */
+const DEFAULT_RUN = 340;
 /** Wider than this (% of the frame) it is passing the camera, or behind it. */
 const PAST = 75;
-/** What a done way's white stones are multiplied by: Pinki's pink. */
+/** What a done way's white stones are multiplied by, unless the course says: Pinki's pink. */
 const WAY_PINK = "#ff86b4";
 /** A way turning pink, stone by stone, from the lesson just done. */
 const TURN_MS = 1500;
 /** Before it starts; then the camera goes on to the next lesson. */
 const TURN_DELAY_MS = 500;
-/** The ways between the lessons (five stops, four ways). */
-const WAYS = 4;
 
 /** Each stop's box at `progress`, between the render's key positions. */
 function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: number): SceneRect {
@@ -72,6 +75,9 @@ interface CourseWorldProps {
 export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir }: CourseWorldProps) {
   const wide = useWide();
   const data = world[wide ? "landscape" : "portrait"];
+  /* The ways between the lessons: one fewer than the stops. */
+  const ways = data.keys[0].length - 1;
+  const tint = world.tint ?? WAY_PINK;
   const rootRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLAnchorElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -85,7 +91,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const redraw = useRef<() => void>(() => undefined);
 
   /* A way is pink once the lesson before it is done. */
-  const pinkWays = !hydrated ? 0 : nextIndex < 0 ? WAYS : nextIndex;
+  const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
   useEffect(() => {
     donePink.current = pinkWays;
     redraw.current();
@@ -101,59 +107,124 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
-    const pictures: (HTMLImageElement | null)[] = Array.from({ length: world.frames }, () => null);
-    const masks: (HTMLImageElement | null)[] = Array.from({ length: world.frames }, () => null);
+    /* Only the frames near the camera are held (`WINDOW`); a mask only while a
+       way it shows is pink or turning pink. */
+    const pictures = new Map<number, HTMLImageElement>();
+    const masks = new Map<number, HTMLImageElement>();
+    const asked = new Set<string>();
     const layer = document.createElement("canvas");
     const layerContext = layer.getContext("2d");
+    const wayLists = data.maskWays;
     let cancelled = false;
     let raf = 0;
     let current = -1;
+    let standing = 0;
+    let loading = 0;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* The ways whose stones are pink now, or turning: 0..n. */
+    const pinkNow = () => Math.max(donePink.current, turning.current ? turning.current[0] + 1 : 0);
+    const needsMask = (f: number) => (wayLists ? wayLists[f].length > 0 && wayLists[f][0] < pinkNow() : pinkNow() > 0);
+
+    /* Let go what the camera has left; ask for what it is near, nearest first. */
+    const ensure = () => {
+      if (cancelled) return;
+      for (const [kind, map] of [["p", pictures], ["m", masks]] as const) {
+        for (const f of [...map.keys()]) {
+          if (Math.abs(f - standing) <= WINDOW + 2) continue;
+          map.delete(f);
+          asked.delete(kind + f);
+        }
+      }
+      for (let d = 0; d <= WINDOW && loading < LOADING_AT_ONCE; d++) {
+        for (const f of d ? [standing - d, standing + d] : [standing]) {
+          if (f < 0 || f >= world.frames) continue;
+          ask("p", f, "jpg", pictures);
+          if (needsMask(f)) ask("m", f, "png", masks);
+        }
+      }
+    };
+    const ask = (kind: "p" | "m", f: number, type: string, map: Map<number, HTMLImageElement>) => {
+      if (asked.has(kind + f) || loading >= LOADING_AT_ONCE) return;
+      asked.add(kind + f);
+      loading++;
+      const picture = new window.Image();
+      const done = () => {
+        loading--;
+        ensure();
+      };
+      picture.onload = () => {
+        if (Math.abs(f - standing) <= WINDOW + 2) map.set(f, picture);
+        else asked.delete(kind + f);
+        wake();
+        done();
+      };
+      picture.onerror = () => {
+        asked.delete(kind + f);
+        done();
+      };
+      picture.src = fileUrl(data, kind === "p" ? "f" : "w", f, type);
+    };
 
     const paint = (progress: number) => {
       const wanted = Math.round(progress * (world.frames - 1));
+      if (wanted !== standing) {
+        standing = wanted;
+        ensure();
+      }
       let found = -1;
-      for (let d = 0; d < world.frames && found < 0; d++) {
-        if (pictures[wanted - d]) found = wanted - d;
-        else if (pictures[wanted + d]) found = wanted + d;
+      for (let d = 0; d <= WINDOW + 2 && found < 0; d++) {
+        if (pictures.has(wanted - d)) found = wanted - d;
+        else if (pictures.has(wanted + d)) found = wanted + d;
       }
       if (found >= 0) {
-        const picture = pictures[found]!;
+        const picture = pictures.get(found)!;
         if (canvas.width !== picture.naturalWidth) {
           canvas.width = layer.width = picture.naturalWidth;
           canvas.height = layer.height = picture.naturalHeight;
         }
         context.drawImage(picture, 0, 0);
-        const mask = masks[found];
+        const mask = masks.get(found);
         if (mask && layerContext) {
-          /* The ways turned pink: white stones multiplied by pink keep their
-             light and shade. A way turning grows out from its lesson. */
+          /* The ways turned pink: white stones multiplied by the tint keep
+             their light and shade. All the done ways go through the layer at
+             once; a way turning grows out from its lesson, on its own. */
           const turn = turning.current;
-          const tile = mask.naturalHeight / WAYS;
-          for (let way = 0; way < WAYS; way++) {
-            const whole = way < donePink.current && turn?.[0] !== way;
-            if (!whole && turn?.[0] !== way) continue;
+          const list = wayLists ? wayLists[found] : Array.from({ length: ways }, (_, way) => way);
+          const tile = mask.naturalHeight / list.length;
+          const lay = (wanted: number[], circle?: [number, number, number]) => {
             layerContext.globalCompositeOperation = "source-over";
             layerContext.clearRect(0, 0, layer.width, layer.height);
-            layerContext.drawImage(mask, 0, tile * way, mask.naturalWidth, tile, 0, 0, layer.width, layer.height);
+            let any = false;
+            for (const way of wanted) {
+              const at = list.indexOf(way);
+              if (at < 0) continue;
+              layerContext.drawImage(mask, 0, tile * at, mask.naturalWidth, tile, 0, 0, layer.width, layer.height);
+              any = true;
+            }
+            if (!any) return;
             layerContext.globalCompositeOperation = "source-in";
-            layerContext.fillStyle = WAY_PINK;
+            layerContext.fillStyle = tint;
             layerContext.fillRect(0, 0, layer.width, layer.height);
-            if (!whole && turn) {
-              const [ax, ay, aw, ah] = boxAt(data.keys, progress, way);
-              const [bx, by, bw, bh] = boxAt(data.keys, progress, way + 1);
-              const [cx, cy] = [((ax + aw / 2) * layer.width) / 100, ((ay + ah) * layer.height) / 100];
-              const [dx, dy] = [((bx + bw / 2) * layer.width) / 100, ((by + bh) * layer.height) / 100];
-              const reach = Math.hypot(dx - cx, dy - cy) * 1.15 * turn[1];
+            if (circle) {
               layerContext.globalCompositeOperation = "destination-in";
               layerContext.beginPath();
-              layerContext.arc(cx, cy, Math.max(0.5, reach), 0, Math.PI * 2);
+              layerContext.arc(circle[0], circle[1], Math.max(0.5, circle[2]), 0, Math.PI * 2);
               layerContext.fillStyle = "#000";
               layerContext.fill();
             }
             context.globalCompositeOperation = "multiply";
             context.drawImage(layer, 0, 0);
             context.globalCompositeOperation = "source-over";
+          };
+          lay(Array.from({ length: donePink.current }, (_, way) => way).filter((way) => way !== turn?.[0]));
+          if (turn) {
+            const way = turn[0];
+            const [ax, ay, aw, ah] = boxAt(data.keys, progress, way);
+            const [bx, by, bw, bh] = boxAt(data.keys, progress, way + 1);
+            const [cx, cy] = [((ax + aw / 2) * layer.width) / 100, ((ay + ah) * layer.height) / 100];
+            const [dx, dy] = [((bx + bw / 2) * layer.width) / 100, ((by + bh) * layer.height) / 100];
+            lay([way], [cx, cy, Math.hypot(dx - cx, dy - cy) * 1.15 * turn[1]]);
           }
         }
       }
@@ -177,46 +248,24 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       paint(current);
       if (current !== target) raf = requestAnimationFrame(tick);
     };
-    const wake = () => {
+    function wake() {
       if (!raf) raf = requestAnimationFrame(tick);
-    };
-
-    /* The frames nearest where the camera stands first. */
-    const top = maxScroll();
-    const standing = (1 - (top > 0 ? window.scrollY / top : 0)) * (world.frames - 1);
-    const order = Array.from({ length: world.frames }, (_, f) => f).sort((a, b) => Math.abs(a - standing) - Math.abs(b - standing));
-    let nextToLoad = 0;
-    const loadNext = () => {
-      if (cancelled || nextToLoad >= world.frames) return;
-      const f = order[nextToLoad++];
-      const picture = new window.Image();
-      picture.onload = () => {
-        pictures[f] = picture;
-        wake();
-        loadNext();
-      };
-      picture.onerror = loadNext;
-      picture.src = fileUrl(data, "f", f, "jpg");
-      const mask = new window.Image();
-      mask.onload = () => {
-        masks[f] = mask;
-        wake();
-      };
-      mask.src = fileUrl(data, "w", f, "png");
-    };
-    for (let i = 0; i < LOADING_AT_ONCE; i++) loadNext();
+    }
 
     window.addEventListener("scroll", wake, { passive: true });
     window.addEventListener("resize", wake);
     wake();
-    redraw.current = () => paint(Math.max(0, current));
+    redraw.current = () => {
+      ensure();
+      paint(Math.max(0, current));
+    };
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", wake);
     };
-  }, [data, world.frames, wide]);
+  }, [data, world.frames, wide, ways, tint]);
 
   /* Once progress is known: open at the stop the child carries on from. */
   useEffect(() => {
@@ -260,7 +309,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   return (
     <div ref={rootRef}>
       {/* The height the scroll runs through; nothing is laid on it. */}
-      <div className="course-world-run" />
+      <div className="course-world-run" style={{ height: `${world.run ?? DEFAULT_RUN}svh` }} />
 
       <div className="world-frame -z-[5]" aria-hidden>
         <div className="world-cover" style={worldCover(wide)}>

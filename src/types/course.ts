@@ -247,11 +247,18 @@ export interface CourseStopsFrame {
   version: string;
   focus: readonly number[];
   keys: readonly (readonly SceneRect[])[];
+  /** Per frame, which ways the tiles of its mask sheet hold, in order (a long
+      course shows only some ways in a frame). Absent: every way, in order. */
+  maskWays?: readonly (readonly number[])[];
 }
 
 /** A course's world of stops, its camera's way in, in both frames. */
 export interface CourseStops extends Framed<CourseStopsFrame> {
   frames: number;
+  /** What a done way's white stones are multiplied by (default Pinki's pink). */
+  tint?: string;
+  /** How tall the scroll is, in `svh` (default 340, Shapes'). */
+  run?: number;
 }
 
 /** One lesson of a course: `/learn/pinki/shapes/1` is `pinkiShapes[0]`. */
