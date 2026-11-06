@@ -340,6 +340,23 @@ export function LessonPlayer({
      screen, outside the stage. */
   let inWorld: ReactNode = null;
 
+  /* Basket Time's end: its scene stays (same slot, same key, so it is not
+     built again — the vegetable stays in the basket), only blurred. */
+  const lastQuestion = lesson.questions[lesson.questions.length - 1];
+  if (finished && world && lastQuestion.type === "basket") {
+    inWorld = (
+      <BasketTime
+        key={`${characterId}.${courseId}.${n}.${lesson.questions.length - 1}.${round}.play`}
+        word={lastQuestion.word}
+        kitchen={lastQuestion.kitchen}
+        done
+        itemAria={lines.findItemAria}
+        onSolved={() => undefined}
+        onMiss={() => undefined}
+      />
+    );
+  }
+
   if (finished) {
     /* Onward goes straight on to the next lesson (direct request
        2026-10-02): its sheet, pinned up on the board — the course page
