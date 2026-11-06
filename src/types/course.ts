@@ -250,6 +250,9 @@ export interface CourseStopsFrame {
   /** Per frame, which ways the tiles of its mask sheet hold, in order (a long
       course shows only some ways in a frame). Absent: every way, in order. */
   maskWays?: readonly (readonly number[])[];
+  /** How the picture moves from one frame to the next, measured off the
+      frames: the point it grows from (% of the frame) and how much. */
+  flow: readonly [number, number, number];
 }
 
 /** A course's world of stops, its camera's way in, in both frames. */
