@@ -325,7 +325,7 @@ if NAME == "stops":
     flows = {
         "shapes": {"landscape": [50, 6, 1.021], "portrait": [50, 16, 1.022]},
         "colors": {"landscape": [50, 8, 1.023], "portrait": [50, 20, 1.03]},
-        "fruits": {"landscape": [50, 8, 1.022], "portrait": [50, 18, 1.03]},
+        "fruits": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
