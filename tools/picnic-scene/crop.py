@@ -430,6 +430,9 @@ if NAME in ("garden", "forest", "veg", "hill"):
     has_find = lambda lesson: not HILL and lesson <= (10 if FOREST else 5 if VEG else 4)
     GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
+    # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
+    sharp0 = lambda lesson: lesson <= 10 if FOREST else not (VEG or HILL) and lesson <= 4
+
     def sigma(lesson, move, last, t):
         # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
         # still that never moves); move 1 goes in to the counter and comes into
@@ -437,9 +440,9 @@ if NAME in ("garden", "forest", "veg", "hill"):
         if VEG:
             return BLUR * (1 - smooth(0.05, 0.85, t)) if move == 1 else BLUR * smooth(0.0, 0.85, t)
         if move == 0:
-            return 0 if FOREST and lesson <= 10 else BLUR * smooth(0.5, 1.0, t)
+            return 0 if sharp0(lesson) else BLUR * smooth(0.5, 1.0, t)
         # The colour lessons' first station stays sharp: its splash is the step.
-        if FOREST and lesson <= 10 and move == 1:
+        if sharp0(lesson) and move == 1:
             return BLUR * smooth(0.84, 1.0, t)
         come_in = 0 if has_find(lesson) and move == last else 1 - smooth(0.0, 0.12, t)
         go_out = 0 if has_find(lesson) and move == last - 1 else smooth(0.84, 1.0, t)
@@ -461,7 +464,7 @@ if NAME in ("garden", "forest", "veg", "hill"):
             for i in stations:
                 img = Image.open(f"{out}/s{i}.png").convert("RGB")
                 img.thumbnail((1280, 1280), Image.LANCZOS)
-                blurred(img, 0 if FOREST and lesson <= 10 and i == 0 else BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
+                blurred(img, 0 if sharp0(lesson) and i == 0 else BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
                 stills.append(f"s{i}.jpg")
             moves = []
             for i in stations:
