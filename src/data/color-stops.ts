@@ -11,7 +11,6 @@ export const COLOR_STOPS: CourseStops = {
   frames: 180,
   tint: "#ffc72e",
   run: 720,
-  guided: true,
   landscape: {
     first: landscape,
     path: "/assets/learn/pinki/colors/stops/landscape/",

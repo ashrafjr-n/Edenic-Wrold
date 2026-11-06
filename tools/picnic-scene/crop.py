@@ -386,7 +386,7 @@ if NAME == "stops":
         'import type { CourseStops } from "@/types/course";\n'
         + "\n".join(imports)
         + f"\n\n/** The camera going in as the page scrolls: {meta['frames']} frames, each stop's box\n    (% of the frame) at even steps along the way. */\nexport const {const}: CourseStops = {{\n  frames: {meta['frames']},\n"
-        + ('  tint: "#ffc72e",\n  run: 720,\n  guided: true,\n' if colors else "")
+        + ('  tint: "#ffc72e",\n  run: 720,\n' if colors else "")
         + "\n".join(parts) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)
