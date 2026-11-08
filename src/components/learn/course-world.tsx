@@ -687,12 +687,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       }
       return;
     }
-    /* Scrolling: coming in (the user, 2026-11-06), whatever is done, the very
-       top, the first lesson, the farthest from the chest. Back from a lesson:
-       the child's place; all done, the chest. */
+    /* Scrolling: always opens at the child's place (the user, 2026-11-09, undoing
+       2026-11-06's "the very top"): the lesson with Start whatever its order; all
+       done, the gold chest. */
     resync.current();
     jump.current = true;
-    window.scrollTo(0, !returning.current || nextIndex === 0 ? 0 : scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
+    window.scrollTo(0, scrollFor(nextIndex < 0 ? data.focus.length - 1 : nextIndex));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` and `playUnlock` only read what is here.
   }, [hydrated, nextIndex, data, lessonId]);
 
