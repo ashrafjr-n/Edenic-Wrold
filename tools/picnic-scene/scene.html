@@ -3581,6 +3581,129 @@ const VIDEO_THINGS = {
 };
 ITEMS.video = (what) => VIDEO_THINGS[what]();
 
+/* ---------- Nova's My Garden (2026-11-08) — the course's things in the
+   videos' look: soft velvet pastels, round and plump. Each stands on y 0
+   facing +z, about a unit tall (a tree two and a half). `tone` picks one of
+   its colours, so four of a kind in a Find are not all alike.
+   `?thing=garden&arg=<kind>[-tone]`. ---------- */
+const GARDEN_KINDS = ["flower", "tree", "leaf", "grass", "nest", "bench"];
+const GARDEN_TONES = {
+  flower: [0xff8fb8, 0xc7a3f0, 0xffd45e, 0xffffff, 0xff9f8a],
+  tree: [0xffa3c8, 0x9cc4f2, 0x8fd27a, 0xc7a3f0],
+  leaf: [0x7ccf6a, 0x5fbf6a, 0x9ad66e, 0x6fc79a],
+  grass: [0x7ccf6a, 0x6cc46a, 0x8fd67c, 0x62b968],
+  nest: [0xc49a6c, 0xb98a5e, 0xd0a678, 0xb08a66],
+  bench: [0xffa3c8, 0x9cc4f2, 0xffd45e, 0xc7a3f0],
+};
+function gardenThing(kind, tone = 0) {
+  const tones = GARDEN_TONES[kind];
+  const c = tones[tone % tones.length];
+  const sph = (r, material, seg = 32) => mesh(new THREE.SphereGeometry(r, seg, Math.round(seg * 0.66)), material);
+  const lighter = (hex, k) => new THREE.Color(hex).lerp(new THREE.Color(0xffffff), k).getHex();
+  const darker = (hex, k) => new THREE.Color(hex).lerp(new THREE.Color(0x000000), k).getHex();
+  const green = velvet(0x6cc46a);
+  const g = new THREE.Group();
+  if (kind === "flower") {
+    g.add(taperTube([[0, 0, 0], [0.05, 0.5, 0], [0, 1.0, 0]], 0.05, 0.04, green));
+    for (const s of [-1, 1]) {
+      const leaf = sph(0.17, green);
+      leaf.scale.set(1.6, 0.45, 0.8);
+      leaf.position.set(s * 0.22, 0.36, 0);
+      leaf.rotation.z = s * -0.5;
+      g.add(leaf);
+    }
+    const head = new THREE.Group();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const p = sph(0.17, velvet(c));
+      p.scale.set(1.25, 1.25, 0.45);
+      p.position.set(Math.cos(a) * 0.23, Math.sin(a) * 0.23, 0);
+      head.add(p);
+    }
+    const middle = sph(0.13, velvet(c === 0xffd45e ? 0xff9f5a : 0xffd45e));
+    middle.scale.z = 0.6;
+    middle.position.z = 0.07;
+    head.add(middle);
+    head.position.y = 1.08;
+    head.rotation.x = -0.2;
+    g.add(head);
+  } else if (kind === "tree") {
+    /* A pom-pom tree: a soft trunk, a crown of round tufts, lighter on top. */
+    g.add(taperTube([[0, 0, 0], [0.08, 0.7, 0], [-0.04, 1.45, 0]], 0.17, 0.1, velvet(0xd9b38c)));
+    for (const [x, y, z, r] of [[0, 1.85, 0, 0.5], [-0.5, 1.65, 0.05, 0.38], [0.52, 1.68, 0, 0.4], [-0.28, 2.25, 0.05, 0.38], [0.3, 2.22, -0.05, 0.4], [0, 2.55, 0, 0.32], [0, 1.6, 0.35, 0.34], [-0.62, 2.0, -0.15, 0.3], [0.65, 2.02, -0.12, 0.3]]) {
+      g.add(at_(sph(r, velvet(y > 2.1 ? lighter(c, 0.25) : c)), x, y, z));
+    }
+  } else if (kind === "leaf") {
+    /* A big leaf standing up on its stalk, its middle vein a lighter line. */
+    const blade = plumpLeaf(1.0, 0.42, velvet(c));
+    blade.rotation.z = Math.PI / 2 - 0.18;
+    blade.position.set(0.02, 0.18, 0);
+    g.add(blade);
+    g.add(taperTube([[0, 0, 0.03], [0.02, 0.12, 0.03], [0.05, 0.25, 0.03]], 0.035, 0.03, velvet(darker(c, 0.15))));
+    const vein = mesh(new THREE.CylinderGeometry(0.014, 0.022, 0.86, 8), velvet(lighter(c, 0.45)));
+    vein.position.set(0.11, 0.67, 0.06);
+    vein.rotation.z = -0.18;
+    g.add(vein);
+  } else if (kind === "grass") {
+    /* A tuft of long blades fanning out of one clump. */
+    for (let i = 0; i < 11; i++) {
+      const a = (i / 11) * Math.PI * 2;
+      const lean = 0.22 + (i % 3) * 0.1;
+      const ht = 0.75 + ((i * 7) % 5) * 0.08;
+      const [dx, dz] = [Math.cos(a) * lean, Math.sin(a) * lean * 0.6];
+      g.add(taperTube([[dx * 0.1, 0, dz * 0.1], [dx * 0.5, ht * 0.55, dz * 0.5], [dx * 1.2, ht, dz * 1.2]], 0.06, 0.012, velvet(i % 2 ? c : lighter(c, 0.2)), 24));
+    }
+  } else if (kind === "nest") {
+    /* A bowl of twigs, three pale blue eggs in it. */
+    const twig = velvet(c);
+    g.add(mesh(lathe([[0, 0.04], [0.42, 0.02], [0.58, 0.16], [0.62, 0.36], [0.52, 0.42], [0.45, 0.3], [0, 0.2]], 64), twig));
+    for (const [y, r, tilt] of [[0.18, 0.56, 0.08], [0.28, 0.6, -0.06], [0.37, 0.56, 0.05]]) {
+      const ring = mesh(new THREE.TorusGeometry(r, 0.055, 12, 64), velvet(darker(c, 0.12)));
+      ring.rotation.set(Math.PI / 2 + tilt, 0, 0);
+      ring.position.y = y;
+      g.add(ring);
+    }
+    for (const [x, z, ry] of [[-0.16, 0.05, 0.3], [0.16, 0.06, -0.3], [0, -0.14, 0]]) {
+      const egg = sph(0.16, velvet(0xbfe0fb));
+      egg.scale.set(0.85, 1.15, 0.85);
+      egg.position.set(x, 0.38, z);
+      egg.rotation.z = ry;
+      g.add(egg);
+    }
+  } else {
+    /* A garden bench: slats in three pastels, white legs and arms. */
+    const legs = velvet(0xfbf6ee);
+    const pal = [c, 0xffd45e, 0x9cc4f2, 0xffa3c8].filter((v, i, all) => all.indexOf(v) === i);
+    const slat = (i) => velvet(pal[i % 3]);
+    const box = (w, h, d, m) => mesh(new RoundedBoxGeometry(w, h, d, 4, Math.min(0.05, h / 2.1, d / 2.1)), m);
+    for (let i = 0; i < 3; i++) g.add(at_(box(1.8, 0.09, 0.17, slat(i)), 0, 0.5, -0.2 + i * 0.2));
+    for (let i = 0; i < 3; i++) {
+      const back = at_(box(1.8, 0.15, 0.08, slat(i)), 0, 0.72 + i * 0.19, -0.36 - i * 0.02);
+      back.rotation.x = -0.12;
+      g.add(back);
+    }
+    for (const sx of [-1, 1]) {
+      g.add(at_(box(0.1, 0.5, 0.5, legs), sx * 0.78, 0.25, -0.05));
+      g.add(at_(box(0.1, 0.65, 0.08, legs), sx * 0.78, 0.82, -0.38));
+      g.add(at_(box(0.1, 0.08, 0.55, legs), sx * 0.86, 0.68, -0.08));
+    }
+    /* Turned a little, so its seat reads from the front. */
+    g.rotation.y = 0.5;
+    const turned = new THREE.Group();
+    turned.add(g);
+    return turned;
+  }
+  return g;
+}
+const at_ = (thing, x, y, z) => {
+  thing.position.set(x, y, z);
+  return thing;
+};
+ITEMS.garden = (arg = "flower") => {
+  const [kind, tone] = arg.split("-");
+  return gardenThing(kind, Number(tone ?? 0));
+};
+
 /* ---------- What Bloo's animals eat — Feed the animal (2026-11-01) ----------
    The animals' own food, in the videos' look like the vegetables (smooth
    satin, coloured per vertex, the videos' warm light — `?thing=food&arg=`,
@@ -4163,6 +4286,12 @@ const COLORS_STOPS = STOPS && params.get("course") === "colors";
 /* Nova's Vegetables as a world of stops (`&course=fruits`, 2026-11-06): five
    vegetables of the videos and the chest, on a lavender and milk-white garden. */
 const FRUITS_STOPS = STOPS && params.get("course") === "fruits";
+/* Nova's My Garden (2026-11-08): its lessons' world (`?garden=<1-7>&world=mygarden`,
+   the videos' candy-pink garden) and its world of stops (`&course=garden`). */
+const MY_GARDEN = params.get("world") === "mygarden";
+const GARDEN_STOPS = STOPS && params.get("course") === "garden";
+/* Nova's two worlds of stops share their shape (faceless things, gold stones). */
+const NOVA_STOPS = FRUITS_STOPS || GARDEN_STOPS;
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
@@ -4173,7 +4302,7 @@ if (THING) {
   /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
      what is worn for it; the videos' vegetables): a softer, fuller light —
      their felt is evenly lit, with no hard dark side. */
-  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food"].includes(THING)) {
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food", "garden"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
@@ -5052,6 +5181,10 @@ if (THING) {
   const LESSON = Number(GARDEN);
   /* The forest's colour lesson (1-10), or null for its review (11). */
   const COLOR_ID = FOREST ? COLOR_LESSONS[LESSON - 1] ?? null : null;
+  /* My Garden's thing (1-6), or null for its review (7). */
+  const MY_KIND = MY_GARDEN ? GARDEN_KINDS[LESSON - 1] ?? null : null;
+  /* The forest and My Garden: places along one path, the Find standing in the world. */
+  const ON_PATH = FOREST || MY_GARDEN;
   /* The hill's season; lesson 5 is the review, all four in turn. */
   const YEAR = ["spring", "summer", "fall", "winter"];
   const HILL_SEASON = YEAR_HILL ? YEAR[LESSON - 1] ?? null : null;
@@ -5072,16 +5205,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = STOPS ? new THREE.Fog(FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = STOPS ? new THREE.Fog(GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
@@ -5126,9 +5259,9 @@ if (THING) {
   lawnCanvas.width = 4;
   lawnCanvas.height = 64;
   const lctx = lawnCanvas.getContext("2d");
-  lctx.fillStyle = VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
+  lctx.fillStyle = MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
   lctx.fillRect(0, 0, 4, 64);
-  lctx.fillStyle = VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
+  lctx.fillStyle = MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
   lctx.fillRect(0, 0, 4, 32);
   const lawnTex = new THREE.CanvasTexture(lawnCanvas);
   lawnTex.colorSpace = THREE.SRGBColorSpace;
@@ -5147,7 +5280,7 @@ if (THING) {
   gravel.castShadow = false;
   scene.add(gravel);
   if (YEAR_HILL || STOPS) scene.remove(gravel);
-  for (const z of FOREST || YEAR_HILL || STOPS ? [] : PATH) {
+  for (const z of ON_PATH || YEAR_HILL || STOPS ? [] : PATH) {
     for (let x = -60; x < 300; x += 0.92) {
       /* Nova's: the way up to her door leaves the path here. */
       if (VEG && z === PATH[0] && Math.abs(x - 16) < 1.7) continue;
@@ -5283,9 +5416,9 @@ if (THING) {
   /* The forest: the places along the path, 5.6 apart — the word, the
      spelling, (a mix), then the Find; the review has five
      places and no Find. */
-  const FOREST_STEPS = !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
+  const FOREST_STEPS = MY_GARDEN ? (MY_KIND ? 2 : 4) : !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
-  const fx = VEG || YEAR_HILL || STOPS ? null : FOREST ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID || MY_KIND ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -5435,9 +5568,130 @@ if (THING) {
     scene.add(at(ball(0.1, glaze(0xffc93a), 16), c + 2.65, 1.6, WALL_Z));
   }
 
+  /* ---- My Garden's houses and roses (2026-11-08), shared by its lessons' world
+     and its world of stops. ---- */
+  const pickOne = (list) => list[Math.floor(rand() * list.length)];
+  /* Pink cottages with a puffy round roof, an arched door, a round window. */
+  function pinkCottage() {
+    const g = new THREE.Group();
+    g.add(at(rbox(4.4, 3.0, 3.4, soft(0xfbd3df, { roughness: 0.85 }), 0.3), 0, 1.5, 0));
+    const roofM = soft(0xf49ab5, { roughness: 0.8 });
+    const dome = at(ball(2.7, roofM, 64), 0, 3.0, 0);
+    dome.scale.set(1, 0.62, 0.85);
+    g.add(dome);
+    for (let i = 0; i < 18; i++) {
+      const a = (i / 18) * Math.PI * 2;
+      g.add(at(ball(0.36, roofM, 24), Math.cos(a) * 2.55, 3.0, Math.sin(a) * 2.15));
+    }
+    const arch = new THREE.Shape();
+    arch.moveTo(-0.62, 0);
+    arch.lineTo(0.62, 0);
+    arch.lineTo(0.62, 1.25);
+    arch.absarc(0, 1.25, 0.62, 0, Math.PI, false);
+    arch.lineTo(-0.62, 0);
+    g.add(at(mesh(roundedShapeExtrude(arch, 0.12, 0.05), soft(0xf28fb0, { roughness: 0.7 })), 0.6, 0, 1.68));
+    g.add(at(ball(0.08, glaze(0xffc93a), 16), 1.0, 0.95, 1.86));
+    const frame = at(mesh(new THREE.TorusGeometry(0.42, 0.07, 12, 48), soft(0xffffff)), -1.25, 1.85, 1.74);
+    g.add(frame);
+    const glass = at(mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.05, 40), clay(0xbfe0f7, { emissive: 0xcfe8fb, emissiveIntensity: 0.35 })), -1.25, 1.85, 1.72);
+    glass.rotation.x = Math.PI / 2;
+    g.add(glass);
+    return g;
+  }
+  /* Rose bushes: a round green bush dotted with roses. */
+  const ROSES = [0xff8fb8, 0xffb38a, 0xc7a3f0, 0x9cc4f2, 0xffffff, 0xffd0e2];
+  function roseBush(k) {
+    const g = new THREE.Group();
+    for (const [x, y, z, r] of [[0, 0.55, 0, 0.65], [-0.6, 0.4, 0.1, 0.48], [0.62, 0.42, 0, 0.5], [0, 0.95, -0.15, 0.45]]) g.add(at(ball(r, leafy(pickOne([0x6cc46a, 0x78c777, 0x63bd66])), 28), x, y, z));
+    for (let i = 0; i < 8; i++) {
+      const a = (rand() - 0.5) * 2.6;
+      const c = pickOne(ROSES);
+      const rose = at(ball(0.2, soft(c), 24), Math.sin(a) * 0.75, 0.35 + rand() * 0.75, Math.cos(a) * 0.55);
+      g.add(rose);
+      g.add(at(ball(0.1, soft(new THREE.Color(c).lerp(new THREE.Color(0xd04f86), 0.25).getHex()), 16), rose.position.x * 1.12, rose.position.y + 0.03, rose.position.z * 1.2));
+    }
+    g.scale.setScalar(k);
+    return g;
+  }
   if (VEG || YEAR_HILL || STOPS) {
     /* Nova's garden and hill are built further down, once their helpers are
        in scope. */
+  } else if (MY_GARDEN) {
+  /* ---- My Garden (2026-11-08, Nova): the videos' candy-pink garden — a
+     lilac-pink sky, round pom-pom trees in pink, blue, green and lilac, a
+     winding path of pastel cobbles in front of the places, pink cottages with
+     arched doors behind a blue picket fence, rose bushes, lavender close to
+     the camera. The middle stays open for the activity. ---- */
+  scene.remove(gravel);
+  const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
+  if (fx !== null) placeXs.push(fx);
+  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.8 && z > -2.4 && z < 3.4) || (fx !== null && Math.abs(x - fx) < 6 && z > -6.5 && z < 3.6);
+  const pick = (list) => list[Math.floor(rand() * list.length)];
+
+  /* The path: pastel cobbles, winding a little, between the places and the camera. */
+  const cobbleM = [0xf9c9dc, 0xc9dcf7, 0xfbe7b0, 0xe0cff5, 0xfbf3ec, 0xd5efd0].map((c) => stone(c));
+  const pathZ = (x) => 3.9 + Math.sin(x * 0.11) * 0.35;
+  for (let x = -34; x < 128; x += 0.46) {
+    for (let k = -2; k <= 2; k++) {
+      const st = mesh(new THREE.CylinderGeometry(0.2 + rand() * 0.04, 0.23, 0.09, 20), pick(cobbleM));
+      st.scale.z = 0.85;
+      st.castShadow = false;
+      add(st, x + (rand() - 0.5) * 0.18 + (k % 2) * 0.23, 0.045, pathZ(x) + k * 0.42 + (rand() - 0.5) * 0.08, { ry: rand() * 3 });
+    }
+  }
+
+  /* Pom-pom trees in rows behind, the farther the hazier. */
+  for (let row = 0; row < 5; row++) {
+    const z0 = -15 - row * 7.5;
+    for (let x = -36; x < 124; x += 4.6 + rand() * 4.2) {
+      add(gardenThing("tree", Math.floor(rand() * 4)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
+    }
+  }
+
+  for (const [x, z, ry] of [[-24, -11.5, 0.3], [5, -11.8, 0.1], [33, -12, -0.15], [62, -11.5, 0.2], [93, -12, -0.1]]) add(pinkCottage(), x, 0, z, { ry });
+
+  /* The blue picket fence, all along the back of the lawn. */
+  const fenceM = soft(0x86b6ee, { roughness: 0.7 });
+  for (let x = -34; x < 128; x += 0.55) {
+    add(rbox(0.3, 1.35, 0.1, fenceM, 0.05), x, 0.68, -8.4);
+    add(mesh(new THREE.ConeGeometry(0.21, 0.32, 4), fenceM), x, 1.5, -8.4, { ry: Math.PI / 4 });
+  }
+  for (const y of [0.4, 1.05]) add(rbox(162, 0.14, 0.08, fenceM, 0.04), 47, y, -8.5);
+
+  for (let x = -32; x < 126; x += 2.4 + rand() * 2.2) add(roseBush(1.0 + rand() * 0.4), x, 0, -7.3 + rand() * 0.5, { ry: rand() * 0.6 - 0.3 });
+  for (let i = 0; i < 26; i++) {
+    const x = -26 + rand() * 146, z = -5.5 + rand() * 7.5;
+    if (!busy(x, z)) add(roseBush(0.7 + rand() * 0.4), x, 0, z, { ry: rand() * 6 });
+  }
+
+  /* Little flowers in clusters on the lawn. */
+  const petals = [0xff8fb8, 0xffffff, 0xc7a3f0, 0xffd45e, 0x9cc4f2];
+  for (let i = 0; i < 70; i++) {
+    const cx = -26 + rand() * 150, cz = -6.5 + rand() * 9.5;
+    const c = pick(petals);
+    for (let j = 0; j < 4 + Math.floor(rand() * 4); j++) {
+      const x = cx + (rand() - 0.5) * 1.8, z = cz + (rand() - 0.5) * 1.2;
+      if (!busy(x, z)) add(hillFlower(c), x, 0, z, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
+    }
+  }
+
+  /* Close to the camera: lavender and soft grass sliding past in a walk. */
+  function lavender(k) {
+    const g = new THREE.Group();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const [dx, dz] = [Math.cos(a) * 0.25, Math.sin(a) * 0.18];
+      const ht = 1.3 + rand() * 0.6;
+      g.add(taperTube([[0, 0, 0], [dx * 0.6, ht * 0.5, dz * 0.6], [dx, ht, dz]], 0.03, 0.02, leafy(0x7cbf6a), 16));
+      for (let j = 0; j < 7; j++) g.add(at(ball(0.075 - j * 0.004, soft(pick([0xa98ae0, 0xb99cec, 0x9b7fd6])), 12), dx + (rand() - 0.5) * 0.04, ht - 0.05 - j * 0.09, dz));
+    }
+    g.scale.setScalar(k);
+    return g;
+  }
+  for (let x = -30; x < 126; x += 1.4 + rand() * 1.6) add(lavender(1.1 + rand() * 0.5), x, 0, 7.4 + rand() * 1.6);
+  for (let x = -30; x < 126; x += 4 + rand() * 3) add(gardenThing("grass", Math.floor(rand() * 4)), x, 0, 8.6 + rand() * 1.0, { k: 1.4 + rand() * 0.5 });
+  for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
+
   } else if (FOREST) {
   /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
      day — "not professional enough"): a sunlit clearing on a winding
@@ -5679,8 +5933,8 @@ if (THING) {
      very blanket and things of `SCENES` — laid on the lawn in its corner.
      The camera's last move tilts down onto it, and the Find is played
      there, in the garden itself. ---- */
-  const PICNIC = FOREST ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
-  const HAS_FIND = VEG || YEAR_HILL || STOPS ? false : FOREST ? Boolean(COLOR_ID) : LESSON <= 4;
+  const PICNIC = ON_PATH ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
+  const HAS_FIND = VEG || YEAR_HILL || STOPS ? false : FOREST ? Boolean(COLOR_ID) : MY_GARDEN ? Boolean(MY_KIND) : LESSON <= 4;
   const FIND_Z = -1.6;
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
@@ -5843,7 +6097,38 @@ if (THING) {
     });
     keepClear.push(new THREE.Box3(new THREE.Vector3(fx - 6, -1, -4), new THREE.Vector3(fx + 6, 4, 5)));
   }
-  if (HAS_FIND && !FOREST) {
+  /* ---- My Garden's Find (2026-11-08): seven things standing on the lawn
+     where the camera has walked to — four of the lesson's thing (each its own
+     colour), three other garden things. The shortest stand in front, the
+     tallest behind, so nothing hides anything. ---- */
+  if (HAS_FIND && MY_GARDEN) {
+    const others = GARDEN_KINDS.filter((k) => k !== MY_KIND);
+    const decoys = [0, 1, 2].map((j) => others[(LESSON + j * 2) % others.length]);
+    /* How big each reads (its height, or a wide one's width), front to back. */
+    const HEIGHT = { nest: 0.95, grass: 1.0, leaf: 1.15, bench: 1.25, flower: 1.3, tree: 2.2 };
+    const entries = [...[0, 1, 2, 3].map((tone) => [MY_KIND, tone]), ...decoys.map((kind) => [kind, LESSON])]
+      .map(([kind, tone], i) => ({ kind, tone, order: HEIGHT[kind] + i * 0.001 }))
+      .sort((a, b) => a.order - b.order);
+    /* Front to back, kept to the middle of the picture (as the forest's). */
+    const SLOTS = portrait
+      ? [[-0.75, 1.9], [0.85, 1.9], [0, 0.6], [-1.4, -0.8], [1.4, -0.8], [-0.5, -2.9], [0.55, -2.9]]
+      : [[-1.3, 1.4], [1.3, 1.4], [-3.1, -0.3], [3.1, -0.3], [0, -0.7], [-1.7, -3.4], [1.7, -3.4]];
+    const K = portrait ? 0.8 : 0.95;
+    const seen = {};
+    entries.forEach(({ kind, tone }, i) => {
+      const [sx, sz] = SLOTS[i];
+      const thing = gardenThing(kind, tone);
+      const size = new THREE.Box3().setFromObject(thing).getSize(new THREE.Vector3());
+      thing.scale.setScalar((K * HEIGHT[kind]) / Math.max(size.y, size.x * 0.75));
+      thing.rotation.y += (rand() - 0.5) * 0.4;
+      thing.position.set(fx + sx + (rand() - 0.5) * 0.25, 0, sz + (rand() - 0.5) * 0.25);
+      scene.add(thing);
+      seen[kind] = (seen[kind] ?? 0) + 1;
+      things[`${kind}${seen[kind]}`] = { group: thing, shape: null, color: null, group_: kind, y: 0 };
+    });
+    keepClear.push(new THREE.Box3(new THREE.Vector3(fx - 6, -1, -4), new THREE.Vector3(fx + 6, 4, 5)));
+  }
+  if (HAS_FIND && !ON_PATH) {
     const pic = SCENES[PICNIC[LESSON]];
     const blanket = BLANKETS[pic.blanket]();
     if (pic.deep) blanket.scale.set(pic.deep[0], 1, pic.deep[1]);
@@ -6067,6 +6352,22 @@ if (THING) {
       for (const [p, a] of petals) p.position.set(Math.cos(a) * 0.42 * (0.4 + 0.6 * open), Math.sin(a) * 0.42 * (0.4 + 0.6 * open), -0.06);
     };
     g.bloom(0);
+    return g;
+  }
+
+  /* My Garden's word: the lesson's thing, big, on a round cream plinth with a
+     pink rim — about 2.4 tall in all (a tree a little more). */
+  function plinth(kind) {
+    const g = new THREE.Group();
+    g.add(at(mesh(new THREE.CylinderGeometry(1.25, 1.35, 0.36, 64), soft(0xfbf1ea, { roughness: 0.8 })), 0, 0.18, 0));
+    const rim = at(mesh(new THREE.TorusGeometry(1.3, 0.08, 16, 96), soft(0xff9fc2)), 0, 0.34, 0);
+    rim.rotation.x = Math.PI / 2;
+    g.add(rim);
+    const thing = gardenThing(kind);
+    const size = new THREE.Box3().setFromObject(thing).getSize(new THREE.Vector3());
+    thing.scale.setScalar((kind === "tree" ? 2.6 : 1.9) / Math.max(size.y, size.x * 0.85));
+    thing.position.y = 0.36;
+    g.add(thing);
     return g;
   }
 
@@ -6443,8 +6744,9 @@ if (THING) {
   const stopsApi = {};
   if (STOPS) {
     /* Pinki's pink; Nova's lavender and milk. */
-    const GROUND = FRUITS_STOPS ? 0xd7c9f2 : 0xf5b2d0, LIGHT = FRUITS_STOPS ? 0xfbf6ee : 0xfccfe2;
-    const PAL_HILL = FRUITS_STOPS ? 0xc6b5ee : 0xf2a6c8;
+    /* My Garden's: the videos' light pink, milk-white slabs. */
+    const GROUND = GARDEN_STOPS ? 0xf7c6d8 : FRUITS_STOPS ? 0xd7c9f2 : 0xf5b2d0, LIGHT = NOVA_STOPS ? 0xfbf6ee : 0xfccfe2;
+    const PAL_HILL = GARDEN_STOPS ? 0xf2b0ca : FRUITS_STOPS ? 0xc6b5ee : 0xf2a6c8;
     lawn.material = soft(GROUND, { roughness: 0.98, sheen: 0.1 });
     lawn.scale.set(1, 3, 1);
     lawn.position.set(0, 0, -30);
@@ -6453,7 +6755,7 @@ if (THING) {
     sun.intensity = 1.55;
     sky.intensity = 1.5;
     sky.color.set(FRUITS_STOPS ? 0xfbf7ff : 0xfff2f7);
-    sky.groundColor.set(FRUITS_STOPS ? 0xcdbfee : 0xf8c2da);
+    sky.groundColor.set(GARDEN_STOPS ? 0xf6c9dc : FRUITS_STOPS ? 0xcdbfee : 0xf8c2da);
     scene.environmentIntensity = 0.35;
     sun.shadow.radius = 14;
     Object.assign(sun.shadow.camera, { left: -32, right: 32, top: 32, bottom: -32, far: 120 });
@@ -6461,8 +6763,9 @@ if (THING) {
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
     const FRUIT_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-    const SPOTS = FRUITS_STOPS
-      ? [...FRUIT_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (FRUIT_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
+    const NOVA_KINDS = GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
+    const SPOTS = NOVA_STOPS
+      ? [...NOVA_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (NOVA_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
       : COLORS_STOPS
       ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
       : portrait
@@ -6470,8 +6773,8 @@ if (THING) {
       : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
     const FIRST_Z = SPOTS[0][1];
     /* How far the Shapes world's far scenery moves back for a longer way. */
-    const DZ = COLORS_STOPS || FRUITS_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
-    const KINDS = FRUITS_STOPS ? FRUIT_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
+    const DZ = COLORS_STOPS || NOVA_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
+    const KINDS = NOVA_STOPS ? NOVA_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
     const slabM = soft(LIGHT, { roughness: 0.9 });
     const INK = soft(0x6a5898, { roughness: 0.7 });
     /* The picture's face: two plain dots, a small smile. */
@@ -6571,8 +6874,18 @@ if (THING) {
         if (kind === "carrot") holder.rotation.z = 0.9;
         return holder;
       };
-      const body = FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
-      if (FRUITS_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
+      /* My Garden's: its thing, in the videos' pastels, to its own size. */
+      const gardenStatue = () => {
+        const t = gardenThing(kind, { tree: 1 }[kind] ?? 0);
+        const size = new THREE.Box3().setFromObject(t).getSize(new THREE.Vector3());
+        const reach = { flower: 3.6, tree: 5.0, leaf: 3.4, grass: 3.2, nest: 3.4, bench: 3.8 }[kind];
+        t.scale.setScalar(reach / Math.max(size.y, size.x * 0.9, size.z * 0.9));
+        const holder = new THREE.Group();
+        holder.add(t);
+        return holder;
+      };
+      const body = GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
+      if (NOVA_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
       else if (COLORS_STOPS) body.scale.setScalar(0.92);
       else if (kind === "circle") body.scale.z = 0.8;
       else body.geometry.center();
@@ -6582,9 +6895,9 @@ if (THING) {
       /* Dark paints wear a white face; the rest the usual plum. */
       const face = dotFace(COLORS_STOPS ? 1.45 : kind === "triangle" ? 1.15 : 1.5, COLORS_STOPS && ["red", "blue", "purple", "brown", "black", "green"].includes(kind) ? soft(0xffffff, { roughness: 0.7 }) : INK);
       face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.985 : box.max.z - 0.02);
-      if (!FRUITS_STOPS) statue.add(face);
+      if (!NOVA_STOPS) statue.add(face);
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
-      statue.rotation.y = FRUITS_STOPS ? 0 : x < 0 ? 0.26 : -0.26;
+      statue.rotation.y = NOVA_STOPS ? 0 : x < 0 ? 0.26 : -0.26;
       g.add(statue);
       statues.push(statue);
       /* A flower or a sprig on the slab's far corner. */
@@ -6661,15 +6974,15 @@ if (THING) {
     /* Round about, the same pink: bell hills. */
     const bell = (r, ht, color = PAL_HILL) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
     const side = portrait ? 11.5 : 15.5;
-    const hills = FRUITS_STOPS
-      ? Array.from({ length: 7 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 11, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
+    const hills = NOVA_STOPS
+      ? Array.from({ length: NOVA_KINDS.length + 2 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 11, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
       : COLORS_STOPS
       ? Array.from({ length: 12 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 10.5, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
       : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]];
     for (const [sx, z, r, ht] of hills) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
     /* Past the first lesson: the bow in the shapes' colours, the hills at its
        feet, a tall hill with a wavy golden top. */
-    (FRUITS_STOPS ? [[8.6, 0xb9a3ec], [6.9, 0xf5d98a], [5.2, 0xfbf6ee]] : [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]]).forEach(([r, color]) => {
+    (GARDEN_STOPS ? [[8.6, 0xffa3c8], [6.9, 0x9cc4f2], [5.2, 0xfbf6ee]] : FRUITS_STOPS ? [[8.6, 0xb9a3ec], [6.9, 0xf5d98a], [5.2, 0xfbf6ee]] : [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]]).forEach(([r, color]) => {
       add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56 + DZ);
     });
     add(bell(7.5, 8.5), -7.5, 0, -51 + DZ);
@@ -6677,7 +6990,7 @@ if (THING) {
     {
       const top = 18, r = 11;
       const geo = smoothLathe([[r, 0], [r * 0.82, top * 0.4], [r * 0.56, top * 0.78], [r * 0.25, top * 0.98], [0, top]], 256);
-      const golden = new THREE.Color(FRUITS_STOPS ? 0xfbf6ee : 0xffd77a), pink = new THREE.Color(PAL_HILL);
+      const golden = new THREE.Color(NOVA_STOPS ? 0xfbf6ee : 0xffd77a), pink = new THREE.Color(PAL_HILL);
       tint(geo, (v) => {
         const a = Math.atan2(v.z, v.x);
         return [v.y > top * 0.62 + Math.sin(a * 7) * 0.9 ? golden : pink, 0];
@@ -6720,21 +7033,42 @@ if (THING) {
       g.add(at(rbox(0.7, 1.4, 0.7, soft(0xe0d4f5, { roughness: 0.8 }), 0.1), 1.6, 5.1, -0.4));
       return g;
     };
-    const dressing = FRUITS_STOPS
+    /* My Garden's: pom-pom trees, rose bushes and the blue picket fence. */
+    const pomTree = (tone) => {
+      const t = gardenThing("tree", tone);
+      t.scale.setScalar(2.3);
+      return t;
+    };
+    const blueFence = (n) => {
+      const g = new THREE.Group();
+      const m = soft(0x86b6ee, { roughness: 0.7 });
+      for (let i = 0; i <= n; i++) {
+        g.add(at(rbox(0.3, 1.35, 0.1, m, 0.05), i * 0.55, 0.68, 0));
+        const tip = at(mesh(new THREE.ConeGeometry(0.21, 0.32, 4), m), i * 0.55, 1.5, 0);
+        tip.rotation.y = Math.PI / 4;
+        g.add(tip);
+      }
+      for (const y of [0.4, 1.05]) g.add(at(rbox(n * 0.55 + 0.3, 0.14, 0.08, m, 0.04), (n * 0.55) / 2, y, -0.08));
+      return g;
+    };
+    const dressing = GARDEN_STOPS
+      ? [[-1, 2, () => pomTree(3)], [1, -4, () => roseBush(1.5)], [-1, -14, () => blueFence(7)], [1, -24, () => pomTree(0)], [-1, -32, () => roseBush(1.5)], [1, -40, () => blueFence(7)], [-1, -48, () => pomTree(3)]]
+      : FRUITS_STOPS
       ? [[-1, 2, () => lollipop(0xb9a3ec)], [1, -4, gardenBed], [-1, -14, () => fenceRun(3)], [1, -24, () => lollipop(0xf5d98a)], [-1, -32, gardenBed], [1, -40, () => fenceRun(3)], [-1, -48, () => lollipop(0xb9a3ec)]]
       : [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
     const inner = portrait ? 7.4 : 12;
     /* A longer way repeats the garden's dressing, every 46 units. */
-    const REPEATS = COLORS_STOPS ? [0, -46, -92, -138] : FRUITS_STOPS ? [0, -46] : [0];
+    const REPEATS = COLORS_STOPS ? [0, -46, -92, -138] : NOVA_STOPS ? [0, -46] : [0];
     if (FRUITS_STOPS) add(cottage(), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { ry: 0.5 });
+    if (GARDEN_STOPS) add(pinkCottage(), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { k: 1.3, ry: 0.5 });
     for (const dz of REPEATS) for (const [sx, z, make] of dressing) add(make(), sx * inner * (dz % 92 ? -1 : 1), 0, z + dz);
-    for (const dz of FRUITS_STOPS ? [] : REPEATS) {
+    for (const dz of NOVA_STOPS ? [] : REPEATS) {
       const blue = soft(0xbfe0fb, { roughness: 0.5 });
       const white = soft(0xfff6ee);
       const f = group(at(mesh(new THREE.CylinderGeometry(2.1, 2.3, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 1.5, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(0.95, 0.75, 0.3, 40), white), 0, 2.35, 0), at(ball(0.4, soft(0xff8fbf), 24), 0, 2.85, 0));
       add(f, (portrait ? -8 : -12.5) * (dz % 92 ? -1 : 1), 0, -22 + dz);
     }
-    for (const dz of REPEATS) for (const [x, z, make] of (FRUITS_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xf5d98a)], [-9, -21, () => chubby(0xffffff)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xf5d98a)]] : [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]])) {
+    for (const dz of REPEATS) for (const [x, z, make] of (GARDEN_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xc7a3f0)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0x9cc4f2)]] : FRUITS_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xf5d98a)], [-9, -21, () => chubby(0xffffff)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xf5d98a)]] : [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]])) {
       add(make(), (portrait ? x * 0.72 : x) * (dz % 92 ? -1 : 1), 0, z + dz, { k: 1.2 });
     }
     /* The cloud with a face, cream, over the far side. */
@@ -6742,7 +7076,7 @@ if (THING) {
       const c = cloud(k);
       const look = dotFace(1.05 * k);
       look.position.set(0, 0.75 * k, 1.05 * k);
-      add(FRUITS_STOPS ? c : group(c, look), portrait ? x * 0.55 : x, y, z + dz);
+      add(NOVA_STOPS ? c : group(c, look), portrait ? x * 0.55 : x, y, z + dz);
     }
     stopsApi.stops = stops;
     stopsApi.statues = statues;
@@ -6785,6 +7119,23 @@ if (THING) {
     ? VEG_KIND
       ? [{ cam: "wide" }, { cam: "kitchen" }]
       : [{ cam: "wide" }]
+    : MY_GARDEN
+    /* My Garden (2026-11-08): the word = the lesson's thing, big on a round
+       plinth on the lawn (sharp, the word card under it); the spelling among
+       letter blocks; the Find standing in the garden. The review: two easels
+       (its picks) and two sets of letter blocks. */
+    ? MY_KIND
+      ? [
+          { x: 0, make: () => plinth(MY_KIND), cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: 0xff8fb8 },
+          { x: STEP_DX, make: () => letterBlocks(MY_KIND), k: 1.7, color: 0xc7a3f0 },
+          { x: fx, z: FIND_Z, flower: [fx + 3.6, 3.6], color: 0xffd45e },
+        ]
+      : [
+          { x: 0, make: () => easel(), color: 0xff8fb8 },
+          { x: STEP_DX, make: () => easel(), color: 0xc7a3f0 },
+          { x: STEP_DX * 2, make: () => letterBlocks("flower"), k: 1.7, color: 0xffd45e },
+          { x: STEP_DX * 3, make: () => letterBlocks("leaf"), k: 1.7, color: 0x9cc4f2 },
+        ]
     : FOREST
     ? COLOR_ID
       ? [
@@ -6827,7 +7178,7 @@ if (THING) {
     }
     if (VEG || YEAR_HILL || STOPS) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
-    const flower = FOREST ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
+    const flower = ON_PATH ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
     flower.rotation.y = -0.15;
     scene.add(flower);
@@ -6905,7 +7256,7 @@ if (THING) {
      each corner — and where the entry crane starts. A station is
      [camera x, y, z, look x, y, z]. ---- */
   const station = (x, look = x) =>
-    FOREST ? (portrait ? [x, 2.5, 9.6, look, 1.1, -4] : [x, 2.5, 9.4, look, 1.2, -4]) : portrait ? [x, 2.9, 11.5, look, 2.0, -6] : [x, 2.7, 11.2, look, 1.9, -6];
+    ON_PATH ? (portrait ? [x, 2.5, 9.6, look, 1.1, -4] : [x, 2.5, 9.4, look, 1.2, -4]) : portrait ? [x, 2.9, 11.5, look, 2.0, -6] : [x, 2.7, 11.2, look, 1.9, -6];
   /* The Find's: high over the picnic, looking down at it as the picnic's
      own camera does (72° off level), far enough back that the blanket
      sits clear of the screen's edges and of the page's bars. */
@@ -6927,7 +7278,7 @@ if (THING) {
     const a = THREE.MathUtils.degToRad(lift);
     return [...toWorld([look[0], look[1] + Math.sin(a) * d, look[2] + Math.cos(a) * d]), ...toWorld(look)];
   };
-  const steps = PLACES.map((place) => (place.pose ? fromPose(place.pose) : place.cam === "kitchen" ? kitchenCam() : place.cam === "wide" ? kitchenCam("wide") : place.cam ? place.cam : place.make ? station(place.x) : FOREST ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
+  const steps = PLACES.map((place) => (place.pose ? fromPose(place.pose) : place.cam === "kitchen" ? kitchenCam() : place.cam === "wide" ? kitchenCam("wide") : place.cam ? place.cam : place.make ? station(place.x) : ON_PATH ? forestFind : portrait ? overPicnic(15) : overPicnic(19)));
   const mid = (PLACES[0].x + PLACES[PLACES.length - 1].x) / 2;
   const HILL_END = portrait ? hillPose(HILL_SEASON ? 380 : 380, 36, 15, 0, 7) : hillPose(380, 28, 11, 0, 6);
   const END = YEAR_HILL
@@ -6936,7 +7287,7 @@ if (THING) {
     ? portrait
       ? [4.5, 12, 27, 4.5, 1, -2]
       : [4.5, 7.2, 16.2, 4.5, 0.9, -2]
-    : FOREST
+    : ON_PATH
     ? portrait
       ? [mid - 1, 15, 31, mid - 1, 0, -1]
       : [mid + 1, 12, 29, mid + 1, 0.2, -1.5]
@@ -7164,7 +7515,7 @@ if (THING) {
       };
     },
     /* Which shape each thing is — the Find's answer key. */
-    meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape, color: t.color }])) }),
+    meta: () => ({ items: Object.fromEntries(Object.entries(things).map(([k, t]) => [k, { shape: t.shape, color: t.color, group: t.group_ ?? null }])) }),
   };
   if (STOPS) {
     /* The camera through the stops: `t` 0 over the chest (the nearest), 1 far
