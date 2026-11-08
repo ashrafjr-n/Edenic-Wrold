@@ -98,6 +98,11 @@ export const ar: Dictionary = {
       description: "أشياء لذيذة نأكلها ونتعلّم تهجئتها",
       items: ["الجزر", "البروكلي", "البطاطا", "الطماطم", "الفلفل", "مراجعة السوق"],
     },
+    garden: {
+      name: "حديقتي",
+      description: "أزهار وأشجار وأعشاش في الحديقة",
+      items: ["الزهرة", "الشجرة", "الورقة", "العشب", "العش", "المقعد", "مراجعة الحديقة"],
+    },
     animals: {
       name: "الحيوانات",
       description: "القطة والكلب والسمكة والفيل وغيرها",
@@ -180,6 +185,8 @@ export const ar: Dictionary = {
     sortWeather: "ضع كل شيء في صندوق طقسه!",
     weatherIn: "كيف يكون الطقس في {season}؟",
     pickList: "اقطف ما في قائمة نوفا!",
+    findThings: "ابحث عن كل {things}!",
+    whichThing: "أين {thing}؟",
   },
   tasks: {
     listen: "استمع",
