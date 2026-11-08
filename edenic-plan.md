@@ -651,25 +651,84 @@ a choosing question). Each lesson in pairs:
    misleading pairing is to be avoided — the user's own example is
    summer → sunny).
 
-**World and UI (open, to design when built):** the background / world of
-the choosing question must be **beautiful, light and with a small story of
-its own** — it does NOT have to look like Shapes' garden or Colors' forest.
-For Bloo (his sky-and-nature classroom, his hill). Seasons' old hill world
-is Nova's and was built for her; it will be reworked or redrawn for Bloo.
+**World and UI:** beautiful, light, a small story of its own — not like
+Shapes' garden or Colors' forest. See "The world" in the plan below.
 
-**Nova** keeps only **Vegetables** for now. What a second Nova course could
-be (Claude's reading of the videos, 2026-11-08, awaiting the user): there
-are **no fruit videos** (the folder named "fruits" holds the vegetables; the
-fruits were removed for that reason), so a Fruits lesson is out — **My
-Garden** is the best fit (flower, tree, sunflower, bench, birdhouse, hose,
-flower pot, grass + the insects, filmed with Nova); alternatively Transport
-(vehicles, land / air / water). Nothing is chosen; Nova's picks wait for
-the user.
+**Pairs (decided by Claude from the videos, 2026-11-08):** Summer → sunny,
+Winter → snowy, Spring → rainy, Fall → windy (the fall reel is falling
+leaves). The question's three circles: the right weather + two others.
 
-**Videos:** the sources are sorted in `~/Desktop/edenic web videos` (01 Shapes
-… 17 Promo) and the candidates for each course are in `edenic world learn`
-(also placed in `public/edenic world learn/` by the user, 2026-11-08 —
-untracked; large, so keep it out of git).
+#### The execution plan (agreed 2026-11-08 — PREPARED, NOT BUILT)
+
+**A. Videos — light, never stuck, sharp (prepared 2026-11-08)**
+- Every reel goes through `tools/reels/encode.sh <source> <out>`: H.264
+  High 720x1280 (the reel frame is 9:16, the sources are vertical
+  1080x1920), CRF 27, AAC 96k mono, loudness-normalised (every reel equally
+  loud), `faststart` (starts playing while it loads) + a `<word>.jpg`
+  poster. ~0.65–1 Mbit/s: 2–6 MB a reel instead of 150–650 MB. H.264
+  because every browser plays it (the season sources are HEVC — Chrome
+  can't).
+- Named by WORD, not number: `public/assets/learn/<friend>/<course>/reels/
+  <word>.mp4` (+ `.jpg`). The course data points at them when built.
+- When built: the `<video>` takes the `poster` (no blank frame), only the
+  current lesson's reel loads (already so); later an optional AV1 copy as a
+  second `<source>` (~30% smaller) — not now.
+- **Hosting (decide before the real launch):** hundreds of MB of video do
+  not belong in git — move `reels/` to a CDN bucket (Vercel Blob /
+  Cloudflare R2) and keep only the URLs in the data. Until then they sit in
+  `public/` UNTRACKED.
+- The same script makes Shapes', Colors', Vegetables' and Animals' reels
+  once the user picks from `edenic world learn`.
+
+**B. Seasons and Weather (Bloo) — the build order**
+1. Data: a new course `seasons-weather` in `data/courses/bloo-seasons-weather.ts`,
+   4 lessons + a review; the old `nova-seasons.ts` and `bloo-weather.ts`
+   go (their pictures reused where they fit), `lessons.ts`: Bloo =
+   Animals + Seasons and Weather, Nova = Vegetables + My Garden. Progress
+   store: bump `version` + `migrate` (the old course keys go).
+2. The lesson player: ONE new small piece, a `reel` STEP (the second reel
+   mid-lesson: season reel → word → spell → pick → **weather reel** → word →
+   spell → done). No new activity: the question is the existing `pick`
+   with three round picture options.
+3. Dictionaries (en / ar / ku): the course title, "What is the weather in
+   {season}?", the eight words already exist.
+4. The world (below). 5. Review: sort, order the seasons, picture spells —
+   from the pieces we have. 6. Docs + README.
+
+**The world — "Bloo's round window" (calm, light, simpler than the 3D worlds)**
+Taken from the videos themselves (sunny day / what is the weather today
+open on a ROUND window looking out at the sky; the seasons' path, tree and
+little houses outside). The story: *Bloo sits by his round window and
+watches the year go by.*
+- ONE still frame: Bloo's cosy room around a big round window (his blue,
+  cream, gold; soft). Outside the window: the hill, ONE round tree, a path,
+  a pastel sky.
+- Each lesson changes only what is OUTSIDE: the tree and sky take the
+  season (spring blossom, summer sun, fall orange leaves, winter snow);
+  after the pick the weather comes in (sun rays, rain, wind with leaves,
+  snow) — a slow CSS cross-fade between stills (8 stills, rendered once,
+  ~100 KB each), plus ONE gentle CSS layer for the weather (drifting
+  drops / flakes / leaves). No camera walks, no 3D clips, no stops.
+- The three circles of the question are three small round "windows".
+- The course page: the four seasons as four small round windows on Bloo's
+  wall, one lit per lesson done (instead of a world of stops).
+
+**C. My Garden (Nova) — DECIDED 2026-11-08: Nova's second course**
+- Fruits: no videos exist → out. My Garden: 19 videos, all prepared in
+  `public/assets/learn/nova/garden/reels/` (bench, birdhouse, flower,
+  flower-pot, fountain, gate, grass, hose, lawn-mower, leaf, nest, pond,
+  rake, rose, shovel, sunflower, tree, watering-can, wheelbarrow).
+- Proposed 6 lessons (short, concrete words a 5-year-old can spell; the
+  user may swap): **flower · tree · leaf · grass · nest · pond** + review.
+- Lesson: reel → word → spell → **Find it in the garden** (the existing
+  `find`: tap every flower / leaf… standing in the garden, as in Colors'
+  forest) — no new activity.
+- The world, like the videos: a candy-pink garden — pastel pink and blue
+  round trees, a winding pastel cobblestone path, a pink cottage with an
+  arched door, rose bushes, purple flowers soft in front, a pink-lilac sky.
+  Shapes'/Colors' kind of world of stops (Phase 7 machinery,
+  `render.cjs` + `crop.py`), each stop the lesson's thing on the path; Nova
+  stays a picture. Built with Vegetables' gold stones.
 
 ### Stars and the Play game (the user, 2026-11-06) — PLANNED, NOT BUILT, recorded only
 
