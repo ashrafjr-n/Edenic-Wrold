@@ -311,8 +311,8 @@ if NAME == "stops":
     course = sys.argv[2] if len(sys.argv) > 2 else "shapes"
     # `fruits` (2026-11-06, Nova's Vegetables) is like colors: each frame's mask
     # sheet holds only the ways it shows; golden stones; no drops.
-    colors = course in ("colors", "fruits", "garden")
-    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops"}[course]
+    colors = course in ("colors", "fruits", "garden", "animals", "weather")
+    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}[course]
     imports, parts = [], []
     # How the picture moves between frames (where it grows from, % of the frame,
     # and how much), measured by best fit on neighbouring frames: re-measure if
@@ -323,6 +323,9 @@ if NAME == "stops":
         "fruits": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
         # My Garden (2026-11-08): measured the same way (best fit on frames 10-110).
         "garden": {"landscape": [50, 4, 1.016], "portrait": [50, 22, 1.037]},
+        # Bloo's (2026-11-08): measured with the flow fit after a render (see render.cjs notes).
+        "animals": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
+        "weather": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
@@ -387,6 +390,8 @@ if NAME == "stops":
         "colors": ("Pinki's Colors course", "COLOR_STOPS", "color-stops.ts", "2026-11-06", 720),
         "fruits": ("Nova's Vegetables course", "VEG_STOPS", "veg-stops.ts", "2026-11-06", 380),
         "garden": ("Nova's My Garden course", "GARDEN_STOPS", "garden-stops.ts", "2026-11-08", 450),
+        "animals": ("Bloo's Animals course", "ANIMALS_STOPS", "animals-stops.ts", "2026-11-08", 720),
+        "weather": ("Bloo's Seasons and Weather course", "WEATHER_STOPS", "weather-stops.ts", "2026-11-08", 340),
     }[course]
     arg = "" if course == "shapes" else f" {course}"
     ts = (
