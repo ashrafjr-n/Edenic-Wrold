@@ -62,7 +62,7 @@ function foodLesson(veg: Veg, i: number): LessonDef {
   const others = FOODS.filter((other) => other !== veg);
   const outsider = others[i % others.length];
   return {
-    reel: `/assets/learn/nova/fruits/reels/${i + 1}.mp4`,
+    reel: `/assets/learn/nova/fruits/reels/${word}.mp4`,
     cover: [picture],
     world: { ...VEG_KITCHEN[1], stepStation: [0, 0, 1] },
     questions: [
@@ -74,8 +74,8 @@ function foodLesson(veg: Veg, i: number): LessonDef {
 }
 
 /** Nova · Fruits & Vegetables. Titles live in `dict.lessons.fruits.items`.
-    The reels are placeholders until the real clips replace them under the
-    same names (`/assets/learn/nova/fruits/reels/<n>.mp4`). */
+    The reels are the real clips, H.264 720p (`tools/reels/encode.sh`):
+    `/assets/learn/nova/fruits/reels/<word>.mp4`. */
 export const novaFruits: LessonDef[] = [
   ...FOODS.map(foodLesson),
   /* The review, no reel: a vegetable soup from a recipe of words alone
