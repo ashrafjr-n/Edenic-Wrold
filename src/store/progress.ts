@@ -57,10 +57,15 @@ export const useProgress = create<ProgressState>()(
          (Vegetables, Animals, Colors), so a stored `nova.fruits.9` named a
          different lesson than it does now. Course progress starts over; the
          play games (`puzzle.*`, `memory.*`) never moved and are kept. */
-      version: 1,
+      /* v1 → v2 (2026-11-08): Nova's Seasons and Bloo's Weather merged into
+         Bloo's Seasons and Weather (still `bloo.weather.*`, other lessons):
+         both courses' progress starts over, nothing else moves. */
+      version: 2,
       migrate: (persisted, version) => {
         const items = (persisted as { items?: Record<ItemKey, ItemProgress> } | null)?.items ?? {};
-        if (version >= 1) return { items };
+        if (version >= 2) return { items };
+        if (version === 1)
+          return { items: Object.fromEntries(Object.entries(items).filter(([key]) => !/^(nova\.seasons|bloo\.weather)\./.test(key))) };
         return {
           items: Object.fromEntries(
             Object.entries(items).filter(([key]) => /^(puzzle|memory)\./.test(key)),
