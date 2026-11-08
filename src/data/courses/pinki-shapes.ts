@@ -19,7 +19,7 @@ const rectangle: Face = { kind: "shape", shape: "rectangle" };
     given. */
 function shapeLesson(n: number, shape: ShapeId, picnic: Scene, cover = SHAPES[shape].thing.src): LessonDef {
   return {
-    reel: `/assets/learn/pinki/shapes/reels/${n}.mp4`,
+    reel: `/assets/learn/pinki/shapes/reels/${shape}.mp4`,
     cover: [cover],
     world: GARDEN[n],
     questions: [
@@ -39,8 +39,8 @@ function thing(scene: Scene, id: string): SceneItem {
 }
 
 /** Pinki · Shapes. Titles live in `dict.lessons.shapes.items`. The reels
-    are placeholders until the company's clips replace them under the same
-    names (`/assets/learn/pinki/shapes/reels/<n>.mp4`). */
+    are the real clips, H.264 720p (`tools/reels/encode.sh`):
+    `/assets/learn/pinki/shapes/reels/<shape>.mp4`. */
 export const pinkiShapes: LessonDef[] = [
   /* The see-through beach ball is lost at stop size; the donut reads round. */
   shapeLesson(1, "circle", picnic, donut),
