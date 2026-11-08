@@ -110,7 +110,7 @@
  *
  * Bloo's seasons and weather (2026-11-09) — the same farm through the year
  * (`scene.html?garden=<1-9>&world=seasons`: 1-4 a season's three places, 5-8 its weather's two,
- * 9 the review), no Find: `out/seasons-<n>-<frame>/`, then `crop.py seasons`, which joins them
+ * 9 the review), no Find: `out/seasons-<n>-<frame>/`, then `crop.py seasonsfarm`, which joins them
  * and writes `src/data/seasons-farm.ts`:
  *
  *   node tools/picnic-scene/render.cjs seasons 1 2 3 4 5 6 7 8 9
