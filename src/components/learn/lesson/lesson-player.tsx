@@ -37,6 +37,7 @@ import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
 import { LessonWorldView } from "./lesson-world";
 import { WorldDone } from "./world-done";
+import { BlooWindow } from "./bloo-window";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
 
@@ -140,11 +141,10 @@ export function LessonPlayer({
 
   const steps: Step[] = [
     ...(lesson.reel ? [{ kind: "watch" as const }] : []),
-    ...lesson.questions.map((question, index) => ({
-      kind: "question" as const,
-      question,
-      index,
-    })),
+    ...lesson.questions.flatMap((question, index): Step[] => [
+      ...(lesson.midReel?.at === index ? [{ kind: "watch" as const, src: lesson.midReel.src }] : []),
+      { kind: "question", question, index },
+    ]),
   ];
 
   const [round, setRound] = useState(0);
@@ -160,6 +160,11 @@ export function LessonPlayer({
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
   const world = lesson.world;
+  /* Bloo's round window: outside is the season until the mid reel has played,
+     then the weather. */
+  const win = lesson.window;
+  const midAt = steps.findIndex((s) => s.kind === "watch" && s.src !== undefined);
+  const view = win ? win.views[midAt >= 0 && at > midAt ? 1 : 0] ?? win.views[0] : undefined;
   /* In a world, a step shows once the camera has arrived where it plays. */
   const [arrived, setArrived] = useState(!world);
   const spell = useRef<SpellWordHandle>(null);
@@ -370,7 +375,7 @@ export function LessonPlayer({
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
         }
       : undefined;
-    if (world && arrived) {
+    if ((world && arrived) || win) {
       /* In the world (2026-11-04, on request): once the camera has risen
          over the lesson's path in bloom, the friend cheering, two short
          lines, and the one way on — no Play again. */
@@ -438,10 +443,10 @@ export function LessonPlayer({
       footStart = again;
       footEnd = finish;
     }
-  } else if (step.kind === "watch" && lesson.reel) {
+  } else if (step.kind === "watch" && (step.src ?? lesson.reel)) {
     body = (
       <ReelVideo
-        src={lesson.reel}
+        src={(step.src ?? lesson.reel) as string}
         image={image}
         loadingLabel={dict.ui.loading}
         label={format(lines.reelAbout, { title })}
@@ -464,6 +469,7 @@ export function LessonPlayer({
           plain={q.plain}
           options={q.options}
           answer={q.answer}
+          round={q.round}
           seed={seed}
           demo={showing}
           onSolved={onSolved}
@@ -673,7 +679,7 @@ export function LessonPlayer({
               world (2026-11-02) has its steps out in the world instead, on
               a stage with no board of its own, and comes back to the board
               for its end. */}
-          <StageFrame world={Boolean(world)}>
+          <StageFrame world={Boolean(world || win)}>
             <div
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
@@ -705,6 +711,7 @@ export function LessonPlayer({
         {footEnd}
       </div>
 
+      {view && <BlooWindow view={view} />}
       {world && (
         <LessonWorldView
           world={world}
