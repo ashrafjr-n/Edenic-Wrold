@@ -100,7 +100,7 @@ const feedDemo = (animal: string) => {
  */
 function animalLesson([animal, picture]: [string, StaticImageData], i: number): LessonDef {
   return {
-    reel: `/assets/learn/bloo/animals/reels/${i + 1}.mp4`,
+    reel: `/assets/learn/bloo/animals/reels/${animal}.mp4`,
     cover: [picture],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture, tilt: true },
@@ -126,8 +126,8 @@ const thing = (animal: Animal, coat: "picture" | "other"): Thing => ({
 });
 
 /** Bloo · Animals. Titles live in `dict.lessons.animals.items`. The reels
-    are placeholders until the real clips replace them under the same names
-    (`/assets/learn/bloo/animals/reels/<n>.mp4`). */
+    are the real clips, H.264 720p (`tools/reels/encode.sh`):
+    `/assets/learn/bloo/animals/reels/<animal>.mp4`. */
 export const blooAnimals: LessonDef[] = [
   ...TAUGHT.map(animalLesson),
   /* The review, no reel: the three animals in both coats into their homes
