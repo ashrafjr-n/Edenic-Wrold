@@ -6,21 +6,21 @@ export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
 
-/** The four seasons Nova's Seasons course teaches, in order. */
+/** The four seasons Bloo's Seasons and Weather teaches, in order. */
 export type Season = "spring" | "summer" | "fall" | "winter";
 
 /** The three animals of Bloo's review Sort (each has a home), in order. */
 export type Animal = "cat" | "dog" | "fish";
 
-/** The four weathers Bloo's Weather course teaches, in order. */
+/** The four weathers Bloo's Seasons and Weather teaches, each with its season. */
 export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 
 /** The five vegetables Nova's Vegetables course teaches, in order. */
 export type Vegetable = "carrot" | "broccoli" | "potato" | "tomato" | "pepper";
 
-/** A set things belong to: the season a thing goes with (Nova's Seasons),
+/** A set things belong to: the season a thing goes with (Seasons and Weather),
     the animal it is — whose home it goes in (Bloo's Animals) — the
-    weather it is worn in (Bloo's Weather), or the vegetable it is (Find
+    weather it is worn in (Seasons and Weather), or the vegetable it is (Find
     It! on Nova's kitchen counter). */
 type Group = Season | Animal | Weather | Vegetable;
 
@@ -51,7 +51,7 @@ export interface Thing {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The season it goes with (Nova's Seasons), the animal it is, or the
+  /** The season it goes with (Seasons and Weather), the animal it is, or the
       weather it is worn in. */
   group?: Group;
 }
@@ -100,8 +100,9 @@ export type Question =
       clay letters above them instead — `plain` writes it in one quiet ink,
       for a word that must be READ (a color word). `answer` indexes `options` before they
       are shuffled. `blind`: the task button's demo shows blank tiles — a
-      lesson's own word, whose answer it must not give away. */
-  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number; blind?: boolean }
+      lesson's own word, whose answer it must not give away. `round`: the
+      tiles are circles, each picture filling its own (Seasons and Weather). */
+  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number; blind?: boolean; round?: boolean }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the
@@ -294,4 +295,19 @@ export interface LessonDef {
   /** Its course's world, when the course has one; without it the steps are
       on the friend's board in their classroom. */
   world?: LessonWorld;
+  /** A second reel inside the lesson, played before question `at` (Seasons
+      and Weather: the season's steps, then the weather's reel and steps). */
+  midReel?: { src: string; at: number };
+  /** Bloo's round window (Seasons and Weather): the steps float in front of
+      it. `views[0]` is outside until the mid reel, `views[1]` after it. */
+  window?: { views: readonly WindowView[] };
+}
+
+/** What a gentle CSS layer adds to a window view, if anything. */
+export type WindowFx = "petals" | "glow" | "leaves" | "snow" | "rain" | "wind";
+
+/** One view out of Bloo's round window: a still from the reel, and its fx. */
+export interface WindowView {
+  src: StaticImageData;
+  fx?: WindowFx;
 }

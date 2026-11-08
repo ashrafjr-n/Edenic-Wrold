@@ -21,7 +21,8 @@ function findLabel(target: Target): string {
   return target.group;
 }
 
-export type Step = { kind: "watch" } | { kind: "question"; question: Question; index: number };
+/** A watch step plays the lesson's reel, or `src` — a reel inside the lesson. */
+export type Step = { kind: "watch"; src?: string } | { kind: "question"; question: Question; index: number };
 
 /** What the task chip shows for a step: its kind (icon + colour) and the
     English word the step is about. */
