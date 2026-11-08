@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { Animal, ColorId, Food, LessonDef, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
+import { ANIMALS_FARM } from "@/data/animals-farm";
 import cat from "../../../public/assets/learn/bloo/animals/things/cat.png";
 import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-grey.png";
 import dog from "../../../public/assets/learn/bloo/animals/things/dog.png";
@@ -102,6 +103,7 @@ function animalLesson([animal, picture]: [string, StaticImageData], i: number): 
   return {
     reel: `/assets/learn/bloo/animals/reels/${animal}.mp4`,
     cover: [picture],
+    world: ANIMALS_FARM[i + 1],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: animal } }, word: animal, picture, tilt: true },
       { type: "spell", ask: { key: "spell", vars: { word: animal } }, word: animal },
@@ -135,6 +137,7 @@ export const blooAnimals: LessonDef[] = [
      alone — in the coat the lessons did not show. */
   {
     cover: ORDER.map((animal) => ANIMALS[animal].picture),
+    world: ANIMALS_FARM[TAUGHT.length + 1],
     questions: [
       {
         type: "sort",
