@@ -122,6 +122,11 @@
  * Nova's My Garden (2026-11-08): `node tools/picnic-scene/render.cjs stops garden`, then
  * `crop.py stops garden` → `src/data/garden-stops.ts`.
  *
+ * Bloo's Animals and Seasons and Weather (2026-11-08): `render.cjs stops animals` (180
+ * frames) / `stops weather` (90) — the lesson's own picture on each slab
+ * (`stop-pictures.cjs`); then `crop.py stops animals|weather` → `src/data/animals-stops.ts` /
+ * `src/data/weather-stops.ts`.
+ *
  * Colors' (2026-11-06) — 180 frames, ten ways; then `crop.py stops colors`,
  * which writes `src/data/color-stops.ts`:
  *
@@ -153,6 +158,7 @@
 const { chromium } = require(process.env.PW || "playwright");
 const fs = require("fs");
 const path = require("path");
+const { stopPictures } = require("./stop-pictures.cjs");
 
 const [mode, ...specs] = process.argv.slice(2);
 const page_ = (browser) => browser.newPage({ viewport: { width: 1000, height: 1250 } });
@@ -177,12 +183,12 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        its own `out/stops-colors-<frame>/`, longer, a mask per way (ten). */
     /* `stops fruits` (2026-11-06) is Nova's Vegetables: `out/stops-fruits-<frame>/`,
        100 frames, five ways. */
-    const course = ["colors", "fruits", "garden"].includes(specs[0]) ? specs[0] : "shapes";
+    const course = ["colors", "fruits", "garden", "animals", "weather"].includes(specs[0]) ? specs[0] : "shapes";
     const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : course === "garden" ? [120, 49] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -192,6 +198,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       }
       await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops${colors ? `&course=${course}` : ""}`);
       await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+      /* Bloo's: the animals' and the seasons' pictures go on before the first frame. */
+      if (stopPictures(course).length) await page.evaluate((urls) => window.garden.setPictures(urls), stopPictures(course));
       const [ways, drops] = await page.evaluate(() => [window.garden.ways, window.garden.drops]);
       for (let f = 0; f < FRAMES; f++) {
         const name = String(f).padStart(3, "0");
