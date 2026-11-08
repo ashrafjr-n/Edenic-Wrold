@@ -2,6 +2,7 @@ import type { StaticImageData } from "next/image";
 import type { ColorId, Face, LessonDef, Season, SortBin, Thing, Weather, WindowView } from "@/types/course";
 import { COLORS } from "@/data/colors";
 import { WEAR } from "@/data/bloo-wear";
+import { SEASONS_FARM } from "@/data/seasons-farm";
 import spring from "../../../public/assets/learn/nova/seasons/scenes/spring.png";
 import summer from "../../../public/assets/learn/nova/seasons/scenes/summer.png";
 import fall from "../../../public/assets/learn/nova/seasons/scenes/fall.png";
@@ -18,10 +19,6 @@ import leaf from "../../../public/assets/learn/nova/seasons/things/maple.png";
 import pumpkin from "../../../public/assets/learn/nova/seasons/things/pumpkin.png";
 import snowman from "../../../public/assets/learn/nova/seasons/things/snowman.png";
 import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflake.png";
-import springView from "../../../public/assets/learn/bloo/seasons-weather/window/spring.jpg";
-import summerView from "../../../public/assets/learn/bloo/seasons-weather/window/summer.jpg";
-import fallView from "../../../public/assets/learn/bloo/seasons-weather/window/fall.jpg";
-import winterView from "../../../public/assets/learn/bloo/seasons-weather/window/winter.jpg";
 import sunnyView from "../../../public/assets/learn/bloo/seasons-weather/window/sunny.jpg";
 import rainyView from "../../../public/assets/learn/bloo/seasons-weather/window/rainy.jpg";
 import windyView from "../../../public/assets/learn/bloo/seasons-weather/window/windy.jpg";
@@ -29,13 +26,13 @@ import snowyView from "../../../public/assets/learn/bloo/seasons-weather/window/
 
 /** Each season: its weather (the user's merge, 2026-11-08: summer → sunny,
     and so on), the two other weathers on the question's circles, its
-    picture (its island), its view out of Bloo's window and its clay color
+    picture (its island) and its clay color
     (the review's box). In teaching order. */
-const SEASONS: Record<Season, { weather: Weather; others: [Weather, Weather]; picture: StaticImageData; view: WindowView; box: ColorId }> = {
-  spring: { weather: "rainy", others: ["snowy", "sunny"], picture: spring, view: { src: springView, fx: "petals" }, box: "green" },
-  summer: { weather: "sunny", others: ["snowy", "rainy"], picture: summer, view: { src: summerView, fx: "glow" }, box: "yellow" },
-  fall: { weather: "windy", others: ["snowy", "sunny"], picture: fall, view: { src: fallView, fx: "leaves" }, box: "orange" },
-  winter: { weather: "snowy", others: ["sunny", "rainy"], picture: winter, view: { src: winterView, fx: "snow" }, box: "blue" },
+const SEASONS: Record<Season, { weather: Weather; others: [Weather, Weather]; picture: StaticImageData; box: ColorId }> = {
+  spring: { weather: "rainy", others: ["snowy", "sunny"], picture: spring, box: "green" },
+  summer: { weather: "sunny", others: ["snowy", "rainy"], picture: summer, box: "yellow" },
+  fall: { weather: "windy", others: ["snowy", "sunny"], picture: fall, box: "orange" },
+  winter: { weather: "snowy", others: ["sunny", "rainy"], picture: winter, box: "blue" },
 };
 const SEASON_ORDER = Object.keys(SEASONS) as Season[];
 
@@ -61,16 +58,17 @@ const viewFace = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[w
  * the season's reel → its word → spell it → "what is the weather in
  * summer?", three round views (its weather + two others, the demo blind) →
  * the weather's reel → its word → spell it. No other activity. In Bloo's
- * round window: the season outside, then the weather after its reel.
+ * farm (`data/seasons-farm.ts`): the season's places, then the weather's after its reel
+ * (the camera cuts there, under the reel).
  */
-function seasonLesson(season: Season): LessonDef {
-  const { weather, others, picture, view } = SEASONS[season];
+function seasonLesson(season: Season, i: number): LessonDef {
+  const { weather, others, picture } = SEASONS[season];
   const options = [weather, ...others];
   return {
     reel: `${REELS}/${season}.mp4`,
     midReel: { src: `${REELS}/${weather}.mp4`, at: 3 },
     cover: [picture, WEATHERS[weather].picture],
-    window: { views: [view, WEATHERS[weather].view] },
+    world: SEASONS_FARM[i + 1],
     questions: [
       { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
@@ -97,12 +95,12 @@ const wearThing = (weather: Weather, k: 0 | 1): Thing => {
     in `dict.lessons.weather.items`. Reels: `tools/reels/encode.sh`, by word. */
 export const blooSeasonsWeather: LessonDef[] = [
   ...SEASON_ORDER.map(seasonLesson),
-  /* The review, no reel, by the window on a summer sky: things into their
+  /* The review, no reel, on the farm in summer sun: things into their
      season's box, then what is worn into its weather's, then a season and
      a weather spelled from their picture alone. */
   {
     cover: SEASON_ORDER.map((season) => SEASONS[season].picture),
-    window: { views: [{ src: summerView }] },
+    world: SEASONS_FARM[SEASON_ORDER.length + 1],
     questions: [
       {
         type: "sort",
