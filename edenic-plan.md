@@ -601,7 +601,7 @@ picture comes back when the user brings better ones. Built for Shapes. **The use
 
 ### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
 
-Animals, Seasons and Weather are **POSTPONED**: their activities wait until
+Animals is **POSTPONED** (Seasons and Weather were merged into one Bloo course and built 2026-11-08): their activities wait until
 better ideas come (Seasons' hill world is built and stays; Animals' and
 Weather's worlds wait with them). Nothing is built for them until then.
 
@@ -680,7 +680,7 @@ leaves). The question's three circles: the right weather + two others.
 - The same script makes Shapes', Colors', Vegetables' and Animals' reels
   once the user picks from `edenic world learn`.
 
-**B. Seasons and Weather (Bloo) — the build order**
+**B. Seasons and Weather (Bloo) — BUILT 2026-11-08** (course id kept `weather`; the course page stays Bloo's board for now — the four-windows page below is NOT built; detail in `claude-docs/learn-courses.md`)
 1. Data: a new course `seasons-weather` in `data/courses/bloo-seasons-weather.ts`,
    4 lessons + a review; the old `nova-seasons.ts` and `bloo-weather.ts`
    go (their pictures reused where they fit), `lessons.ts`: Bloo =
