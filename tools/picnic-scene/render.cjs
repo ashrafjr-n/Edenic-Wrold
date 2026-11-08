@@ -95,6 +95,13 @@
  *
  *   node tools/picnic-scene/render.cjs veg 1 2 3 4 5 6
  *
+ * Nova's My Garden (2026-11-08) — the course's world, the same kit as the
+ * forest (`scene.html?garden=<1-7>&world=mygarden`; 1-6 the things in order,
+ * 7 the review): `out/mygarden-<n>-<frame>/`, then `crop.py mygarden`, which
+ * writes `src/data/my-garden.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs mygarden 1 2 3 4 5 6 7
+ *
  * Nova's hill (2026-11-05) — The Seasons' world, the same kit
  * (`scene.html?garden=<1-5>&world=hill`, the seasons in order, 5 the review):
  * `out/hill-<n>-<frame>/`, then `crop.py hill`, which writes
@@ -111,6 +118,9 @@
  *
  * Nova's Vegetables (2026-11-06): `node tools/picnic-scene/render.cjs stops fruits`, then
  * `crop.py stops fruits` → `src/data/veg-stops.ts`.
+ *
+ * Nova's My Garden (2026-11-08): `node tools/picnic-scene/render.cjs stops garden`, then
+ * `crop.py stops garden` → `src/data/garden-stops.ts`.
  *
  * Colors' (2026-11-06) — 180 frames, ten ways; then `crop.py stops colors`,
  * which writes `src/data/color-stops.ts`:
@@ -158,7 +168,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -167,12 +177,12 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        its own `out/stops-colors-<frame>/`, longer, a mask per way (ten). */
     /* `stops fruits` (2026-11-06) is Nova's Vegetables: `out/stops-fruits-<frame>/`,
        100 frames, five ways. */
-    const course = specs[0] === "colors" || specs[0] === "fruits" ? specs[0] : "shapes";
+    const course = ["colors", "fruits", "garden"].includes(specs[0]) ? specs[0] : "shapes";
     const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : course === "garden" ? [120, 49] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -259,7 +269,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${name}&frame=${frame}`)).backdrop);
     }
-  } else if (["garden", "forest", "veg", "hill"].includes(mode)) {
+  } else if (["garden", "forest", "mygarden", "veg", "hill"].includes(mode)) {
     /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
        — each station's still, every frame of each camera move (`m<i>/`;
        move 0 is the entry, the last the end's rise over the path in
@@ -308,7 +318,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.mkdirSync(kitchen);
           fs.writeFileSync(path.join(out, "kitchen.json"), JSON.stringify(await page.evaluate(() => window.garden.kitchenMeta())));
           for (const [layer, url] of Object.entries(await page.evaluate(() => window.garden.kitchenLayers()))) save(kitchen, layer, url);
-        } else if (mode !== "hill" && Number(lesson) <= (mode === "forest" ? 10 : 4)) {
+        } else if (mode !== "hill" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 6 : 4)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");
