@@ -4293,7 +4293,11 @@ const FRUITS_STOPS = STOPS && params.get("course") === "fruits";
 const MY_GARDEN = params.get("world") === "mygarden";
 /* Bloo's farm (2026-11-08): the Animals course's lessons' world (`?garden=<1-10>&world=farm`,
    9 animals in order, 10 the review) — My Garden's kit, a sunny blue-green farm, no Find. */
-const FARM = params.get("world") === "farm";
+/* Bloo's seasons and weather (`?garden=<1-9>&world=seasons`, 2026-11-09): the same farm through the
+   year — 1-4 a season's first three places, 5-8 its weather's two (the camera cuts there, under
+   the weather's reel), 9 the review. */
+const SEAS = params.get("world") === "seasons";
+const FARM = params.get("world") === "farm" || SEAS;
 const GARDEN_STOPS = STOPS && params.get("course") === "garden";
 /* Bloo's Animals and Seasons and Weather as worlds of stops (2026-11-08): the
    lesson's own picture on each slab (an animal, a round window on a season),
@@ -5197,7 +5201,21 @@ if (THING) {
   /* The forest and My Garden: places along one path, the Find standing in the world. */
   const ON_PATH = FOREST || MY_GARDEN || FARM;
   /* The farm's animal (1-9), or null for its review (10). */
-  const FARM_KIND = FARM ? FARM_KINDS[LESSON - 1] ?? null : null;
+  const FARM_KIND = FARM && !SEAS ? FARM_KINDS[LESSON - 1] ?? null : null;
+  /* The seasons' farm: which season and weather this part is, how many places, and their words. */
+  const SEAS_SEASONS = ["spring", "summer", "fall", "winter"], SEAS_WEATHERS = ["rainy", "sunny", "windy", "snowy"];
+  const SEAS_SEASON = SEAS ? (LESSON <= 4 ? SEAS_SEASONS[LESSON - 1] : LESSON <= 8 ? SEAS_SEASONS[LESSON - 5] : "summer") : null;
+  const SEAS_WEATHER = SEAS ? (LESSON >= 5 && LESSON <= 8 ? SEAS_WEATHERS[LESSON - 5] : LESSON === 9 ? "sunny" : null) : null;
+  const SEAS_STEPS = LESSON <= 4 ? 3 : LESSON <= 8 ? 2 : 4;
+  const SEAS_LOOK = {
+    spring: { sky: ["#9fcdf2", "#cfe6f7", "#e6f1e2", "#f6f1dc"], lawn: ["#a5de84", "#9cd77b"], trees: [0xffa3c8, 0xffc4dc, 0x9fdc86, 0x8fd27a], roof: 0x6fa3e4, petals: [0xff8fb8, 0xffffff, 0xffc4dc, 0xc7a3f0] },
+    summer: { sky: ["#6fb9f0", "#a9d8f5", "#e6f3e6", "#f6f1c8"], lawn: ["#8fd46f", "#86cb68"], trees: [0x7fd36a, 0x62bf62, 0x8fd27a, 0x6fcf8f], roof: 0x6fa3e4, petals: [0xffd45e, 0xffffff, 0xff9f8a, 0x9cc4f2] },
+    fall: { sky: ["#a9c8e6", "#d9dfe6", "#f3e3c8", "#f8e7c4"], lawn: ["#c9cf72", "#c0c76a"], trees: [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xc9573a], roof: 0xb9745a, petals: [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xffffff] },
+    winter: { sky: ["#b9cde4", "#d6e2ee", "#e9eff5", "#f4f6f9"], lawn: ["#f4f8fb", "#e9f0f6"], trees: [0xffffff, 0xe8f2fb, 0xdbeaf6, 0xf3f7fb], roof: 0xf2f7fb, petals: [0xffffff, 0xdbeaf6, 0xffffff, 0xc9dcf2] },
+  };
+  const SEAS_WEATHER_SKY = { rainy: ["#8d9fb0", "#aebbc7", "#c5cfd6", "#d6dcdf"], sunny: ["#5fb2f0", "#9fd4f6", "#f1f0c9", "#fbf2c4"], windy: ["#9fc0e4", "#cfdeec", "#ecdfc9", "#f6e8cc"], snowy: ["#c4d0dd", "#dbe3eb", "#edf1f5", "#f6f8fa"] };
+  const LOOK = SEAS ? SEAS_LOOK[SEAS_SEASON] : null;
+  const SKY = SEAS ? SEAS_WEATHER_SKY[SEAS_WEATHER] ?? LOOK.sky : ["#9fcdf2", "#cfe6f7", "#e6f1e2", "#f6f1dc"];
   /* The hill's season; lesson 5 is the review, all four in turn. */
   const YEAR = ["spring", "summer", "fall", "winter"];
   const HILL_SEASON = YEAR_HILL ? YEAR[LESSON - 1] ?? null : null;
@@ -5218,22 +5236,22 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, FARM ? "#9fcdf2" : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, FARM ? "#cfe6f7" : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, FARM ? "#e6f1e2" : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, FARM ? "#f6f1dc" : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = FARM ? new THREE.Fog(0xe0eef2, 28, 92) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 14, 64) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 14, 64) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(0xeaf4ff);
   sky.groundColor.set(0xc0e0a4);
   sky.intensity = 1.05;
   sun.color.set(0xfff0da);
-  sun.intensity = 2.25;
+  sun.intensity = SEAS_WEATHER === "rainy" ? 1.35 : SEAS_WEATHER === "snowy" ? 1.5 : SEAS_WEATHER === "sunny" ? 2.6 : 2.25;
   scene.environmentIntensity = 0.42;
   Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 });
   sun.shadow.camera.updateProjectionMatrix();
@@ -5272,9 +5290,9 @@ if (THING) {
   lawnCanvas.width = 4;
   lawnCanvas.height = 64;
   const lctx = lawnCanvas.getContext("2d");
-  lctx.fillStyle = FARM ? "#9bd77b" : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
+  lctx.fillStyle = FARM ? (LOOK ? LOOK.lawn[0] : "#9bd77b") : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
   lctx.fillRect(0, 0, 4, 64);
-  lctx.fillStyle = FARM ? "#92cf74" : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
+  lctx.fillStyle = FARM ? (LOOK ? LOOK.lawn[1] : "#92cf74") : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
   lctx.fillRect(0, 0, 4, 32);
   const lawnTex = new THREE.CanvasTexture(lawnCanvas);
   lawnTex.colorSpace = THREE.SRGBColorSpace;
@@ -5429,7 +5447,7 @@ if (THING) {
   /* The forest: the places along the path, 5.6 apart — the word, the
      spelling, (a mix), then the Find; the review has five
      places and no Find. */
-  const FOREST_STEPS = FARM ? 3 : MY_GARDEN ? (MY_KIND ? 2 : 4) : !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
+  const FOREST_STEPS = FARM ? (SEAS ? SEAS_STEPS : 3) : MY_GARDEN ? (MY_KIND ? 2 : 4) : !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
   const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID || MY_KIND ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
@@ -5644,7 +5662,7 @@ if (THING) {
     out.add(g);
     return out;
   }
-  function barn() {
+  function barn(roof = 0x6fa3e4) {
     const g = new THREE.Group();
     g.add(at(rbox(5, 3, 4, soft(0xfbf1de, { roughness: 0.85 }), 0.12), 0, 1.5, 0));
     const gable = new THREE.Shape();
@@ -5653,7 +5671,7 @@ if (THING) {
     gable.lineTo(0, 1.72);
     gable.lineTo(-2.45, 0);
     for (const z of [1.9, -2.0]) g.add(at(mesh(new THREE.ExtrudeGeometry(gable, { depth: 0.1, bevelEnabled: false }), soft(0xfbf1de, { roughness: 0.85 })), 0, 3, z));
-    const roofM = soft(0x6fa3e4, { roughness: 0.8 });
+    const roofM = soft(roof, { roughness: 0.8 });
     for (const sgn of [-1, 1]) {
       const panel = at(rbox(3.15, 0.2, 4.5, roofM, 0.08), sgn * 1.25, 3.86, 0);
       panel.rotation.z = -sgn * 0.6;
@@ -5668,10 +5686,10 @@ if (THING) {
     g.add(at(mesh(new THREE.CircleGeometry(0.4, 32), soft(0x7fb0ea)), 0, 3.5, 2.03));
     return g;
   }
-  function silo() {
+  function silo(roof = 0x6fa3e4) {
     const g = new THREE.Group();
     g.add(at(mesh(new THREE.CylinderGeometry(1, 1, 4.6, 40), soft(0xfbf1de, { roughness: 0.85 })), 0, 2.3, 0));
-    const dome = at(ball(1.05, soft(0x6fa3e4, { roughness: 0.8 }), 40), 0, 4.6, 0);
+    const dome = at(ball(1.05, soft(roof, { roughness: 0.8 }), 40), 0, 4.6, 0);
     dome.scale.y = 0.7;
     g.add(dome);
     return g;
@@ -5764,6 +5782,7 @@ if (THING) {
   const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
   const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.8 && z > -2.4 && z < 3.4);
   const pick = (list) => list[Math.floor(rand() * list.length)];
+  if (SEAS) GARDEN_TONES.tree.splice(0, 4, ...LOOK.trees);
 
   const cobbleM = [0xf3e2c0, 0xe9d3a8, 0xfbf0d8, 0xe6d0a0].map((c) => stone(c));
   const pathZ = (x) => 3.9 + Math.sin(x * 0.11) * 0.35;
@@ -5779,13 +5798,14 @@ if (THING) {
   for (let row = 0; row < 5; row++) {
     const z0 = -15 - row * 7.5;
     for (let x = -36; x < 124; x += 4.6 + rand() * 4.2) {
-      add(gardenThing("tree", 1 + Math.floor(rand() * 2)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
+      const tree = add(gardenThing("tree", SEAS ? Math.floor(rand() * 4) : 1 + Math.floor(rand() * 2)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
+      if (SEAS_WEATHER === "windy") tree.rotation.z = -0.13;
     }
   }
 
   [[-24, -11.5, 0.3], [5, -11.8, 0.1], [33, -12, -0.15], [62, -11.5, 0.2], [93, -12, -0.1]].forEach(([x, z, ry], i) => {
-    add(barn(), x, 0, z, { ry, k: 1.1 });
-    add(silo(), x + 4.2, 0, z - 0.8, { k: 0.95 });
+    add(barn(LOOK?.roof), x, 0, z, { ry, k: 1.1 });
+    add(silo(LOOK?.roof), x + 4.2, 0, z - 0.8, { k: 0.95 });
     for (let b = 0; b < 3; b++) add(hayBale(), x - 4 - b * 1.25, 0, z + 0.6 + (b % 2) * 0.3, { ry: rand() * 0.4 });
   });
 
@@ -5798,7 +5818,7 @@ if (THING) {
     const x = -26 + rand() * 146, z = -6.5 + rand() * 6;
     if (!busy(x, z)) add(hayBale(), x, 0, z, { k: 0.9 + rand() * 0.3, ry: rand() * 6 });
   }
-  const petals = [0xffd45e, 0xffffff, 0xff9f8a, 0x9cc4f2];
+  const petals = LOOK ? LOOK.petals : [0xffd45e, 0xffffff, 0xff9f8a, 0x9cc4f2];
   for (let i = 0; i < 60; i++) {
     const cx = -26 + rand() * 150, cz = -6.5 + rand() * 9.5;
     const c = pick(petals);
@@ -5809,6 +5829,38 @@ if (THING) {
   }
   for (let x = -30; x < 126; x += 3 + rand() * 3) add(gardenThing("grass", Math.floor(rand() * 4)), x, 0, 7.6 + rand() * 1.8, { k: 1.4 + rand() * 0.5 });
   for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
+  if (SEAS) {
+    /* The season's and the weather's extras, in the places' reach (x -20 to the last place + 20). */
+    const X0 = -20, X1 = SEAS_STEPS * STEP_DX + 20;
+    const spread = (n, make) => { for (let i = 0; i < n; i++) make(X0 + rand() * (X1 - X0), -12 + rand() * 19, i); };
+    if (SEAS_SEASON === "fall") {
+      for (const c of [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xc9573a]) for (let i = 0; i < 40; i++) { const l = ball(0.14, soft(c), 12); l.scale.set(1.5, 0.12, 1); add(l, X0 + rand() * (X1 - X0), 0.05, -6 + rand() * 12, { ry: rand() * 6 }); }
+    }
+    if (SEAS_SEASON === "winter") {
+      for (const [x, z] of [[-6, 1.6], [SEAS_STEPS * STEP_DX + 3, 0.6], [SEAS_STEPS * STEP_DX * 0.5, -3]]) {
+        const m = soft(0xffffff, { roughness: 0.9 });
+        add(ball(0.75, m, 28), x, 0.7, z); add(ball(0.55, m, 28), x, 1.8, z); add(ball(0.38, m, 28), x, 2.55, z);
+        const nose = mesh(new THREE.ConeGeometry(0.07, 0.4, 12), soft(0xff8a3c)); nose.rotation.x = Math.PI / 2; add(nose, x, 2.55, z + 0.4);
+      }
+    }
+    if (SEAS_WEATHER === "rainy") {
+      spread(900, (x, z) => { const d = mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.8, 5), soft(0xc4def5)); d.castShadow = false; add(d, x, 0.4 + rand() * 8, z, { ry: 0 }).rotation.z = 0.14; });
+      spread(14, (x, z) => { const p = mesh(new THREE.CylinderGeometry(0.7 + rand() * 0.5, 0.7 + rand() * 0.5, 0.02, 32), soft(0xa9c9e6, { roughness: 0.3 })); p.scale.z = 0.6; p.castShadow = false; add(p, x, 0.025, 1 + rand() * 5); });
+    }
+    if (SEAS_WEATHER === "snowy") spread(1100, (x, z) => { const f = ball(0.05 + rand() * 0.06, soft(0xffffff), 8); f.castShadow = false; add(f, x, 0.2 + rand() * 9, z); });
+    if (SEAS_WEATHER === "windy") {
+      spread(90, (x, z) => { const l = ball(0.1, soft(pick([0x7fd36a, 0xf2a44a, 0xf5cf5a, 0xe2763a])), 10); l.scale.set(2.2, 0.35, 1); l.castShadow = false; add(l, x, 0.6 + rand() * 6, z, { ry: rand() * 3 }); });
+      spread(50, (x, z) => { const s = rbox(1.6 + rand(), 0.035, 0.035, soft(0xffffff), 0.015); s.castShadow = false; add(s, x, 0.8 + rand() * 6, z); });
+    }
+    if (SEAS_WEATHER === "sunny") {
+      const sunMid = (X0 + X1) / 2;
+      const disc = new THREE.Mesh(new THREE.SphereGeometry(7, 40, 20), new THREE.MeshBasicMaterial({ color: 0xfff4b8, fog: false }));
+      disc.position.set(sunMid, 12.5, -72);
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(11, 40, 20), new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.28, fog: false }));
+      halo.position.copy(disc.position);
+      scene.add(disc, halo);
+    }
+  }
 
   } else if (FOREST) {
   /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
@@ -7294,7 +7346,25 @@ if (THING) {
        picture is the page's), so the places are only things on the way: hay for the
        word, letter blocks for the spelling, a trough for the feeding. The review:
        the sort at hay, then two sets of letter blocks. */
-    ? FARM_KIND
+    ? SEAS
+      ? LESSON <= 4
+        ? [
+            { x: 0, make: () => hayStack(), k: 1.4, color: 0xffd45e },
+            { x: STEP_DX, make: () => letterBlocks(SEAS_SEASON), k: 1.7, color: 0x9cc4f2 },
+            { x: STEP_DX * 2, make: () => hayStack(), k: 1.4, color: 0xff9f8a },
+          ]
+        : LESSON <= 8
+        ? [
+            { x: 0, make: () => hayStack(), k: 1.4, color: 0xffd45e },
+            { x: STEP_DX, make: () => letterBlocks(SEAS_WEATHER), k: 1.7, color: 0x9cc4f2 },
+          ]
+        : [
+            { x: 0, make: () => hayStack(), k: 1.4, color: 0xffd45e },
+            { x: STEP_DX, make: () => hayStack(), k: 1.4, color: 0x9cc4f2 },
+            { x: STEP_DX * 2, make: () => letterBlocks("winter"), k: 1.7, color: 0xff9f8a },
+            { x: STEP_DX * 3, make: () => letterBlocks("sunny"), k: 1.7, color: 0xffd45e },
+          ]
+    : FARM_KIND
       ? [
           { x: 0, make: () => hayStack(), k: 1.4, color: 0xffd45e },
           { x: STEP_DX, make: () => letterBlocks(FARM_KIND), k: 1.7, color: 0x9cc4f2 },
