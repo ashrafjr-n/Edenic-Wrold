@@ -763,8 +763,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
 
       <div
         className="world-frame course-world-stops z-10"
-        /* Pinki's pink shadows stay hers; Nova's badge and lock chip cast her own. */
-        style={characterId === "pinki" ? undefined : ({ "--go-shadow": "color-mix(in srgb, var(--page-accent-edge) 65%, transparent)", "--mark-shadow": "rgb(70 50 120 / 35%)" } as CSSProperties)}
+        /* Pinki's pink shadows stay hers; Nova's badge and lock chip cast her own, Bloo's his (a deep blue). */
+        style={characterId === "pinki" ? undefined : ({ "--go-shadow": "color-mix(in srgb, var(--page-accent-edge) 65%, transparent)", "--mark-shadow": characterId === "bloo" ? "rgb(40 90 150 / 35%)" : "rgb(70 50 120 / 35%)" } as CSSProperties)}
       >
         <div className="world-cover" style={worldCover(wide)}>
           {titles.map((title, i) => {
