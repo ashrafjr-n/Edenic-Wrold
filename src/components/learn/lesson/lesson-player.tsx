@@ -214,12 +214,14 @@ export function LessonPlayer({
 
   /* The station of the world the camera stands at for step `i` of `steps` (-1
      during the reel; one past the last step is the lesson's end). */
-  const stationAt = (i: number) => {
+  const stationAt = (i: number): number => {
     if (!world) return -1;
     const own = world.stepStation;
     if (i >= steps.length) return world.stations.length - 1;
     const there = steps[i];
-    if (there.kind === "watch") return -1;
+    /* The lesson's own reel is before the world; a reel in the middle (Seasons and Weather's weather reel)
+       holds the camera where it stands. */
+    if (there.kind === "watch") return i === 0 ? -1 : stationAt(i - 1);
     return own ? own[Math.min(there.index, own.length - 1)] : there.index;
   };
 
