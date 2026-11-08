@@ -86,8 +86,8 @@ export const en = {
   },
   characters: {
     pinki: { tagline: "Finds every shape and color in the whole wide world." },
-    nova: { tagline: "Grows yummy vegetables and watches the seasons change." },
-    bloo: { tagline: "Says hello to every animal and every kind of weather." },
+    nova: { tagline: "Grows yummy vegetables and spells every one." },
+    bloo: { tagline: "Says hello to every animal and watches the seasons and the weather." },
   },
   lessons: {
     shapes: {
@@ -105,20 +105,15 @@ export const en = {
       description: "Yummy things to eat and how to spell them",
       items: ["Carrot", "Broccoli", "Potato", "Tomato", "Pepper", "Market review"],
     },
-    seasons: {
-      name: "The Seasons",
-      description: "Spring, summer, fall and winter",
-      items: ["Spring", "Summer", "Fall", "Winter", "Seasons review"],
-    },
     animals: {
       name: "Animals",
       description: "Cat, dog, fish, elephant and more",
       items: ["Cat", "Dog", "Fish", "Elephant", "Mouse", "Bird", "Parrot", "Turtle", "Gecko", "Animals review"],
     },
     weather: {
-      name: "The Weather",
-      description: "Sunny, rainy, windy, snowy",
-      items: ["Sunny", "Rainy", "Windy", "Snowy", "Weather review"],
+      name: "Seasons and Weather",
+      description: "Spring, summer, fall, winter — and their weather",
+      items: ["Spring · Rainy", "Summer · Sunny", "Fall · Windy", "Winter · Snowy", "Seasons and weather review"],
     },
   },
   characterHub: {
@@ -190,7 +185,6 @@ export const en = {
     spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
     sortSeasons: "Put each thing in its season's box!",
-    orderSeasons: "Put the seasons in order!",
     sortAnimals: "Put each animal in its home!",
     meetThing: "Meet the {thing}!",
     feedAnimal: "What does the {thing} eat? Feed it!",
@@ -199,7 +193,7 @@ export const en = {
     likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
     sortWeather: "Put each thing in its weather's box!",
-    whichWeather: "Which one is {weather}?",
+    weatherIn: "What is the weather in {season}?",
     pickList: "Pick the things on Nova's list!",
   },
   /** The task chip's one verb per kind of step. */
