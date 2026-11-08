@@ -6,6 +6,7 @@ import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
+import { novaGarden } from "./nova-garden";
 import { blooAnimals } from "./bloo-animals";
 import { blooSeasonsWeather } from "./bloo-seasons-weather";
 
@@ -15,6 +16,7 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   shapes: pinkiShapes,
   colors: pinkiColors,
   fruits: novaFruits,
+  garden: novaGarden,
   animals: blooAnimals,
   weather: blooSeasonsWeather,
 };
