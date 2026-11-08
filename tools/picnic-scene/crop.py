@@ -323,9 +323,9 @@ if NAME == "stops":
         "fruits": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
         # My Garden (2026-11-08): measured the same way (best fit on frames 10-110).
         "garden": {"landscape": [50, 4, 1.016], "portrait": [50, 22, 1.037]},
-        # Bloo's (2026-11-08): measured with the flow fit after a render (see render.cjs notes).
-        "animals": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
-        "weather": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
+        # Bloo's (2026-11-08): best fit on neighbouring frames, as the others.
+        "animals": {"landscape": [50, 12, 1.024], "portrait": [50, 20, 1.037]},
+        "weather": {"landscape": [50, 0, 1.015], "portrait": [50, 18, 1.032]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
