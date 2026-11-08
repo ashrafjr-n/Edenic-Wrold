@@ -484,7 +484,7 @@ export function LessonPlayer({
     } else if (q.type === "word") {
       body = (
         <WordCard
-          onScene={Boolean(world && (q.color || q.shape))}
+          onScene={Boolean(world && !q.picture)}
           word={q.word}
           shape={q.shape}
           picture={q.picture}
