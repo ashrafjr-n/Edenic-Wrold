@@ -1,7 +1,8 @@
 /** A course. The route segment too: `/learn/pinki/shapes`. */
 export type LessonId =
   | "shapes" | "colors"
-  | "fruits" | "seasons"
+  | "fruits"
+  /* `weather` is Bloo's Seasons and Weather (Nova's Seasons merged in, 2026-11-08). */
   | "animals" | "weather";
 
 /** A course's own colour world (its cards, banner, path and buttons).

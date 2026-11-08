@@ -6,9 +6,8 @@ import { SHAPES } from "@/data/shapes";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
-import { novaSeasons } from "./nova-seasons";
 import { blooAnimals } from "./bloo-animals";
-import { blooWeather } from "./bloo-weather";
+import { blooSeasonsWeather } from "./bloo-seasons-weather";
 
 /** Every course's lessons, by course id. A course's `totalItems` is the
     length of its list here. */
@@ -16,9 +15,8 @@ export const courseLessons: Record<LessonId, LessonDef[]> = {
   shapes: pinkiShapes,
   colors: pinkiColors,
   fruits: novaFruits,
-  seasons: novaSeasons,
   animals: blooAnimals,
-  weather: blooWeather,
+  weather: blooSeasonsWeather,
 };
 
 /** A course's pictures, for its card and banner: every lesson's cover, each
