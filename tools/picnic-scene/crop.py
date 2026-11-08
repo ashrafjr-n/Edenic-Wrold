@@ -54,14 +54,6 @@ scenes/<season>.png`.
 
     python3 tools/picnic-scene/crop.py seasons
 
-Bloo dressed for each weather (the Weather lessons' "Which weather?",
-2026-11-01) — run after `render.cjs thing bloo-sunny=bloo:sunny@float …`
-(all four): crops the four on ONE box (they are a Pick's tiles), at most
-640px, with the grain (none on the faces), into
-`public/assets/learn/bloo/weather/dressed/<weather>.png`.
-
-    python3 tools/picnic-scene/crop.py bloo
-
 Bloo's weather — run after `render.cjs thing weather-sunny=weather:sunny@float
 …` (all four): crops the four pictures on ONE box (they match — the review's
 boxes and picks), at most 640px, with the grain, into
@@ -152,9 +144,6 @@ def one_box(prefix, names, dest):
         grain(cut, zlib.crc32(n.encode()), keep).save(os.path.join(dest, f"{n}.png"), optimize=True)
     sys.exit()
 
-
-if NAME == "bloo":
-    one_box("bloo", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/dressed")
 
 if NAME == "weather":
     one_box("weather", ["sunny", "rainy", "windy", "snowy"], "public/assets/learn/bloo/weather/scenes")
