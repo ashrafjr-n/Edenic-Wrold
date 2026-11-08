@@ -713,7 +713,7 @@ watches the year go by.*
 - The course page: the four seasons as four small round windows on Bloo's
   wall, one lit per lesson done (instead of a world of stops).
 
-**C. My Garden (Nova) — DECIDED 2026-11-08: Nova's second course**
+**C. My Garden (Nova) — BUILT 2026-11-08: Nova's second course** (course id `garden`; flower · tree · leaf · grass · nest · **bench** — `pond` swapped for `bench`, four ponds don't stand in a Find; detail in `claude-docs/learn-courses.md`)
 - Fruits: no videos exist → out. My Garden: 19 videos, all prepared in
   `public/assets/learn/nova/garden/reels/` (bench, birdhouse, flower,
   flower-pot, fountain, gate, grass, hose, lawn-mower, leaf, nest, pond,
@@ -734,7 +734,7 @@ watches the year go by.*
 
 - **The gold chest at the end of a course's world gives ONE star** when the
   child reaches it and it opens (light). One star per course: Pinki 2
-  (Shapes, Colors), Nova 2 (Vegetables, Seasons), Bloo 2 (Animals, Weather).
+  (Shapes, Colors), Nova 2 (Vegetables, My Garden), Bloo 2 (Animals, Seasons and Weather).
   Not coins, no shop (the sticker idea was floated, the user chose stars).
 - **Play becomes ONE big game made of stages.** The child plays the first
   stages alone. After a few, **Pinki joins** — to unlock her and carry on
