@@ -21,8 +21,8 @@ interface PageTransitionState {
   active: boolean;
   /** The clouds' colour: white, or the friend's (going in to their course's
       world). */
-  tint: "white" | "pink" | "lavender";
-  start: (tint?: "white" | "pink" | "lavender") => void;
+  tint: "white" | "pink" | "lavender" | "bloo";
+  start: (tint?: "white" | "pink" | "lavender" | "bloo") => void;
   reset: () => void;
 }
 

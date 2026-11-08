@@ -88,12 +88,12 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
   const startVeil = usePageTransition((state) => state.start);
 
   /* A course with a world of stops: the friend's clouds rise over the page —
-     Pinki's pink, Nova's lavender (a plain click only — a new tab goes as any
+     Pinki's pink, Nova's lavender, Bloo's blue (a plain click only — a new tab goes as any
      link goes), then the world. */
   const intoWorld = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    startVeil(characterId === "nova" ? "lavender" : "pink");
+    startVeil(characterId === "nova" ? "lavender" : characterId === "bloo" ? "bloo" : "pink");
     window.setTimeout(() => router.push(href), TRAIL_COVER_MS);
   };
 
