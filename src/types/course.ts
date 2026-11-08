@@ -18,11 +18,15 @@ export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 /** The five vegetables Nova's Vegetables course teaches, in order. */
 export type Vegetable = "carrot" | "broccoli" | "potato" | "tomato" | "pepper";
 
+/** The six things Nova's My Garden teaches, in order (2026-11-08). */
+export type GardenThing = "flower" | "tree" | "leaf" | "grass" | "nest" | "bench";
+
 /** A set things belong to: the season a thing goes with (Seasons and Weather),
     the animal it is — whose home it goes in (Bloo's Animals) — the
-    weather it is worn in (Seasons and Weather), or the vegetable it is (Find
-    It! on Nova's kitchen counter). */
-type Group = Season | Animal | Weather | Vegetable;
+    weather it is worn in (Seasons and Weather), the vegetable it is (Find
+    It! on Nova's kitchen counter), or the garden thing it is (My Garden's
+    Find). */
+type Group = Season | Animal | Weather | Vegetable | GardenThing;
 
 /** What a Find looks for, or what a Sort box takes: a shape, a color, or a
     group. */
