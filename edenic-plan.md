@@ -380,7 +380,7 @@ docs (README, CLAUDE.md, `claude-docs/`) updated.
       on) — measured 1024x768 to 1920x1080, phone pixel-identical.
 - [x] Desktop open stage (2026-10-01): no board, no wrapping cards, a step
       trail on top, buttons centred under the step.
-- [ ] The 4 real reels replace the placeholders (same file names).
+- [x] The 4 real reels replace the placeholders (2026-11-08, named by shape: `circle.mp4` …).
 - [ ] Shape pictures in place (§10), if still wanted.
 - [ ] Play it through on a phone; test with one child aged 5–6 and one aged 8–9.
 
@@ -660,7 +660,7 @@ leaves). The question's three circles: the right weather + two others.
 
 #### The execution plan (agreed 2026-11-08 — PREPARED, NOT BUILT)
 
-**A. Videos — light, never stuck, sharp (prepared 2026-11-08)**
+**A. Videos — light, never stuck, sharp — DONE 2026-11-08** (Shapes, Colors, Vegetables — the plain set, its red bell pepper matches our art, not "Pepper Nova"'s chili — and Animals — the Pets set + "Elephant Pinki" — point at their real reels by word; no poster on the `<video>`: the loader covers it until the first frame, so a poster is never seen)
 - Every reel goes through `tools/reels/encode.sh <source> <out>`: H.264
   High 720x1280 (the reel frame is 9:16, the sources are vertical
   1080x1920), CRF 27, AAC 96k mono, loudness-normalised (every reel equally
@@ -1079,8 +1079,8 @@ cookie, ball, toast, cheese, book, kite); `squares/`, `triangles/`,
 
 | Folder | Files |
 | --- | --- |
-| `public/assets/learn/pinki/shapes/reels/` | `1.mp4` … `4.mp4` (circle, square, triangle, rectangle; placeholders in place now) |
-| `public/assets/learn/{friend}/{course}/reels/` | `1.mp4` … `n.mp4`, one per lesson (placeholders until Phase 6) |
+| `public/assets/learn/pinki/shapes/reels/` | `circle.mp4` … `rectangle.mp4` (the real clips since 2026-11-08) |
+| `public/assets/learn/{friend}/{course}/reels/` | `<word>.mp4` (+ `<word>.jpg`), one per lesson, made by `tools/reels/encode.sh`; Shapes, Colors, Vegetables, Animals real since 2026-11-08 (UNTRACKED until a CDN); Weather and Seasons still numbered placeholders until the merge |
 
 Pictures are imported in code; reels are played by path.
 
