@@ -35,6 +35,12 @@ scroll, and `src/data/shape-stops.ts`.
 
     python3 tools/picnic-scene/crop.py stops
 
+Nova's My Garden — run after `render.cjs mygarden`: as the colour forest
+(the Find standing in the world), into `public/assets/learn/nova/garden/
+world/`. Writes `src/data/my-garden.ts`.
+
+    python3 tools/picnic-scene/crop.py mygarden
+
 Nova's hill, The Seasons' world — run after `render.cjs hill`: as the shape
 garden below, no Find. Writes `src/data/season-hill.ts`.
 
@@ -305,8 +311,8 @@ if NAME == "stops":
     course = sys.argv[2] if len(sys.argv) > 2 else "shapes"
     # `fruits` (2026-11-06, Nova's Vegetables) is like colors: each frame's mask
     # sheet holds only the ways it shows; golden stones; no drops.
-    colors = course in ("colors", "fruits")
-    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops"}[course]
+    colors = course in ("colors", "fruits", "garden")
+    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops"}[course]
     imports, parts = [], []
     # How the picture moves between frames (where it grows from, % of the frame,
     # and how much), measured by best fit on neighbouring frames: re-measure if
@@ -315,6 +321,8 @@ if NAME == "stops":
         "shapes": {"landscape": [50, 6, 1.021], "portrait": [50, 16, 1.022]},
         "colors": {"landscape": [50, 8, 1.023], "portrait": [50, 20, 1.03]},
         "fruits": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
+        # My Garden (2026-11-08): Vegetables' way, one lesson longer.
+        "garden": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
@@ -378,6 +386,7 @@ if NAME == "stops":
         "shapes": ("the Shapes course", "SHAPE_STOPS", "shape-stops.ts", "2026-11-05", None),
         "colors": ("Pinki's Colors course", "COLOR_STOPS", "color-stops.ts", "2026-11-06", 720),
         "fruits": ("Nova's Vegetables course", "VEG_STOPS", "veg-stops.ts", "2026-11-06", 380),
+        "garden": ("Nova's My Garden course", "GARDEN_STOPS", "garden-stops.ts", "2026-11-08", 450),
     }[course]
     arg = "" if course == "shapes" else f" {course}"
     ts = (
@@ -393,8 +402,9 @@ if NAME == "stops":
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)
     sys.exit()
 
-if NAME in ("garden", "forest", "veg", "hill"):
-    FOREST = NAME == "forest"  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
+if NAME in ("garden", "forest", "mygarden", "veg", "hill"):
+    MYG = NAME == "mygarden"  # Nova's My Garden (2026-11-08): the forest's kit, its own things to find
+    FOREST = NAME == "forest" or MYG  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
     HILL = NAME == "hill"  # Nova's hill (2026-11-05): the same; every step over it out of focus, no Find
     VEG = NAME == "veg"  # Nova's vegetable garden (2026-11-05): the same; its last step is indoors, Basket Time in layers
     # Pinki's shape garden — run after `render.cjs garden <n…>`: for each
@@ -413,14 +423,14 @@ if NAME in ("garden", "forest", "veg", "hill"):
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
-    base = "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 8)) if MYG else list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
+    base = "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
-    has_find = lambda lesson: not HILL and lesson <= (10 if FOREST else 5 if VEG else 4)
-    GENERATED = "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
+    has_find = lambda lesson: not HILL and lesson <= (6 if MYG else 10 if FOREST else 5 if VEG else 4)
+    GENERATED = "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
-    sharp0 = lambda lesson: lesson <= 10 if FOREST else not (VEG or HILL) and lesson <= 4
+    sharp0 = lambda lesson: lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 4
 
     def sigma(lesson, move, last, t):
         # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
@@ -484,7 +494,7 @@ if NAME in ("garden", "forest", "veg", "hill"):
                     box = alpha_box(layer)
                     layer.crop(box).save(f"{to}/find/{name}.png", optimize=True)
                     hit = Image.open(f"{fdir}/{name}__hit.png").split()[-1].point(lambda v: 255 if v > 40 else 0).getbbox()
-                    items.append({"id": name, "shape": item["shape"], "color": item.get("color"), "box": sized(box), "hit": sized(hit)})
+                    items.append({"id": name, "shape": item["shape"], "color": item.get("color"), "group": item.get("group"), "box": sized(box), "hit": sized(hit)})
                 # Farthest first, so a nearer thing lies over a farther one.
                 items.sort(key=lambda it: it["hit"][1] + it["hit"][3])
                 find = {"items": items}
@@ -520,7 +530,9 @@ if NAME in ("garden", "forest", "veg", "hill"):
                 for it in both[frame]["find"]["items"]:
                     shape = "null" if FOREST or it["shape"] is None else f'"{it["shape"]}"'
                     color = f', color: "{it["color"]}"' if it.get("color") else ""
-                    rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{WORD.get(it["id"], it["id"])}", shape: {shape}{color}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
+                    group = f', group: "{it["group"]}"' if it.get("group") else ""
+                    word = it.get("group") or WORD.get(it["id"], it["id"])
+                    rows.append(f'        {{ id: "{it["id"]}", src: {pic(lesson, frame, "find/" + it["id"] + ".png")}, word: "{word}", shape: {shape}{color}{group}, box: {json.dumps(it["box"])}, hit: {json.dumps(it["hit"])} }},')
                 scenes.append(f"    {frame}: {{\n      background: {pic(lesson, frame, 'find/ground.jpg')},\n      items: [\n" + "\n".join(rows) + "\n      ],\n    },")
             finds.append(f"  {lesson}: {{\n" + "\n".join(scenes) + "\n  },")
     if HILL:
@@ -606,6 +618,20 @@ if NAME in ("garden", "forest", "veg", "hill"):
             + "export const VEG_KITCHEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
             + "/** Basket Time's kitchen, the frame the camera comes in to, in layers. */\n"
             + "export const KITCHEN_FRAMES: Framed<KitchenFrame> = {\n" + "\n".join(frames) + "\n};\n"
+        )
+        open(os.path.join(ROOT, GENERATED), "w").write(ts)
+        sys.exit()
+    if MYG:
+        ts = (
+            "/* GENERATED by `python3 tools/picnic-scene/crop.py mygarden` (after\n"
+            "   `render.cjs mygarden`) — Nova's My Garden, the course's world\n"
+            "   (2026-11-08). Edit the scene, not this file. */\n"
+            'import type { Framed, LessonWorld, Scene } from "@/types/course";\n'
+            + "\n".join(imports)
+            + "\n\n/** Each My Garden lesson's camera through the garden (7 is the review): a\n    still per step after the reel and the move into each (0: the entry). */\n"
+            + "export const MY_GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
+            + "/** Each thing's Find, standing in the garden itself — the ground and the\n    things to tap, in both frames (farthest first). */\n"
+            + "export const MY_GARDEN_FIND: Record<number, Framed<Scene>> = {\n" + "\n".join(finds) + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
         sys.exit()
