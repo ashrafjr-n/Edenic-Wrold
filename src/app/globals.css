@@ -1614,6 +1614,32 @@ bdi {
   --cloud-deep: color-mix(in srgb, var(--color-nova) 74%, #ffffff);
 }
 
+/* The same clouds, blue: going in to Bloo's course world (2026-11-08). Fixed
+   in dark mode too — it is his colour, not the sky's. */
+.page-veil--bloo .page-veil-cloud--far,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--far {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 58%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 82%, #ffffff);
+  --cloud-deep: var(--color-bloo);
+}
+
+.page-veil--bloo .page-veil-cloud--mid,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--mid {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 68%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 88%, #ffffff);
+}
+
+.page-veil--bloo .page-veil-cloud--near,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--near {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 52%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 74%, #ffffff);
+}
+
 /* ---------------------------------------------------------------
    A course's world of stops (`CourseWorld`, 2026-11-05, Shapes first): the
    run of the scroll, the links laid over the pedestals (each its own
