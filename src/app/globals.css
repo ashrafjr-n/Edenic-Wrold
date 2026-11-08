@@ -5738,6 +5738,152 @@ a.board-cell--now:focus-visible {
   }
 }
 
+/* ---------------------------------------------------------------
+   Bloo's round window (Seasons and Weather, 2026-11-08) — `BlooWindow`'s
+   calm world: a still wall in Bloo's blue (grained), one big round window
+   with a cream clay frame; only the view outside changes, fading in, with
+   one gentle layer of petals, leaves, snow, rain, wind or a sun's glow.
+   Fixed behind the steps like `.world-frame`, never over the header.
+   --------------------------------------------------------------- */
+.bloo-window {
+  --win-wall: color-mix(in srgb, var(--color-bloo) 24%, #fff);
+  --win-frame: #fff8ee;
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 100lvh;
+  overflow: hidden;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  padding-top: 4rem;
+  background-color: var(--win-wall);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+[data-theme="dark"] .bloo-window {
+  --win-wall: color-mix(in srgb, var(--color-bloo) 22%, #0e1626);
+  --win-frame: color-mix(in srgb, var(--color-bloo) 30%, #1b2538);
+}
+
+.bloo-window__glass {
+  position: relative;
+  width: min(94vw, 70svh);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-bloo) 40%, #fff);
+  border: clamp(10px, 2.4vmin, 22px) solid var(--win-frame);
+  box-shadow:
+    inset 0 8px 22px rgb(var(--shadow-hue) / 28%),
+    0 0 0 3px color-mix(in srgb, var(--color-gold) 55%, transparent),
+    0 26px 56px -20px rgb(var(--shadow-hue) / 40%);
+}
+
+@media (width >= 64rem) {
+  .bloo-window__glass {
+    width: min(70vw, 80svh);
+  }
+}
+
+.bloo-window__view {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  animation: bloo-window-in 1.6s ease both;
+}
+
+@keyframes bloo-window-in {
+  from { opacity: 0; }
+}
+
+.bloo-window__glow {
+  position: absolute;
+  inset: -20% -20% auto auto;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(255 236 170 / 70%), transparent 65%);
+  animation: bloo-window-glow 6s ease-in-out infinite alternate;
+}
+
+@keyframes bloo-window-glow {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+
+.bloo-window__bit {
+  position: absolute;
+  top: -6%;
+  animation: bloo-window-fall linear infinite;
+}
+
+.bloo-window__bit--snow {
+  width: 2.2cqw;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 6px rgb(255 255 255 / 80%);
+}
+
+.bloo-window__bit--petals {
+  width: 2.4cqw;
+  aspect-ratio: 1.4;
+  border-radius: 9999px 0;
+  background: #ffc4dc;
+}
+
+.bloo-window__bit--leaves,
+.bloo-window__bit--wind {
+  width: 3.2cqw;
+  aspect-ratio: 1.5;
+  border-radius: 0 9999px;
+  background: #f29a3e;
+}
+
+.bloo-window__bit--wind {
+  background: #9fcf5c;
+  animation-name: bloo-window-blow;
+}
+
+.bloo-window__bit--rain {
+  width: 0.45cqw;
+  height: 6cqh;
+  border-radius: 9999px;
+  background: rgb(230 242 255 / 75%);
+  animation-name: bloo-window-rain;
+}
+
+@keyframes bloo-window-fall {
+  from { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(4cqw, 56cqh) rotate(160deg); }
+  to { transform: translate(-3cqw, 112cqh) rotate(320deg); }
+}
+
+@keyframes bloo-window-rain {
+  from { transform: translate(0, 0) rotate(12deg); }
+  to { transform: translate(-10cqw, 112cqh) rotate(12deg); }
+}
+
+@keyframes bloo-window-blow {
+  from { transform: translate(-60cqw, 20cqh) rotate(0deg); }
+  50% { transform: translate(10cqw, 36cqh) rotate(200deg); }
+  to { transform: translate(80cqw, 26cqh) rotate(400deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bloo-window__bit {
+    display: none;
+  }
+
+  .bloo-window__view,
+  .bloo-window__glow {
+    animation: none;
+  }
+}
+
 /* Out in the world the trace is on a white sheet, in crayon (the board's
    chalk on a white sheet would vanish): the friend's colour for the line,
    a soft pink fill, the guide and its marks in faint ink. The sheet keeps
