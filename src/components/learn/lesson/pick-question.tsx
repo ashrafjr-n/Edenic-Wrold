@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Celebration } from "@/components/ui/celebration";
 import { shuffle } from "@/lib/seeded";
 import type { Face } from "@/types/course";
@@ -19,6 +20,8 @@ interface PickQuestionProps {
   options: Face[];
   /** Index into `options`, before shuffling. */
   answer: number;
+  /** Circles, each picture filling its own (a whole view, not one thing). */
+  round?: boolean;
   /** Deals the tile order — a new seed is a new order. */
   seed: string;
   /** Pinki's turn: the answer glows and nothing can be tapped. */
@@ -32,7 +35,7 @@ interface PickQuestionProps {
  * ?") sits on a clay card above big answer tiles. A wrong tap wiggles; after
  * two, the answer glows; a right one is ringed in green with confetti.
  */
-export function PickQuestion({ show, word, plain = false, options, answer, seed, demo, onSolved, onMiss }: PickQuestionProps) {
+export function PickQuestion({ show, word, plain = false, options, answer, round = false, seed, demo, onSolved, onMiss }: PickQuestionProps) {
   const order = useMemo(() => shuffle(options.map((_, index) => index), seed), [options, seed]);
   const [solved, setSolved] = useState(false);
   const [wrong, setWrong] = useState<number | null>(null);
@@ -80,7 +83,7 @@ export function PickQuestion({ show, word, plain = false, options, answer, seed,
                 onClick={() => pick(index)}
                 onAnimationEnd={() => setWrong(null)}
                 disabled={demo}
-                className={`card card-clay-white flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
+                className={`card card-clay-white ${round ? "card-pill p-[6%]" : ""} flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
                   wrong === index ? "anim-wiggle" : ""
                 } ${solved && !isAnswer ? "opacity-40" : ""} ${
                   solved || demo ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"
@@ -91,7 +94,13 @@ export function PickQuestion({ show, word, plain = false, options, answer, seed,
                     : undefined
                 }
               >
-                <FaceView face={options[index]} size="tile" />
+                {round && options[index].kind === "picture" ? (
+                  <span className="relative block h-full w-full overflow-hidden rounded-full">
+                    <Image src={options[index].src} alt={options[index].word} fill sizes="(min-width: 640px) 160px, 110px" className="object-cover" />
+                  </span>
+                ) : (
+                  <FaceView face={options[index]} size="tile" />
+                )}
               </button>
               {solved && isAnswer && <Celebration />}
             </li>
