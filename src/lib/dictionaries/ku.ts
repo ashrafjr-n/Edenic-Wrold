@@ -102,6 +102,11 @@ export const ku: Dictionary = {
       description: "تشتێن خۆش بۆ خوارنێ و چاوا دنڤیسن",
       items: ["گێزەر", "بڕۆکلی", "پەتاتە", "تەماتە", "بیبەر", "دووبارەکرنا بازاڕی"],
     },
+    garden: {
+      name: "باخچێ من",
+      description: "گول، دار، هێلین و پتر د باخچێ دا",
+      items: ["گول", "دار", "بەلگ", "گیا", "هێلین", "کورسی", "دووبارەکرنا باخچێ"],
+    },
     animals: {
       name: "گیانەوەر",
       description: "پشیک، سەگ، ماسی، فیل و یێن دی",
@@ -184,6 +189,8 @@ export const ku: Dictionary = {
     sortWeather: "هەر تشتەکی بکە د سندوقا هەوایێ وی دا!",
     weatherIn: "د {season} دا کەش و هەوا چاوایە؟",
     pickList: "تشتێن د لیستا Nova دا بچنە!",
+    findThings: "هەمی {things} بدۆزە!",
+    whichThing: "{thing} کیژە؟",
   },
   tasks: {
     listen: "گوهداری بکە",
