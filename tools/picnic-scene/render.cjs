@@ -108,6 +108,13 @@
  *
  *   node tools/picnic-scene/render.cjs farm 1 2 3 4 5 6 7 8 9 10
  *
+ * Bloo's seasons and weather (2026-11-09) — the same farm through the year
+ * (`scene.html?garden=<1-9>&world=seasons`: 1-4 a season's three places, 5-8 its weather's two,
+ * 9 the review), no Find: `out/seasons-<n>-<frame>/`, then `crop.py seasons`, which joins them
+ * and writes `src/data/seasons-farm.ts`:
+ *
+ *   node tools/picnic-scene/render.cjs seasons 1 2 3 4 5 6 7 8 9
+ *
  * Nova's hill (2026-11-05) — The Seasons' world, the same kit
  * (`scene.html?garden=<1-5>&world=hill`, the seasons in order, 5 the review):
  * `out/hill-<n>-<frame>/`, then `crop.py hill`, which writes
@@ -180,7 +187,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "mygarden", "farm", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -283,7 +290,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       fs.mkdirSync(out, { recursive: true });
       for (const frame of ["portrait", "landscape"]) save(out, frame, (await render(page, `backdrop=${name}&frame=${frame}`)).backdrop);
     }
-  } else if (["garden", "forest", "mygarden", "farm", "veg", "hill"].includes(mode)) {
+  } else if (["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill"].includes(mode)) {
     /* Pinki's shape garden: for each lesson and frame, `out/garden-<n>-<frame>/`
        — each station's still, every frame of each camera move (`m<i>/`;
        move 0 is the entry, the last the end's rise over the path in
@@ -332,7 +339,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.mkdirSync(kitchen);
           fs.writeFileSync(path.join(out, "kitchen.json"), JSON.stringify(await page.evaluate(() => window.garden.kitchenMeta())));
           for (const [layer, url] of Object.entries(await page.evaluate(() => window.garden.kitchenLayers()))) save(kitchen, layer, url);
-        } else if (mode !== "hill" && mode !== "farm" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 6 : 4)) {
+        } else if (mode !== "hill" && mode !== "farm" && mode !== "seasons" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 6 : 4)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");

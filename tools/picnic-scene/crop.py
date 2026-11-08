@@ -97,6 +97,7 @@ animals and their homes).
 """
 import json
 import os
+import re
 import shutil
 import sys
 import zlib
@@ -407,8 +408,9 @@ if NAME == "stops":
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)
     sys.exit()
 
-if NAME in ("garden", "forest", "mygarden", "farm", "veg", "hill"):
-    FARM = NAME == "farm"  # Bloo's farm (2026-11-08): the Animals course's world, the same kit, no Find
+if NAME in ("garden", "forest", "mygarden", "farm", "seasons", "veg", "hill"):
+    SEAS = NAME == "seasons"  # Bloo's seasons and weather (2026-11-09): the farm through the year; ids 1-4 a season, 5-8 its weather, 9 the review
+    FARM = NAME in ("farm", "seasons")  # Bloo's farm (2026-11-08): the Animals course's world, the same kit, no Find
     MYG = NAME == "mygarden"  # Nova's My Garden (2026-11-08): the forest's kit, its own things to find
     FOREST = NAME == "forest" or MYG  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
     HILL = NAME == "hill"  # Nova's hill (2026-11-05): the same; every step over it out of focus, no Find
@@ -429,11 +431,11 @@ if NAME in ("garden", "forest", "mygarden", "farm", "veg", "hill"):
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 11)) if FARM else list(range(1, 8)) if MYG else list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
-    base = "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 10)) if SEAS else list(range(1, 11)) if FARM else list(range(1, 8)) if MYG else list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
+    base = "public/assets/learn/bloo/seasons-weather/world" if SEAS else "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
     has_find = lambda lesson: not HILL and not FARM and lesson <= (6 if MYG else 10 if FOREST else 5 if VEG else 4)
-    GENERATED = "src/data/animals-farm.ts" if FARM else "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
+    GENERATED = "src/data/seasons-farm.ts" if SEAS else "src/data/animals-farm.ts" if FARM else "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
     sharp0 = lambda lesson: False if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 4
@@ -624,6 +626,36 @@ if NAME in ("garden", "forest", "mygarden", "farm", "veg", "hill"):
             + "export const VEG_KITCHEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
             + "/** Basket Time's kitchen, the frame the camera comes in to, in layers. */\n"
             + "export const KITCHEN_FRAMES: Framed<KitchenFrame> = {\n" + "\n".join(frames) + "\n};\n"
+        )
+        open(os.path.join(ROOT, GENERATED), "w").write(ts)
+        sys.exit()
+    if SEAS:
+        # A season lesson = its season's three places (id n) + its weather's two and the end (id n + 4): the camera
+        # cuts between them under the weather's reel. The review (id 9) is one walk.
+        parts = {n: ([n, 3, n + 4, 3] if n <= 4 else [9, 5, None, 0]) for n in range(1, 6)}
+        lines = []
+        for n in range(1, 6):
+            a, ka, b, kb = parts[n]
+            stations, moves = [], []
+            for frame_ids in ((a, ka), (b, kb)):
+                lid, k = frame_ids
+                if lid is None or lid not in data:
+                    continue
+                both = data[lid]
+                for i in range(k):
+                    stations.append(f"{{ landscape: {pic(lid, 'landscape', both['landscape']['stills'][i])}, portrait: {pic(lid, 'portrait', both['portrait']['stills'][i])} }}")
+                    moves.append(f'{{ landscape: "/{base[len("public/"):]}/{lid}/landscape/{both["landscape"]["moves"][i]}", portrait: "/{base[len("public/"):]}/{lid}/portrait/{both["portrait"]["moves"][i]}" }}')
+            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n  }},")
+        body = "\n".join(lines)
+        imports = [line for line in dict.fromkeys(imports) if re.search(r"\b" + line.split()[1] + r"\b", body)]
+        ts = (
+            "/* GENERATED by `python3 tools/picnic-scene/crop.py seasons` (after\n"
+            "   `render.cjs seasons`) — Bloo's farm through the year, the Seasons and Weather\n"
+            "   course's world (2026-11-09). Edit the scene, not this file. */\n"
+            'import type { LessonWorld } from "@/types/course";\n'
+            + "\n".join(imports)
+            + "\n\n/** Each season lesson's camera (5 is the review): its season's three places, then the\n    weather's two and the lesson's end — the cut between is under the weather's reel. */\n"
+            + "export const SEASONS_FARM: Record<number, LessonWorld> = {\n" + body + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
         sys.exit()
