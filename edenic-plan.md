@@ -601,7 +601,7 @@ picture comes back when the user brings better ones. Built for Shapes. **The use
 
 ### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
 
-Animals is **POSTPONED** (Seasons and Weather were merged into one Bloo course and built 2026-11-08): their activities wait until
+Animals' **activities** are **POSTPONED** (Seasons and Weather were merged into one Bloo course and built 2026-11-08; both Bloo course PAGES became worlds of stops the same day): their activities wait until
 better ideas come (Seasons' hill world is built and stays; Animals' and
 Weather's worlds wait with them). Nothing is built for them until then.
 
@@ -710,8 +710,9 @@ watches the year go by.*
   ~100 KB each), plus ONE gentle CSS layer for the weather (drifting
   drops / flakes / leaves). No camera walks, no 3D clips, no stops.
 - The three circles of the question are three small round "windows".
-- The course page: the four seasons as four small round windows on Bloo's
-  wall, one lit per lesson done (instead of a world of stops).
+- The course page: ~~four small round windows on Bloo's wall~~ — CHANGED
+  2026-11-08: a world of stops like the others, a round window with the
+  season's view on each slab, gold stones, the gold chest (the user).
 
 **C. My Garden (Nova) — BUILT 2026-11-08: Nova's second course** (course id `garden`; flower · tree · leaf · grass · nest · **bench** — `pond` swapped for `bench`, four ponds don't stand in a Find; detail in `claude-docs/learn-courses.md`)
 - Fruits: no videos exist → out. My Garden: 19 videos, all prepared in
