@@ -196,7 +196,7 @@ sort boxes, done screen, the course page).
 | Nova | Vegetables (was Fruits & Vegetables) | Carrot · Broccoli · Potato · Tomato · Pepper · Market review (2026-10-12: only what the videos show — apple, banana, orange, grapes, corn and the juice removed; tomato and pepper added, reel → word → spell, then since 2026-11-01 **Basket Time** (Find It! merged in, the same day: the 3D kitchen with Pinki's picture behind the counter — drag the word's vegetable into the basket) — the 2026-10-24 Grow it (slide the knob, the vegetable grows in the soil) deleted that day; built 2026-10-02; reworked 2026-10-03; its third step was **Nova's cups** 2026-10-08 → 2026-10-23 (a /play game since) — and before them a tap-by-tap Grow it (2026-10-07, replaced); the 2026-10-24 Grow it is a slide, the plant following the knob. The foods are drawn the friends' way: chubby velvet clay with the buttons' grain and the friends' face. Review: a mixed juice, a soup, "Do you like…?", two picture spells, then the exam — pick Nova's list off three plants into one basket, twice) |
 | Nova | The Seasons | Spring · Summer · Fall · Winter · Seasons review (built 2026-10-02; reworked 2026-10-04: word → spell (its third step, make the season come, removed 2026-10-12); review: sort eight things into four season boxes, order the four, two picture spells) |
 | Bloo | Animals | Cat · Dog · Fish · Elephant · Mouse · Bird · Parrot · Turtle · Gecko · Animals review (built 2026-10-07; the last six added 2026-10-13 from the videos, every animal cut out of its video's still — the cow, with no still, removed the same day — and its picture leaning toward the finger on the word card; one animal a lesson: word → spell → feed the animal (2026-11-01, the user's design; Match the shadow built and deleted the same day; Match the footprints, 2026-10-26, deleted that day; the old Feed it — three bites, no choice — removed 2026-10-12; Fill the word before it). The animals and their homes are drawn the friends' way: velvet clay with the buttons' grain and the friends' face. Review: sort eight animals — each in two coats — into their four homes, then two picture spells) |
-| Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell → **which weather?** since 2026-11-01 (pick the 3D Bloo dressed for the word; make it by hand, 2026-10-08 → 2026-11-01, deleted). Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
+| Bloo | The Weather | Sunny · Rainy · Windy · Snowy · Weather review (built 2026-10-08, one weather a lesson — Cloudy dropped: two words in one lesson, and nothing of its own to do: word → spell (Which weather? — pick the 3D Bloo dressed for the word — built 2026-11-01, **deleted 2026-11-08**; make it by hand, 2026-10-08 → 2026-11-01, deleted; the course is to merge with Seasons, see "Seasons and Weather become ONE course"). Each weather is the same place, Bloo's hill, under it. Review: sort eight things a child needs for the weather into the four weathers, read two weathers' words and pick their pictures, two picture spells) |
 
 **Removed 2026-10-08 (direct request "احذفها نهائيا"):** Nova's Months of the
 Year (its year wheel, its art and its strings — in git history, `months wheel
@@ -248,7 +248,7 @@ about 3 minutes.
 | ~~Match the footprints~~: the animal above three sheets of footprints; draw a line to its own | removed 2026-11-01 | Animals — the user's new design |
 | ~~Match the shadow~~: four animals onto their 3D shadows on a paper | removed 2026-11-01 (the same day — "keep only the food") | Animals |
 | **Feed the animal**: the animal over three foods — its own and two it would never eat; drag (or tap) the right one into its mouth | built (`feed`, 2026-11-01) | Animals |
-| **Which weather?**: read the word, pick the 3D Bloo dressed for it (sunglasses, umbrella, kite, woolly hat + scarf) — a Pick, its demo blind | built (`pick` + `blind`, 2026-11-01) | Weather |
+| ~~Which weather?~~: read the word, pick the 3D Bloo dressed for it | built 2026-11-01, **deleted 2026-11-08** (the `pick` + `blind` and `full` pieces stay, unused) | Weather |
 | **Basket Time** (Find It! merged in): the 3D kitchen, Nova's picture behind the counter, the word on the wall; drag the right vegetable from the counter (blender, milk, cheese, garlic, the five vegetables) into the basket | built (`basket` + `KITCHEN`, 2026-11-01) | Vegetables |
 | ~~The magic button~~: the picture starts bare; each tap on the glowing spot spreads the next part of the season over it | removed 2026-10-12 | Seasons, its last course (Fruits' Grow it and Months' wheel went 2026-10-08) |
 | **Nova's cups**: the thing goes under one of three cups (a random one every round), they swap places at a medium speed, the child taps the right cup; one miss and the round starts again, a little slower | built (`cups`) | Fruits |
@@ -288,7 +288,7 @@ about 3 minutes.
   Each is ONE place, Bloo's hill (his blue-roofed house, a round tree),
   under the weather (the Seasons rule: the difference between the
   pictures IS the weather). Each lesson is reel → word ("It is sunny!") →
-  spell → **which weather?** since 2026-11-01 (the user's design: read the
+  spell (and **which weather?** 2026-11-01 → **deleted 2026-11-08**: read the
   word, pick of four the 3D Bloo dressed for it). Before it, deleted
   2026-11-01, **make it by hand** (2026-10-08, the user's pick after Dress
   Bloo — "not really liked"): three goes, each weather its own gesture —
@@ -627,9 +627,69 @@ Weather's worlds wait with them). Nothing is built for them until then.
   another season in the scene, tap them away; catch the season's things as
   they fall; a game per season (butterflies, ice creams, raking leaves, a
   snowman).
-- Weather (replaces Which weather?): help Bloo in it (hang the washing, hold
+- Weather (Which weather? is deleted; superseded by the merge below): help Bloo in it (hang the washing, hold
   the umbrella over him, hold the kite's string, roll a snowball); pack his
   bag; open the right window; the weather reporter.
+
+### Seasons and Weather become ONE course, under Bloo (the user, 2026-11-08) — PLANNED, NOT BUILT
+
+Decided: **merge Seasons and Weather into one course, "Seasons and Weather",
+Bloo's** (so Bloo = Animals + Seasons and Weather). Which weather? (Bloo
+dressed for the weather) was **deleted 2026-11-08** — no new activity types:
+the course is built from the lesson pieces we have (reel → word → spell →
+a choosing question). Each lesson in pairs:
+
+1. **A season lesson** (e.g. Summer): reel of the season → sound (the word
+   card) → spell the word as usual → **right away a question**: "what is the
+   weather in summer?" with **three round picture buttons**, one of them the
+   season's weather (e.g. sunny). A right pick shows the child it is right.
+2. **Then straight into that weather's lesson** (sunny): its reel → sound →
+   spell → the lesson ends.
+3. The same for every season and its weather. Four seasons (Summer, Winter,
+   Spring, Fall) paired with four weathers (sunny, rainy, windy, snowy; which
+   weather goes with which season is for the build to decide, and a
+   misleading pairing is to be avoided — the user's own example is
+   summer → sunny).
+
+**World and UI (open, to design when built):** the background / world of
+the choosing question must be **beautiful, light and with a small story of
+its own** — it does NOT have to look like Shapes' garden or Colors' forest.
+For Bloo (his sky-and-nature classroom, his hill). Seasons' old hill world
+is Nova's and was built for her; it will be reworked or redrawn for Bloo.
+
+**Nova** keeps only **Vegetables** for now. What a second Nova course could
+be (Claude's reading of the videos, 2026-11-08, awaiting the user): there
+are **no fruit videos** (the folder named "fruits" holds the vegetables; the
+fruits were removed for that reason), so a Fruits lesson is out — **My
+Garden** is the best fit (flower, tree, sunflower, bench, birdhouse, hose,
+flower pot, grass + the insects, filmed with Nova); alternatively Transport
+(vehicles, land / air / water). Nothing is chosen; Nova's picks wait for
+the user.
+
+**Videos:** the sources are sorted in `~/Desktop/edenic web videos` (01 Shapes
+… 17 Promo) and the candidates for each course are in `edenic world learn`
+(also placed in `public/edenic world learn/` by the user, 2026-11-08 —
+untracked; large, so keep it out of git).
+
+### Stars and the Play game (the user, 2026-11-06) — PLANNED, NOT BUILT, recorded only
+
+- **The gold chest at the end of a course's world gives ONE star** when the
+  child reaches it and it opens (light). One star per course: Pinki 2
+  (Shapes, Colors), Nova 2 (Vegetables, Seasons), Bloo 2 (Animals, Weather).
+  Not coins, no shop (the sticker idea was floated, the user chose stars).
+- **Play becomes ONE big game made of stages.** The child plays the first
+  stages alone. After a few, **Pinki joins** — to unlock her and carry on
+  with the stages, the child must hand over **Pinki's two stars** (both of
+  her Learn courses' chests). A few stages on, the same with **Nova's two
+  stars**, and so on for **Bloo**. So Learn feeds Play, Play pushes the child
+  back to Learn for the next friend.
+- Fits "linked INDIRECTLY": Play only READS which stars exist (a per-course
+  flag in the progress store, e.g. `stars[courseId]`); Learn knows nothing of
+  Play. Watch comes later and can read the same flags.
+- Open for when it is built: how many stages before each friend; what the
+  existing Play games (puzzle, Memory Match, Cups, Trail) become (stages of
+  the big game?); a locked friend's look; the chest's opening. This
+  REPLACES "no stars or rewards anywhere in Learn" for the chest only.
 
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
@@ -770,7 +830,7 @@ then checked by the user:**
    the world); marker: the animal (its picture) settles at home; end: all
    of them home.
 4. **Bloo · Weather (5): Bloo's hill** — the sky changes per lesson,
-   "Which weather?" with the four dressed Bloos on the hill; marker: the
+   (Which weather? deleted 2026-11-08) on the hill; marker: the
    weather's sign grows (sun, cloud, wind, snow).
 5. **Nova · Seasons (5): one hill, one tree** — the camera turns round the
    tree; marker and end: the tree in the lesson's season.
@@ -797,8 +857,8 @@ leads; the older items below fold into it:
       the removed "Make it come"; catching must be slow with no fail.
 - [ ] **Bloo · Animals**: good — design polish; a big improvement is
       coming later (the user will describe it).
-- [ ] **Bloo · Weather**: Which weather? will probably be replaced — the
-      user is thinking of an alternative.
+- [ ] **Bloo · Weather**: Which weather? DELETED 2026-11-08; Weather and
+      Seasons are to be merged (see "Seasons and Weather become ONE course").
 - [ ] **Shared, every course**: the review and similar small things —
       one pass, the same for all. Done 2026-11-02: the end-of-lesson
       celebration (the friend big, hopping, balloons + confetti + chalk
@@ -901,12 +961,11 @@ Before calling Learn done (easy to forget):
             the footprints deleted; Match the shadow was built too and
             deleted the same day ("keep only the food"). The image's lion, giraffe,
             rabbit and cow are not ours — the nine with stills are used.
-      - [x] **Bloo · Weather**: reel → word → spell → **Which weather?**
-            (read the word, pick the 3D Bloo dressed for it — Bloo built
-            in 3D for it). Make it by hand deleted. The image's fourth
+      - [x] **Bloo · Weather**: reel → word → spell → ~~Which weather?~~
+            (deleted 2026-11-08; the 3D Bloo went with it). Make it by hand deleted. The image's fourth
             picture (cloudy) is windy here: our words are sunny, rainy,
             windy, snowy.
-      - [ ] The user checks Feed, Which weather? and Basket Time → fixes.
+      - [ ] The user checks Feed and Basket Time → fixes.
       - [x] **Nova · Vegetables** (built 2026-11-01): reel → word → spell → **Basket
             Time** (the word over her basket — reuse the exam's basket —
             and four vegetables: the lesson's + three of the others; drag
