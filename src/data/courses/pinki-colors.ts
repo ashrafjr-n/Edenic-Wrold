@@ -64,7 +64,7 @@ function colorLesson(color: ColorId, n: number): LessonDef {
   questions.push(
     { type: "find", ask: { key: "findColor", vars: { color } }, target: { color }, scene: SCENES[color], world: FOREST_FIND[n] },
   );
-  return { reel: `/assets/learn/pinki/colors/reels/${n}.mp4`, cover: [COLORS[color].dot], world: FOREST[n], questions };
+  return { reel: `/assets/learn/pinki/colors/reels/${color}.mp4`, cover: [COLORS[color].dot], world: FOREST[n], questions };
 }
 
 /** One thing out of a picnic, for the review's boxes. */
@@ -75,8 +75,8 @@ function thing(scene: Scene, id: string): SceneItem {
 }
 
 /** Pinki · Colors. Titles live in `dict.lessons.colors.items`. The reels
-    are placeholders until the real clips replace them under the same names
-    (`/assets/learn/pinki/colors/reels/<n>.mp4`). */
+    are the real clips, H.264 720p (`tools/reels/encode.sh`):
+    `/assets/learn/pinki/colors/reels/<color>.mp4`. */
 export const pinkiColors: LessonDef[] = [
   ...COLOR_ORDER.map((color, i) => colorLesson(color, i + 1)),
   /* The review, no reel: things from the picnics into four color boxes,
