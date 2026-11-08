@@ -105,6 +105,11 @@ export const en = {
       description: "Yummy things to eat and how to spell them",
       items: ["Carrot", "Broccoli", "Potato", "Tomato", "Pepper", "Market review"],
     },
+    garden: {
+      name: "My Garden",
+      description: "Flowers, trees, nests and more in the garden",
+      items: ["Flower", "Tree", "Leaf", "Grass", "Nest", "Bench", "Garden review"],
+    },
     animals: {
       name: "Animals",
       description: "Cat, dog, fish, elephant and more",
@@ -195,6 +200,9 @@ export const en = {
     sortWeather: "Put each thing in its weather's box!",
     weatherIn: "What is the weather in {season}?",
     pickList: "Pick the things on Nova's list!",
+    /** My Garden's Find; `{things}` the English plural ("trees"). */
+    findThings: "Find all the {things}!",
+    whichThing: "Which one is the {thing}?",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
