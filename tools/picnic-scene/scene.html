@@ -7102,19 +7102,95 @@ if (THING) {
         }
         return holder;
       };
-      const body = BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : kind === "circle" ? ball(1.55, clayM, 96) : mesh(roundedShapeExtrude(outline(kind, kind === "rectangle" ? 1.55 : kind === "triangle" ? 1.65 : 1.5), 0.85, 0.5), clayM);
+      /* The four shapes as the reels show them (2026-11-09): FELT with a fine
+         fur, sage green, with soft pink patches, no face. The fur is shells —
+         the same mesh drawn 16 times, each pushed a little further out along
+         its normals and keeping only the cells a hash says are strands, so it
+         has a real fuzzy edge. The patches are a mask in OBJECT space (exact at
+         any size, soft at the edge as in the videos). */
+      const furShape = () => {
+        const GREEN = new THREE.Color(0x94bd64), PINK = new THREE.Color(0xf99dbd);
+        const HELP = `
+          float rr(vec2 p, vec2 c, vec2 h, float r) { vec2 q = abs(p - c) - h + r; return smoothstep(0.07, -0.07, length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r); }
+          float tri(vec2 p, float r) { const float k = 1.7320508; p.x = abs(p.x) - r; p.y = p.y + r / k; if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0; p.x -= clamp(p.x, -2.0 * r, 0.0); return -length(p) * sign(p.y); }
+          float blob(vec3 d, vec3 c, float r) { return smoothstep(r, r * 0.7, acos(clamp(dot(d, c), -1.0, 1.0))); }`;
+        let geo, patch, dens = 90;
+        if (kind === "circle") {
+          geo = new THREE.SphereGeometry(1.62, 192, 128);
+          patch = `float patchAt(vec3 p, vec3 n) { vec3 d = normalize(p);
+            return max(max(blob(d, normalize(vec3(0.64, -0.4, 0.65)), 0.56), blob(d, normalize(vec3(-0.69, -0.47, 0.55)), 0.54)), blob(d, normalize(vec3(0.24, 0.87, 0.43)), 0.58)); }`;
+        } else if (kind === "square") {
+          geo = new RoundedBoxGeometry(2.9, 2.9, 2.9, 24, 0.42);
+          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+            return f * max(rr(p.xy, vec2(-0.82, -0.18), vec2(0.5, 0.62), 0.5), rr(p.xy, vec2(0.84, -0.1), vec2(0.56, 0.66), 0.55)); }`;
+        } else if (kind === "triangle") {
+          const s = new THREE.Shape();
+          const [a, b, c, r] = [[0, 1.62], [1.8, -1.4], [-1.8, -1.4], 0.34];
+          const mid = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+          const corner = (p, from, to, first) => {
+            const len = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1]);
+            const t0 = Math.min(0.2, (r * 2.2) / len(p, from)), t1 = Math.min(0.2, (r * 2.2) / len(p, to));
+            const [p0, p1] = [mid(p, from, t0), mid(p, to, t1)];
+            if (first) s.moveTo(p0[0], p0[1]); else s.lineTo(p0[0], p0[1]);
+            s.quadraticCurveTo(p[0], p[1], p1[0], p1[1]);
+          };
+          corner(a, c, b, true);
+          corner(b, a, c, false);
+          corner(c, b, a, false);
+          s.closePath();
+          geo = new THREE.ExtrudeGeometry(s, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.36, bevelSegments: 14, curveSegments: 48 });
+          geo.center();
+          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+            float m = max(max(smoothstep(0.07, -0.07, tri(p.xy - vec2(0.0, 0.62), 0.36) - 0.07), smoothstep(0.07, -0.07, tri(p.xy - vec2(-0.78, -0.62), 0.36) - 0.07)), smoothstep(0.07, -0.07, tri(p.xy - vec2(0.78, -0.62), 0.36) - 0.07));
+            return f * m; }`;
+        } else {
+          geo = new RoundedBoxGeometry(2.3, 3.0, 1.5, 24, 0.42);
+          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+            return f * max(rr(p.xy, vec2(0.0, 0.62), vec2(0.4, 0.33), 0.1), max(rr(p.xy, vec2(-0.7, -0.5), vec2(0.42, 0.29), 0.1), rr(p.xy, vec2(0.7, -0.5), vec2(0.42, 0.29), 0.1))); }`;
+        }
+        const SHELLS = 14, LENGTH = 0.03;
+        const g = new THREE.Group();
+        for (let i = 0; i < SHELLS; i++) {
+          const layer = i / (SHELLS - 1);
+          const mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.92, clearcoat: 0, sheen: 1, sheenRoughness: 0.45, sheenColor: 0xfff4e6 });
+          mat.onBeforeCompile = (sh) => {
+            sh.uniforms.uOff = { value: LENGTH * layer };
+            sh.uniforms.uLayer = { value: layer };
+            sh.uniforms.uGreen = { value: GREEN };
+            sh.uniforms.uPink = { value: PINK };
+            sh.vertexShader = sh.vertexShader
+              .replace("#include <common>", "#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uOff;")
+              .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position; vObjN = normal; transformed += normal * uOff;");
+            sh.fragmentShader = sh.fragmentShader
+              .replace("#include <common>", `#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uLayer; uniform vec3 uGreen; uniform vec3 uPink;\n${HELP}\n${patch}
+                float hash3(vec3 q) { q = fract(q * 0.3183099 + 0.1); q *= 17.0; return fract(q.x * q.y * q.z * (q.x + q.y + q.z)); }`)
+              .replace("#include <color_fragment>", `#include <color_fragment>
+                vec3 cell = vObj * ${dens.toFixed(1)};
+                float strand = hash3(floor(cell));
+                float reach = mix(1.1, 0.35, uLayer) * (0.55 + 0.45 * strand);
+                if (uLayer > 0.0 && (length(fract(cell) - 0.5) * 2.0 > reach || strand < uLayer * 0.45)) discard;
+                float m = patchAt(vObj, normalize(vObjN));
+                diffuseColor.rgb = mix(uGreen, uPink, m) * mix(0.8, 1.1, uLayer) * (0.93 + 0.14 * strand);`);
+          };
+          mat.customProgramCacheKey = () => "fur-" + kind;
+          const shell = mesh(geo, mat);
+          shell.castShadow = i === 0;
+          shell.userData.noMerge = true;
+          g.add(shell);
+        }
+        return g;
+      };
+      const body = BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : furShape();
       if (BLOO_STOPS) body.rotation.y = 0;
       else if (MILK_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
       else if (COLORS_STOPS) body.scale.setScalar(0.92);
-      else if (kind === "circle") body.scale.z = 0.8;
-      else body.geometry.center();
       const statue = new THREE.Group();
       statue.add(body);
       const box = new THREE.Box3().setFromObject(body);
       /* Dark paints wear a white face; the rest the usual plum. */
       const face = dotFace(COLORS_STOPS ? 1.45 : kind === "triangle" ? 1.15 : 1.5, COLORS_STOPS && ["red", "blue", "purple", "brown", "black", "green"].includes(kind) ? soft(0xffffff, { roughness: 0.7 }) : INK);
       face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.985 : box.max.z - 0.02);
-      if (!MILK_STOPS) statue.add(face);
+      if (COLORS_STOPS) statue.add(face);
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
       statue.rotation.y = MILK_STOPS ? 0 : x < 0 ? 0.26 : -0.26;
       g.add(statue);

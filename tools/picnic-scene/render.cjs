@@ -188,7 +188,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
   const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
-  const browser = await chromium.launch({ args: gpu });
+  const browser = await chromium.launch({ args: gpu, executablePath: process.env.CHROME });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
   if (mode === "stops") {
