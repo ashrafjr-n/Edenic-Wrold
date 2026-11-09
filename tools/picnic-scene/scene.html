@@ -4426,7 +4426,7 @@ const BLOO_STOPS = ANIMALS_STOPS || WEATHER_STOPS;
 const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS;
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 /* The colours' words need a font (only the worlds that show them load it). */
-const WORD_FONT = COLORS_STOPS || FOREST ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
+const WORD_FONT = COLORS_STOPS ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
 if (THING) {
@@ -5321,6 +5321,8 @@ if (THING) {
   const ON_PATH = FOREST || MY_GARDEN || FARM;
   /* Pinki's shape garden (2026-11-09): the reels' pastel felt land, not a walled garden. */
   const SHAPE_LAND = !ON_PATH && !VEG && !YEAR_HILL && !STOPS;
+  /* The reels' pastel land: Shapes' garden and Colors' world (2026-11-09) share the sky, fog, light and lawn. */
+  const LAND = SHAPE_LAND || FOREST;
   /* The farm's animal (1-9), or null for its review (10). */
   const FARM_KIND = FARM && !SEAS ? FARM_KINDS[LESSON - 1] ?? null : null;
   /* The seasons' farm: which season and weather this part is, how many places, and their words. */
@@ -5357,21 +5359,21 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, SHAPE_LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, SHAPE_LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, SHAPE_LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, SHAPE_LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = SHAPE_LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 14, 64) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 14, 64) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 14, 64) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 14, 64) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
-  sky.color.set(SHAPE_LAND ? 0xf2e6ff : 0xeaf4ff);
-  sky.groundColor.set(SHAPE_LAND ? 0xd4e8a8 : 0xc0e0a4);
+  sky.color.set(LAND ? 0xf2e6ff : 0xeaf4ff);
+  sky.groundColor.set(LAND ? 0xd4e8a8 : 0xc0e0a4);
   sky.intensity = 1.05;
-  sun.color.set(SHAPE_LAND ? 0xffe8d2 : 0xfff0da);
+  sun.color.set(LAND ? 0xffe8d2 : 0xfff0da);
   sun.intensity = SEAS_WEATHER === "rainy" ? 1.35 : SEAS_WEATHER === "snowy" ? 1.5 : SEAS_WEATHER === "sunny" ? 2.6 : 2.25;
   scene.environmentIntensity = 0.42;
   Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 });
@@ -5411,9 +5413,9 @@ if (THING) {
   lawnCanvas.width = 4;
   lawnCanvas.height = 64;
   const lctx = lawnCanvas.getContext("2d");
-  lctx.fillStyle = SHAPE_LAND ? "#92cc62" : FARM ? (LOOK ? LOOK.lawn[0] : "#9bd77b") : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
+  lctx.fillStyle = LAND ? "#92cc62" : FARM ? (LOOK ? LOOK.lawn[0] : "#9bd77b") : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
   lctx.fillRect(0, 0, 4, 64);
-  lctx.fillStyle = SHAPE_LAND ? "#8ac45a" : FARM ? (LOOK ? LOOK.lawn[1] : "#92cf74") : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
+  lctx.fillStyle = LAND ? "#8ac45a" : FARM ? (LOOK ? LOOK.lawn[1] : "#92cf74") : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
   lctx.fillRect(0, 0, 4, 32);
   const lawnTex = new THREE.CanvasTexture(lawnCanvas);
   lawnTex.colorSpace = THREE.SRGBColorSpace;
@@ -5984,215 +5986,112 @@ if (THING) {
   }
 
   } else if (FOREST) {
-  /* ---- The FOREST (2026-11-05, Pinki · Colors' world; made over the same
-     day — "not professional enough"): a sunlit clearing on a winding
-     path. Layered trees in soft haze, dappled light on the floor and
-     shafts of sun through the canopy, leafy undergrowth, moss, mushroom
-     clumps and flower clusters. The middle stays open for the activity;
-     what is of the lesson's colour stays out of the Find's view. ---- */
+  /* ---- Pinki's COLOR LAND (2026-11-09, replaces the dark-green forest): the
+     reels' world — a lilac-pink sky with big soft suns and cotton clouds,
+     short bright grass, a path of pastel pebbles, round felt trees, stacks of
+     books and little flowers. The middle of every shot stays calm lawn, and
+     nothing of the lesson's colour stands in the Find's view. ---- */
   scene.remove(gravel);
-  const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
-  if (fx !== null) placeXs.push(fx);
-  /* A spot an activity, or the Find, stands on. */
-  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 2.6 && z > -2.2 && z < 3.2) || (fx !== null && Math.abs(x - fx) < 6 && z > -10);
   const pick = (list) => list[Math.floor(rand() * list.length)];
+  const lighter = (c, t = 0.45) => new THREE.Color(c).lerp(new THREE.Color(0xffffff), t).getHex();
+  const X1 = 70;
 
-  /* The path: flat stepping stones and worn earth, winding a little —
-     not a road. */
-  const pathZ = (x) => 6.4 + Math.sin(x * 0.09) * 0.6 + Math.sin(x * 0.31) * 0.12;
-  for (let x = -34; x < 128; x += 3.4 + rand() * 1.5) {
-    const earth = mesh(new THREE.CylinderGeometry(0.9 + rand() * 0.5, 0.9 + rand() * 0.5, 0.05, 40), soft(pick([0xcdb58b, 0xc6ad82, 0xd3bb90]), { roughness: 0.95 }));
-    earth.scale.z = 0.55;
-    earth.castShadow = false;
-    add(earth, x, 0.025, pathZ(x) + (rand() - 0.5) * 0.4);
-  }
-  for (let x = -34; x < 128; x += 0.85 + rand() * 0.35) {
-    const st = mesh(new THREE.CylinderGeometry(0.3 + rand() * 0.14, 0.33 + rand() * 0.14, 0.08, 28), stone(pick([0xf0e4d0, 0xe9dcc6, 0xf5ebdb])));
-    st.scale.z = 0.8 + rand() * 0.2;
-    st.castShadow = false;
-    add(st, x, 0.06, pathZ(x) + (rand() - 0.5) * 1.1, { ry: rand() * 3 });
-  }
-
-  /* Trees. A trunk with a root flare, leaning a little; a crown of soft
-     lobes, lighter on top and darker underneath; or a round-tiered pine. */
-  const greens = [[0x6cbf6c, 0x4fa862], [0x78c777, 0x58b06a], [0x62b968, 0x479f5f], [0x82cc7a, 0x5ab36c]];
-  function forestTree(k, pine) {
-    const t = new THREE.Group();
-    const bark = soft(pick([0xa9825f, 0xb08a66, 0x9d7a58]), { roughness: 0.9 });
-    const lean = new THREE.Group();
-    lean.rotation.z = (rand() - 0.5) * 0.1;
-    t.add(lean);
-    t.add(at(mesh(new THREE.CylinderGeometry(0.38, 0.52, 0.5, 20), bark), 0, 0.25, 0));
-    lean.add(at(mesh(new THREE.CylinderGeometry(0.27, 0.4, pine ? 5.2 : 3.8, 18), bark), 0, pine ? 2.6 : 1.9, 0));
-    const [light, dark] = pick(greens);
-    if (pine) {
-      for (let i = 0; i < 4; i++) {
-        const r = 2.15 - i * 0.42, y = 3.0 + i * 1.4;
-        lean.add(at(mesh(new THREE.ConeGeometry(r, 2.4, 40), leafy(i % 2 ? light : dark)), 0, y + 1.0, 0));
-        const skirt = at(mesh(new THREE.SphereGeometry(r * 0.98, 40, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), leafy(dark)), 0, y - 0.18, 0);
-        skirt.scale.y = 0.22;
-        lean.add(skirt);
-      }
-    } else {
-      const lobes = 8;
-      for (let i = 0; i < lobes; i++) {
-        const a = rand() * Math.PI * 2, h = rand();
-        const r = (1.05 + rand() * 0.75) * (1 - h * 0.25);
-        const y = 4.0 + h * 2.3;
-        lean.add(at(ball(r, leafy(h > 0.45 ? light : dark), 28), Math.cos(a) * (1.5 - h) * 1.2, y, Math.sin(a) * (1.5 - h) * 0.9));
-      }
-      lean.add(at(ball(1.7, leafy(dark), 28), 0, 4.2, 0));
-    }
-    t.scale.setScalar(k);
-    return t;
-  }
-  /* Rows behind the clearing; the farther, the hazier (the fog). */
-  for (let row = 0; row < 8; row++) {
-    const z0 = -11 - row * 6;
-    for (let x = -36; x < 124; x += 3 + rand() * 3.2) {
-      add(forestTree((1.0 + row * 0.08) * (0.82 + rand() * 0.5), rand() > 0.6), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3);
+  const pebbleM = [0xf9c9dc, 0xc9dcf7, 0xfbe7b0, 0xe0cff5, 0xfbf3ec, 0xd5efd0, 0xf7c4a8].map((c) => stone(c));
+  /* In front of the places, winding a little, and swinging back out of the Find's view. */
+  const swing = (x) => (fx === null ? 0 : Math.min(1, Math.max(0, (x - (fx - 12)) / 7)));
+  const pathZ = (x) => 3.1 + Math.sin(x * 0.1) * 0.5 + swing(x) * swing(x) * 5;
+  for (let x = -40; x < X1; x += 0.44) {
+    for (let k = -2; k <= 2; k++) {
+      const st = ball(0.23 + rand() * 0.05, pick(pebbleM), 14);
+      st.scale.set(1, 0.38, 0.85);
+      st.castShadow = false;
+      add(st, x + (rand() - 0.5) * 0.16 + (k % 2) * 0.22, 0.06, pathZ(x) + k * 0.42 + (rand() - 0.5) * 0.08, { ry: rand() * 3 });
     }
   }
-  /* Trunks at the edges of the way, outside the stations' sight. */
-  for (const [x, z, k] of [[-27, 8.5, 1.5], [-19, 3, 1.4], [-31, -4, 1.6], [96, 5, 1.5], [100, -3, 1.6]]) add(forestTree(k, rand() > 0.5), x, 0, z);
 
-  /* Leafy undergrowth: broad blades fanning out of a clump. */
-  function leafBush(k) {
+  /* Round felt trees in rows, the farther the hazier. */
+  const CROWNS = [0x9fd16a, 0x86c76a, 0xf7a1c3, 0xc9a9f0, 0xa9d96c, 0xf9dc7a];
+  const stemM = () => furShells(new THREE.CylinderGeometry(0.3, 0.38, 3, 24, 1), { green: lighter(0xf7a1c3, 0.1), pink: lighter(0xf7a1c3, 0.1), dens: 60, length: 0.04, shells: 8, key: "stem" });
+  function feltTree() {
+    const c = pick(CROWNS);
     const g = new THREE.Group();
-    const n = 9;
-    for (let i = 0; i < n; i++) {
-      const blade = mesh(new THREE.SphereGeometry(0.5, 20, 12), leafy(pick([0x5fb76a, 0x6cc271, 0x57ad65, 0x72c878])));
-      blade.scale.set(0.2, 0.05, 0.85 + rand() * 0.4);
-      const arm = new THREE.Group();
-      blade.position.set(0, 0, 0.55);
-      arm.add(blade);
-      arm.rotation.y = (i / n) * Math.PI * 2 + rand() * 0.4;
-      arm.rotation.x = -(0.15 + rand() * 0.4);
-      blade.rotation.x = 0.2;
-      g.add(arm);
-    }
-    g.position.y = 0.16;
-    const w = new THREE.Group();
-    w.add(g);
-    w.scale.setScalar(k);
-    return w;
-  }
-  /* Mushrooms in clumps of two or three, caps in the lesson's colour. */
-  const capColor = (i) => (COLOR_ID ? PAINT[COLOR_ID] : PAINT[["red", "yellow", "green", "purple", "pink"][i % 5]]);
-  function mushroom(k, color) {
-    const m = new THREE.Group();
-    m.add(at(mesh(new THREE.CylinderGeometry(0.1, 0.15, 0.42, 16), soft(0xf7eedd)), 0, 0.21, 0));
-    const cap = mesh(new THREE.SphereGeometry(0.31, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), glaze(color));
-    cap.position.y = 0.4;
-    cap.scale.y = 0.8;
-    m.add(cap);
-    for (const [dx, dz] of [[0.1, 0.08], [-0.12, 0.02], [0.02, -0.14]]) m.add(at(ball(0.04, soft(0xffffff), 12), dx, 0.64, dz));
-    m.scale.setScalar(k);
-    return m;
-  }
-  function logPile(k) {
-    const g = new THREE.Group();
-    const bark = soft(0xa77b55, { roughness: 0.9 });
-    const log = mesh(new THREE.CylinderGeometry(0.45, 0.5, 3.4, 32), bark);
-    log.rotation.z = Math.PI / 2;
-    log.position.y = 0.46;
-    g.add(log);
-    const cut = at(mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 32), soft(0xf1d9b0)), 1.7, 0.46, 0);
-    cut.rotation.z = Math.PI / 2;
-    g.add(cut);
-    for (let i = 0; i < 5; i++) {
-      const tuft = at(ball(0.2 + rand() * 0.12, leafy(0x6fbf6e), 16), -1.3 + rand() * 2.4, 0.9, (rand() - 0.5) * 0.3);
-      tuft.scale.y = 0.45;
-      g.add(tuft);
-    }
-    g.scale.setScalar(k);
+    const stem = stemM();
+    stem.position.y = 1.5;
+    g.add(stem);
+    const crown = furBody("circle", { green: c, pink: lighter(c, 0.5), shells: 8, dens: 26, length: 0.06 });
+    crown.position.y = 4.3;
+    g.add(crown);
     return g;
   }
-  /* A boulder with moss on top. */
-  function boulder(k) {
-    const g = new THREE.Group();
-    const rock = ball(0.9, stone(pick([0xdcd5c4, 0xd0c8b8, 0xe3dccb])), 32);
-    rock.scale.set(1.2, 0.8, 0.95);
-    rock.position.y = 0.5;
-    g.add(rock);
-    const moss = ball(0.7, leafy(0x6fbf6e), 24);
-    moss.scale.set(1.0, 0.35, 0.8);
-    moss.position.set(-0.1, 1.0, 0);
-    g.add(moss);
-    g.scale.setScalar(k);
-    return g;
-  }
-  const colorsHere = COLOR_ID ? [PAINT[COLOR_ID], PAINT[COLOR_ID], 0xffffff] : [PAINT.red, PAINT.yellow, PAINT.purple, PAINT.pink, 0xffffff];
-  /* Clusters: mushrooms, leaf bushes, flowers and boulders gather — never
-     spread out evenly. */
-  for (let i = 0; i < 46; i++) {
-    const cx = -26 + rand() * 128, cz = rand() > 0.5 ? -8 + rand() * 4 : 1.2 + rand() * 1.8;
-    const kind = rand();
-    const n = 3 + Math.floor(rand() * 4);
-    for (let j = 0; j < n; j++) {
-      const x = cx + (rand() - 0.5) * 2.4, z = cz + (rand() - 0.5) * 1.6;
-      if (busy(x, z)) continue;
-      if (kind < 0.28) add(mushroom(0.8 + rand() * 0.6, capColor(i + j)), x, 0, z, { ry: rand() * 6 });
-      else if (kind < 0.55) add(hillFlower(pick(colorsHere)), x, 0, z, { k: 1.0 + rand() * 0.5 });
-      else if (kind < 0.8) add(leafBush(0.8 + rand() * 0.7), x, 0, z, { ry: rand() * 6 });
-      else add(ball(0.2 + rand() * 0.2, stone(0xdcd5c4), 16), x, 0.08, z).scale.y = 0.6;
+  for (let row = 0; row < 4; row++) {
+    const z0 = -17 - row * 9;
+    for (let x = -40; x < X1; x += 8.5 + rand() * 6) {
+      add(feltTree(), x + (rand() - 0.5) * 2.2, 0, z0 - rand() * 3, { k: (1.25 + row * 0.4) * (0.85 + rand() * 0.45), ry: (rand() - 0.5) * 1.1 });
     }
   }
-  for (const [x, z, k] of [[-5, -9.2, 1.2], [38, -9.6, 1.3], [60, -9.0, 1.1], [84, -8.6, 1.2]]) add(logPile(k), x, 0, z, { ry: 0.15 });
-  for (const [x, z, k] of [[-12, -7, 1.5], [14, -9, 1.4], [46, -8.2, 1.6], [70, -7.6, 1.5], [102, -8, 1.5]]) if (!busy(x, z)) add(boulder(k), x, 0, z, { ry: rand() * 6 });
-  /* Near the camera, in front of the path: leafy fronds sliding past in a walk. */
-  for (let x = -28; x < 124; x += 5 + rand() * 4) add(leafBush(1.5 + rand() * 0.6), x, 0, 8.6 + rand() * 1.2, { ry: rand() * 6 });
-
-  /* Light: soft patches of sun on the floor and shafts through the canopy. */
-  function glow(w, h, stops) {
-    const cv = document.createElement("canvas");
-    cv.width = 128;
-    cv.height = 128;
-    const cx = cv.getContext("2d");
-    const grd = cx.createRadialGradient(64, 64, 4, 64, 64, 62);
-    stops.forEach(([p, c]) => grd.addColorStop(p, c));
-    cx.fillStyle = grd;
-    cx.fillRect(0, 0, 128, 128);
-    const tex = new THREE.CanvasTexture(cv);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    return tex;
+  /* Soft far hills of felt. */
+  for (let x = -60; x < X1 + 20; x += 30 + rand() * 12) {
+    const hill = furShells(new THREE.SphereGeometry(1, 64, 32), { green: pick([0xf2b0d0, 0xd6bdf2, 0xb8e0a0, 0xf6d9a0]), pink: 0xffffff, dens: 5, length: 0.05, shells: 6, key: "hill" });
+    hill.scale.set(20 + rand() * 8, 7 + rand() * 4, 14);
+    add(hill, x, -1.2, -78 - rand() * 14);
   }
-  const patchTex = glow(1, 1, [[0, "rgba(255,246,200,0.3)"], [0.6, "rgba(255,240,190,0.1)"], [1, "rgba(255,240,190,0)"]]);
-  const patchMat = new THREE.MeshBasicMaterial({ map: patchTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
-  for (let i = 0; i < 26; i++) {
-    const p = new THREE.Mesh(new THREE.PlaneGeometry(3 + rand() * 3, 2 + rand() * 2), patchMat);
-    p.rotation.x = -Math.PI / 2;
-    p.position.set(-24 + rand() * 126, 0.04, -9 + rand() * 12);
-    p.userData.noMerge = true;
-    scene.add(p);
+  /* Stacks of books, as in the reels, off to the sides of the path. */
+  const bookCols = [0xf7a1c3, 0xc9a9f0, 0xf9dc7a, 0x9fd8c4, 0x9cc4f2, 0xf8b98e];
+  const paper = soft(0xfff6e6, { roughness: 0.9 });
+  for (let x = -34; x < X1; x += 7 + rand() * 6) {
+    if (fx !== null && Math.abs(x - fx) < 7) continue;
+    const stack = new THREE.Group();
+    let y = 0;
+    for (let i = 0; i < 3 + Math.floor(rand() * 3); i++) {
+      const hgt = 0.22 + rand() * 0.14, wd = 1.3 + rand() * 0.5, dp = 0.95 + rand() * 0.3;
+      const book = rbox(wd, hgt, dp, soft(pick(bookCols), { roughness: 0.8 }), 0.06);
+      book.position.set((rand() - 0.5) * 0.18, y + hgt / 2, 0);
+      book.rotation.y = (rand() - 0.5) * 0.35;
+      stack.add(book);
+      const pages = rbox(wd * 0.92, hgt * 0.7, dp * 1.02, paper, 0.03);
+      pages.position.set(book.position.x, book.position.y, 0.02);
+      pages.rotation.y = book.rotation.y;
+      stack.add(pages);
+      y += hgt;
+    }
+    add(stack, x, 0, -9 - rand() * 4, { k: 1.4, ry: rand() * 3 });
   }
-  const shaftCv = document.createElement("canvas");
-  shaftCv.width = 32;
-  shaftCv.height = 256;
-  const shx = shaftCv.getContext("2d");
-  const shg = shx.createLinearGradient(0, 0, 0, 256);
-  shg.addColorStop(0, "rgba(255,248,214,0.5)");
-  shg.addColorStop(1, "rgba(255,248,214,0)");
-  shx.fillStyle = shg;
-  shx.fillRect(0, 0, 32, 256);
-  const side = shx.createLinearGradient(0, 0, 32, 0);
-  side.addColorStop(0, "rgba(0,0,0,1)");
-  side.addColorStop(0.5, "rgba(0,0,0,0)");
-  side.addColorStop(1, "rgba(0,0,0,1)");
-  shx.globalCompositeOperation = "destination-out";
-  shx.fillStyle = side;
-  shx.fillRect(0, 0, 32, 256);
-  const shaftTex = new THREE.CanvasTexture(shaftCv);
-  shaftTex.colorSpace = THREE.SRGBColorSpace;
-  const shaftMat = new THREE.MeshBasicMaterial({ map: shaftTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, side: THREE.DoubleSide });
-  for (let i = 0; i < 16; i++) {
-    const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.6 + rand() * 2.2, 15), shaftMat);
-    sh.position.set(-20 + rand() * 124, 7, -9 - rand() * 5);
-    sh.rotation.z = 0.3 + rand() * 0.12;
-    sh.userData.noMerge = true;
-    scene.add(sh);
+  /* Big soft suns, glowing, low over the far hills. */
+  const sunCv = document.createElement("canvas");
+  sunCv.width = sunCv.height = 256;
+  const sg = sunCv.getContext("2d");
+  const sr = sg.createRadialGradient(128, 128, 0, 128, 128, 128);
+  sr.addColorStop(0, "#fffbe0");
+  sr.addColorStop(0.34, "#fff2a8");
+  sr.addColorStop(0.42, "rgba(255,238,150,0.55)");
+  sr.addColorStop(1, "rgba(255,226,170,0)");
+  sg.fillStyle = sr;
+  sg.fillRect(0, 0, 256, 256);
+  const sunTex = new THREE.CanvasTexture(sunCv);
+  sunTex.colorSpace = THREE.SRGBColorSpace;
+  for (const [x, y, z, k] of [[-14, 26, -110, 30], [36, 24, -118, 26], [92, 27, -112, 32]]) {
+    const disc = new THREE.Mesh(new THREE.PlaneGeometry(k, k), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, fog: false, toneMapped: false, depthWrite: false }));
+    disc.userData.noMerge = true;
+    disc.position.set(x, y, z);
+    scene.add(disc);
   }
   for (const [x, y, z, k] of [[-10, 15, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
+
+  /* Little flowers in clusters on the lawn, never where an activity stands
+     or in the Find's view. */
+  const petals = [0xff8fb8, 0xffffff, 0xc7a3f0, 0xffd45e, 0x9cc4f2];
+  for (let i = 0; i < 60; i++) {
+    const cx = -34 + rand() * (X1 + 34), cz = -9 + rand() * 11;
+    if (cz > -4.5 && cz < 2.4) continue;
+    if (fx !== null && Math.abs(cx - fx) < 8 && cz > -9) continue;
+    const c = pick(petals);
+    for (let j = 0; j < 4 + Math.floor(rand() * 4); j++) add(hillFlower(c), cx + (rand() - 0.5) * 1.8, 0, cz + (rand() - 0.5) * 1.2, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
+  }
+  /* Close to the camera: a border of flowers sliding past in the walk. */
+  for (let x = -30; x < X1; x += 5 + rand() * 3) {
+    if (fx !== null && Math.abs(x - fx) < 6) continue;
+    border(x - 1.6, x + 1.6, 8.2, [0xffa6cf, 0xffd45e, 0xc7a3f0, 0xffffff], { k: 1.2, clear: false, tulips: false });
+  }
 
   } else if (SHAPE_LAND) {
   /* ---- Pinki's SHAPE LAND (2026-11-09): the reels' world — a lilac-pink sky
@@ -6463,15 +6362,15 @@ if (THING) {
     const first = (LESSON * 2) % KIND_LIST.length;
     const mine = [0, 1, 2, 3].map((j) => KIND_LIST[(first + j) % KIND_LIST.length]);
     const rest = KIND_LIST.filter((k) => !mine.includes(k));
-    const K = 0.65;
+    const K = portrait ? 0.6 : 0.65;
     /* Each kind always in its own spot (short ones in front, tall ones
        behind), so nothing hides anything; only the colours change. */
     /* Kept to the middle of the picture (the page crops its sides on a
        4:3 tablet or a narrow phone, and covers its top and bottom with the
        header and the tray) — rows in depth, tall things behind. */
     const SPOT = portrait
-      ? { bug: [-0.55, 2.0], ball: [0.65, 2.0], mushroom: [-0.7, -0.2], basket: [0.8, -0.2], bird: [-1.0, -2.2], flower: [1.0, -2.2], butterfly: [0, -4.7] }
-      : { bug: [-0.9, 1.0], ball: [0.9, 1.0], mushroom: [-1.8, -1.5], basket: [0, -1.5], bird: [1.8, -1.5], butterfly: [-1.0, -4.0], flower: [1.0, -4.0] };
+      ? { bug: [-1.25, 2.6], ball: [1.2, 1.5], mushroom: [-1.2, -0.2], basket: [1.25, -1.3], bird: [-1.15, -2.7], flower: [0.9, -3.6], butterfly: [-0.1, -5.3] }
+      : { bug: [-2.8, 0.9], ball: [2.6, 1.1], mushroom: [-1.3, -0.9], basket: [1.2, -0.7], bird: [-2.9, -2.6], butterfly: [-0.1, -3.6], flower: [2.4, -3.0] };
     const entries = [...mine.map((k) => [k, COLOR_ID]), ...rest.map((k, i) => [k, DECOYS[COLOR_ID][i]])];
     entries.forEach(([kind, c], i) => {
       const [sx, sz] = SPOT[kind];
@@ -6608,15 +6507,7 @@ if (THING) {
     board.add(rbox(2.5, 1.85, 0.1, SHAPE_LAND && shape ? soft(0xf7a1c3, { roughness: 0.95, sheen: 1 }) : glaze(0xff8fbf), 0.07));
     /* White paint needs a paper that is not white. */
     board.add(at(rbox(2.25, 1.6, 0.06, glaze(splash === PAINT.white ? 0xbfcfe6 : 0xffffff), 0.05), 0, 0, 0.05));
-    if (splash !== undefined && FOREST && COLOR_ID && splash === PAINT[COLOR_ID]) {
-      /* The colour's name, puffed up, on the board. */
-      const text = COLOR_ID[0].toUpperCase() + COLOR_ID.slice(1);
-      const w = furWord(WORD_FONT, text, WORD_COLORS[COLOR_ID], { height: 0.88 });
-      const wd = w.userData.size.x * w.scale.x;
-      if (wd > 1.75) w.scale.multiplyScalar(1.75 / wd);
-      w.position.set(0, 0, 0.2);
-      board.add(w);
-    } else if (splash !== undefined) {
+    if (splash !== undefined) {
       const blob = paintBlob(splash);
       blob.scale.setScalar(0.56);
       blob.position.z = 0.09;
@@ -7634,7 +7525,8 @@ if (THING) {
     : FOREST
     ? COLOR_ID
       ? [
-          { x: 0, make: () => easel(PAINT[COLOR_ID]), k: 1.25, cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: PAINT[COLOR_ID] },
+          /* The word: no prop — the page writes the colour's name in the sky over the path. */
+          { x: 0, cam: portrait ? [0, 2.2, 9.6, 0, 3.2, -4] : [0, 2.2, 9.4, 0, 2.8, -4], color: PAINT[COLOR_ID] },
           { x: STEP_DX, make: () => letterBlocks(COLOR_ID), k: 1.7, color: PAINT[COLOR_ID] },
           ...(MIXES[COLOR_ID] ? [{ x: STEP_DX * 2, make: () => stumpMix(...MIXES[COLOR_ID]), color: PAINT[COLOR_ID] }] : []),
           { x: fx, z: FIND_Z, flower: [fx + 3.6, 3.6], color: PAINT[COLOR_ID] },
@@ -7672,7 +7564,7 @@ if (THING) {
       keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
     }
     /* No shape-flower blooms between the activities in the felt land (2026-11-09, the user). */
-    if (VEG || YEAR_HILL || STOPS || SHAPE_LAND) return null;
+    if (VEG || YEAR_HILL || STOPS || LAND) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
     const flower = ON_PATH ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
