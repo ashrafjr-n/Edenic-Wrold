@@ -487,6 +487,7 @@ export function LessonPlayer({
       body = (
         <WordCard
           onScene={Boolean(world && !q.picture)}
+          inSky={Boolean(world && q.color)}
           word={q.word}
           shape={q.shape}
           picture={q.picture}
