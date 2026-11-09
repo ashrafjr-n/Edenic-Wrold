@@ -13,8 +13,8 @@ interface CueButtonProps {
   label: string;
   /** What is on the button beside the speaker; none makes it a round icon. */
   children?: ReactNode;
-  /** `xl` is the one big speaker a word card is built around. */
-  size?: "sm" | "lg" | "xl";
+  /** `xl` is the one big speaker a word card is built around; `2xl` the huge one in the middle of a colour's stage. */
+  size?: "sm" | "lg" | "xl" | "2xl";
   /** Pulse softly until first pressed — "you can press this". */
   invite?: boolean;
 }
@@ -46,13 +46,15 @@ export function CueButton({ cue, label, children, size = "lg", invite = false }:
     ? size === "lg"
       ? "gap-2.5 px-6 py-3.5 text-xl sm:px-7 sm:py-4 sm:text-2xl"
       : "gap-2 px-4 py-2.5 text-base"
+    : size === "2xl"
+      ? "h-36 w-36 sm:h-44 sm:w-44"
     : size === "xl"
       ? "h-24 w-24 sm:h-28 sm:w-28"
       : size === "lg"
         ? "h-14 w-14 sm:h-16 sm:w-16"
         : "h-11 w-11";
   const icon =
-    size === "xl" ? "h-11 w-11 sm:h-12 sm:w-12" : size === "lg" ? "h-6 w-6 sm:h-7 sm:w-7" : "h-5 w-5";
+    size === "2xl" ? "h-16 w-16 sm:h-20 sm:w-20" : size === "xl" ? "h-11 w-11 sm:h-12 sm:w-12" : size === "lg" ? "h-6 w-6 sm:h-7 sm:w-7" : "h-5 w-5";
 
   return (
     <span className="relative inline-flex shrink-0">
