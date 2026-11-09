@@ -7620,7 +7620,8 @@ if (THING) {
       scene.add(prop);
       keepClear.push(new THREE.Box3().setFromObject(prop).expandByScalar(0.3));
     }
-    if (VEG || YEAR_HILL || STOPS) return null;
+    /* No shape-flower blooms between the activities in the felt land (2026-11-09, the user). */
+    if (VEG || YEAR_HILL || STOPS || SHAPE_LAND) return null;
     const [x, z] = place.flower ?? [place.x + 1.9, PLACE_Z + 1.5];
     const flower = ON_PATH ? shapeFlower("circle", place.color) : shapeFlower(place.shape ?? SHAPE_OF_LESSON[LESSON - 1]);
     flower.position.set(x, 0, z);
@@ -7643,7 +7644,7 @@ if (THING) {
   const blooms = (done, b = 0) =>
     YEAR_HILL
       ? hillGrow(done, b)
-      : flowers.forEach((f, k) => f.bloom(k < done ? 1 : k === done ? b : 0));
+      : flowers.forEach((f, k) => f?.bloom(k < done ? 1 : k === done ? b : 0));
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
