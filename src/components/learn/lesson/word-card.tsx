@@ -16,6 +16,9 @@ interface WordCardProps {
   /** What it names is in the world behind it (a color's splash on the
       forest's easel): just the speaker and the word, on a card under it. */
   onScene?: boolean;
+  /** A colour's name written big in the world's sky, glowing in its own
+      colour, with one big speaker in the middle of the stage (Colors). */
+  inSky?: boolean;
   /** One tone for all its letters — a color word in its own color. */
   tone?: LetterTone;
   /** The word's own clip — `lessonCue.word`. */
@@ -30,7 +33,18 @@ interface WordCardProps {
  * word is learned as the name OF something, not as letters on their own.
  * Nothing to get right here; the lesson's Next is the way on.
  */
-export function WordCard({ word, shape, picture, tilt, onScene = false, tone, cue, label }: WordCardProps) {
+export function WordCard({ word, shape, picture, tilt, onScene = false, inSky = false, tone, cue, label }: WordCardProps) {
+  if (inSky) {
+    return (
+      <div className="flex flex-1 flex-col items-center">
+        <div className="flex flex-1 items-center justify-center" style={tone && { filter: `drop-shadow(0 0 0.3em color-mix(in srgb, ${tone.face} 65%, transparent))` }}>
+          <ClayWord word={word} size="xl" tone={tone} />
+        </div>
+        <CueButton cue={cue} label={label} size="2xl" invite />
+        <div className="flex-1" />
+      </div>
+    );
+  }
   if (onScene) {
     return (
       <div className="card card-clay-white anim-pop-in mt-auto flex items-center gap-4 px-5 py-3 sm:gap-6 sm:px-8 sm:py-4">
