@@ -3884,6 +3884,107 @@ function gardenThing(kind, tone = 0) {
   }
   return g;
 }
+/* The garden's backdrop trees and grass tufts (the old pom-pom look, 2026-11-08): My Garden's world, Bloo's farm and the stops' trees keep it. */
+function gardenScenery(kind, tone = 0) {
+  const tones = GARDEN_TONES[kind];
+  const c = tones[tone % tones.length];
+  const sph = (r, material, seg = 32) => mesh(new THREE.SphereGeometry(r, seg, Math.round(seg * 0.66)), material);
+  const lighter = (hex, k) => new THREE.Color(hex).lerp(new THREE.Color(0xffffff), k).getHex();
+  const darker = (hex, k) => new THREE.Color(hex).lerp(new THREE.Color(0x000000), k).getHex();
+  const green = velvet(0x6cc46a);
+  const g = new THREE.Group();
+  if (kind === "flower") {
+    g.add(taperTube([[0, 0, 0], [0.05, 0.5, 0], [0, 1.0, 0]], 0.05, 0.04, green));
+    for (const s of [-1, 1]) {
+      const leaf = sph(0.17, green);
+      leaf.scale.set(1.6, 0.45, 0.8);
+      leaf.position.set(s * 0.22, 0.36, 0);
+      leaf.rotation.z = s * -0.5;
+      g.add(leaf);
+    }
+    const head = new THREE.Group();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const p = sph(0.17, velvet(c));
+      p.scale.set(1.25, 1.25, 0.45);
+      p.position.set(Math.cos(a) * 0.23, Math.sin(a) * 0.23, 0);
+      head.add(p);
+    }
+    const middle = sph(0.13, velvet(c === 0xffd45e ? 0xff9f5a : 0xffd45e));
+    middle.scale.z = 0.6;
+    middle.position.z = 0.07;
+    head.add(middle);
+    head.position.y = 1.08;
+    head.rotation.x = -0.2;
+    g.add(head);
+  } else if (kind === "tree") {
+    /* A pom-pom tree: a soft trunk, a crown of round tufts, lighter on top. */
+    g.add(taperTube([[0, 0, 0], [0.08, 0.7, 0], [-0.04, 1.45, 0]], 0.17, 0.1, velvet(0xd9b38c)));
+    for (const [x, y, z, r] of [[0, 1.85, 0, 0.5], [-0.5, 1.65, 0.05, 0.38], [0.52, 1.68, 0, 0.4], [-0.28, 2.25, 0.05, 0.38], [0.3, 2.22, -0.05, 0.4], [0, 2.55, 0, 0.32], [0, 1.6, 0.35, 0.34], [-0.62, 2.0, -0.15, 0.3], [0.65, 2.02, -0.12, 0.3]]) {
+      g.add(at_(sph(r, velvet(y > 2.1 ? lighter(c, 0.25) : c)), x, y, z));
+    }
+  } else if (kind === "leaf") {
+    /* A big leaf standing up on its stalk, its middle vein a lighter line. */
+    const blade = plumpLeaf(1.0, 0.42, velvet(c));
+    blade.rotation.z = Math.PI / 2 - 0.18;
+    blade.position.set(0.02, 0.18, 0);
+    g.add(blade);
+    g.add(taperTube([[0, 0, 0.03], [0.02, 0.12, 0.03], [0.05, 0.25, 0.03]], 0.035, 0.03, velvet(darker(c, 0.15))));
+    const vein = mesh(new THREE.CylinderGeometry(0.014, 0.022, 0.86, 8), velvet(lighter(c, 0.45)));
+    vein.position.set(0.11, 0.67, 0.06);
+    vein.rotation.z = -0.18;
+    g.add(vein);
+  } else if (kind === "grass") {
+    /* A tuft of long blades fanning out of one clump. */
+    for (let i = 0; i < 11; i++) {
+      const a = (i / 11) * Math.PI * 2;
+      const lean = 0.22 + (i % 3) * 0.1;
+      const ht = 0.75 + ((i * 7) % 5) * 0.08;
+      const [dx, dz] = [Math.cos(a) * lean, Math.sin(a) * lean * 0.6];
+      g.add(taperTube([[dx * 0.1, 0, dz * 0.1], [dx * 0.5, ht * 0.55, dz * 0.5], [dx * 1.2, ht, dz * 1.2]], 0.06, 0.012, velvet(i % 2 ? c : lighter(c, 0.2)), 24));
+    }
+  } else if (kind === "nest") {
+    /* A bowl of twigs, three pale blue eggs in it. */
+    const twig = velvet(c);
+    g.add(mesh(lathe([[0, 0.04], [0.42, 0.02], [0.58, 0.16], [0.62, 0.36], [0.52, 0.42], [0.45, 0.3], [0, 0.2]], 64), twig));
+    for (const [y, r, tilt] of [[0.18, 0.56, 0.08], [0.28, 0.6, -0.06], [0.37, 0.56, 0.05]]) {
+      const ring = mesh(new THREE.TorusGeometry(r, 0.055, 12, 64), velvet(darker(c, 0.12)));
+      ring.rotation.set(Math.PI / 2 + tilt, 0, 0);
+      ring.position.y = y;
+      g.add(ring);
+    }
+    for (const [x, z, ry] of [[-0.16, 0.05, 0.3], [0.16, 0.06, -0.3], [0, -0.14, 0]]) {
+      const egg = sph(0.16, velvet(0xbfe0fb));
+      egg.scale.set(0.85, 1.15, 0.85);
+      egg.position.set(x, 0.38, z);
+      egg.rotation.z = ry;
+      g.add(egg);
+    }
+  } else {
+    /* A garden bench: slats in three pastels, white legs and arms. */
+    const legs = velvet(0xfbf6ee);
+    const pal = [c, 0xffd45e, 0x9cc4f2, 0xffa3c8].filter((v, i, all) => all.indexOf(v) === i);
+    const slat = (i) => velvet(pal[i % 3]);
+    const box = (w, h, d, m) => mesh(new RoundedBoxGeometry(w, h, d, 4, Math.min(0.05, h / 2.1, d / 2.1)), m);
+    for (let i = 0; i < 3; i++) g.add(at_(box(1.8, 0.09, 0.17, slat(i)), 0, 0.5, -0.2 + i * 0.2));
+    for (let i = 0; i < 3; i++) {
+      const back = at_(box(1.8, 0.15, 0.08, slat(i)), 0, 0.72 + i * 0.19, -0.36 - i * 0.02);
+      back.rotation.x = -0.12;
+      g.add(back);
+    }
+    for (const sx of [-1, 1]) {
+      g.add(at_(box(0.1, 0.5, 0.5, legs), sx * 0.78, 0.25, -0.05));
+      g.add(at_(box(0.1, 0.65, 0.08, legs), sx * 0.78, 0.82, -0.38));
+      g.add(at_(box(0.1, 0.08, 0.55, legs), sx * 0.86, 0.68, -0.08));
+    }
+    /* Turned a little, so its seat reads from the front. */
+    g.rotation.y = 0.5;
+    const turned = new THREE.Group();
+    turned.add(g);
+    return turned;
+  }
+  return g;
+}
 const at_ = (thing, x, y, z) => {
   thing.position.set(x, y, z);
   return thing;
@@ -5918,7 +6019,7 @@ if (THING) {
   for (let row = 0; row < 5; row++) {
     const z0 = -15 - row * 7.5;
     for (let x = -36; x < 124; x += 4.6 + rand() * 4.2) {
-      add(gardenThing("tree", Math.floor(rand() * 4)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
+      add(gardenScenery("tree", Math.floor(rand() * 4)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
     }
   }
 
@@ -5963,7 +6064,7 @@ if (THING) {
     return g;
   }
   for (let x = -30; x < 126; x += 1.4 + rand() * 1.6) add(lavender(1.1 + rand() * 0.5), x, 0, 7.4 + rand() * 1.6);
-  for (let x = -30; x < 126; x += 4 + rand() * 3) add(gardenThing("grass", Math.floor(rand() * 4)), x, 0, 8.6 + rand() * 1.0, { k: 1.4 + rand() * 0.5 });
+  for (let x = -30; x < 126; x += 4 + rand() * 3) add(gardenScenery("grass", Math.floor(rand() * 4)), x, 0, 8.6 + rand() * 1.0, { k: 1.4 + rand() * 0.5 });
   for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
 
   } else if (FARM) {
@@ -5991,7 +6092,7 @@ if (THING) {
   for (let row = 0; row < 5; row++) {
     const z0 = -15 - row * 7.5;
     for (let x = -36; x < 124; x += 4.6 + rand() * 4.2) {
-      const tree = add(gardenThing("tree", SEAS ? Math.floor(rand() * 4) : 1 + Math.floor(rand() * 2)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
+      const tree = add(gardenScenery("tree", SEAS ? Math.floor(rand() * 4) : 1 + Math.floor(rand() * 2)), x + (rand() - 0.5) * 2.5, 0, z0 - rand() * 3, { k: (2.2 + row * 0.25) * (0.8 + rand() * 0.45), ry: rand() * 6 });
       if (SEAS_WEATHER === "windy") tree.rotation.z = -0.13;
     }
   }
@@ -6020,7 +6121,7 @@ if (THING) {
       if (!busy(x, z)) add(hillFlower(c), x, 0, z, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
     }
   }
-  for (let x = -30; x < 126; x += 3 + rand() * 3) add(gardenThing("grass", Math.floor(rand() * 4)), x, 0, 7.6 + rand() * 1.8, { k: 1.4 + rand() * 0.5 });
+  for (let x = -30; x < 126; x += 3 + rand() * 3) add(gardenScenery("grass", Math.floor(rand() * 4)), x, 0, 7.6 + rand() * 1.8, { k: 1.4 + rand() * 0.5 });
   for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
   if (SEAS) {
     /* The season's and the weather's extras, in the places' reach (x -20 to the last place + 20). */
@@ -7423,7 +7524,7 @@ if (THING) {
     };
     /* My Garden's: pom-pom trees, rose bushes and the blue picket fence. */
     const pomTree = (tone) => {
-      const t = gardenThing("tree", tone);
+      const t = gardenScenery("tree", tone);
       t.scale.setScalar(2.3);
       return t;
     };
@@ -7654,7 +7755,7 @@ if (THING) {
     const buckets = new Map();
     const merged = [];
     scene.traverse((o) => {
-      if (!o.isMesh || o === catcher || Array.isArray(o.material) || o.userData.noMerge) return;
+      if (!o.isMesh || o === catcher || Array.isArray(o.material) || o.userData.noMerge || o.material.vertexColors) return;
       for (let p = o; p; p = p.parent) if (keep.has(p)) return;
       const m = o.material;
       const key = [m.type, m.color?.getHexString(), m.roughness, m.metalness, m.clearcoat, m.clearcoatRoughness, m.sheen, m.sheenRoughness,
