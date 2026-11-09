@@ -4306,29 +4306,28 @@ button:disabled,
   padding: 2.2rem 0.4rem 0.25rem;
 }
 
-/* A course's card: a paper lesson sheet pinned to the slate by two clay
-   magnets (cream in dark mode too — ink-fixed), so it reads at once as
-   something to DO: its name on a clay tag over the top edge, "5 lessons",
-   its one 3D thing, a dot per lesson, one button. Pinned up one after the
-   other as the board settles. */
+/* A course's card: a clay frame round a big picture of the course's own
+   world (cropped square), the name on a clay tag over the top edge, and,
+   along the bottom, a white clay strip — "5 lessons", a dot per lesson, one
+   button. The whole card is the link. Pinned up one after the other as the
+   board settles. */
 .class-card {
+  --rim: clamp(0.25rem, 0.7vw, 0.5rem);
   position: relative;
   display: flex;
   aspect-ratio: 1;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(0.2rem, 0.7vw, 0.5rem);
-  padding: clamp(1.1rem, 2.6vw, 2.2rem) clamp(0.5rem, 1.6vw, 1.3rem) clamp(0.6rem, 1.5vw, 1.2rem);
   margin-inline: var(--card-gap);
+  padding: var(--rim);
   container-type: inline-size;
-  border-radius: 1.4rem;
+  border-radius: 1.7rem;
   color: var(--color-ink-fixed);
   background-color: #fbf8f0;
   background-image: var(--noise);
   background-blend-mode: soft-light;
   box-shadow:
-    inset 0 -4px 0 rgb(120 90 60 / 10%),
-    0 16px 22px -12px rgb(0 0 0 / 55%);
+    inset 0 3px 3px rgb(255 255 255 / 90%),
+    inset 0 -5px 0 rgb(120 90 60 / 14%),
+    0 18px 24px -12px rgb(0 0 0 / 55%);
   transition: background-color 0.2s;
   animation: class-card-pin 0.6s cubic-bezier(0.3, 1.3, 0.5, 1) backwards;
 }
@@ -4341,32 +4340,6 @@ button:disabled,
   }
 }
 
-/* Its two magnets, top corners. */
-.class-card::before,
-.class-card::after {
-  content: "";
-  position: absolute;
-  top: -0.5rem;
-  width: clamp(0.95rem, 1.8vw, 1.4rem);
-  aspect-ratio: 1;
-  border-radius: 9999px;
-  background:
-    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
-    var(--magnet, #f776ac);
-  box-shadow:
-    inset 0 -2px 3px rgb(0 0 0 / 25%),
-    0 3px 4px rgb(0 0 0 / 35%);
-}
-
-.class-card::before {
-  left: 0.9rem;
-}
-
-.class-card::after {
-  --magnet: #4da3ec;
-  right: 0.9rem;
-}
-
 .class-card:hover {
   background-color: #fffdf8;
 }
@@ -4374,6 +4347,32 @@ button:disabled,
 .class-card:focus-visible {
   outline: 4px solid var(--chalk-accent);
   outline-offset: 4px;
+}
+
+/* The picture, clipped to the frame's inside, a soft scrim at the foot so
+   the strip reads on any scene and a clay inner edge over it. */
+.class-card-art {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: calc(1.7rem - var(--rim));
+  background-color: #e9dff2;
+}
+
+.class-card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, rgb(50 25 70 / 45%), transparent 42%);
+  box-shadow:
+    inset 0 4px 6px rgb(255 255 255 / 35%),
+    inset 0 -6px 10px rgb(60 30 80 / 22%);
+  pointer-events: none;
 }
 
 /* The course to play next glows pink. */
@@ -4389,6 +4388,7 @@ button:disabled,
    card's top edge. */
 .class-card-tag {
   position: absolute;
+  z-index: 2;
   top: 0;
   left: 50%;
   translate: -50% -55%;
@@ -4413,23 +4413,40 @@ button:disabled,
     0 8px 12px -6px rgb(0 0 0 / 45%);
 }
 
-/* "5 lessons": what the sheet holds. */
+/* The strip along the picture's foot: white clay, "5 lessons" and the dots
+   on the left, the button on the right. */
+.class-card-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin: clamp(0.3rem, 2.4cqi, 0.8rem);
+  padding: clamp(0.3rem, 1.4cqi, 0.6rem) clamp(0.7rem, 4.2cqi, 1.3rem);
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 92%);
+  box-shadow:
+    inset 0 3px 3px rgb(255 255 255 / 90%),
+    inset 0 -4px 6px rgb(120 90 60 / 16%),
+    0 8px 12px -6px rgb(0 0 0 / 45%);
+}
+
+.class-card-info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* "5 lessons": what the course holds. */
 .class-card-count {
-  font-size: clamp(0.7rem, 1.15vw, 1rem);
+  font-size: clamp(0.65rem, 4.4cqi, 1rem);
   font-weight: 700;
   line-height: 1.1;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: color-mix(in srgb, var(--color-ink-fixed) 62%, transparent);
-}
-
-/* The course's one 3D thing, filling what the card has left. */
-.class-card-model {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  filter: drop-shadow(0 8px 8px rgb(90 40 70 / 28%));
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--color-ink-fixed) 70%, transparent);
 }
 
 /* A dot per lesson: faint to come, pink once learned, ringed where the
@@ -4437,16 +4454,14 @@ button:disabled,
 .class-card-dots {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(0.2rem, 0.5vw, 0.4rem);
-  max-width: 90%;
+  gap: clamp(0.15rem, 0.7cqi, 0.35rem);
 }
 
 .class-card-dot {
-  width: clamp(0.45rem, 0.9vw, 0.75rem);
+  width: clamp(0.4rem, 2.6cqi, 0.7rem);
   aspect-ratio: 1;
   border-radius: 9999px;
-  background-color: rgb(90 60 80 / 16%);
+  background-color: rgb(90 60 80 / 18%);
 }
 
 .class-card-dot--done {
@@ -4465,10 +4480,22 @@ button:disabled,
   --btn-face: var(--page-accent-color);
   --btn-edge: var(--page-accent-edge);
   --btn-text: var(--page-accent-ink, #fff);
+  flex-shrink: 0;
   gap: 0.35rem;
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+/* A narrow card (a phone's): the button is its icon alone. */
+@container (width < 15rem) {
+  .class-card-go {
+    padding: 0.5rem;
+  }
+
+  .class-card-go-label {
+    display: none;
+  }
 }
 
 .class-card:hover .class-card-go {
@@ -4594,8 +4621,8 @@ button:disabled,
   }
 
   .class-card-go {
-    padding: 0.6rem 1.3rem;
-    font-size: 1.05rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 1rem;
   }
 
   .class-teacher {
@@ -4624,8 +4651,8 @@ button:disabled,
   }
 
   .class-card-go {
-    padding: 0.6rem 1.4rem;
-    font-size: 1.1rem;
+    padding: 0.55rem 1.2rem;
+    font-size: 1.05rem;
   }
 
   .class-teacher {

@@ -4,7 +4,7 @@ import { lessonsByCharacter } from "@/data/lessons";
 import { courseCovers } from "@/data/courses";
 import type { UpNextCourse } from "@/components/learn/up-next";
 import { ClassCourses } from "@/components/learn/classroom/class-courses";
-import { classroomModels } from "@/data/classroom";
+import { classroomModels, courseCardArt } from "@/data/classroom";
 import { getDictionary } from "@/lib/locale";
 import { dirFor } from "@/lib/format-dict";
 
@@ -49,7 +49,7 @@ export default async function CharacterLearnPage({
         .filter((lesson) => !lesson.locked)
         .map((lesson, i) => ({
           ...upNextCourses[i],
-          model: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0],
+          art: courseCardArt[lesson.id] ?? { src: classroomModels[lesson.id] ?? courseCovers(lesson.id)[0], focus: "50% 50%" },
         }))}
       labels={{
         lessons: dict.lessonPicker.lessonsCount,

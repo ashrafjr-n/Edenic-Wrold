@@ -23,6 +23,12 @@ import blooDesk from "../../public/assets/learn/bloo/classroom/portrait-desk.png
 import blooDeskWide from "../../public/assets/learn/bloo/classroom/landscape-desk.png";
 import blooWithStick from "../../public/assets/learn/bloo/classroom/bloo-with-a-stick.png";
 import blooCheer from "../../public/assets/friends/bloo.png";
+import cardShapes from "../../public/assets/learn-cards/shapes-card.jpeg";
+import cardColors from "../../public/assets/learn-cards/colors-card.jpeg";
+import cardVegetables from "../../public/assets/learn-cards/Vegetables-card.jpeg";
+import cardGarden from "../../public/assets/learn-cards/garden-card.jpeg";
+import cardAnimals from "../../public/assets/learn-cards/animals-card.jpeg";
+import cardWeather from "../../public/assets/learn-cards/seasons-and-weathers-card.jpeg";
 
 
 /** A friend's classroom (2026-10-14 Pinki's; Nova's and Bloo's
@@ -85,4 +91,16 @@ export function classroomStyle({ chalk }: Classroom): CSSProperties {
 export const classroomModels: Partial<Record<LessonId, StaticImageData>> = {
   shapes: courseShapes,
   colors: courseColors,
+};
+
+/** The big picture on a course's sheet on the hub (2026-11-09): the scene
+    of the course's own world, cropped square by `object-fit: cover` — `focus`
+    is the crop's centre (`object-position`) so the friends stay in it. */
+export const courseCardArt: Partial<Record<LessonId, { src: StaticImageData; focus: string }>> = {
+  shapes: { src: cardShapes, focus: "58% 50%" },
+  colors: { src: cardColors, focus: "45% 50%" },
+  fruits: { src: cardVegetables, focus: "50% 55%" },
+  garden: { src: cardGarden, focus: "50% 50%" },
+  animals: { src: cardAnimals, focus: "35% 55%" },
+  weather: { src: cardWeather, focus: "50% 50%" },
 };

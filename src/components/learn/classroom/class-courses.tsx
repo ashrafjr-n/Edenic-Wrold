@@ -20,8 +20,8 @@ import chalkBurst from "../../../../public/assets/learn/classroom/chalk-burst.pn
 import chalkUnderline from "../../../../public/assets/learn/classroom/chalk-underline.png";
 
 interface ClassCourse extends UpNextCourse {
-  /** The course's one 3D thing (`classroomModels`). */
-  model: StaticImageData;
+  /** The course's picture (`courseCardArt`), cropped to the card. */
+  art: { src: StaticImageData; focus: string };
 }
 
 interface ClassCoursesProps {
@@ -123,25 +123,36 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
               <span dir={dir} className="class-card-tag" style={{ "--chars": course.name.length } as CSSProperties}>
                 {course.name}
               </span>
-              <span dir={dir} className="class-card-count">
-                {format(labels.lessons, { n: course.titles.length })}
-              </span>
-              <span className="class-card-model">
-                <Image src={course.model} alt="" fill sizes="(min-width: 1024px) 15rem, 30vw" className="object-contain" />
-              </span>
-              {/* One dot per lesson: pink once learned, ringed where
-                  the child carries on. */}
-              <span className="class-card-dots" aria-hidden>
-                {course.titles.map((_, k) => (
-                  <span
-                    key={k}
-                    className={`class-card-dot ${k < done ? "class-card-dot--done" : k === done ? "class-card-dot--next" : ""}`}
-                  />
-                ))}
-              </span>
-              <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
-                {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
-                <span>{finished ? labels.again : done ? labels.continue : labels.start}</span>
+              <span className="class-card-art">
+                <Image
+                  src={course.art.src}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 24rem, 45vw"
+                  className="object-cover"
+                  style={{ objectPosition: course.art.focus }}
+                />
+                <span className="class-card-foot">
+                  <span className="class-card-info">
+                    <span dir={dir} className="class-card-count">
+                      {format(labels.lessons, { n: course.titles.length })}
+                    </span>
+                    {/* One dot per lesson: pink once learned, ringed where
+                        the child carries on. */}
+                    <span className="class-card-dots" aria-hidden>
+                      {course.titles.map((_, k) => (
+                        <span
+                          key={k}
+                          className={`class-card-dot ${k < done ? "class-card-dot--done" : k === done ? "class-card-dot--next" : ""}`}
+                        />
+                      ))}
+                    </span>
+                  </span>
+                  <span className={`btn3d class-card-go ${finished ? "class-card-go--done" : ""}`} aria-hidden>
+                    {finished ? <RotateCcw className="h-4 w-4" strokeWidth={3} /> : <Play className="h-4 w-4 fill-current" strokeWidth={2.5} />}
+                    <span className="class-card-go-label">{finished ? labels.again : done ? labels.continue : labels.start}</span>
+                  </span>
+                </span>
               </span>
             </Link>
           );
