@@ -132,10 +132,10 @@ export const GARDEN: Record<number, LessonWorld> = {
     ],
     moves: [
       { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m0.mp4?v=0869cc74", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m0.mp4?v=e564a908" },
-      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m1.mp4?v=85e54bad", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m1.mp4?v=8fb375e0" },
-      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m2.mp4?v=69d71d02", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m2.mp4?v=6efa567c" },
-      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m3.mp4?v=e3a52bae", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m3.mp4?v=6469f2fa" },
-      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m4.mp4?v=99b8420c", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m4.mp4?v=86fba4ad" },
+      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m1.mp4?v=e73d8a28", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m1.mp4?v=0323fad9" },
+      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m2.mp4?v=8903a1bf", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m2.mp4?v=a5cdce62" },
+      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m3.mp4?v=61146944", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m3.mp4?v=82ec7c6e" },
+      { landscape: "/assets/learn/pinki/shapes/garden/1/landscape/m4.mp4?v=d0168f9e", portrait: "/assets/learn/pinki/shapes/garden/1/portrait/m4.mp4?v=e6d227d7" },
     ],
   },
   2: {
@@ -148,10 +148,10 @@ export const GARDEN: Record<number, LessonWorld> = {
     ],
     moves: [
       { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m0.mp4?v=1c5d2a6d", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m0.mp4?v=fd378e29" },
-      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m1.mp4?v=fbabdb3c", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m1.mp4?v=0ea8c389" },
-      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m2.mp4?v=3b437ae8", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m2.mp4?v=22c15513" },
-      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m3.mp4?v=353cb659", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m3.mp4?v=32349a28" },
-      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m4.mp4?v=a7583bd1", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m4.mp4?v=69e81a5a" },
+      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m1.mp4?v=b615c26a", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m1.mp4?v=3db0ec10" },
+      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m2.mp4?v=1adc21d9", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m2.mp4?v=3d640b29" },
+      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m3.mp4?v=853e5fd8", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m3.mp4?v=b91e6464" },
+      { landscape: "/assets/learn/pinki/shapes/garden/2/landscape/m4.mp4?v=d62312f2", portrait: "/assets/learn/pinki/shapes/garden/2/portrait/m4.mp4?v=bf87e85c" },
     ],
   },
   3: {
@@ -164,10 +164,10 @@ export const GARDEN: Record<number, LessonWorld> = {
     ],
     moves: [
       { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m0.mp4?v=53901084", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m0.mp4?v=457b3955" },
-      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m1.mp4?v=4e08fb1f", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m1.mp4?v=0fd668a9" },
-      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m2.mp4?v=76dd2cbe", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m2.mp4?v=23fce5cc" },
-      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m3.mp4?v=66b6927a", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m3.mp4?v=5c806f51" },
-      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m4.mp4?v=7b302160", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m4.mp4?v=2a3385fa" },
+      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m1.mp4?v=52f62290", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m1.mp4?v=45acf630" },
+      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m2.mp4?v=a454e2d4", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m2.mp4?v=07dcbc6c" },
+      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m3.mp4?v=957745bd", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m3.mp4?v=761ec558" },
+      { landscape: "/assets/learn/pinki/shapes/garden/3/landscape/m4.mp4?v=94ecbab1", portrait: "/assets/learn/pinki/shapes/garden/3/portrait/m4.mp4?v=bd82bbf6" },
     ],
   },
   4: {
@@ -179,11 +179,11 @@ export const GARDEN: Record<number, LessonWorld> = {
       { landscape: l4_s4_jpg, portrait: p4_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m0.mp4?v=d03ea1de", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m0.mp4?v=d9dfaeb0" },
-      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m1.mp4?v=63af7b1e", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m1.mp4?v=8d2d85ff" },
-      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m2.mp4?v=873f8100", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m2.mp4?v=b2b47496" },
-      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m3.mp4?v=ee9e2cd5", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m3.mp4?v=bd5cbba9" },
-      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m4.mp4?v=7fdd0c94", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m4.mp4?v=31cdec3c" },
+      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m0.mp4?v=65d03119", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m0.mp4?v=b5f04505" },
+      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m1.mp4?v=97782c9a", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m1.mp4?v=331400aa" },
+      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m2.mp4?v=31b1e52a", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m2.mp4?v=92a54a8f" },
+      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m3.mp4?v=6017d0d9", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m3.mp4?v=b35b960e" },
+      { landscape: "/assets/learn/pinki/shapes/garden/4/landscape/m4.mp4?v=a9bf238d", portrait: "/assets/learn/pinki/shapes/garden/4/portrait/m4.mp4?v=0d28c164" },
     ],
   },
   5: {
@@ -195,11 +195,11 @@ export const GARDEN: Record<number, LessonWorld> = {
       { landscape: l5_s4_jpg, portrait: p5_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m0.mp4?v=52039ae3", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m0.mp4?v=f3145f18" },
-      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m1.mp4?v=1f190ef8", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m1.mp4?v=c0f1ed02" },
-      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m2.mp4?v=d3fdf6d0", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m2.mp4?v=47750338" },
-      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m3.mp4?v=9302db4d", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m3.mp4?v=04607857" },
-      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m4.mp4?v=8a34b46a", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m4.mp4?v=bfd92235" },
+      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m0.mp4?v=24959110", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m0.mp4?v=b7195c22" },
+      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m1.mp4?v=97099ba6", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m1.mp4?v=4c54a2a6" },
+      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m2.mp4?v=7b507896", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m2.mp4?v=4696a373" },
+      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m3.mp4?v=f082f059", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m3.mp4?v=b85fa4d1" },
+      { landscape: "/assets/learn/pinki/shapes/garden/5/landscape/m4.mp4?v=c7ce4678", portrait: "/assets/learn/pinki/shapes/garden/5/portrait/m4.mp4?v=dafafbcb" },
     ],
   },
 };
