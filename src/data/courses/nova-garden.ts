@@ -1,6 +1,6 @@
 import type { StaticImageData } from "next/image";
 import type { Face, GardenThing, LessonDef } from "@/types/course";
-import { MY_GARDEN, MY_GARDEN_FIND } from "@/data/my-garden";
+import { MY_GARDEN } from "@/data/my-garden";
 import flower from "../../../public/assets/learn/nova/garden/things/garden-flower.png";
 import tree from "../../../public/assets/learn/nova/garden/things/garden-tree.png";
 import leaf from "../../../public/assets/learn/nova/garden/things/garden-leaf.png";
@@ -28,8 +28,7 @@ const face = (word: GardenThing): Face => ({ kind: "picture", src: THINGS[word].
  * One garden thing, one lesson (the user, 2026-11-08), all in Nova's garden
  * (`data/my-garden.ts`, the videos' candy-pink garden): its reel → the word,
  * the thing itself big on a plinth on the lawn → spell it among letter blocks
- * → Find: tap every one of it standing in the garden (four, each its own
- * colour, among three other garden things). No other activity.
+ * (2026-11-09: the Find was removed — nothing comes after the spelling).
  */
 function thingLesson(word: GardenThing, n: number): LessonDef {
   return {
@@ -39,13 +38,6 @@ function thingLesson(word: GardenThing, n: number): LessonDef {
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word },
       { type: "spell", ask: { key: "spell", vars: { word } }, word },
-      {
-        type: "find",
-        ask: { key: "findThings", vars: { things: THINGS[word].things } },
-        target: { group: word },
-        scene: MY_GARDEN_FIND[n].landscape,
-        world: MY_GARDEN_FIND[n],
-      },
     ],
   };
 }
