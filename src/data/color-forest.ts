@@ -19,10 +19,10 @@ import l1_find_ball_png from "../../public/assets/learn/pinki/colors/forest/1/la
 import l1_find_bug_png from "../../public/assets/learn/pinki/colors/forest/1/landscape/find/bug.png";
 import l1_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/1/landscape/find/ground.jpg";
 import p1_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/butterfly.png";
-import p1_find_bird_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/bird.png";
 import p1_find_flower_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/flower.png";
-import p1_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/mushroom.png";
+import p1_find_bird_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/bird.png";
 import p1_find_basket_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/basket.png";
+import p1_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/mushroom.png";
 import p1_find_ball_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/ball.png";
 import p1_find_bug_png from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/bug.png";
 import p1_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/1/portrait/find/ground.jpg";
@@ -43,10 +43,10 @@ import l2_find_ball_png from "../../public/assets/learn/pinki/colors/forest/2/la
 import l2_find_bug_png from "../../public/assets/learn/pinki/colors/forest/2/landscape/find/bug.png";
 import l2_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/2/landscape/find/ground.jpg";
 import p2_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/butterfly.png";
-import p2_find_bird_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/bird.png";
 import p2_find_flower_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/flower.png";
-import p2_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/mushroom.png";
+import p2_find_bird_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/bird.png";
 import p2_find_basket_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/basket.png";
+import p2_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/mushroom.png";
 import p2_find_ball_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/ball.png";
 import p2_find_bug_png from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/bug.png";
 import p2_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/2/portrait/find/ground.jpg";
@@ -69,8 +69,8 @@ import l3_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/3/
 import p3_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/butterfly.png";
 import p3_find_flower_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/flower.png";
 import p3_find_bird_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/bird.png";
-import p3_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/mushroom.png";
 import p3_find_basket_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/basket.png";
+import p3_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/mushroom.png";
 import p3_find_ball_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/ball.png";
 import p3_find_bug_png from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/bug.png";
 import p3_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/3/portrait/find/ground.jpg";
@@ -95,8 +95,8 @@ import l4_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/4/
 import p4_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/butterfly.png";
 import p4_find_flower_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/flower.png";
 import p4_find_bird_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/bird.png";
-import p4_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/mushroom.png";
 import p4_find_basket_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/basket.png";
+import p4_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/mushroom.png";
 import p4_find_ball_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/ball.png";
 import p4_find_bug_png from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/bug.png";
 import p4_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/4/portrait/find/ground.jpg";
@@ -110,8 +110,8 @@ import l5_s3_jpg from "../../public/assets/learn/pinki/colors/forest/5/landscape
 import p5_s3_jpg from "../../public/assets/learn/pinki/colors/forest/5/portrait/s3.jpg";
 import l5_s4_jpg from "../../public/assets/learn/pinki/colors/forest/5/landscape/s4.jpg";
 import p5_s4_jpg from "../../public/assets/learn/pinki/colors/forest/5/portrait/s4.jpg";
-import l5_find_flower_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/flower.png";
 import l5_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/butterfly.png";
+import l5_find_flower_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/flower.png";
 import l5_find_bird_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/bird.png";
 import l5_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/mushroom.png";
 import l5_find_basket_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/basket.png";
@@ -119,10 +119,10 @@ import l5_find_ball_png from "../../public/assets/learn/pinki/colors/forest/5/la
 import l5_find_bug_png from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/bug.png";
 import l5_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/5/landscape/find/ground.jpg";
 import p5_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/butterfly.png";
-import p5_find_bird_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/bird.png";
 import p5_find_flower_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/flower.png";
-import p5_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/mushroom.png";
+import p5_find_bird_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/bird.png";
 import p5_find_basket_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/basket.png";
+import p5_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/mushroom.png";
 import p5_find_ball_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/ball.png";
 import p5_find_bug_png from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/bug.png";
 import p5_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/5/portrait/find/ground.jpg";
@@ -145,10 +145,10 @@ import l6_find_ball_png from "../../public/assets/learn/pinki/colors/forest/6/la
 import l6_find_bug_png from "../../public/assets/learn/pinki/colors/forest/6/landscape/find/bug.png";
 import l6_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/6/landscape/find/ground.jpg";
 import p6_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/butterfly.png";
-import p6_find_bird_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/bird.png";
 import p6_find_flower_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/flower.png";
-import p6_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/mushroom.png";
+import p6_find_bird_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/bird.png";
 import p6_find_basket_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/basket.png";
+import p6_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/mushroom.png";
 import p6_find_ball_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/ball.png";
 import p6_find_bug_png from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/bug.png";
 import p6_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/6/portrait/find/ground.jpg";
@@ -162,8 +162,8 @@ import l7_s3_jpg from "../../public/assets/learn/pinki/colors/forest/7/landscape
 import p7_s3_jpg from "../../public/assets/learn/pinki/colors/forest/7/portrait/s3.jpg";
 import l7_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/butterfly.png";
 import l7_find_flower_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/flower.png";
-import l7_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/mushroom.png";
 import l7_find_bird_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/bird.png";
+import l7_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/mushroom.png";
 import l7_find_basket_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/basket.png";
 import l7_find_ball_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/ball.png";
 import l7_find_bug_png from "../../public/assets/learn/pinki/colors/forest/7/landscape/find/bug.png";
@@ -171,8 +171,8 @@ import l7_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/7/
 import p7_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/butterfly.png";
 import p7_find_flower_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/flower.png";
 import p7_find_bird_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/bird.png";
-import p7_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/mushroom.png";
 import p7_find_basket_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/basket.png";
+import p7_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/mushroom.png";
 import p7_find_ball_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/ball.png";
 import p7_find_bug_png from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/bug.png";
 import p7_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/7/portrait/find/ground.jpg";
@@ -193,10 +193,10 @@ import l8_find_ball_png from "../../public/assets/learn/pinki/colors/forest/8/la
 import l8_find_bug_png from "../../public/assets/learn/pinki/colors/forest/8/landscape/find/bug.png";
 import l8_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/8/landscape/find/ground.jpg";
 import p8_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/butterfly.png";
-import p8_find_bird_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/bird.png";
 import p8_find_flower_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/flower.png";
-import p8_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/mushroom.png";
+import p8_find_bird_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/bird.png";
 import p8_find_basket_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/basket.png";
+import p8_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/mushroom.png";
 import p8_find_ball_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/ball.png";
 import p8_find_bug_png from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/bug.png";
 import p8_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/8/portrait/find/ground.jpg";
@@ -217,10 +217,10 @@ import l9_find_ball_png from "../../public/assets/learn/pinki/colors/forest/9/la
 import l9_find_bug_png from "../../public/assets/learn/pinki/colors/forest/9/landscape/find/bug.png";
 import l9_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/9/landscape/find/ground.jpg";
 import p9_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/butterfly.png";
-import p9_find_bird_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/bird.png";
 import p9_find_flower_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/flower.png";
-import p9_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/mushroom.png";
+import p9_find_bird_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/bird.png";
 import p9_find_basket_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/basket.png";
+import p9_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/mushroom.png";
 import p9_find_ball_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/ball.png";
 import p9_find_bug_png from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/bug.png";
 import p9_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/9/portrait/find/ground.jpg";
@@ -243,8 +243,8 @@ import l10_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/1
 import p10_find_butterfly_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/butterfly.png";
 import p10_find_flower_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/flower.png";
 import p10_find_bird_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/bird.png";
-import p10_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/mushroom.png";
 import p10_find_basket_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/basket.png";
+import p10_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/mushroom.png";
 import p10_find_ball_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/ball.png";
 import p10_find_bug_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/bug.png";
 import p10_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/ground.jpg";
@@ -272,10 +272,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l1_s3_jpg, portrait: p1_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m0.mp4?v=6576463c", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m0.mp4?v=37eee403" },
-      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m1.mp4?v=26a19e14", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m1.mp4?v=9a17a274" },
-      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m2.mp4?v=03b8e562", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m2.mp4?v=03ead254" },
-      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m3.mp4?v=0ccd4c22", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m3.mp4?v=e722c9e1" },
+      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m0.mp4?v=894273c1", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m0.mp4?v=783f6cc0" },
+      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m1.mp4?v=b73858e9", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m1.mp4?v=35f696e1" },
+      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m2.mp4?v=30435e4c", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m2.mp4?v=959e7769" },
+      { landscape: "/assets/learn/pinki/colors/forest/1/landscape/m3.mp4?v=a96e649b", portrait: "/assets/learn/pinki/colors/forest/1/portrait/m3.mp4?v=6118c283" },
     ],
   },
   2: {
@@ -286,10 +286,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l2_s3_jpg, portrait: p2_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m0.mp4?v=b20ff073", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m0.mp4?v=369567d4" },
-      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m1.mp4?v=900a66d8", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m1.mp4?v=0a78ace8" },
-      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m2.mp4?v=d7caf08f", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m2.mp4?v=dc450d29" },
-      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m3.mp4?v=4d65c2b5", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m3.mp4?v=95ad2df0" },
+      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m0.mp4?v=b2f83e97", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m0.mp4?v=61702b1f" },
+      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m1.mp4?v=74c56a6f", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m1.mp4?v=bfd2e75d" },
+      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m2.mp4?v=b289b8e5", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m2.mp4?v=ff791ece" },
+      { landscape: "/assets/learn/pinki/colors/forest/2/landscape/m3.mp4?v=6cb8f4ae", portrait: "/assets/learn/pinki/colors/forest/2/portrait/m3.mp4?v=b6f00b09" },
     ],
   },
   3: {
@@ -300,10 +300,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l3_s3_jpg, portrait: p3_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m0.mp4?v=ca192e1a", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m0.mp4?v=462984b0" },
-      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m1.mp4?v=c7bf579d", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m1.mp4?v=dc05c841" },
-      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m2.mp4?v=bf53dbce", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m2.mp4?v=05659e55" },
-      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m3.mp4?v=b93363d6", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m3.mp4?v=720ecd9a" },
+      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m0.mp4?v=215904b8", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m0.mp4?v=d03898a5" },
+      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m1.mp4?v=dbdd3f50", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m1.mp4?v=22beaef4" },
+      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m2.mp4?v=6d24b323", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m2.mp4?v=0e6b8f94" },
+      { landscape: "/assets/learn/pinki/colors/forest/3/landscape/m3.mp4?v=b0eff06e", portrait: "/assets/learn/pinki/colors/forest/3/portrait/m3.mp4?v=49679b2e" },
     ],
   },
   4: {
@@ -315,11 +315,11 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l4_s4_jpg, portrait: p4_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m0.mp4?v=273a452f", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m0.mp4?v=1734687f" },
-      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m1.mp4?v=8d3d60bf", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m1.mp4?v=a683bac8" },
-      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m2.mp4?v=50000195", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m2.mp4?v=f708948a" },
-      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m3.mp4?v=1ba11d55", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m3.mp4?v=2313dd61" },
-      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m4.mp4?v=de89c033", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m4.mp4?v=b3656652" },
+      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m0.mp4?v=9657d568", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m0.mp4?v=b24cbd67" },
+      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m1.mp4?v=42e73aaf", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m1.mp4?v=a77199cd" },
+      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m2.mp4?v=8609b550", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m2.mp4?v=a7162a5f" },
+      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m3.mp4?v=9f8d20f8", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m3.mp4?v=557e6c03" },
+      { landscape: "/assets/learn/pinki/colors/forest/4/landscape/m4.mp4?v=9735b46a", portrait: "/assets/learn/pinki/colors/forest/4/portrait/m4.mp4?v=bd8789cc" },
     ],
   },
   5: {
@@ -331,11 +331,11 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l5_s4_jpg, portrait: p5_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m0.mp4?v=9fb53695", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m0.mp4?v=20acdd8d" },
-      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m1.mp4?v=6d327955", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m1.mp4?v=c05c30c0" },
-      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m2.mp4?v=9368e8b8", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m2.mp4?v=baeea018" },
-      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m3.mp4?v=db08d1b8", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m3.mp4?v=b54eef72" },
-      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m4.mp4?v=b7e4da2b", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m4.mp4?v=e9ad7101" },
+      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m0.mp4?v=7039ad28", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m0.mp4?v=8e23a18a" },
+      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m1.mp4?v=6217050d", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m1.mp4?v=3bfe95a5" },
+      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m2.mp4?v=a84260ba", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m2.mp4?v=2b9d9e2f" },
+      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m3.mp4?v=754ce608", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m3.mp4?v=81584aaf" },
+      { landscape: "/assets/learn/pinki/colors/forest/5/landscape/m4.mp4?v=0db2c031", portrait: "/assets/learn/pinki/colors/forest/5/portrait/m4.mp4?v=03c009d5" },
     ],
   },
   6: {
@@ -347,11 +347,11 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l6_s4_jpg, portrait: p6_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m0.mp4?v=c88ebf84", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m0.mp4?v=69563938" },
-      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m1.mp4?v=2f03a1c4", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m1.mp4?v=47b7c1af" },
-      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m2.mp4?v=08595e1e", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m2.mp4?v=a63d6128" },
-      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m3.mp4?v=36270d2a", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m3.mp4?v=f937878b" },
-      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m4.mp4?v=fa5c1298", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m4.mp4?v=2c9f3c63" },
+      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m0.mp4?v=bcee739a", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m0.mp4?v=0f15cb49" },
+      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m1.mp4?v=fcbab01d", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m1.mp4?v=cce8908a" },
+      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m2.mp4?v=c1b8dd78", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m2.mp4?v=cccdd6e9" },
+      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m3.mp4?v=d7ac1dd2", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m3.mp4?v=ffe5abe9" },
+      { landscape: "/assets/learn/pinki/colors/forest/6/landscape/m4.mp4?v=1ac57e5d", portrait: "/assets/learn/pinki/colors/forest/6/portrait/m4.mp4?v=1ca0f671" },
     ],
   },
   7: {
@@ -362,10 +362,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l7_s3_jpg, portrait: p7_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m0.mp4?v=9cc67bb7", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m0.mp4?v=4807b96a" },
-      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m1.mp4?v=f0c050d2", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m1.mp4?v=0a79c7a9" },
-      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m2.mp4?v=c221eecd", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m2.mp4?v=1fbdcfef" },
-      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m3.mp4?v=9c7c9ca2", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m3.mp4?v=24b168ea" },
+      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m0.mp4?v=dfe2da72", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m0.mp4?v=9ce0f5fe" },
+      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m1.mp4?v=e7e3a2c6", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m1.mp4?v=18e30bf3" },
+      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m2.mp4?v=b1b70e76", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m2.mp4?v=0dd696fc" },
+      { landscape: "/assets/learn/pinki/colors/forest/7/landscape/m3.mp4?v=006f60e4", portrait: "/assets/learn/pinki/colors/forest/7/portrait/m3.mp4?v=d972e5dd" },
     ],
   },
   8: {
@@ -376,10 +376,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l8_s3_jpg, portrait: p8_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m0.mp4?v=7e82b1bc", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m0.mp4?v=1a998d76" },
-      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m1.mp4?v=ed052818", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m1.mp4?v=aef11c2b" },
-      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m2.mp4?v=242f44a4", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m2.mp4?v=e476326f" },
-      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m3.mp4?v=c051b423", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m3.mp4?v=905e0fb3" },
+      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m0.mp4?v=4b1742da", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m0.mp4?v=5d0fac89" },
+      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m1.mp4?v=84c6fc6c", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m1.mp4?v=fad9f4a4" },
+      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m2.mp4?v=7763ddf7", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m2.mp4?v=6ea3e845" },
+      { landscape: "/assets/learn/pinki/colors/forest/8/landscape/m3.mp4?v=e1109761", portrait: "/assets/learn/pinki/colors/forest/8/portrait/m3.mp4?v=8c6add79" },
     ],
   },
   9: {
@@ -390,10 +390,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l9_s3_jpg, portrait: p9_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m0.mp4?v=a3fbc098", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m0.mp4?v=dfb1cea8" },
-      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m1.mp4?v=76193347", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m1.mp4?v=e3d04695" },
-      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m2.mp4?v=9216886a", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m2.mp4?v=c5cf97a8" },
-      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m3.mp4?v=8a150ad4", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m3.mp4?v=f0732c1b" },
+      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m0.mp4?v=4545b922", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m0.mp4?v=129a2f34" },
+      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m1.mp4?v=7300b765", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m1.mp4?v=1f2bbf25" },
+      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m2.mp4?v=3fb0ea61", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m2.mp4?v=edc9c6fd" },
+      { landscape: "/assets/learn/pinki/colors/forest/9/landscape/m3.mp4?v=c9a530fd", portrait: "/assets/learn/pinki/colors/forest/9/portrait/m3.mp4?v=c256f126" },
     ],
   },
   10: {
@@ -404,10 +404,10 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l10_s3_jpg, portrait: p10_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m0.mp4?v=8950b0f5", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m0.mp4?v=ce2d1ae2" },
-      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m1.mp4?v=a8812928", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m1.mp4?v=294f469b" },
-      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m2.mp4?v=879f689a", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m2.mp4?v=5b15b903" },
-      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m3.mp4?v=1ff65f79", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m3.mp4?v=3e38ebc8" },
+      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m0.mp4?v=8d2953d2", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m0.mp4?v=1ef0c151" },
+      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m1.mp4?v=abf4d1bf", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m1.mp4?v=a05144e1" },
+      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m2.mp4?v=d1d9a9c4", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m2.mp4?v=d0412b36" },
+      { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m3.mp4?v=5189b744", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m3.mp4?v=300e9b78" },
     ],
   },
   11: {
@@ -420,12 +420,12 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: l11_s5_jpg, portrait: p11_s5_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m0.mp4?v=893651cb", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m0.mp4?v=d31b74bb" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m1.mp4?v=b2b0dbaa", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m1.mp4?v=181344e9" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m2.mp4?v=f7fb49af", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m2.mp4?v=b8d55e9b" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m3.mp4?v=5e800d0f", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m3.mp4?v=8b573224" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m4.mp4?v=aa3129f1", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m4.mp4?v=630eb30e" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m5.mp4?v=14d2d282", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m5.mp4?v=4f3a3ac3" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m0.mp4?v=0816c423", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m0.mp4?v=aafe8229" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m1.mp4?v=a967b6af", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m1.mp4?v=902ca673" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m2.mp4?v=221c7cd9", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m2.mp4?v=9331549a" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m3.mp4?v=86c99f33", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m3.mp4?v=ec092c17" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m4.mp4?v=bb6cc221", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m4.mp4?v=d4067d9f" },
+      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m5.mp4?v=8676cedb", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m5.mp4?v=ef74a740" },
     ],
   },
 };
@@ -438,25 +438,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l1_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l1_find_butterfly_png, word: "butterfly", shape: null, color: "red", box: [37.89, 33.82, 14.41, 20.0], hit: [38.12, 34.24, 8.98, 19.17] },
-        { id: "flower", src: l1_find_flower_png, word: "flower", shape: null, color: "blue", box: [54.41, 38.96, 8.91, 15.83], hit: [54.65, 39.38, 5.74, 15.0] },
-        { id: "bird", src: l1_find_bird_png, word: "bird", shape: null, color: "red", box: [61.25, 46.04, 10.9, 19.58], hit: [61.48, 46.46, 6.91, 18.68] },
-        { id: "mushroom", src: l1_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [29.65, 50.42, 13.09, 16.67], hit: [29.88, 50.83, 8.75, 15.83] },
-        { id: "basket", src: l1_find_basket_png, word: "basket", shape: null, color: "red", box: [44.45, 47.99, 14.69, 20.28], hit: [44.69, 48.4, 11.37, 19.03] },
-        { id: "ball", src: l1_find_ball_png, word: "ball", shape: null, color: "yellow", box: [53.48, 65.76, 14.73, 21.11], hit: [53.71, 66.18, 11.48, 18.75] },
-        { id: "bug", src: l1_find_bug_png, word: "bug", shape: null, color: "red", box: [34.49, 70.42, 14.22, 18.68], hit: [34.73, 70.83, 12.73, 17.78] },
+        { id: "butterfly", src: l1_find_butterfly_png, word: "butterfly", shape: null, color: "red", box: [44.49, 34.93, 14.3, 20.76], hit: [44.73, 35.35, 9.22, 19.93] },
+        { id: "flower", src: l1_find_flower_png, word: "flower", shape: null, color: "blue", box: [65.66, 41.81, 8.98, 17.01], hit: [65.9, 42.22, 6.29, 16.18] },
+        { id: "bird", src: l1_find_bird_png, word: "bird", shape: null, color: "red", box: [23.05, 42.43, 12.34, 17.99], hit: [23.28, 42.85, 6.64, 17.15] },
+        { id: "mushroom", src: l1_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [32.77, 53.61, 13.67, 17.85], hit: [33.01, 54.03, 9.3, 17.01] },
+        { id: "basket", src: l1_find_basket_png, word: "basket", shape: null, color: "red", box: [55.31, 51.25, 15.04, 21.88], hit: [55.55, 51.67, 12.3, 20.56] },
+        { id: "ball", src: l1_find_ball_png, word: "ball", shape: null, color: "yellow", box: [76.56, 67.29, 14.22, 21.6], hit: [76.8, 67.71, 12.34, 19.17] },
+        { id: "bug", src: l1_find_bug_png, word: "bug", shape: null, color: "red", box: [12.46, 70.62, 15.23, 18.61], hit: [12.7, 71.04, 13.36, 17.78] },
       ],
     },
     portrait: {
       background: p1_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p1_find_butterfly_png, word: "butterfly", shape: null, color: "red", box: [42.29, 38.79, 22.5, 10.2], hit: [42.71, 39.02, 14.44, 9.73] },
-        { id: "bird", src: p1_find_bird_png, word: "bird", shape: null, color: "red", box: [28.26, 45.47, 19.58, 9.69], hit: [28.68, 45.7, 10.97, 9.22] },
-        { id: "flower", src: p1_find_flower_png, word: "flower", shape: null, color: "blue", box: [58.61, 46.13, 17.01, 9.45], hit: [59.03, 46.37, 11.04, 8.98] },
-        { id: "mushroom", src: p1_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [30.83, 53.2, 23.12, 9.8], hit: [31.25, 53.44, 16.11, 9.34] },
-        { id: "basket", src: p1_find_basket_png, word: "basket", shape: null, color: "red", box: [53.06, 51.84, 26.67, 12.03], hit: [53.47, 52.07, 21.39, 11.25] },
-        { id: "ball", src: p1_find_ball_png, word: "ball", shape: null, color: "yellow", box: [50.97, 62.93, 26.67, 12.11], hit: [51.39, 63.16, 20.62, 10.74] },
-        { id: "bug", src: p1_find_bug_png, word: "bug", shape: null, color: "red", box: [29.38, 65.16, 25.35, 11.33], hit: [29.79, 65.39, 22.78, 10.78] },
+        { id: "butterfly", src: p1_find_butterfly_png, word: "butterfly", shape: null, color: "red", box: [42.15, 38.83, 20.21, 9.22], hit: [42.57, 39.06, 12.78, 8.75] },
+        { id: "flower", src: p1_find_flower_png, word: "flower", shape: null, color: "blue", box: [56.46, 43.87, 14.44, 7.97], hit: [56.88, 44.1, 9.17, 7.5] },
+        { id: "bird", src: p1_find_bird_png, word: "bird", shape: null, color: "red", box: [29.58, 45.31, 17.57, 8.71], hit: [30.0, 45.55, 9.86, 8.24] },
+        { id: "basket", src: p1_find_basket_png, word: "basket", shape: null, color: "red", box: [59.65, 49.14, 22.08, 10.0], hit: [60.07, 49.38, 17.71, 9.3] },
+        { id: "mushroom", src: p1_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [22.15, 54.14, 22.15, 9.18], hit: [22.57, 54.37, 15.07, 8.71] },
+        { id: "ball", src: p1_find_ball_png, word: "ball", shape: null, color: "yellow", box: [67.22, 61.6, 22.92, 10.66], hit: [67.64, 61.84, 18.26, 9.38] },
+        { id: "bug", src: p1_find_bug_png, word: "bug", shape: null, color: "red", box: [12.99, 69.92, 25.97, 11.91], hit: [13.4, 70.16, 23.12, 11.25] },
       ],
     },
   },
@@ -464,25 +464,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l2_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l2_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [38.28, 34.17, 14.53, 20.21], hit: [38.52, 34.58, 9.06, 19.38] },
-        { id: "flower", src: l2_find_flower_png, word: "flower", shape: null, color: "blue", box: [53.4, 38.75, 8.87, 15.62], hit: [53.63, 39.17, 5.62, 14.79] },
-        { id: "bird", src: l2_find_bird_png, word: "bird", shape: null, color: "blue", box: [63.24, 46.04, 10.51, 19.51], hit: [63.48, 46.46, 7.03, 18.47] },
-        { id: "mushroom", src: l2_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [29.38, 50.14, 13.01, 16.6], hit: [29.61, 50.56, 8.67, 15.76] },
-        { id: "basket", src: l2_find_basket_png, word: "basket", shape: null, color: "blue", box: [44.02, 47.57, 14.65, 20.14], hit: [44.26, 47.99, 11.37, 18.82] },
-        { id: "ball", src: l2_find_ball_png, word: "ball", shape: null, color: "blue", box: [55.16, 65.62, 14.53, 21.04], hit: [55.39, 66.04, 11.45, 18.68] },
-        { id: "bug", src: l2_find_bug_png, word: "bug", shape: null, color: "green", box: [31.56, 71.94, 14.61, 19.03], hit: [31.8, 72.36, 13.01, 18.12] },
+        { id: "butterfly", src: l2_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [44.53, 35.35, 14.53, 20.9], hit: [44.77, 35.76, 9.41, 20.07] },
+        { id: "flower", src: l2_find_flower_png, word: "flower", shape: null, color: "blue", box: [66.13, 41.94, 8.87, 16.94], hit: [66.37, 42.36, 6.21, 16.11] },
+        { id: "bird", src: l2_find_bird_png, word: "bird", shape: null, color: "blue", box: [23.71, 42.29, 12.46, 18.12], hit: [23.95, 42.71, 6.6, 17.29] },
+        { id: "mushroom", src: l2_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [32.73, 52.78, 13.44, 17.57], hit: [32.97, 53.19, 9.14, 16.74] },
+        { id: "basket", src: l2_find_basket_png, word: "basket", shape: null, color: "blue", box: [55.31, 51.6, 15.35, 22.01], hit: [55.55, 52.01, 12.5, 20.62] },
+        { id: "ball", src: l2_find_ball_png, word: "ball", shape: null, color: "blue", box: [74.77, 65.9, 13.71, 21.11], hit: [75.0, 66.32, 11.64, 18.68] },
+        { id: "bug", src: l2_find_bug_png, word: "bug", shape: null, color: "green", box: [10.7, 71.67, 16.64, 19.17], hit: [10.94, 72.08, 14.57, 18.19] },
       ],
     },
     portrait: {
       background: p2_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p2_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [43.12, 38.98, 22.5, 10.31], hit: [43.54, 39.22, 14.44, 9.84] },
-        { id: "bird", src: p2_find_bird_png, word: "bird", shape: null, color: "blue", box: [31.67, 45.43, 18.89, 9.69], hit: [32.08, 45.66, 11.04, 9.14] },
-        { id: "flower", src: p2_find_flower_png, word: "flower", shape: null, color: "blue", box: [56.6, 45.9, 16.88, 9.34], hit: [57.01, 46.13, 10.9, 8.87] },
-        { id: "mushroom", src: p2_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [30.21, 52.97, 22.99, 9.77], hit: [30.63, 53.2, 15.97, 9.3] },
-        { id: "basket", src: p2_find_basket_png, word: "basket", shape: null, color: "blue", box: [52.22, 51.56, 26.46, 11.88], hit: [52.64, 51.8, 21.11, 11.09] },
-        { id: "ball", src: p2_find_ball_png, word: "ball", shape: null, color: "blue", box: [54.03, 62.85, 26.18, 12.03], hit: [54.44, 63.09, 20.49, 10.66] },
-        { id: "bug", src: p2_find_bug_png, word: "bug", shape: null, color: "green", box: [24.31, 66.21, 25.97, 11.52], hit: [24.72, 66.45, 23.26, 10.98] },
+        { id: "butterfly", src: p2_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [42.29, 39.06, 20.49, 9.26], hit: [42.71, 39.3, 13.06, 8.79] },
+        { id: "flower", src: p2_find_flower_png, word: "flower", shape: null, color: "blue", box: [57.15, 43.91, 14.44, 7.97], hit: [57.57, 44.14, 9.1, 7.5] },
+        { id: "bird", src: p2_find_bird_png, word: "bird", shape: null, color: "blue", box: [30.76, 45.27, 17.64, 8.75], hit: [31.18, 45.51, 9.58, 8.28] },
+        { id: "basket", src: p2_find_basket_png, word: "basket", shape: null, color: "blue", box: [59.72, 49.34, 22.43, 10.04], hit: [60.14, 49.57, 17.92, 9.3] },
+        { id: "mushroom", src: p2_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [22.01, 53.55, 21.88, 9.06], hit: [22.43, 53.79, 14.79, 8.59] },
+        { id: "ball", src: p2_find_ball_png, word: "ball", shape: null, color: "blue", box: [64.58, 60.74, 22.71, 10.43], hit: [65.0, 60.98, 17.71, 9.18] },
+        { id: "bug", src: p2_find_bug_png, word: "bug", shape: null, color: "green", box: [12.01, 70.78, 26.46, 12.03], hit: [12.43, 71.02, 23.54, 11.56] },
       ],
     },
   },
@@ -490,25 +490,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l3_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l3_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [37.11, 33.75, 14.45, 20.0], hit: [37.34, 34.17, 8.98, 19.17] },
-        { id: "flower", src: l3_find_flower_png, word: "flower", shape: null, color: "yellow", box: [55.12, 38.61, 8.79, 15.69], hit: [55.35, 39.03, 5.62, 14.86] },
-        { id: "bird", src: l3_find_bird_png, word: "bird", shape: null, color: "red", box: [61.52, 46.6, 10.98, 19.79], hit: [61.76, 47.01, 6.99, 18.89] },
-        { id: "mushroom", src: l3_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [29.49, 50.14, 13.01, 16.6], hit: [29.73, 50.56, 8.67, 15.76] },
-        { id: "basket", src: l3_find_basket_png, word: "basket", shape: null, color: "purple", box: [44.65, 48.26, 14.69, 20.42], hit: [44.88, 48.68, 11.45, 19.1] },
-        { id: "ball", src: l3_find_ball_png, word: "ball", shape: null, color: "yellow", box: [54.53, 64.93, 14.49, 20.76], hit: [54.77, 65.35, 11.29, 18.4] },
-        { id: "bug", src: l3_find_bug_png, word: "bug", shape: null, color: "blue", box: [33.09, 71.6, 14.49, 19.17], hit: [33.32, 72.01, 12.97, 18.12] },
+        { id: "butterfly", src: l3_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [44.77, 34.93, 14.37, 20.69], hit: [45.0, 35.35, 9.3, 19.86] },
+        { id: "flower", src: l3_find_flower_png, word: "flower", shape: null, color: "yellow", box: [66.88, 41.88, 8.63, 16.94], hit: [67.11, 42.29, 5.98, 16.11] },
+        { id: "bird", src: l3_find_bird_png, word: "bird", shape: null, color: "red", box: [23.36, 42.85, 12.27, 18.19], hit: [23.59, 43.26, 6.72, 17.29] },
+        { id: "mushroom", src: l3_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [32.89, 52.57, 13.4, 17.5], hit: [33.12, 52.99, 9.1, 16.67] },
+        { id: "basket", src: l3_find_basket_png, word: "basket", shape: null, color: "purple", box: [55.66, 52.36, 15.43, 22.36], hit: [55.9, 52.78, 12.62, 20.97] },
+        { id: "ball", src: l3_find_ball_png, word: "ball", shape: null, color: "yellow", box: [74.84, 66.39, 14.1, 21.32], hit: [75.08, 66.81, 12.11, 18.89] },
+        { id: "bug", src: l3_find_bug_png, word: "bug", shape: null, color: "blue", box: [9.88, 70.56, 16.45, 18.75], hit: [10.12, 70.97, 14.41, 17.85] },
       ],
     },
     portrait: {
       background: p3_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p3_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [41.04, 38.75, 22.5, 10.2], hit: [41.46, 38.98, 14.44, 9.73] },
-        { id: "flower", src: p3_find_flower_png, word: "flower", shape: null, color: "yellow", box: [59.93, 45.78, 16.74, 9.41], hit: [60.35, 46.02, 10.9, 8.95] },
-        { id: "bird", src: p3_find_bird_png, word: "bird", shape: null, color: "red", box: [28.19, 45.78, 19.72, 9.77], hit: [28.61, 46.02, 11.11, 9.3] },
-        { id: "mushroom", src: p3_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [30.49, 53.01, 22.99, 9.77], hit: [30.9, 53.24, 15.97, 9.3] },
-        { id: "basket", src: p3_find_basket_png, word: "basket", shape: null, color: "purple", box: [53.61, 52.03, 26.39, 12.11], hit: [54.03, 52.27, 21.32, 11.29] },
-        { id: "ball", src: p3_find_ball_png, word: "ball", shape: null, color: "yellow", box: [52.99, 62.34, 26.18, 11.91], hit: [53.4, 62.58, 20.21, 10.55] },
-        { id: "bug", src: p3_find_bug_png, word: "bug", shape: null, color: "blue", box: [27.01, 65.94, 25.83, 11.72], hit: [27.43, 66.17, 23.12, 11.02] },
+        { id: "butterfly", src: p3_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [42.64, 38.87, 20.28, 9.14], hit: [43.06, 39.1, 12.85, 8.67] },
+        { id: "flower", src: p3_find_flower_png, word: "flower", shape: null, color: "yellow", box: [58.26, 43.87, 14.17, 7.97], hit: [58.68, 44.1, 8.96, 7.5] },
+        { id: "bird", src: p3_find_bird_png, word: "bird", shape: null, color: "red", box: [30.35, 45.59, 17.43, 8.79], hit: [30.76, 45.82, 10.0, 8.28] },
+        { id: "basket", src: p3_find_basket_png, word: "basket", shape: null, color: "purple", box: [60.28, 49.73, 22.5, 10.2], hit: [60.69, 49.96, 18.06, 9.45] },
+        { id: "mushroom", src: p3_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [22.29, 53.44, 21.74, 8.98], hit: [22.71, 53.67, 14.72, 8.52] },
+        { id: "ball", src: p3_find_ball_png, word: "ball", shape: null, color: "yellow", box: [64.72, 61.05, 22.71, 10.51], hit: [65.14, 61.29, 17.99, 9.22] },
+        { id: "bug", src: p3_find_bug_png, word: "bug", shape: null, color: "blue", box: [9.86, 69.88, 26.18, 11.99], hit: [10.28, 70.12, 23.19, 11.29] },
       ],
     },
   },
@@ -516,25 +516,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l4_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l4_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [37.42, 33.96, 14.53, 20.14], hit: [37.66, 34.38, 9.02, 19.31] },
-        { id: "flower", src: l4_find_flower_png, word: "flower", shape: null, color: "red", box: [55.12, 38.68, 8.67, 15.69], hit: [55.35, 39.1, 5.55, 14.86] },
-        { id: "bird", src: l4_find_bird_png, word: "bird", shape: null, color: "purple", box: [61.29, 46.32, 10.74, 19.58], hit: [61.52, 46.74, 6.99, 18.68] },
-        { id: "mushroom", src: l4_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [29.57, 49.86, 12.93, 16.46], hit: [29.8, 50.28, 8.63, 15.62] },
-        { id: "basket", src: l4_find_basket_png, word: "basket", shape: null, color: "green", box: [44.84, 48.33, 14.77, 20.49], hit: [45.08, 48.75, 11.48, 19.17] },
-        { id: "ball", src: l4_find_ball_png, word: "ball", shape: null, color: "orange", box: [55.66, 66.74, 14.77, 21.46], hit: [55.9, 67.15, 11.52, 19.03] },
-        { id: "bug", src: l4_find_bug_png, word: "bug", shape: null, color: "green", box: [31.56, 70.76, 14.34, 18.54], hit: [31.8, 71.18, 12.77, 17.64] },
+        { id: "butterfly", src: l4_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [44.26, 35.28, 14.3, 20.9], hit: [44.49, 35.69, 9.18, 20.07] },
+        { id: "flower", src: l4_find_flower_png, word: "flower", shape: null, color: "red", box: [65.2, 42.22, 9.1, 17.15], hit: [65.43, 42.64, 6.33, 16.32] },
+        { id: "bird", src: l4_find_bird_png, word: "bird", shape: null, color: "purple", box: [23.24, 42.36, 12.38, 17.99], hit: [23.48, 42.78, 6.64, 17.15] },
+        { id: "mushroom", src: l4_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [33.98, 52.29, 13.24, 17.36], hit: [34.22, 52.71, 9.02, 16.53] },
+        { id: "basket", src: l4_find_basket_png, word: "basket", shape: null, color: "green", box: [55.47, 51.53, 14.84, 22.01], hit: [55.7, 51.94, 12.34, 20.62] },
+        { id: "ball", src: l4_find_ball_png, word: "ball", shape: null, color: "orange", box: [74.84, 66.88, 13.67, 21.46], hit: [75.08, 67.29, 11.48, 19.03] },
+        { id: "bug", src: l4_find_bug_png, word: "bug", shape: null, color: "green", box: [10.55, 70.49, 16.68, 18.68], hit: [10.78, 70.9, 14.65, 17.85] },
       ],
     },
     portrait: {
       background: p4_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p4_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [41.6, 38.91, 22.57, 10.23], hit: [42.01, 39.14, 14.51, 9.77] },
-        { id: "flower", src: p4_find_flower_png, word: "flower", shape: null, color: "red", box: [59.93, 45.82, 16.53, 9.38], hit: [60.35, 46.05, 10.69, 8.91] },
-        { id: "bird", src: p4_find_bird_png, word: "bird", shape: null, color: "purple", box: [28.19, 45.62, 19.38, 9.69], hit: [28.61, 45.86, 11.18, 9.18] },
-        { id: "mushroom", src: p4_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [30.49, 52.73, 22.78, 9.73], hit: [30.9, 52.97, 15.83, 9.26] },
-        { id: "basket", src: p4_find_basket_png, word: "basket", shape: null, color: "green", box: [54.03, 52.11, 26.53, 12.15], hit: [54.44, 52.34, 21.39, 11.33] },
-        { id: "ball", src: p4_find_ball_png, word: "ball", shape: null, color: "orange", box: [54.79, 63.63, 26.81, 12.3], hit: [55.21, 63.87, 20.69, 10.9] },
-        { id: "bug", src: p4_find_bug_png, word: "bug", shape: null, color: "green", box: [24.17, 65.39, 25.49, 11.21], hit: [24.58, 65.62, 22.85, 10.7] },
+        { id: "butterfly", src: p4_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [41.88, 39.02, 20.21, 9.26], hit: [42.29, 39.26, 12.71, 8.79] },
+        { id: "flower", src: p4_find_flower_png, word: "flower", shape: null, color: "red", box: [55.56, 44.06, 14.44, 8.09], hit: [55.97, 44.3, 9.1, 7.62] },
+        { id: "bird", src: p4_find_bird_png, word: "bird", shape: null, color: "purple", box: [29.86, 45.27, 17.64, 8.71], hit: [30.28, 45.51, 9.79, 8.24] },
+        { id: "basket", src: p4_find_basket_png, word: "basket", shape: null, color: "green", box: [59.93, 49.26, 21.74, 10.08], hit: [60.35, 49.49, 17.71, 9.34] },
+        { id: "mushroom", src: p4_find_mushroom_png, word: "mushroom", shape: null, color: "green", box: [24.17, 53.24, 21.53, 8.95], hit: [24.58, 53.48, 14.65, 8.48] },
+        { id: "ball", src: p4_find_ball_png, word: "ball", shape: null, color: "orange", box: [64.17, 61.33, 22.85, 10.62], hit: [64.58, 61.56, 17.64, 9.34] },
+        { id: "bug", src: p4_find_bug_png, word: "bug", shape: null, color: "green", box: [11.67, 69.84, 26.04, 11.88], hit: [12.08, 70.08, 23.12, 11.29] },
       ],
     },
   },
@@ -542,25 +542,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l5_find_ground_jpg,
       items: [
-        { id: "flower", src: l5_find_flower_png, word: "flower", shape: null, color: "blue", box: [55.12, 38.68, 8.67, 15.69], hit: [55.35, 39.1, 5.55, 14.86] },
-        { id: "butterfly", src: l5_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [38.24, 34.38, 14.61, 20.35], hit: [38.48, 34.79, 9.14, 19.51] },
-        { id: "bird", src: l5_find_bird_png, word: "bird", shape: null, color: "orange", box: [61.09, 45.97, 10.86, 19.58], hit: [61.33, 46.39, 6.91, 18.68] },
-        { id: "mushroom", src: l5_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [28.28, 49.86, 13.01, 16.53], hit: [28.52, 50.28, 8.63, 15.69] },
-        { id: "basket", src: l5_find_basket_png, word: "basket", shape: null, color: "orange", box: [43.52, 47.92, 14.77, 20.28], hit: [43.75, 48.33, 11.41, 19.03] },
-        { id: "ball", src: l5_find_ball_png, word: "ball", shape: null, color: "orange", box: [55.9, 66.25, 14.61, 21.25], hit: [56.13, 66.67, 11.41, 18.89] },
-        { id: "bug", src: l5_find_bug_png, word: "bug", shape: null, color: "orange", box: [33.28, 70.9, 14.41, 18.82], hit: [33.52, 71.32, 12.85, 17.99] },
+        { id: "butterfly", src: l5_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [44.06, 35.14, 14.34, 20.76], hit: [44.3, 35.56, 9.26, 19.93] },
+        { id: "flower", src: l5_find_flower_png, word: "flower", shape: null, color: "blue", box: [65.2, 42.22, 9.1, 17.15], hit: [65.43, 42.64, 6.33, 16.32] },
+        { id: "bird", src: l5_find_bird_png, word: "bird", shape: null, color: "orange", box: [23.32, 42.36, 12.07, 18.06], hit: [23.55, 42.78, 6.64, 17.08] },
+        { id: "mushroom", src: l5_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [33.48, 52.78, 13.4, 17.5], hit: [33.71, 53.19, 9.14, 16.67] },
+        { id: "basket", src: l5_find_basket_png, word: "basket", shape: null, color: "orange", box: [55.27, 52.22, 15.04, 22.36], hit: [55.51, 52.64, 12.54, 20.97] },
+        { id: "ball", src: l5_find_ball_png, word: "ball", shape: null, color: "orange", box: [75.31, 66.25, 13.36, 21.32], hit: [75.55, 66.67, 11.21, 18.89] },
+        { id: "bug", src: l5_find_bug_png, word: "bug", shape: null, color: "orange", box: [10.98, 69.65, 16.99, 18.33], hit: [11.21, 70.07, 14.88, 17.5] },
       ],
     },
     portrait: {
       background: p5_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p5_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [43.12, 39.1, 22.64, 10.39], hit: [43.54, 39.34, 14.58, 9.92] },
-        { id: "bird", src: p5_find_bird_png, word: "bird", shape: null, color: "orange", box: [28.06, 45.43, 19.51, 9.69], hit: [28.47, 45.66, 10.97, 9.22] },
-        { id: "flower", src: p5_find_flower_png, word: "flower", shape: null, color: "blue", box: [59.93, 45.82, 16.53, 9.38], hit: [60.35, 46.05, 10.69, 8.91] },
-        { id: "mushroom", src: p5_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [28.06, 52.77, 23.06, 9.73], hit: [28.47, 53.01, 15.9, 9.26] },
-        { id: "basket", src: p5_find_basket_png, word: "basket", shape: null, color: "orange", box: [51.39, 51.8, 26.46, 12.03], hit: [51.81, 52.03, 21.18, 11.21] },
-        { id: "ball", src: p5_find_ball_png, word: "ball", shape: null, color: "orange", box: [55.21, 63.28, 26.53, 12.19], hit: [55.62, 63.52, 20.56, 10.82] },
-        { id: "bug", src: p5_find_bug_png, word: "bug", shape: null, color: "orange", box: [27.36, 65.51, 25.56, 11.41], hit: [27.78, 65.74, 22.92, 10.9] },
+        { id: "butterfly", src: p5_find_butterfly_png, word: "butterfly", shape: null, color: "green", box: [41.6, 38.95, 20.21, 9.22], hit: [42.01, 39.18, 12.78, 8.75] },
+        { id: "flower", src: p5_find_flower_png, word: "flower", shape: null, color: "blue", box: [55.56, 44.06, 14.44, 8.09], hit: [55.97, 44.3, 9.1, 7.62] },
+        { id: "bird", src: p5_find_bird_png, word: "bird", shape: null, color: "orange", box: [29.93, 45.31, 17.22, 8.71], hit: [30.35, 45.55, 9.93, 8.16] },
+        { id: "basket", src: p5_find_basket_png, word: "basket", shape: null, color: "orange", box: [59.65, 49.69, 21.94, 10.16], hit: [60.07, 49.92, 17.92, 9.45] },
+        { id: "mushroom", src: p5_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [23.33, 53.55, 21.74, 9.02], hit: [23.75, 53.79, 14.72, 8.55] },
+        { id: "ball", src: p5_find_ball_png, word: "ball", shape: null, color: "orange", box: [65.14, 60.98, 22.43, 10.51], hit: [65.56, 61.21, 17.29, 9.22] },
+        { id: "bug", src: p5_find_bug_png, word: "bug", shape: null, color: "orange", box: [12.85, 69.14, 25.76, 11.6], hit: [13.26, 69.38, 22.92, 11.09] },
       ],
     },
   },
@@ -568,25 +568,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l6_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l6_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [38.83, 33.68, 14.3, 20.0], hit: [39.06, 34.1, 8.95, 19.17] },
-        { id: "flower", src: l6_find_flower_png, word: "flower", shape: null, color: "purple", box: [53.28, 38.68, 8.87, 15.69], hit: [53.52, 39.1, 5.62, 14.86] },
-        { id: "bird", src: l6_find_bird_png, word: "bird", shape: null, color: "purple", box: [62.5, 46.25, 10.66, 19.65], hit: [62.73, 46.67, 7.03, 18.61] },
-        { id: "mushroom", src: l6_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [29.84, 50.56, 13.09, 16.67], hit: [30.08, 50.97, 8.75, 15.83] },
-        { id: "basket", src: l6_find_basket_png, word: "basket", shape: null, color: "orange", box: [44.61, 48.61, 14.88, 20.62], hit: [44.84, 49.03, 11.56, 19.31] },
-        { id: "ball", src: l6_find_ball_png, word: "ball", shape: null, color: "purple", box: [54.02, 65.56, 14.53, 20.97], hit: [54.26, 65.97, 11.25, 18.61] },
-        { id: "bug", src: l6_find_bug_png, word: "bug", shape: null, color: "green", box: [31.6, 71.11, 14.49, 18.89], hit: [31.84, 71.53, 12.93, 17.92] },
+        { id: "butterfly", src: l6_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [43.83, 35.21, 14.34, 20.9], hit: [44.06, 35.62, 9.14, 20.07] },
+        { id: "flower", src: l6_find_flower_png, word: "flower", shape: null, color: "purple", box: [66.25, 41.81, 8.98, 17.01], hit: [66.48, 42.22, 6.29, 16.18] },
+        { id: "bird", src: l6_find_bird_png, word: "bird", shape: null, color: "purple", box: [23.83, 42.08, 11.88, 17.85], hit: [24.06, 42.5, 6.6, 16.88] },
+        { id: "mushroom", src: l6_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [32.93, 52.85, 13.44, 17.5], hit: [33.16, 53.26, 9.14, 16.67] },
+        { id: "basket", src: l6_find_basket_png, word: "basket", shape: null, color: "orange", box: [55.0, 51.88, 15.08, 22.22], hit: [55.23, 52.29, 12.46, 20.83] },
+        { id: "ball", src: l6_find_ball_png, word: "ball", shape: null, color: "purple", box: [75.43, 67.43, 13.59, 21.67], hit: [75.66, 67.85, 11.41, 19.24] },
+        { id: "bug", src: l6_find_bug_png, word: "bug", shape: null, color: "green", box: [11.76, 70.69, 15.31, 18.54], hit: [11.99, 71.11, 13.4, 17.64] },
       ],
     },
     portrait: {
       background: p6_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p6_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [43.82, 38.75, 22.15, 10.2], hit: [44.24, 38.98, 14.31, 9.73] },
-        { id: "bird", src: p6_find_bird_png, word: "bird", shape: null, color: "purple", box: [30.28, 45.59, 19.17, 9.69], hit: [30.69, 45.82, 11.11, 9.14] },
-        { id: "flower", src: p6_find_flower_png, word: "flower", shape: null, color: "purple", box: [56.39, 45.9, 16.88, 9.3], hit: [56.81, 46.13, 10.9, 8.83] },
-        { id: "mushroom", src: p6_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [31.25, 53.24, 23.12, 9.88], hit: [31.67, 53.48, 16.11, 9.41] },
-        { id: "basket", src: p6_find_basket_png, word: "basket", shape: null, color: "orange", box: [53.68, 52.34, 26.67, 12.19], hit: [54.1, 52.58, 21.53, 11.37] },
-        { id: "ball", src: p6_find_ball_png, word: "ball", shape: null, color: "purple", box: [51.94, 62.77, 26.53, 12.03], hit: [52.36, 63.01, 20.28, 10.66] },
-        { id: "bug", src: p6_find_bug_png, word: "bug", shape: null, color: "green", box: [24.38, 65.62, 25.69, 11.56], hit: [24.79, 65.86, 22.99, 10.9] },
+        { id: "butterfly", src: p6_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [41.25, 38.98, 20.14, 9.22], hit: [41.67, 39.22, 12.57, 8.75] },
+        { id: "flower", src: p6_find_flower_png, word: "flower", shape: null, color: "purple", box: [57.43, 43.83, 14.44, 8.01], hit: [57.85, 44.06, 9.1, 7.54] },
+        { id: "bird", src: p6_find_bird_png, word: "bird", shape: null, color: "purple", box: [30.56, 45.12, 17.01, 8.63], hit: [30.97, 45.35, 9.86, 8.09] },
+        { id: "basket", src: p6_find_basket_png, word: "basket", shape: null, color: "orange", box: [59.24, 49.49, 22.01, 10.12], hit: [59.65, 49.73, 17.85, 9.38] },
+        { id: "mushroom", src: p6_find_mushroom_png, word: "mushroom", shape: null, color: "purple", box: [22.36, 53.59, 21.81, 9.02], hit: [22.78, 53.83, 14.79, 8.55] },
+        { id: "ball", src: p6_find_ball_png, word: "ball", shape: null, color: "purple", box: [64.79, 61.68, 22.85, 10.66], hit: [65.21, 61.91, 17.64, 9.41] },
+        { id: "bug", src: p6_find_bug_png, word: "bug", shape: null, color: "green", box: [11.6, 70.0, 26.04, 11.68], hit: [12.01, 70.23, 23.19, 11.17] },
       ],
     },
   },
@@ -594,25 +594,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l7_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l7_find_butterfly_png, word: "butterfly", shape: null, color: "pink", box: [38.28, 34.03, 14.34, 20.14], hit: [38.52, 34.44, 8.83, 19.31] },
-        { id: "flower", src: l7_find_flower_png, word: "flower", shape: null, color: "pink", box: [54.18, 38.82, 8.83, 15.62], hit: [54.41, 39.24, 5.66, 14.79] },
-        { id: "mushroom", src: l7_find_mushroom_png, word: "mushroom", shape: null, color: "pink", box: [30.55, 49.58, 12.77, 16.39], hit: [30.78, 50.0, 8.55, 15.56] },
-        { id: "bird", src: l7_find_bird_png, word: "bird", shape: null, color: "blue", box: [62.58, 46.74, 11.76, 19.93], hit: [62.81, 47.15, 8.05, 19.1] },
-        { id: "basket", src: l7_find_basket_png, word: "basket", shape: null, color: "green", box: [44.3, 47.99, 14.77, 20.28], hit: [44.53, 48.4, 11.41, 18.96] },
-        { id: "ball", src: l7_find_ball_png, word: "ball", shape: null, color: "yellow", box: [53.48, 65.76, 14.73, 21.11], hit: [53.71, 66.18, 11.48, 18.75] },
-        { id: "bug", src: l7_find_bug_png, word: "bug", shape: null, color: "pink", box: [31.68, 70.83, 14.37, 18.54], hit: [31.91, 71.25, 12.81, 17.71] },
+        { id: "butterfly", src: l7_find_butterfly_png, word: "butterfly", shape: null, color: "pink", box: [44.41, 34.79, 14.3, 20.62], hit: [44.65, 35.21, 9.26, 19.79] },
+        { id: "flower", src: l7_find_flower_png, word: "flower", shape: null, color: "pink", box: [65.74, 41.88, 9.02, 17.01], hit: [65.98, 42.29, 6.29, 16.18] },
+        { id: "bird", src: l7_find_bird_png, word: "bird", shape: null, color: "blue", box: [22.5, 42.92, 12.58, 18.26], hit: [22.73, 43.33, 6.76, 17.43] },
+        { id: "mushroom", src: l7_find_mushroom_png, word: "mushroom", shape: null, color: "pink", box: [34.06, 52.78, 13.36, 17.57], hit: [34.3, 53.19, 9.1, 16.74] },
+        { id: "basket", src: l7_find_basket_png, word: "basket", shape: null, color: "green", box: [55.23, 51.53, 15.35, 21.94], hit: [55.47, 51.94, 12.46, 20.56] },
+        { id: "ball", src: l7_find_ball_png, word: "ball", shape: null, color: "yellow", box: [76.56, 67.29, 14.22, 21.6], hit: [76.8, 67.71, 12.34, 19.17] },
+        { id: "bug", src: l7_find_bug_png, word: "bug", shape: null, color: "pink", box: [11.45, 70.83, 15.31, 18.68], hit: [11.68, 71.25, 13.44, 17.71] },
       ],
     },
     portrait: {
       background: p7_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p7_find_butterfly_png, word: "butterfly", shape: null, color: "pink", box: [42.92, 38.91, 22.43, 10.27], hit: [43.33, 39.14, 14.37, 9.8] },
-        { id: "flower", src: p7_find_flower_png, word: "flower", shape: null, color: "pink", box: [58.13, 45.94, 16.81, 9.38], hit: [58.54, 46.17, 10.9, 8.91] },
-        { id: "bird", src: p7_find_bird_png, word: "bird", shape: null, color: "blue", box: [30.56, 45.86, 19.86, 9.8], hit: [30.97, 46.09, 10.9, 9.34] },
-        { id: "mushroom", src: p7_find_mushroom_png, word: "mushroom", shape: null, color: "pink", box: [32.08, 52.54, 22.64, 9.65], hit: [32.5, 52.77, 15.76, 9.18] },
-        { id: "basket", src: p7_find_basket_png, word: "basket", shape: null, color: "green", box: [52.78, 51.84, 26.81, 12.03], hit: [53.19, 52.07, 21.39, 11.21] },
-        { id: "ball", src: p7_find_ball_png, word: "ball", shape: null, color: "yellow", box: [50.97, 62.93, 26.67, 12.11], hit: [51.39, 63.16, 20.62, 10.74] },
-        { id: "bug", src: p7_find_bug_png, word: "bug", shape: null, color: "pink", box: [24.44, 65.47, 25.56, 11.21], hit: [24.86, 65.7, 22.92, 10.7] },
+        { id: "butterfly", src: p7_find_butterfly_png, word: "butterfly", shape: null, color: "pink", box: [42.08, 38.79, 20.21, 9.1], hit: [42.5, 39.02, 12.85, 8.63] },
+        { id: "flower", src: p7_find_flower_png, word: "flower", shape: null, color: "pink", box: [56.6, 43.91, 14.44, 8.01], hit: [57.01, 44.14, 9.1, 7.54] },
+        { id: "bird", src: p7_find_bird_png, word: "bird", shape: null, color: "blue", box: [29.03, 45.66, 17.85, 8.79], hit: [29.44, 45.9, 9.93, 8.32] },
+        { id: "basket", src: p7_find_basket_png, word: "basket", shape: null, color: "green", box: [59.58, 49.26, 22.36, 10.04], hit: [60.0, 49.49, 17.92, 9.3] },
+        { id: "mushroom", src: p7_find_mushroom_png, word: "mushroom", shape: null, color: "pink", box: [24.38, 53.55, 21.6, 9.06], hit: [24.79, 53.79, 14.72, 8.59] },
+        { id: "ball", src: p7_find_ball_png, word: "ball", shape: null, color: "yellow", box: [67.22, 61.6, 22.92, 10.66], hit: [67.64, 61.84, 18.26, 9.38] },
+        { id: "bug", src: p7_find_bug_png, word: "bug", shape: null, color: "pink", box: [11.04, 70.12, 26.11, 11.68], hit: [11.46, 70.35, 23.26, 11.21] },
       ],
     },
   },
@@ -620,25 +620,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l8_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l8_find_butterfly_png, word: "butterfly", shape: null, color: "brown", box: [37.89, 33.82, 14.41, 20.0], hit: [38.12, 34.24, 8.98, 19.17] },
-        { id: "flower", src: l8_find_flower_png, word: "flower", shape: null, color: "blue", box: [54.41, 38.96, 8.91, 15.83], hit: [54.65, 39.38, 5.74, 15.0] },
-        { id: "bird", src: l8_find_bird_png, word: "bird", shape: null, color: "brown", box: [61.25, 46.04, 10.9, 19.58], hit: [61.48, 46.46, 6.91, 18.68] },
-        { id: "mushroom", src: l8_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [29.65, 50.42, 13.09, 16.67], hit: [29.88, 50.83, 8.75, 15.83] },
-        { id: "basket", src: l8_find_basket_png, word: "basket", shape: null, color: "brown", box: [44.45, 47.99, 14.69, 20.28], hit: [44.69, 48.4, 11.37, 19.03] },
-        { id: "ball", src: l8_find_ball_png, word: "ball", shape: null, color: "pink", box: [53.48, 65.76, 14.73, 21.11], hit: [53.71, 66.18, 11.48, 18.75] },
-        { id: "bug", src: l8_find_bug_png, word: "bug", shape: null, color: "brown", box: [34.49, 70.42, 14.22, 18.68], hit: [34.73, 70.83, 12.73, 17.78] },
+        { id: "butterfly", src: l8_find_butterfly_png, word: "butterfly", shape: null, color: "brown", box: [44.49, 34.93, 14.3, 20.76], hit: [44.73, 35.35, 9.22, 19.93] },
+        { id: "flower", src: l8_find_flower_png, word: "flower", shape: null, color: "blue", box: [65.66, 41.81, 8.98, 17.01], hit: [65.9, 42.22, 6.29, 16.18] },
+        { id: "bird", src: l8_find_bird_png, word: "bird", shape: null, color: "brown", box: [23.05, 42.43, 12.34, 17.99], hit: [23.28, 42.85, 6.64, 17.15] },
+        { id: "mushroom", src: l8_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [32.77, 53.61, 13.67, 17.85], hit: [33.01, 54.03, 9.3, 17.01] },
+        { id: "basket", src: l8_find_basket_png, word: "basket", shape: null, color: "brown", box: [55.31, 51.25, 15.04, 21.88], hit: [55.55, 51.67, 12.3, 20.56] },
+        { id: "ball", src: l8_find_ball_png, word: "ball", shape: null, color: "pink", box: [76.56, 67.29, 14.22, 21.6], hit: [76.8, 67.71, 12.34, 19.17] },
+        { id: "bug", src: l8_find_bug_png, word: "bug", shape: null, color: "brown", box: [12.46, 70.62, 15.23, 18.61], hit: [12.7, 71.04, 13.36, 17.78] },
       ],
     },
     portrait: {
       background: p8_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p8_find_butterfly_png, word: "butterfly", shape: null, color: "brown", box: [42.29, 38.79, 22.5, 10.2], hit: [42.71, 39.02, 14.44, 9.73] },
-        { id: "bird", src: p8_find_bird_png, word: "bird", shape: null, color: "brown", box: [28.26, 45.47, 19.58, 9.69], hit: [28.68, 45.7, 10.97, 9.22] },
-        { id: "flower", src: p8_find_flower_png, word: "flower", shape: null, color: "blue", box: [58.61, 46.13, 17.01, 9.45], hit: [59.03, 46.37, 11.04, 8.98] },
-        { id: "mushroom", src: p8_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [30.83, 53.2, 23.12, 9.8], hit: [31.25, 53.44, 16.11, 9.34] },
-        { id: "basket", src: p8_find_basket_png, word: "basket", shape: null, color: "brown", box: [53.06, 51.84, 26.67, 12.03], hit: [53.47, 52.07, 21.39, 11.25] },
-        { id: "ball", src: p8_find_ball_png, word: "ball", shape: null, color: "pink", box: [50.97, 62.93, 26.67, 12.11], hit: [51.39, 63.16, 20.62, 10.74] },
-        { id: "bug", src: p8_find_bug_png, word: "bug", shape: null, color: "brown", box: [29.38, 65.16, 25.35, 11.33], hit: [29.79, 65.39, 22.78, 10.78] },
+        { id: "butterfly", src: p8_find_butterfly_png, word: "butterfly", shape: null, color: "brown", box: [42.15, 38.83, 20.21, 9.22], hit: [42.57, 39.06, 12.78, 8.75] },
+        { id: "flower", src: p8_find_flower_png, word: "flower", shape: null, color: "blue", box: [56.46, 43.87, 14.44, 7.97], hit: [56.88, 44.1, 9.17, 7.5] },
+        { id: "bird", src: p8_find_bird_png, word: "bird", shape: null, color: "brown", box: [29.58, 45.31, 17.57, 8.71], hit: [30.0, 45.55, 9.86, 8.24] },
+        { id: "basket", src: p8_find_basket_png, word: "basket", shape: null, color: "brown", box: [59.65, 49.14, 22.08, 10.0], hit: [60.07, 49.38, 17.71, 9.3] },
+        { id: "mushroom", src: p8_find_mushroom_png, word: "mushroom", shape: null, color: "yellow", box: [22.15, 54.14, 22.15, 9.18], hit: [22.57, 54.37, 15.07, 8.71] },
+        { id: "ball", src: p8_find_ball_png, word: "ball", shape: null, color: "pink", box: [67.22, 61.6, 22.92, 10.66], hit: [67.64, 61.84, 18.26, 9.38] },
+        { id: "bug", src: p8_find_bug_png, word: "bug", shape: null, color: "brown", box: [12.99, 69.92, 25.97, 11.91], hit: [13.4, 70.16, 23.12, 11.25] },
       ],
     },
   },
@@ -646,25 +646,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l9_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l9_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [38.28, 34.17, 14.53, 20.21], hit: [38.52, 34.58, 9.06, 19.38] },
-        { id: "flower", src: l9_find_flower_png, word: "flower", shape: null, color: "black", box: [53.4, 38.75, 8.87, 15.62], hit: [53.63, 39.17, 5.62, 14.79] },
-        { id: "bird", src: l9_find_bird_png, word: "bird", shape: null, color: "black", box: [63.24, 46.04, 10.51, 19.51], hit: [63.48, 46.46, 7.03, 18.47] },
-        { id: "mushroom", src: l9_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [29.38, 50.14, 13.01, 16.6], hit: [29.61, 50.56, 8.67, 15.76] },
-        { id: "basket", src: l9_find_basket_png, word: "basket", shape: null, color: "black", box: [44.02, 47.57, 14.65, 20.14], hit: [44.26, 47.99, 11.37, 18.82] },
-        { id: "ball", src: l9_find_ball_png, word: "ball", shape: null, color: "black", box: [55.16, 65.62, 14.53, 21.04], hit: [55.39, 66.04, 11.45, 18.68] },
-        { id: "bug", src: l9_find_bug_png, word: "bug", shape: null, color: "blue", box: [31.56, 71.94, 14.61, 19.03], hit: [31.8, 72.36, 13.01, 18.12] },
+        { id: "butterfly", src: l9_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [44.53, 35.35, 14.53, 20.9], hit: [44.77, 35.76, 9.41, 20.07] },
+        { id: "flower", src: l9_find_flower_png, word: "flower", shape: null, color: "black", box: [66.13, 41.94, 8.87, 16.94], hit: [66.37, 42.36, 6.21, 16.11] },
+        { id: "bird", src: l9_find_bird_png, word: "bird", shape: null, color: "black", box: [23.71, 42.29, 12.46, 18.12], hit: [23.95, 42.71, 6.6, 17.29] },
+        { id: "mushroom", src: l9_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [32.73, 52.78, 13.44, 17.57], hit: [32.97, 53.19, 9.14, 16.74] },
+        { id: "basket", src: l9_find_basket_png, word: "basket", shape: null, color: "black", box: [55.31, 51.6, 15.35, 22.01], hit: [55.55, 52.01, 12.5, 20.62] },
+        { id: "ball", src: l9_find_ball_png, word: "ball", shape: null, color: "black", box: [74.77, 65.9, 13.71, 21.11], hit: [75.0, 66.32, 11.64, 18.68] },
+        { id: "bug", src: l9_find_bug_png, word: "bug", shape: null, color: "blue", box: [10.7, 71.67, 16.64, 19.17], hit: [10.94, 72.08, 14.57, 18.19] },
       ],
     },
     portrait: {
       background: p9_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p9_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [43.12, 38.98, 22.5, 10.31], hit: [43.54, 39.22, 14.44, 9.84] },
-        { id: "bird", src: p9_find_bird_png, word: "bird", shape: null, color: "black", box: [31.67, 45.43, 18.89, 9.69], hit: [32.08, 45.66, 11.04, 9.14] },
-        { id: "flower", src: p9_find_flower_png, word: "flower", shape: null, color: "black", box: [56.6, 45.9, 16.88, 9.34], hit: [57.01, 46.13, 10.9, 8.87] },
-        { id: "mushroom", src: p9_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [30.21, 52.97, 22.99, 9.77], hit: [30.63, 53.2, 15.97, 9.3] },
-        { id: "basket", src: p9_find_basket_png, word: "basket", shape: null, color: "black", box: [52.22, 51.56, 26.46, 11.88], hit: [52.64, 51.8, 21.11, 11.09] },
-        { id: "ball", src: p9_find_ball_png, word: "ball", shape: null, color: "black", box: [54.03, 62.85, 26.18, 12.03], hit: [54.44, 63.09, 20.49, 10.66] },
-        { id: "bug", src: p9_find_bug_png, word: "bug", shape: null, color: "blue", box: [24.31, 66.21, 25.97, 11.52], hit: [24.72, 66.45, 23.26, 10.98] },
+        { id: "butterfly", src: p9_find_butterfly_png, word: "butterfly", shape: null, color: "yellow", box: [42.29, 39.06, 20.49, 9.26], hit: [42.71, 39.3, 13.06, 8.79] },
+        { id: "flower", src: p9_find_flower_png, word: "flower", shape: null, color: "black", box: [57.15, 43.91, 14.44, 7.97], hit: [57.57, 44.14, 9.1, 7.5] },
+        { id: "bird", src: p9_find_bird_png, word: "bird", shape: null, color: "black", box: [30.76, 45.27, 17.64, 8.75], hit: [31.18, 45.51, 9.58, 8.28] },
+        { id: "basket", src: p9_find_basket_png, word: "basket", shape: null, color: "black", box: [59.72, 49.34, 22.43, 10.04], hit: [60.14, 49.57, 17.92, 9.3] },
+        { id: "mushroom", src: p9_find_mushroom_png, word: "mushroom", shape: null, color: "red", box: [22.01, 53.55, 21.88, 9.06], hit: [22.43, 53.79, 14.79, 8.59] },
+        { id: "ball", src: p9_find_ball_png, word: "ball", shape: null, color: "black", box: [64.58, 60.74, 22.71, 10.43], hit: [65.0, 60.98, 17.71, 9.18] },
+        { id: "bug", src: p9_find_bug_png, word: "bug", shape: null, color: "blue", box: [12.01, 70.78, 26.46, 12.03], hit: [12.43, 71.02, 23.54, 11.56] },
       ],
     },
   },
@@ -672,25 +672,25 @@ export const FOREST_FIND: Record<number, Framed<Scene>> = {
     landscape: {
       background: l10_find_ground_jpg,
       items: [
-        { id: "butterfly", src: l10_find_butterfly_png, word: "butterfly", shape: null, color: "white", box: [37.11, 33.75, 14.45, 20.0], hit: [37.34, 34.17, 8.98, 19.17] },
-        { id: "flower", src: l10_find_flower_png, word: "flower", shape: null, color: "white", box: [55.12, 38.61, 8.79, 15.69], hit: [55.35, 39.03, 5.62, 14.86] },
-        { id: "bird", src: l10_find_bird_png, word: "bird", shape: null, color: "green", box: [61.52, 46.6, 10.98, 19.79], hit: [61.76, 47.01, 6.99, 18.89] },
-        { id: "mushroom", src: l10_find_mushroom_png, word: "mushroom", shape: null, color: "white", box: [29.49, 50.14, 13.01, 16.6], hit: [29.73, 50.56, 8.67, 15.76] },
-        { id: "basket", src: l10_find_basket_png, word: "basket", shape: null, color: "blue", box: [44.65, 48.26, 14.69, 20.42], hit: [44.88, 48.68, 11.45, 19.1] },
-        { id: "ball", src: l10_find_ball_png, word: "ball", shape: null, color: "white", box: [54.53, 64.93, 14.49, 20.76], hit: [54.77, 65.35, 11.29, 18.4] },
-        { id: "bug", src: l10_find_bug_png, word: "bug", shape: null, color: "red", box: [33.09, 71.6, 14.49, 19.17], hit: [33.32, 72.01, 12.97, 18.12] },
+        { id: "butterfly", src: l10_find_butterfly_png, word: "butterfly", shape: null, color: "white", box: [44.77, 34.93, 14.37, 20.69], hit: [45.0, 35.35, 9.3, 19.86] },
+        { id: "flower", src: l10_find_flower_png, word: "flower", shape: null, color: "white", box: [66.88, 41.88, 8.63, 16.94], hit: [67.11, 42.29, 5.98, 16.11] },
+        { id: "bird", src: l10_find_bird_png, word: "bird", shape: null, color: "green", box: [23.36, 42.85, 12.27, 18.19], hit: [23.59, 43.26, 6.72, 17.29] },
+        { id: "mushroom", src: l10_find_mushroom_png, word: "mushroom", shape: null, color: "white", box: [32.89, 52.57, 13.4, 17.5], hit: [33.12, 52.99, 9.1, 16.67] },
+        { id: "basket", src: l10_find_basket_png, word: "basket", shape: null, color: "blue", box: [55.66, 52.36, 15.43, 22.36], hit: [55.9, 52.78, 12.62, 20.97] },
+        { id: "ball", src: l10_find_ball_png, word: "ball", shape: null, color: "white", box: [74.84, 66.39, 14.1, 21.32], hit: [75.08, 66.81, 12.11, 18.89] },
+        { id: "bug", src: l10_find_bug_png, word: "bug", shape: null, color: "red", box: [9.88, 70.56, 16.45, 18.75], hit: [10.12, 70.97, 14.41, 17.85] },
       ],
     },
     portrait: {
       background: p10_find_ground_jpg,
       items: [
-        { id: "butterfly", src: p10_find_butterfly_png, word: "butterfly", shape: null, color: "white", box: [41.04, 38.75, 22.5, 10.2], hit: [41.46, 38.98, 14.44, 9.73] },
-        { id: "flower", src: p10_find_flower_png, word: "flower", shape: null, color: "white", box: [59.93, 45.78, 16.74, 9.41], hit: [60.35, 46.02, 10.9, 8.95] },
-        { id: "bird", src: p10_find_bird_png, word: "bird", shape: null, color: "green", box: [28.19, 45.78, 19.72, 9.77], hit: [28.61, 46.02, 11.11, 9.3] },
-        { id: "mushroom", src: p10_find_mushroom_png, word: "mushroom", shape: null, color: "white", box: [30.49, 53.01, 22.99, 9.77], hit: [30.9, 53.24, 15.97, 9.3] },
-        { id: "basket", src: p10_find_basket_png, word: "basket", shape: null, color: "blue", box: [53.61, 52.03, 26.39, 12.11], hit: [54.03, 52.27, 21.32, 11.29] },
-        { id: "ball", src: p10_find_ball_png, word: "ball", shape: null, color: "white", box: [52.99, 62.34, 26.18, 11.91], hit: [53.4, 62.58, 20.21, 10.55] },
-        { id: "bug", src: p10_find_bug_png, word: "bug", shape: null, color: "red", box: [27.01, 65.94, 25.83, 11.72], hit: [27.43, 66.17, 23.12, 11.02] },
+        { id: "butterfly", src: p10_find_butterfly_png, word: "butterfly", shape: null, color: "white", box: [42.64, 38.87, 20.28, 9.14], hit: [43.06, 39.1, 12.85, 8.67] },
+        { id: "flower", src: p10_find_flower_png, word: "flower", shape: null, color: "white", box: [58.26, 43.87, 14.17, 7.97], hit: [58.68, 44.1, 8.96, 7.5] },
+        { id: "bird", src: p10_find_bird_png, word: "bird", shape: null, color: "green", box: [30.35, 45.59, 17.43, 8.79], hit: [30.76, 45.82, 10.0, 8.28] },
+        { id: "basket", src: p10_find_basket_png, word: "basket", shape: null, color: "blue", box: [60.28, 49.73, 22.5, 10.2], hit: [60.69, 49.96, 18.06, 9.45] },
+        { id: "mushroom", src: p10_find_mushroom_png, word: "mushroom", shape: null, color: "white", box: [22.29, 53.44, 21.74, 8.98], hit: [22.71, 53.67, 14.72, 8.52] },
+        { id: "ball", src: p10_find_ball_png, word: "ball", shape: null, color: "white", box: [64.72, 61.05, 22.71, 10.51], hit: [65.14, 61.29, 17.99, 9.22] },
+        { id: "bug", src: p10_find_bug_png, word: "bug", shape: null, color: "red", box: [9.86, 69.88, 26.18, 11.99], hit: [10.28, 70.12, 23.19, 11.29] },
       ],
     },
   },
