@@ -186,7 +186,18 @@ function furBody(kind, opts = {}) {
    felt as the shapes. About `height` tall, centred. */
 const WORD_COLORS = { red: 0xe6192b, blue: 0x1b63e8, yellow: 0xffd400, green: 0x1fb53a, orange: 0xff7a0a, purple: 0x8a2be2, pink: 0xff2d92, brown: 0x8b4a1f, black: 0x26232e, white: 0xeaf1ff };
 function furWord(font, text, color, { height = 1, shells = 12, length = 0.016, dens = 110 } = {}) {
-  let geo = new TextGeometry(text, { font, size: 1, depth: 0.4, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.2, bevelSize: 0.1, bevelOffset: 0, bevelSegments: 10 });
+  /* One letter at a time, so each gets its own breathing room (the bevel swells
+     a letter outward and `TextGeometry` alone would let neighbours touch). */
+  const unit = 1 / font.data.resolution;
+  const parts = [];
+  let x = 0;
+  for (const ch of text) {
+    const letter = new TextGeometry(ch, { font, size: 1, depth: 0.4, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.2, bevelSize: 0.1, bevelOffset: 0, bevelSegments: 10 });
+    letter.translate(x, 0, 0);
+    parts.push(letter);
+    x += font.data.glyphs[ch].ha * unit + 0.17;
+  }
+  let geo = mergeGeometries(parts);
   geo.center();
   geo.deleteAttribute("uv");
   geo.deleteAttribute("normal");
@@ -6600,9 +6611,9 @@ if (THING) {
     if (splash !== undefined && FOREST && COLOR_ID && splash === PAINT[COLOR_ID]) {
       /* The colour's name, puffed up, on the board. */
       const text = COLOR_ID[0].toUpperCase() + COLOR_ID.slice(1);
-      const w = furWord(WORD_FONT, text, WORD_COLORS[COLOR_ID], { height: 0.95 });
+      const w = furWord(WORD_FONT, text, WORD_COLORS[COLOR_ID], { height: 0.88 });
       const wd = w.userData.size.x * w.scale.x;
-      if (wd > 2.05) w.scale.multiplyScalar(2.05 / wd);
+      if (wd > 1.75) w.scale.multiplyScalar(1.75 / wd);
       w.position.set(0, 0, 0.2);
       board.add(w);
     } else if (splash !== undefined) {
