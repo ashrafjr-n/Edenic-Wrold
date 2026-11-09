@@ -434,7 +434,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 10)) if SEAS else list(range(1, 11)) if FARM else list(range(1, 8)) if MYG else list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
     base = "public/assets/learn/bloo/seasons-weather/world" if SEAS else "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
-    has_find = lambda lesson: not HILL and not FARM and lesson <= (6 if MYG else 10 if FOREST else 5 if VEG else 4)
+    has_find = lambda lesson: not HILL and not FARM and lesson <= (0 if MYG else 10 if FOREST else 5 if VEG else 4)
     GENERATED = "src/data/seasons-farm.ts" if SEAS else "src/data/animals-farm.ts" if FARM else "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
@@ -679,9 +679,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             'import type { Framed, LessonWorld, Scene } from "@/types/course";\n'
             + "\n".join(imports)
             + "\n\n/** Each My Garden lesson's camera through the garden (7 is the review): a\n    still per step after the reel and the move into each (0: the entry). */\n"
-            + "export const MY_GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
-            + "/** Each thing's Find, standing in the garden itself — the ground and the\n    things to tap, in both frames (farthest first). */\n"
-            + "export const MY_GARDEN_FIND: Record<number, Framed<Scene>> = {\n" + "\n".join(finds) + "\n};\n"
+            + "export const MY_GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
         sys.exit()

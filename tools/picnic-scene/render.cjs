@@ -339,7 +339,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.mkdirSync(kitchen);
           fs.writeFileSync(path.join(out, "kitchen.json"), JSON.stringify(await page.evaluate(() => window.garden.kitchenMeta())));
           for (const [layer, url] of Object.entries(await page.evaluate(() => window.garden.kitchenLayers()))) save(kitchen, layer, url);
-        } else if (mode !== "hill" && mode !== "farm" && mode !== "seasons" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 6 : 4)) {
+        } else if (mode !== "hill" && mode !== "farm" && mode !== "seasons" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 0 : 4)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");
