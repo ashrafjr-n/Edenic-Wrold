@@ -8,144 +8,36 @@ import l1_s1_jpg from "../../public/assets/learn/nova/garden/world/1/landscape/s
 import p1_s1_jpg from "../../public/assets/learn/nova/garden/world/1/portrait/s1.jpg";
 import l1_s2_jpg from "../../public/assets/learn/nova/garden/world/1/landscape/s2.jpg";
 import p1_s2_jpg from "../../public/assets/learn/nova/garden/world/1/portrait/s2.jpg";
-import l1_s3_jpg from "../../public/assets/learn/nova/garden/world/1/landscape/s3.jpg";
-import p1_s3_jpg from "../../public/assets/learn/nova/garden/world/1/portrait/s3.jpg";
-import l1_find_flower4_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/flower4.png";
-import l1_find_tree1_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/tree1.png";
-import l1_find_flower3_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/flower3.png";
-import l1_find_flower2_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/flower2.png";
-import l1_find_flower1_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/flower1.png";
-import l1_find_leaf1_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/leaf1.png";
-import l1_find_nest1_png from "../../public/assets/learn/nova/garden/world/1/landscape/find/nest1.png";
-import l1_find_ground_jpg from "../../public/assets/learn/nova/garden/world/1/landscape/find/ground.jpg";
-import p1_find_flower4_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/flower4.png";
-import p1_find_tree1_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/tree1.png";
-import p1_find_flower3_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/flower3.png";
-import p1_find_flower2_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/flower2.png";
-import p1_find_flower1_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/flower1.png";
-import p1_find_leaf1_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/leaf1.png";
-import p1_find_nest1_png from "../../public/assets/learn/nova/garden/world/1/portrait/find/nest1.png";
-import p1_find_ground_jpg from "../../public/assets/learn/nova/garden/world/1/portrait/find/ground.jpg";
 import l2_s0_jpg from "../../public/assets/learn/nova/garden/world/2/landscape/s0.jpg";
 import p2_s0_jpg from "../../public/assets/learn/nova/garden/world/2/portrait/s0.jpg";
 import l2_s1_jpg from "../../public/assets/learn/nova/garden/world/2/landscape/s1.jpg";
 import p2_s1_jpg from "../../public/assets/learn/nova/garden/world/2/portrait/s1.jpg";
 import l2_s2_jpg from "../../public/assets/learn/nova/garden/world/2/landscape/s2.jpg";
 import p2_s2_jpg from "../../public/assets/learn/nova/garden/world/2/portrait/s2.jpg";
-import l2_s3_jpg from "../../public/assets/learn/nova/garden/world/2/landscape/s3.jpg";
-import p2_s3_jpg from "../../public/assets/learn/nova/garden/world/2/portrait/s3.jpg";
-import l2_find_tree3_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/tree3.png";
-import l2_find_tree4_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/tree4.png";
-import l2_find_tree2_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/tree2.png";
-import l2_find_tree1_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/tree1.png";
-import l2_find_bench1_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/bench1.png";
-import l2_find_leaf1_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/leaf1.png";
-import l2_find_grass1_png from "../../public/assets/learn/nova/garden/world/2/landscape/find/grass1.png";
-import l2_find_ground_jpg from "../../public/assets/learn/nova/garden/world/2/landscape/find/ground.jpg";
-import p2_find_tree3_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/tree3.png";
-import p2_find_tree4_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/tree4.png";
-import p2_find_tree2_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/tree2.png";
-import p2_find_tree1_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/tree1.png";
-import p2_find_bench1_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/bench1.png";
-import p2_find_leaf1_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/leaf1.png";
-import p2_find_grass1_png from "../../public/assets/learn/nova/garden/world/2/portrait/find/grass1.png";
-import p2_find_ground_jpg from "../../public/assets/learn/nova/garden/world/2/portrait/find/ground.jpg";
 import l3_s0_jpg from "../../public/assets/learn/nova/garden/world/3/landscape/s0.jpg";
 import p3_s0_jpg from "../../public/assets/learn/nova/garden/world/3/portrait/s0.jpg";
 import l3_s1_jpg from "../../public/assets/learn/nova/garden/world/3/landscape/s1.jpg";
 import p3_s1_jpg from "../../public/assets/learn/nova/garden/world/3/portrait/s1.jpg";
 import l3_s2_jpg from "../../public/assets/learn/nova/garden/world/3/landscape/s2.jpg";
 import p3_s2_jpg from "../../public/assets/learn/nova/garden/world/3/portrait/s2.jpg";
-import l3_s3_jpg from "../../public/assets/learn/nova/garden/world/3/landscape/s3.jpg";
-import p3_s3_jpg from "../../public/assets/learn/nova/garden/world/3/portrait/s3.jpg";
-import l3_find_leaf4_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/leaf4.png";
-import l3_find_flower1_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/flower1.png";
-import l3_find_leaf3_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/leaf3.png";
-import l3_find_leaf2_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/leaf2.png";
-import l3_find_leaf1_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/leaf1.png";
-import l3_find_grass1_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/grass1.png";
-import l3_find_nest1_png from "../../public/assets/learn/nova/garden/world/3/landscape/find/nest1.png";
-import l3_find_ground_jpg from "../../public/assets/learn/nova/garden/world/3/landscape/find/ground.jpg";
-import p3_find_leaf4_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/leaf4.png";
-import p3_find_flower1_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/flower1.png";
-import p3_find_leaf3_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/leaf3.png";
-import p3_find_leaf2_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/leaf2.png";
-import p3_find_leaf1_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/leaf1.png";
-import p3_find_grass1_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/grass1.png";
-import p3_find_nest1_png from "../../public/assets/learn/nova/garden/world/3/portrait/find/nest1.png";
-import p3_find_ground_jpg from "../../public/assets/learn/nova/garden/world/3/portrait/find/ground.jpg";
 import l4_s0_jpg from "../../public/assets/learn/nova/garden/world/4/landscape/s0.jpg";
 import p4_s0_jpg from "../../public/assets/learn/nova/garden/world/4/portrait/s0.jpg";
 import l4_s1_jpg from "../../public/assets/learn/nova/garden/world/4/landscape/s1.jpg";
 import p4_s1_jpg from "../../public/assets/learn/nova/garden/world/4/portrait/s1.jpg";
 import l4_s2_jpg from "../../public/assets/learn/nova/garden/world/4/landscape/s2.jpg";
 import p4_s2_jpg from "../../public/assets/learn/nova/garden/world/4/portrait/s2.jpg";
-import l4_s3_jpg from "../../public/assets/learn/nova/garden/world/4/landscape/s3.jpg";
-import p4_s3_jpg from "../../public/assets/learn/nova/garden/world/4/portrait/s3.jpg";
-import l4_find_tree1_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/tree1.png";
-import l4_find_bench1_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/bench1.png";
-import l4_find_grass4_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/grass4.png";
-import l4_find_grass3_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/grass3.png";
-import l4_find_grass2_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/grass2.png";
-import l4_find_grass1_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/grass1.png";
-import l4_find_nest1_png from "../../public/assets/learn/nova/garden/world/4/landscape/find/nest1.png";
-import l4_find_ground_jpg from "../../public/assets/learn/nova/garden/world/4/landscape/find/ground.jpg";
-import p4_find_tree1_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/tree1.png";
-import p4_find_bench1_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/bench1.png";
-import p4_find_grass4_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/grass4.png";
-import p4_find_grass3_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/grass3.png";
-import p4_find_grass2_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/grass2.png";
-import p4_find_grass1_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/grass1.png";
-import p4_find_nest1_png from "../../public/assets/learn/nova/garden/world/4/portrait/find/nest1.png";
-import p4_find_ground_jpg from "../../public/assets/learn/nova/garden/world/4/portrait/find/ground.jpg";
 import l5_s0_jpg from "../../public/assets/learn/nova/garden/world/5/landscape/s0.jpg";
 import p5_s0_jpg from "../../public/assets/learn/nova/garden/world/5/portrait/s0.jpg";
 import l5_s1_jpg from "../../public/assets/learn/nova/garden/world/5/landscape/s1.jpg";
 import p5_s1_jpg from "../../public/assets/learn/nova/garden/world/5/portrait/s1.jpg";
 import l5_s2_jpg from "../../public/assets/learn/nova/garden/world/5/landscape/s2.jpg";
 import p5_s2_jpg from "../../public/assets/learn/nova/garden/world/5/portrait/s2.jpg";
-import l5_s3_jpg from "../../public/assets/learn/nova/garden/world/5/landscape/s3.jpg";
-import p5_s3_jpg from "../../public/assets/learn/nova/garden/world/5/portrait/s3.jpg";
-import l5_find_flower1_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/flower1.png";
-import l5_find_bench1_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/bench1.png";
-import l5_find_leaf1_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/leaf1.png";
-import l5_find_nest4_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/nest4.png";
-import l5_find_nest3_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/nest3.png";
-import l5_find_nest2_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/nest2.png";
-import l5_find_nest1_png from "../../public/assets/learn/nova/garden/world/5/landscape/find/nest1.png";
-import l5_find_ground_jpg from "../../public/assets/learn/nova/garden/world/5/landscape/find/ground.jpg";
-import p5_find_flower1_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/flower1.png";
-import p5_find_bench1_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/bench1.png";
-import p5_find_leaf1_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/leaf1.png";
-import p5_find_nest4_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/nest4.png";
-import p5_find_nest3_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/nest3.png";
-import p5_find_nest2_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/nest2.png";
-import p5_find_nest1_png from "../../public/assets/learn/nova/garden/world/5/portrait/find/nest1.png";
-import p5_find_ground_jpg from "../../public/assets/learn/nova/garden/world/5/portrait/find/ground.jpg";
 import l6_s0_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s0.jpg";
 import p6_s0_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s0.jpg";
 import l6_s1_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s1.jpg";
 import p6_s1_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s1.jpg";
 import l6_s2_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s2.jpg";
 import p6_s2_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s2.jpg";
-import l6_s3_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s3.jpg";
-import p6_s3_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s3.jpg";
-import l6_find_flower1_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/flower1.png";
-import l6_find_tree1_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/tree1.png";
-import l6_find_bench4_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/bench4.png";
-import l6_find_bench2_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/bench2.png";
-import l6_find_bench3_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/bench3.png";
-import l6_find_grass1_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/grass1.png";
-import l6_find_bench1_png from "../../public/assets/learn/nova/garden/world/6/landscape/find/bench1.png";
-import l6_find_ground_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/find/ground.jpg";
-import p6_find_flower1_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/flower1.png";
-import p6_find_tree1_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/tree1.png";
-import p6_find_bench4_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/bench4.png";
-import p6_find_bench3_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/bench3.png";
-import p6_find_bench2_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/bench2.png";
-import p6_find_grass1_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/grass1.png";
-import p6_find_bench1_png from "../../public/assets/learn/nova/garden/world/6/portrait/find/bench1.png";
-import p6_find_ground_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/find/ground.jpg";
 import l7_s0_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s0.jpg";
 import p7_s0_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s0.jpg";
 import l7_s1_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s1.jpg";
@@ -165,13 +57,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l1_s0_jpg, portrait: p1_s0_jpg },
       { landscape: l1_s1_jpg, portrait: p1_s1_jpg },
       { landscape: l1_s2_jpg, portrait: p1_s2_jpg },
-      { landscape: l1_s3_jpg, portrait: p1_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m0.mp4?v=8f6e377b", portrait: "/assets/learn/nova/garden/world/1/portrait/m0.mp4?v=e474f6dc" },
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m1.mp4?v=8479baa4", portrait: "/assets/learn/nova/garden/world/1/portrait/m1.mp4?v=df225eb0" },
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m2.mp4?v=37dd4477", portrait: "/assets/learn/nova/garden/world/1/portrait/m2.mp4?v=2adcaf31" },
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m3.mp4?v=ba08ac57", portrait: "/assets/learn/nova/garden/world/1/portrait/m3.mp4?v=f74dd081" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m0.mp4?v=798138dc", portrait: "/assets/learn/nova/garden/world/1/portrait/m0.mp4?v=4343cd1e" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m1.mp4?v=3c6336a7", portrait: "/assets/learn/nova/garden/world/1/portrait/m1.mp4?v=5b8e1c46" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m2.mp4?v=8076e3c3", portrait: "/assets/learn/nova/garden/world/1/portrait/m2.mp4?v=cbd23c4e" },
     ],
   },
   2: {
@@ -179,13 +69,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l2_s0_jpg, portrait: p2_s0_jpg },
       { landscape: l2_s1_jpg, portrait: p2_s1_jpg },
       { landscape: l2_s2_jpg, portrait: p2_s2_jpg },
-      { landscape: l2_s3_jpg, portrait: p2_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m0.mp4?v=010a3bba", portrait: "/assets/learn/nova/garden/world/2/portrait/m0.mp4?v=4cccb0a3" },
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m1.mp4?v=2b110ee4", portrait: "/assets/learn/nova/garden/world/2/portrait/m1.mp4?v=1f5bd599" },
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m2.mp4?v=87199d74", portrait: "/assets/learn/nova/garden/world/2/portrait/m2.mp4?v=f53913fe" },
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m3.mp4?v=fe4b5c61", portrait: "/assets/learn/nova/garden/world/2/portrait/m3.mp4?v=92f46d40" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m0.mp4?v=a55cdbf0", portrait: "/assets/learn/nova/garden/world/2/portrait/m0.mp4?v=d9b8a502" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m1.mp4?v=a416daa7", portrait: "/assets/learn/nova/garden/world/2/portrait/m1.mp4?v=d116874e" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m2.mp4?v=19064d30", portrait: "/assets/learn/nova/garden/world/2/portrait/m2.mp4?v=814e1a09" },
     ],
   },
   3: {
@@ -193,13 +81,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l3_s0_jpg, portrait: p3_s0_jpg },
       { landscape: l3_s1_jpg, portrait: p3_s1_jpg },
       { landscape: l3_s2_jpg, portrait: p3_s2_jpg },
-      { landscape: l3_s3_jpg, portrait: p3_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m0.mp4?v=e522a4a4", portrait: "/assets/learn/nova/garden/world/3/portrait/m0.mp4?v=67daff29" },
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m1.mp4?v=a60900a8", portrait: "/assets/learn/nova/garden/world/3/portrait/m1.mp4?v=1670b2a5" },
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m2.mp4?v=f6ca1138", portrait: "/assets/learn/nova/garden/world/3/portrait/m2.mp4?v=523dc9ec" },
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m3.mp4?v=6163ac8c", portrait: "/assets/learn/nova/garden/world/3/portrait/m3.mp4?v=40e281c7" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m0.mp4?v=28e11be8", portrait: "/assets/learn/nova/garden/world/3/portrait/m0.mp4?v=fe5c0b57" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m1.mp4?v=0301de68", portrait: "/assets/learn/nova/garden/world/3/portrait/m1.mp4?v=f7792304" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m2.mp4?v=0163a64f", portrait: "/assets/learn/nova/garden/world/3/portrait/m2.mp4?v=3c65335c" },
     ],
   },
   4: {
@@ -207,13 +93,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l4_s0_jpg, portrait: p4_s0_jpg },
       { landscape: l4_s1_jpg, portrait: p4_s1_jpg },
       { landscape: l4_s2_jpg, portrait: p4_s2_jpg },
-      { landscape: l4_s3_jpg, portrait: p4_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m0.mp4?v=019100ce", portrait: "/assets/learn/nova/garden/world/4/portrait/m0.mp4?v=4a8381d0" },
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m1.mp4?v=1f2e335a", portrait: "/assets/learn/nova/garden/world/4/portrait/m1.mp4?v=76f1318f" },
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m2.mp4?v=170af489", portrait: "/assets/learn/nova/garden/world/4/portrait/m2.mp4?v=070b129c" },
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m3.mp4?v=d0755929", portrait: "/assets/learn/nova/garden/world/4/portrait/m3.mp4?v=40dec507" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m0.mp4?v=acd1002f", portrait: "/assets/learn/nova/garden/world/4/portrait/m0.mp4?v=c4895736" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m1.mp4?v=0f105d87", portrait: "/assets/learn/nova/garden/world/4/portrait/m1.mp4?v=8749a34a" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m2.mp4?v=982c19e1", portrait: "/assets/learn/nova/garden/world/4/portrait/m2.mp4?v=d644f516" },
     ],
   },
   5: {
@@ -221,13 +105,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l5_s0_jpg, portrait: p5_s0_jpg },
       { landscape: l5_s1_jpg, portrait: p5_s1_jpg },
       { landscape: l5_s2_jpg, portrait: p5_s2_jpg },
-      { landscape: l5_s3_jpg, portrait: p5_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m0.mp4?v=dc6ebb85", portrait: "/assets/learn/nova/garden/world/5/portrait/m0.mp4?v=58978afe" },
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m1.mp4?v=ffda83e6", portrait: "/assets/learn/nova/garden/world/5/portrait/m1.mp4?v=7caec371" },
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m2.mp4?v=e1542253", portrait: "/assets/learn/nova/garden/world/5/portrait/m2.mp4?v=0669ed9b" },
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m3.mp4?v=6de50739", portrait: "/assets/learn/nova/garden/world/5/portrait/m3.mp4?v=550b502e" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m0.mp4?v=92c1f7fe", portrait: "/assets/learn/nova/garden/world/5/portrait/m0.mp4?v=1606ebc9" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m1.mp4?v=c77f419a", portrait: "/assets/learn/nova/garden/world/5/portrait/m1.mp4?v=df5823cd" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m2.mp4?v=a1402fd4", portrait: "/assets/learn/nova/garden/world/5/portrait/m2.mp4?v=0894e007" },
     ],
   },
   6: {
@@ -235,13 +117,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l6_s0_jpg, portrait: p6_s0_jpg },
       { landscape: l6_s1_jpg, portrait: p6_s1_jpg },
       { landscape: l6_s2_jpg, portrait: p6_s2_jpg },
-      { landscape: l6_s3_jpg, portrait: p6_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m0.mp4?v=36656d80", portrait: "/assets/learn/nova/garden/world/6/portrait/m0.mp4?v=8f08d9d6" },
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m1.mp4?v=21325d03", portrait: "/assets/learn/nova/garden/world/6/portrait/m1.mp4?v=0279d864" },
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m2.mp4?v=ae3ee5c4", portrait: "/assets/learn/nova/garden/world/6/portrait/m2.mp4?v=4319e764" },
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m3.mp4?v=312334ab", portrait: "/assets/learn/nova/garden/world/6/portrait/m3.mp4?v=ef5c28b9" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m0.mp4?v=f50122bd", portrait: "/assets/learn/nova/garden/world/6/portrait/m0.mp4?v=f00d3dff" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m1.mp4?v=964ffe0d", portrait: "/assets/learn/nova/garden/world/6/portrait/m1.mp4?v=559a9d3c" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m2.mp4?v=e0483eca", portrait: "/assets/learn/nova/garden/world/6/portrait/m2.mp4?v=d984f81a" },
     ],
   },
   7: {
@@ -253,172 +133,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l7_s4_jpg, portrait: p7_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m0.mp4?v=fc9f9a0d", portrait: "/assets/learn/nova/garden/world/7/portrait/m0.mp4?v=3181b2f9" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m1.mp4?v=8aa36c77", portrait: "/assets/learn/nova/garden/world/7/portrait/m1.mp4?v=d57646af" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m0.mp4?v=d118134f", portrait: "/assets/learn/nova/garden/world/7/portrait/m0.mp4?v=3181b2f9" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m1.mp4?v=b4a7f84a", portrait: "/assets/learn/nova/garden/world/7/portrait/m1.mp4?v=d57646af" },
       { landscape: "/assets/learn/nova/garden/world/7/landscape/m2.mp4?v=249556cc", portrait: "/assets/learn/nova/garden/world/7/portrait/m2.mp4?v=a5b0685b" },
       { landscape: "/assets/learn/nova/garden/world/7/landscape/m3.mp4?v=9e76569a", portrait: "/assets/learn/nova/garden/world/7/portrait/m3.mp4?v=1cb7e2d3" },
       { landscape: "/assets/learn/nova/garden/world/7/landscape/m4.mp4?v=05a0a564", portrait: "/assets/learn/nova/garden/world/7/portrait/m4.mp4?v=561379ad" },
     ],
-  },
-};
-
-/** Each thing's Find, standing in the garden itself — the ground and the
-    things to tap, in both frames (farthest first). */
-export const MY_GARDEN_FIND: Record<number, Framed<Scene>> = {
-  1: {
-    landscape: {
-      background: l1_find_ground_jpg,
-      items: [
-        { id: "flower4", src: l1_find_flower4_png, word: "flower", shape: null, group: "flower", box: [33.75, 39.79, 10.47, 17.08], hit: [33.98, 40.21, 5.74, 16.25] },
-        { id: "tree1", src: l1_find_tree1_png, word: "tree", shape: null, group: "tree", box: [57.81, 29.17, 14.69, 28.82], hit: [58.05, 29.58, 10.04, 27.99] },
-        { id: "flower3", src: l1_find_flower3_png, word: "flower", shape: null, group: "flower", box: [45.55, 49.58, 12.03, 21.18], hit: [45.78, 50.0, 7.11, 20.35] },
-        { id: "flower2", src: l1_find_flower2_png, word: "flower", shape: null, group: "flower", box: [76.8, 52.36, 10.7, 22.29], hit: [77.03, 52.78, 8.09, 21.46] },
-        { id: "flower1", src: l1_find_flower1_png, word: "flower", shape: null, group: "flower", box: [13.75, 52.43, 15.31, 22.5], hit: [13.98, 52.85, 7.58, 21.67] },
-        { id: "leaf1", src: l1_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [65.51, 66.04, 9.3, 22.57], hit: [65.74, 66.46, 5.39, 21.74] },
-        { id: "nest1", src: l1_find_nest1_png, word: "nest", shape: null, group: "nest", box: [26.02, 74.44, 17.93, 19.86], hit: [26.25, 74.86, 15.12, 17.57] },
-      ],
-    },
-    portrait: {
-      background: p1_find_ground_jpg,
-      items: [
-        { id: "flower4", src: p1_find_flower4_png, word: "flower", shape: null, group: "flower", box: [38.47, 45.47, 14.65, 7.97], hit: [38.89, 45.7, 8.19, 7.5] },
-        { id: "tree1", src: p1_find_tree1_png, word: "tree", shape: null, group: "tree", box: [49.51, 40.66, 23.06, 13.28], hit: [49.93, 40.9, 14.51, 12.81] },
-        { id: "flower3", src: p1_find_flower3_png, word: "flower", shape: null, group: "flower", box: [65.49, 50.55, 15.83, 9.22], hit: [65.9, 50.78, 10.0, 8.75] },
-        { id: "flower2", src: p1_find_flower2_png, word: "flower", shape: null, group: "flower", box: [21.11, 51.02, 18.54, 9.3], hit: [21.53, 51.25, 10.14, 8.83] },
-        { id: "flower1", src: p1_find_flower1_png, word: "flower", shape: null, group: "flower", box: [43.47, 55.9, 19.24, 10.51], hit: [43.89, 56.13, 11.11, 10.04] },
-        { id: "leaf1", src: p1_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [67.15, 62.73, 14.31, 9.96], hit: [67.57, 62.97, 7.57, 9.49] },
-        { id: "nest1", src: p1_find_nest1_png, word: "nest", shape: null, group: "nest", box: [23.26, 66.09, 25.14, 9.49], hit: [23.68, 66.33, 21.18, 8.4] },
-      ],
-    },
-  },
-  2: {
-    landscape: {
-      background: l2_find_ground_jpg,
-      items: [
-        { id: "tree3", src: l2_find_tree3_png, word: "tree", shape: null, group: "tree", box: [31.45, 29.1, 17.19, 28.82], hit: [31.68, 29.51, 10.0, 27.99] },
-        { id: "tree4", src: l2_find_tree4_png, word: "tree", shape: null, group: "tree", box: [57.81, 29.17, 14.69, 28.82], hit: [58.05, 29.58, 10.04, 27.99] },
-        { id: "tree2", src: l2_find_tree2_png, word: "tree", shape: null, group: "tree", box: [42.89, 36.18, 19.8, 35.9], hit: [43.12, 36.6, 12.66, 35.07] },
-        { id: "tree1", src: l2_find_tree1_png, word: "tree", shape: null, group: "tree", box: [74.65, 38.12, 17.15, 37.92], hit: [74.88, 38.54, 13.79, 37.08] },
-        { id: "bench1", src: l2_find_bench1_png, word: "bench", shape: null, group: "bench", box: [8.95, 53.89, 23.4, 22.78], hit: [9.18, 54.31, 16.6, 21.94] },
-        { id: "leaf1", src: l2_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [65.51, 66.04, 9.3, 22.57], hit: [65.74, 66.46, 5.39, 21.74] },
-        { id: "grass1", src: l2_find_grass1_png, word: "grass", shape: null, group: "grass", box: [28.16, 68.4, 15.62, 21.25], hit: [28.4, 68.82, 8.87, 20.42] },
-      ],
-    },
-    portrait: {
-      background: p2_find_ground_jpg,
-      items: [
-        { id: "tree3", src: p2_find_tree3_png, word: "tree", shape: null, group: "tree", box: [35.21, 40.62, 24.17, 13.28], hit: [35.62, 40.86, 14.58, 12.81] },
-        { id: "tree4", src: p2_find_tree4_png, word: "tree", shape: null, group: "tree", box: [49.51, 40.66, 23.06, 13.28], hit: [49.93, 40.9, 14.51, 12.81] },
-        { id: "tree2", src: p2_find_tree2_png, word: "tree", shape: null, group: "tree", box: [62.29, 44.88, 25.69, 15.43], hit: [62.71, 45.12, 17.43, 14.96] },
-        { id: "tree1", src: p2_find_tree1_png, word: "tree", shape: null, group: "tree", box: [17.08, 45.27, 30.42, 15.62], hit: [17.5, 45.51, 17.64, 15.16] },
-        { id: "bench1", src: p2_find_bench1_png, word: "bench", shape: null, group: "bench", box: [36.46, 56.17, 29.51, 11.25], hit: [36.88, 56.41, 24.31, 10.78] },
-        { id: "leaf1", src: p2_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [67.15, 62.73, 14.31, 9.96], hit: [67.57, 62.97, 7.57, 9.49] },
-        { id: "grass1", src: p2_find_grass1_png, word: "grass", shape: null, group: "grass", box: [26.46, 63.79, 21.53, 9.49], hit: [26.88, 64.02, 12.43, 9.02] },
-      ],
-    },
-  },
-  3: {
-    landscape: {
-      background: l3_find_ground_jpg,
-      items: [
-        { id: "leaf4", src: l3_find_leaf4_png, word: "leaf", shape: null, group: "leaf", box: [35.62, 42.01, 7.81, 14.86], hit: [35.86, 42.43, 3.24, 14.03] },
-        { id: "flower1", src: l3_find_flower1_png, word: "flower", shape: null, group: "flower", box: [59.53, 39.79, 9.1, 17.15], hit: [59.77, 40.21, 5.78, 16.32] },
-        { id: "leaf3", src: l3_find_leaf3_png, word: "leaf", shape: null, group: "leaf", box: [47.89, 52.5, 8.71, 18.26], hit: [48.12, 52.92, 4.1, 17.43] },
-        { id: "leaf2", src: l3_find_leaf2_png, word: "leaf", shape: null, group: "leaf", box: [79.53, 55.42, 6.99, 19.24], hit: [79.77, 55.83, 4.57, 18.4] },
-        { id: "leaf1", src: l3_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [16.21, 55.76, 11.64, 19.17], hit: [16.45, 56.18, 4.14, 18.33] },
-        { id: "grass1", src: l3_find_grass1_png, word: "grass", shape: null, group: "grass", box: [62.07, 67.43, 12.77, 21.53], hit: [62.3, 67.85, 8.91, 20.69] },
-        { id: "nest1", src: l3_find_nest1_png, word: "nest", shape: null, group: "nest", box: [26.02, 74.44, 17.93, 19.86], hit: [26.25, 74.86, 15.12, 17.57] },
-      ],
-    },
-    portrait: {
-      background: p3_find_ground_jpg,
-      items: [
-        { id: "leaf4", src: p3_find_leaf4_png, word: "leaf", shape: null, group: "leaf", box: [41.18, 46.52, 10.83, 6.91], hit: [41.6, 46.76, 4.72, 6.45] },
-        { id: "flower1", src: p3_find_flower1_png, word: "flower", shape: null, group: "flower", box: [52.29, 45.51, 14.03, 7.97], hit: [52.71, 45.74, 8.12, 7.5] },
-        { id: "leaf3", src: p3_find_leaf3_png, word: "leaf", shape: null, group: "leaf", box: [68.82, 51.84, 11.11, 7.93], hit: [69.24, 52.07, 5.76, 7.46] },
-        { id: "leaf2", src: p3_find_leaf2_png, word: "leaf", shape: null, group: "leaf", box: [24.44, 52.3, 13.82, 8.01], hit: [24.86, 52.54, 5.69, 7.54] },
-        { id: "leaf1", src: p3_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [47.08, 57.54, 14.03, 8.91], hit: [47.5, 57.77, 6.46, 8.44] },
-        { id: "grass1", src: p3_find_grass1_png, word: "grass", shape: null, group: "grass", box: [62.22, 63.2, 19.03, 9.65], hit: [62.64, 63.44, 12.5, 9.18] },
-        { id: "nest1", src: p3_find_nest1_png, word: "nest", shape: null, group: "nest", box: [23.26, 66.09, 25.14, 9.49], hit: [23.68, 66.33, 21.18, 8.4] },
-      ],
-    },
-  },
-  4: {
-    landscape: {
-      background: l4_find_ground_jpg,
-      items: [
-        { id: "tree1", src: l4_find_tree1_png, word: "tree", shape: null, group: "tree", box: [57.81, 29.17, 14.69, 28.82], hit: [58.05, 29.58, 10.04, 27.99] },
-        { id: "bench1", src: l4_find_bench1_png, word: "bench", shape: null, group: "bench", box: [30.08, 40.97, 15.23, 17.29], hit: [30.31, 41.39, 12.27, 16.46] },
-        { id: "grass4", src: l4_find_grass4_png, word: "grass", shape: null, group: "grass", box: [45.04, 53.89, 11.21, 17.22], hit: [45.27, 54.31, 6.8, 16.39] },
-        { id: "grass3", src: l4_find_grass3_png, word: "grass", shape: null, group: "grass", box: [76.91, 56.88, 9.84, 18.12], hit: [77.15, 57.29, 7.46, 17.29] },
-        { id: "grass2", src: l4_find_grass2_png, word: "grass", shape: null, group: "grass", box: [13.05, 56.88, 13.36, 18.4], hit: [13.28, 57.29, 7.54, 17.57] },
-        { id: "grass1", src: l4_find_grass1_png, word: "grass", shape: null, group: "grass", box: [62.07, 67.43, 12.77, 21.53], hit: [62.3, 67.85, 8.91, 20.69] },
-        { id: "nest1", src: l4_find_nest1_png, word: "nest", shape: null, group: "nest", box: [26.02, 74.44, 17.93, 19.86], hit: [26.25, 74.86, 15.12, 17.57] },
-      ],
-    },
-    portrait: {
-      background: p4_find_ground_jpg,
-      items: [
-        { id: "tree1", src: p4_find_tree1_png, word: "tree", shape: null, group: "tree", box: [49.51, 40.66, 23.06, 13.28], hit: [49.93, 40.9, 14.51, 12.81] },
-        { id: "bench1", src: p4_find_bench1_png, word: "bench", shape: null, group: "bench", box: [33.26, 45.78, 21.46, 8.4], hit: [33.68, 46.02, 17.5, 7.93] },
-        { id: "grass4", src: p4_find_grass4_png, word: "grass", shape: null, group: "grass", box: [65.14, 52.34, 14.58, 7.54], hit: [65.56, 52.58, 9.44, 7.07] },
-        { id: "grass3", src: p4_find_grass3_png, word: "grass", shape: null, group: "grass", box: [20.35, 52.81, 16.94, 7.62], hit: [20.76, 53.05, 9.65, 7.15] },
-        { id: "grass2", src: p4_find_grass2_png, word: "grass", shape: null, group: "grass", box: [42.43, 57.85, 17.78, 8.75], hit: [42.85, 58.09, 11.11, 8.28] },
-        { id: "grass1", src: p4_find_grass1_png, word: "grass", shape: null, group: "grass", box: [62.22, 63.2, 19.03, 9.65], hit: [62.64, 63.44, 12.5, 9.18] },
-        { id: "nest1", src: p4_find_nest1_png, word: "nest", shape: null, group: "nest", box: [23.26, 66.09, 25.14, 9.49], hit: [23.68, 66.33, 21.18, 8.4] },
-      ],
-    },
-  },
-  5: {
-    landscape: {
-      background: l5_find_ground_jpg,
-      items: [
-        { id: "flower1", src: l5_find_flower1_png, word: "flower", shape: null, group: "flower", box: [59.53, 39.79, 9.1, 17.15], hit: [59.77, 40.21, 5.78, 16.32] },
-        { id: "bench1", src: l5_find_bench1_png, word: "bench", shape: null, group: "bench", box: [30.08, 40.97, 15.23, 17.29], hit: [30.31, 41.39, 12.27, 16.46] },
-        { id: "leaf1", src: l5_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [47.89, 52.5, 8.71, 18.26], hit: [48.12, 52.92, 4.1, 17.43] },
-        { id: "nest4", src: l5_find_nest4_png, word: "nest", shape: null, group: "nest", box: [74.3, 62.78, 14.1, 15.14], hit: [74.53, 63.19, 12.97, 13.12] },
-        { id: "nest3", src: l5_find_nest3_png, word: "nest", shape: null, group: "nest", box: [11.05, 62.99, 16.05, 15.21], hit: [11.29, 63.4, 13.05, 13.12] },
-        { id: "nest2", src: l5_find_nest2_png, word: "nest", shape: null, group: "nest", box: [59.49, 73.89, 16.72, 19.58], hit: [59.73, 74.31, 15.04, 17.36] },
-        { id: "nest1", src: l5_find_nest1_png, word: "nest", shape: null, group: "nest", box: [26.02, 74.44, 17.93, 19.86], hit: [26.25, 74.86, 15.12, 17.57] },
-      ],
-    },
-    portrait: {
-      background: p5_find_ground_jpg,
-      items: [
-        { id: "flower1", src: p5_find_flower1_png, word: "flower", shape: null, group: "flower", box: [52.29, 45.51, 14.03, 7.97], hit: [52.71, 45.74, 8.12, 7.5] },
-        { id: "bench1", src: p5_find_bench1_png, word: "bench", shape: null, group: "bench", box: [33.26, 45.78, 21.46, 8.4], hit: [33.68, 46.02, 17.5, 7.93] },
-        { id: "leaf1", src: p5_find_leaf1_png, word: "leaf", shape: null, group: "leaf", box: [68.82, 51.84, 11.11, 7.93], hit: [69.24, 52.07, 5.76, 7.46] },
-        { id: "nest4", src: p5_find_nest4_png, word: "nest", shape: null, group: "nest", box: [18.12, 55.2, 19.65, 6.48], hit: [18.54, 55.43, 16.25, 5.51] },
-        { id: "nest3", src: p5_find_nest3_png, word: "nest", shape: null, group: "nest", box: [39.72, 60.43, 21.74, 7.85], hit: [40.14, 60.66, 18.54, 6.84] },
-        { id: "nest2", src: p5_find_nest2_png, word: "nest", shape: null, group: "nest", box: [58.75, 65.74, 23.96, 9.38], hit: [59.17, 65.98, 21.11, 8.28] },
-        { id: "nest1", src: p5_find_nest1_png, word: "nest", shape: null, group: "nest", box: [23.26, 66.09, 25.14, 9.49], hit: [23.68, 66.33, 21.18, 8.4] },
-      ],
-    },
-  },
-  6: {
-    landscape: {
-      background: l6_find_ground_jpg,
-      items: [
-        { id: "flower1", src: l6_find_flower1_png, word: "flower", shape: null, group: "flower", box: [33.75, 39.79, 10.47, 17.08], hit: [33.98, 40.21, 5.74, 16.25] },
-        { id: "tree1", src: l6_find_tree1_png, word: "tree", shape: null, group: "tree", box: [57.81, 29.17, 14.69, 28.82], hit: [58.05, 29.58, 10.04, 27.99] },
-        { id: "bench4", src: l6_find_bench4_png, word: "bench", shape: null, group: "bench", box: [41.09, 50.56, 18.05, 22.36], hit: [41.33, 50.97, 15.16, 21.53] },
-        { id: "bench2", src: l6_find_bench2_png, word: "bench", shape: null, group: "bench", box: [8.95, 53.89, 23.4, 22.78], hit: [9.18, 54.31, 16.6, 21.94] },
-        { id: "bench3", src: l6_find_bench3_png, word: "bench", shape: null, group: "bench", box: [72.93, 53.19, 16.29, 23.96], hit: [73.16, 53.61, 14.88, 23.12] },
-        { id: "grass1", src: l6_find_grass1_png, word: "grass", shape: null, group: "grass", box: [28.16, 68.4, 15.62, 21.25], hit: [28.4, 68.82, 8.87, 20.42] },
-        { id: "bench1", src: l6_find_bench1_png, word: "bench", shape: null, group: "bench", box: [57.15, 62.64, 20.98, 29.58], hit: [57.38, 63.06, 18.67, 28.68] },
-      ],
-    },
-    portrait: {
-      background: p6_find_ground_jpg,
-      items: [
-        { id: "flower1", src: p6_find_flower1_png, word: "flower", shape: null, group: "flower", box: [38.47, 45.47, 14.65, 7.97], hit: [38.89, 45.7, 8.19, 7.5] },
-        { id: "tree1", src: p6_find_tree1_png, word: "tree", shape: null, group: "tree", box: [49.51, 40.66, 23.06, 13.28], hit: [49.93, 40.9, 14.51, 12.81] },
-        { id: "bench4", src: p6_find_bench4_png, word: "bench", shape: null, group: "bench", box: [59.86, 50.74, 23.68, 10.0], hit: [60.28, 50.98, 20.21, 9.53] },
-        { id: "bench3", src: p6_find_bench3_png, word: "bench", shape: null, group: "bench", box: [14.72, 51.17, 27.22, 10.2], hit: [15.14, 51.41, 21.67, 9.73] },
-        { id: "bench2", src: p6_find_bench2_png, word: "bench", shape: null, group: "bench", box: [36.46, 56.17, 29.51, 11.25], hit: [36.88, 56.41, 24.31, 10.78] },
-        { id: "grass1", src: p6_find_grass1_png, word: "grass", shape: null, group: "grass", box: [26.46, 63.79, 21.53, 9.49], hit: [26.88, 64.02, 12.43, 9.02] },
-        { id: "bench1", src: p6_find_bench1_png, word: "bench", shape: null, group: "bench", box: [55.21, 60.7, 30.97, 13.79], hit: [55.62, 60.94, 26.81, 13.32] },
-      ],
-    },
   },
 };
