@@ -6063,8 +6063,16 @@ if (THING) {
     g.scale.setScalar(k);
     return g;
   }
-  for (let x = -30; x < 126; x += 1.4 + rand() * 1.6) add(lavender(1.1 + rand() * 0.5), x, 0, 7.4 + rand() * 1.6);
-  for (let x = -30; x < 126; x += 4 + rand() * 3) add(gardenScenery("grass", Math.floor(rand() * 4)), x, 0, 8.6 + rand() * 1.0, { k: 1.4 + rand() * 0.5 });
+  /* Never right in front of a station's camera (it stood at 9.4): they hid the letter blocks. */
+  const nearCamera = (x) => placeXs.some((px) => Math.abs(x - px) < 4.2);
+  for (let x = -30; x < 126; x += 1.4 + rand() * 1.6) {
+    const lx = x, lk = 1.1 + rand() * 0.5, lz = 7.4 + rand() * 1.6;
+    if (!nearCamera(lx)) add(lavender(lk), lx, 0, lz);
+  }
+  for (let x = -30; x < 126; x += 4 + rand() * 3) {
+    const gk = 1.4 + rand() * 0.5, gz = 8.6 + rand() * 1.0, gg = gardenScenery("grass", Math.floor(rand() * 4));
+    if (!nearCamera(x)) add(gg, x, 0, gz, { k: gk });
+  }
   for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
 
   } else if (FARM) {
@@ -6790,16 +6798,13 @@ if (THING) {
 
   /* My Garden's word: the lesson's thing, big, on a round cream plinth with a
      pink rim — about 2.4 tall in all (a tree a little more). */
-  function plinth(kind) {
+  /* A garden thing standing on the lawn itself, no base (2026-11-09): it grows
+     out of the ground during the entry move (`growth`, in `window.garden.move`). */
+  function lawnThing(kind) {
     const g = new THREE.Group();
-    g.add(at(mesh(new THREE.CylinderGeometry(1.25, 1.35, 0.36, 64), soft(0xfbf1ea, { roughness: 0.8 })), 0, 0.18, 0));
-    const rim = at(mesh(new THREE.TorusGeometry(1.3, 0.08, 16, 96), soft(0xff9fc2)), 0, 0.34, 0);
-    rim.rotation.x = Math.PI / 2;
-    g.add(rim);
     const thing = gardenThing(kind);
     const size = new THREE.Box3().setFromObject(thing).getSize(new THREE.Vector3());
     thing.scale.setScalar((kind === "tree" ? 2.6 : 1.9) / Math.max(size.y, size.x * 0.85));
-    thing.position.y = 0.36;
     g.add(thing);
     return g;
   }
@@ -7652,7 +7657,7 @@ if (THING) {
        (its picks) and two sets of letter blocks. */
     ? MY_KIND
       ? [
-          { x: 0, make: () => plinth(MY_KIND), cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: 0xff8fb8 },
+          { x: 0, make: () => lawnThing(MY_KIND), cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: 0xff8fb8 },
           { x: STEP_DX, make: () => letterBlocks(MY_KIND), k: 1.7, color: 0xc7a3f0 },
         ]
       : [
@@ -7690,11 +7695,14 @@ if (THING) {
           { x: 77, make: easel, shape: "triangle" },
           { x: 117, make: drawingTable, shape: "rectangle" },
         ];
+  /* My Garden's word-step thing: it grows out of the ground in the entry move. */
+  const growers = [];
   const flowers = PLACES.map((place) => {
     if (place.make) {
       const prop = place.make();
       prop.scale.multiplyScalar(place.k ?? 1);
       prop.position.set(place.x, 0, PLACE_Z);
+      if (MY_KIND && place.x === 0) growers.push(prop);
       if (place.pos) {
         prop.position.set(...place.pos);
         prop.rotation.y = place.ry;
@@ -7750,7 +7758,7 @@ if (THING) {
      calls a frame. The things to find stay apart (they are hidden and
      shown one by one for the Find's layers). */
   (function freeze() {
-    const keep = new Set([...Object.values(things).map((t) => t.group), ...flowers, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? []), ...(stopsApi.ways ?? [])]);
+    const keep = new Set([...Object.values(things).map((t) => t.group), ...growers, ...flowers, ...vegKeep, kitchen.counter, kitchen.basket, ...(stopsApi.stops ?? []), ...(stopsApi.ways ?? [])]);
     scene.updateMatrixWorld(true);
     const buckets = new Map();
     const merged = [];
@@ -7895,6 +7903,23 @@ if (THING) {
     kitchen.inBasket(on);
     if (kitchen.friend) kitchen.friend.fit(on ? kitchen.friend.joy : kitchen.friend.pic);
   };
+  /* The word-step thing grows out of the ground in the second half of the
+     entry move: a spring (it overshoots a little and settles), tall first and
+     wide a beat later — a grower (flower, tree, leaf, grass) twists a little as
+     it comes up, a nest or a bench just pops up. Exactly 1 at the move's end. */
+  const growBase = growers.map((o) => ({ o, s: o.scale.clone(), ry: o.rotation.y }));
+  const spring = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.exp(-6.5 * u) * Math.cos(10 * u) * (1 - u * u * u * u));
+  function grow(t) {
+    const u = Math.max(0, Math.min(1, (t - 0.28) / 0.64));
+    const tall = spring(u), wide = spring(Math.max(0, u - 0.1) / 0.9);
+    const plain = MY_KIND === "nest" || MY_KIND === "bench";
+    for (const { o, s, ry } of growBase) {
+      o.visible = u > 0;
+      const k = plain ? tall : wide;
+      o.scale.set(s.x * Math.max(0.0001, k), s.y * Math.max(0.0001, tall), s.z * Math.max(0.0001, k));
+      o.rotation.y = ry + (plain ? 0 : (1 - tall) * 0.4);
+    }
+  }
   window.garden = {
     stations: STATIONS.length,
     /* A still from any camera ([x, y, z, lookX, lookY, lookZ], an optional
@@ -7909,11 +7934,13 @@ if (THING) {
     },
     /* Station i's still. */
     station(i) {
+      grow(1);
       aim(STATIONS[i]);
       return render();
     },
     /* Frame `t` of move i. */
     move(i, t) {
+      grow(i === 0 ? t : 1);
       if (!VEG) {
         const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
         blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
