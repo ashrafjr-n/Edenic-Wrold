@@ -59,9 +59,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l1_s2_jpg, portrait: p1_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m0.mp4?v=798138dc", portrait: "/assets/learn/nova/garden/world/1/portrait/m0.mp4?v=4343cd1e" },
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m1.mp4?v=3c6336a7", portrait: "/assets/learn/nova/garden/world/1/portrait/m1.mp4?v=5b8e1c46" },
-      { landscape: "/assets/learn/nova/garden/world/1/landscape/m2.mp4?v=8076e3c3", portrait: "/assets/learn/nova/garden/world/1/portrait/m2.mp4?v=cbd23c4e" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m0.mp4?v=13e6674b", portrait: "/assets/learn/nova/garden/world/1/portrait/m0.mp4?v=a54da9c3" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m1.mp4?v=4e843d0c", portrait: "/assets/learn/nova/garden/world/1/portrait/m1.mp4?v=e30499e0" },
+      { landscape: "/assets/learn/nova/garden/world/1/landscape/m2.mp4?v=3f41c336", portrait: "/assets/learn/nova/garden/world/1/portrait/m2.mp4?v=49e277cd" },
     ],
   },
   2: {
@@ -71,9 +71,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l2_s2_jpg, portrait: p2_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m0.mp4?v=a55cdbf0", portrait: "/assets/learn/nova/garden/world/2/portrait/m0.mp4?v=d9b8a502" },
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m1.mp4?v=a416daa7", portrait: "/assets/learn/nova/garden/world/2/portrait/m1.mp4?v=d116874e" },
-      { landscape: "/assets/learn/nova/garden/world/2/landscape/m2.mp4?v=19064d30", portrait: "/assets/learn/nova/garden/world/2/portrait/m2.mp4?v=814e1a09" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m0.mp4?v=0911b8ea", portrait: "/assets/learn/nova/garden/world/2/portrait/m0.mp4?v=cb47985d" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m1.mp4?v=8293cca9", portrait: "/assets/learn/nova/garden/world/2/portrait/m1.mp4?v=6e76882a" },
+      { landscape: "/assets/learn/nova/garden/world/2/landscape/m2.mp4?v=9942dbd2", portrait: "/assets/learn/nova/garden/world/2/portrait/m2.mp4?v=de0c93d4" },
     ],
   },
   3: {
@@ -83,9 +83,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l3_s2_jpg, portrait: p3_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m0.mp4?v=28e11be8", portrait: "/assets/learn/nova/garden/world/3/portrait/m0.mp4?v=fe5c0b57" },
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m1.mp4?v=0301de68", portrait: "/assets/learn/nova/garden/world/3/portrait/m1.mp4?v=f7792304" },
-      { landscape: "/assets/learn/nova/garden/world/3/landscape/m2.mp4?v=0163a64f", portrait: "/assets/learn/nova/garden/world/3/portrait/m2.mp4?v=3c65335c" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m0.mp4?v=0cbc0ab1", portrait: "/assets/learn/nova/garden/world/3/portrait/m0.mp4?v=147e9d7f" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m1.mp4?v=f5082f69", portrait: "/assets/learn/nova/garden/world/3/portrait/m1.mp4?v=8391947c" },
+      { landscape: "/assets/learn/nova/garden/world/3/landscape/m2.mp4?v=c5552c06", portrait: "/assets/learn/nova/garden/world/3/portrait/m2.mp4?v=554a8567" },
     ],
   },
   4: {
@@ -95,9 +95,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l4_s2_jpg, portrait: p4_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m0.mp4?v=acd1002f", portrait: "/assets/learn/nova/garden/world/4/portrait/m0.mp4?v=c4895736" },
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m1.mp4?v=0f105d87", portrait: "/assets/learn/nova/garden/world/4/portrait/m1.mp4?v=8749a34a" },
-      { landscape: "/assets/learn/nova/garden/world/4/landscape/m2.mp4?v=982c19e1", portrait: "/assets/learn/nova/garden/world/4/portrait/m2.mp4?v=d644f516" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m0.mp4?v=32bb2fa2", portrait: "/assets/learn/nova/garden/world/4/portrait/m0.mp4?v=234dd104" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m1.mp4?v=1987339a", portrait: "/assets/learn/nova/garden/world/4/portrait/m1.mp4?v=2f947ccd" },
+      { landscape: "/assets/learn/nova/garden/world/4/landscape/m2.mp4?v=c29f4a7c", portrait: "/assets/learn/nova/garden/world/4/portrait/m2.mp4?v=a040a477" },
     ],
   },
   5: {
@@ -107,9 +107,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l5_s2_jpg, portrait: p5_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m0.mp4?v=92c1f7fe", portrait: "/assets/learn/nova/garden/world/5/portrait/m0.mp4?v=1606ebc9" },
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m1.mp4?v=c77f419a", portrait: "/assets/learn/nova/garden/world/5/portrait/m1.mp4?v=df5823cd" },
-      { landscape: "/assets/learn/nova/garden/world/5/landscape/m2.mp4?v=a1402fd4", portrait: "/assets/learn/nova/garden/world/5/portrait/m2.mp4?v=0894e007" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m0.mp4?v=d5bac899", portrait: "/assets/learn/nova/garden/world/5/portrait/m0.mp4?v=7e992e5c" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m1.mp4?v=1b155864", portrait: "/assets/learn/nova/garden/world/5/portrait/m1.mp4?v=79ddb10b" },
+      { landscape: "/assets/learn/nova/garden/world/5/landscape/m2.mp4?v=e84fc826", portrait: "/assets/learn/nova/garden/world/5/portrait/m2.mp4?v=e28629e4" },
     ],
   },
   6: {
@@ -119,9 +119,9 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l6_s2_jpg, portrait: p6_s2_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m0.mp4?v=f50122bd", portrait: "/assets/learn/nova/garden/world/6/portrait/m0.mp4?v=f00d3dff" },
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m1.mp4?v=964ffe0d", portrait: "/assets/learn/nova/garden/world/6/portrait/m1.mp4?v=559a9d3c" },
-      { landscape: "/assets/learn/nova/garden/world/6/landscape/m2.mp4?v=e0483eca", portrait: "/assets/learn/nova/garden/world/6/portrait/m2.mp4?v=d984f81a" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m0.mp4?v=c4ba14b6", portrait: "/assets/learn/nova/garden/world/6/portrait/m0.mp4?v=61666d61" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m1.mp4?v=12238024", portrait: "/assets/learn/nova/garden/world/6/portrait/m1.mp4?v=cdcaeac5" },
+      { landscape: "/assets/learn/nova/garden/world/6/landscape/m2.mp4?v=20b8cba2", portrait: "/assets/learn/nova/garden/world/6/portrait/m2.mp4?v=85e2b5ea" },
     ],
   },
   7: {
@@ -133,11 +133,11 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: l7_s4_jpg, portrait: p7_s4_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m0.mp4?v=d118134f", portrait: "/assets/learn/nova/garden/world/7/portrait/m0.mp4?v=3181b2f9" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m1.mp4?v=b4a7f84a", portrait: "/assets/learn/nova/garden/world/7/portrait/m1.mp4?v=d57646af" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m2.mp4?v=249556cc", portrait: "/assets/learn/nova/garden/world/7/portrait/m2.mp4?v=a5b0685b" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m3.mp4?v=9e76569a", portrait: "/assets/learn/nova/garden/world/7/portrait/m3.mp4?v=1cb7e2d3" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m4.mp4?v=05a0a564", portrait: "/assets/learn/nova/garden/world/7/portrait/m4.mp4?v=561379ad" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m0.mp4?v=2d0b6359", portrait: "/assets/learn/nova/garden/world/7/portrait/m0.mp4?v=fe5e2ae3" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m1.mp4?v=ac0b8864", portrait: "/assets/learn/nova/garden/world/7/portrait/m1.mp4?v=4dd1376e" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m2.mp4?v=5f8ec29e", portrait: "/assets/learn/nova/garden/world/7/portrait/m2.mp4?v=8272ef74" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m3.mp4?v=67fa918f", portrait: "/assets/learn/nova/garden/world/7/portrait/m3.mp4?v=c13d34fa" },
+      { landscape: "/assets/learn/nova/garden/world/7/landscape/m4.mp4?v=ad850e93", portrait: "/assets/learn/nova/garden/world/7/portrait/m4.mp4?v=53456495" },
     ],
   },
 };
