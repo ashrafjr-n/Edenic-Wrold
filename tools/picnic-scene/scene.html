@@ -93,6 +93,89 @@ const mesh = (geometry, material) => {
   return m;
 };
 
+/* Felt with a fine fur (2026-11-09) — the reels' shapes: sage green, soft pink
+   patches, no face. The fur is SHELLS: the same mesh drawn `shells` times, each
+   pushed a little further out along its normals and keeping only the cells a
+   hash says are strands, so it has a real fuzzy edge. The patches are a soft
+   mask in OBJECT space (exact at any size). Object-space cells and length mean
+   a scaled group has proportionally scaled fur. */
+const FUR_HELP = `
+  float rr(vec2 p, vec2 c, vec2 h, float r) { vec2 q = abs(p - c) - h + r; return smoothstep(0.07, -0.07, length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r); }
+  float tri(vec2 p, float r) { const float k = 1.7320508; p.x = abs(p.x) - r; p.y = p.y + r / k; if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0; p.x -= clamp(p.x, -2.0 * r, 0.0); return -length(p) * sign(p.y); }
+  float blob(vec3 d, vec3 c, float r) { return smoothstep(r, r * 0.7, acos(clamp(dot(d, c), -1.0, 1.0))); }`;
+function furShells(geo, { patch = "float patchAt(vec3 p, vec3 n) { return 0.0; }", dens = 90, length = 0.03, shells = 14, green = 0x94bd64, pink = 0xf99dbd, key = "plain" } = {}) {
+  const [GREEN, PINK] = [new THREE.Color(green), new THREE.Color(pink)];
+  const g = new THREE.Group();
+  for (let i = 0; i < shells; i++) {
+    const layer = i / (shells - 1);
+    const mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.92, clearcoat: 0, sheen: 1, sheenRoughness: 0.45, sheenColor: 0xfff4e6 });
+    mat.onBeforeCompile = (sh) => {
+      sh.uniforms.uOff = { value: length * layer };
+      sh.uniforms.uLayer = { value: layer };
+      sh.uniforms.uGreen = { value: GREEN };
+      sh.uniforms.uPink = { value: PINK };
+      sh.vertexShader = sh.vertexShader
+        .replace("#include <common>", "#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uOff;")
+        .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position; vObjN = normal; transformed += normal * uOff;");
+      sh.fragmentShader = sh.fragmentShader
+        .replace("#include <common>", `#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uLayer; uniform vec3 uGreen; uniform vec3 uPink;\n${FUR_HELP}\n${patch}
+          float hash3(vec3 q) { q = fract(q * 0.3183099 + 0.1); q *= 17.0; return fract(q.x * q.y * q.z * (q.x + q.y + q.z)); }`)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          vec3 cell = vObj * ${dens.toFixed(1)};
+          float strand = hash3(floor(cell));
+          float reach = mix(1.1, 0.35, uLayer) * (0.55 + 0.45 * strand);
+          if (uLayer > 0.0 && (length(fract(cell) - 0.5) * 2.0 > reach || strand < uLayer * 0.45)) discard;
+          float m = patchAt(vObj, normalize(vObjN));
+          diffuseColor.rgb = mix(uGreen, uPink, m) * mix(0.8, 1.1, uLayer) * (0.93 + 0.14 * strand);`);
+    };
+    mat.customProgramCacheKey = () => "fur-" + key;
+    const shell = mesh(geo, mat);
+    shell.castShadow = i === 0;
+    shell.userData.noMerge = true;
+    g.add(shell);
+  }
+  return g;
+}
+/* One of the four shapes, about 3 across, centred, fur on, its pink patches
+   where the reels have them (no face). `opts` override the fur / colours. */
+function furBody(kind, opts = {}) {
+  let geo, patch;
+    if (kind === "circle") {
+      geo = new THREE.SphereGeometry(1.62, 192, 128);
+      patch = `float patchAt(vec3 p, vec3 n) { vec3 d = normalize(p);
+        return max(max(blob(d, normalize(vec3(0.64, -0.4, 0.65)), 0.56), blob(d, normalize(vec3(-0.69, -0.47, 0.55)), 0.54)), blob(d, normalize(vec3(0.24, 0.87, 0.43)), 0.58)); }`;
+    } else if (kind === "square") {
+      geo = new RoundedBoxGeometry(2.9, 2.9, 2.9, 24, 0.42);
+      patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+        return f * max(rr(p.xy, vec2(-0.82, -0.18), vec2(0.5, 0.62), 0.5), rr(p.xy, vec2(0.84, -0.1), vec2(0.56, 0.66), 0.55)); }`;
+    } else if (kind === "triangle") {
+      const s = new THREE.Shape();
+      const [a, b, c, r] = [[0, 1.62], [1.8, -1.4], [-1.8, -1.4], 0.34];
+      const mid = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+      const corner = (p, from, to, first) => {
+        const len = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1]);
+        const t0 = Math.min(0.2, (r * 2.2) / len(p, from)), t1 = Math.min(0.2, (r * 2.2) / len(p, to));
+        const [p0, p1] = [mid(p, from, t0), mid(p, to, t1)];
+        if (first) s.moveTo(p0[0], p0[1]); else s.lineTo(p0[0], p0[1]);
+        s.quadraticCurveTo(p[0], p[1], p1[0], p1[1]);
+      };
+      corner(a, c, b, true);
+      corner(b, a, c, false);
+      corner(c, b, a, false);
+      s.closePath();
+      geo = new THREE.ExtrudeGeometry(s, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.36, bevelSegments: 14, curveSegments: 48 });
+      geo.center();
+      patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+        float m = max(max(smoothstep(0.07, -0.07, tri(p.xy - vec2(0.0, 0.62), 0.36) - 0.07), smoothstep(0.07, -0.07, tri(p.xy - vec2(-0.78, -0.62), 0.36) - 0.07)), smoothstep(0.07, -0.07, tri(p.xy - vec2(0.78, -0.62), 0.36) - 0.07));
+        return f * m; }`;
+    } else {
+      geo = new RoundedBoxGeometry(2.3, 3.0, 1.5, 24, 0.42);
+      patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+        return f * max(rr(p.xy, vec2(0.0, 0.62), vec2(0.4, 0.33), 0.1), max(rr(p.xy, vec2(-0.7, -0.5), vec2(0.42, 0.29), 0.1), rr(p.xy, vec2(0.7, -0.5), vec2(0.42, 0.29), 0.1))); }`;
+    }
+  return furShells(geo, { patch, key: kind, ...opts });
+}
+
 /* A lathe from a 2D profile (x = radius, y = height). */
 const lathe = (points, segments = 160) =>
   new THREE.LatheGeometry(points.map(([x, y]) => new THREE.Vector2(x, y)), segments);
@@ -5200,6 +5283,8 @@ if (THING) {
   const MY_KIND = MY_GARDEN ? GARDEN_KINDS[LESSON - 1] ?? null : null;
   /* The forest and My Garden: places along one path, the Find standing in the world. */
   const ON_PATH = FOREST || MY_GARDEN || FARM;
+  /* Pinki's shape garden (2026-11-09): the reels' pastel felt land, not a walled garden. */
+  const SHAPE_LAND = !ON_PATH && !VEG && !YEAR_HILL && !STOPS;
   /* The farm's animal (1-9), or null for its review (10). */
   const FARM_KIND = FARM && !SEAS ? FARM_KINDS[LESSON - 1] ?? null : null;
   /* The seasons' farm: which season and weather this part is, how many places, and their words. */
@@ -5236,21 +5321,21 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, SHAPE_LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, SHAPE_LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, SHAPE_LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, SHAPE_LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 14, 64) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 14, 64) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = SHAPE_LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 14, 64) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 14, 64) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
-  sky.color.set(0xeaf4ff);
-  sky.groundColor.set(0xc0e0a4);
+  sky.color.set(SHAPE_LAND ? 0xf2e6ff : 0xeaf4ff);
+  sky.groundColor.set(SHAPE_LAND ? 0xd4e8a8 : 0xc0e0a4);
   sky.intensity = 1.05;
-  sun.color.set(0xfff0da);
+  sun.color.set(SHAPE_LAND ? 0xffe8d2 : 0xfff0da);
   sun.intensity = SEAS_WEATHER === "rainy" ? 1.35 : SEAS_WEATHER === "snowy" ? 1.5 : SEAS_WEATHER === "sunny" ? 2.6 : 2.25;
   scene.environmentIntensity = 0.42;
   Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 });
@@ -5290,9 +5375,9 @@ if (THING) {
   lawnCanvas.width = 4;
   lawnCanvas.height = 64;
   const lctx = lawnCanvas.getContext("2d");
-  lctx.fillStyle = FARM ? (LOOK ? LOOK.lawn[0] : "#9bd77b") : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
+  lctx.fillStyle = SHAPE_LAND ? "#92cc62" : FARM ? (LOOK ? LOOK.lawn[0] : "#9bd77b") : MY_GARDEN ? "#aadd88" : VEG ? "#a4d27e" : FOREST ? "#7fc068" : "#9cd67f";
   lctx.fillRect(0, 0, 4, 64);
-  lctx.fillStyle = FARM ? (LOOK ? LOOK.lawn[1] : "#92cf74") : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
+  lctx.fillStyle = SHAPE_LAND ? "#8ac45a" : FARM ? (LOOK ? LOOK.lawn[1] : "#92cf74") : MY_GARDEN ? "#a1d67f" : VEG ? "#9aca75" : FOREST ? "#78ba62" : "#93cf77";
   lctx.fillRect(0, 0, 4, 32);
   const lawnTex = new THREE.CanvasTexture(lawnCanvas);
   lawnTex.colorSpace = THREE.SRGBColorSpace;
@@ -5311,7 +5396,7 @@ if (THING) {
   gravel.castShadow = false;
   scene.add(gravel);
   if (YEAR_HILL || STOPS) scene.remove(gravel);
-  for (const z of ON_PATH || YEAR_HILL || STOPS ? [] : PATH) {
+  for (const z of ON_PATH || YEAR_HILL || STOPS || SHAPE_LAND ? [] : PATH) {
     for (let x = -60; x < 300; x += 0.92) {
       /* Nova's: the way up to her door leaves the path here. */
       if (VEG && z === PATH[0] && Math.abs(x - 16) < 1.7) continue;
@@ -6073,6 +6158,102 @@ if (THING) {
   }
   for (const [x, y, z, k] of [[-10, 15, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
 
+  } else if (SHAPE_LAND) {
+  /* ---- Pinki's SHAPE LAND (2026-11-09): the reels' world — a lilac-pink sky
+     with big soft suns and cotton clouds, short bright grass, a path of pastel
+     pebbles, and giant shapes of FELT with a fine fur (`furBody`): round
+     lollipop trees, cubes, triangles and tall blocks in pastels, one kind
+     leading each corner (round x 0, square 40, triangle 80, rectangle 120).
+     The middle of every shot stays calm lawn. ---- */
+  scene.remove(gravel);
+  const pick = (list) => list[Math.floor(rand() * list.length)];
+  const PASTEL = [0xf7a1c3, 0xc9a9f0, 0xf9dc7a, 0x9fd8c4, 0x9cc4f2, 0xa9d96c, 0xf8b98e];
+  const lighter = (c, t = 0.45) => new THREE.Color(c).lerp(new THREE.Color(0xffffff), t).getHex();
+
+  /* The path: pastel pebbles, winding a little, between the places and the camera. */
+  const pebbleM = [0xf9c9dc, 0xc9dcf7, 0xfbe7b0, 0xe0cff5, 0xfbf3ec, 0xd5efd0, 0xf7c4a8].map((c) => stone(c));
+  const pathZ = (x) => 4.2 + Math.sin(x * 0.1) * 0.4;
+  for (let x = -40; x < 170; x += 0.44) {
+    for (let k = -2; k <= 2; k++) {
+      const st = ball(0.23 + rand() * 0.05, pick(pebbleM), 14);
+      st.scale.set(1, 0.38, 0.85);
+      st.castShadow = false;
+      add(st, x + (rand() - 0.5) * 0.16 + (k % 2) * 0.22, 0.06, pathZ(x) + k * 0.42 + (rand() - 0.5) * 0.08, { ry: rand() * 3 });
+    }
+  }
+
+  /* Giant felt things behind, in rows, the farther the hazier: the kind that
+     leads each corner stands most. */
+  const KIND_AT = (x) => (x < 20 ? "circle" : x < 60 ? "square" : x < 100 ? "triangle" : "rectangle");
+  const stemM = (c) => furShells(new THREE.CylinderGeometry(0.3, 0.38, 3, 24, 1), { green: c, pink: c, dens: 60, length: 0.04, shells: 8, key: "stem" });
+  function feltThing(kind) {
+    const c = pick(PASTEL);
+    const g = new THREE.Group();
+    const opts = { green: c, pink: c === 0xf7a1c3 ? 0xfff0b8 : 0xf99dbd, shells: 8, dens: 26, length: 0.06 };
+    if (kind === "circle") {
+      const stem = stemM(lighter(0xf7a1c3, 0.1));
+      stem.position.y = 1.5;
+      g.add(stem);
+      const crown = furBody("circle", opts);
+      crown.position.y = 4.3;
+      g.add(crown);
+    } else if (kind === "rectangle") {
+      const post = furBody("rectangle", opts);
+      post.scale.set(0.7, 1.5, 0.7);
+      post.position.y = 3.4;
+      g.add(post);
+    } else {
+      const body = furBody(kind, opts);
+      body.position.y = kind === "triangle" ? 1.9 : 1.55;
+      g.add(body);
+    }
+    return g;
+  }
+  for (let row = 0; row < 4; row++) {
+    const z0 = -17 - row * 9;
+    for (let x = -40; x < 168; x += 8.5 + rand() * 6) {
+      const kind = rand() < 0.72 ? KIND_AT(x) : pick(["circle", "square", "triangle", "rectangle"]);
+      add(feltThing(kind), x + (rand() - 0.5) * 2.2, 0, z0 - rand() * 3, { k: (1.25 + row * 0.4) * (0.85 + rand() * 0.45), ry: (rand() - 0.5) * 1.1 });
+    }
+  }
+  /* Soft far hills of felt. */
+  for (let x = -60; x < 190; x += 30 + rand() * 12) {
+    const hill = furShells(new THREE.SphereGeometry(1, 64, 32), { green: pick([0xf2b0d0, 0xd6bdf2, 0xb8e0a0, 0xf6d9a0]), pink: 0xffffff, dens: 5, length: 0.05, shells: 6, key: "hill" });
+    hill.scale.set(20 + rand() * 8, 7 + rand() * 4, 14);
+    add(hill, x, -1.2, -78 - rand() * 14);
+  }
+  /* Big soft suns, glowing, low over the far hills. */
+  const sunCv = document.createElement("canvas");
+  sunCv.width = sunCv.height = 256;
+  const sg = sunCv.getContext("2d");
+  const sr = sg.createRadialGradient(128, 128, 0, 128, 128, 128);
+  sr.addColorStop(0, "#fffbe0");
+  sr.addColorStop(0.34, "#fff2a8");
+  sr.addColorStop(0.42, "rgba(255,238,150,0.55)");
+  sr.addColorStop(1, "rgba(255,226,170,0)");
+  sg.fillStyle = sr;
+  sg.fillRect(0, 0, 256, 256);
+  const sunTex = new THREE.CanvasTexture(sunCv);
+  sunTex.colorSpace = THREE.SRGBColorSpace;
+  for (const [x, y, z, k] of [[-14, 26, -110, 30], [36, 24, -118, 26], [92, 27, -112, 32], [140, 25, -116, 28]]) {
+    const disc = new THREE.Mesh(new THREE.PlaneGeometry(k, k), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, fog: false, toneMapped: false, depthWrite: false }));
+    disc.userData.noMerge = true;
+    disc.position.set(x, y, z);
+    scene.add(disc);
+  }
+  for (const [x, y, z, k] of [[-10, 15, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8], [120, 16, -84, 3.6], [150, 15, -80, 3.4]]) add(cloud(k), x, y, z);
+
+  /* Little flowers in clusters on the lawn, never where an activity stands. */
+  const petals = [0xff8fb8, 0xffffff, 0xc7a3f0, 0xffd45e, 0x9cc4f2];
+  for (let i = 0; i < 90; i++) {
+    const cx = -34 + rand() * 190, cz = -9 + rand() * 11;
+    if (cz > -4.5 && cz < 2.4) continue;
+    const c = pick(petals);
+    for (let j = 0; j < 4 + Math.floor(rand() * 4); j++) add(hillFlower(c), cx + (rand() - 0.5) * 1.8, 0, cz + (rand() - 0.5) * 1.2, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
+  }
+  /* Close to the camera: a border of flowers sliding past in the walk. */
+  for (let x = -30; x < 168; x += 5 + rand() * 3) border(x - 1.6, x + 1.6, 8.2, [0xffa6cf, 0xffd45e, 0xc7a3f0, 0xffffff], { k: 1.2, clear: false, tulips: false });
+
   } else {
   /* The whole garden: the wall (the moon gate and the door cut through
      it), what lies beyond, the four corners, the hedges between them. */
@@ -6388,7 +6569,7 @@ if (THING) {
     back.rotation.x = 0.36;
     g.add(back);
     const board = new THREE.Group();
-    board.add(rbox(2.5, 1.85, 0.1, glaze(0xff8fbf), 0.07));
+    board.add(rbox(2.5, 1.85, 0.1, SHAPE_LAND && shape ? soft(0xf7a1c3, { roughness: 0.95, sheen: 1 }) : glaze(0xff8fbf), 0.07));
     /* White paint needs a paper that is not white. */
     board.add(at(rbox(2.25, 1.6, 0.06, glaze(splash === PAINT.white ? 0xbfcfe6 : 0xffffff), 0.05), 0, 0, 0.05));
     if (splash !== undefined) {
@@ -6398,7 +6579,14 @@ if (THING) {
       board.add(blob);
     }
     /* A shape lesson's word: the shape itself drawn on the board, in its colour. */
-    if (shape) board.add(at(upright(shape, 1.05, 0.06, glaze(SHAPE_COLOR[shape])), 0, 0, 0.12));
+    if (shape && SHAPE_LAND) {
+      /* The reels' felt shape, flattened onto the board. */
+      const felt = furBody(shape, { shells: 12, dens: 120, length: 0.035 });
+      const k = { circle: 0.36, square: 0.34, triangle: 0.3, rectangle: 0.3 }[shape];
+      felt.scale.set(k, k, 0.12);
+      felt.position.set(0, 0, 0.2);
+      board.add(felt);
+    } else if (shape) board.add(at(upright(shape, 1.05, 0.06, glaze(SHAPE_COLOR[shape])), 0, 0, 0.12));
     board.position.set(0, 2.05, 0.2);
     board.rotation.x = -0.1;
     g.add(board);
@@ -7102,84 +7290,8 @@ if (THING) {
         }
         return holder;
       };
-      /* The four shapes as the reels show them (2026-11-09): FELT with a fine
-         fur, sage green, with soft pink patches, no face. The fur is shells —
-         the same mesh drawn 16 times, each pushed a little further out along
-         its normals and keeping only the cells a hash says are strands, so it
-         has a real fuzzy edge. The patches are a mask in OBJECT space (exact at
-         any size, soft at the edge as in the videos). */
-      const furShape = () => {
-        const GREEN = new THREE.Color(0x94bd64), PINK = new THREE.Color(0xf99dbd);
-        const HELP = `
-          float rr(vec2 p, vec2 c, vec2 h, float r) { vec2 q = abs(p - c) - h + r; return smoothstep(0.07, -0.07, length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r); }
-          float tri(vec2 p, float r) { const float k = 1.7320508; p.x = abs(p.x) - r; p.y = p.y + r / k; if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0; p.x -= clamp(p.x, -2.0 * r, 0.0); return -length(p) * sign(p.y); }
-          float blob(vec3 d, vec3 c, float r) { return smoothstep(r, r * 0.7, acos(clamp(dot(d, c), -1.0, 1.0))); }`;
-        let geo, patch, dens = 90;
-        if (kind === "circle") {
-          geo = new THREE.SphereGeometry(1.62, 192, 128);
-          patch = `float patchAt(vec3 p, vec3 n) { vec3 d = normalize(p);
-            return max(max(blob(d, normalize(vec3(0.64, -0.4, 0.65)), 0.56), blob(d, normalize(vec3(-0.69, -0.47, 0.55)), 0.54)), blob(d, normalize(vec3(0.24, 0.87, 0.43)), 0.58)); }`;
-        } else if (kind === "square") {
-          geo = new RoundedBoxGeometry(2.9, 2.9, 2.9, 24, 0.42);
-          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
-            return f * max(rr(p.xy, vec2(-0.82, -0.18), vec2(0.5, 0.62), 0.5), rr(p.xy, vec2(0.84, -0.1), vec2(0.56, 0.66), 0.55)); }`;
-        } else if (kind === "triangle") {
-          const s = new THREE.Shape();
-          const [a, b, c, r] = [[0, 1.62], [1.8, -1.4], [-1.8, -1.4], 0.34];
-          const mid = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
-          const corner = (p, from, to, first) => {
-            const len = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1]);
-            const t0 = Math.min(0.2, (r * 2.2) / len(p, from)), t1 = Math.min(0.2, (r * 2.2) / len(p, to));
-            const [p0, p1] = [mid(p, from, t0), mid(p, to, t1)];
-            if (first) s.moveTo(p0[0], p0[1]); else s.lineTo(p0[0], p0[1]);
-            s.quadraticCurveTo(p[0], p[1], p1[0], p1[1]);
-          };
-          corner(a, c, b, true);
-          corner(b, a, c, false);
-          corner(c, b, a, false);
-          s.closePath();
-          geo = new THREE.ExtrudeGeometry(s, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.36, bevelSegments: 14, curveSegments: 48 });
-          geo.center();
-          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
-            float m = max(max(smoothstep(0.07, -0.07, tri(p.xy - vec2(0.0, 0.62), 0.36) - 0.07), smoothstep(0.07, -0.07, tri(p.xy - vec2(-0.78, -0.62), 0.36) - 0.07)), smoothstep(0.07, -0.07, tri(p.xy - vec2(0.78, -0.62), 0.36) - 0.07));
-            return f * m; }`;
-        } else {
-          geo = new RoundedBoxGeometry(2.3, 3.0, 1.5, 24, 0.42);
-          patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
-            return f * max(rr(p.xy, vec2(0.0, 0.62), vec2(0.4, 0.33), 0.1), max(rr(p.xy, vec2(-0.7, -0.5), vec2(0.42, 0.29), 0.1), rr(p.xy, vec2(0.7, -0.5), vec2(0.42, 0.29), 0.1))); }`;
-        }
-        const SHELLS = 14, LENGTH = 0.03;
-        const g = new THREE.Group();
-        for (let i = 0; i < SHELLS; i++) {
-          const layer = i / (SHELLS - 1);
-          const mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.92, clearcoat: 0, sheen: 1, sheenRoughness: 0.45, sheenColor: 0xfff4e6 });
-          mat.onBeforeCompile = (sh) => {
-            sh.uniforms.uOff = { value: LENGTH * layer };
-            sh.uniforms.uLayer = { value: layer };
-            sh.uniforms.uGreen = { value: GREEN };
-            sh.uniforms.uPink = { value: PINK };
-            sh.vertexShader = sh.vertexShader
-              .replace("#include <common>", "#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uOff;")
-              .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position; vObjN = normal; transformed += normal * uOff;");
-            sh.fragmentShader = sh.fragmentShader
-              .replace("#include <common>", `#include <common>\nvarying vec3 vObj; varying vec3 vObjN; uniform float uLayer; uniform vec3 uGreen; uniform vec3 uPink;\n${HELP}\n${patch}
-                float hash3(vec3 q) { q = fract(q * 0.3183099 + 0.1); q *= 17.0; return fract(q.x * q.y * q.z * (q.x + q.y + q.z)); }`)
-              .replace("#include <color_fragment>", `#include <color_fragment>
-                vec3 cell = vObj * ${dens.toFixed(1)};
-                float strand = hash3(floor(cell));
-                float reach = mix(1.1, 0.35, uLayer) * (0.55 + 0.45 * strand);
-                if (uLayer > 0.0 && (length(fract(cell) - 0.5) * 2.0 > reach || strand < uLayer * 0.45)) discard;
-                float m = patchAt(vObj, normalize(vObjN));
-                diffuseColor.rgb = mix(uGreen, uPink, m) * mix(0.8, 1.1, uLayer) * (0.93 + 0.14 * strand);`);
-          };
-          mat.customProgramCacheKey = () => "fur-" + kind;
-          const shell = mesh(geo, mat);
-          shell.castShadow = i === 0;
-          shell.userData.noMerge = true;
-          g.add(shell);
-        }
-        return g;
-      };
+      /* The four shapes as the reels show them: see `furBody` (top level). */
+      const furShape = () => furBody(kind);
       const body = BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? drop() : furShape();
       if (BLOO_STOPS) body.rotation.y = 0;
       else if (MILK_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
