@@ -32,11 +32,11 @@ type LetterVars = CSSProperties & { "--letter-face": string; "--letter-edge": st
 
 interface ClayWordProps {
   word: string;
-  /** `lg` is the word on its own card; `md` sits above the spelling board;
+  /** `xl` is a colour's name big in the world's sky; `lg` is the word on its own card; `md` sits above the spelling board;
       `sm` is the word on the done screen and above a pick; `demo` is the
       word inside a how-to demo, sized to the demo's own square (a
       container: the popup's, or the tablet panel's small one). */
-  size?: "lg" | "md" | "sm" | "demo";
+  size?: "xl" | "lg" | "md" | "sm" | "demo";
   /** One tone for every letter instead of one per letter: a color word in
       its own color, or `PLAIN_TONE`. */
   tone?: LetterTone;
@@ -53,6 +53,8 @@ export function ClayWord({ word, size = "lg", tone }: ClayWordProps) {
   const type =
     size === "demo"
       ? "text-[min(3.75rem,15cqi)]"
+      : size === "xl"
+      ? "text-[5.5rem] sm:text-[8rem] lg:text-[min(11rem,17svh)]"
       : size === "sm"
       ? "text-5xl sm:text-6xl lg:text-[min(4.5rem,8svh)]"
       : size === "lg"
