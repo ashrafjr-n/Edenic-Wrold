@@ -289,7 +289,7 @@ export function LessonPlayer({
     const { kind, target } = taskFor(q, showing);
     const demo = showing ? undefined : demoFor(q, tone.face, seed);
     /* The animal stands in the world itself: the Listen demo shows no second picture of it. */
-    const how = demo?.kind === "listen" && world?.animalInWorld ? { ...demo, face: undefined } : demo;
+    const how = demo?.kind === "listen" && (world?.animalInWorld || world?.wordInSky) ? { ...demo, face: undefined } : demo;
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
     const verb = dict.tasks[kind];
     task = (
@@ -489,7 +489,7 @@ export function LessonPlayer({
       body = (
         <WordCard
           onScene={Boolean(world && (!q.picture || world.animalInWorld))}
-          inSky={Boolean(world && q.color)}
+          inSky={Boolean(world && (q.color || world.wordInSky))}
           word={q.word}
           shape={q.shape}
           picture={world?.animalInWorld ? undefined : q.picture}
