@@ -94,11 +94,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l1_s3_jpg, portrait: p1_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m0.mp4?v=699598e7", portrait: "/assets/learn/bloo/animals/world/1/portrait/m0.mp4?v=bcaccfc4" },
-      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m1.mp4?v=c3aad37d", portrait: "/assets/learn/bloo/animals/world/1/portrait/m1.mp4?v=07c8f42d" },
-      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m2.mp4?v=c1ced5d2", portrait: "/assets/learn/bloo/animals/world/1/portrait/m2.mp4?v=9a73166f" },
-      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m3.mp4?v=5a219d9c", portrait: "/assets/learn/bloo/animals/world/1/portrait/m3.mp4?v=cb7d2e02" },
+      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m0.mp4?v=cd700ffc", portrait: "/assets/learn/bloo/animals/world/1/portrait/m0.mp4?v=8e5b766c" },
+      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m1.mp4?v=176efbde", portrait: "/assets/learn/bloo/animals/world/1/portrait/m1.mp4?v=f20b799d" },
+      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m2.mp4?v=eebc7cf3", portrait: "/assets/learn/bloo/animals/world/1/portrait/m2.mp4?v=4d93992e" },
+      { landscape: "/assets/learn/bloo/animals/world/1/landscape/m3.mp4?v=a58eb323", portrait: "/assets/learn/bloo/animals/world/1/portrait/m3.mp4?v=8df8f03b" },
     ],
+    animalInWorld: true,
   },
   2: {
     stations: [
@@ -108,11 +109,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l2_s3_jpg, portrait: p2_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m0.mp4?v=783a54e6", portrait: "/assets/learn/bloo/animals/world/2/portrait/m0.mp4?v=3e8e6d81" },
-      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m1.mp4?v=5e08600c", portrait: "/assets/learn/bloo/animals/world/2/portrait/m1.mp4?v=9450e60d" },
-      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m2.mp4?v=a6e9acb3", portrait: "/assets/learn/bloo/animals/world/2/portrait/m2.mp4?v=db96c177" },
-      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m3.mp4?v=1751e5b0", portrait: "/assets/learn/bloo/animals/world/2/portrait/m3.mp4?v=9762a87f" },
+      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m0.mp4?v=e465812c", portrait: "/assets/learn/bloo/animals/world/2/portrait/m0.mp4?v=f8759a33" },
+      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m1.mp4?v=ab1bbc63", portrait: "/assets/learn/bloo/animals/world/2/portrait/m1.mp4?v=6290787b" },
+      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m2.mp4?v=82b7932f", portrait: "/assets/learn/bloo/animals/world/2/portrait/m2.mp4?v=5113ff8b" },
+      { landscape: "/assets/learn/bloo/animals/world/2/landscape/m3.mp4?v=b2ae6c5b", portrait: "/assets/learn/bloo/animals/world/2/portrait/m3.mp4?v=0b859354" },
     ],
+    animalInWorld: true,
   },
   3: {
     stations: [
@@ -122,11 +124,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l3_s3_jpg, portrait: p3_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m0.mp4?v=0a3b6e2a", portrait: "/assets/learn/bloo/animals/world/3/portrait/m0.mp4?v=c843ae45" },
-      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m1.mp4?v=f1e43da0", portrait: "/assets/learn/bloo/animals/world/3/portrait/m1.mp4?v=6b144bfd" },
-      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m2.mp4?v=b2757b40", portrait: "/assets/learn/bloo/animals/world/3/portrait/m2.mp4?v=29aa1718" },
-      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m3.mp4?v=5acadaa3", portrait: "/assets/learn/bloo/animals/world/3/portrait/m3.mp4?v=fbc15da9" },
+      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m0.mp4?v=3dfb7913", portrait: "/assets/learn/bloo/animals/world/3/portrait/m0.mp4?v=8cce0c8d" },
+      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m1.mp4?v=b4d64755", portrait: "/assets/learn/bloo/animals/world/3/portrait/m1.mp4?v=dbf0815a" },
+      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m2.mp4?v=64524aef", portrait: "/assets/learn/bloo/animals/world/3/portrait/m2.mp4?v=83e8a0f9" },
+      { landscape: "/assets/learn/bloo/animals/world/3/landscape/m3.mp4?v=4ce2fec7", portrait: "/assets/learn/bloo/animals/world/3/portrait/m3.mp4?v=9c257ea9" },
     ],
+    animalInWorld: true,
   },
   4: {
     stations: [
@@ -136,11 +139,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l4_s3_jpg, portrait: p4_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m0.mp4?v=9a457091", portrait: "/assets/learn/bloo/animals/world/4/portrait/m0.mp4?v=31bbdc37" },
-      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m1.mp4?v=fb516a14", portrait: "/assets/learn/bloo/animals/world/4/portrait/m1.mp4?v=01ea472a" },
-      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m2.mp4?v=1c4b1b68", portrait: "/assets/learn/bloo/animals/world/4/portrait/m2.mp4?v=7600f7de" },
-      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m3.mp4?v=b9ac9d7d", portrait: "/assets/learn/bloo/animals/world/4/portrait/m3.mp4?v=5e5823cb" },
+      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m0.mp4?v=b117a8e0", portrait: "/assets/learn/bloo/animals/world/4/portrait/m0.mp4?v=ad4f4614" },
+      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m1.mp4?v=1ca0cd25", portrait: "/assets/learn/bloo/animals/world/4/portrait/m1.mp4?v=e7ec9169" },
+      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m2.mp4?v=1bb944be", portrait: "/assets/learn/bloo/animals/world/4/portrait/m2.mp4?v=a64319b0" },
+      { landscape: "/assets/learn/bloo/animals/world/4/landscape/m3.mp4?v=230d946d", portrait: "/assets/learn/bloo/animals/world/4/portrait/m3.mp4?v=e1931730" },
     ],
+    animalInWorld: true,
   },
   5: {
     stations: [
@@ -150,11 +154,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l5_s3_jpg, portrait: p5_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m0.mp4?v=7e062f08", portrait: "/assets/learn/bloo/animals/world/5/portrait/m0.mp4?v=ac389e1f" },
-      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m1.mp4?v=346a7f5a", portrait: "/assets/learn/bloo/animals/world/5/portrait/m1.mp4?v=eeb05821" },
-      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m2.mp4?v=4d8d1cd6", portrait: "/assets/learn/bloo/animals/world/5/portrait/m2.mp4?v=ebf1fe78" },
-      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m3.mp4?v=e6ead200", portrait: "/assets/learn/bloo/animals/world/5/portrait/m3.mp4?v=9a5607dc" },
+      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m0.mp4?v=d87ec886", portrait: "/assets/learn/bloo/animals/world/5/portrait/m0.mp4?v=353b69e0" },
+      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m1.mp4?v=8ac1471e", portrait: "/assets/learn/bloo/animals/world/5/portrait/m1.mp4?v=b1210e00" },
+      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m2.mp4?v=f3848076", portrait: "/assets/learn/bloo/animals/world/5/portrait/m2.mp4?v=06fed740" },
+      { landscape: "/assets/learn/bloo/animals/world/5/landscape/m3.mp4?v=82a070f6", portrait: "/assets/learn/bloo/animals/world/5/portrait/m3.mp4?v=962925e9" },
     ],
+    animalInWorld: true,
   },
   6: {
     stations: [
@@ -164,11 +169,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l6_s3_jpg, portrait: p6_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m0.mp4?v=28e99811", portrait: "/assets/learn/bloo/animals/world/6/portrait/m0.mp4?v=27420926" },
-      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m1.mp4?v=877639b5", portrait: "/assets/learn/bloo/animals/world/6/portrait/m1.mp4?v=70f8d3c7" },
-      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m2.mp4?v=90d7a7ca", portrait: "/assets/learn/bloo/animals/world/6/portrait/m2.mp4?v=bb34f8ea" },
-      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m3.mp4?v=8b9a9da0", portrait: "/assets/learn/bloo/animals/world/6/portrait/m3.mp4?v=e7d80585" },
+      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m0.mp4?v=8e20191d", portrait: "/assets/learn/bloo/animals/world/6/portrait/m0.mp4?v=3c9f6a29" },
+      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m1.mp4?v=62997371", portrait: "/assets/learn/bloo/animals/world/6/portrait/m1.mp4?v=e44a0acc" },
+      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m2.mp4?v=e369df8d", portrait: "/assets/learn/bloo/animals/world/6/portrait/m2.mp4?v=638215e1" },
+      { landscape: "/assets/learn/bloo/animals/world/6/landscape/m3.mp4?v=27df6808", portrait: "/assets/learn/bloo/animals/world/6/portrait/m3.mp4?v=3698e12b" },
     ],
+    animalInWorld: true,
   },
   7: {
     stations: [
@@ -178,11 +184,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l7_s3_jpg, portrait: p7_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m0.mp4?v=1f0c13a4", portrait: "/assets/learn/bloo/animals/world/7/portrait/m0.mp4?v=3ee70e55" },
-      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m1.mp4?v=a78473ff", portrait: "/assets/learn/bloo/animals/world/7/portrait/m1.mp4?v=08f511a2" },
-      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m2.mp4?v=b0fc98dd", portrait: "/assets/learn/bloo/animals/world/7/portrait/m2.mp4?v=c6694aa5" },
-      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m3.mp4?v=d86b878f", portrait: "/assets/learn/bloo/animals/world/7/portrait/m3.mp4?v=ca2b3b49" },
+      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m0.mp4?v=20e8bcdf", portrait: "/assets/learn/bloo/animals/world/7/portrait/m0.mp4?v=9b919aa1" },
+      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m1.mp4?v=1a1340ba", portrait: "/assets/learn/bloo/animals/world/7/portrait/m1.mp4?v=09668e26" },
+      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m2.mp4?v=6c937281", portrait: "/assets/learn/bloo/animals/world/7/portrait/m2.mp4?v=30d77db7" },
+      { landscape: "/assets/learn/bloo/animals/world/7/landscape/m3.mp4?v=ce99bd53", portrait: "/assets/learn/bloo/animals/world/7/portrait/m3.mp4?v=602de0b1" },
     ],
+    animalInWorld: true,
   },
   8: {
     stations: [
@@ -192,11 +199,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l8_s3_jpg, portrait: p8_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m0.mp4?v=be01ddda", portrait: "/assets/learn/bloo/animals/world/8/portrait/m0.mp4?v=1b21e326" },
-      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m1.mp4?v=8c9c9eaf", portrait: "/assets/learn/bloo/animals/world/8/portrait/m1.mp4?v=2a8f56b3" },
-      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m2.mp4?v=b01b3363", portrait: "/assets/learn/bloo/animals/world/8/portrait/m2.mp4?v=226a4437" },
-      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m3.mp4?v=47254728", portrait: "/assets/learn/bloo/animals/world/8/portrait/m3.mp4?v=520032f4" },
+      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m0.mp4?v=a41673f0", portrait: "/assets/learn/bloo/animals/world/8/portrait/m0.mp4?v=dfd542ee" },
+      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m1.mp4?v=509d1d0e", portrait: "/assets/learn/bloo/animals/world/8/portrait/m1.mp4?v=ad4faf01" },
+      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m2.mp4?v=7a2a25ed", portrait: "/assets/learn/bloo/animals/world/8/portrait/m2.mp4?v=d2f851d6" },
+      { landscape: "/assets/learn/bloo/animals/world/8/landscape/m3.mp4?v=e504a0ca", portrait: "/assets/learn/bloo/animals/world/8/portrait/m3.mp4?v=1411d021" },
     ],
+    animalInWorld: true,
   },
   9: {
     stations: [
@@ -206,11 +214,12 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l9_s3_jpg, portrait: p9_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m0.mp4?v=778f20a9", portrait: "/assets/learn/bloo/animals/world/9/portrait/m0.mp4?v=c2959595" },
-      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m1.mp4?v=a9fb5c34", portrait: "/assets/learn/bloo/animals/world/9/portrait/m1.mp4?v=f6fbc619" },
-      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m2.mp4?v=41bbd8e0", portrait: "/assets/learn/bloo/animals/world/9/portrait/m2.mp4?v=bcba3a18" },
-      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m3.mp4?v=e5db40be", portrait: "/assets/learn/bloo/animals/world/9/portrait/m3.mp4?v=5ae729d7" },
+      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m0.mp4?v=fe4bdbff", portrait: "/assets/learn/bloo/animals/world/9/portrait/m0.mp4?v=05608ec5" },
+      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m1.mp4?v=4acbb0b3", portrait: "/assets/learn/bloo/animals/world/9/portrait/m1.mp4?v=2d96f14d" },
+      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m2.mp4?v=258e66b2", portrait: "/assets/learn/bloo/animals/world/9/portrait/m2.mp4?v=4fb1c46e" },
+      { landscape: "/assets/learn/bloo/animals/world/9/landscape/m3.mp4?v=a009156e", portrait: "/assets/learn/bloo/animals/world/9/portrait/m3.mp4?v=af2e8ac8" },
     ],
+    animalInWorld: true,
   },
   10: {
     stations: [
@@ -220,10 +229,10 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: l10_s3_jpg, portrait: p10_s3_jpg },
     ],
     moves: [
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m0.mp4?v=c402d028", portrait: "/assets/learn/bloo/animals/world/10/portrait/m0.mp4?v=c0588705" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m1.mp4?v=ee0a950a", portrait: "/assets/learn/bloo/animals/world/10/portrait/m1.mp4?v=0576bfcc" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m2.mp4?v=0d74a32c", portrait: "/assets/learn/bloo/animals/world/10/portrait/m2.mp4?v=ed2df683" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m3.mp4?v=f33c79bd", portrait: "/assets/learn/bloo/animals/world/10/portrait/m3.mp4?v=cb3d048b" },
+      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m0.mp4?v=39dd07d0", portrait: "/assets/learn/bloo/animals/world/10/portrait/m0.mp4?v=815e2a81" },
+      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m1.mp4?v=9c8e753d", portrait: "/assets/learn/bloo/animals/world/10/portrait/m1.mp4?v=c11f68e5" },
+      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m2.mp4?v=87c5b73c", portrait: "/assets/learn/bloo/animals/world/10/portrait/m2.mp4?v=cfea126b" },
+      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m3.mp4?v=78bc6aed", portrait: "/assets/learn/bloo/animals/world/10/portrait/m3.mp4?v=5496251b" },
     ],
   },
 };
