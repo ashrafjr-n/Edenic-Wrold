@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { ColorId, Face, LessonDef, Season, SortBin, Thing, Weather, WindowView } from "@/types/course";
+import type { ColorId, Face, LessonDef, Season, SortBin, Thing, Weather } from "@/types/course";
 import { COLORS } from "@/data/colors";
 import { WEAR } from "@/data/bloo-wear";
 import { SEASONS_FARM } from "@/data/seasons-farm";
@@ -19,30 +19,24 @@ import leaf from "../../../public/assets/learn/nova/seasons/things/maple.png";
 import pumpkin from "../../../public/assets/learn/nova/seasons/things/pumpkin.png";
 import snowman from "../../../public/assets/learn/nova/seasons/things/snowman.png";
 import snowflake from "../../../public/assets/learn/nova/seasons/things/snowflake.png";
-import sunnyView from "../../../public/assets/learn/bloo/seasons-weather/window/sunny.jpg";
-import rainyView from "../../../public/assets/learn/bloo/seasons-weather/window/rainy.jpg";
-import windyView from "../../../public/assets/learn/bloo/seasons-weather/window/windy.jpg";
-import snowyView from "../../../public/assets/learn/bloo/seasons-weather/window/snowy.jpg";
 
 /** Each season: its weather (the user's merge, 2026-11-08: summer → sunny,
-    and so on), the two other weathers on the question's circles, its
-    picture (its island) and its clay color
+    and so on), its picture (its island) and its clay color
     (the review's box). In teaching order. */
-const SEASONS: Record<Season, { weather: Weather; others: [Weather, Weather]; picture: StaticImageData; box: ColorId }> = {
-  spring: { weather: "rainy", others: ["snowy", "sunny"], picture: spring, box: "green" },
-  summer: { weather: "sunny", others: ["snowy", "rainy"], picture: summer, box: "yellow" },
-  fall: { weather: "windy", others: ["snowy", "sunny"], picture: fall, box: "orange" },
-  winter: { weather: "snowy", others: ["sunny", "rainy"], picture: winter, box: "blue" },
+const SEASONS: Record<Season, { weather: Weather; picture: StaticImageData; box: ColorId }> = {
+  spring: { weather: "rainy", picture: spring, box: "green" },
+  summer: { weather: "sunny", picture: summer, box: "yellow" },
+  fall: { weather: "windy", picture: fall, box: "orange" },
+  winter: { weather: "snowy", picture: winter, box: "blue" },
 };
 const SEASON_ORDER = Object.keys(SEASONS) as Season[];
 
-/** Each weather: its picture (Bloo's hill under it), its view out of the
-    window — the circles of the question too — and its review box's color. */
-const WEATHERS: Record<Weather, { picture: StaticImageData; view: WindowView; box: ColorId }> = {
-  sunny: { picture: sunny, view: { src: sunnyView, fx: "glow" }, box: "yellow" },
-  rainy: { picture: rainy, view: { src: rainyView, fx: "rain" }, box: "blue" },
-  windy: { picture: windy, view: { src: windyView, fx: "wind" }, box: "green" },
-  snowy: { picture: snowy, view: { src: snowyView, fx: "snow" }, box: "purple" },
+/** Each weather: its picture (Bloo's hill under it) and its review box's color. */
+const WEATHERS: Record<Weather, { picture: StaticImageData; box: ColorId }> = {
+  sunny: { picture: sunny, box: "yellow" },
+  rainy: { picture: rainy, box: "blue" },
+  windy: { picture: windy, box: "green" },
+  snowy: { picture: snowy, box: "purple" },
 };
 const WEATHER_ORDER = Object.keys(WEATHERS) as Weather[];
 
@@ -50,29 +44,25 @@ const REELS = "/assets/learn/bloo/seasons-weather/reels";
 
 const seasonFace = (season: Season): Face => ({ kind: "picture", src: SEASONS[season].picture, word: season });
 const weatherFace = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].picture, word: weather });
-/** A circle of the question: the weather's own view, filling it. */
-const viewFace = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[weather].view.src, word: weather });
 
 /**
- * One season and its weather, one lesson (the user's design, 2026-11-08):
- * the season's reel → its word → spell it → "what is the weather in
- * summer?", three snow globes of views (its weather + two others, the demo blind) →
- * the weather's reel → its word → spell it. No other activity. On Bloo's
- * island of the year (`data/seasons-farm.ts`, 2026-11-10): the season's quarter, its word
- * written in the sky over it; then the weather's after its reel (the camera cuts there).
+ * One season and its weather, one lesson (reworked 2026-11-10 — no choosing, the
+ * camera is cut, never walked): the season's reel → its word → spell it → the
+ * weather's reel straight on → its word → spell it. The rain, snow and wind are
+ * painted into the stills and move only in the reel — no live effect to weigh the
+ * page down. On Bloo's island of the year (`data/seasons-farm.ts`): the season's
+ * word written in the sky over it, then the weather's after its reel.
  */
 function seasonLesson(season: Season, i: number): LessonDef {
-  const { weather, others, picture } = SEASONS[season];
-  const options = [weather, ...others];
+  const { weather, picture } = SEASONS[season];
   return {
     reel: `${REELS}/${season}.mp4`,
-    midReel: { src: `${REELS}/${weather}.mp4`, at: 3 },
+    midReel: { src: `${REELS}/${weather}.mp4`, at: 2 },
     cover: [picture, WEATHERS[weather].picture],
     world: SEASONS_FARM[i + 1],
     questions: [
       { type: "word", ask: { key: "thisSeason", vars: { season } }, word: season, picture },
       { type: "spell", ask: { key: "spell", vars: { word: season } }, word: season },
-      { type: "pick", ask: { key: "weatherIn", vars: { season } }, word: season, plain: true, options: options.map(viewFace), answer: 0, blind: true, round: true },
       { type: "word", ask: { key: "thisWeather", vars: { weather } }, word: weather, picture: WEATHERS[weather].picture },
       { type: "spell", ask: { key: "spell", vars: { word: weather } }, word: weather },
     ],
