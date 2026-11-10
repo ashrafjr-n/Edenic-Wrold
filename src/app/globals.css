@@ -2642,6 +2642,136 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
+   Seasons and Weather's pick (2026-11-10, the user: "something nicer than three
+   circles"): each weather in a snow globe — the view behind glass with a shine
+   and slow white flecks, on a gold clay base, bobbing a little out of step.
+   The right one glows green and pops; a wrong one wiggles (`.anim-wiggle`).
+   --------------------------------------------------------------- */
+.globe {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  animation: globe-bob 3.4s ease-in-out infinite;
+}
+
+.globe-glass {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 9999px;
+  box-shadow:
+    inset 0 0 0 0.3rem rgb(255 255 255 / 0.8),
+    inset 0 -0.8rem 1.6rem rgb(20 50 90 / 0.28),
+    0 0.9rem 1.6rem -0.6rem color-mix(in srgb, var(--shadow-hue) 50%, transparent);
+  transition: box-shadow 0.25s ease;
+}
+
+/* The flecks: a tile of soft white dots sliding down, over and over. */
+.globe-glass::before {
+  content: "";
+  position: absolute;
+  inset: -100% 0 0;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgb(255 255 255 / 0.95) 0 0.13rem, transparent 0.15rem),
+    radial-gradient(circle at 64% 12%, rgb(255 255 255 / 0.85) 0 0.1rem, transparent 0.12rem),
+    radial-gradient(circle at 82% 46%, rgb(255 255 255 / 0.9) 0 0.12rem, transparent 0.14rem),
+    radial-gradient(circle at 38% 64%, rgb(255 255 255 / 0.8) 0 0.09rem, transparent 0.11rem),
+    radial-gradient(circle at 10% 84%, rgb(255 255 255 / 0.9) 0 0.11rem, transparent 0.13rem);
+  background-size: 100% 50%;
+  animation: globe-flecks 7s linear infinite;
+  pointer-events: none;
+}
+
+/* The glass: a bright window of light top left, a softer one bottom right. */
+.globe-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 26% 18% at 30% 22%, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.18) 60%, transparent 100%),
+    radial-gradient(circle at 74% 82%, rgb(255 255 255 / 0.3), transparent 28%),
+    radial-gradient(circle at 50% 50%, transparent 62%, rgb(255 255 255 / 0.22) 72%, transparent 76%);
+  pointer-events: none;
+}
+
+.globe-base {
+  position: relative;
+  width: 70%;
+  margin-top: -15%;
+  aspect-ratio: 2.3;
+  border-radius: 50% 50% 20% 20% / 46% 46% 24% 24%;
+  background: linear-gradient(#ffe8b4, #f6bb57 62%, #e59b37);
+  box-shadow:
+    inset 0 0.25rem 0 rgb(255 255 255 / 0.65),
+    inset 0 -0.4rem 0 rgb(160 90 20 / 0.22),
+    0 0.7rem 1.1rem -0.4rem color-mix(in srgb, var(--shadow-hue) 55%, transparent);
+}
+
+/* A band of lighter clay round the base. */
+.globe-base::after {
+  content: "";
+  position: absolute;
+  inset: 52% 6% 26%;
+  border-radius: 9999px;
+  background: rgb(255 248 228 / 0.7);
+}
+
+.globe-btn:hover .globe-glass {
+  box-shadow:
+    inset 0 0 0 0.3rem rgb(255 255 255 / 0.95),
+    inset 0 -0.8rem 1.6rem rgb(20 50 90 / 0.28),
+    0 0 0 0.25rem color-mix(in srgb, var(--page-accent-color) 45%, transparent),
+    0 0.9rem 1.6rem -0.6rem color-mix(in srgb, var(--shadow-hue) 50%, transparent);
+}
+
+.globe--right {
+  animation: globe-win 0.6s ease-out both;
+}
+
+/* After the tap the pointer still hovers it: this must outrank the hover ring. */
+.globe-btn .globe--right .globe-glass {
+  box-shadow:
+    inset 0 0 0 0.3rem rgb(255 255 255 / 0.95),
+    0 0 0 0.3rem var(--color-go),
+    0 0 1.8rem 0.4rem color-mix(in srgb, var(--color-go) 55%, transparent);
+}
+
+@keyframes globe-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.4rem);
+  }
+}
+
+@keyframes globe-flecks {
+  to {
+    transform: translateY(50%);
+  }
+}
+
+@keyframes globe-win {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+/* ---------------------------------------------------------------
    Clay letters — the taught word (`ClayWord`) and the spelling board
    (`SpellWord`).
 
@@ -3563,6 +3693,8 @@ button:disabled,
   .stage-swap,
   .stage-swap--out,
   .anim-wiggle,
+  .globe,
+  .globe-glass::before,
   .anim-jump,
   .stroke-draw,
   .pen-tip,
