@@ -6,26 +6,18 @@ import l1_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/la
 import p1_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/portrait/s0.jpg";
 import l1_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/landscape/s1.jpg";
 import p1_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/portrait/s1.jpg";
-import l1_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/landscape/s2.jpg";
-import p1_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/1/portrait/s2.jpg";
 import l2_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/landscape/s0.jpg";
 import p2_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/portrait/s0.jpg";
 import l2_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/landscape/s1.jpg";
 import p2_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/portrait/s1.jpg";
-import l2_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/landscape/s2.jpg";
-import p2_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/2/portrait/s2.jpg";
 import l3_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/landscape/s0.jpg";
 import p3_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/portrait/s0.jpg";
 import l3_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/landscape/s1.jpg";
 import p3_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/portrait/s1.jpg";
-import l3_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/landscape/s2.jpg";
-import p3_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/3/portrait/s2.jpg";
 import l4_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/landscape/s0.jpg";
 import p4_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/portrait/s0.jpg";
 import l4_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/landscape/s1.jpg";
 import p4_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/portrait/s1.jpg";
-import l4_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/landscape/s2.jpg";
-import p4_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/4/portrait/s2.jpg";
 import l5_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/5/landscape/s0.jpg";
 import p5_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/5/portrait/s0.jpg";
 import l5_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/5/landscape/s1.jpg";
@@ -61,83 +53,51 @@ import p9_s3_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/po
 import l9_s4_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s4.jpg";
 import p9_s4_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s4.jpg";
 
-/** Each season lesson's camera (5 is the review): its season's three places, then the
-    weather's two and the lesson's end — the cut between is under the weather's reel. */
+/** Each season lesson's camera (5 is the review): a season lesson's five stills (its season's word and spelling, then the weather's word, spelling
+    and the end) are CUT between, never walked (2026-11-10); the review is one walk. */
 export const SEASONS_FARM: Record<number, LessonWorld> = {
   1: {
     stations: [
       { landscape: l1_s0_jpg, portrait: p1_s0_jpg },
       { landscape: l1_s1_jpg, portrait: p1_s1_jpg },
-      { landscape: l1_s2_jpg, portrait: p1_s2_jpg },
       { landscape: l5_s0_jpg, portrait: p5_s0_jpg },
       { landscape: l5_s1_jpg, portrait: p5_s1_jpg },
       { landscape: l5_s2_jpg, portrait: p5_s2_jpg },
     ],
-    moves: [
-      { landscape: "/assets/learn/bloo/seasons-weather/world/1/landscape/m0.mp4?v=58f75ecb", portrait: "/assets/learn/bloo/seasons-weather/world/1/portrait/m0.mp4?v=3f6f813b" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/1/landscape/m1.mp4?v=17860ab5", portrait: "/assets/learn/bloo/seasons-weather/world/1/portrait/m1.mp4?v=1e929e1d" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/1/landscape/m2.mp4?v=c40f509e", portrait: "/assets/learn/bloo/seasons-weather/world/1/portrait/m2.mp4?v=c73e57b4" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/5/landscape/m0.mp4?v=fb7ea4c3", portrait: "/assets/learn/bloo/seasons-weather/world/5/portrait/m0.mp4?v=9603185c" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/5/landscape/m1.mp4?v=a5d36eae", portrait: "/assets/learn/bloo/seasons-weather/world/5/portrait/m1.mp4?v=baa34378" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/5/landscape/m2.mp4?v=6b7b6854", portrait: "/assets/learn/bloo/seasons-weather/world/5/portrait/m2.mp4?v=cb3448d4" },
-    ],
+    moves: [null, null, null, null, null],
     wordInSky: true,
   },
   2: {
     stations: [
       { landscape: l2_s0_jpg, portrait: p2_s0_jpg },
       { landscape: l2_s1_jpg, portrait: p2_s1_jpg },
-      { landscape: l2_s2_jpg, portrait: p2_s2_jpg },
       { landscape: l6_s0_jpg, portrait: p6_s0_jpg },
       { landscape: l6_s1_jpg, portrait: p6_s1_jpg },
       { landscape: l6_s2_jpg, portrait: p6_s2_jpg },
     ],
-    moves: [
-      { landscape: "/assets/learn/bloo/seasons-weather/world/2/landscape/m0.mp4?v=81369d37", portrait: "/assets/learn/bloo/seasons-weather/world/2/portrait/m0.mp4?v=20044e88" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/2/landscape/m1.mp4?v=b020a4c3", portrait: "/assets/learn/bloo/seasons-weather/world/2/portrait/m1.mp4?v=b70f6113" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/2/landscape/m2.mp4?v=6c13852c", portrait: "/assets/learn/bloo/seasons-weather/world/2/portrait/m2.mp4?v=8ecced60" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/6/landscape/m0.mp4?v=e961a66e", portrait: "/assets/learn/bloo/seasons-weather/world/6/portrait/m0.mp4?v=e4a00057" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/6/landscape/m1.mp4?v=d90bd6b6", portrait: "/assets/learn/bloo/seasons-weather/world/6/portrait/m1.mp4?v=4874368a" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/6/landscape/m2.mp4?v=2996a248", portrait: "/assets/learn/bloo/seasons-weather/world/6/portrait/m2.mp4?v=a2947fdc" },
-    ],
+    moves: [null, null, null, null, null],
     wordInSky: true,
   },
   3: {
     stations: [
       { landscape: l3_s0_jpg, portrait: p3_s0_jpg },
       { landscape: l3_s1_jpg, portrait: p3_s1_jpg },
-      { landscape: l3_s2_jpg, portrait: p3_s2_jpg },
       { landscape: l7_s0_jpg, portrait: p7_s0_jpg },
       { landscape: l7_s1_jpg, portrait: p7_s1_jpg },
       { landscape: l7_s2_jpg, portrait: p7_s2_jpg },
     ],
-    moves: [
-      { landscape: "/assets/learn/bloo/seasons-weather/world/3/landscape/m0.mp4?v=7c757310", portrait: "/assets/learn/bloo/seasons-weather/world/3/portrait/m0.mp4?v=117117d5" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/3/landscape/m1.mp4?v=d1527d0c", portrait: "/assets/learn/bloo/seasons-weather/world/3/portrait/m1.mp4?v=16fedfb6" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/3/landscape/m2.mp4?v=776ee15c", portrait: "/assets/learn/bloo/seasons-weather/world/3/portrait/m2.mp4?v=af191540" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/7/landscape/m0.mp4?v=11927740", portrait: "/assets/learn/bloo/seasons-weather/world/7/portrait/m0.mp4?v=29292979" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/7/landscape/m1.mp4?v=a1846105", portrait: "/assets/learn/bloo/seasons-weather/world/7/portrait/m1.mp4?v=27f834f3" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/7/landscape/m2.mp4?v=9c20a96c", portrait: "/assets/learn/bloo/seasons-weather/world/7/portrait/m2.mp4?v=b5aa1690" },
-    ],
+    moves: [null, null, null, null, null],
     wordInSky: true,
   },
   4: {
     stations: [
       { landscape: l4_s0_jpg, portrait: p4_s0_jpg },
       { landscape: l4_s1_jpg, portrait: p4_s1_jpg },
-      { landscape: l4_s2_jpg, portrait: p4_s2_jpg },
       { landscape: l8_s0_jpg, portrait: p8_s0_jpg },
       { landscape: l8_s1_jpg, portrait: p8_s1_jpg },
       { landscape: l8_s2_jpg, portrait: p8_s2_jpg },
     ],
-    moves: [
-      { landscape: "/assets/learn/bloo/seasons-weather/world/4/landscape/m0.mp4?v=611f9217", portrait: "/assets/learn/bloo/seasons-weather/world/4/portrait/m0.mp4?v=fdebde47" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/4/landscape/m1.mp4?v=60b3d9e6", portrait: "/assets/learn/bloo/seasons-weather/world/4/portrait/m1.mp4?v=1e9a0406" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/4/landscape/m2.mp4?v=275fc80c", portrait: "/assets/learn/bloo/seasons-weather/world/4/portrait/m2.mp4?v=a638ff6c" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/8/landscape/m0.mp4?v=5521c02e", portrait: "/assets/learn/bloo/seasons-weather/world/8/portrait/m0.mp4?v=209deccb" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/8/landscape/m1.mp4?v=b1014adc", portrait: "/assets/learn/bloo/seasons-weather/world/8/portrait/m1.mp4?v=497862e1" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/8/landscape/m2.mp4?v=c757c88c", portrait: "/assets/learn/bloo/seasons-weather/world/8/portrait/m2.mp4?v=3e310745" },
-    ],
+    moves: [null, null, null, null, null],
     wordInSky: true,
   },
   5: {
