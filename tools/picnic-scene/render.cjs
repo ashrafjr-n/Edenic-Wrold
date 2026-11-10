@@ -300,7 +300,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, blur: 1.6 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
     const FPS = 30;
     for (const lesson of specs) {
-      for (const frame of ["landscape", "portrait"]) {
+      for (const frame of (process.env.FRAMES ?? "landscape,portrait").split(",")) {
         const out = path.join(__dirname, "out", `${mode}-${lesson}-${frame}`);
         fs.mkdirSync(out, { recursive: true });
         const open = async (px) => {
