@@ -251,6 +251,9 @@ export interface LessonWorld {
   /** Bloo's farm (2026-11-10): the word step's animal stands sharp in the world itself,
       so the page lays no picture of its own — just the speaker and the word. */
   animalInWorld?: boolean;
+  /** Bloo's island (2026-11-10): the word step's station is the season (or its weather)
+      itself, sharp — the page writes the word in the sky, as Colors does. */
+  wordInSky?: boolean;
 }
 
 /** A frame of a course's world of stops (`CourseWorld`): the first picture
