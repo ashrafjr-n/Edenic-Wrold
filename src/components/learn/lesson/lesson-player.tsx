@@ -287,7 +287,9 @@ export function LessonPlayer({
   if (!finished && step.kind === "question") {
     const q = step.question;
     const { kind, target } = taskFor(q, showing);
-    const how = showing ? undefined : demoFor(q, tone.face, seed);
+    const demo = showing ? undefined : demoFor(q, tone.face, seed);
+    /* The animal stands in the world itself: the Listen demo shows no second picture of it. */
+    const how = demo?.kind === "listen" && world?.animalInWorld ? { ...demo, face: undefined } : demo;
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
     const verb = dict.tasks[kind];
     task = (
