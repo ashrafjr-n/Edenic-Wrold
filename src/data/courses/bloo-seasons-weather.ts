@@ -56,10 +56,10 @@ const viewFace = (weather: Weather): Face => ({ kind: "picture", src: WEATHERS[w
 /**
  * One season and its weather, one lesson (the user's design, 2026-11-08):
  * the season's reel → its word → spell it → "what is the weather in
- * summer?", three round views (its weather + two others, the demo blind) →
- * the weather's reel → its word → spell it. No other activity. In Bloo's
- * farm (`data/seasons-farm.ts`): the season's places, then the weather's after its reel
- * (the camera cuts there, under the reel).
+ * summer?", three snow globes of views (its weather + two others, the demo blind) →
+ * the weather's reel → its word → spell it. No other activity. On Bloo's
+ * island of the year (`data/seasons-farm.ts`, 2026-11-10): the season's quarter, its word
+ * written in the sky over it; then the weather's after its reel (the camera cuts there).
  */
 function seasonLesson(season: Season, i: number): LessonDef {
   const { weather, others, picture } = SEASONS[season];
@@ -95,7 +95,7 @@ const wearThing = (weather: Weather, k: 0 | 1): Thing => {
     in `dict.lessons.weather.items`. Reels: `tools/reels/encode.sh`, by word. */
 export const blooSeasonsWeather: LessonDef[] = [
   ...SEASON_ORDER.map(seasonLesson),
-  /* The review, no reel, on the farm in summer sun: things into their
+  /* The review, no reel, on the island in summer sun: things into their
      season's box, then what is worn into its weather's, then a season and
      a weather spelled from their picture alone. */
   {
