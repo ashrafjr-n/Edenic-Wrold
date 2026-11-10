@@ -5754,7 +5754,9 @@ if (THING) {
     const F = THREE.MathUtils.degToRad(75), B = THREE.MathUtils.degToRad(150);
     return a > B || a < -B ? 2 : a > F ? 1 : a < -F ? 3 : 0;
   };
-  const isleSeason = (x, z) => SEAS_SEASONS[(SEAS_SEASONS.indexOf(SEAS_SEASON) + isleQuarter(x, z)) % 4];
+  /* A season's lessons (1-8): the whole island is that season, a world of its own (the user,
+     2026-11-10). The review (9): the four quarters, the whole year. */
+  const isleSeason = (x, z) => (LESSON <= 8 ? SEAS_SEASON : SEAS_SEASONS[(SEAS_SEASONS.indexOf(SEAS_SEASON) + isleQuarter(x, z)) % 4]);
   const onIsle = (x, z, margin = 1) => Math.hypot(x - ISLE.cx, z - ISLE.cz) < ISLE.r - margin;
   const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
@@ -6118,7 +6120,7 @@ if (THING) {
     let sum = 0;
     for (let k = -6; k <= 6; k++) {
       const a = Math.atan2(x - ISLE.cx, z - ISLE.cz) + THREE.MathUtils.degToRad(2 * k);
-      c.add(lawnOf[(S0 + isleQuarter(ISLE.cx + Math.sin(a), ISLE.cz + Math.cos(a))) % 4]);
+      c.add(lawnOf[SEAS_SEASONS.indexOf(isleSeason(ISLE.cx + Math.sin(a), ISLE.cz + Math.cos(a)))]);
       sum++;
     }
     c.multiplyScalar(1 / Math.max(sum, 1e-3));
@@ -6189,7 +6191,7 @@ if (THING) {
     if (front && open(x, z) && season !== "winter" && rand() < 0.75) continue;
     const r = rand();
     if (season === "winter") {
-      if (r < 0.012 && !open(x, z)) snowman(x, z, 0.9 + rand() * 0.3);
+      if (r < 0.006 && !open(x, z)) snowman(x, z, 0.9 + rand() * 0.3);
       else if (r < 0.06) { const d = ball(0.9 + rand() * 0.8, snowM, 24); d.scale.y = 0.28; d.castShadow = false; add(d, x, 0, z); }
     } else if (season === "fall") {
       if (r < 0.025) { const pk = ball(0.42 + rand() * 0.15, pumpkinM, 24); pk.scale.y = 0.78; add(pk, x, 0.32, z); add(mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.22, 8), stemM), x, 0.72, z); }
@@ -6228,7 +6230,7 @@ if (THING) {
       spread(90, (x, z) => { const l = ball(0.1, soft(pick([0x7fd36a, 0xf2a44a, 0xf5cf5a, 0xe2763a])), 10); l.scale.set(2.2, 0.35, 1); l.castShadow = false; add(l, x, 0.6 + rand() * 6, z, { ry: rand() * 3 }); });
       spread(50, (x, z) => { if (z > -2) return; const s = rbox(1.2 + rand() * 0.6, 0.03, 0.03, soft(0xffffff), 0.012); s.castShadow = false; add(s, x, 0.8 + rand() * 5, z); });
     }
-    if (SEAS_WEATHER === "sunny") {
+    if (SEAS_WEATHER === "sunny" || SEAS_SEASON === "summer") {
       const sunMid = (X0 + X1) / 2;
       const disc = new THREE.Mesh(new THREE.SphereGeometry(7, 40, 20), new THREE.MeshBasicMaterial({ color: 0xfff4b8, fog: false }));
       disc.position.set(sunMid, 12.5, -72);
