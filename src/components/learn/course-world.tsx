@@ -713,6 +713,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const started = performance.now() + TURN_DELAY_MS;
     let raf = 0;
     const stop = () => cancelAnimationFrame(raf);
+    /* A finger or wheel mid-turn: the way is done, so it is pink whole at once. Left
+       half-turned, the pink circle (centred by the scroll) would travel with every
+       scroll and the stones would change colour as the child moves. */
+    const release = () => {
+      stop();
+      turning.current = null;
+      redraw.current();
+    };
     const step = (now: number) => {
       const t = Math.max(0, now - started);
       const move = still ? 1 : Math.min(1, t / CAMERA_RUN_MS);
@@ -725,12 +733,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     };
     raf = requestAnimationFrame(step);
     /* A finger or wheel takes the camera back. */
-    window.addEventListener("wheel", stop, { passive: true, once: true });
-    window.addEventListener("touchstart", stop, { passive: true, once: true });
+    window.addEventListener("wheel", release, { passive: true, once: true });
+    window.addEventListener("touchstart", release, { passive: true, once: true });
     return () => {
       stop();
-      window.removeEventListener("wheel", stop);
-      window.removeEventListener("touchstart", stop);
+      window.removeEventListener("wheel", release);
+      window.removeEventListener("touchstart", release);
       turning.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
