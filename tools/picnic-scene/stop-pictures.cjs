@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 
 const FILES = {
-  animals: ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"].map((a) => `learn/bloo/animals/things/${a}.png`),
+  animals: ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"].map((a) => `learn/bloo/animals/things/${a === "gecko" ? "gecko-wide" : a}.png`),
   weather: ["spring", "summer", "fall", "winter"].map((s) => `learn/bloo/seasons-weather/window/${s}.jpg`),
 };
 
