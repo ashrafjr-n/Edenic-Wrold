@@ -486,11 +486,11 @@ export function LessonPlayer({
     } else if (q.type === "word") {
       body = (
         <WordCard
-          onScene={Boolean(world && !q.picture)}
+          onScene={Boolean(world && (!q.picture || world.animalInWorld))}
           inSky={Boolean(world && q.color)}
           word={q.word}
           shape={q.shape}
-          picture={q.picture}
+          picture={world?.animalInWorld ? undefined : q.picture}
           tilt={q.tilt}
           tone={q.color && COLORS[q.color].letter}
           cue={lessonCue.word(q.word)}

@@ -248,6 +248,9 @@ export interface LessonWorld {
       coming, for Basket Time, and the counter blurring again for the end.
       The lesson's end is always the last station. */
   stepStation?: readonly number[];
+  /** Bloo's farm (2026-11-10): the word step's animal stands sharp in the world itself,
+      so the page lays no picture of its own — just the speaker and the word. */
+  animalInWorld?: boolean;
 }
 
 /** A frame of a course's world of stops (`CourseWorld`): the first picture
