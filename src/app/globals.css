@@ -2643,8 +2643,8 @@ button:disabled,
 
 /* ---------------------------------------------------------------
    Seasons and Weather's pick (2026-11-10, the user: "something nicer than three
-   circles"): each weather in a snow globe — the view behind glass with a shine
-   and slow white flecks, on a gold clay base, bobbing a little out of step.
+   circles"): each weather in a glass globe — the view behind glass with a shine
+   (no falling flecks: they read as snow on every weather, the user), on a gold clay base, bobbing a little out of step.
    The right one glows green and pops; a wrong one wiggles (`.anim-wiggle`).
    --------------------------------------------------------------- */
 .globe {
@@ -2668,23 +2668,6 @@ button:disabled,
     inset 0 -0.8rem 1.6rem rgb(20 50 90 / 0.28),
     0 0.9rem 1.6rem -0.6rem color-mix(in srgb, var(--shadow-hue) 50%, transparent);
   transition: box-shadow 0.25s ease;
-}
-
-/* The flecks: a tile of soft white dots sliding down, over and over. */
-.globe-glass::before {
-  content: "";
-  position: absolute;
-  inset: -100% 0 0;
-  z-index: 1;
-  background-image:
-    radial-gradient(circle at 18% 22%, rgb(255 255 255 / 0.95) 0 0.13rem, transparent 0.15rem),
-    radial-gradient(circle at 64% 12%, rgb(255 255 255 / 0.85) 0 0.1rem, transparent 0.12rem),
-    radial-gradient(circle at 82% 46%, rgb(255 255 255 / 0.9) 0 0.12rem, transparent 0.14rem),
-    radial-gradient(circle at 38% 64%, rgb(255 255 255 / 0.8) 0 0.09rem, transparent 0.11rem),
-    radial-gradient(circle at 10% 84%, rgb(255 255 255 / 0.9) 0 0.11rem, transparent 0.13rem);
-  background-size: 100% 50%;
-  animation: globe-flecks 7s linear infinite;
-  pointer-events: none;
 }
 
 /* The glass: a bright window of light top left, a softer one bottom right. */
@@ -2750,12 +2733,6 @@ button:disabled,
   }
   50% {
     transform: translateY(-0.4rem);
-  }
-}
-
-@keyframes globe-flecks {
-  to {
-    transform: translateY(50%);
   }
 }
 
@@ -3694,7 +3671,6 @@ button:disabled,
   .stage-swap--out,
   .anim-wiggle,
   .globe,
-  .globe-glass::before,
   .anim-jump,
   .stroke-draw,
   .pen-tip,
