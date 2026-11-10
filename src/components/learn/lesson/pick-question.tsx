@@ -20,7 +20,7 @@ interface PickQuestionProps {
   options: Face[];
   /** Index into `options`, before shuffling. */
   answer: number;
-  /** Circles, each picture filling its own (a whole view, not one thing). */
+  /** Snow globes, each picture filling its glass (a whole view, not one thing) — Seasons and Weather's pick. */
   round?: boolean;
   /** Deals the tile order — a new seed is a new order. */
   seed: string;
@@ -58,7 +58,9 @@ export function PickQuestion({ show, word, plain = false, options, answer, round
     options.length === 4
       ? "grid-cols-2 max-w-[min(26rem,36svh)] sm:max-w-[min(26rem,32svh)] lg:max-w-[min(28rem,calc(var(--stage-h)-7rem))]"
       : options.length === 3
-        ? "grid-cols-3 max-w-[min(30rem,72svh)]"
+        ? round
+          ? "grid-cols-3 gap-5 max-w-[min(42rem,80svh)] sm:gap-8"
+          : "grid-cols-3 max-w-[min(30rem,72svh)]"
         : "grid-cols-2 max-w-[min(22rem,44svh)]";
 
   return (
@@ -78,30 +80,45 @@ export function PickQuestion({ show, word, plain = false, options, answer, round
           const glow = !solved && isAnswer && (demo || misses >= HELP_AFTER);
           return (
             <li key={index} className={`relative ${glow ? "guide-target" : ""}`}>
-              <button
-                type="button"
-                onClick={() => pick(index)}
-                onAnimationEnd={() => setWrong(null)}
-                disabled={demo}
-                className={`card card-clay-white ${round ? "card-pill p-[6%]" : ""} flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
-                  wrong === index ? "anim-wiggle" : ""
-                } ${solved && !isAnswer ? "opacity-40" : ""} ${
-                  solved || demo ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"
-                }`}
-                style={
-                  solved && isAnswer
-                    ? { outline: "4px solid var(--color-go)", outlineOffset: "3px" }
-                    : undefined
-                }
-              >
-                {round && options[index].kind === "picture" ? (
-                  <span className="relative block h-full w-full overflow-hidden rounded-full">
-                    <Image src={options[index].src} alt={options[index].word} fill sizes="(min-width: 640px) 160px, 110px" className="object-cover" />
+              {round ? (
+                /* Seasons and Weather: a snow globe (`.globe` in globals.css). */
+                <button
+                  type="button"
+                  onClick={() => pick(index)}
+                  onAnimationEnd={() => setWrong(null)}
+                  disabled={demo}
+                  aria-label={options[index].kind === "picture" ? options[index].word : undefined}
+                  className={`globe-btn block w-full rounded-full focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] ${wrong === index ? "anim-wiggle" : ""} ${
+                    solved && !isAnswer ? "opacity-40" : ""
+                  } transition-opacity duration-300`}
+                >
+                  <span className={`globe ${solved && isAnswer ? "globe--right" : ""}`} style={{ animationDelay: `${-1.1 * order.indexOf(index)}s` }}>
+                    <span className="globe-glass">
+                      {options[index].kind === "picture" ? (
+                        <Image src={options[index].src} alt="" fill sizes="(min-width: 640px) 180px, 120px" className="object-cover" />
+                      ) : (
+                        <FaceView face={options[index]} size="tile" />
+                      )}
+                    </span>
+                    <span className="globe-base" aria-hidden />
                   </span>
-                ) : (
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => pick(index)}
+                  onAnimationEnd={() => setWrong(null)}
+                  disabled={demo}
+                  className={`card card-clay-white flex aspect-square w-full items-center justify-center transition-transform duration-200 focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--page-accent-color)] active:scale-95 ${
+                    wrong === index ? "anim-wiggle" : ""
+                  } ${solved && !isAnswer ? "opacity-40" : ""} ${
+                    solved || demo ? "" : "hover:outline-4 hover:outline-offset-4 hover:outline-[color-mix(in_srgb,var(--page-accent-color)_45%,transparent)]"
+                  }`}
+                  style={solved && isAnswer ? { outline: "4px solid var(--color-go)", outlineOffset: "3px" } : undefined}
+                >
                   <FaceView face={options[index]} size="tile" />
-                )}
-              </button>
+                </button>
+              )}
               {solved && isAnswer && <Celebration />}
             </li>
           );
