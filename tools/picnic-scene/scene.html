@@ -8001,7 +8001,8 @@ if (THING) {
       const h = 3.2, aspect = tex.image.width / tex.image.height;
       animalPlane.material.map = tex;
       animalPlane.material.needsUpdate = true;
-      animalPlane.scale.set(Math.min(h * aspect, 4.6), Math.min(h, 4.6 / aspect), 1);
+      const cap = portrait ? 2.9 : 4.6; /* a wide animal (the fish) must fit a phone's width */
+      animalPlane.scale.set(Math.min(h * aspect, cap), Math.min(h, cap / aspect), 1);
     },
     async setFriend(picture, cheer) {
       const load = (url) =>
