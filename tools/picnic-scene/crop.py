@@ -632,7 +632,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     if SEAS:
         # A season lesson = its season's three places (id n) + its weather's two and the end (id n + 4): the camera
         # cuts between them under the weather's reel. The review (id 9) is one walk.
-        parts = {n: ([n, 3, n + 4, 3] if n <= 4 else [9, 5, None, 0]) for n in range(1, 6)}
+        parts = {n: ([n, 2, n + 4, 3] if n <= 4 else [9, 5, None, 0]) for n in range(1, 6)}
         lines = []
         for n in range(1, 6):
             a, ka, b, kb = parts[n]
@@ -644,7 +644,10 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
                 both = data[lid]
                 for i in range(k):
                     stations.append(f"{{ landscape: {pic(lid, 'landscape', both['landscape']['stills'][i])}, portrait: {pic(lid, 'portrait', both['portrait']['stills'][i])} }}")
-                    moves.append(f'{{ landscape: "/{base[len("public/"):]}/{lid}/landscape/{both["landscape"]["moves"][i]}", portrait: "/{base[len("public/"):]}/{lid}/portrait/{both["portrait"]["moves"][i]}" }}')
+                    if n > 4:
+                        moves.append(f'{{ landscape: "/{base[len("public/"):]}/{lid}/landscape/{both["landscape"]["moves"][i]}", portrait: "/{base[len("public/"):]}/{lid}/portrait/{both["portrait"]["moves"][i]}" }}')
+                    else:
+                        moves.append("null")  # a season lesson is CUT, never walked (2026-11-10)
             lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],{chr(10) + '    wordInSky: true,' if n <= 4 else ''}\n  }},")
         body = "\n".join(lines)
         imports = [line for line in dict.fromkeys(imports) if re.search(r"\b" + line.split()[1] + r"\b", body)]
