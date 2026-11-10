@@ -2,18 +2,18 @@ import type { StaticImageData } from "next/image";
 import type { Animal, ColorId, Food, LessonDef, SortBin, Thing } from "@/types/course";
 import { COLORS } from "@/data/colors";
 import { ANIMALS_FARM } from "@/data/animals-farm";
-import cat from "../../../public/assets/learn/bloo/animals/things/cat.png";
-import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-grey.png";
-import dog from "../../../public/assets/learn/bloo/animals/things/dog.png";
-import dogGolden from "../../../public/assets/learn/bloo/animals/things/dog-golden.png";
-import fish from "../../../public/assets/learn/bloo/animals/things/fish.png";
-import fishBlue from "../../../public/assets/learn/bloo/animals/things/fish-blue.png";
+import cat from "../../../public/assets/learn/bloo/animals/things/cat-play.png";
+import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-play-grey.png";
+import dog from "../../../public/assets/learn/bloo/animals/things/dog-play.png";
+import dogGolden from "../../../public/assets/learn/bloo/animals/things/dog-play-golden.png";
+import fish from "../../../public/assets/learn/bloo/animals/things/fish-play.png";
+import fishBlue from "../../../public/assets/learn/bloo/animals/things/fish-play-blue.png";
 import elephant from "../../../public/assets/learn/bloo/animals/things/elephant.png";
-import mouse from "../../../public/assets/learn/bloo/animals/things/mouse.png";
-import bird from "../../../public/assets/learn/bloo/animals/things/bird.png";
-import parrot from "../../../public/assets/learn/bloo/animals/things/parrot.png";
-import turtle from "../../../public/assets/learn/bloo/animals/things/turtle.png";
-import gecko from "../../../public/assets/learn/bloo/animals/things/gecko.png";
+import mouse from "../../../public/assets/learn/bloo/animals/things/mouse-play.png";
+import bird from "../../../public/assets/learn/bloo/animals/things/bird-play.png";
+import parrot from "../../../public/assets/learn/bloo/animals/things/parrot-play.png";
+import turtle from "../../../public/assets/learn/bloo/animals/things/turtle-play.png";
+import gecko from "../../../public/assets/learn/bloo/animals/things/gecko-play.png";
 import milk from "../../../public/assets/learn/bloo/animals/food/milk.png";
 import bone from "../../../public/assets/learn/bloo/animals/food/bone.png";
 import fishFood from "../../../public/assets/learn/bloo/animals/food/fish-food.png";
@@ -72,15 +72,15 @@ const FOOD: Record<string, Food> = {
     cat's milk, no fruit beside a parrot's seeds, nothing a 5-year-old
     could argue for — and where its mouth is (% of its picture). */
 const MEALS: Record<string, { foods: readonly [string, string, string]; mouth: readonly [number, number] }> = {
-  cat: { foods: ["milk", "banana", "seeds"], mouth: [46, 39] },
-  dog: { foods: ["bone", "seeds", "lettuce"], mouth: [50, 40] },
-  fish: { foods: ["fishFood", "bone", "banana"], mouth: [90, 31] },
+  cat: { foods: ["milk", "banana", "seeds"], mouth: [34, 41] },
+  dog: { foods: ["bone", "seeds", "lettuce"], mouth: [62, 50] },
+  fish: { foods: ["fishFood", "bone", "banana"], mouth: [94, 40] },
   elephant: { foods: ["banana", "bone", "cricket"], mouth: [55, 44] },
-  mouse: { foods: ["cheese", "bone", "worm"], mouth: [67, 52] },
-  bird: { foods: ["worm", "bone", "milk"], mouth: [85, 34] },
-  parrot: { foods: ["seeds", "bone", "milk"], mouth: [83, 27] },
-  turtle: { foods: ["lettuce", "bone", "milk"], mouth: [56, 53] },
-  gecko: { foods: ["cricket", "bone", "cheese"], mouth: [56, 6] },
+  mouse: { foods: ["cheese", "bone", "worm"], mouth: [83, 40] },
+  bird: { foods: ["worm", "bone", "milk"], mouth: [64, 26] },
+  parrot: { foods: ["seeds", "bone", "milk"], mouth: [66, 32] },
+  turtle: { foods: ["lettuce", "bone", "milk"], mouth: [88, 65] },
+  gecko: { foods: ["cricket", "bone", "cheese"], mouth: [96, 15] },
 };
 
 const PICTURES = Object.fromEntries(TAUGHT);
