@@ -311,6 +311,11 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
             const dataUrl = (file) => "data:image/png;base64," + fs.readFileSync(path.join(__dirname, "../../public/assets", file)).toString("base64");
             await page.evaluate(([a, b]) => window.garden.setFriend(a, b), [dataUrl("friends/nova.png"), dataUrl("friends/nova.png")]);
           }
+          /* Bloo's farm: the lesson's animal stands in the word step's place (2026-11-10). */
+          if (mode === "farm" && Number(lesson) <= 9) {
+            const kind = ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"][Number(lesson) - 1];
+            await page.evaluate((u) => window.garden.setAnimal(u), "data:image/png;base64," + fs.readFileSync(path.join(__dirname, "../../public/assets/learn/bloo/animals/things", kind + ".png")).toString("base64"));
+          }
         };
         await open(1);
         const stations = await page.evaluate(() => window.garden.stations);

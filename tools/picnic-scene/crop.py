@@ -438,7 +438,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     GENERATED = "src/data/seasons-farm.ts" if SEAS else "src/data/animals-farm.ts" if FARM else "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
-    sharp0 = lambda lesson: False if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 4
+    sharp0 = lambda lesson: (lesson <= 9 and not SEAS) if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 4
 
     def sigma(lesson, move, last, t):
         # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
@@ -530,7 +530,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             (f'{{ landscape: "/{base[len("public/"):]}/{lesson}/landscape/{m}", portrait: "/{base[len("public/"):]}/{lesson}/portrait/{both["portrait"]["moves"][i]}" }}' if m else "null")
             for i, m in enumerate(both["landscape"]["moves"])
         ]
-        worlds.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n  }},")
+        worlds.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],{chr(10) + '    animalInWorld: true,' if sharp0(lesson) and FARM else ''}\n  }},")
         if both["landscape"].get("find"):
             scenes = []
             for frame in ("landscape", "portrait"):
@@ -645,7 +645,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
                 for i in range(k):
                     stations.append(f"{{ landscape: {pic(lid, 'landscape', both['landscape']['stills'][i])}, portrait: {pic(lid, 'portrait', both['portrait']['stills'][i])} }}")
                     moves.append(f'{{ landscape: "/{base[len("public/"):]}/{lid}/landscape/{both["landscape"]["moves"][i]}", portrait: "/{base[len("public/"):]}/{lid}/portrait/{both["portrait"]["moves"][i]}" }}')
-            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n  }},")
+            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],{chr(10) + '    animalInWorld: true,' if sharp0(lesson) and FARM else ''}\n  }},")
         body = "\n".join(lines)
         imports = [line for line in dict.fromkeys(imports) if re.search(r"\b" + line.split()[1] + r"\b", body)]
         ts = (
