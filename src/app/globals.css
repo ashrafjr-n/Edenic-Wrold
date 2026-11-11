@@ -1644,8 +1644,17 @@ bdi {
    A course's world of stops (`CourseWorld`, 2026-11-05, Shapes first): the
    run of the scroll, the links laid over the pedestals (each its own
    container, so what is on it keeps its size with the stop). Fixed colours: the world is the same picture in dark mode. */
-.course-world-stops a {
+.course-world-stops a,
+.course-world-stops button {
   pointer-events: auto;
+}
+
+/* The gold chest is a button: no button chrome. */
+button.course-stop {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
 }
 
 .course-stop {
