@@ -99,7 +99,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
           <span className="board-next-word">{word}</span>
           <span className="btn3d board-next-go" aria-hidden>
             <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
-            <span>{dict.ctaStart}</span>
+            <span>{nextIndex === 0 ? dict.ctaStart : dict.ctaContinue}</span>
           </span>
         </span>
         {springing && (
