@@ -41,9 +41,10 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const world = COURSE_STOPS[lesson.id];
   if (world) {
     /* A stop with no lesson (or a lesson with no stop) would put every link
-       in the wrong place; say so while building. */
-    if (process.env.NODE_ENV !== "production" && world.landscape.keys[0].length !== course.items.length) {
-      throw new Error(`${lesson.id}: the world has ${world.landscape.keys[0].length} stops, the course ${course.items.length} lessons`);
+       in the wrong place; say so while building. The last stop is the gold
+       chest (no lesson since 2026-11-11). */
+    if (process.env.NODE_ENV !== "production" && world.landscape.keys[0].length !== course.items.length + 1) {
+      throw new Error(`${lesson.id}: the world has ${world.landscape.keys[0].length} stops, the course ${course.items.length} lessons and a chest`);
     }
     return (
       <main className="relative flex flex-1 flex-col overflow-x-clip" style={characterAccent(character)}>
