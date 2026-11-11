@@ -277,8 +277,27 @@ export interface CourseStopsFrame {
   flow: readonly [number, number, number];
 }
 
+/** The gold chest opening in one frame of a course's world (2026-11-11,
+    rendered — `tools/picnic-scene` `chest`): only the pixels that change, as
+    cropped WebPs laid over the page's own frame, each with its box (% of
+    the frame; empty when nothing changed). */
+export interface ChestPlayFrame {
+  /** The scroll frame the page rests on at the chest: the play is seen from it. */
+  rest: number;
+  version: string;
+  /** The play, `c00.webp`…: shake, the lid swinging open, the light coming up. */
+  play: readonly SceneRect[];
+  /** The scroll frames from `from` on that show the chest, open: `o<frame>.webp`. */
+  from: number;
+  open: readonly SceneRect[];
+}
+
+export type ChestOpening = Framed<ChestPlayFrame>;
+
 /** A course's world of stops, its camera's way in, in both frames. */
 export interface CourseStops extends Framed<CourseStopsFrame> {
+  /** The gold chest opening (absent: it never opens). */
+  chest?: ChestOpening;
   frames: number;
   /** What a done way's white stones are multiplied by (default Pinki's pink). */
   tint?: string;
