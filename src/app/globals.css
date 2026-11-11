@@ -1813,10 +1813,10 @@ bdi {
 
 @keyframes chest-lid {
   22% {
-    transform: perspective(60em) translateY(4%) rotateX(4deg);
+    transform: perspective(40em) translateY(3%) rotateX(3deg);
   }
   to {
-    transform: perspective(60em) translateY(-10%) rotateX(-78deg);
+    transform: perspective(40em) translateY(-22%) rotateX(-52deg);
   }
 }
 
