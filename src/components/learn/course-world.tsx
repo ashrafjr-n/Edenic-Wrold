@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Lock, Play } from "lucide-react";
+import { CHEST_OPEN_MS, ChestOpen } from "@/components/learn/chest-open";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
@@ -64,6 +66,8 @@ const TURN_DELAY_MS = 300;
     off, so the camera is ahead of the colour. */
 const CAMERA_RUN_MS = 1900;
 const STONES_LAG_MS = 350;
+/** The camera has come to the chest: the beat before it opens, ms. */
+const CHEST_PAUSE_MS = 450;
 
 /** Each stop's box at `progress`, between the render's key positions. */
 function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: number): SceneRect {
@@ -235,6 +239,10 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const alive = useRef(false);
   const [settled, setSettled] = useState(false);
   const [shown, setShown] = useState(false);
+  /* The chest opening, once the camera has come to it after the lesson before. */
+  const [opening, setOpening] = useState(false);
+  const router = useRouter();
+  const reviewIndex = titles.length - 1;
 
   /* A way is pink once the lesson before it is done. */
   const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
@@ -702,7 +710,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
      eased scroll, never the browser's smooth one — a phone's lags and cannot
      be timed against the stones. */
   useEffect(() => {
-    if (world.guided || unlocking < 1 || !returning.current) return;
+    if (world.guided || unlocking < 1 || !(returning.current || unlocking === reviewIndex)) return;
     const way = unlocking - 1;
     jump.current = true;
     const [from, to] = [scrollFor(way), scrollFor(unlocking)];
@@ -712,6 +720,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const started = performance.now() + TURN_DELAY_MS;
     let raf = 0;
+    let chest = 0;
     const stop = () => cancelAnimationFrame(raf);
     /* A finger or wheel mid-turn: the way is done, so it is pink whole at once. Left
        half-turned, the pink circle (centred by the scroll) would travel with every
@@ -729,7 +738,11 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       turning.current = [way, turn];
       redraw.current();
       if (move < 1 || turn < 1) raf = requestAnimationFrame(step);
-      else turning.current = null;
+      else {
+        turning.current = null;
+        /* At the chest: a beat to look at it, then it opens. */
+        if (unlocking === reviewIndex) chest = window.setTimeout(() => setOpening(true), still ? 0 : CHEST_PAUSE_MS);
+      }
     };
     raf = requestAnimationFrame(step);
     /* A finger or wheel takes the camera back. */
@@ -737,12 +750,26 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     window.addEventListener("touchstart", release, { passive: true, once: true });
     return () => {
       stop();
+      clearTimeout(chest);
       window.removeEventListener("wheel", release);
       window.removeEventListener("touchstart", release);
       turning.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [unlocking, data]);
+
+  /* The chest open: nothing scrolls, and when the light is full the review begins. */
+  useEffect(() => {
+    if (!opening) return;
+    const page = document.documentElement;
+    const was = page.style.overflow;
+    page.style.overflow = "hidden";
+    const timer = setTimeout(() => router.push(`${basePath}/${titles.length}`), CHEST_OPEN_MS);
+    return () => {
+      page.style.overflow = was;
+      clearTimeout(timer);
+    };
+  }, [opening, router, basePath, titles.length]);
 
   /* The first picture painted: the Start button may come. */
   useEffect(() => {
@@ -827,6 +854,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                     <span dir={dir}>{i === 0 ? dict.ctaStart : dict.ctaContinue}</span>
                   </span>
                 )}
+                {opening && i === reviewIndex && <ChestOpen stop={nextRef} canvas={canvasRef} wide={wide} />}
               </Link>
             );
           })}
