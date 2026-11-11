@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Lock, Play } from "lucide-react";
-import { CHEST_OPEN_MS, ChestOpen } from "@/components/learn/chest-open";
+import { ChestOpen } from "@/components/learn/chest-open";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { peekChest, takeChest } from "@/lib/chest-run";
 import { format } from "@/lib/format-dict";
@@ -240,12 +239,11 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const alive = useRef(false);
   const [settled, setSettled] = useState(false);
   const [shown, setShown] = useState(false);
-  /* The chest opening, once the camera has come to it after the lesson before. */
+  /* The gold chest: the stop after the last lesson; opening, once the camera
+     has come to it after the last lesson's Finish (`chestAsked`). */
+  const chestRef = useRef<HTMLSpanElement>(null);
   const [opening, setOpening] = useState(false);
-  /* Came by the Next of the lesson before the chest: walk to it and open it, whatever was seen before. */
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
-  const router = useRouter();
-  const reviewIndex = titles.length - 1;
 
   /* A way is pink once the lesson before it is done. */
   const pinkWays = !hydrated ? 0 : nextIndex < 0 ? ways : nextIndex;
@@ -709,7 +707,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   }, [hydrated, nextIndex, data, lessonId]);
 
   /* The lesson whose way turns pink and the camera goes to: the one just opened, or the chest. */
-  const walk = chestAsked ? reviewIndex : unlocking;
+  const walk = chestAsked ? ways : unlocking;
 
   /* Scrolling: back from a lesson just done, stand at it, then the camera goes
      on to the next one and the way turns pink stone by stone just BEHIND it
@@ -765,18 +763,18 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [walk, chestAsked, data]);
 
-  /* The chest open: nothing scrolls, and when the light is full the review begins. */
+  /* The chest stays open until a finger or wheel moves the camera (its copy is
+     of the frame it opened on). */
   useEffect(() => {
     if (!opening) return;
-    const page = document.documentElement;
-    const was = page.style.overflow;
-    page.style.overflow = "hidden";
-    const timer = setTimeout(() => router.push(`${basePath}/${titles.length}`), CHEST_OPEN_MS);
+    const close = () => setOpening(false);
+    window.addEventListener("wheel", close, { passive: true, once: true });
+    window.addEventListener("touchstart", close, { passive: true, once: true });
     return () => {
-      page.style.overflow = was;
-      clearTimeout(timer);
+      window.removeEventListener("wheel", close);
+      window.removeEventListener("touchstart", close);
     };
-  }, [opening, router, basePath, titles.length]);
+  }, [opening]);
 
   /* The first picture painted: the Start button may come. */
   useEffect(() => {
@@ -855,16 +853,26 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 className="course-stop"
                 style={place(box)}
               >
-                {isNext && !opening && (
+                {isNext && (
                   <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
                     <span dir={dir}>{i === 0 ? dict.ctaStart : dict.ctaContinue}</span>
                   </span>
                 )}
-                {opening && i === reviewIndex && <ChestOpen stop={nextRef} canvas={canvasRef} wide={wide} />}
               </Link>
             );
           })}
+          {/* The gold chest, the nearest stop: nothing to tap yet (a star, later). */}
+          <span
+            ref={(element) => {
+              chestRef.current = element;
+              stopRefs.current[ways] = element;
+            }}
+            className="course-stop"
+            style={place(data.keys[data.keys.length - 1][ways])}
+          >
+            {opening && <ChestOpen stop={chestRef} canvas={canvasRef} wide={wide} />}
+          </span>
         </div>
       </div>
 
