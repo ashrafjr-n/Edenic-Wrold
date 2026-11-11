@@ -359,14 +359,16 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const needsDrops = (f: number) => closedIn(f).length > 0 || (guidedNow.current && reveal.current !== null && dropsOf(f).includes(reveal.current.stop));
     /* A frame shows only with its masks: stones never flash white, a closed
        lesson never flashes its colour. */
-    const ready = (f: number) => pictures.has(f) && (!needsMask(f) || masks.has(f)) && (!needsDrops(f) || dropMasks.has(f));
+    /* An open chest's crop is part of its frame: the chest never shows shut for a moment. */
+    const chestReady = (f: number) => !chestNow.current.open || !hasOpen(f) || openCrops.has(f);
+    const ready = (f: number) => pictures.has(f) && chestReady(f) && (!needsMask(f) || masks.has(f)) && (!needsDrops(f) || dropMasks.has(f));
     const held = (f: number) => (corridor !== null && f >= corridor[0] && f <= corridor[1]) || (heading > 0 ? f - standing <= AHEAD && standing - f <= BEHIND : standing - f <= AHEAD && f - standing <= BEHIND);
 
     const ask = (name: string, f: number, map: Map<number, ImageBitmap>) => {
       if (map.has(f) || loading.has(name + f) || loading.size >= LOADING_AT_ONCE) return;
       const stop = new AbortController();
       loading.set(name + f, { frame: f, stop });
-      fetchBitmap(name === "o" ? chestUrl("o", f, 3) : fileUrl(data, name, f, name === "f" ? "jpg" : "png"), stop.signal)
+      fetchBitmap(fileUrl(data, name, f, name === "f" ? "jpg" : "png"), stop.signal)
         .then((bitmap) => {
           if (gone.signal.aborted) bitmap.close();
           else {
@@ -388,7 +390,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
        for what it is near, nearest first. */
     const ensure = () => {
       if (standing < 0) return;
-      for (const map of [pictures, masks, dropMasks, openCrops]) {
+      for (const map of [pictures, masks, dropMasks]) {
         for (const [f, bitmap] of map) {
           if (held(f)) continue;
           bitmap.close();
@@ -399,7 +401,6 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       const want = (f: number) => {
         if (f < 0 || f >= world.frames) return;
         ask("f", f, pictures);
-        if (chestNow.current.open && hasOpen(f)) ask("o", f, openCrops);
         if (needsMask(f)) ask("w", f, masks);
         if (needsDrops(f)) ask("d", f, dropMasks);
       };
@@ -539,7 +540,10 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         const key = close < 0 && !guidedNow.current ? nearest(wanted, (f) => keys.has(f), world.frames) : -1;
         const far = close < 0 && key < 0 && !guidedNow.current ? nearest(wanted, ready, world.frames) : -1;
         if (close >= 0 || far >= 0) compose(context, close >= 0 ? close : far, progress);
-        else if (key >= 0) context.drawImage(keys.get(key)!, 0, 0, canvas.width, canvas.height);
+        else if (key >= 0) {
+          context.drawImage(keys.get(key)!, 0, 0, canvas.width, canvas.height);
+          chestOver(context, key);
+        }
         else if (guidedNow.current) drew = false;
       }
       if (drew) painted.current();
@@ -640,10 +644,22 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     playChest.current = (quiet: boolean) => {
       if (!chestData) return;
       const now = chestNow.current;
+      /* Every open crop (a few, small) is fetched at once and kept: the chest
+         must never be shut in a frame the scroll passes through. */
+      const loadOpen = () =>
+        Promise.all(
+          chestData.open.map(([, , w], i) => {
+            const f = chestData.from + i;
+            return w > 0 && !openCrops.has(f) ? fetchBitmap(chestUrl("o", f, 3), gone.signal).then((bitmap) => void openCrops.set(f, bitmap)).catch(() => undefined) : undefined;
+          }),
+        );
       const show = () => {
-        now.open = true;
-        ensure();
-        wake();
+        void loadOpen().then(() => {
+          if (gone.signal.aborted) return;
+          now.open = true;
+          redraw.current();
+          wake();
+        });
       };
       if (quiet || still) {
         show();
