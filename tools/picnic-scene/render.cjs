@@ -187,7 +187,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu, executablePath: process.env.CHROME });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -237,6 +237,47 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ frames: FRAMES, ways, keys }));
       }
       console.log(`stops ${colors ? course + " " : ""}${dropsOnly ? "drops " : ""}${frame}: done`);
+    }
+  } else if (mode === "chest") {
+    /* The gold chest opening (2026-11-11), for `render.cjs chest <course>` (after
+       its `stops`): `out/chest-<course>-<frame>/` — `c00…` the play (shake, the
+       lid swinging open, the light coming up) from the very frame the page
+       rests on at the chest, and `o<frame>` every frame of the scroll that
+       shows the chest, with it open. Then `crop.py chest <course>`. */
+    const course = specs[0] ?? "shapes";
+    const PLAY = 46;
+    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90 }[course] ?? 90;
+    const module = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather" }[course];
+    const source = fs.readFileSync(path.join(__dirname, `../../src/data/${module}-stops.ts`), "utf8");
+    for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
+      /* Where the page stands at the chest: its focus, the last stop's. */
+      const block = source.slice(source.indexOf(`${frame}: {`));
+      const focus = JSON.parse(block.match(/focus: (\[[^\]]*\])/)[1]);
+      const rest = Math.round(focus[focus.length - 1] * (FRAMES - 1));
+      const out = path.join(__dirname, "out", `chest-${course}-${frame}`);
+      fs.rmSync(out, { recursive: true, force: true });
+      fs.mkdirSync(out, { recursive: true });
+      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops${course !== "shapes" ? `&course=${course}` : ""}`);
+      await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+      if (stopPictures(course).length) await page.evaluate((urls) => window.garden.setPictures(urls), stopPictures(course));
+      const t = rest / (FRAMES - 1);
+      fs.writeFileSync(path.join(out, "shut.jpg"), Buffer.from((await page.evaluate((t) => window.garden.frameAt(t), t)).split(",")[1], "base64"));
+      for (let k = 0; k < PLAY; k++) {
+        const url = await page.evaluate(([t, p]) => window.garden.chestAt(t, p), [t, k / (PLAY - 1)]);
+        fs.writeFileSync(path.join(out, `c${String(k).padStart(2, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+      }
+      const open = [];
+      for (let f = 0; f < FRAMES; f++) {
+        const tf = f / (FRAMES - 1);
+        const boxes = await page.evaluate((tf) => window.garden.boxes(tf), tf);
+        const [, y, , h] = boxes[boxes.length - 1];
+        if (y >= 100 || y + h <= 0) continue;
+        open.push(f);
+        const url = await page.evaluate((tf) => window.garden.chestAt(tf, 1), tf);
+        fs.writeFileSync(path.join(out, `o${String(f).padStart(3, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+      }
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ rest, play: PLAY, open }));
+      console.log(`chest ${course} ${frame}: rest ${rest}, ${open.length} open frames`);
     }
   } else if (mode === "thing") {
     const out = path.join(__dirname, "out", "things");
