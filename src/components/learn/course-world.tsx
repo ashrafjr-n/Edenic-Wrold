@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Lock, Play } from "lucide-react";
 import { ChestOpen } from "@/components/learn/chest-open";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
-import { peekChest, takeChest } from "@/lib/chest-run";
+import { chestSeen, peekChest, takeChest } from "@/lib/chest-run";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import { usePageTransition } from "@/store/page-transition";
@@ -241,8 +241,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const [shown, setShown] = useState(false);
   /* The gold chest: the stop after the last lesson; opening, once the camera
      has come to it after the last lesson's Finish (`chestAsked`). */
-  const chestRef = useRef<HTMLSpanElement>(null);
-  const [opening, setOpening] = useState(false);
+  const chestRef = useRef<HTMLButtonElement>(null);
+  /* How many times it has been opened this visit (0 = closed); a tap on it opens it again. */
+  const [plays, setPlays] = useState(0);
+  const opening = plays > 0;
+  const open = () => {
+    setPlays((count) => count + 1);
+    chestSeen.mark(`${characterId}.${lessonId}`);
+  };
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
 
   /* A way is pink once the lesson before it is done. */
@@ -746,7 +752,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       else {
         turning.current = null;
         /* At the chest: a beat to look at it, then it opens. */
-        if (chestAsked) chest = window.setTimeout(() => setOpening(true), still ? 0 : CHEST_PAUSE_MS);
+        if (chestAsked) chest = window.setTimeout(open, still ? 0 : CHEST_PAUSE_MS);
       }
     };
     raf = requestAnimationFrame(step);
@@ -763,11 +769,19 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [walk, chestAsked, data]);
 
+  /* Every lesson done and the chest never opened here: it opens by itself once the camera is at it. */
+  useEffect(() => {
+    if (!hydrated || nextIndex >= 0 || chestAsked || chestSeen.has(`${characterId}.${lessonId}`)) return;
+    const timer = window.setTimeout(open, 1400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `open` only reads what is here.
+  }, [hydrated, nextIndex, chestAsked, characterId, lessonId]);
+
   /* The chest stays open until a finger or wheel moves the camera (its copy is
      of the frame it opened on). */
   useEffect(() => {
     if (!opening) return;
-    const close = () => setOpening(false);
+    const close = () => setPlays(0);
     window.addEventListener("wheel", close, { passive: true, once: true });
     window.addEventListener("touchstart", close, { passive: true, once: true });
     return () => {
@@ -862,17 +876,20 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
               </Link>
             );
           })}
-          {/* The gold chest, the nearest stop: nothing to tap yet (a star, later). */}
-          <span
+          {/* The gold chest, the nearest stop: a tap shakes it and opens it (a star comes out of it, later). */}
+          <button
+            type="button"
             ref={(element) => {
               chestRef.current = element;
               stopRefs.current[ways] = element;
             }}
+            aria-label={dict.openChest}
+            onClick={open}
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
-            {opening && <ChestOpen stop={chestRef} canvas={canvasRef} wide={wide} />}
-          </span>
+            {opening && <ChestOpen key={plays} stop={chestRef} canvas={canvasRef} wide={wide} />}
+          </button>
         </div>
       </div>
 
