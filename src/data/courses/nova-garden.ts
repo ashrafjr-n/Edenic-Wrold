@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { Face, GardenThing, LessonDef } from "@/types/course";
+import type { GardenThing, LessonDef } from "@/types/course";
 import { MY_GARDEN } from "@/data/my-garden";
 import flower from "../../../public/assets/learn/nova/garden/things/garden-flower.png";
 import tree from "../../../public/assets/learn/nova/garden/things/garden-tree.png";

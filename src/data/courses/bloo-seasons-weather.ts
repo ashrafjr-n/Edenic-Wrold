@@ -11,22 +11,21 @@ import windy from "../../../public/assets/learn/bloo/weather/scenes/windy.png";
 import snowy from "../../../public/assets/learn/bloo/weather/scenes/snowy.png";
 
 /** Each season: its weather (the user's merge, 2026-11-08: summer → sunny,
-    and so on), its picture (its island) and its clay color
-    (the review's box). In teaching order. */
-const SEASONS: Record<Season, { weather: Weather; picture: StaticImageData; box: ColorId }> = {
-  spring: { weather: "rainy", picture: spring, box: "green" },
-  summer: { weather: "sunny", picture: summer, box: "yellow" },
-  fall: { weather: "windy", picture: fall, box: "orange" },
-  winter: { weather: "snowy", picture: winter, box: "blue" },
+    and so on), and its picture (its island). In teaching order. */
+const SEASONS: Record<Season, { weather: Weather; picture: StaticImageData }> = {
+  spring: { weather: "rainy", picture: spring },
+  summer: { weather: "sunny", picture: summer },
+  fall: { weather: "windy", picture: fall },
+  winter: { weather: "snowy", picture: winter },
 };
 const SEASON_ORDER = Object.keys(SEASONS) as Season[];
 
-/** Each weather: its picture (Bloo's hill under it) and its review box's color. */
-const WEATHERS: Record<Weather, { picture: StaticImageData; box: ColorId }> = {
-  sunny: { picture: sunny, box: "yellow" },
-  rainy: { picture: rainy, box: "blue" },
-  windy: { picture: windy, box: "green" },
-  snowy: { picture: snowy, box: "purple" },
+/** Each weather: its picture (Bloo's hill under it). */
+const WEATHERS: Record<Weather, { picture: StaticImageData }> = {
+  sunny: { picture: sunny },
+  rainy: { picture: rainy },
+  windy: { picture: windy },
+  snowy: { picture: snowy },
 };
 
 const REELS = "/assets/learn/bloo/seasons-weather/reels";

@@ -29,12 +29,6 @@ const FOODS: Veg[] = [
   { word: "pepper", things: "peppers", picture: pepper },
 ];
 
-const food = (word: string): Veg => {
-  const found = FOODS.find((f) => f.word === word);
-  if (!found) throw new Error(`No ${word} at the market`);
-  return found;
-};
-
 /** A vegetable as Basket Time's demo carries it: its word and picture. */
 const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
 
