@@ -89,6 +89,8 @@ interface LessonPlayerProps {
   /** This lesson's and the next lesson's titles (none after the last). */
   title: string;
   nextTitle?: string;
+  /** The next lesson is the review (the chest): Next goes back to the course page, where the chest opens. */
+  nextIsReview?: boolean;
   /** The next lesson teaches one shape — its button says "Next shape". */
   nextIsShape?: boolean;
   /** Art behind the reel while it loads. */
@@ -126,6 +128,7 @@ export function LessonPlayer({
   courseName,
   title,
   nextTitle,
+  nextIsReview,
   nextIsShape = false,
   image,
   tone,
@@ -371,7 +374,7 @@ export function LessonPlayer({
        goes. */
     const next: DoneNext | undefined = nextTitle
       ? {
-          href: `${coursePath}/${n + 1}`,
+          href: nextIsReview ? coursePath : `${coursePath}/${n + 1}`,
           label: format(dict.lessonPicker.lessonN, { n: n + 1 }),
           word: nextTitle,
           art: covers[n] ?? [],
