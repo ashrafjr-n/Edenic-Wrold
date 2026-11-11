@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 
 /** The lid of the chest, as a share of the chest stop's box (measured on the
     frame the camera ends on, the same in every course's world): the dome down
-    down to the top of the lock plate. */
+    to the top of the lock plate. */
 const LID = {
   portrait: { x: 0.285, y: 0.105, w: 0.44, h: 0.225 },
   landscape: { x: 0.275, y: 0.09, w: 0.46, h: 0.235 },
