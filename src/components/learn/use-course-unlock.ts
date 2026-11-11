@@ -51,7 +51,9 @@ export function useCourseUnlock({ characterId, lessonId, count, rootRef, nextRef
     const seen = readSeen();
     const key = `${characterId}.${lessonId}`;
     const timer = setTimeout(() => {
-      if (seen[key] !== undefined && seen[key] < nextIndex) setUnlocking(nextIndex);
+      /* The chest opens even for a child who never saw this page at the lesson before it. */
+      const lastSeen = seen[key] ?? (nextIndex === count - 1 ? -1 : undefined);
+      if (lastSeen !== undefined && lastSeen < nextIndex) setUnlocking(nextIndex);
       try {
         localStorage.setItem(SEEN_KEY, JSON.stringify({ ...seen, [key]: nextIndex }));
       } catch {
@@ -63,7 +65,7 @@ export function useCourseUnlock({ characterId, lessonId, count, rootRef, nextRef
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [hydrated, allDone, nextIndex, characterId, lessonId, scroll, rootRef, nextRef]);
+  }, [hydrated, allDone, nextIndex, count, characterId, lessonId, scroll, rootRef, nextRef]);
 
   return { stars, nextIndex, unlocking };
 }
