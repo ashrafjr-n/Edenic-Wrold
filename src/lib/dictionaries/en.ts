@@ -93,32 +93,32 @@ export const en = {
     shapes: {
       name: "Shapes",
       description: "Circles, squares and triangles",
-      items: ["Circle", "Square", "Triangle", "Rectangle", "Shape review"],
+      items: ["Circle", "Square", "Triangle", "Rectangle"],
     },
     colors: {
       name: "Colors",
       description: "Red, blue, yellow and more",
-      items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White", "Color review"],
+      items: ["Red", "Blue", "Yellow", "Green", "Orange", "Purple", "Pink", "Brown", "Black", "White"],
     },
     fruits: {
       name: "Vegetables",
       description: "Yummy things to eat and how to spell them",
-      items: ["Carrot", "Broccoli", "Potato", "Tomato", "Pepper", "Market review"],
+      items: ["Carrot", "Broccoli", "Potato", "Tomato", "Pepper"],
     },
     garden: {
       name: "My Garden",
       description: "Flowers, trees, nests and more in the garden",
-      items: ["Flower", "Tree", "Leaf", "Grass", "Nest", "Bench", "Garden review"],
+      items: ["Flower", "Tree", "Leaf", "Grass", "Nest", "Bench"],
     },
     animals: {
       name: "Animals",
       description: "Cat, dog, fish, elephant and more",
-      items: ["Cat", "Dog", "Fish", "Elephant", "Mouse", "Bird", "Parrot", "Turtle", "Gecko", "Animals review"],
+      items: ["Cat", "Dog", "Fish", "Elephant", "Mouse", "Bird", "Parrot", "Turtle", "Gecko"],
     },
     weather: {
       name: "Seasons and Weather",
       description: "Spring, summer, fall, winter — and their weather",
-      items: ["Spring · Rainy", "Summer · Sunny", "Fall · Windy", "Winter · Snowy", "Seasons and weather review"],
+      items: ["Spring · Rainy", "Summer · Sunny", "Fall · Windy", "Winter · Snowy"],
     },
   },
   characterHub: {
