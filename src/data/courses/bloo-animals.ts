@@ -1,6 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { Animal, ColorId, Food, LessonDef, SortBin, Thing } from "@/types/course";
-import { COLORS } from "@/data/colors";
+import type { Animal, ColorId, Food, LessonDef } from "@/types/course";
 import { ANIMALS_FARM } from "@/data/animals-farm";
 import cat from "../../../public/assets/learn/bloo/animals/things/cat-play.png";
 import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-play-grey.png";
