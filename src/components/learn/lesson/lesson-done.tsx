@@ -27,6 +27,8 @@ export interface DoneNext {
   go: string;
   /** "Start lesson 2: Square", for a screen reader. */
   aria: string;
+  /** Run when it is pressed. */
+  onGo?: () => void;
 }
 
 interface LessonDoneProps {
@@ -154,7 +156,7 @@ export function LessonDone({ title, path, words, faces, drawing, found, accent, 
         </div>
 
         {next && (
-          <Link href={next.href} className="board-next done-next lesson-onward" aria-label={next.aria}>
+          <Link href={next.href} onClick={next.onGo} className="board-next done-next lesson-onward" aria-label={next.aria}>
             <span className={`board-cell-art ${next.art.length > 1 ? "board-cell-art--row" : ""}`}>
               {next.art.map((picture) => (
                 <span key={picture.src} className="board-magnet">

@@ -16,6 +16,7 @@ import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
 import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
+import { askChest } from "@/lib/chest-run";
 import { Button3D } from "@/components/ui/button-3d";
 import { TaskChip, TaskPanel } from "./task-chip";
 import type { StaticImageData } from "next/image";
@@ -380,6 +381,7 @@ export function LessonPlayer({
           art: covers[n] ?? [],
           go: nextIsShape ? lines.nextShape : lines.nextLesson,
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
+          onGo: nextIsReview ? () => askChest(`${characterId}.${courseId}`) : undefined,
         }
       : undefined;
     if ((world && arrived) || win) {
@@ -404,6 +406,7 @@ export function LessonPlayer({
              with a world of stops too: its stones and tiles are seen by going
              back with the back button. */
           href={next ? next.href : coursePath}
+          onPress={next?.onGo}
           dir={dir}
           className="lesson-onward"
         />
