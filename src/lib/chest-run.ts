@@ -16,3 +16,25 @@ export const takeChest = (course: string) => {
 
 /** The same, without using it up (a state initialiser can run twice). */
 export const peekChest = (course: string) => asked === course;
+
+/** The courses whose chest has opened on this device, so it opens by itself
+    once and after that only when tapped. */
+const SEEN = "edenic-chest-opened";
+const read = (): string[] => {
+  try {
+    return JSON.parse(localStorage.getItem(SEEN) ?? "[]");
+  } catch {
+    return [];
+  }
+};
+
+export const chestSeen = {
+  has: (course: string) => read().includes(course),
+  mark: (course: string) => {
+    try {
+      localStorage.setItem(SEEN, JSON.stringify([...new Set([...read(), course])]));
+    } catch {
+      /* Storage off: it just opens by itself again next visit. */
+    }
+  },
+};
