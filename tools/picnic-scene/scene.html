@@ -7576,21 +7576,74 @@ if (THING) {
       chest.add(at(rbox(W, H, D, gold, 0.26), 0, H / 2, 0));
       chest.add(at(rbox(W - 0.76, H - 0.5, 0.1, panel, 0.05), 0, H / 2 - 0.05, D / 2 + 0.01));
       for (const sx of [-1, 1]) chest.add(at(rbox(0.1, H - 0.5, D - 0.7, panel, 0.04), sx * (W / 2 + 0.01), H / 2 - 0.05, 0));
-      const lidM = mesh(new THREE.CylinderGeometry(R, R, W - 0.72, 64), panel);
-      lidM.rotation.z = Math.PI / 2;
-      lidM.position.y = H;
-      chest.add(lidM);
+      /* The round lid (2026-11-11: it opens): its upper halves hinge at the
+         back (`lid`), the lower halves stay in the body — shut, the two
+         together are the whole round lid as before, pixel for pixel. */
+      const lid = new THREE.Group();
+      lid.position.set(0, H, -R);
+      chest.add(lid);
+      const half = (up, make) => {
+        const m = make(up);
+        (up ? lid : chest).add(m);
+        if (up) m.position.z += R, m.position.y -= H;
+        return m;
+      };
+      /* A cylinder along x, its upper (θ 0..π) or lower half. */
+      const tube = (r, len, material) => (up) => {
+        const m = mesh(new THREE.CylinderGeometry(r, r, len, 64, 1, false, up ? 0 : Math.PI, Math.PI), material);
+        m.rotation.z = Math.PI / 2;
+        m.position.y = H;
+        return m;
+      };
+      for (const up of [true, false]) half(up, tube(R, W - 0.72, panel));
       for (const sx of [-1, 1]) {
-        const end = mesh(new THREE.CylinderGeometry(R + 0.05, R + 0.05, 0.42, 64), gold);
-        end.rotation.z = Math.PI / 2;
-        end.position.set(sx * (W / 2 - 0.2), H, 0);
-        chest.add(end);
-        const cap = mesh(new THREE.SphereGeometry(R + 0.05, 48, 24), gold);
-        cap.scale.x = 0.14;
-        cap.position.set(sx * (W / 2), H, 0);
-        chest.add(cap);
+        for (const up of [true, false]) {
+          half(up, (u) => {
+            const m = tube(R + 0.05, 0.42, gold)(u);
+            m.position.x = sx * (W / 2 - 0.2);
+            return m;
+          });
+          half(up, (u) => {
+            const m = mesh(new THREE.SphereGeometry(R + 0.05, 48, 12, 0, Math.PI * 2, u ? 0 : Math.PI / 2, Math.PI / 2), gold);
+            m.scale.x = 0.14;
+            m.position.set(sx * (W / 2), H, 0);
+            return m;
+          });
+        }
       }
-      chest.add(at(rbox(W + 0.06, 0.34, D + 0.08, gold, 0.14), 0, H - 0.02, 0));
+      /* The lid's underside, seen only open: a warm inside. */
+      lid.add(at(rbox(W - 0.1, 0.08, 2 * R + 0.06, gold, 0.04), 0, 0.04, R));
+      lid.add(at(rbox(W - 0.8, 0.06, 2 * R - 0.5, soft(0xe8913a, { roughness: 0.8 }), 0.03), 0, -0.01, R));
+      /* Inside the chest: a bed of white light under the lid, a warm light
+         that lights the lid's underside, and a soft halo over the opening —
+         all off while it is shut. */
+      const glowM = new THREE.MeshBasicMaterial({ color: 0xc9762a, fog: false });
+      const bed = at(rbox(W - 0.3, 0.04, D - 0.3, glowM, 0.02), 0, H + 0.0, 0);
+      bed.castShadow = bed.receiveShadow = false;
+      chest.add(bed);
+      const inner = new THREE.PointLight(0xfff1d0, 0, 9, 1.6);
+      inner.position.set(0, H + 0.9, 0.2);
+      chest.add(inner);
+      const haloCanvas = document.createElement("canvas");
+      haloCanvas.width = haloCanvas.height = 128;
+      const hc = haloCanvas.getContext("2d");
+      const grad = hc.createRadialGradient(64, 64, 0, 64, 64, 64);
+      grad.addColorStop(0, "rgba(255,255,250,1)");
+      grad.addColorStop(0.35, "rgba(255,248,225,0.55)");
+      grad.addColorStop(1, "rgba(255,240,200,0)");
+      hc.fillStyle = grad;
+      hc.fillRect(0, 0, 128, 128);
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(haloCanvas), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, transparent: true, opacity: 0 }));
+      halo.position.set(0, H + 0.75, 0.3);
+      halo.scale.set(4.2, 2.6, 1);
+      chest.add(halo);
+      stopsApi.chest = { chest, lid, glowM, inner, halo, base: { ry: 0.1 } };
+      /* The rim round the top: four walls, hollow (open, the inside shows). */
+      {
+        const [rw, rd, th] = [W + 0.06, D + 0.08, 0.2];
+        for (const sz of [-1, 1]) chest.add(at(rbox(rw, 0.34, th, gold, 0.1), 0, H - 0.02, sz * (rd / 2 - th / 2)));
+        for (const sx of [-1, 1]) chest.add(at(rbox(th, 0.34, rd, gold, 0.1), sx * (rw / 2 - th / 2), H - 0.02, 0));
+      }
       const plate = rbox(1, 1.2, 0.3, gold, 0.2);
       chest.add(at(plate, 0, H - 0.08, D / 2 + 0.12));
       const hole = soft(0xa96a22);
@@ -8262,10 +8315,42 @@ if (THING) {
       ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, first + 21, 0, 2.6, first - 2]]
       : [[0, 8.4 + UP, 20.5 + BACK, 0, 1.8, 3], [0, 9.6 + UP, first + 17 + BACK, 0, 2.8, first - 2]];
     const camAt = (t) => lerp(FROM, TO, t);
+    /* The chest opening (2026-11-11): `p` 0..1 over the play — a cartoon
+       wobble (the lid rattling), then the lid swings open on its hinge with a
+       little overshoot as the light inside comes up; 1 = open and lit. */
+    const chestState = (p) => {
+      const c = stopsApi.chest;
+      if (!c) return;
+      const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+      const shake = k(0, 0.4);
+      const fade = shake < 1 ? Math.sin(Math.PI * shake) : 0;
+      const wob = Math.sin(shake * Math.PI * 6) * 0.07 * fade;
+      c.chest.rotation.z = wob;
+      c.chest.rotation.y = c.base.ry + wob * 0.4;
+      c.chest.scale.set(1 + 0.03 * fade * Math.cos(shake * Math.PI * 12), 1 - 0.03 * fade * Math.cos(shake * Math.PI * 12), 1);
+      const rattle = Math.abs(Math.sin(shake * Math.PI * 9)) * 0.1 * fade;
+      const o = k(0.4, 0.82);
+      /* Ease out with a small overshoot, then settle (back ease). */
+      const back = (x) => 1 + 2.2 * (x - 1) ** 3 + 1.2 * (x - 1) ** 2;
+      c.lid.rotation.x = -(rattle + 1.95 * (o > 0 ? back(o) : 0));
+      const g = k(0.44, 0.9);
+      const glow = g * g * (3 - 2 * g);
+      c.glowM.color.setHex(0xc9762a).lerp(new THREE.Color(0xfffcf2), glow);
+      c.inner.intensity = 9 * glow;
+      c.halo.material.opacity = 0.45 * glow;
+    };
     window.garden = {
       frameAt(t) {
         aim(camAt(t));
         return render("image/jpeg", 0.95);
+      },
+      /* The chest at `p` of its opening, from the camera at `t`. */
+      chestAt(t, p) {
+        chestState(p);
+        aim(camAt(t));
+        const url = render("image/jpeg", 0.95);
+        chestState(0);
+        return url;
       },
       /* Way `k`'s stones at `t`: white where they are the nearest thing, black
          elsewhere. The page multiplies pink through it, so a white stone
