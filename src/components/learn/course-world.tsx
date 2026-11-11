@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
-import { ChestOpen } from "@/components/learn/chest-open";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { chestSeen, peekChest, takeChest } from "@/lib/chest-run";
 import { format } from "@/lib/format-dict";
@@ -12,7 +11,7 @@ import { useWide } from "@/lib/use-wide";
 import { usePageTransition } from "@/store/page-transition";
 import { useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
-import type { CourseStops, CourseStopsFrame, SceneRect } from "@/types/course";
+import type { ChestPlayFrame, CourseStops, CourseStopsFrame, SceneRect } from "@/types/course";
 import { place } from "./lesson/find-shapes";
 import { worldCover } from "./lesson/lesson-world";
 
@@ -68,6 +67,8 @@ const CAMERA_RUN_MS = 1900;
 const STONES_LAG_MS = 350;
 /** The camera has come to the chest: the beat before it opens, ms. */
 const CHEST_PAUSE_MS = 450;
+/** One frame of the chest's opening (rendered at 25 a second). */
+const CHEST_FRAME_MS = 40;
 
 /** Each stop's box at `progress`, between the render's key positions. */
 function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: number): SceneRect {
@@ -241,12 +242,20 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const [shown, setShown] = useState(false);
   /* The gold chest: the stop after the last lesson; opening, once the camera
      has come to it after the last lesson's Finish (`chestAsked`). */
-  const chestRef = useRef<HTMLButtonElement>(null);
+  const chestData: ChestPlayFrame | undefined = world.chest?.[wide ? "landscape" : "portrait"];
+  /* What the engine paints at the chest: open (its open frames over the
+     scroll's), and the play's start (-2 asked, waiting for the camera to rest
+     at the chest; -1 none). Kept outside the engine so a rebuilt engine (a
+     turned screen) keeps it open. */
+  const chestNow = useRef({ open: false, playStart: -1 });
+  const playChest = useRef<(still: boolean) => void>(() => undefined);
   /* closed → `play` (shakes, opens; a tap plays it again, `n` re-keys it) or
      `still` (a later visit: simply open). Once open it stays open. */
-  const [chest, setChest] = useState<{ mode: "closed" | "play" | "still"; n: number }>({ mode: "closed", n: 0 });
-  const open = () => {
-    setChest(({ n }) => ({ mode: "play", n: n + 1 }));
+  /* It opens once and stays open: a shake and the lid swinging open the first
+     time, simply open (`still`) on a later visit. */
+  const open = (still = false) => {
+    if (chestNow.current.open) return;
+    playChest.current(still);
     chestSeen.mark(`${characterId}.${lessonId}`);
   };
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
@@ -299,6 +308,11 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     };
 
     const pictures = new Map<number, ImageBitmap>();
+    /* The chest open, per scroll frame, and its play (null: nothing changed). */
+    const openCrops = new Map<number, ImageBitmap>();
+    let playCrops: (ImageBitmap | null)[] = [];
+    const chestUrl = (name: string, k: number, pad: number) => `${data.path}${name}${String(k).padStart(pad, "0")}.webp?v=${chestData?.version}`;
+    const hasOpen = (f: number) => chestData !== undefined && f >= chestData.from && f < chestData.from + chestData.open.length && chestData.open[f - chestData.from][2] > 0;
     const masks = new Map<number, ImageBitmap>();
     const dropMasks = new Map<number, ImageBitmap>();
     const keys = new Map<number, HTMLCanvasElement>();
@@ -352,7 +366,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       if (map.has(f) || loading.has(name + f) || loading.size >= LOADING_AT_ONCE) return;
       const stop = new AbortController();
       loading.set(name + f, { frame: f, stop });
-      fetchBitmap(fileUrl(data, name, f, name === "f" ? "jpg" : "png"), stop.signal)
+      fetchBitmap(name === "o" ? chestUrl("o", f, 3) : fileUrl(data, name, f, name === "f" ? "jpg" : "png"), stop.signal)
         .then((bitmap) => {
           if (gone.signal.aborted) bitmap.close();
           else {
@@ -374,7 +388,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
        for what it is near, nearest first. */
     const ensure = () => {
       if (standing < 0) return;
-      for (const map of [pictures, masks, dropMasks]) {
+      for (const map of [pictures, masks, dropMasks, openCrops]) {
         for (const [f, bitmap] of map) {
           if (held(f)) continue;
           bitmap.close();
@@ -385,6 +399,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       const want = (f: number) => {
         if (f < 0 || f >= world.frames) return;
         ask("f", f, pictures);
+        if (chestNow.current.open && hasOpen(f)) ask("o", f, openCrops);
         if (needsMask(f)) ask("w", f, masks);
         if (needsDrops(f)) ask("d", f, dropMasks);
       };
@@ -436,7 +451,35 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       }, KEYS_AFTER_MS);
     };
 
+    /* The chest over frame `f`, after the stones are tinted (a lid in front of
+       a stone stays gold): its play at the frame the page rests on, else open. */
+    const chestOver = (target: CanvasRenderingContext2D, f: number) => {
+      const now = chestNow.current;
+      if (!chestData || (!now.open && now.playStart === -1)) return;
+      const lay = (bitmap: ImageBitmap | null | undefined, [x, y, w, h]: SceneRect) => {
+        if (bitmap && w > 0) target.drawImage(bitmap, (x * canvas.width) / 100, (y * canvas.height) / 100, (w * canvas.width) / 100, (h * canvas.height) / 100);
+      };
+      if (now.playStart !== -1) {
+        /* Played from the frame it rests on; anywhere else it waits, shut. */
+        if (f !== chestData.rest) return;
+        if (now.playStart === -2) now.playStart = performance.now();
+        const last = chestData.play.length - 1;
+        const k = Math.min(last, Math.floor((performance.now() - now.playStart) / CHEST_FRAME_MS));
+        /* Held on its last frame until the open one is here, then it hands over. */
+        if (k < last || !openCrops.has(f)) {
+          lay(playCrops[k], chestData.play[k]);
+          return;
+        }
+        now.playStart = -1;
+      }
+      if (hasOpen(f)) lay(openCrops.get(f), chestData.open[f - chestData.from]);
+    };
+
     const compose = (target: CanvasRenderingContext2D, f: number, progress: number) => {
+      composeFrame(target, f, progress);
+      chestOver(target, f);
+    };
+    const composeFrame = (target: CanvasRenderingContext2D, f: number, progress: number) => {
       target.drawImage(pictures.get(f)!, 0, 0);
       const drops = dropMasks.get(f);
       if (drops && guidedNow.current) {
@@ -557,7 +600,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       jump.current = false;
       if (Math.abs(target - current) < 0.0004) current = target;
       paint(current);
-      if (current !== target || !resting) raf = requestAnimationFrame(tick);
+      if (current !== target || !resting || chestNow.current.playStart !== -1) raf = requestAnimationFrame(tick);
     };
     function wake() {
       if (!raf) raf = requestAnimationFrame(tick);
@@ -592,6 +635,27 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       current = -1;
       wake();
     };
+    /* Opens the chest: the play's frames first (small), then it plays from the
+       next painted frame at rest; `still` (or less motion), simply open. */
+    playChest.current = (quiet: boolean) => {
+      if (!chestData) return;
+      const now = chestNow.current;
+      const show = () => {
+        now.open = true;
+        ensure();
+        wake();
+      };
+      if (quiet || still) {
+        show();
+        return;
+      }
+      void Promise.all(chestData.play.map(([, , w], k) => (w > 0 ? fetchBitmap(chestUrl("c", k, 2), gone.signal).catch(() => null) : Promise.resolve(null)))).then((crops) => {
+        if (gone.signal.aborted) return crops.forEach((crop) => crop?.close());
+        playCrops = crops;
+        now.playStart = -2;
+        show();
+      });
+    };
     redraw.current = () => {
       if (current < 0) return;
       ensure();
@@ -606,13 +670,14 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       for (const { stop } of loading.values()) stop.abort();
-      for (const map of [pictures, masks, dropMasks]) {
+      playCrops.forEach((crop) => crop?.close());
+      for (const map of [pictures, masks, dropMasks, openCrops]) {
         for (const bitmap of map.values()) bitmap.close();
         map.clear();
       }
       redraw.current = rekey.current = kick.current = resync.current = () => undefined;
     };
-  }, [data, world.frames, ways, tint]);
+  }, [data, world.frames, ways, tint, chestData]);
 
   /* Only mounted while it is (a double mount in development mounts twice). */
   useEffect(() => {
@@ -752,7 +817,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       else {
         turning.current = null;
         /* At the chest: a beat to look at it, then it opens. */
-        if (chestAsked) chestTimer = window.setTimeout(open, still ? 0 : CHEST_PAUSE_MS);
+        if (chestAsked) chestTimer = window.setTimeout(() => open(), still ? 0 : CHEST_PAUSE_MS);
       }
     };
     raf = requestAnimationFrame(step);
@@ -774,7 +839,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   useEffect(() => {
     if (!hydrated || nextIndex >= 0 || chestAsked) return;
     const first = !chestSeen.has(`${characterId}.${lessonId}`);
-    const timer = window.setTimeout(() => (first ? open() : setChest({ mode: "still", n: 0 })), first ? 1400 : 900);
+    const timer = window.setTimeout(() => open(!first), first ? 1400 : 300);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `open` only reads what is here.
   }, [hydrated, nextIndex, chestAsked, characterId, lessonId]);
@@ -869,15 +934,13 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
           <button
             type="button"
             ref={(element) => {
-              chestRef.current = element;
               stopRefs.current[ways] = element;
             }}
             aria-label={dict.openChest}
-            onClick={open}
+            onClick={() => open()}
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
-            {chest.mode !== "closed" && <ChestOpen key={chest.n} mode={chest.mode} stop={chestRef} canvas={canvasRef} wide={wide} />}
           </button>
         </div>
       </div>
