@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Lock, Play } from "lucide-react";
 import { CHEST_OPEN_MS, ChestOpen } from "@/components/learn/chest-open";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
+import { peekChest, takeChest } from "@/lib/chest-run";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import { usePageTransition } from "@/store/page-transition";
@@ -241,6 +242,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   const [shown, setShown] = useState(false);
   /* The chest opening, once the camera has come to it after the lesson before. */
   const [opening, setOpening] = useState(false);
+  /* Came by the Next of the lesson before the chest: walk to it and open it, whatever was seen before. */
+  const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
   const router = useRouter();
   const reviewIndex = titles.length - 1;
 
@@ -680,6 +683,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     if (!hydrated || opened.current) return;
     opened.current = true;
     returning.current = leftForLesson === lessonId;
+    takeChest(`${characterId}.${lessonId}`);
     leftForLesson = null;
     if (world.guided && nextIndex >= 0) {
       /* Guided: at the child's lesson, nothing to scroll; back from a lesson
@@ -704,16 +708,19 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` and `playUnlock` only read what is here.
   }, [hydrated, nextIndex, data, lessonId]);
 
+  /* The lesson whose way turns pink and the camera goes to: the one just opened, or the chest. */
+  const walk = chestAsked ? reviewIndex : unlocking;
+
   /* Scrolling: back from a lesson just done, stand at it, then the camera goes
      on to the next one and the way turns pink stone by stone just BEHIND it
      (the user, 2026-11-06: the camera led late, on a phone worst). Its own
      eased scroll, never the browser's smooth one — a phone's lags and cannot
      be timed against the stones. */
   useEffect(() => {
-    if (world.guided || unlocking < 1 || !(returning.current || unlocking === reviewIndex)) return;
-    const way = unlocking - 1;
+    if (world.guided || walk < 1 || !(returning.current || chestAsked)) return;
+    const way = walk - 1;
     jump.current = true;
-    const [from, to] = [scrollFor(way), scrollFor(unlocking)];
+    const [from, to] = [scrollFor(way), scrollFor(walk)];
     window.scrollTo(0, from);
     turning.current = [way, 0];
     redraw.current();
@@ -741,7 +748,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       else {
         turning.current = null;
         /* At the chest: a beat to look at it, then it opens. */
-        if (unlocking === reviewIndex) chest = window.setTimeout(() => setOpening(true), still ? 0 : CHEST_PAUSE_MS);
+        if (chestAsked) chest = window.setTimeout(() => setOpening(true), still ? 0 : CHEST_PAUSE_MS);
       }
     };
     raf = requestAnimationFrame(step);
@@ -756,7 +763,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       turning.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
-  }, [unlocking, data]);
+  }, [walk, chestAsked, data]);
 
   /* The chest open: nothing scrolls, and when the light is full the review begins. */
   useEffect(() => {
