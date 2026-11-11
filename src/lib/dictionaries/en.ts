@@ -142,6 +142,7 @@ export const en = {
     startLessonAria: "Start lesson {n}: {title}",
     ctaStart: "Start",
     ctaContinue: "Continue",
+    openChest: "Open the chest",
     /** Over the next lesson on a friend's course board. */
     lessonN: "Lesson {n}",
   },

@@ -131,6 +131,7 @@ export const ar: Dictionary = {
     startLessonAria: "ابدأ الدرس {n}: {title}",
     ctaStart: "بدء",
     ctaContinue: "تابع",
+    openChest: "افتح الصندوق",
     /** Over the next lesson on a friend's course board. */
     lessonN: "الدرس {n}",
   },
