@@ -266,15 +266,17 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         const url = await page.evaluate(([t, p]) => window.garden.chestAt(t, p), [t, k / (PLAY - 1)]);
         fs.writeFileSync(path.join(out, `c${String(k).padStart(2, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
       }
+      /* Open from the chest back to the last lesson's stop (further in, the
+         chest is under the camera); each with its shut twin (`s<frame>`), so
+         only the chest differs between them. */
       const open = [];
-      for (let f = 0; f < FRAMES; f++) {
+      const far = Math.round(focus[focus.length - 2] * (FRAMES - 1));
+      for (let f = 0; f <= far; f++) {
         const tf = f / (FRAMES - 1);
-        const boxes = await page.evaluate((tf) => window.garden.boxes(tf), tf);
-        const [, y, , h] = boxes[boxes.length - 1];
-        if (y >= 100 || y + h <= 0) continue;
         open.push(f);
-        const url = await page.evaluate((tf) => window.garden.chestAt(tf, 1), tf);
-        fs.writeFileSync(path.join(out, `o${String(f).padStart(3, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+        const name = String(f).padStart(3, "0");
+        fs.writeFileSync(path.join(out, `s${name}.jpg`), Buffer.from((await page.evaluate((tf) => window.garden.frameAt(tf), tf)).split(",")[1], "base64"));
+        fs.writeFileSync(path.join(out, `o${name}.jpg`), Buffer.from((await page.evaluate((tf) => window.garden.chestAt(tf, 1), tf)).split(",")[1], "base64"));
       }
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ rest, play: PLAY, open }));
       console.log(`chest ${course} ${frame}: rest ${rest}, ${open.length} open frames`);

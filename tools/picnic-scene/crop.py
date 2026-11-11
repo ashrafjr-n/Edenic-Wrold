@@ -307,7 +307,7 @@ if NAME == "chest":
     # (the chest, its light), each cropped to them with a soft alpha edge, as
     # WebP: the play (`c00.webp`…, against the frame the page rests on) and
     # every scroll frame that shows the chest, open (`o<frame>.webp`, against
-    # that frame shut). The page lays them over its own frame, after the
+    # its shut twin). The page lays them over its own frame, after the
     # stones are tinted — a lid in front of a stone stays gold. Then writes
     # `src/data/chest-open.ts`.
     DEST = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}
@@ -324,7 +324,7 @@ if NAME == "chest":
             return None
         x0, y0, x1, y1 = max(0, xs.min() - 2), max(0, ys.min() - 2), min(W, xs.max() + 3), min(H, ys.max() + 3)
         rgba = Image.merge("RGBA", (*im.split(), Image.fromarray(alpha)))
-        rgba.crop((x0, y0, x1, y1)).save(to, quality=86, method=6)
+        rgba.crop((x0, y0, x1, y1)).save(to, quality=86, method=3)
         return [round(v, 3) for v in (x0 / W * 100, y0 / H * 100, (x1 - x0) / W * 100, (y1 - y0) / H * 100)]
 
     entries = []
@@ -353,7 +353,7 @@ if NAME == "chest":
                 if f not in opened:
                     rects.append([0, 0, 0, 0])
                     continue
-                closed = Image.open(f"{to}/f{f:03d}.jpg").convert("RGB")
+                closed = Image.open(f"{out}/s{f:03d}.jpg").convert("RGB")
                 rects.append(changed(Image.open(f"{out}/o{f:03d}.jpg").convert("RGB"), closed, f"{to}/o{f:03d}.webp") or [0, 0, 0, 0])
                 if rects[-1][2]:
                     crc = zlib.crc32(open(f"{to}/o{f:03d}.webp", "rb").read(), crc)
