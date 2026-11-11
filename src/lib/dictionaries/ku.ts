@@ -134,6 +134,7 @@ export const ku: Dictionary = {
     lockedLessonAria: "وانا {n}: {title}، قوفلکری",
     startLessonAria: "وانا {n} دەستپێبکە: {title}",
     ctaStart: "دەستپێبکە",
+    ctaContinue: "بەردەوام بە",
     /** Over the next lesson on a friend's course board. */
     lessonN: "وانا {n}",
   },
