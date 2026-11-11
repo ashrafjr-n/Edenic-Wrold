@@ -1734,6 +1734,135 @@ bdi {
   }
 }
 
+/* The chest opening (`ChestOpen`, 2026-11-11), over the chest's stop: the lid
+   tips back, a warm light fills the chest under it, a beam and slow rays rise,
+   and the light grows over the world — about 2.2s, the review starts when it
+   ends (`CHEST_OPEN_MS`). Fixed colours: light is light in dark mode too.
+   Everything is laid in the stop's own units (`cqi` = its width), and only
+   transform and opacity move. */
+.chest-open {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.chest-inside,
+.chest-lid {
+  position: absolute;
+  border-radius: 42% 42% 6% 6% / 70% 70% 6% 6%;
+}
+
+.chest-inside {
+  background: radial-gradient(ellipse 80% 95% at 50% 100%, #fffbe0 0%, #ffd873 55%, #f2a63c 100%);
+  animation: chest-fill 0.2s ease-out 0.15s both;
+}
+
+.chest-lid {
+  transform-origin: 50% 6%;
+  animation: chest-lid 0.8s cubic-bezier(0.3, 1, 0.4, 1) 0.15s both;
+}
+
+.chest-light {
+  position: absolute;
+  height: 0;
+}
+
+.chest-beam,
+.chest-rays {
+  position: absolute;
+  left: 50%;
+  bottom: -4cqi;
+  translate: -50% 0;
+}
+
+.chest-beam {
+  width: 34cqi;
+  height: 80cqi;
+  background: linear-gradient(to top, rgb(255 246 190 / 95%), rgb(255 226 130 / 55%) 45%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+  transform-origin: 50% 100%;
+  animation: chest-beam 1.1s cubic-bezier(0.2, 0.8, 0.3, 1) 0.35s both;
+}
+
+.chest-rays {
+  width: 120cqi;
+  height: 120cqi;
+  translate: -50% 50%;
+  background: repeating-conic-gradient(rgb(255 240 170 / 55%) 0 7deg, transparent 7deg 20deg);
+  mask-image: radial-gradient(circle, #000 0, transparent 68%);
+  animation:
+    chest-rays 0.7s ease-out 0.5s both,
+    chest-spin 9s linear infinite;
+}
+
+.chest-bloom {
+  position: absolute;
+  width: 300vmax;
+  height: 300vmax;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffdf0 0, #fffdf0 55%, rgb(255 236 160 / 0%) 100%);
+  animation: chest-bloom 1s cubic-bezier(0.5, 0, 0.8, 0.5) 0.95s both;
+}
+
+@keyframes chest-fill {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes chest-lid {
+  22% {
+    transform: perspective(60em) translateY(4%) rotateX(4deg);
+  }
+  to {
+    transform: perspective(60em) translateY(-10%) rotateX(-78deg);
+  }
+}
+
+@keyframes chest-beam {
+  from {
+    opacity: 0;
+    scale: 1 0;
+  }
+}
+
+@keyframes chest-rays {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+@keyframes chest-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes chest-bloom {
+  from {
+    opacity: 0;
+    scale: 0.04;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chest-lid {
+    animation: none;
+    opacity: 0;
+  }
+
+  .chest-rays {
+    animation: chest-rays 0.7s ease-out 0.5s both;
+  }
+
+  .chest-bloom {
+    animation-name: chest-fill;
+    animation-timing-function: ease-in;
+  }
+}
+
 /* ---------------------------------------------------------------
    The trail page's back button ink.
 
