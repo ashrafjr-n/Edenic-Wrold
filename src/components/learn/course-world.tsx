@@ -503,8 +503,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         const off = box[1] + box[3] < 0 || box[1] > 100 || box[0] + box[2] < 0 || box[0] > 100;
         if (!off || !parked[i]) Object.assign(element.style, place(box));
         parked[i] = off;
-        /* The camera has gone past it. */
-        element.style.visibility = box[2] > PAST || box[1] > 100 ? "hidden" : "";
+        /* The camera has gone past it — never the chest, the nearest: it fills a phone's frame at rest (2026-11-11, it was untappable). */
+        element.style.visibility = (box[2] > PAST && i < stopRefs.current.length - 1) || box[1] > 100 ? "hidden" : "";
       });
     };
 
