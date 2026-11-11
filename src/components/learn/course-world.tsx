@@ -824,7 +824,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 {isNext && (
                   <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
-                    <span dir={dir}>{dict.ctaStart}</span>
+                    <span dir={dir}>{i === 0 ? dict.ctaStart : dict.ctaContinue}</span>
                   </span>
                 )}
               </Link>
