@@ -855,7 +855,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 className="course-stop"
                 style={place(box)}
               >
-                {isNext && (
+                {isNext && !opening && (
                   <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
                     <span dir={dir}>{i === 0 ? dict.ctaStart : dict.ctaContinue}</span>
