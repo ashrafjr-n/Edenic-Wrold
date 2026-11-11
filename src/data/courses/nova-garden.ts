@@ -22,8 +22,6 @@ const ORDER = Object.keys(THINGS) as GardenThing[];
 
 const REELS = "/assets/learn/nova/garden/reels";
 
-const face = (word: GardenThing): Face => ({ kind: "picture", src: THINGS[word].picture, word });
-
 /**
  * One garden thing, one lesson (the user, 2026-11-08), all in Nova's garden
  * (`data/my-garden.ts`, the videos' candy-pink garden): its reel → the word,
@@ -46,16 +44,4 @@ function thingLesson(word: GardenThing, n: number): LessonDef {
     `tools/reels/encode.sh`, by word. */
 export const novaGarden: LessonDef[] = [
   ...ORDER.map((word, i) => thingLesson(word, i + 1)),
-  /* The review, no reel, walking the garden: two things named by their word
-     (it must be read), then two spelled from the picture alone. */
-  {
-    cover: [flower, tree, nest, bench],
-    world: MY_GARDEN[7],
-    questions: [
-      { type: "pick", ask: { key: "whichThing", vars: { thing: "tree" } }, word: "tree", plain: true, options: (["leaf", "tree", "grass", "flower"] as const).map(face), answer: 1 },
-      { type: "pick", ask: { key: "whichThing", vars: { thing: "nest" } }, word: "nest", plain: true, options: (["nest", "bench", "leaf", "tree"] as const).map(face), answer: 0 },
-      { type: "spell", ask: { key: "spellPicture" }, word: "flower", picture: flower },
-      { type: "spell", ask: { key: "spellPicture" }, word: "leaf", picture: leaf },
-    ],
-  },
 ];

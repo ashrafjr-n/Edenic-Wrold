@@ -112,44 +112,9 @@ function animalLesson([animal, picture]: [string, StaticImageData], i: number): 
   };
 }
 
-/** The review's boxes: each animal's home, labelled with its word. */
-const HOMES: SortBin[] = ORDER.map((animal) => {
-  const { home, box } = ANIMALS[animal];
-  const { face, edge, text } = COLORS[box];
-  return { target: { group: animal }, word: animal, face: { kind: "picture", src: home, word: `${animal}'s home` }, tone: { face, edge, text } };
-});
-
-const thing = (animal: Animal, coat: "picture" | "other"): Thing => ({
-  id: `${animal}-${coat}`,
-  src: ANIMALS[animal][coat],
-  word: animal,
-  shape: null,
-  group: animal,
-});
-
 /** Bloo · Animals. Titles live in `dict.lessons.animals.items`. The reels
     are the real clips, H.264 720p (`tools/reels/encode.sh`):
     `/assets/learn/bloo/animals/reels/<animal>.mp4`. */
 export const blooAnimals: LessonDef[] = [
   ...TAUGHT.map(animalLesson),
-  /* The review, no reel: the three animals in both coats into their homes
-     (each box says whose it is), then two words spelled from the picture
-     alone — in the coat the lessons did not show. */
-  {
-    cover: ORDER.map((animal) => ANIMALS[animal].picture),
-    world: ANIMALS_FARM[TAUGHT.length + 1],
-    questions: [
-      {
-        type: "sort",
-        ask: { key: "sortAnimals" },
-        bins: HOMES,
-        items: [
-          thing("dog", "other"), thing("fish", "picture"), thing("cat", "other"),
-          thing("fish", "other"), thing("dog", "picture"), thing("cat", "picture"),
-        ],
-      },
-      { type: "spell", ask: { key: "spellPicture" }, word: "dog", picture: dogGolden },
-      { type: "spell", ask: { key: "spellPicture" }, word: "fish", picture: fishBlue },
-    ],
-  },
 ];

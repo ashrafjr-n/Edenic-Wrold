@@ -1,14 +1,13 @@
 import type { StaticImageData } from "next/image";
-import { BASKET, GARDENS } from "@/data/garden";
+import { BASKET } from "@/data/garden";
 import { KITCHEN } from "@/data/kitchen";
 import { VEG_KITCHEN } from "@/data/veg-kitchen";
-import type { Face, Food, LessonDef, Vegetable } from "@/types/course";
+import type { Food, LessonDef, Vegetable } from "@/types/course";
 import carrot from "../../../public/assets/learn/nova/fruits/things/carrot.png";
 import broccoli from "../../../public/assets/learn/nova/fruits/things/broccoli.png";
 import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
 import tomato from "../../../public/assets/learn/nova/fruits/things/tomato.png";
 import pepper from "../../../public/assets/learn/nova/fruits/things/pepper.png";
-import potMix from "../../../public/assets/learn/nova/fruits/make/pot-mix.png";
 
 /** One thing to learn: its word, its plural ("I like carrots.", "3
     carrots"), its picture — the videos' look (smooth satin clay, no
@@ -35,11 +34,6 @@ const food = (word: string): Veg => {
   if (!found) throw new Error(`No ${word} at the market`);
   return found;
 };
-
-const face = (word: string): Face => ({ kind: "picture", src: food(word).picture, word });
-
-/** A line of Nova's note: how many of a food to pick. */
-const line = (word: string, count: number) => ({ word, things: food(word).things, count });
 
 /** A vegetable as Basket Time's demo carries it: its word and picture. */
 const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
@@ -78,26 +72,4 @@ function foodLesson(veg: Veg, i: number): LessonDef {
     `/assets/learn/nova/fruits/reels/<word>.mp4`. */
 export const novaFruits: LessonDef[] = [
   ...FOODS.map(foodLesson),
-  /* The review, no reel: a vegetable soup from a recipe of words alone
-     (the fourth thing beside the pot is a vegetable too, so every word has
-     to be read), "Do you like…?" (I like / I don't like), two words spelled
-     from the picture alone, then the exam, twice: Nova's note at her pantry
-     — a crate of carrots, a crate of tomatoes, a crate of potatoes (the
-     user, 2026-11-06: moved in from the garden) — and one basket,
-     "1 potato, 3 carrots, 2 tomatoes" — never in the crates' order, so
-     every line is read, and more in each crate than the note asks for, so
-     every line is counted. (The juice went with the fruits, 2026-10-12.)
-     In her world: all of it at the one wide view of the kitchen. */
-  {
-    cover: [carrot, broccoli, tomato, pepper],
-    world: { ...VEG_KITCHEN[6], stepStation: [0] },
-    questions: [
-      { type: "make", ask: { key: "makeSoup" }, list: ["carrot", "potato", "broccoli"], stall: ["carrot", "potato", "broccoli", "pepper"].map(face), full: potMix },
-      { type: "likes", ask: { key: "likeThem" }, items: ["tomato", "broccoli", "pepper", "carrot"].map((word) => ({ face: face(word), things: food(word).things })) },
-      { type: "spell", ask: { key: "spellPicture" }, word: "carrot", picture: carrot },
-      { type: "spell", ask: { key: "spellPicture" }, word: "pepper", picture: pepper },
-      { type: "harvest", ask: { key: "pickList" }, order: [line("potato", 1), line("carrot", 3), line("tomato", 2)], garden: GARDENS.vegetables },
-      { type: "harvest", ask: { key: "pickList" }, order: [line("tomato", 3), line("potato", 2), line("carrot", 1)], garden: GARDENS.vegetables },
-    ],
-  },
 ];
