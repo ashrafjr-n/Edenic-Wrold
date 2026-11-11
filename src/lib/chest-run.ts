@@ -1,5 +1,4 @@
-/** The course whose last lesson before the review was just left by its Next
-    button (`pinki.shapes`): the course page then walks to the chest and opens
+/** The course whose last lesson was just finished (its Finish pressed) (`pinki.shapes`): the course page then walks to the chest and opens
     it (2026-11-11). Kept in memory — only that click may ask for it, never a
     reload or the back button. */
 let asked: string | null = null;

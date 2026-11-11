@@ -71,7 +71,6 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           courseName={course.name}
           title={title}
           nextTitle={course.items[n]}
-          nextIsReview={n + 1 === lesson.totalItems}
           nextIsShape={courseLessons[lesson.id][n]?.questions.some((q) => q.type === "word" && q.shape !== undefined)}
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}

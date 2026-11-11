@@ -90,8 +90,6 @@ interface LessonPlayerProps {
   /** This lesson's and the next lesson's titles (none after the last). */
   title: string;
   nextTitle?: string;
-  /** The next lesson is the review (the chest): Next goes back to the course page, where the chest opens. */
-  nextIsReview?: boolean;
   /** The next lesson teaches one shape — its button says "Next shape". */
   nextIsShape?: boolean;
   /** Art behind the reel while it loads. */
@@ -129,7 +127,6 @@ export function LessonPlayer({
   courseName,
   title,
   nextTitle,
-  nextIsReview,
   nextIsShape = false,
   image,
   tone,
@@ -340,6 +337,8 @@ export function LessonPlayer({
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
+  /* The last lesson's Finish: the course page walks to the gold chest and opens it (2026-11-11). */
+  const toChest = () => askChest(`${characterId}.${courseId}`);
   let body: ReactNode = null;
   /* Phone and tablet: the one slot under the step. */
   let action: ReactNode = null;
@@ -375,13 +374,12 @@ export function LessonPlayer({
        goes. */
     const next: DoneNext | undefined = nextTitle
       ? {
-          href: nextIsReview ? coursePath : `${coursePath}/${n + 1}`,
+          href: `${coursePath}/${n + 1}`,
           label: format(dict.lessonPicker.lessonN, { n: n + 1 }),
           word: nextTitle,
           art: covers[n] ?? [],
           go: nextIsShape ? lines.nextShape : lines.nextLesson,
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
-          onGo: nextIsReview ? () => askChest(`${characterId}.${courseId}`) : undefined,
         }
       : undefined;
     if ((world && arrived) || win) {
@@ -406,7 +404,7 @@ export function LessonPlayer({
              with a world of stops too: its stones and tiles are seen by going
              back with the back button. */
           href={next ? next.href : coursePath}
-          onPress={next?.onGo}
+          onPress={next ? undefined : toChest}
           dir={dir}
           className="lesson-onward"
         />
@@ -442,7 +440,7 @@ export function LessonPlayer({
       );
       const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
       const finish = next ? null : (
-        <NextButton label={lines.finish} tone={GO_TONE} href={coursePath} dir={dir} className="lesson-onward" />
+        <NextButton label={lines.finish} tone={GO_TONE} href={coursePath} onPress={toChest} dir={dir} className="lesson-onward" />
       );
       action = (
         <div className="flex items-center gap-3 sm:gap-4">
