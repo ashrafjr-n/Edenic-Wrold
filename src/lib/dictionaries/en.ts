@@ -141,6 +141,7 @@ export const en = {
     lockedLessonAria: "Lesson {n}: {title}, locked",
     startLessonAria: "Start lesson {n}: {title}",
     ctaStart: "Start",
+    ctaContinue: "Continue",
     /** Over the next lesson on a friend's course board. */
     lessonN: "Lesson {n}",
   },
