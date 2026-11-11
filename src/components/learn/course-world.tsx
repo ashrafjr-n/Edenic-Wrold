@@ -242,11 +242,11 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   /* The gold chest: the stop after the last lesson; opening, once the camera
      has come to it after the last lesson's Finish (`chestAsked`). */
   const chestRef = useRef<HTMLButtonElement>(null);
-  /* How many times it has been opened this visit (0 = closed); a tap on it opens it again. */
-  const [plays, setPlays] = useState(0);
-  const opening = plays > 0;
+  /* closed → `play` (shakes, opens; a tap plays it again, `n` re-keys it) or
+     `still` (a later visit: simply open). Once open it stays open. */
+  const [chest, setChest] = useState<{ mode: "closed" | "play" | "still"; n: number }>({ mode: "closed", n: 0 });
   const open = () => {
-    setPlays((count) => count + 1);
+    setChest(({ n }) => ({ mode: "play", n: n + 1 }));
     chestSeen.mark(`${characterId}.${lessonId}`);
   };
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
@@ -731,7 +731,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const started = performance.now() + TURN_DELAY_MS;
     let raf = 0;
-    let chest = 0;
+    let chestTimer = 0;
     const stop = () => cancelAnimationFrame(raf);
     /* A finger or wheel mid-turn: the way is done, so it is pink whole at once. Left
        half-turned, the pink circle (centred by the scroll) would travel with every
@@ -752,7 +752,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
       else {
         turning.current = null;
         /* At the chest: a beat to look at it, then it opens. */
-        if (chestAsked) chest = window.setTimeout(open, still ? 0 : CHEST_PAUSE_MS);
+        if (chestAsked) chestTimer = window.setTimeout(open, still ? 0 : CHEST_PAUSE_MS);
       }
     };
     raf = requestAnimationFrame(step);
@@ -761,7 +761,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     window.addEventListener("touchstart", release, { passive: true, once: true });
     return () => {
       stop();
-      clearTimeout(chest);
+      clearTimeout(chestTimer);
       window.removeEventListener("wheel", release);
       window.removeEventListener("touchstart", release);
       turning.current = null;
@@ -769,26 +769,15 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `scrollFor` only reads `data`.
   }, [walk, chestAsked, data]);
 
-  /* Every lesson done and the chest never opened here: it opens by itself once the camera is at it. */
+  /* Every lesson done = the child has reached the chest: it opens by itself once
+     the camera is at it — shaking the first time, simply open after that. */
   useEffect(() => {
-    if (!hydrated || nextIndex >= 0 || chestAsked || chestSeen.has(`${characterId}.${lessonId}`)) return;
-    const timer = window.setTimeout(open, 1400);
+    if (!hydrated || nextIndex >= 0 || chestAsked) return;
+    const first = !chestSeen.has(`${characterId}.${lessonId}`);
+    const timer = window.setTimeout(() => (first ? open() : setChest({ mode: "still", n: 0 })), first ? 1400 : 900);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `open` only reads what is here.
   }, [hydrated, nextIndex, chestAsked, characterId, lessonId]);
-
-  /* The chest stays open until a finger or wheel moves the camera (its copy is
-     of the frame it opened on). */
-  useEffect(() => {
-    if (!opening) return;
-    const close = () => setPlays(0);
-    window.addEventListener("wheel", close, { passive: true, once: true });
-    window.addEventListener("touchstart", close, { passive: true, once: true });
-    return () => {
-      window.removeEventListener("wheel", close);
-      window.removeEventListener("touchstart", close);
-    };
-  }, [opening]);
 
   /* The first picture painted: the Start button may come. */
   useEffect(() => {
@@ -888,7 +877,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
-            {opening && <ChestOpen key={plays} stop={chestRef} canvas={canvasRef} wide={wide} />}
+            {chest.mode !== "closed" && <ChestOpen key={chest.n} mode={chest.mode} stop={chestRef} canvas={canvasRef} wide={wide} />}
           </button>
         </div>
       </div>
