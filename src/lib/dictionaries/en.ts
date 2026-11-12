@@ -172,8 +172,6 @@ export const en = {
     letterAria: "Letter {letter}",
     playReel: "Play the video",
     findItemAria: "Tap the {word}",
-    likeAria: "I like it",
-    dislikeAria: "I don't like it",
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
@@ -197,7 +195,6 @@ export const en = {
     feedAnimal: "What does the {thing} eat? Feed it!",
     basketTime: "Put the {thing} in the basket!",
     makeSoup: "Make a vegetable soup!",
-    likeThem: "Do you like them?",
     thisWeather: "It is {weather}!",
     sortWeather: "Put each thing in its weather's box!",
     weatherIn: "What is the weather in {season}?",
@@ -216,7 +213,6 @@ export const en = {
     sort: "Sort",
     order: "Line up",
     cook: "Cook",
-    like: "Like?",
     feed: "Feed",
     basket: "Put",
   },
