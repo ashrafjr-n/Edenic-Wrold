@@ -1693,6 +1693,103 @@ button.course-stop {
 }
 
 /* ---------------------------------------------------------------
+   A Sky Trail world's door, shut (2026-11-12, `SkyWorldView`): over the
+   friend's house, inside its stop (`cqi` of its box) — the friend's stars
+   so far and the way to Learn, in the site's white clay. --------- */
+.sky-gate {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.8rem 0.7rem;
+  border-radius: 1.4rem;
+  background: var(--surface);
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 70%),
+    0 14px 28px -14px rgb(20 20 80 / 55%);
+  color: var(--color-ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sky-gate-count {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 1.05rem;
+}
+
+.sky-gate-count svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sky-gate-learn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: var(--color-pinki);
+  color: #fff;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 12px -6px rgb(190 60 120 / 60%);
+}
+
+.sky-gate-learn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* A world's entry scene over the whole screen, under the chrome (z-30). */
+.world-intro {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 100lvh;
+  z-index: 15;
+  background: #0f1446;
+  animation: world-intro-in 0.4s ease both;
+  transition: opacity 0.6s ease;
+}
+
+.world-intro[data-leaving] {
+  opacity: 0;
+}
+
+.world-intro-clip {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.world-intro-skip.btn3d {
+  position: absolute;
+  right: 1.25rem;
+  bottom: calc(4rem + 1rem + env(safe-area-inset-bottom));
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+}
+
+@media (width >= 40rem) {
+  .world-intro-skip.btn3d {
+    right: 2rem;
+    bottom: 2rem;
+  }
+}
+
+@keyframes world-intro-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------
    The Sky Trail's balloon (2026-11-12): the child's marker, hovering by
    the cloud they are at — `CourseWorld`'s `marker`, inside that stop, so
    it rides the stop's own box (`cqi`). It bobs on `translate`; nothing
