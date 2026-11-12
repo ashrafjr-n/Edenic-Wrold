@@ -32,7 +32,6 @@ import { SortShapes } from "./sort-shapes";
 import { OrderLine } from "./order-line";
 import { MakeFood } from "./make-food";
 import { LikesPlates } from "./likes-plates";
-import { HarvestPick } from "./harvest-pick";
 import { FeedAnimal } from "./feed-animal";
 import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
@@ -576,8 +575,6 @@ export function LessonPlayer({
     } else if (q.type === "basket") {
       /* In Nova's cottage (the world's last place): over the whole screen. */
       inWorld = <BasketTime key={seed} word={q.word} kitchen={q.kitchen} hidden={!arrived} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
-    } else if (q.type === "harvest") {
-      body = <HarvestPick key={seed} order={q.order} garden={q.garden} itemAria={lines.findItemAria} hearLabel={lines.hearWord} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "find") {
       const find = (
         <FindShapes

@@ -45,8 +45,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "cook", target: q.list.length === 1 ? q.list[0] : undefined };
     case "likes":
       return { kind: "like" };
-    case "harvest":
-      return { kind: "harvest" };
     /* Their demos feed and fill with another animal and vegetable (how,
        never which), so the chip names no word that would not match. */
     case "feed":
@@ -86,8 +84,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "make", list: q.list, stall: q.stall, seed };
     case "likes":
       return { kind: "like", face: q.items[0].face };
-    case "harvest":
-      return { kind: "harvest", garden: q.garden, line: q.order[0] };
     case "feed":
       return { kind: "feed", ...q.demo };
     case "basket":
