@@ -6,8 +6,15 @@ import type { NavItem } from "@/types/nav";
 export const mainNav: NavItem[] = [
   { id: "home", href: "/" },
   { id: "learn", href: "/learn" },
-  { id: "play", href: "/play" },
+  { id: "discover", href: "/discover", alsoCurrentOn: ["/play", "/watch", "/trail"] },
 ];
+
+/** Whether `item` is the current page's tab. "/" would otherwise prefix-match
+    every route on the site. */
+export function isNavActive({ href, alsoCurrentOn = [] }: NavItem, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  return [href, ...alsoCurrentOn].some((prefix) => prefix !== undefined && pathname.startsWith(prefix));
+}
 
 /**
  * The phone bar's fourth tab.

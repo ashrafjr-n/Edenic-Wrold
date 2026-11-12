@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { mainNav, profileNav } from "@/data/nav";
+import { isNavActive, mainNav, profileNav } from "@/data/nav";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 /* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
@@ -14,13 +14,13 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 const ICON_SRC = {
   home: "/assets/nav-icons/home.png",
   learn: "/assets/nav-icons/learn.png",
-  play: "/assets/nav-icons/activity.png",
+  discover: "/assets/nav-icons/activity.png",
   profile: "/assets/nav-icons/profile.png",
 } as const;
 
 /* One optical size for all four, MEASURED from each PNG rather than eyeballed.
    The four glyphs fill their shared 512×512 canvas by very different amounts —
-   home 512×512 (a solid square), learn 512×392, play 512×376, profile
+   home 512×512 (a solid square), learn 512×392, discover 512×376, profile
    342×428 — so `.icon-mask`'s plain `mask-size: contain` renders four
    different sizes out of one 28×28 box. Each scale below is `512 / (the
    glyph's own longest side)`, which fits every glyph to the same square, and
@@ -40,7 +40,7 @@ const ICON_SRC = {
 const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
   home: "92%",
   learn: "100%",
-  play: "100%",
+  discover: "100%",
   profile: "120%",
 };
 
@@ -81,7 +81,8 @@ export function BottomNav({ dict }: { dict: Dictionary }) {
          was not enough. The two are one tier of site chrome. */
       className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-16px_rgb(var(--shadow-hue)/45%)] sm:hidden"
     >
-      {mainNav.map(({ id, href }) => {
+      {mainNav.map((item) => {
+        const { id, href } = item;
         const label = dict.nav[id];
         const iconStyle = iconVar(id);
 
@@ -109,8 +110,7 @@ export function BottomNav({ dict }: { dict: Dictionary }) {
           );
         }
 
-        const active =
-          href === "/" ? pathname === "/" : pathname.startsWith(href);
+        const active = isNavActive(item, pathname);
 
         return (
           <Link

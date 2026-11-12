@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { mainNav } from "@/data/nav";
+import { isNavActive, mainNav } from "@/data/nav";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 /** The only reason this is a Client Component is `usePathname` for the active
@@ -21,7 +21,8 @@ export function MainNav({ dict }: { dict: Dictionary }) {
       aria-label={dict.nav.mainAriaLabel}
       className="hidden items-center gap-2 sm:flex sm:gap-4"
     >
-      {mainNav.map(({ id, href }) => {
+      {mainNav.map((item) => {
+        const { id, href } = item;
         const label = dict.nav[id];
 
         if (!href) {
@@ -39,9 +40,7 @@ export function MainNav({ dict }: { dict: Dictionary }) {
           );
         }
 
-        /* "/" would otherwise prefix-match every route on the site. */
-        const active =
-          href === "/" ? pathname === "/" : pathname.startsWith(href);
+        const active = isNavActive(item, pathname);
 
         return (
           <Link
