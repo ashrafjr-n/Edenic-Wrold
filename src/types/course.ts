@@ -75,15 +75,6 @@ export interface Scene {
   items: SceneItem[];
 }
 
-/** One box of a Sort: what goes in it, its name, what it shows, its clay. */
-export interface SortBin {
-  target: Target;
-  /** English — the box's label. */
-  word: string;
-  face: Face;
-  tone: { face: string; edge: string; text: string };
-}
-
 /** Pinki's question, as a key into `dict.asks` plus its values. The taught
     words in `vars` stay English in every locale. */
 export interface Ask {
@@ -122,8 +113,6 @@ export type Question =
      its picnic on the garden's lawn, seen from above); `scene` is then
      the task button's demo picture. */
   | { type: "find"; ask: Ask; target: Target; scene: Scene; world?: Framed<Scene> }
-  /** Put each thing, one at a time, in the box it belongs in. */
-  | { type: "sort"; ask: Ask; items: Thing[]; bins: SortBin[] }
   /** Two paints and what they make: pick the color; the two run together
       into it (`MixColors`). `others` are the wrong answers. */
   | { type: "mix"; ask: Ask; a: ColorId; b: ColorId; color: ColorId; others: ColorId[] }
