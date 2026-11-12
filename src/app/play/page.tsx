@@ -1,77 +1,69 @@
 import type { Metadata } from "next";
-import { PuzzleCta } from "@/components/activities/puzzle-cta";
-import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
-import { TrailCta } from "@/components/activities/trail-cta";
-import { CupsCta } from "@/components/activities/cups-cta";
-import { BackRow } from "@/components/ui/back-button";
+import Image from "next/image";
+import { Gamepad2 } from "lucide-react";
+import { CourseWorld } from "@/components/learn/course-world";
+import { BackRow, pageAccent } from "@/components/ui/back-button";
+import { Button3D } from "@/components/ui/button-3d";
+import { CHEST_OPEN } from "@/data/chest-open";
+import { SKY_KEY, SKY_LEVELS } from "@/data/sky-levels";
+import { SKY_STOPS } from "@/data/sky-stops";
+import { dirFor, format } from "@/lib/format-dict";
 import { getDictionary } from "@/lib/locale";
+import balloon from "../../../public/assets/play/sky/balloon.png";
 
 export const metadata: Metadata = {
-  title: "Play — Edenic World",
-  description: "Puzzles, memory and cups games for kids at Edenic World.",
+  title: "Sky Trail — Edenic World",
+  description: "Fly up the sky from cloud to cloud: short games on every cloud, and Edenic's big star at the end.",
 };
 
-const ITEM_DELAY = 0.1;
-const ITEM_STAGGER = 0.12;
-
 /**
- * The Activities page: cards only, no heading/intro copy, by request.
+ * Play = **the Sky Trail** (2026-11-12, phase 1 of `edenic-plan.md`'s three):
+ * a world of stops up in the sky, played by the same `CourseWorld` as a Learn
+ * course — a level on each cloud (the first the farthest), white stars the
+ * way between them turning gold as levels are done, Edenic's big star the
+ * nearest stop, lighting once every level is done (the chest's machinery).
+ * The child's balloon hovers by the cloud they are at.
  *
- * **The Edenic Trail card leads the page, full-width, with the two playable
- * games below it.** It replaced `FriendWorldTeaser`, the friend-world
- * "Coming Soon" placeholder that used to hold this slot (and which had
- * itself been moved from last to first). It carried a third card, `WatchLearnCta`
- * (a link out to the YouTube channel), which was cut on direct request: the
- * page is the two games a child can actually play here, and a card that
- * leaves the site belongs with the other social links rather than beside
- * them.
- *
- * **All three cards rise in, staggered — `PuzzleGrid` / `MemoryGrid`'s own
- * timing** (`anim-rise-in`, `ITEM_DELAY + index * ITEM_STAGGER`). This page
- * was the one grid of cards on the site with no entrance choreography at
- * all — everywhere else (the stage grid, the level grid, the lesson hub, the
- * home page) fades or rises its content in on load, and landing here felt
- * like the page had frozen mid-render by comparison. `ITEM_STAGGER` is
- * wider than the fifteen-card grids' `0.06s` on purpose: a pause long enough
- * to actually read as one-then-the-other rather than a near-simultaneous
- * flicker.
+ * Its progress is `play.sky.<n>` in the same store, so nothing here is new
+ * machinery; the free games moved to `/play/games` (the chip opposite the
+ * back button).
  */
-export default async function ActivitiesPage() {
+export default async function PlayPage() {
   const dict = await getDictionary();
+  const dir = dirFor(dict.locale);
+  const words = dict.sky;
+
+  /* A cloud with no level (or a level with no cloud) would put every link in
+     the wrong place; say so while building. The last stop is the big star. */
+  if (process.env.NODE_ENV !== "production" && SKY_STOPS.landscape.keys[0].length !== SKY_LEVELS.length + 1) {
+    throw new Error(`sky: the world has ${SKY_STOPS.landscape.keys[0].length} stops, the trail ${SKY_LEVELS.length} levels and a star`);
+  }
 
   return (
-    <main className="flex flex-1 flex-col overflow-x-clip">
-      <BackRow href="/discover" label={dict.discover.backToDiscover} />
-      <div className="flex flex-1 flex-col justify-center px-4 pb-10 pt-6 sm:px-8 sm:pb-14">
-        <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:max-w-6xl lg:grid-cols-3">
-          {/* Spans every column, first in the grid — the Trail is a section
-            of the site, not a game, and leading the page at full width is
-            what says so. */}
-          <TrailCta
-            dict={dict}
-            className="anim-rise-in lg:col-span-3"
-            style={{ animationDelay: `${ITEM_DELAY}s` }}
-          />
-
-          <PuzzleCta
-            dict={dict}
-            className="anim-rise-in"
-            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
-          />
-
-          <MemoryMatchCta
-            dict={dict}
-            className="anim-rise-in"
-            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 2}s` }}
-          />
-
-          <CupsCta
-            dict={dict}
-            className="anim-rise-in"
-            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 3}s` }}
-          />
-        </div>
-      </div>
+    <main className="relative flex flex-1 flex-col overflow-x-clip" style={pageAccent("var(--brand)", "var(--brand-dark)", "#fff")}>
+      <BackRow href="/discover" label={dict.discover.backToDiscover}>
+        <Button3D
+          variant="calm"
+          tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
+          href="/play/games"
+          aria-label={words.gamesAria}
+          className="btn3d--clay-white h-12 px-4 text-base sm:h-14 sm:px-5 sm:text-lg"
+        >
+          <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.25} />
+          <span dir={dir}>{words.games}</span>
+        </Button3D>
+      </BackRow>
+      <h1 className="sr-only">{words.title}</h1>
+      <CourseWorld
+        world={{ ...SKY_STOPS, chest: CHEST_OPEN.sky }}
+        titles={SKY_LEVELS.map((level) => format(dict.activities.levelLabel, { value: level.value }))}
+        characterId={SKY_KEY.owner}
+        lessonId={SKY_KEY.course}
+        basePath="/play/sky"
+        dict={{ ...dict.lessonPicker, startLessonAria: words.startLevelAria, lockedLessonAria: words.lockedLevelAria, openChest: words.starAria }}
+        dir={dir}
+        marker={<Image key="balloon" src={balloon} alt="" sizes="(orientation: landscape) 10vw, 26vw" className="sky-balloon" />}
+      />
     </main>
   );
 }
