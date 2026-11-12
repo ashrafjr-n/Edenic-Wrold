@@ -8,7 +8,6 @@ import type { Basket, Face, Food, Scene, ShapeId, SortBin, Target, Thing } from 
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
-import { shuffle } from "@/lib/seeded";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
@@ -24,7 +23,6 @@ export type TaskDemoDef =
   | { kind: "find"; scene: Scene; target: Target }
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: Thing; bins: SortBin[] }
-  | { kind: "order"; items: Face[]; seed: string }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
   | { kind: "basket"; food: Food; basket: Basket };
 
@@ -256,42 +254,6 @@ function SortDemo({ item, bins }: { item: Thing; bins: SortBin[] }) {
   );
 }
 
-/** Order: the line of numbered spaces, the tiles dealt under it as the
-    board deals them; the finger taps the one that comes FIRST and it flies
-    into space 1. */
-function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
-  const order = shuffle(items.map((_, i) => i), seed);
-  const columns = { gridTemplateColumns: `repeat(${items.length}, minmax(0, 3.5rem))` };
-  return (
-    <div dir="ltr" className="flex h-full flex-col items-center justify-center gap-5">
-      <div className="grid justify-center gap-1.5" style={columns}>
-        {items.map((_, i) => (
-          <span key={i} className="letter-slot aspect-square text-lg font-bold text-[rgb(var(--shadow-hue)/0.28)]">
-            {i + 1}
-          </span>
-        ))}
-      </div>
-      <div className="grid justify-center gap-1.5" style={columns}>
-        {order.map((index, i) => (
-          <span key={index} className="relative aspect-square">
-            <span
-              className={`card card-clay-white flex h-full w-full items-center justify-center ${index === 0 ? "demo-fly relative z-[1]" : ""}`}
-              style={index === 0 ? ({ "--fly-x": `calc(${-i} * (100% + 0.375rem))`, "--fly-y": "calc(-100% - 1.25rem)" } as CSSProperties) : undefined}
-            >
-              <FaceView face={items[index]} size="tile" />
-            </span>
-            {index === 0 && (
-              <span className="absolute left-1/2 top-1/2">
-                <Finger />
-              </span>
-            )}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** Feed the animal: the finger carries a food up into the animal's mouth.
     Another animal and its own food, NOT the step's — HOW to feed, never
     what this one eats. One 3.6s loop with the finger: it presses at 36%,
@@ -365,8 +327,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
     case "sort":
       return <SortDemo item={demo.item} bins={demo.bins} />;
-    case "order":
-      return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
     case "basket":

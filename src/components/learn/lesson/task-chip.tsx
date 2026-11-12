@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Blocks, Ear, Eye, ListOrdered, Pencil, Pointer, Search, Shapes, ShoppingBasket, Utensils, X, type LucideIcon } from "lucide-react";
+import { Blocks, Ear, Eye, Pencil, Pointer, Search, Shapes, ShoppingBasket, Utensils, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
@@ -20,7 +20,6 @@ export const TASK_ICONS: Record<TaskKind, LucideIcon> = {
   find: Search,
   pick: Pointer,
   sort: Shapes,
-  order: ListOrdered,
   feed: Utensils,
   basket: ShoppingBasket,
 };
