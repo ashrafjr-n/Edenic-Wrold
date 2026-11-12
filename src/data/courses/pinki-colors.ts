@@ -38,7 +38,7 @@ function othersFor(color: ColorId, count: number): ColorId[] {
 /**
  * One color, one lesson (`edenic-plan.md` §5): watch its reel, meet it (the
  * word in its own color, under its splash on the forest's easel), spell it, mix it (the three made
- * colors), pop its balloons, then find it in its picnic — all in Pinki's
+ * colors), then find it in its picnic — all in Pinki's
  * forest (2026-11-05: the course's world, `data/color-forest.ts`; the
  * picnic lies on the forest floor and the camera tilts down onto it).
  * Every step is about this one color; the others are only there to choose
