@@ -193,6 +193,11 @@ export const ku: Dictionary = {
     watchAlt: "Pinki، Nova و Bloo د جیهانا Edenic دا دگەرن",
     backToDiscover: "زڤڕینا بۆ بدۆزە",
     watchClipAria: "ڤیدیۆیا {title} تەماشە بکە",
+    episodesTitle: "پشکێن",
+    reelsTitle: "ڤیدیۆیێن کورت",
+    filterAll: "هەمی",
+    filterAria: "ڤیدیۆیێن کورت فلتەر بکە",
+    episodeAria: "پشکا {title} بلێزە",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
