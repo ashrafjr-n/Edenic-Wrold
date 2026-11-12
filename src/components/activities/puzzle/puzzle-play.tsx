@@ -88,12 +88,15 @@ export function PuzzlePlay({
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* `levelLabel`, not `puzzleLabel`: the badge SAYS "Level" now, so
                 reading out "Puzzle 7" would disagree with what is on it. */}
-            <LevelBadge
-              value={host?.level ?? stage}
-              word={dict.activities.levelWord}
-              label={format(dict.activities.levelLabel, { value: host?.level ?? stage })}
-              dir={dirFor(dict.locale)}
-            />
+            {/* A Sky Trail level keeps the row's middle for its three dots: no badge. */}
+            {!host && (
+              <LevelBadge
+                value={stage}
+                word={dict.activities.levelWord}
+                label={format(dict.activities.levelLabel, { value: stage })}
+                dir={dirFor(dict.locale)}
+              />
+            )}
 
             <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} dict={dict.activities} />
           </div>
