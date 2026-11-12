@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BackRow } from "@/components/ui/back-button";
 import { WatchGrid } from "@/components/watch/watch-grid";
-import { watchSections } from "@/data/watch";
+import { watchClips, watchEpisodes } from "@/data/watch";
 import { dirFor } from "@/lib/format-dict";
 import { getDictionary } from "@/lib/locale";
 
@@ -18,9 +18,17 @@ export default async function WatchPage() {
       <div className="px-4 pb-10 pt-6 sm:px-8">
         <h1 className="sr-only">{dict.discover.watchButton}</h1>
         <WatchGrid
-          sections={watchSections(dict)}
-          ariaTemplate={dict.discover.watchClipAria}
-          closeLabel={dict.lessonPlayer.close}
+          episodes={watchEpisodes}
+          {...watchClips(dict)}
+          words={{
+            episodesTitle: dict.discover.episodesTitle,
+            reelsTitle: dict.discover.reelsTitle,
+            filterAll: dict.discover.filterAll,
+            filterAria: dict.discover.filterAria,
+            clipAria: dict.discover.watchClipAria,
+            episodeAria: dict.discover.episodeAria,
+            close: dict.lessonPlayer.close,
+          }}
           dir={dirFor(dict.locale)}
         />
       </div>
