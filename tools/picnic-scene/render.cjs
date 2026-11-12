@@ -247,8 +247,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     const course = specs[0] ?? "shapes";
     const PLAY = 46;
     const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90 }[course] ?? 90;
-    const module = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather" }[course];
-    const source = fs.readFileSync(path.join(__dirname, `../../src/data/${module}-stops.ts`), "utf8");
+    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather" }[course];
+    const source = fs.readFileSync(path.join(__dirname, `../../src/data/${stops}-stops.ts`), "utf8");
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       /* Where the page stands at the chest: its focus, the last stop's. */
       const block = source.slice(source.indexOf(`${frame}: {`));
