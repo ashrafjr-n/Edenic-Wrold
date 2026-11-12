@@ -1,12 +1,9 @@
 import type { StaticImageData } from "next/image";
-import type { Animal, ColorId, Food, LessonDef } from "@/types/course";
+import type { Food, LessonDef } from "@/types/course";
 import { ANIMALS_FARM } from "@/data/animals-farm";
 import cat from "../../../public/assets/learn/bloo/animals/things/cat-play.png";
-import catGrey from "../../../public/assets/learn/bloo/animals/things/cat-play-grey.png";
 import dog from "../../../public/assets/learn/bloo/animals/things/dog-play.png";
-import dogGolden from "../../../public/assets/learn/bloo/animals/things/dog-play-golden.png";
 import fish from "../../../public/assets/learn/bloo/animals/things/fish-play.png";
-import fishBlue from "../../../public/assets/learn/bloo/animals/things/fish-play-blue.png";
 import elephant from "../../../public/assets/learn/bloo/animals/things/elephant.png";
 import mouse from "../../../public/assets/learn/bloo/animals/things/mouse-play.png";
 import bird from "../../../public/assets/learn/bloo/animals/things/bird-play.png";
@@ -22,37 +19,12 @@ import worm from "../../../public/assets/learn/bloo/animals/food/worm.png";
 import seeds from "../../../public/assets/learn/bloo/animals/food/seeds.png";
 import lettuce from "../../../public/assets/learn/bloo/animals/food/lettuce.png";
 import cricket from "../../../public/assets/learn/bloo/animals/food/cricket.png";
-import catHome from "../../../public/assets/learn/bloo/animals/homes/cat.png";
-import dogHome from "../../../public/assets/learn/bloo/animals/homes/dog.png";
-import fishHome from "../../../public/assets/learn/bloo/animals/homes/fish.png";
 
-/** One animal to learn: its picture (the lesson's coat — the animal on its
-    own, no world behind it, direct request 2026-10-12; cut out of its
-    video's still — an animal with no still has no lesson, the cow went
-    2026-10-13), a second coat for
-    the review (a cat is a cat in any color), where it lives, and that
-    home's box color in the review. */
-interface Pet {
-  picture: StaticImageData;
-  other: StaticImageData;
-  home: StaticImageData;
-  box: ColorId;
-}
-
-/** In teaching order. */
-const ANIMALS: Record<Animal, Pet> = {
-  cat: { picture: cat, other: catGrey, home: catHome, box: "purple" },
-  dog: { picture: dog, other: dogGolden, home: dogHome, box: "orange" },
-  fish: { picture: fish, other: fishBlue, home: fishHome, box: "blue" },
-};
-const ORDER = Object.keys(ANIMALS) as Animal[];
-
-/** The videos' other animals (2026-10-13), cut out of their stills: a
-    lesson each, after the three — not in the review's Sort (no home). */
-const MORE: Record<string, StaticImageData> = { elephant, mouse, bird, parrot, turtle, gecko };
-
-/** Every lesson's animal and picture, in teaching order. */
-const TAUGHT: [string, StaticImageData][] = [...ORDER.map((animal): [string, StaticImageData] => [animal, ANIMALS[animal].picture]), ...Object.entries(MORE)];
+/** Every lesson's animal and its picture, in teaching order — the animal on
+    its own, no world behind it (direct request 2026-10-12), cut out of its
+    video's still (2026-10-13; an animal with no still has no lesson — the
+    cow went). */
+const TAUGHT: [string, StaticImageData][] = Object.entries({ cat, dog, fish, elephant, mouse, bird, parrot, turtle, gecko });
 
 /** Feed the animal: what each eats (its English word and picture). */
 const FOOD: Record<string, Food> = {
@@ -114,6 +86,4 @@ function animalLesson([animal, picture]: [string, StaticImageData], i: number): 
 /** Bloo · Animals. Titles live in `dict.lessons.animals.items`. The reels
     are the real clips, H.264 720p (`tools/reels/encode.sh`):
     `/assets/learn/bloo/animals/reels/<animal>.mp4`. */
-export const blooAnimals: LessonDef[] = [
-  ...TAUGHT.map(animalLesson),
-];
+export const blooAnimals: LessonDef[] = TAUGHT.map(animalLesson);
