@@ -56,6 +56,4 @@ function seasonLesson(season: Season, i: number): LessonDef {
 
 /** Bloo · Seasons and Weather (the course id stays `weather`). Titles live
     in `dict.lessons.weather.items`. Reels: `tools/reels/encode.sh`, by word. */
-export const blooSeasonsWeather: LessonDef[] = [
-  ...SEASON_ORDER.map(seasonLesson),
-];
+export const blooSeasonsWeather: LessonDef[] = SEASON_ORDER.map(seasonLesson);
