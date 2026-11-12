@@ -28,7 +28,6 @@ import { PickQuestion } from "./pick-question";
 import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
-import { SortShapes } from "./sort-shapes";
 import { FeedAnimal } from "./feed-animal";
 import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
@@ -544,10 +543,6 @@ export function LessonPlayer({
           </>
         );
       }
-    } else if (q.type === "sort") {
-      body = (
-        <SortShapes key={seed} items={q.items} bins={q.bins} seed={seed} binAria={lines.sortBin} onSolved={onSolved} onMiss={onMiss} />
-      );
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "basket") {

@@ -37,8 +37,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "build" };
     case "find":
       return { kind: "find", target: findLabel(q.target) };
-    case "sort":
-      return { kind: "sort" };
     /* Their demos feed and fill with another animal and vegetable (how,
        never which), so the chip names no word that would not match. */
     case "feed":
@@ -70,8 +68,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "build", word: q.word, seed };
     case "find":
       return { kind: "find", scene: q.scene, target: q.target };
-    case "sort":
-      return { kind: "sort", item: q.items[0], bins: q.bins };
     case "feed":
       return { kind: "feed", ...q.demo };
     case "basket":
@@ -99,7 +95,6 @@ export function lessonFaces(lesson: LessonDef): Face[] {
   const faces = lesson.questions.flatMap((q): Face[] => {
     if (q.type === "trace") return [{ kind: "shape", shape: q.shape }];
     if (q.type === "find" && "shape" in q.target) return [{ kind: "shape", shape: q.target.shape }];
-    if (q.type === "sort") return q.items.flatMap((item): Face[] => (item.shape ? [{ kind: "shape", shape: item.shape }] : []));
     if (q.type === "pick") {
       const answer = q.options[q.answer];
       return answer.kind === "text" ? [] : [answer];
