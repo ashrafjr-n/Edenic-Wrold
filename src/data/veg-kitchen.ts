@@ -6,8 +6,6 @@ import l1_s0_jpg from "../../public/assets/learn/nova/fruits/world/1/landscape/s
 import p1_s0_jpg from "../../public/assets/learn/nova/fruits/world/1/portrait/s0.jpg";
 import l1_s1_jpg from "../../public/assets/learn/nova/fruits/world/1/landscape/s1.jpg";
 import p1_s1_jpg from "../../public/assets/learn/nova/fruits/world/1/portrait/s1.jpg";
-import l6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/landscape/s0.jpg";
-import p6_s0_jpg from "../../public/assets/learn/nova/fruits/world/6/portrait/s0.jpg";
 import kl_potato_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/potato.png";
 import kl_pepper_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/pepper.png";
 import kl_milk_png from "../../public/assets/learn/nova/fruits/kitchen/landscape/milk.png";
@@ -36,8 +34,7 @@ import kp_basket_png from "../../public/assets/learn/nova/fruits/kitchen/portrai
 import kp_basket_rim_png from "../../public/assets/learn/nova/fruits/kitchen/portrait/basket-rim.png";
 
 /** The camera in Nova's kitchen: 1 is every vegetable lesson's (the entry to the
-    wide view, then the move in to the counter), 6 the review's (the wide view
-    alone). */
+    wide view, then the move in to the counter). */
 export const VEG_KITCHEN: Record<number, LessonWorld> = {
   1: {
     stations: [
@@ -47,14 +44,6 @@ export const VEG_KITCHEN: Record<number, LessonWorld> = {
     moves: [
       null,
       { landscape: "/assets/learn/nova/fruits/world/1/landscape/m1.mp4?v=025b4798", portrait: "/assets/learn/nova/fruits/world/1/portrait/m1.mp4?v=36a75091" },
-    ],
-  },
-  6: {
-    stations: [
-      { landscape: l6_s0_jpg, portrait: p6_s0_jpg },
-    ],
-    moves: [
-      null,
     ],
   },
 };
