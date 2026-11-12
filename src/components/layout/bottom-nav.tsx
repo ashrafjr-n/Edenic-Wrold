@@ -14,13 +14,13 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 const ICON_SRC = {
   home: "/assets/nav-icons/home.png",
   learn: "/assets/nav-icons/learn.png",
-  discover: "/assets/nav-icons/activity.png",
+  discover: "/assets/nav-icons/discover.png",
   profile: "/assets/nav-icons/profile.png",
 } as const;
 
 /* One optical size for all four, MEASURED from each PNG rather than eyeballed.
    The four glyphs fill their shared 512×512 canvas by very different amounts —
-   home 512×512 (a solid square), learn 512×392, discover 512×376, profile
+   home 512×512 (a solid square), learn 512×392, discover 512×512, profile
    342×428 — so `.icon-mask`'s plain `mask-size: contain` renders four
    different sizes out of one 28×28 box. Each scale below is `512 / (the
    glyph's own longest side)`, which fits every glyph to the same square, and
