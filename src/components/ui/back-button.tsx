@@ -100,8 +100,8 @@ export function BackButton({ href, label }: BackButtonProps) {
  *
  * `BACK_TOP` is the stuck offset. `BACK_FIXED` is the same spot for the
  * pages that cannot give the button a row of its own and pin a wrapper
- * instead (`/trail` over its full-bleed sky; the puzzle and Memory Match
- * grids, whose heading is centred on the page) — x there is the `max-w-7xl`
+ * instead (the puzzle and Memory Match grids, whose heading is centred on
+ * the page) — x there is the `max-w-7xl`
  * container's padding edge, computed from the viewport. Put it on a WRAPPER,
  * never on the button: `.btn3d` is unlayered and sets `position: relative`.
  */

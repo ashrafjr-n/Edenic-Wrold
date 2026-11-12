@@ -79,8 +79,9 @@ const BANKS: VeilBank[] = [
 
 /**
  * Three wide banks of clay cloud that rise from below the viewport, cover
- * the screen, then carry on up and off the top — the transition `TrailCta`
- * plays on the way into `/trail`.
+ * the screen, then carry on up and off the top — the transition a friend's
+ * hub card plays on the way into a course's world (it was built for the old
+ * Edenic Trail card, deleted 2026-11-12).
  *
  * **Three elements, not the two dozen puffs this started as.** Banks span
  * more than the full width, so the drift has no vertical seams to leak the
@@ -100,7 +101,7 @@ const BANKS: VeilBank[] = [
  * streams in behind it, instead of a fresh overlay per page.
  *
  * **State comes from `usePageTransition`, not local state alone**, because
- * the trigger (`TrailCta`) and this overlay are nowhere near each other in
+ * the trigger (a hub card, `ClassCourses`) and this overlay are nowhere near each other in
  * the tree — the same reason `theme`/`progress` are zustand stores.
  *
  * **`revealing` only flips once `pathname` has actually moved away from
