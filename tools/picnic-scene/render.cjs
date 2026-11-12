@@ -144,6 +144,12 @@
  * which writes `src/data/color-stops.ts`:
  *
  *   node tools/picnic-scene/render.cjs stops colors
+ *
+ * The Sky Trail (2026-11-12, the Play game on /play): `render.cjs stops sky`, then
+ * `crop.py stops sky` → `src/data/sky-stops.ts`; its big star lighting is the chest's
+ * way (`render.cjs chest sky` + `crop.py chest`). The child's balloon:
+ * `render.cjs thing balloon=hotAirBalloon@float@hd`, then
+ * `crop.py things public/assets/play/sky balloon`.
  *   node tools/picnic-scene/render.cjs stops colors drops   (after it: each drop's
  *                                   pixels, so the page can grey the closed ones)
  *
@@ -196,12 +202,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        its own `out/stops-colors-<frame>/`, longer, a mask per way (ten). */
     /* `stops fruits` (2026-11-06) is Nova's Vegetables: `out/stops-fruits-<frame>/`,
        100 frames, five ways. */
-    const course = ["colors", "fruits", "garden", "animals", "weather"].includes(specs[0]) ? specs[0] : "shapes";
+    /* `stops sky` (2026-11-12) is the Sky Trail, the Play game: `out/stops-sky-<frame>/`,
+       100 frames, five ways of stars, Pinki's picture on level 4's cloud. */
+    const course = ["colors", "fruits", "garden", "animals", "weather", "sky"].includes(specs[0]) ? specs[0] : "shapes";
     const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" ? [100, 41] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" ? [100, 41] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -231,6 +239,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.writeFileSync(path.join(out, `w${name}-${k}.png`), Buffer.from(mask.split(",")[1], "base64"));
         }
       }
+      /* The Sky Trail: the sky alone from the top of the trail — its levels' ground (`crop.py` blurs it). */
+      if (course === "sky") fs.writeFileSync(path.join(out, "empty.jpg"), Buffer.from((await page.evaluate(() => window.garden.emptyAt(1))).split(",")[1], "base64"));
       if (!dropsOnly) {
         const keys = [];
         for (let k = 0; k < KEYS; k++) keys.push(await page.evaluate((t) => window.garden.boxes(t), k / (KEYS - 1)));
@@ -246,8 +256,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        shows the chest, with it open. Then `crop.py chest <course>`. */
     const course = specs[0] ?? "shapes";
     const PLAY = 46;
-    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90 }[course] ?? 90;
-    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather" }[course];
+    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100 }[course] ?? 90;
+    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky" }[course];
     const source = fs.readFileSync(path.join(__dirname, `../../src/data/${stops}-stops.ts`), "utf8");
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       /* Where the page stands at the chest: its focus, the last stop's. */

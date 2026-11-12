@@ -7,6 +7,8 @@ const fs = require("fs");
 const path = require("path");
 
 const FILES = {
+  /* The Sky Trail: Pinki, waiting on level 4's cloud. */
+  sky: ["friends/pinki.png"],
   animals: ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"].map((a) => `learn/bloo/animals/things/${a === "gecko" ? "gecko-wide" : a}.png`),
 };
 
