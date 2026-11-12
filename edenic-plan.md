@@ -791,7 +791,7 @@ Settles the "open for when it is built" list above. **Discover's Play card = thi
   games, the star flags + the chest giving its star, the sleeping-Pinki gate. Then grow
   clouds and add the new mechanics. Art is rendered by Claude (`tools/picnic-scene`).
 
-#### The Sky Trail in three build phases (the user, 2026-11-12)
+#### The Sky Trail in three build phases (the user, 2026-11-12) — SUPERSEDED the same day by "The Sky Trail: four worlds, one story" below (its phase 1 is built and stays the base)
 
 The user's calls the same day: **no stars for now** (the chests give nothing yet, so no
 gate either), **no picture that does not exist** (no sleeping friends — a friend simply
@@ -832,6 +832,104 @@ from now on.
    - Free play's place on the site settled; three languages, dark mode, phone / tablet /
      desktop checked; the docs brought up to date.
    - Done when: a child goes from nothing to the big star with no dead end.
+
+### The Sky Trail: four worlds, one story (the user, 2026-11-12) — THE PLAN, built stage by stage
+
+The user, after seeing phase 1: the build is fine, the STORY is the thing. Levels are not
+games in a row — each has a fixed scenario; Puzzle and Memory Match only close a level;
+**Cups is out of the trail** (it stays on `/play/games` for now, deleted later with the
+other old games). **Rule for the build: one stage at a time — the next stage starts only
+after the user has tested the one before and said so.**
+
+**The story.** At night a star falls out of the sky and is gone, far beyond the clouds. The
+child sets off in the balloon to find it; on the way they find Pinki, then Nova, then Bloo
+to help; the star is reached on cloud 18 — sad, then smiling and alight. The star is the
+series' own (episode 1 on `/watch`; the user's two stills: a plump gold star, big brown
+eyes, sad brows and mouth) — to be modelled in 3D from them, a sad and a happy face.
+NOT in the story (the user): finding the star early, "sparks" in the chests. The gold stars
+of the way between clouds (built) are the trail the star left.
+
+**Four worlds on one line** (3 + 5 + 5 + 5 = 18 levels). Only the world the child is in is
+shown; the next one is seen ahead, shut behind a bank of cloud, and opens when the world
+before it is done AND the friend's two stars are in hand (one star per Learn course chest;
+shown as "1 of 2" + a way back to Learn; the friend's cloud house has two star-shaped slots
+in its door — the friends stay their own pictures). Each world opens with a rendered entry
+scene (5–8 s, skippable), the camera carrying on along the same line.
+
+| World | Sky | Levels | With | Entry scene |
+| --- | --- | --- | --- | --- |
+| 1 Night sky | night, moon, stars | 1–3 | alone | a star falls with a tail of light and is gone; the camera comes down to cloud 1 and the balloon |
+| 2 Rainbow | sunrise, pink and orange | 4–8 | Pinki | her door opens; night melts into sunrise, the rainbow comes up |
+| 3 Sky garden | day, green floating islands | 9–13 | + Nova | Nova joins; the sun is up; her garden's islands |
+| 4 High clouds | day, the white sky built in phase 1 | 14–18 | + Bloo | Bloo joins; far off something glints — the star |
+
+**A level's fixed shape:** a short scene → the main activity → a closing game, Puzzle and
+Memory Match in turn, the puzzle's picture the level's own scene. Difficulty rises by
+world (the user: world 1 medium, world 4 the hardest): 12 pieces / 6 pairs → 16 / 8 →
+20 / 8 look-alikes → 25–30 / 10. (Read as: a closing game on EVERY level of every world —
+the user did not object; if it is to be worlds 1 and 4 only, drop it from 2 and 3.)
+
+**World 1 — night sky** (no reel: the word's sound, its letters put in order, then a
+search — never for the star):
+
+| # | Level | Word | The search | Closes with |
+| --- | --- | --- | --- | --- |
+| 1 | A star fell | star | the small stars hidden among the clouds; one place is empty | Puzzle |
+| 2 | The moon saw it all | moon | move the clouds off the moon; find the star's dust that shows the way | Memory |
+| 3 | Who will help me? | cloud | three far lights (pink, lavender, blue): the friends' houses | Puzzle |
+
+**World 2 — rainbow (Pinki: shapes, colours):** 4 Shape bridge (the right piece into each
+gap) · 5 Colour works (mix two to paint each band of the bow) · 6 Gates of light (trace
+the shape, it becomes a gate for the balloon) · 7 Cloud bells (hear a run of colours, play
+it back) · 8 The grey cloud (paint it the colour its word says; it smiles and blows the
+balloon up).
+
+**World 3 — sky garden (Nova: vegetables, garden):** 9 The seed (put the real steps of
+growing in order; a giant stalk comes up) · 10 Food for the way (a recipe in pictures and
+numbers, the right vegetables into the basket) · 11 What is missing? (the wind took one
+thing from the garden — which?) · 12 The nest (find its pieces, bring the chicks back;
+the birds show where the star fell) · 13 Up the stalk (tap the leaf whose word matches
+the picture).
+
+**World 4 — high clouds (Bloo: animals, weather):** 14 The storm (steer the balloon
+between rain, wind and snow — the one fast level) · 15 Shadows on the clouds (each animal
+to its shadow) · 16 The animals' bridge (smallest to biggest) · 17 The last of the trail
+(join the star's dust in order to draw the way to its cloud) · 18 The star (it is there,
+sad; each friend does one small thing with the child — Pinki a colour, Nova a flower, Bloo
+stills the wind — and it smiles and lights; the hardest puzzle closes it: the star, happy).
+
+**Worlds 3 and 4 must not read as one** (the user): 3 is green islands in a warm morning,
+4 the bare white cloud tops of the built sky, higher and cooler.
+
+#### The build, stage by stage (the user tests each; the next waits for "go on")
+
+1. **The base.** A Learn course's gold chest gives its star (`stars[courseId]` in the
+   progress store; the star seen coming out of the chest; the count shown at the friend's
+   door). The fallen star in 3D from the user's stills (sad, happy). The trail's data
+   becomes worlds (`SKY_WORLDS`: levels, friend, gate); Cups leaves the trail.
+   *Test:* finish a course → the chest gives one star, once; the star's two faces.
+2. **World 1, its look.** The night sky (3 clouds, Pinki's house and door at its end, the
+   next world shut behind cloud), its entry scene, the door's "0 of 2". `/play` shows
+   world 1; the built day sky is parked for stage 8.
+   *Test:* the night's look on phone / tablet / desktop, the entry scene, the door.
+3. **World 1, its three levels.** Word (sound slot + letters in order), the search in
+   the level's own scene, the closing Puzzle / Memory at the medium step, with the
+   levels' own pictures.
+   *Test:* play 1–3 to the door; with Pinki's two stars it opens.
+4. **World 2, its look and the way in.** The sunrise sky (5 clouds, Nova's door), the
+   entry scene (night into sunrise, Pinki out of her door, `FriendSays`).
+   *Test:* the passage from world 1 into 2, the look.
+5. **World 2, levels 4–8.** Five activities (bridge, mixing, gates, bells, grey cloud).
+   *Test:* play 4–8.
+6. **World 3, its look and the way in.** The garden sky, Nova joining, Bloo's door.
+7. **World 3, levels 9–13.**
+8. **World 4, its look and the way in.** The built day sky re-made for five clouds and
+   the star's cloud, told apart from world 3; Bloo joining; the glint far off.
+9. **World 4, levels 14–18 and the end.** The storm, shadows, bridge, the trail, the
+   star's scene and the hardest puzzle.
+10. **The finish.** Three languages read through, dark mode, weight and loading of four
+    worlds, the docs; the old five-level data gone. (Cups and the old games' own pages
+    are deleted only when the user says.)
 
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
