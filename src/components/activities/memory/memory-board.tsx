@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Star, Timer } from "lucide-react";
 import type { MemoryLevel } from "@/types/memory";
+import type { SkyHost } from "@/data/sky-levels";
 import { memoryFaces } from "@/data/memory-levels";
 import { deckFor, secondsLeft } from "@/lib/memory-deck";
 import { memoryKey, useProgress } from "@/store/progress";
@@ -18,7 +19,9 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 interface MemoryBoardProps {
   level: MemoryLevel;
   /** The next level, or back to the list when this was the last one. */
-  nextHref: string;
+  nextHref?: string;
+  /** Played as a challenge of a Sky Trail level (see `SkyHost`). */
+  host?: SkyHost;
   dict: Dictionary;
 }
 
@@ -57,7 +60,7 @@ type ClockVars = CSSProperties & { "--clock-left"?: string };
  * `PuzzlePlay` does — the header shows live state (the clock), so the whole
  * row has to be inside the client component that has it.
  */
-export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
+export function MemoryBoard({ level, nextHref, host, dict }: MemoryBoardProps) {
   const complete = useProgress((state) => state.complete);
 
   /* Bumped by "Again", and the only thing that re-deals the board. It starts
@@ -121,7 +124,8 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
         /* Recorded in the handler that finished it, never in an effect
            watching for it — the same call the puzzle makes. */
         setFinished(true);
-        complete(memoryKey(level.value), DONE);
+        if (host) host.onSolved();
+        else complete(memoryKey(level.value), DONE);
       }
       return;
     }
@@ -155,7 +159,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
               sets `position: relative` and is UNLAYERED, so a Tailwind
               `absolute` utility on the button itself silently loses. */}
           <span className="absolute left-0 top-0">
-            <BackButton href="/play/memory-match" label={dict.activities.backToLevels} />
+            <BackButton href={host?.backHref ?? "/play/memory-match"} label={host?.backLabel ?? dict.activities.backToLevels} />
           </span>
 
           {/* Which level this is, facing the back button across the row —
@@ -164,9 +168,9 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
               was a heading-sized piece of chrome for a single digit. */}
           <span className="absolute right-0 top-0">
             <LevelBadge
-              value={level.value}
+              value={host?.level ?? level.value}
               word={dict.activities.levelWord}
-              label={format(dict.activities.levelLabel, { value: level.value })}
+              label={format(dict.activities.levelLabel, { value: host?.level ?? level.value })}
               dir={dirFor(dict.locale)}
             />
           </span>
@@ -264,6 +268,8 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
           <div className="anim-pop-in relative mt-7 flex flex-col items-center gap-5 sm:mt-9 sm:gap-6">
             <Celebration />
 
+            {/* A Sky Trail level goes on by itself: no Again, no Next. */}
+            {!host && (
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               {/* The site's one replay button — same collapse-and-spin as
                   the numbers lesson's, and it keeps the WHITE clay face
@@ -293,6 +299,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
                 href={nextHref}
               />
             </div>
+            )}
           </div>
         )}
       </div>
