@@ -205,6 +205,11 @@ export const en = {
     watchAlt: "Pinki, Nova and Bloo walking through Edenic World",
     backToDiscover: "Back to Discover",
     watchClipAria: "Watch the video: {title}",
+    episodesTitle: "Episodes",
+    reelsTitle: "Short videos",
+    filterAll: "All",
+    filterAria: "Filter the short videos",
+    episodeAria: "Play episode: {title}",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
