@@ -1632,6 +1632,67 @@ button.course-stop {
 
 
 /* ---------------------------------------------------------------
+   The star a course's gold chest gives (2026-11-12): over the open chest,
+   inside the chest's own stop (`cqi` of its box). It comes up out of the
+   chest once (`data-rise`), then hangs there, bobbing — on later visits it
+   is simply there. Both animate `translate`, which carries the centring
+   (never a Tailwind `-translate-x-1/2` beside it). --------- */
+.chest-star {
+  position: absolute;
+  left: 50%;
+  bottom: 80%;
+  width: 21cqi;
+  height: auto;
+  pointer-events: none;
+  translate: -50% 0;
+  filter: drop-shadow(0 0 0.7em rgb(255 214 96 / 85%)) drop-shadow(0 0.5em 0.6em rgb(150 90 20 / 30%));
+  animation: chest-star-bob 2.2s ease-in-out infinite alternate;
+}
+
+.chest-star[data-rise] {
+  animation:
+    chest-star-rise 1.15s cubic-bezier(0.3, 1.25, 0.5, 1) both,
+    chest-star-bob 2.2s ease-in-out 1.15s infinite alternate;
+}
+
+@keyframes chest-star-rise {
+  0% {
+    translate: -50% 115%;
+    scale: 0.12;
+    rotate: -30deg;
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    translate: -50% 0;
+    scale: 1;
+    rotate: 0deg;
+    opacity: 1;
+  }
+}
+
+@keyframes chest-star-bob {
+  from {
+    translate: -50% 0;
+  }
+
+  to {
+    translate: -50% -7%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chest-star,
+  .chest-star[data-rise] {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------
    The Sky Trail's balloon (2026-11-12): the child's marker, hovering by
    the cloud they are at — `CourseWorld`'s `marker`, inside that stop, so
    it rides the stop's own box (`cqi`). It bobs on `translate`; nothing
