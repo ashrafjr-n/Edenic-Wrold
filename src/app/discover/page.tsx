@@ -4,7 +4,7 @@ import { DiscoverCard } from "@/components/discover/discover-card";
 import { dirFor } from "@/lib/format-dict";
 import { getDictionary } from "@/lib/locale";
 /* The Play door shows where it leads: the Sky Trail, a frame of its own world. */
-import skyCard from "../../../public/assets/play/sky/stops/landscape/f050.jpg";
+import skyCard from "../../../public/assets/play/sky/night/stops/landscape/f055.jpg";
 import watchCard from "../../../public/hero.webp";
 
 export const metadata: Metadata = {
