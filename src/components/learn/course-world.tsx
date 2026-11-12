@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
@@ -9,7 +9,7 @@ import { chestSeen, peekChest, takeChest } from "@/lib/chest-run";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import { usePageTransition } from "@/store/page-transition";
-import { useProgress } from "@/store/progress";
+import { chestStarKey, itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { ChestPlayFrame, CourseStops, CourseStopsFrame, SceneRect } from "@/types/course";
 import { place } from "./lesson/find-shapes";
@@ -69,6 +69,10 @@ const STONES_LAG_MS = 350;
 const CHEST_PAUSE_MS = 450;
 /** One frame of the chest's opening (rendered at 25 a second). */
 const CHEST_FRAME_MS = 40;
+/** The chest's star comes out once the lid has swung open (its play is 46 frames);
+    out of a chest already open, after a beat. */
+const STAR_AFTER_MS = 1300;
+const STAR_BEAT_MS = 500;
 
 /** Each stop's box at `progress`, between the render's key positions. */
 function boxAt(keys: readonly (readonly SceneRect[])[], progress: number, stop: number): SceneRect {
@@ -184,6 +188,9 @@ interface CourseWorldProps {
   basePath: string;
   dict: Dictionary["lessonPicker"];
   dir: "rtl" | "ltr";
+  /** The star this course's chest gives (its picture); absent, the last stop
+      gives none (the Sky Trail's is the big star itself). */
+  star?: StaticImageData;
   /** Something that stands at the child's place — the stop to play next, the
       last stop once all are done (the Sky Trail's balloon). */
   marker?: ReactNode;
@@ -207,7 +214,7 @@ interface CourseWorldProps {
  * lesson just done, its way turns pink stone by stone, and the camera goes on
  * to the next lesson.
  */
-export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir, marker }: CourseWorldProps) {
+export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir, star, marker }: CourseWorldProps) {
   const wide = useWide();
   const data = world[wide ? "landscape" : "portrait"];
   /* The ways between the lessons: one fewer than the stops. */
@@ -260,7 +267,20 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     if (chestNow.current.open) return;
     playChest.current(still);
     chestSeen.mark(`${characterId}.${lessonId}`);
+    /* Its star (2026-11-12): only a chest reached — every lesson done — gives it,
+       once. Read off the store itself: this can be called from an effect of the
+       first render, whose own `nextIndex` is from before the store was read. */
+    const { items, complete } = useProgress.getState();
+    if (!star || !titles.every((_, i) => items[itemKey(characterId, lessonId, i + 1)])) return;
+    const key = chestStarKey(characterId, lessonId);
+    const fresh = !items[key];
+    complete(key, 1);
+    starTimer.current = window.setTimeout(() => setStarOut(fresh ? "rise" : "rest"), fresh ? (still ? STAR_BEAT_MS : STAR_AFTER_MS) : 0);
   };
+  /* The star over the open chest: `rise` as it comes out the first time, `rest` after. */
+  const [starOut, setStarOut] = useState<"rise" | "rest" | null>(null);
+  const starTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(starTimer.current), []);
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
 
   /* A way is pink once the lesson before it is done. */
@@ -961,6 +981,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
+            {star && starOut && <Image src={star} alt="" sizes="(orientation: landscape) 12vw, 34vw" className="chest-star" data-rise={starOut === "rise" || undefined} />}
             {hydrated && nextIndex < 0 && marker}
           </button>
         </div>
