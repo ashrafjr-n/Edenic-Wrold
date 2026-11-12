@@ -201,7 +201,6 @@ export const en = {
     thisWeather: "It is {weather}!",
     sortWeather: "Put each thing in its weather's box!",
     weatherIn: "What is the weather in {season}?",
-    pickList: "Pick the things on Nova's list!",
     /** My Garden's Find; `{things}` the English plural ("trees"). */
     findThings: "Find all the {things}!",
     whichThing: "Which one is the {thing}?",
@@ -218,7 +217,6 @@ export const en = {
     order: "Line up",
     cook: "Cook",
     like: "Like?",
-    harvest: "Pick",
     feed: "Feed",
     basket: "Put",
   },
