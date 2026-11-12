@@ -174,7 +174,6 @@ export const en = {
   },
   /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
   asks: {
-    whichShape: "Which one is the {shape}?",
     draw: "Draw a {shape}!",
     thisIs: "This is a {shape}!",
     spell: "Build the word {word}!",
@@ -182,18 +181,11 @@ export const en = {
     thisColor: "This is {color}!",
     findColor: "Find all the {color} things!",
     mix: "What do {a} and {b} make?",
-    whichColor: "Which one is {color}?",
-    spellColor: "Build the word for this color!",
-    spellPicture: "Build the word for this picture!",
     thisSeason: "This is {season}!",
     meetThing: "Meet the {thing}!",
     feedAnimal: "What does the {thing} eat? Feed it!",
     basketTime: "Put the {thing} in the basket!",
     thisWeather: "It is {weather}!",
-    weatherIn: "What is the weather in {season}?",
-    /** My Garden's Find; `{things}` the English plural ("trees"). */
-    findThings: "Find all the {things}!",
-    whichThing: "Which one is the {thing}?",
   },
   /** The task chip's one verb per kind of step. */
   tasks: {
