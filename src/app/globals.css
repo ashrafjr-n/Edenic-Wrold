@@ -3071,7 +3071,7 @@ button:disabled,
 }
 
 /* ---------------------------------------------------------------
-   Nova's market (Fruits & Vegetables).
+   Nova's Vegetables.
    --------------------------------------------------------------- */
 
 /* Basket Time (`BasketTime`, Nova's Vegetables, 2026-11-01): the basket
@@ -4651,8 +4651,7 @@ button:disabled,
 
 /* Every lesson, in order, under the next one (2026-11-05, on request:
    "tidier, more than one in a row"): rows of equal chalk cards, a last row
-   that is not full centred; the review, a paper sheet, a row of its own.
-   The board grows with them. */
+   that is not full centred. The board grows with them. */
 .board-row {
   --cols: var(--cols-phone, 3);
   --gap: 0.8rem;
@@ -4672,10 +4671,6 @@ button:disabled,
   display: flex;
   flex: 0 0 calc((100% - var(--gap) * (var(--cols) - 1)) / var(--cols));
   min-width: 0;
-}
-
-.board-row > .board-row-item--review {
-  flex-basis: 100%;
 }
 
 @media (width >= 40rem) {
@@ -4847,70 +4842,6 @@ a.board-cell:focus-visible {
 
 .board-cell--locked .board-cell-n {
   color: rgb(247 243 233 / 35%);
-}
-
-/* The review, the last one: a paper sheet pinned up like the next lesson's,
-   not a chalk box — its things small in a row, its title in ink. */
-.board-cell--review {
-  border-image: none;
-  border-color: transparent;
-  flex-direction: row;
-  gap: 1rem;
-  padding: 0.7rem 1.25rem 0.7rem 2.2rem;
-  border-radius: 1.2rem;
-  color: var(--color-ink-fixed);
-  background-color: #fbf8f0;
-  background-image: var(--noise);
-  background-blend-mode: soft-light;
-  box-shadow: 0 10px 18px -10px rgb(0 0 0 / 60%);
-}
-
-.board-row .board-cell--review .board-cell-word {
-  font-size: clamp(1.05rem, 3vw, 1.4rem);
-}
-
-a.board-cell--review:hover,
-a.board-cell--review:focus-visible {
-  background-color: #fffdf8;
-}
-
-.board-cell--review.board-cell--now {
-  box-shadow: 0 0 0 3px var(--chalk-accent), 0 10px 18px -10px rgb(0 0 0 / 60%);
-}
-
-.board-cell--review.board-cell--locked {
-  opacity: 0.55;
-}
-
-.board-cell--review .board-cell-n {
-  top: 50%;
-  left: 0.85rem;
-  translate: 0 -50%;
-  color: color-mix(in srgb, var(--color-ink-fixed) 55%, transparent);
-}
-
-.board-cell--review .board-cell-word {
-  color: var(--color-ink-fixed);
-}
-
-.board-cell--review .board-cell-lock {
-  color: var(--color-ink-fixed);
-}
-
-.board-row .board-cell--review .board-cell-art {
-  width: auto;
-  aspect-ratio: auto;
-  gap: 0.2rem;
-}
-
-.board-cell--review .board-magnet {
-  width: clamp(1.9rem, 6vw, 2.75rem);
-  max-width: none;
-  filter: drop-shadow(0 3px 3px rgb(90 40 70 / 25%));
-}
-
-.board-cell--review .board-magnet::before {
-  display: none;
 }
 
 /* The lesson the child is on, in the line: ringed in their chalk, the
