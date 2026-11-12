@@ -39,8 +39,6 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "find", target: findLabel(q.target) };
     case "sort":
       return { kind: "sort" };
-    case "order":
-      return { kind: "order" };
     /* Their demos feed and fill with another animal and vegetable (how,
        never which), so the chip names no word that would not match. */
     case "feed":
@@ -74,8 +72,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
       return { kind: "find", scene: q.scene, target: q.target };
     case "sort":
       return { kind: "sort", item: q.items[0], bins: q.bins };
-    case "order":
-      return { kind: "order", items: q.items, seed };
     case "feed":
       return { kind: "feed", ...q.demo };
     case "basket":
