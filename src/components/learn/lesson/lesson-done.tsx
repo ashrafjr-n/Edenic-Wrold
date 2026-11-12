@@ -34,10 +34,9 @@ interface LessonDoneProps {
   title: string;
   /** Every step of the lesson, in order — its path, walked. */
   path: readonly TaskKind[];
-  /** The taught words ("circle"; "red", "blue"), none for a review. */
+  /** The taught words ("circle"; "spring", "rainy"). */
   words: { word: string; tone?: LetterTone }[];
-  /** What the lesson was about — a shape, two colors' pots, or a review's
-      four. */
+  /** What the lesson was about — a shape, or the pictures it names. */
   faces: Face[];
   /** The child's own passing trace, drawn back beside the shape. */
   drawing?: readonly StrokePoint[];
