@@ -5645,12 +5645,6 @@ a.board-cell--now:focus-visible {
   border-color: rgb(251 248 240 / 35%);
 }
 
-/* Written straight on the slate, in chalk: an ordering space's number, a
-   "Do you like…?" sentence, a plate's "I like" in its own colour, lighter. */
-.chalkboard--stage .slot-number {
-  color: rgb(251 248 240 / 45%);
-}
-
 /* A Pick's sum ("blue + yellow = ?"): its signs are text faces in ink —
    chalk on the slate. */
 .chalkboard--stage .pick-show {
