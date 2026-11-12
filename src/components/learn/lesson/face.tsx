@@ -61,8 +61,8 @@ export function FaceView({ face, size }: FaceViewProps) {
       <Image
         src={face.src}
         alt={face.word}
-        sizes={size === "tile" ? (face.full ? "(min-width: 640px) 200px, 140px" : "(min-width: 640px) 120px, 80px") : "(min-width: 1024px) 96px, (min-width: 640px) 80px, 64px"}
-        className={`${size === "tile" ? (face.full ? "h-[94%] w-[94%]" : box) : "h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24"} object-contain`}
+        sizes={size === "tile" ? "(min-width: 640px) 120px, 80px" : "(min-width: 1024px) 96px, (min-width: 640px) 80px, 64px"}
+        className={`${size === "tile" ? box : "h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24"} object-contain`}
       />
     );
   }
