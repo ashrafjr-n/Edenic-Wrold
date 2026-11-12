@@ -127,9 +127,6 @@ export type Question =
   /** Two paints and what they make: pick the color; the two run together
       into it (`MixColors`). `others` are the wrong answers. */
   | { type: "mix"; ask: Ask; a: ColorId; b: ColorId; color: ColorId; others: ColorId[] }
-  /** Tap the things in their order — each lands in the next space of the
-      line. `items` are in the right order. */
-  | { type: "order"; ask: Ask; items: Face[] }
   /** Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find
       It! merged in): the kitchen, its friend behind the counter, the word
       up on the wall; drag its vegetable from the counter into the basket
