@@ -35,7 +35,7 @@ interface FindShapesProps {
     phone, capped by the height left once the tray and the chrome are taken
     off (measured at 375x667, 390x844, 820x1180) — the picture is 4:5.
     On Pinki's board (`.pic-card`) it is a photo pinned up by two magnets. */
-export const STAGE_CARD =
+const STAGE_CARD =
   "card card-clay-white card-bare-lg pic-card relative w-full max-w-[min(100%,calc((100svh-24.75rem-min(2.5rem,4svh))*0.8))] p-2 sm:max-w-[min(28rem,calc((100svh-40rem)*0.8))] sm:p-3 lg:max-w-[min(36rem,calc((var(--stage-h)-6.75rem)*0.8+1.5rem))]";
 
 /**
@@ -43,7 +43,7 @@ export const STAGE_CARD =
  * request): one per thing to collect, each filled, in order, with the
  * picture of one collected.
  */
-export function SocketTray({ filled, count }: { filled: StaticImageData[]; count: number }) {
+function SocketTray({ filled, count }: { filled: StaticImageData[]; count: number }) {
   return (
     <div
       className="clay flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--surface)] p-1.5 sm:gap-2 sm:p-2 lg:gap-2.5 lg:p-2.5"
