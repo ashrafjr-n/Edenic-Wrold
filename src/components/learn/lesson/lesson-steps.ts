@@ -7,18 +7,16 @@ import type { TaskDemoDef } from "./task-demo";
    button, its demo and the done screen read off a question. */
 
 /** The store needs a star count > 0 for "done". Nothing on the site shows
-    stars; fewer of them is how a later review could find a shaky lesson. */
+    stars; fewer of them marks a lesson that took more tries. */
 export function starsFor(mistakes: number): number {
   if (mistakes <= 1) return 3;
   if (mistakes <= 4) return 2;
   return 1;
 }
 
-/** The word on a Find's task chip: "circles", "red", "spring". */
+/** The word on a Find's task chip: "circles", "red". */
 function findLabel(target: Target): string {
-  if ("shape" in target) return `${target.shape}s`;
-  if ("color" in target) return target.color;
-  return target.group;
+  return "shape" in target ? `${target.shape}s` : target.color;
 }
 
 /** A watch step plays the lesson's reel, or `src` — a reel inside the lesson. */
