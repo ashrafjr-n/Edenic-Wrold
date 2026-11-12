@@ -4724,7 +4724,12 @@ const BLOO_STOPS = ANIMALS_STOPS || WEATHER_STOPS;
 /* The Sky Trail (2026-11-12): the Play game's world of stops (`&course=sky`) — its levels
    on clouds up in the sky, white stars the way between them (the page turns them gold),
    Edenic's big star the nearest stop (it lights, as a chest opens). */
-const SKY_STOPS = STOPS && params.get("course") === "sky";
+/* Its first world (`&course=sky-night`, 2026-11-12, "four worlds, one story"): night — the
+   moon, stars, three level clouds going AWAY from the camera (level 1 the nearest), then
+   Pinki's cloud house, whose door opens as a chest does; past it the next world, shut
+   behind a bank of cloud with the dawn behind it. */
+const SKY_NIGHT = STOPS && params.get("course") === "sky-night";
+const SKY_STOPS = STOPS && (params.get("course") === "sky" || SKY_NIGHT);
 /* Nova's two worlds of stops and Bloo's share their shape (milk slabs, gold stones); the sky its way. */
 const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS || SKY_STOPS;
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
@@ -5662,16 +5667,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, SKY_STOPS ? "#4fa3ee" : LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, SKY_STOPS ? "#86c5f6" : LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, SKY_STOPS ? "#a9d6f8" : LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, SKY_STOPS ? "#8cc6f4" : LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, SKY_NIGHT ? "#0f1446" : SKY_STOPS ? "#4fa3ee" : LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, SKY_NIGHT ? "#3b3f9e" : SKY_STOPS ? "#86c5f6" : LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, SKY_NIGHT ? "#2f3890" : SKY_STOPS ? "#a9d6f8" : LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, SKY_NIGHT ? "#262d7a" : SKY_STOPS ? "#8cc6f4" : LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = SKY_NIGHT ? new THREE.Fog(0x2b3486, 52, 175) : SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(LAND ? 0xf2e6ff : 0xeaf4ff);
   sky.groundColor.set(LAND ? 0xd4e8a8 : 0xc0e0a4);
@@ -7504,12 +7509,24 @@ if (THING) {
       sky.groundColor.set(0xcfe4fa);
       sky.intensity = 1.7;
     }
+    /* Night: moonlight — cool, lower, still bright enough for a child to read every cloud. */
+    if (SKY_NIGHT) {
+      sun.color.set(0xcdd8ff);
+      sun.intensity = 1.2;
+      sky.color.set(0xb4c0ff);
+      sky.groundColor.set(0x3b4092);
+      sky.intensity = 1.2;
+      scene.environmentIntensity = 0.2;
+    }
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
     const FRUIT_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-    const SET_KINDS = SKY_STOPS ? ["1", "2", "3", "4", "5"] : ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
+    const SET_KINDS = SKY_NIGHT ? ["1", "2", "3"] : SKY_STOPS ? ["1", "2", "3", "4", "5"] : ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
     stopsApi.pictures = [];
-    const SPOTS = MILK_STOPS
+    const SPOTS = SKY_NIGHT
+      ? /* Going away: level 1 where a course's chest stands, the house the farthest. */
+        [[portrait ? -1.2 : -4.8, 5], [portrait ? 1.2 : 4.8, -6], [portrait ? -1.2 : -4.8, -17], [0, -29]]
+      : MILK_STOPS
       ? [...SET_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? (SKY_STOPS ? 1.2 : 2.4) : 4.8), -6 - (SET_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
       : COLORS_STOPS
       ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
@@ -7517,6 +7534,8 @@ if (THING) {
       ? [[-2.3, -39], [2.4, -28], [-2.4, -17], [2.4, -6], [0, 6]]
       : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
     const FIRST_Z = SPOTS[0][1];
+    /* The far end of the way (the first lesson's — or, at night, the house's). */
+    const FAR_Z = Math.min(...SPOTS.map((spot) => spot[1]));
     /* How far the Shapes world's far scenery moves back for a longer way. */
     const DZ = COLORS_STOPS || MILK_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
     const KINDS = MILK_STOPS ? SET_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
@@ -7590,7 +7609,9 @@ if (THING) {
     /* A fixed scatter (never `Math.random`: the same sky on every render). */
     let seed = 7;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-    const cloudM = soft(0xffffff, { roughness: 0.96, sheen: 0.9, emissive: 0xffffff, emissiveIntensity: 0.16 });
+    const cloudM = SKY_NIGHT
+      ? soft(0xe4e8ff, { roughness: 0.96, sheen: 0.9, emissive: 0x8e9bff, emissiveIntensity: 0.3 })
+      : soft(0xffffff, { roughness: 0.96, sheen: 0.9, emissive: 0xffffff, emissiveIntensity: 0.16 });
     /* A cloud to stand on: a low bed with a nearly flat top, round puffs all
        about its rim and a belly under it. */
     const cloudBed = (wd, dp) => {
@@ -7784,9 +7805,142 @@ if (THING) {
       add(g, x, 0, z);
       stops.push(g);
     });
+    /* The night's last stop: Pinki's cloud house — her pink, a domed roof with her two
+       gold horns, lit windows, a cream door with two star-shaped slots. Its door opens as
+       a chest does (`state(p)`): her two stars drop into the slots, the door swings out,
+       light comes up inside and Pinki (her own picture, `setPictures`) stands in it. */
+    if (SKY_NIGHT) {
+      const [x, z] = SPOTS[SPOTS.length - 1];
+      const g = new THREE.Group();
+      const ped = cloudBed(9, 6.6);
+      g.add(ped);
+      ped.userData.hit.scale.y = 1.3;
+      ped.userData.hit.position.y = 3.2;
+      const wallM = soft(0xff9ec9, { roughness: 0.75, sheen: 0.5, emissive: 0xff7fb8, emissiveIntensity: 0.2 });
+      const roofM = soft(0xff5aa5, { roughness: 0.7, sheen: 0.5, emissive: 0xff3d95, emissiveIntensity: 0.18 });
+      const cream = soft(0xfff3e2, { roughness: 0.7, emissive: 0xffe9c8, emissiveIntensity: 0.22 });
+      const gold = soft(0xffc93a, { roughness: 0.55, emissive: 0xffb000, emissiveIntensity: 0.3 });
+      const house = new THREE.Group();
+      const [W, H, D] = [4.6, 3.1, 3.4];
+      house.add(at(rbox(W, H, D, wallM, 0.55), 0, H / 2, 0));
+      const roof = mesh(new THREE.SphereGeometry(1, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), roofM);
+      roof.scale.set(W * 0.6, 1.9, D * 0.64);
+      roof.position.y = H - 0.2;
+      house.add(roof);
+      const eave = mesh(new THREE.TorusGeometry(1, 0.085, 16, 96), roofM);
+      eave.scale.set(W * 0.6, D * 0.64, 2.2);
+      eave.rotation.x = Math.PI / 2;
+      eave.position.y = H - 0.2;
+      house.add(eave);
+      for (const sx of [-1, 1]) {
+        const horn = mesh(new THREE.ConeGeometry(0.36, 1.05, 40), gold);
+        horn.position.set(sx * 1.5, H + 1.15, 0.1);
+        horn.rotation.z = -sx * 0.6;
+        house.add(horn);
+      }
+      const zf = D / 2;
+      /* A lit round window either side of the door. */
+      const paneM = new THREE.MeshBasicMaterial({ color: 0xffe28a, fog: false, toneMapped: false });
+      for (const sx of [-1, 1]) {
+        const ring = mesh(new THREE.TorusGeometry(0.5, 0.11, 16, 64), cream);
+        ring.position.set(sx * 1.52, 1.85, zf);
+        house.add(ring);
+        const pane = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), paneM);
+        pane.position.set(sx * 1.52, 1.85, zf + 0.012);
+        house.add(pane);
+        for (const turn of [0, Math.PI / 2]) {
+          const bar = rbox(1, 0.07, 0.05, cream, 0.02);
+          bar.position.set(sx * 1.52, 1.85, zf + 0.03);
+          bar.rotation.z = turn;
+          house.add(bar);
+        }
+      }
+      const [DW, DH] = [1.55, 2.3];
+      house.add(at(rbox(DW + 0.4, DH + 0.24, 0.2, cream, 0.36), 0, DH / 2 + 0.02, zf));
+      /* Behind the door: dark until it opens, then the light of her room. */
+      const DARK = new THREE.Color(0x4a2350), WARM = new THREE.Color(0xfff2c4);
+      const insideM = new THREE.MeshBasicMaterial({ color: DARK.getHex(), fog: false, toneMapped: false });
+      const inside = new THREE.Mesh(new THREE.PlaneGeometry(DW, DH), insideM);
+      inside.position.set(0, DH / 2 + 0.02, zf + 0.105);
+      house.add(inside);
+      /* Pinki in her doorway, not there until it opens. */
+      const friend = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).translate(0, 0.5, 0), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false, opacity: 0 }));
+      friend.scale.setScalar(2.05);
+      friend.position.set(0, 0.06, zf + 0.16);
+      friend.userData.noMerge = true;
+      friend.visible = false;
+      house.add(friend);
+      stopsApi.pictures.push({ kind: "friend", mesh: friend });
+      /* The door, hinged on its left edge. */
+      const door = new THREE.Group();
+      door.position.set(-DW / 2, 0.02, zf + 0.2);
+      const leaf = rbox(DW, DH, 0.16, soft(0xfffaf1, { roughness: 0.65, emissive: 0xfff0d8, emissiveIntensity: 0.25 }), 0.3);
+      leaf.position.set(DW / 2, DH / 2, 0);
+      door.add(leaf);
+      door.add(at(ball(0.11, gold, 24), DW - 0.24, DH * 0.44, 0.12));
+      /* Its two slots, and the stars that fill them. */
+      const slotM = soft(0x7a3f86, { roughness: 0.9 });
+      const slotGeo = starGeo(0.25, 0.03, 0.02), fillGeo = starGeo(0.25, 0.07, 0.06);
+      const fillM = soft(0xffc400, { roughness: 0.5, emissive: 0xffa800, emissiveIntensity: 0.45 });
+      const fills = [-1, 1].map((sx) => {
+        door.add(at(mesh(slotGeo, slotM), DW / 2 + sx * 0.37, DH * 0.72, 0.085));
+        const fill = mesh(fillGeo, fillM);
+        fill.position.set(DW / 2 + sx * 0.37, DH * 0.72, 0.13);
+        fill.castShadow = false;
+        door.add(fill);
+        return fill;
+      });
+      house.add(door);
+      /* The light that spills out of it. */
+      const spillCanvas = document.createElement("canvas");
+      spillCanvas.width = spillCanvas.height = 128;
+      const sc = spillCanvas.getContext("2d");
+      const spillGrad = sc.createRadialGradient(64, 64, 0, 64, 64, 64);
+      spillGrad.addColorStop(0, "rgba(255,244,200,1)");
+      spillGrad.addColorStop(0.45, "rgba(255,214,140,0.45)");
+      spillGrad.addColorStop(1, "rgba(255,200,120,0)");
+      sc.fillStyle = spillGrad;
+      sc.fillRect(0, 0, 128, 128);
+      const spill = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(spillCanvas), depthWrite: false, fog: false, transparent: true, opacity: 0 }));
+      spill.position.set(0, DH / 2, zf + 0.02);
+      spill.scale.set(5.2, 5.2, 1);
+      spill.visible = false;
+      house.add(spill);
+      house.position.set(0, ped.top - 0.12, -0.25);
+      house.scale.setScalar(1.12);
+      g.add(house);
+      stopsApi.last = {
+        state(p) {
+          const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+          const back = (v) => 1 + 2.2 * (v - 1) ** 3 + 1.2 * (v - 1) ** 2;
+          fills.forEach((fill, i) => {
+            const f = k(0.02 + i * 0.13, 0.2 + i * 0.13);
+            fill.scale.setScalar(Math.max(0.001, f > 0 ? back(f) : 0));
+            fill.visible = f > 0;
+          });
+          const shake = k(0.34, 0.46);
+          const fade = shake > 0 && shake < 1 ? Math.sin(Math.PI * shake) : 0;
+          house.rotation.z = Math.sin(shake * Math.PI * 4) * 0.035 * fade;
+          const o = k(0.44, 0.8);
+          door.rotation.y = -1.9 * (o > 0 ? back(o) : 0);
+          const g2 = k(0.46, 0.84);
+          const glow = g2 * g2 * (3 - 2 * g2);
+          insideM.color.copy(DARK).lerp(WARM, glow);
+          spill.material.opacity = 0.55 * glow;
+          spill.visible = glow > 0;
+          const here = k(0.6, 0.88);
+          friend.material.opacity = here;
+          friend.visible = here > 0;
+          friend.position.y = 0.06 - 0.35 * (1 - (here > 0 ? back(here) : 0));
+        },
+      };
+      stopsApi.last.state(0);
+      add(g, x, 0, z);
+      stops.push(g);
+    }
     /* The sky's last stop: Edenic's big star on the nearest cloud — pale until
        every level is done, then it lights (`state(p)`, played as the chest's opening). */
-    if (SKY_STOPS) {
+    if (SKY_STOPS && !SKY_NIGHT) {
       const [x, z] = SPOTS[SPOTS.length - 1];
       const g = new THREE.Group();
       const ped = cloudBed(8, 6);
@@ -7828,7 +7982,7 @@ if (THING) {
         g.add(m);
         return m;
       });
-      stopsApi.star = {
+      stopsApi.last = {
         /* `p` 0..1: a wobble, then it swells and turns gold, its face comes and
            little stars fly out; 1 = lit. */
         state(p) {
@@ -7856,7 +8010,7 @@ if (THING) {
           });
         },
       };
-      stopsApi.star.state(0);
+      stopsApi.last.state(0);
       add(g, x, 0, z);
       stops.push(g);
     }
@@ -7958,7 +8112,7 @@ if (THING) {
     }
     /* The stepping stones, white: a group a way between two lessons (the
        page turns a way pink, stone by stone, once its lesson is done). */
-    const stoneM = SKY_STOPS ? soft(0xffffff, { roughness: 0.7, emissive: 0xffffff, emissiveIntensity: 0.22 }) : soft(0xffffff, { roughness: 0.85 });
+    const stoneM = SKY_STOPS ? soft(0xffffff, { roughness: 0.7, emissive: 0xffffff, emissiveIntensity: SKY_NIGHT ? 0.55 : 0.22 }) : soft(0xffffff, { roughness: 0.85 });
     const skyStarGeo = SKY_STOPS ? starGeo(0.98, 0.26, 0.2) : null;
     const ways = [];
     for (let i = 0; i < SPOTS.length - 1; i++) {
@@ -8098,7 +8252,7 @@ if (THING) {
        at every height, the friends' rainbow past the first level, three balloons. */
     if (SKY_STOPS) {
       /* The sea far below is the sky's own blue, so the white clouds a child lands on stand out of it. */
-      const seaM = soft(0x9ccbf3, { roughness: 1, sheen: 0.4 });
+      const seaM = SKY_NIGHT ? soft(0x2a3488, { roughness: 1, sheen: 0.4, emissive: 0x1c2470, emissiveIntensity: 0.35 }) : soft(0x9ccbf3, { roughness: 1, sheen: 0.4 });
       const drift = (k, x, y, z, sx = 1, material = cloudM) => {
         const c = cloud(k);
         c.scale.x *= sx;
@@ -8109,17 +8263,109 @@ if (THING) {
         });
         add(c, x, y, z);
       };
-      for (let z = 30; z > FIRST_Z - 130; z -= 10) {
+      for (let z = 30; z > FAR_Z - 130; z -= 10) {
         for (let x = -96; x <= 96; x += 14) drift(9 + rnd() * 6, x + (rnd() - 0.5) * 10, -30 - rnd() * 7, z + (rnd() - 0.5) * 7, 1.5, seaM);
       }
       const edge = portrait ? 8.5 : 15;
-      for (let z = 14; z > FIRST_Z - 40; z -= 7) {
+      for (let z = 14; z > FAR_Z - 40; z -= 7) {
         for (const sx of [-1, 1]) drift(2.2 + rnd() * 2.2, sx * (edge + rnd() * (portrait ? 9 : 16)), -3 + rnd() * 13, z + (rnd() - 0.5) * 5, 1.25);
       }
-      [[9.4, 0xff8fbf], [7.7, 0xffd24d], [6, 0x6bb8f0]].forEach(([r, color]) => {
-        add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, -1.5, FIRST_Z - 19);
+      if (!SKY_NIGHT) {
+        [[9.4, 0xff8fbf], [7.7, 0xffd24d], [6, 0x6bb8f0]].forEach(([r, color]) => {
+          add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, -1.5, FIRST_Z - 19);
+        });
+        for (const sx of [-1, 1]) drift(4.6, sx * 8.6, -2.6, FIRST_Z - 18.2, 1.3);
+      }
+    /* The night's own: stars all over the sky (high ones too — the entry scene looks
+       up), a big low moon, and past the house the next world, shut: a bank of cloud
+       across the way, the dawn glowing behind it. */
+    if (SKY_NIGHT) {
+      const twinkle = new THREE.MeshBasicMaterial({ color: 0xfff6d8, fog: false, toneMapped: false });
+      for (let i = 0; i < 900; i++) {
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.14 + rnd() ** 3 * 0.5, 8, 6), twinkle);
+        dot.position.set((rnd() - 0.5) * 560, -24 + rnd() * 210, FAR_Z - 150 - rnd() * 50);
+        scene.add(dot);
+      }
+      const moonX = portrait ? -24 : -62;
+      const moon = new THREE.Mesh(new THREE.SphereGeometry(10, 64, 48), new THREE.MeshBasicMaterial({ color: 0xfff3c8, fog: false, toneMapped: false }));
+      moon.position.set(moonX, 22, FAR_Z - 150);
+      scene.add(moon);
+      for (const [dx, dy, r] of [[-3, 2.5, 1.7], [2.6, -1.5, 2.2], [3.4, 4, 1.1], [-1.5, -4.2, 1.3]]) {
+        const crater = new THREE.Mesh(new THREE.CircleGeometry(r, 32), new THREE.MeshBasicMaterial({ color: 0xf2dfa6, fog: false, toneMapped: false }));
+        crater.position.set(moonX + dx, 22 + dy, FAR_Z - 139.5);
+        scene.add(crater);
+      }
+      const glowOf = (stops) => {
+        const c = document.createElement("canvas");
+        c.width = c.height = 256;
+        const x2 = c.getContext("2d");
+        const gr = x2.createRadialGradient(128, 128, 0, 128, 128, 128);
+        stops.forEach(([at2, color]) => gr.addColorStop(at2, color));
+        x2.fillStyle = gr;
+        x2.fillRect(0, 0, 256, 256);
+        return new THREE.CanvasTexture(c);
+      };
+      const moonHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, "rgba(255,244,205,0.75)"], [0.4, "rgba(220,220,255,0.28)"], [1, "rgba(200,205,255,0)"]]), depthWrite: false, fog: false, transparent: true }));
+      moonHalo.position.set(moonX, 22, FAR_Z - 152);
+      moonHalo.scale.set(64, 64, 1);
+      scene.add(moonHalo);
+      /* The dawn, low and straight ahead, and the bank of cloud that shuts it off. */
+      const dawn = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, "rgba(255,206,150,0.95)"], [0.35, "rgba(255,150,170,0.6)"], [0.7, "rgba(190,120,220,0.22)"], [1, "rgba(120,110,220,0)"]]), depthWrite: false, fog: false, transparent: true }));
+      dawn.position.set(0, 2, FAR_Z - 60);
+      dawn.scale.set(150, 46, 1);
+      scene.add(dawn);
+      /* The entry scene's falling star (hidden in the trail's own frames): the series'
+         star, sad, with a long tail of light behind it. */
+      const faller = new THREE.Group();
+      const body = ITEMS.fallenStar("sad");
+      body.scale.setScalar(1.6);
+      /* Lit from inside, and never dimmed by the night's haze. */
+      body.traverse((o) => {
+        if (!o.isMesh) return;
+        o.material = o.material.clone();
+        o.material.fog = false;
+        if (o.material.emissive && o.material.vertexColors) o.material.emissiveIntensity = 0.55;
       });
-      for (const sx of [-1, 1]) drift(4.6, sx * 8.6, -2.6, FIRST_Z - 18.2, 1.3);
+      faller.add(body);
+      const tailCanvas = document.createElement("canvas");
+      tailCanvas.width = 512;
+      tailCanvas.height = 64;
+      const tc = tailCanvas.getContext("2d");
+      const tailGrad = tc.createLinearGradient(0, 0, 512, 0);
+      tailGrad.addColorStop(0, "rgba(255,240,180,0)");
+      tailGrad.addColorStop(0.6, "rgba(255,226,140,0.7)");
+      tailGrad.addColorStop(1, "rgba(255,250,220,1)");
+      tc.fillStyle = tailGrad;
+      const r = 32;
+      tc.beginPath();
+      tc.moveTo(0, r);
+      tc.quadraticCurveTo(256, 4, 512 - r, 4);
+      tc.arc(512 - r, r, r - 4, -Math.PI / 2, Math.PI / 2);
+      tc.quadraticCurveTo(256, 60, 0, r);
+      tc.fill();
+      const tail = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).translate(-0.5, 0, 0), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(tailCanvas), transparent: true, depthWrite: false, fog: false, toneMapped: false, blending: THREE.AdditiveBlending }));
+      tail.scale.set(22, 2.6, 1);
+      tail.position.z = -0.6;
+      faller.add(tail);
+      const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, "rgba(255,240,190,0.9)"], [0.4, "rgba(255,210,120,0.35)"], [1, "rgba(255,200,120,0)"]]), depthWrite: false, fog: false, transparent: true, blending: THREE.AdditiveBlending }));
+      aura.scale.set(9, 9, 1);
+      faller.add(aura);
+      faller.visible = false;
+      /* It moves: never baked into the scene's merged geometry (that left the tail lying at the origin). */
+      faller.traverse((o) => (o.userData.noMerge = true));
+      scene.add(faller);
+      /* Where it lands: a soft burst of light in the sea of cloud, far ahead. */
+      const burst = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, "rgba(255,236,180,0.95)"], [0.35, "rgba(255,190,150,0.4)"], [1, "rgba(255,170,170,0)"]]), depthWrite: false, fog: false, transparent: true, opacity: 0 }));
+      burst.scale.set(64, 30, 1);
+      burst.visible = false;
+      scene.add(burst);
+      stopsApi.fall = { faller, tail, burst };
+      const wallM = soft(0xc9c4f2, { roughness: 0.96, sheen: 0.9, emissive: 0xb07ad8, emissiveIntensity: 0.32 });
+      for (let i = 0; i < 26; i++) {
+        const row = i % 3;
+        drift(5.5 + rnd() * 3.5, -30 + (i / 25) * 60 + (rnd() - 0.5) * 4, -5 + row * 4.2 + rnd() * 1.6, FAR_Z - 24 - row * 2.2 - rnd() * 3, 1.35, wallM);
+      }
+    }
     }
     stopsApi.stops = stops;
     stopsApi.statues = statues;
@@ -8636,7 +8882,7 @@ if (THING) {
   if (STOPS) {
     /* The camera through the stops: `t` 0 over the chest (the nearest), 1 far
        in at the first lesson — low, as in the picture, going up a little. */
-    const first = stopsApi.spots[0][1];
+    const first = Math.min(...stopsApi.spots.map((spot) => spot[1]));
     /* The wide frame (a desktop): further back, higher and a wider lens than the
        first take, whose camera was too close with everything too big. */
     const [FOV, BACK, UP] = [Number(params.get("fov") ?? 42), Number(params.get("back") ?? 6), Number(params.get("up") ?? 1.5)];
@@ -8652,7 +8898,7 @@ if (THING) {
        wobble (the lid rattling), then the lid swings open on its hinge with a
        little overshoot as the light inside comes up; 1 = open and lit. */
     const chestState = (p) => {
-      if (stopsApi.star) return stopsApi.star.state(p);
+      if (stopsApi.last) return stopsApi.last.state(p);
       const c = stopsApi.chest;
       if (!c) return;
       const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
@@ -8677,6 +8923,44 @@ if (THING) {
       frameAt(t) {
         aim(camAt(t));
         return render("image/jpeg", 0.95);
+      },
+      /* The night world's entry scene (2026-11-12), `p` 0..1 over ~7 s: the camera
+         looks up at the night sky, a star falls across it with its tail of light and
+         is gone in the clouds far ahead (a soft burst), then the camera comes down to
+         the trail and lands where the page opens (`endT`, level 1's place). */
+      introAt(p, endT) {
+        const fall = stopsApi.fall;
+        if (!fall) return null;
+        const ease = (v) => v * v * (3 - 2 * v);
+        const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+        const farZ = first;
+        /* The star: in from high left, down and away to the right, into the sea. */
+        const f = k(0.06, 0.52);
+        /* Across open sky, right of the way, so nothing on the trail hides it. */
+        const from = new THREE.Vector3(portrait ? -12 : -30, 40, -14), to = new THREE.Vector3(portrait ? 16 : 44, -20, farZ - 36);
+        const pos = from.clone().lerp(to, f * f * 0.35 + f * 0.65);
+        fall.faller.visible = f > 0 && f < 1;
+        fall.faller.position.copy(pos);
+        const dir = to.clone().sub(from).normalize();
+        fall.tail.rotation.z = Math.atan2(dir.y, dir.x);
+        fall.faller.children[0].rotation.z = -f * 7;
+        const b = k(0.5, 0.8);
+        fall.burst.visible = b > 0 && b < 1;
+        fall.burst.position.set(to.x, -13, to.z - 4);
+        fall.burst.material.opacity = Math.min(1, Math.sin(Math.PI * b) * 1.4);
+        /* The camera: up at the sky, following the star, then down to the trail. */
+        const high = [0, 13, 26, -10, 34, farZ - 70];
+        const follow = [0, 12, 26, pos.x * 0.6, Math.max(2, pos.y * 0.7), Math.min(-20, pos.z)];
+        const end = camAt(endT);
+        const look = ease(k(0.12, 0.5));
+        let pose = lerp(high, follow, look);
+        const land = ease(k(0.6, 1));
+        pose = lerp(pose, end, land);
+        aim(pose);
+        const url = render("image/jpeg", 0.92);
+        fall.faller.visible = false;
+        fall.burst.visible = false;
+        return url;
       },
       /* The sky with nothing to land on, from the camera at `t` (the Sky Trail's
          levels are played over it, out of focus). */
@@ -8709,9 +8993,10 @@ if (THING) {
         scene.fog = null;
         /* The sky's friend is a flat picture: its empty corners hide no star. */
         const flat = SKY_STOPS ? stopsApi.pictures.map((picture) => picture.mesh) : [];
+        const shown = flat.map((m) => m.visible);
         flat.forEach((m) => (m.visible = false));
         const url = maskOf([[stopsApi.ways[k], -Infinity]], view);
-        flat.forEach((m) => (m.visible = true));
+        flat.forEach((m, i) => (m.visible = shown[i]));
         scene.background = bg;
         scene.fog = fog;
         return url;
