@@ -210,6 +210,9 @@ export const en = {
     filterAll: "All",
     filterAria: "Filter the short videos",
     episodeAria: "Play episode: {title}",
+    latestEpisode: "Latest episode",
+    watchNow: "Watch now",
+    more: "More",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
