@@ -16,7 +16,7 @@ export const ar: Dictionary = {
   nav: {
     home: "الرئيسية",
     learn: "تعلّم",
-    play: "العب",
+    discover: "اكتشف",
     profile: "الملف الشخصي",
     soon: "قريبًا",
     mainAriaLabel: "القائمة الرئيسية",
@@ -181,6 +181,14 @@ export const ar: Dictionary = {
     pick: "اختر",
     feed: "أطعِم",
     basket: "ضع",
+  },
+  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  discover: {
+    playButton: "العب",
+    watchButton: "شاهد",
+    watchAlt: "بينكي ونوفا وبلو يتجوّلون في عالم إيدينيك",
+    backToDiscover: "العودة إلى اكتشف",
+    watchClipAria: "شاهد الفيديو: {title}",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
