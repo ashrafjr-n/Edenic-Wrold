@@ -1,5 +1,5 @@
 import type { StaticImageData } from "next/image";
-import type { ColorId, Face, SortBin } from "@/types/course";
+import type { ColorId, Face } from "@/types/course";
 import red from "../../public/assets/learn/pinki/colors/dots/red.png";
 import blue from "../../public/assets/learn/pinki/colors/dots/blue.png";
 import yellow from "../../public/assets/learn/pinki/colors/dots/yellow.png";
@@ -61,9 +61,3 @@ export const COLOR_ORDER: ColorId[] = ["red", "blue", "yellow", "green", "orange
 
 /** A color as something to look at: its dot. */
 export const dotFace = (color: ColorId): Face => ({ kind: "picture", src: COLORS[color].dot, word: color });
-
-/** A Sort box for a color, in that color's own clay. */
-export const colorBin = (color: ColorId): SortBin => {
-  const { face, edge, text } = COLORS[color];
-  return { target: { color }, word: color, face: dotFace(color), tone: { face, edge, text } };
-};
