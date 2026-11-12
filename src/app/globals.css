@@ -3200,78 +3200,6 @@ button:disabled,
     0 14px 28px -14px rgb(var(--shadow-hue) / 34%);
 }
 
-/* Make it (`MakeFood`): the pot bubbles and what is in it sinks. Then it
-   fills — the full render, lying exactly over the empty one, uncovered
-   from the pot's middle out (`--fill-at`: the soup spreading) — and it
-   steams. (The blender's whirl and rising juice went with the fruits,
-   2026-10-12.) */
-.make-bubble {
-  transform-origin: 50% 100%;
-  animation: make-bubble 0.45s ease-in-out infinite alternate;
-}
-
-@keyframes make-bubble {
-  to {
-    scale: 1.035 0.965;
-  }
-}
-
-.make-sink {
-  animation: make-sink 1.1s ease-in forwards;
-}
-
-@keyframes make-sink {
-  to {
-    translate: 0 30%;
-    scale: 0.5;
-    opacity: 0;
-  }
-}
-
-.make-fill-out {
-  animation: make-fill-out 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both;
-}
-
-@keyframes make-fill-out {
-  from {
-    clip-path: circle(0% at var(--fill-at));
-  }
-  to {
-    clip-path: circle(75% at var(--fill-at));
-  }
-}
-
-/* A puff of steam over the soup; three of them, one after another. The
-   centring lives in the keyframes — an animation owning `translate` would
-   drop a `-translate-x-1/2` utility. */
-.make-steam {
-  position: absolute;
-  bottom: 0;
-  width: 22%;
-  aspect-ratio: 1;
-  border-radius: 9999px;
-  background: rgb(255 255 255 / 80%);
-  filter: blur(5px);
-  opacity: 0;
-  animation: make-steam 1.8s ease-out infinite;
-}
-
-@keyframes make-steam {
-  from {
-    translate: -50% 0;
-    scale: 0.5;
-    opacity: 0;
-  }
-  30% {
-    opacity: 0.9;
-  }
-  to {
-    translate: -50% -150%;
-    scale: 1.5;
-    opacity: 0;
-  }
-}
-
 /* Basket Time (`BasketTime`, Nova's Vegetables, 2026-11-01): the basket
    (`.basket-bin`) leans in and glows in the friend's chalk while a
    vegetable is held over it (`--aim`), and bounces once it is in (`--in`).
@@ -3678,9 +3606,6 @@ button:disabled,
   .demo-ring,
   .demo-tick,
   .paint-reveal,
-  .make-bubble,
-  .make-sink,
-  .make-fill-out,
   .feed-no,
   .basket-bin--in {
     animation: none;
@@ -3691,10 +3616,6 @@ button:disabled,
     animation: none;
     opacity: 1;
     translate: 0 -140%;
-  }
-
-  .make-steam {
-    display: none;
   }
 
   .demo-pen {
