@@ -70,6 +70,4 @@ function colorLesson(color: ColorId, n: number): LessonDef {
 /** Pinki · Colors. Titles live in `dict.lessons.colors.items`. The reels
     are the real clips, H.264 720p (`tools/reels/encode.sh`):
     `/assets/learn/pinki/colors/reels/<color>.mp4`. */
-export const pinkiColors: LessonDef[] = [
-  ...COLOR_ORDER.map((color, i) => colorLesson(color, i + 1)),
-];
+export const pinkiColors: LessonDef[] = COLOR_ORDER.map((color, i) => colorLesson(color, i + 1));
