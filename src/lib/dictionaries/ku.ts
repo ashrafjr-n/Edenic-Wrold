@@ -198,6 +198,9 @@ export const ku: Dictionary = {
     filterAll: "هەمی",
     filterAria: "ڤیدیۆیێن کورت فلتەر بکە",
     episodeAria: "پشکا {title} بلێزە",
+    latestEpisode: "دوماهیک پشک",
+    watchNow: "نوکە تەماشە بکە",
+    more: "زێدەتر",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
