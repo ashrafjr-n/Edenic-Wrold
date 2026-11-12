@@ -751,6 +751,85 @@ watches the year go by.*
   the big game?); a locked friend's look; the chest's opening. This
   REPLACES "no stars or rewards anywhere in Learn" for the chest only.
 
+### The Sky Trail — the Play game, full design (the user, 2026-11-12) — PLANNED, NOT BUILT
+
+Settles the "open for when it is built" list above. **Discover's Play card = this game**
+(`/play` becomes the sky; the Trail card on `/play` goes; the old games stay as "free play").
+
+- **Shape:** the sky, the stops are CLOUDS, built like a Learn course page of stops
+  (`CourseWorld`: a rendered 3D world, scrolling moves the camera, locked cloud grey,
+  done cloud tinted). **18 levels**: 1–3 alone (NO friend), 4–8 with **Pinki**, 9–13 with
+  **Pinki + Nova**, 14–18 with **all three**. 3 + 5 + 5 + 5 = 18.
+- **The gate:** a sleeping friend sits in a cloud bubble at levels 4 (Pinki), 9 (Nova),
+  14 (Bloo); waking one costs **2 stars** (stars come from the Learn chests, one per
+  course; 6 chests = 6 stars = 3 friends x 2 — an exact fit, compute from the real course
+  count, never hard-code 6). Fixed order Pinki → Nova → Bloo whatever courses were done.
+  Show the sleeping friend + "1 of 2 stars" + a button back to Learn (never a dead end);
+  levels already passed stay replayable. Play only READS `stars[courseId]`.
+- **A level = 3 short challenges** (a lesson-like sequence), drawn from ~7 mechanics at a
+  rising difficulty, so 54 challenges need only ~7 builds:
+  1. Memory Match, 2. Puzzle, 3. Cups (all exist — parameterise difficulty from their
+  existing level data), 4. constellation trace (join stars; reuse the tracing board),
+  5. "what comes next" pattern of shapes/colours (new, tiny), 6. sort into baskets by
+  colour/animal (like Basket Time), 7. catch the falling stars by tapping (simplest),
+  plus 8. spell the word (exists). Content comes from Learn (shapes, colours, vegetables,
+  garden, animals, weather) — taught words stay English.
+- **Friends are PICTURES only, silent** (audio later). Each adds a power, not decoration:
+  Pinki = a hint button (like the puzzle's Help) + shapes/colours levels; Nova = one retry
+  or more time + vegetables/garden/cups levels; Bloo = animals/weather levels (wind moves
+  clouds, rain/snow change a level). Level 18: all three cheer, together they light the big
+  Edenic star.
+- **Story, no text:** the child flies a small balloon / paper plane (NOT a character);
+  sleeping friends in cloud bubbles; the goal is lighting Edenic's big star with all three.
+- **Rewards in Play: no stars** (they are the chest's, don't mix them) — a finished level
+  just lights its cloud.
+- **Conflicts to resolve when building:** `/trail`'s intro has Nova saying "I am Nova,
+  your guide up the sky" (clashes with levels 1–3 having no friend); the gate is heavy
+  (levels 4+ need two whole courses; Colors alone is 10 lessons) — hence the visible
+  progress + way back to Learn.
+- **Build small first:** a sky of 6 clouds (levels 1–3 + Pinki's first), the 3 existing
+  games, the star flags + the chest giving its star, the sleeping-Pinki gate. Then grow
+  clouds and add the new mechanics. Art is rendered by Claude (`tools/picnic-scene`).
+
+#### The Sky Trail in three build phases (the user, 2026-11-12)
+
+The user's calls the same day: **no stars for now** (the chests give nothing yet, so no
+gate either), **no picture that does not exist** (no sleeping friends — a friend simply
+JOINS, with the pictures we have), the child's marker is a **balloon**, Nova's `/trail`
+intro goes but **its way of appearing is kept** (a life-size friend at the screen's edge,
+a white clay bubble, a tap moves on — `FriendSays`): the friends are to speak this way
+from now on.
+
+1. **Phase 1 — the base, playable end to end** (BUILDING 2026-11-12).
+   - `/play` IS the sky: a rendered world of stops (`render.cjs stops sky` + `crop.py
+     stops sky` → `data/sky-stops.ts`, played by `CourseWorld`): five cloud levels and,
+     the nearest stop, Edenic's big star.
+   - A level (`/play/sky/[level]`) = 3 short challenges out of the three games that
+     exist (Memory Match, Puzzle, Cups), their difficulty read from those games' own
+     level data (`data/sky-levels.ts`); a solved challenge goes on by itself; the third
+     finishes the level (`play.sky.<n>` in the progress store).
+   - Levels 1–3 alone; **Pinki joins at level 4** (her picture, the bubble) and brings
+     her power: the puzzle's Help.
+   - The balloon floats over the cloud the child is at. After the last level the camera
+     walks on and the big star lights (the chest's own machinery).
+   - The old cards move to `/play/games` (free play); the Trail card, `/trail`, its sky
+     of CSS clouds and Nova's intro are removed (`/trail` redirects to `/play`).
+   - Done when: a child plays levels 1–5 in order, Pinki arrives at 4, the star lights.
+2. **Phase 2 — the content: new mechanics, Pinki's and Nova's levels** (13 clouds).
+   - Four new mechanics, easiest first: catch the falling stars, what comes next, sort
+     into baskets, join the stars (the tracing board); plus Spell the word.
+   - Pinki's levels 4–8 (shapes, colours), her hint on every mechanic; Nova joins at 9
+     (levels 9–13: vegetables, garden, cups), her power one more try / more time.
+   - The world re-rendered with 13 clouds; the star gate (2 stars a friend) goes in here
+     once the chests give stars.
+   - Done when: levels 1–13 play, every mechanic at more than one difficulty.
+3. **Phase 3 — the end: Bloo, the finale, the clean-up** (18 clouds).
+   - Bloo joins at 14 (levels 14–18: animals, weather; wind moves clouds, rain and snow
+     change a level); level 18: all three light the big star.
+   - Free play's place on the site settled; three languages, dark mode, phone / tablet /
+     desktop checked; the docs brought up to date.
+   - Done when: a child goes from nothing to the big star with no dead end.
+
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
 The user: after the reel everything sits on the same board — a lesson
