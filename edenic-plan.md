@@ -903,7 +903,8 @@ stills the wind — and it smiles and lights; the hardest puzzle closes it: the 
 
 #### The build, stage by stage (the user tests each; the next waits for "go on")
 
-1. **The base.** A Learn course's gold chest gives its star (`stars[courseId]` in the
+1. **The base — DONE 2026-11-12** (the worlds' data and the count at the door moved to
+   stage 2, where they are first read). A Learn course's gold chest gives its star (`stars[courseId]` in the
    progress store; the star seen coming out of the chest; the count shown at the friend's
    door). The fallen star in 3D from the user's stills (sad, happy). The trail's data
    becomes worlds (`SKY_WORLDS`: levels, friend, gate); Cups leaves the trail.
