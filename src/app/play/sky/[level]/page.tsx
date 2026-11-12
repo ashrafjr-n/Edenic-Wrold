@@ -6,7 +6,7 @@ import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Sky Trail — Edenic World",
-  description: "A level of the Sky Trail: three short games on a cloud.",
+  description: "A level of the Sky Trail: short games on a cloud.",
 };
 
 export function generateStaticParams() {

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { CupsGame } from "@/components/activities/cups/cups-game";
 import { MemoryBoard } from "@/components/activities/memory/memory-board";
 import { PuzzlePlay } from "@/components/activities/puzzle/puzzle-play";
 import { WorldDone } from "@/components/learn/lesson/world-done";
@@ -13,7 +12,6 @@ import { LevelBadge } from "@/components/ui/level-badge";
 import { NextButton } from "@/components/ui/morph-button";
 import { characters } from "@/data/characters";
 import { CLASSROOMS } from "@/data/classroom";
-import { CUPS_LEVELS } from "@/data/cups-levels";
 import { findMemoryLevel } from "@/data/memory-levels";
 import { findPuzzleStage } from "@/data/puzzles";
 import { SKY_KEY, SKY_LEVELS, findSkyLevel, type SkyHost, type SkyLevel } from "@/data/sky-levels";
@@ -45,11 +43,11 @@ interface SkyLevelPlayProps {
 }
 
 /**
- * One level of the Sky Trail (2026-11-12): three short challenges, one after
+ * One level of the Sky Trail (2026-11-12): its short challenges, one after
  * another, out of the games that exist — a hosted game (`SkyHost`) keeps its
  * own board and chrome, goes back to the sky, wears this level's number and
  * records nothing of its own. A solved challenge cheers and the next arrives
- * by itself; the third finishes the level (`play.sky.<n>`), and the done card
+ * by itself; the last finishes the level (`play.sky.<n>`), and the done card
  * (the lessons' own `WorldDone`) leads straight to the next level — the last
  * one back to the sky, where the camera walks on and the big star lights.
  *
@@ -86,7 +84,6 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
   const challenge = level.challenges[step];
   const memory = challenge.game === "memory" ? findMemoryLevel(challenge.level) : undefined;
   const puzzle = challenge.game === "puzzle" ? findPuzzleStage(challenge.stage) : undefined;
-  const cups = challenge.game === "cups" ? CUPS_LEVELS.find((l) => l.value === challenge.level) : undefined;
   /* An upright puzzle has to fit one phone screen with its heap: the padding its own page gives it. */
   const upright = Boolean(puzzle?.picture && isUpright(puzzle.picture.image));
   const nextLevel = SKY_LEVELS.find((l) => l.value === level.value + 1);
@@ -97,7 +94,7 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
   return (
     <main
       className={`relative flex flex-1 flex-col overflow-x-clip ${
-        phase !== "play" || cups ? "" : puzzle && upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
+        phase !== "play" ? "" : puzzle && upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
       }`}
       /* The sky's blue; a friend's own colour once they fly along. */
       style={friend ? characterAccent(friend) : pageAccent("var(--brand)", "var(--brand-dark)", "#fff")}
@@ -112,7 +109,7 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
       </div>
 
       {phase === "play" && (
-        /* Which of the three this is: on the chrome's own line, between the
+        /* Which challenge this is: on the chrome's own line, between the
            back button and the level's badge. */
         <div className={`pointer-events-none absolute inset-x-0 z-20 flex h-12 items-center justify-center sm:h-14 ${puzzle && upright ? "top-3 sm:top-5" : "top-5"}`}>
           <ol
@@ -173,18 +170,6 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
         <MemoryBoard key={step} level={memory} host={host} dict={dict} />
       ) : puzzle?.picture && puzzle.grid ? (
         <PuzzlePlay key={step} stage={puzzle.value} picture={puzzle.picture} grid={puzzle.grid} upright={upright} host={host} dict={dict} />
-      ) : cups ? (
-        <>
-          <BackRow href="/play" label={words.back}>
-            {badge}
-          </BackRow>
-          <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-4 px-4 pb-6 sm:gap-6 sm:px-8 lg:pb-10">
-            <p dir={dir} className="card card-clay-white card-pill px-6 py-2.5 text-center text-lg font-bold text-[var(--color-ink)] sm:text-2xl">
-              {format(dict.activities.cupsAsk, { thing: cups.word })}
-            </p>
-            <CupsGame key={step} word={cups.word} picture={cups.picture} swaps={cups.swaps} swapMs={cups.swapMs} cupAria={dict.activities.cupAria} onSolved={solved} />
-          </div>
-        </>
       ) : null}
     </main>
   );
