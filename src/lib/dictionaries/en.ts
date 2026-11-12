@@ -23,7 +23,7 @@ export const en = {
   nav: {
     home: "Home",
     learn: "Learn",
-    play: "Play",
+    discover: "Discover",
     profile: "Profile",
     soon: "Soon",
     mainAriaLabel: "Main",
@@ -197,6 +197,14 @@ export const en = {
     pick: "Pick",
     feed: "Feed",
     basket: "Put",
+  },
+  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  discover: {
+    playButton: "Play",
+    watchButton: "Watch",
+    watchAlt: "Pinki, Nova and Bloo walking through Edenic World",
+    backToDiscover: "Back to Discover",
+    watchClipAria: "Watch the video: {title}",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
