@@ -36,8 +36,7 @@ const SPRING_DELAY = 1.1;
  *   one Start button. A lock that opened since the last visit springs off.
  * - Under it, EVERY lesson in order, in rows of equal chalk cards (2026-11-05;
  *   the board grows tall): the learned ones with a tick, the next one ringed
- *   in the friend's chalk, the ones to come dashed and dim with a "?". The
- *   review (last) is a paper sheet, a row of its own.
+ *   in the friend's chalk, the ones to come dashed and dim with a "?".
  *
  * No stars (direct request 2026-11-02: no stars or rewards) — learned is
  * learned.
@@ -59,10 +58,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
   const lessonAt = (i: number) => {
     const title = titles[i];
     const stop = stops[i];
-    const review = stop.review === true;
-    /* A word still to learn keeps its name a secret; a review is labelled
-       by its title. */
-    const word = review || stop.word === undefined ? title : stop.word;
+    const word = stop.word ?? title;
     const art = (locked: boolean, springing: boolean, sizes: string) => (
       <span className="board-cell-art">
         {stop.pictures.map((picture) => (
@@ -79,7 +75,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
         ))}
       </span>
     );
-    return { n: i + 1, title, review, word, art };
+    return { n: i + 1, title, word, art };
   };
 
   let next: ReactNode = null;
@@ -112,13 +108,11 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
   }
 
   const cells = titles.map((_, i) => {
-    const { n, title, review, word, art } = lessonAt(i);
+    const { n, title, word, art } = lessonAt(i);
     const done = stars[i] > 0;
     const now = i === nextIndex;
     const open = done || now;
-    const kind = review ? "board-cell--review " : "";
-    const state = kind + (now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked");
-    /* A review is a paper sheet, not a chalk box: its title always shows. */
+    const state = now ? "board-cell--now" : done ? "board-cell--done" : "board-cell--locked";
     const inner = (
       <>
         <span className="board-cell-n" aria-hidden>
@@ -126,7 +120,8 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
         </span>
         {art(!open, false, "(min-width: 1024px) 5rem, 3rem")}
         <span dir={dir} className="board-cell-word">
-          {open || review ? word : "?"}
+          {/* A word still to learn keeps its name a secret. */}
+          {open ? word : "?"}
         </span>
         {done && (
           <span className="board-cell-tick" aria-hidden>
@@ -142,7 +137,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
     );
     const style = { animationDelay: `${0.35 + i * 0.04}s` };
     return (
-      <li key={n} className={review ? "board-row-item--review" : undefined}>
+      <li key={n}>
         {open ? (
           <Link
             href={`${basePath}/${n}`}
@@ -163,7 +158,7 @@ export function BoardLessons({ titles, stops, characterId, lessonId, basePath, d
   });
 
   /* Never one card alone on the last row: a column more where it would be. */
-  const lessons = stops.filter((stop) => !stop.review).length;
+  const lessons = stops.length;
   const columns = {
     "--cols-phone": lessons % 3 === 1 ? 4 : 3,
     "--cols-tablet": lessons % 4 === 1 ? 5 : 4,
