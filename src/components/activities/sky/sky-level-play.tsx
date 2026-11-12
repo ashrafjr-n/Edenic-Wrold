@@ -14,7 +14,7 @@ import { characters } from "@/data/characters";
 import { CLASSROOMS } from "@/data/classroom";
 import { findMemoryLevel } from "@/data/memory-levels";
 import { findPuzzleStage } from "@/data/puzzles";
-import { SKY_KEY, SKY_LEVELS, findSkyLevel, type SkyHost, type SkyLevel } from "@/data/sky-levels";
+import { SKY_KEY, findSkyLevel, worldOf, type SkyHost, type SkyLevel } from "@/data/sky-levels";
 import { askChest } from "@/lib/chest-run";
 import { dirFor, format } from "@/lib/format-dict";
 import { isUpright } from "@/lib/puzzle-pieces";
@@ -86,7 +86,10 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
   const puzzle = challenge.game === "puzzle" ? findPuzzleStage(challenge.stage) : undefined;
   /* An upright puzzle has to fit one phone screen with its heap: the padding its own page gives it. */
   const upright = Boolean(puzzle?.picture && isUpright(puzzle.picture.image));
-  const nextLevel = SKY_LEVELS.find((l) => l.value === level.value + 1);
+  /* On within its world; its last level leads to the friend's house at the world's end. */
+  const world = worldOf(level.value);
+  const nextLevel = world?.levels.includes(level.value + 1) ? findSkyLevel(level.value + 1) : undefined;
+  const doorFriend = characters.find((c) => c.id === world?.door);
   const badge = (
     <LevelBadge value={level.value} word={dict.activities.levelWord} label={format(dict.activities.levelLabel, { value: level.value })} dir={dir} />
   );
@@ -161,8 +164,9 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
             {nextLevel ? (
               <NextButton label={words.nextLevel} tone={GO_TONE} href={`/play/sky/${nextLevel.value}`} dir={dir} />
             ) : (
-              /* The last level: back in the sky the camera walks on to the big star, and it lights. */
-              <NextButton label={words.toTheStar} tone={GO_TONE} href="/play" onPress={() => askChest(`${SKY_KEY.owner}.${SKY_KEY.course}`)} dir={dir} />
+              /* A world's last level: back in the sky the camera walks on to the friend's
+                 house — its door opens if their stars are in hand. */
+              <NextButton label={format(words.toTheDoor, { name: doorFriend?.name ?? "" })} tone={GO_TONE} href="/play" onPress={() => askChest(`${SKY_KEY.owner}.${SKY_KEY.course}`)} dir={dir} />
             )}
           </div>
         </>
