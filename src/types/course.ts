@@ -130,12 +130,6 @@ export type Question =
   /** Tap the things in their order — each lands in the next space of the
       line. `items` are in the right order. */
   | { type: "order"; ask: Ask; items: Face[] }
-  /** Make it: what goes in (`list` — the English word, or a recipe of a
-      few), Nova's soup pot and the things beside it. Drag or tap each one
-      in; once all are in, it bubbles and fills. `full` is the pot full —
-      rendered from the same camera as the empty one, so it lies exactly
-      over it. */
-  | { type: "make"; ask: Ask; list: string[]; stall: Face[]; full: StaticImageData }
   /** Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find
       It! merged in): the kitchen, its friend behind the counter, the word
       up on the wall; drag its vegetable from the counter into the basket
