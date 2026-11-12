@@ -36,6 +36,9 @@ const nextConfig: NextConfig = {
         destination: "/play/:path*",
         permanent: true,
       },
+      /* The Edenic Trail's own page became the Play game itself (the Sky
+         Trail, 2026-11-12): `/play` is the sky now. */
+      { source: "/trail", destination: "/play", permanent: true },
     ];
   },
 };

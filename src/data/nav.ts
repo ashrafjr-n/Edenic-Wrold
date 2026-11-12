@@ -6,7 +6,7 @@ import type { NavItem } from "@/types/nav";
 export const mainNav: NavItem[] = [
   { id: "home", href: "/" },
   { id: "learn", href: "/learn" },
-  { id: "discover", href: "/discover", alsoCurrentOn: ["/play", "/watch", "/trail"] },
+  { id: "discover", href: "/discover", alsoCurrentOn: ["/play", "/watch"] },
 ];
 
 /** Whether `item` is the current page's tab. "/" would otherwise prefix-match
