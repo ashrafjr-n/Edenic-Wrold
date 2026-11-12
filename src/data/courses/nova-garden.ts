@@ -8,16 +8,9 @@ import grass from "../../../public/assets/learn/nova/garden/things/garden-grass.
 import nest from "../../../public/assets/learn/nova/garden/things/garden-nest.png";
 import bench from "../../../public/assets/learn/nova/garden/things/garden-bench.png";
 
-/** Each thing, in teaching order: its plural ("Find all the trees!") and its
-    picture — the videos' look, `render.cjs thing garden-<thing>=garden:<thing>`. */
-const THINGS: Record<GardenThing, { things: string; picture: StaticImageData }> = {
-  flower: { things: "flowers", picture: flower },
-  tree: { things: "trees", picture: tree },
-  leaf: { things: "leaves", picture: leaf },
-  grass: { things: "grass", picture: grass },
-  nest: { things: "nests", picture: nest },
-  bench: { things: "benches", picture: bench },
-};
+/** Each thing's picture, in teaching order — the videos' look, `render.cjs
+    thing garden-<thing>=garden:<thing>`. */
+const THINGS: Record<GardenThing, StaticImageData> = { flower, tree, leaf, grass, nest, bench };
 const ORDER = Object.keys(THINGS) as GardenThing[];
 
 const REELS = "/assets/learn/nova/garden/reels";
@@ -31,7 +24,7 @@ const REELS = "/assets/learn/nova/garden/reels";
 function thingLesson(word: GardenThing, n: number): LessonDef {
   return {
     reel: `${REELS}/${word}.mp4`,
-    cover: [THINGS[word].picture],
+    cover: [THINGS[word]],
     world: MY_GARDEN[n],
     questions: [
       { type: "word", ask: { key: "meetThing", vars: { thing: word } }, word },
@@ -42,6 +35,4 @@ function thingLesson(word: GardenThing, n: number): LessonDef {
 
 /** Nova · My Garden. Titles live in `dict.lessons.garden.items`. Reels:
     `tools/reels/encode.sh`, by word. */
-export const novaGarden: LessonDef[] = [
-  ...ORDER.map((word, i) => thingLesson(word, i + 1)),
-];
+export const novaGarden: LessonDef[] = ORDER.map((word, i) => thingLesson(word, i + 1));
