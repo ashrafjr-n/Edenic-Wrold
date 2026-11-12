@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronDown, Play, X } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -112,29 +112,33 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
     <>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 lg:gap-16">
         <section aria-label={words.episodesTitle} className="flex flex-col gap-5">
-          <button
-            type="button"
-            onClick={() => play({ kind: "episode", item: latest })}
-            aria-label={format(words.episodeAria, { title: latest.title })}
-            className="card group grid cursor-pointer overflow-hidden text-start lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]"
-          >
-            <span className="relative block aspect-video w-full">
+          <div className="card grid overflow-hidden lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+            <button
+              type="button"
+              onClick={() => play({ kind: "episode", item: latest })}
+              aria-label={format(words.episodeAria, { title: latest.title })}
+              className="group relative block aspect-video w-full cursor-pointer"
+            >
               <Image src={latest.poster} alt="" fill preload sizes="(min-width: 1280px) 46rem, (min-width: 1024px) 60vw, 100vw" className="object-cover" />
               <PlayBadge size="h-16 w-16 sm:h-20 sm:w-20" icon="h-8 w-8 sm:h-10 sm:w-10" />
-            </span>
-            <span className="flex flex-col items-start justify-center gap-4 p-5 sm:p-8">
+            </button>
+            <div className="flex flex-col items-start justify-center gap-4 p-5 sm:p-8">
               <span dir={dir} className="rounded-full bg-[var(--accent)] px-3.5 py-1 text-sm font-bold text-white">
                 {words.latestEpisode}
               </span>
-              <span dir="ltr" className="text-start text-2xl font-bold leading-tight text-[var(--color-ink)] sm:text-3xl">
+              <p dir="ltr" className="text-start text-2xl font-bold leading-tight text-[var(--color-ink)] sm:text-3xl">
                 {latest.title}
-              </span>
-              <span className="btn3d" style={{ "--btn-face": "var(--brand)", "--btn-edge": "var(--brand-dark)", "--btn-text": "#fff" } as CSSProperties}>
+              </p>
+              <Button3D
+                tone={{ face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" }}
+                onClick={() => play({ kind: "episode", item: latest })}
+                className="px-7 py-3 text-lg"
+              >
                 <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
                 <span dir={dir}>{words.watchNow}</span>
-              </span>
-            </span>
-          </button>
+              </Button3D>
+            </div>
+          </div>
 
           {older.length > 0 && (
             <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -158,7 +162,7 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
           )}
         </section>
 
-        <section aria-label={words.reelsTitle} className="grid gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
+        <section aria-label={words.reelsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
           <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
             <h2 dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-2xl">
               {words.reelsTitle}
