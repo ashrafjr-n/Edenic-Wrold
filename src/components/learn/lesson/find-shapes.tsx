@@ -30,7 +30,7 @@ interface FindShapesProps {
   onMiss: () => void;
 }
 
-/** The card a picture activity (Find, Pop) plays on, sized so the card
+/** The card a picture activity (Find) plays on, sized so the card
     and the tray under it fit the stage: as wide as the screen allows on a
     phone, capped by the height left once the tray and the chrome are taken
     off (measured at 375x667, 390x844, 820x1180) — the picture is 4:5.
