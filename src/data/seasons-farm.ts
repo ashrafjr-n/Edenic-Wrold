@@ -42,20 +42,10 @@ import l8_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/8/la
 import p8_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/8/portrait/s1.jpg";
 import l8_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/8/landscape/s2.jpg";
 import p8_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/8/portrait/s2.jpg";
-import l9_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s0.jpg";
-import p9_s0_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s0.jpg";
-import l9_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s1.jpg";
-import p9_s1_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s1.jpg";
-import l9_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s2.jpg";
-import p9_s2_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s2.jpg";
-import l9_s3_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s3.jpg";
-import p9_s3_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s3.jpg";
-import l9_s4_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/landscape/s4.jpg";
-import p9_s4_jpg from "../../public/assets/learn/bloo/seasons-weather/world/9/portrait/s4.jpg";
 
-/** Each season lesson's camera (5 is the review): a season lesson's five stills (its season's word and spelling, then the weather's word, spelling and
+/** Each season lesson's camera: its five stills (its season's word and spelling, then the weather's word, spelling and
     the end) and the walk between: in, to the letters, BACK while the weather rolls in (`roll.mp4`, `roll.py`),
-    to the letters in the weather, up and away. The review is one walk. */
+    to the letters in the weather, up and away. */
 export const SEASONS_FARM: Record<number, LessonWorld> = {
   1: {
     stations: [
@@ -124,21 +114,5 @@ export const SEASONS_FARM: Record<number, LessonWorld> = {
       { landscape: "/assets/learn/bloo/seasons-weather/world/8/landscape/m2.mp4?v=c757c88c", portrait: "/assets/learn/bloo/seasons-weather/world/8/portrait/m2.mp4?v=3e310745" },
     ],
     wordInSky: true,
-  },
-  5: {
-    stations: [
-      { landscape: l9_s0_jpg, portrait: p9_s0_jpg },
-      { landscape: l9_s1_jpg, portrait: p9_s1_jpg },
-      { landscape: l9_s2_jpg, portrait: p9_s2_jpg },
-      { landscape: l9_s3_jpg, portrait: p9_s3_jpg },
-      { landscape: l9_s4_jpg, portrait: p9_s4_jpg },
-    ],
-    moves: [
-      { landscape: "/assets/learn/bloo/seasons-weather/world/9/landscape/m0.mp4?v=cb93bf76", portrait: "/assets/learn/bloo/seasons-weather/world/9/portrait/m0.mp4?v=40fa7528" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/9/landscape/m1.mp4?v=c0b6394e", portrait: "/assets/learn/bloo/seasons-weather/world/9/portrait/m1.mp4?v=2e6cc9d7" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/9/landscape/m2.mp4?v=83fb660f", portrait: "/assets/learn/bloo/seasons-weather/world/9/portrait/m2.mp4?v=c3dfef33" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/9/landscape/m3.mp4?v=b0bfc74f", portrait: "/assets/learn/bloo/seasons-weather/world/9/portrait/m3.mp4?v=322d2d15" },
-      { landscape: "/assets/learn/bloo/seasons-weather/world/9/landscape/m4.mp4?v=11d7501f", portrait: "/assets/learn/bloo/seasons-weather/world/9/portrait/m4.mp4?v=6ea9a76e" },
-    ],
   },
 };
