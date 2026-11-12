@@ -74,7 +74,7 @@ export function CupsPlay({ dict }: CupsPlayProps) {
 
   return (
     <>
-      <BackRow href="/play" label={lines.backToActivities}>
+      <BackRow href="/play/games" label={lines.backToGames}>
         <LevelBadge
           value={level.value}
           word={lines.levelWord}

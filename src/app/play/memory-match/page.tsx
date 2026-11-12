@@ -80,7 +80,7 @@ export default async function MemoryMatchPage() {
             lower rank it paints over this corner and swallows the tap.
             Verified with `elementFromPoint` on the button's centre. */}
         <span className={BACK_FIXED}>
-          <BackButton href="/play" label={dict.activities.backToActivities} />
+          <BackButton href="/play/games" label={dict.activities.backToGames} />
         </span>
 
         {/* Back on the left, the heading's own mark centred on the page —
