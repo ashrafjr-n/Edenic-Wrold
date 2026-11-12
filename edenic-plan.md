@@ -909,7 +909,7 @@ stills the wind — and it smiles and lights; the hardest puzzle closes it: the 
    door). The fallen star in 3D from the user's stills (sad, happy). The trail's data
    becomes worlds (`SKY_WORLDS`: levels, friend, gate); Cups leaves the trail.
    *Test:* finish a course → the chest gives one star, once; the star's two faces.
-2. **World 1, its look.** The night sky (3 clouds, Pinki's house and door at its end, the
+2. **World 1, its look — DONE 2026-11-12.** The night sky (3 clouds, Pinki's house and door at its end, the
    next world shut behind cloud), its entry scene, the door's "0 of 2". `/play` shows
    world 1; the built day sky is parked for stage 8.
    *Test:* the night's look on phone / tablet / desktop, the entry scene, the door.
