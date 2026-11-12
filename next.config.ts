@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
      slower, not faster, for a 20% file saving nobody is waiting on. */
   images: {
     minimumCacheTTL: 60 * 60 * 24 * 31,
+    /* Episode thumbnails on /watch come from YouTube. */
+    remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
   },
   /* The Play section lived at `/activities` until it was renamed. A child
      who bookmarked a puzzle, or anyone holding a link to one, must still
