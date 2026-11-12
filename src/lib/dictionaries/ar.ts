@@ -194,6 +194,9 @@ export const ar: Dictionary = {
     filterAll: "الكل",
     filterAria: "تصفية الفيديوهات القصيرة",
     episodeAria: "شغّل الحلقة: {title}",
+    latestEpisode: "أحدث حلقة",
+    watchNow: "شاهد الآن",
+    more: "المزيد",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
