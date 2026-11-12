@@ -9,9 +9,6 @@ export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" 
 /** The four seasons Bloo's Seasons and Weather teaches, in order. */
 export type Season = "spring" | "summer" | "fall" | "winter";
 
-/** The three animals of Bloo's review Sort (each has a home), in order. */
-export type Animal = "cat" | "dog" | "fish";
-
 /** The four weathers Bloo's Seasons and Weather teaches, each with its season. */
 export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 
@@ -21,16 +18,8 @@ export type Vegetable = "carrot" | "broccoli" | "potato" | "tomato" | "pepper";
 /** The six things Nova's My Garden teaches, in order (2026-11-08). */
 export type GardenThing = "flower" | "tree" | "leaf" | "grass" | "nest" | "bench";
 
-/** A set things belong to: the season a thing goes with (Seasons and Weather),
-    the animal it is — whose home it goes in (Bloo's Animals) — the
-    weather it is worn in (Seasons and Weather), the vegetable it is (Find
-    It! on Nova's kitchen counter), or the garden thing it is (My Garden's
-    Find). */
-type Group = Season | Animal | Weather | Vegetable | GardenThing;
-
-/** What a Find looks for, or what a Sort box takes: a shape, a color, or a
-    group. */
-export type Target = { shape: ShapeId } | { color: ColorId } | { group: Group };
+/** What a Find looks for: a shape or a color. */
+export type Target = { shape: ShapeId } | { color: ColorId };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
@@ -43,9 +32,9 @@ export type Face =
 /** A box in a scene, as percentages of the scene: left, top, width, height. */
 export type SceneRect = readonly [number, number, number, number];
 
-/** A thing to tell apart: its picture, and what it is — a Sort's things.
-    `shape` is what it IS (a plate is a circle); `null` for things that are
-    no taught shape (a kite). */
+/** A thing to tell apart: its picture, and what it is. `shape` is what it
+    IS (a plate is a circle); `null` for things that are no taught shape (a
+    kite). */
 export interface Thing {
   id: string;
   src: StaticImageData;
@@ -54,9 +43,8 @@ export interface Thing {
   shape: ShapeId | null;
   /** Its color, in the Colors course's scenes. */
   color?: ColorId;
-  /** The season it goes with (Seasons and Weather), the animal it is, or the
-      weather it is worn in. */
-  group?: Group;
+  /** The vegetable it is, on Basket Time's counter. */
+  group?: Vegetable;
 }
 
 /** One thing lying in a scene, and where. */
