@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Check, Pointer, ThumbsDown, ThumbsUp, Volume2 } from "lucide-react";
+import { Check, Pointer, Volume2 } from "lucide-react";
 import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
@@ -28,7 +28,6 @@ export type TaskDemoDef =
   | { kind: "sort"; item: Thing; bins: SortBin[] }
   | { kind: "order"; items: Face[]; seed: string }
   | { kind: "make"; list: string[]; stall: Face[]; seed: string }
-  | { kind: "like"; face: Face }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
   | { kind: "basket"; food: Food; basket: Basket };
 
@@ -347,37 +346,6 @@ function MakeDemo({ list, stall, seed }: { list: string[]; stall: Face[]; seed: 
   );
 }
 
-/** Like: the thing, the two thumbs; the finger taps the thumb up and the
-    thing hops onto the "I like" plate. */
-function LikeDemo({ face }: { face: Face }) {
-  return (
-    <div dir="ltr" className="relative h-full w-full">
-      <span className="card card-clay-white absolute left-[34%] top-[2%] flex h-[32%] w-[32%] items-center justify-center">
-        <span className="demo-fly absolute inset-0 flex items-center justify-center" style={{ "--fly-x": "-78%", "--fly-y": "190%" } as CSSProperties}>
-          <FaceView face={face} size="tile" />
-        </span>
-      </span>
-      <span
-        className="demo-press clay absolute left-[24%] top-[42%] flex h-[18%] w-[18%] items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: "var(--color-go)", "--clay-edge": "var(--color-go-dark)" } as CSSProperties}
-      >
-        <ThumbsUp className="h-6 w-6" strokeWidth={2.5} />
-        <span className="absolute left-1/2 top-1/2">
-          <Finger />
-        </span>
-      </span>
-      <span
-        className="clay absolute left-[58%] top-[42%] flex h-[18%] w-[18%] items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)" } as CSSProperties}
-      >
-        <ThumbsDown className="h-6 w-6" strokeWidth={2.5} />
-      </span>
-      <span className="plate absolute left-[6%] top-[70%] h-[22%] w-[40%]" />
-      <span className="plate absolute right-[6%] top-[70%] h-[22%] w-[40%]" />
-    </div>
-  );
-}
-
 /** Feed the animal: the finger carries a food up into the animal's mouth.
     Another animal and its own food, NOT the step's — HOW to feed, never
     what this one eats. One 3.6s loop with the finger: it presses at 36%,
@@ -455,8 +423,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <OrderDemo items={demo.items} seed={demo.seed} />;
     case "make":
       return <MakeDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
-    case "like":
-      return <LikeDemo face={demo.face} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
     case "basket":
