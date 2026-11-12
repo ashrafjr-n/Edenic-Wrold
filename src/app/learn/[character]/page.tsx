@@ -55,7 +55,7 @@ export default async function CharacterLearnPage({
         lessons: dict.lessonPicker.lessonsCount,
         cheer: dict.characterHub.youCanDoIt,
         start: dict.lessonPicker.ctaStart,
-        continue: dict.trail.ctaContinue,
+        continue: dict.lessonPicker.ctaContinue,
         again: dict.lessonPlayer.playAgain,
         startCourse: dict.characterHub.startLesson,
         continueCourse: dict.characterHub.continueLesson,
