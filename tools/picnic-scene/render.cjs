@@ -193,7 +193,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest", "intro"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu, executablePath: process.env.CHROME });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -204,12 +204,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        100 frames, five ways. */
     /* `stops sky` (2026-11-12) is the Sky Trail, the Play game: `out/stops-sky-<frame>/`,
        100 frames, five ways of stars, Pinki's picture on level 4's cloud. */
-    const course = ["colors", "fruits", "garden", "animals", "weather", "sky"].includes(specs[0]) ? specs[0] : "shapes";
+    /* `stops sky-night` (2026-11-12): the trail's first world, night, three levels and
+       Pinki's house: `out/stops-sky-night-<frame>/`, 90 frames. */
+    const course = ["colors", "fruits", "garden", "animals", "weather", "sky", "sky-night"].includes(specs[0]) ? specs[0] : "shapes";
     const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" ? [100, 41] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" ? [100, 41] : course === "sky-night" ? [90, 31] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -240,7 +242,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
         }
       }
       /* The Sky Trail: the sky alone from the top of the trail — its levels' ground (`crop.py` blurs it). */
-      if (course === "sky") fs.writeFileSync(path.join(out, "empty.jpg"), Buffer.from((await page.evaluate(() => window.garden.emptyAt(1))).split(",")[1], "base64"));
+      if (course === "sky" || course === "sky-night") fs.writeFileSync(path.join(out, "empty.jpg"), Buffer.from((await page.evaluate(() => window.garden.emptyAt(1))).split(",")[1], "base64"));
       if (!dropsOnly) {
         const keys = [];
         for (let k = 0; k < KEYS; k++) keys.push(await page.evaluate((t) => window.garden.boxes(t), k / (KEYS - 1)));
@@ -256,8 +258,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        shows the chest, with it open. Then `crop.py chest <course>`. */
     const course = specs[0] ?? "shapes";
     const PLAY = 46;
-    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100 }[course] ?? 90;
-    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky" }[course];
+    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100, "sky-night": 90 }[course] ?? 90;
+    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky", "sky-night": "sky-night" }[course];
     const source = fs.readFileSync(path.join(__dirname, `../../src/data/${stops}-stops.ts`), "utf8");
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       /* Where the page stands at the chest: its focus, the last stop's. */
@@ -280,7 +282,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
          chest is under the camera); each with its shut twin (`s<frame>`), so
          only the chest differs between them. */
       const open = [];
-      const far = Math.round(focus[focus.length - 2] * (FRAMES - 1));
+      /* The night's last stop (the house) is the FARTHEST: it shows in every frame. */
+      const far = course === "sky-night" ? FRAMES - 1 : Math.round(focus[focus.length - 2] * (FRAMES - 1));
       for (let f = 0; f <= far; f++) {
         const tf = f / (FRAMES - 1);
         open.push(f);
@@ -290,6 +293,28 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       }
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ rest, play: PLAY, open }));
       console.log(`chest ${course} ${frame}: rest ${rest}, ${open.length} open frames`);
+    }
+  } else if (mode === "intro") {
+    /* A Sky Trail world's entry scene (2026-11-12): `render.cjs intro sky-night` (after
+       its `stops` and `crop.py stops`) → `out/intro-<course>-<frame>/0000.jpg…`, then
+       `crop.py intro sky-night` encodes them. 30 a second; it lands where the page opens. */
+    const course = specs[0] ?? "sky-night";
+    const FRAMES = 210;
+    const source = fs.readFileSync(path.join(__dirname, `../../src/data/${course}-stops.ts`), "utf8");
+    for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
+      const block = source.slice(source.indexOf(`${frame}: {`));
+      const focus = JSON.parse(block.match(/focus: (\[[^\]]*\])/)[1]);
+      const out = path.join(__dirname, "out", `intro-${course}-${frame}`);
+      fs.rmSync(out, { recursive: true, force: true });
+      fs.mkdirSync(out, { recursive: true });
+      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops&course=${course}`);
+      await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+      if (stopPictures(course).length) await page.evaluate((urls) => window.garden.setPictures(urls), stopPictures(course));
+      for (let f = 0; f < FRAMES; f++) {
+        const url = await page.evaluate(([p, t]) => window.garden.introAt(p, t), [f / (FRAMES - 1), focus[0]]);
+        fs.writeFileSync(path.join(out, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+      }
+      console.log(`intro ${course} ${frame}: ${FRAMES} frames`);
     }
   } else if (mode === "thing") {
     const out = path.join(__dirname, "out", "things");
