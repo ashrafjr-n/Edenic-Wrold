@@ -39,6 +39,13 @@ export function memoryKey(level: number): ItemKey {
   return `memory.${level}`;
 }
 
+/** The star a Learn course's gold chest gives (`star.pinki.shapes`), one a
+    course, earned when every lesson is done and the chest opens (2026-11-12).
+    The Sky Trail's friends each ask for the two of their courses. */
+export function chestStarKey(characterId: string, lessonId: string): ItemKey {
+  return `star.${characterId}.${lessonId}`;
+}
+
 /** Nova's Cups' five levels (`cups.1`) — finished or not, like a puzzle. */
 export function cupsKey(level: number): ItemKey {
   return `cups.${level}`;
