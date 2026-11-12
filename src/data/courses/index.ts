@@ -1,8 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { LessonId } from "@/types/lesson";
 import type { LessonDef, Question } from "@/types/course";
-import { COLORS, EMPTY_DOT } from "@/data/colors";
-import { SHAPES } from "@/data/shapes";
+import { EMPTY_DOT } from "@/data/colors";
 import { pinkiShapes } from "./pinki-shapes";
 import { pinkiColors } from "./pinki-colors";
 import { novaFruits } from "./nova-fruits";
@@ -28,16 +27,14 @@ export function courseCovers(id: LessonId): StaticImageData[] {
   return [...bySrc.values()];
 }
 
-/** One lesson as a cell of a course box (`LessonBox`): its picture(s), and
-    — for a lesson that meets one word — that word, the color of the ring
-    it wears when it is next, and its letters' tone. `blank` is what a
-    locked cell shows instead of its pictures (else they show greyed). */
+/** One lesson as a cell on the friend's board (`BoardLessons`): its
+    picture(s), and — for a lesson that meets one word — that word. `blank`
+    is what a locked cell shows instead of its pictures (else they show
+    greyed). */
 export interface BoxStop {
   pictures: readonly StaticImageData[];
   blank?: StaticImageData;
   word?: string;
-  ring?: string;
-  letter?: { face: string; edge: string };
 }
 
 /** A course's lessons as box cells, read off each lesson's own "meet the
@@ -48,15 +45,6 @@ export function courseStops(id: LessonId): BoxStop[] {
   const blank = id === "colors" ? EMPTY_DOT : undefined;
   return courseLessons[id].map(({ cover, questions }) => {
     const meets = questions.filter((q): q is Extract<Question, { type: "word" }> => q.type === "word");
-    const meet = meets.length === 1 ? meets[0] : undefined;
-    if (meet === undefined) return { pictures: cover, blank };
-    const { word, color, shape } = meet;
-    return {
-      pictures: cover,
-      blank,
-      word,
-      ring: color ? COLORS[color].face : shape ? SHAPES[shape].color : undefined,
-      letter: color ? COLORS[color].letter : undefined,
-    };
+    return { pictures: cover, blank, word: meets.length === 1 ? meets[0].word : undefined };
   });
 }
