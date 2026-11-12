@@ -20,7 +20,7 @@ export const ku: Dictionary = {
   nav: {
     home: "ماڵ",
     learn: "فێربوون",
-    play: "یاری",
+    discover: "بدۆزە",
     profile: "پرۆفایل",
     soon: "بزووی",
     mainAriaLabel: "لیستا سەرەکی",
@@ -185,6 +185,14 @@ export const ku: Dictionary = {
     pick: "هەلبژێرە",
     feed: "خوارن بدە",
     basket: "دانە",
+  },
+  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  discover: {
+    playButton: "یاری",
+    watchButton: "تەماشە بکە",
+    watchAlt: "Pinki، Nova و Bloo د جیهانا Edenic دا دگەرن",
+    backToDiscover: "زڤڕینا بۆ بدۆزە",
+    watchClipAria: "ڤیدیۆیا {title} تەماشە بکە",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
