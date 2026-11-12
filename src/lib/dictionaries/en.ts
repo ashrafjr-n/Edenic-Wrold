@@ -210,7 +210,6 @@ export const en = {
     find: "Find",
     pick: "Pick",
     sort: "Sort",
-    order: "Line up",
     feed: "Feed",
     basket: "Put",
   },
