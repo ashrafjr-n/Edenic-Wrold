@@ -19,19 +19,32 @@ export interface SkyLevel {
  * The Sky Trail's levels (2026-11-12 — the first build; `edenic-plan.md`
  * "four worlds, one story" replaces their content world by world):
  * each a notch harder than the one before, the two games taking turns to
- * open a level. Levels 1–3 are flown alone;
- * Pinki joins on level 4's cloud and brings her power — the puzzle's Help.
- *
- * The world (`data/sky-stops.ts`) is rendered with one cloud per level: add
- * a level here and it must be rendered again (`render.cjs stops sky`).
+ * open a level. World 1 (levels 1–3) is flown alone; its content is replaced in
+ * stage 3. A world is rendered with one cloud per level (`render.cjs stops
+ * sky-night`): add a level here and its world must be rendered again.
  */
 export const SKY_LEVELS: readonly SkyLevel[] = [
   { value: 1, challenges: [{ game: "memory", level: 1 }, { game: "puzzle", stage: 1 }] },
   { value: 2, challenges: [{ game: "puzzle", stage: 2 }, { game: "memory", level: 2 }] },
   { value: 3, challenges: [{ game: "memory", level: 3 }, { game: "puzzle", stage: 3 }] },
-  { value: 4, friend: "pinki", challenges: [{ game: "puzzle", stage: 4 }, { game: "memory", level: 4 }] },
-  { value: 5, friend: "pinki", challenges: [{ game: "memory", level: 5 }, { game: "puzzle", stage: 5 }] },
 ];
+
+/** One of the trail's four worlds (`edenic-plan.md` "four worlds, one story"): its
+    levels, and the friend whose cloud house ends it — the door opens with that
+    friend's stars (one per Learn course of theirs) once every level is done. */
+export interface SkyWorld {
+  id: "night" | "sunrise" | "garden" | "high";
+  levels: readonly number[];
+  door: CharacterId;
+}
+
+/** Built so far: world 1, night (stage 2, 2026-11-12). The rest come stage by stage. */
+export const SKY_WORLDS: readonly SkyWorld[] = [{ id: "night", levels: [1, 2, 3], door: "pinki" }];
+
+/** The world a level belongs to. */
+export function worldOf(level: number): SkyWorld | undefined {
+  return SKY_WORLDS.find((world) => world.levels.includes(level));
+}
 
 /** The trail's two halves of a progress key (`play.sky.<n>`, `itemKey`), and
     what `CourseWorld` and the chest run know it by. */
