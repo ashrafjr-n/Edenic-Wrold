@@ -38,7 +38,6 @@ import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
 import { LessonWorldView } from "./lesson-world";
 import { WorldDone } from "./world-done";
-import { BlooWindow } from "./bloo-window";
 import { LessonAbout } from "./lesson-about";
 import { StepTrail } from "./step-trail";
 
@@ -161,11 +160,6 @@ export function LessonPlayer({
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
   const world = lesson.world;
-  /* Bloo's round window: outside is the season until the mid reel has played,
-     then the weather. */
-  const win = lesson.window;
-  const midAt = steps.findIndex((s) => s.kind === "watch" && s.src !== undefined);
-  const view = win ? win.views[midAt >= 0 && at > midAt ? 1 : 0] ?? win.views[0] : undefined;
   /* In a world, a step shows once the camera has arrived where it plays. */
   const [arrived, setArrived] = useState(!world);
   const spell = useRef<SpellWordHandle>(null);
@@ -382,7 +376,7 @@ export function LessonPlayer({
           aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
         }
       : undefined;
-    if ((world && arrived) || win) {
+    if (world && arrived) {
       /* In the world (2026-11-04, on request): once the camera has risen
          over the lesson's path in bloom, the friend cheering, two short
          lines, and the one way on — no Play again. */
@@ -688,7 +682,7 @@ export function LessonPlayer({
               world (2026-11-02) has its steps out in the world instead, on
               a stage with no board of its own, and comes back to the board
               for its end. */}
-          <StageFrame world={Boolean(world || win)}>
+          <StageFrame world={Boolean(world)}>
             <div
               key={`${round}-${at}-${demo}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
@@ -720,7 +714,6 @@ export function LessonPlayer({
         {footEnd}
       </div>
 
-      {view && <BlooWindow view={view} />}
       {world && (
         <LessonWorldView
           world={world}
