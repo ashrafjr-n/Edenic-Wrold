@@ -248,21 +248,9 @@ import p10_find_mushroom_png from "../../public/assets/learn/pinki/colors/forest
 import p10_find_ball_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/ball.png";
 import p10_find_bug_png from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/bug.png";
 import p10_find_ground_jpg from "../../public/assets/learn/pinki/colors/forest/10/portrait/find/ground.jpg";
-import l11_s0_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s0.jpg";
-import p11_s0_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s0.jpg";
-import l11_s1_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s1.jpg";
-import p11_s1_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s1.jpg";
-import l11_s2_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s2.jpg";
-import p11_s2_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s2.jpg";
-import l11_s3_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s3.jpg";
-import p11_s3_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s3.jpg";
-import l11_s4_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s4.jpg";
-import p11_s4_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s4.jpg";
-import l11_s5_jpg from "../../public/assets/learn/pinki/colors/forest/11/landscape/s5.jpg";
-import p11_s5_jpg from "../../public/assets/learn/pinki/colors/forest/11/portrait/s5.jpg";
 
-/** Each Colors lesson's camera through the forest (11 is the review): a still
-    per step after the reel and the move into each (0: the entry). */
+/** Each Colors lesson's camera through the forest: a still per
+    step after the reel and the move into each (0: the entry). */
 export const FOREST: Record<number, LessonWorld> = {
   1: {
     stations: [
@@ -408,24 +396,6 @@ export const FOREST: Record<number, LessonWorld> = {
       { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m1.mp4?v=abf4d1bf", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m1.mp4?v=a05144e1" },
       { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m2.mp4?v=d1d9a9c4", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m2.mp4?v=d0412b36" },
       { landscape: "/assets/learn/pinki/colors/forest/10/landscape/m3.mp4?v=5189b744", portrait: "/assets/learn/pinki/colors/forest/10/portrait/m3.mp4?v=300e9b78" },
-    ],
-  },
-  11: {
-    stations: [
-      { landscape: l11_s0_jpg, portrait: p11_s0_jpg },
-      { landscape: l11_s1_jpg, portrait: p11_s1_jpg },
-      { landscape: l11_s2_jpg, portrait: p11_s2_jpg },
-      { landscape: l11_s3_jpg, portrait: p11_s3_jpg },
-      { landscape: l11_s4_jpg, portrait: p11_s4_jpg },
-      { landscape: l11_s5_jpg, portrait: p11_s5_jpg },
-    ],
-    moves: [
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m0.mp4?v=0816c423", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m0.mp4?v=aafe8229" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m1.mp4?v=a967b6af", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m1.mp4?v=902ca673" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m2.mp4?v=221c7cd9", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m2.mp4?v=9331549a" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m3.mp4?v=86c99f33", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m3.mp4?v=ec092c17" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m4.mp4?v=bb6cc221", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m4.mp4?v=d4067d9f" },
-      { landscape: "/assets/learn/pinki/colors/forest/11/landscape/m5.mp4?v=8676cedb", portrait: "/assets/learn/pinki/colors/forest/11/portrait/m5.mp4?v=ef74a740" },
     ],
   },
 };
