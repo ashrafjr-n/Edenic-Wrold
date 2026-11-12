@@ -10,6 +10,7 @@ import { classroomModels } from "@/data/classroom";
 import Image from "next/image";
 import { getDictionary } from "@/lib/locale";
 import { dirFor, format } from "@/lib/format-dict";
+import chestStar from "../../../../../public/assets/learn/chest-star.png";
 
 interface LessonPageProps {
   params: Promise<{ character: string; lesson: string }>;
@@ -58,6 +59,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           basePath={basePath}
           dict={dict.lessonPicker}
           dir={dir}
+          star={chestStar}
         />
       </main>
     );
