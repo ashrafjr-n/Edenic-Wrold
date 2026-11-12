@@ -136,10 +136,6 @@ export type Question =
       rendered from the same camera as the empty one, so it lies exactly
       over it. */
   | { type: "make"; ask: Ask; list: string[]; stall: Face[]; full: StaticImageData }
-  /** Do you like it? One thing at a time, thumbs up or down, onto the "I
-      like" or the "I don't like" plate — no wrong answer: the sentences
-      ("I like apples.") are the lesson. `things` is each one's plural. */
-  | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
   /** Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find
       It! merged in): the kitchen, its friend behind the counter, the word
       up on the wall; drag its vegetable from the counter into the basket
