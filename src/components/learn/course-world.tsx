@@ -189,7 +189,7 @@ interface CourseWorldProps {
 /**
  * A course as a 3D world of stops (2026-11-05, Shapes first, the user's
  * picture): its lessons on clay pedestals with stepping stones between
- * them, the review a treasure chest on the last. Pre-rendered, never live 3D
+ * them, a gold treasure chest on the last. Pre-rendered, never live 3D
  * on a phone. **The scroll is the camera** (the user, same day): the page
  * has height, but nothing slides — the frames of the camera's way in, going
  * up a little and further in, are painted on a canvas as it moves. Each stop
