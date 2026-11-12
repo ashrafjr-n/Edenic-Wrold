@@ -39,18 +39,29 @@ export interface WatchCourse {
   name: string;
 }
 
-/** `/watch`'s short videos: every lesson's reel — the ones the lessons open
-    with, nothing new to make — in hub order. Their courses are the filters. */
+/** `/watch`'s short videos: every lesson's reel (and its mid-lesson reel, the
+    weather's) — the ones the lessons play, nothing new to make — in hub order. Their courses are the filters. */
 export function watchClips(dict: Dictionary): { courses: WatchCourse[]; clips: WatchClip[] } {
   const courses = Object.values(lessonsByCharacter)
     .flat()
     .map(({ id }) => ({ id, name: dict.lessons[id].name }));
+  const clipFor = (src: string, title: string, courseId: LessonId): WatchClip => ({
+    src,
+    poster: src.replace(/\.mp4$/, ".jpg"),
+    title,
+    courseId,
+  });
   const clips = courses.flatMap(({ id }) =>
-    courseLessons[id].flatMap((lesson, i) =>
-      lesson.reel
-        ? [{ src: lesson.reel, poster: lesson.reel.replace(/\.mp4$/, ".jpg"), title: dict.lessons[id].items[i], courseId: id }]
-        : [],
-    ),
+    courseLessons[id].flatMap((lesson, i) => {
+      const title = dict.lessons[id].items[i];
+      /* A season lesson's title is "Spring · Rainy": its first reel is the
+         season, its `midReel` the weather — two videos, one name each. */
+      const [first, second] = title.split(" · ");
+      return [
+        ...(lesson.reel ? [clipFor(lesson.reel, first, id)] : []),
+        ...(lesson.midReel ? [clipFor(lesson.midReel.src, second ?? first, id)] : []),
+      ];
+    }),
   );
   return { courses, clips };
 }
