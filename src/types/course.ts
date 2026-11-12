@@ -327,16 +327,4 @@ export interface LessonDef {
   /** A second reel inside the lesson, played before question `at` (Seasons
       and Weather: the season's steps, then the weather's reel and steps). */
   midReel?: { src: string; at: number };
-  /** Bloo's round window (Seasons and Weather): the steps float in front of
-      it. `views[0]` is outside until the mid reel, `views[1]` after it. */
-  window?: { views: readonly WindowView[] };
-}
-
-/** What a gentle CSS layer adds to a window view, if anything. */
-export type WindowFx = "petals" | "glow" | "leaves" | "snow" | "rain" | "wind";
-
-/** One view out of Bloo's round window: a still from the reel, and its fx. */
-export interface WindowView {
-  src: StaticImageData;
-  fx?: WindowFx;
 }
