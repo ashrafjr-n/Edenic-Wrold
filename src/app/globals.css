@@ -2274,6 +2274,24 @@ button:disabled,
   }
 }
 
+/* Back buttons (`BackAutoHide`): slide up out of the way while the page is
+   scrolled down, back on the first scroll up. `translate` is its own property,
+   so it doesn't fight `anim-drop-in`'s `transform`; `visibility` goes after
+   the slide so a hidden one can't be tapped. */
+.back-spot {
+  transition:
+    translate 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+:root[data-back-hidden] .back-spot {
+  translate: 0 -7rem;
+  visibility: hidden;
+  transition:
+    translate 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s 0.3s;
+}
+
 .anim-drop-in {
   animation: drop-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }

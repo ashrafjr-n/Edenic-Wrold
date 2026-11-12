@@ -106,7 +106,7 @@ export function BackButton({ href, label }: BackButtonProps) {
  * never on the button: `.btn3d` is unlayered and sets `position: relative`.
  */
 const BACK_TOP = "top-[5.25rem] sm:top-[10rem] lg:top-[6.75rem]";
-export const BACK_FIXED = `fixed left-6 z-20 sm:left-8 lg:left-[max(2rem,calc(50%-38rem))] ${BACK_TOP}`;
+export const BACK_FIXED = `back-spot fixed left-6 z-20 sm:left-8 lg:left-[max(2rem,calc(50%-38rem))] ${BACK_TOP}`;
 
 interface BackRowProps extends BackButtonProps {
   /** Anything that shares the row with the button, to its right. */
@@ -127,7 +127,7 @@ interface BackRowProps extends BackButtonProps {
 export function BackRow({ href, label, children }: BackRowProps) {
   return (
     <div
-      className={`anim-drop-in pointer-events-none sticky z-20 mx-auto mt-5 flex w-full max-w-7xl items-center justify-between gap-3 px-6 sm:gap-6 sm:px-8 [&>*]:pointer-events-auto ${BACK_TOP}`}
+      className={`back-spot anim-drop-in pointer-events-none sticky z-20 mx-auto mt-5 flex w-full max-w-7xl items-center justify-between gap-3 px-6 sm:gap-6 sm:px-8 [&>*]:pointer-events-auto ${BACK_TOP}`}
       style={{ animationDelay: "0.1s" }}
     >
       <BackButton href={href} label={label} />
