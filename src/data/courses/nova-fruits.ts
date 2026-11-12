@@ -9,12 +9,11 @@ import potato from "../../../public/assets/learn/nova/fruits/things/potato.png";
 import tomato from "../../../public/assets/learn/nova/fruits/things/tomato.png";
 import pepper from "../../../public/assets/learn/nova/fruits/things/pepper.png";
 
-/** One thing to learn: its word, its plural ("I like carrots.", "3
-    carrots"), its picture — the videos' look (smooth satin clay, no
-    face, the clay buttons' grain: `render.cjs thing carrot=video:carrot`). */
+/** One thing to learn: its word and its picture — the videos' look (smooth
+    satin clay, no face, the clay buttons' grain: `render.cjs thing
+    carrot=video:carrot`). */
 interface Veg {
   word: Vegetable;
-  things: string;
   picture: StaticImageData;
 }
 
@@ -22,11 +21,11 @@ interface Veg {
     2026-10-12: the apple, banana, orange, grapes and corn went): three
     vegetables, then the two the videos added. */
 const FOODS: Veg[] = [
-  { word: "carrot", things: "carrots", picture: carrot },
-  { word: "broccoli", things: "broccoli", picture: broccoli },
-  { word: "potato", things: "potatoes", picture: potato },
-  { word: "tomato", things: "tomatoes", picture: tomato },
-  { word: "pepper", things: "peppers", picture: pepper },
+  { word: "carrot", picture: carrot },
+  { word: "broccoli", picture: broccoli },
+  { word: "potato", picture: potato },
+  { word: "tomato", picture: tomato },
+  { word: "pepper", picture: pepper },
 ];
 
 /** A vegetable as Basket Time's demo carries it: its word and picture. */
@@ -42,8 +41,7 @@ const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
  * among everything else on it, into the basket (the user's design,
  * 2026-11-01: Find It! merged into it). Its demo carries another vegetable.
  * (Grow it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
- * cups, before it, are a game on `/play`.) Picking from the pantry shelves is the
- * review's exam, with several foods to tell apart.
+ * cups, before it, are a game on `/play`.)
  */
 function foodLesson(veg: Veg, i: number): LessonDef {
   const { word, picture } = veg;
@@ -64,6 +62,4 @@ function foodLesson(veg: Veg, i: number): LessonDef {
 /** Nova · Fruits & Vegetables. Titles live in `dict.lessons.fruits.items`.
     The reels are the real clips, H.264 720p (`tools/reels/encode.sh`):
     `/assets/learn/nova/fruits/reels/<word>.mp4`. */
-export const novaFruits: LessonDef[] = [
-  ...FOODS.map(foodLesson),
-];
+export const novaFruits: LessonDef[] = FOODS.map(foodLesson);
