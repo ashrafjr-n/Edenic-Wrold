@@ -800,7 +800,8 @@ intro goes but **its way of appearing is kept** (a life-size friend at the scree
 a white clay bubble, a tap moves on — `FriendSays`): the friends are to speak this way
 from now on.
 
-1. **Phase 1 — the base, playable end to end** (BUILDING 2026-11-12).
+1. **Phase 1 — the base, playable end to end** (BUILT 2026-11-12; how it is made:
+   `claude-docs/play-page.md`).
    - `/play` IS the sky: a rendered world of stops (`render.cjs stops sky` + `crop.py
      stops sky` → `data/sky-stops.ts`, played by `CourseWorld`): five cloud levels and,
      the nearest stop, Edenic's big star.
@@ -814,7 +815,9 @@ from now on.
      walks on and the big star lights (the chest's own machinery).
    - The old cards move to `/play/games` (free play); the Trail card, `/trail`, its sky
      of CSS clouds and Nova's intro are removed (`/trail` redirects to `/play`).
-   - Done when: a child plays levels 1–5 in order, Pinki arrives at 4, the star lights.
+   - Done when: a child plays levels 1–5 in order, Pinki arrives at 4, the star lights
+     — checked by a scripted play-through of levels 1 and 5 and screenshots at phone,
+     tablet and desktop sizes.
 2. **Phase 2 — the content: new mechanics, Pinki's and Nova's levels** (13 clouds).
    - Four new mechanics, easiest first: catch the falling stars, what comes next, sort
      into baskets, join the stars (the tracing board); plus Spell the word.
