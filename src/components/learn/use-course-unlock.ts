@@ -10,7 +10,7 @@ const SEEN_KEY = "edenic-path-seen";
 /** The furthest lesson of a course the child has seen open, if any. */
 export const seenOf = (characterId: string, lessonId: string): number | undefined => readSeen()[`${characterId}.${lessonId}`];
 
-export function readSeen(): Record<string, number> {
+function readSeen(): Record<string, number> {
   try {
     return JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}");
   } catch {
