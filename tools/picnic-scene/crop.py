@@ -480,7 +480,7 @@ if NAME == "stops":
     sys.exit()
 
 if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"):
-    SEAS = NAME == "seasonsfarm"  # Bloo's seasons and weather (2026-11-09): the farm through the year; ids 1-4 a season, 5-8 its weather, 9 the review
+    SEAS = NAME == "seasonsfarm"  # Bloo's seasons and weather (2026-11-09): the farm through the year; ids 1-4 a season, 5-8 its weather
     FARM = NAME in ("farm", "seasonsfarm")  # Bloo's farm (2026-11-08): the Animals course's world, the same kit, no Find
     MYG = NAME == "mygarden"  # Nova's My Garden (2026-11-08): the forest's kit, its own things to find
     FOREST = NAME == "forest" or MYG  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
@@ -502,7 +502,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 10)) if SEAS else list(range(1, 11)) if FARM else list(range(1, 8)) if MYG else list(range(1, 12)) if FOREST else [1, 6] if VEG else [1, 2, 3, 4, 5])
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 9)) if SEAS else list(range(1, 10)) if FARM else list(range(1, 7)) if MYG else list(range(1, 11)) if FOREST else [1] if VEG else [1, 2, 3, 4, 5] if HILL else [1, 2, 3, 4])
     base = "public/assets/learn/bloo/seasons-weather/world" if SEAS else "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
     has_find = lambda lesson: not HILL and not FARM and lesson <= (0 if MYG else 10 if FOREST else 5 if VEG else 4)
@@ -582,6 +582,8 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     # Keep what an earlier run wrote for the lessons not cropped this time.
     saved = os.path.join(HERE, "out", f"{NAME}.json")
     data = {**({int(k): v for k, v in json.load(open(saved)).items()} if os.path.exists(saved) else {}), **data}
+    # No review lessons (removed 2026-11-11): what an earlier run saved for one is dropped.
+    data.pop(9 if SEAS else 10 if FARM else 7 if MYG else 11 if FOREST else 6 if VEG else None if HILL else 5, None)
     json.dump(data, open(saved, "w"))
 
     # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
@@ -693,7 +695,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             "   (2026-11-06). Edit the scene, not this file. */\n"
             'import type { Framed, KitchenFrame, LessonWorld } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** The camera in Nova's kitchen: 1 is every vegetable lesson's (the entry to the\n    wide view, then the move in to the counter), 6 the review's (the wide view\n    alone). */\n"
+            + "\n\n/** The camera in Nova's kitchen: 1 is every vegetable lesson's (the entry to the\n    wide view, then the move in to the counter). */\n"
             + "export const VEG_KITCHEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
             + "/** Basket Time's kitchen, the frame the camera comes in to, in layers. */\n"
             + "export const KITCHEN_FRAMES: Framed<KitchenFrame> = {\n" + "\n".join(frames) + "\n};\n"
@@ -702,26 +704,26 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
         sys.exit()
     if SEAS:
         # A season lesson = its season's three places (id n) + its weather's two and the end (id n + 4): the camera
-        # are joined by `roll.py`'s clip (`roll.mp4`, the weather rolling in; the weather render's own entry is not used). The review (id 9) is one walk.
-        parts = {n: ([n, 2, n + 4, 3] if n <= 4 else [9, 5, None, 0]) for n in range(1, 6)}
+        # are joined by `roll.py`'s clip (`roll.mp4`, the weather rolling in; the weather render's own entry is not used).
+        parts = {n: [n, 2, n + 4, 3] for n in range(1, 5)}
         lines = []
-        for n in range(1, 6):
+        for n in range(1, 5):
             a, ka, b, kb = parts[n]
             stations, moves = [], []
             for frame_ids in ((a, ka), (b, kb)):
                 lid, k = frame_ids
-                if lid is None or lid not in data:
+                if lid not in data:
                     continue
                 both = data[lid]
                 for i in range(k):
                     stations.append(f"{{ landscape: {pic(lid, 'landscape', both['landscape']['stills'][i])}, portrait: {pic(lid, 'portrait', both['portrait']['stills'][i])} }}")
                     own = both["landscape"]["moves"][i]
-                    rolled = n <= 4 and lid == b and i == 0  # the weather rolls in: `roll.py`'s clip of the season's lesson
+                    rolled = lid == b and i == 0  # the weather rolls in: `roll.py`'s clip of the season's lesson
                     name = "roll.mp4" if rolled else own
                     dir_ = a if rolled else lid
                     portrait = "roll.mp4" if rolled else both["portrait"]["moves"][i]
                     moves.append(f'{{ landscape: "/{base[len("public/"):]}/{dir_}/landscape/{name}", portrait: "/{base[len("public/"):]}/{dir_}/portrait/{portrait}" }}')
-            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],{chr(10) + '    wordInSky: true,' if n <= 4 else ''}\n  }},")
+            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n    wordInSky: true,\n  }},")
         body = "\n".join(lines)
         imports = [line for line in dict.fromkeys(imports) if re.search(r"\b" + line.split()[1] + r"\b", body)]
         ts = (
@@ -730,7 +732,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             "   course's world (2026-11-10). Edit the scene, not this file. */\n"
             'import type { LessonWorld } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** Each season lesson's camera (5 is the review): its season's three places, then the\n    weather's two and the lesson's end — the cut between is under the weather's reel. */\n"
+            + "\n\n/** Each season lesson's camera: its five stills (its season's word and spelling, then the weather's word, spelling and\n    the end) and the walk between: in, to the letters, BACK while the weather rolls in (`roll.mp4`, `roll.py`),\n    to the letters in the weather, up and away. */\n"
             + "export const SEASONS_FARM: Record<number, LessonWorld> = {\n" + body + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
@@ -742,7 +744,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             "   (2026-11-08). Edit the scene, not this file. */\n"
             'import type { LessonWorld } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** Each Animals lesson's camera through the farm (10 is the review): a still per\n    step after the reel and the move into each (0: the entry). */\n"
+            + "\n\n/** Each Animals lesson's camera through the farm: a still per\n    step after the reel and the move into each (0: the entry). */\n"
             + "export const ANIMALS_FARM: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
@@ -754,7 +756,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             "   (2026-11-08). Edit the scene, not this file. */\n"
             'import type { LessonWorld } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** Each My Garden lesson's camera through the garden (7 is the review): a\n    still per step after the reel and the move into each (0: the entry). */\n"
+            + "\n\n/** Each My Garden lesson's camera through the garden: a still per\n    step after the reel and the move into each (0: the entry). */\n"
             + "export const MY_GARDEN: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
@@ -766,7 +768,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             "   (2026-11-05). Edit the scene, not this file. */\n"
             'import type { Framed, LessonWorld, Scene } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** Each Colors lesson's camera through the forest (11 is the review): a still\n    per step after the reel and the move into each (0: the entry). */\n"
+            + "\n\n/** Each Colors lesson's camera through the forest: a still per\n    step after the reel and the move into each (0: the entry). */\n"
             + "export const FOREST: Record<number, LessonWorld> = {\n" + "\n".join(worlds) + "\n};\n\n"
             + "/** Each colour lesson's Find, in the forest itself — its picnic on the\n    forest floor, seen from above: the ground and the things to tap, in both\n    frames (farthest first). */\n"
             + "export const FOREST_FIND: Record<number, Framed<Scene>> = {\n" + "\n".join(finds) + "\n};\n"
