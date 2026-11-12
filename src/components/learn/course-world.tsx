@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
@@ -184,6 +184,9 @@ interface CourseWorldProps {
   basePath: string;
   dict: Dictionary["lessonPicker"];
   dir: "rtl" | "ltr";
+  /** Something that stands at the child's place — the stop to play next, the
+      last stop once all are done (the Sky Trail's balloon). */
+  marker?: ReactNode;
 }
 
 /**
@@ -204,7 +207,7 @@ interface CourseWorldProps {
  * lesson just done, its way turns pink stone by stone, and the camera goes on
  * to the next lesson.
  */
-export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir }: CourseWorldProps) {
+export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir, marker }: CourseWorldProps) {
   const wide = useWide();
   const data = world[wide ? "landscape" : "portrait"];
   /* The ways between the lessons: one fewer than the stops. */
@@ -937,6 +940,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 className="course-stop"
                 style={place(box)}
               >
+                {isNext && marker}
                 {isNext && (
                   <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
@@ -957,6 +961,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
+            {hydrated && nextIndex < 0 && marker}
           </button>
         </div>
       </div>
