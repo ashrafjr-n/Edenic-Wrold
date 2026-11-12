@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check, Pointer, Volume2 } from "lucide-react";
-import { POT } from "@/data/market";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
@@ -13,7 +12,6 @@ import { shuffle } from "@/lib/seeded";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
 import { binFor } from "./sort-shapes";
-import { wordOf } from "./list-note";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -27,7 +25,6 @@ export type TaskDemoDef =
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
   | { kind: "sort"; item: Thing; bins: SortBin[] }
   | { kind: "order"; items: Face[]; seed: string }
-  | { kind: "make"; list: string[]; stall: Face[]; seed: string }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
   | { kind: "basket"; food: Food; basket: Basket };
 
@@ -295,57 +292,6 @@ function OrderDemo({ items, seed }: { items: Face[]; seed: string }) {
   );
 }
 
-/** Make: the word, three things beside the pot as the board deals them;
-    the finger takes the one the word names and it flies into the pot's
-    mouth. Laid out in % of the square stage: the tiles are 25% wide at 5%
-    left, 25/51/77% top; the pot is 58% wide at 38% left, as tall as its
-    picture makes it. */
-function MakeDemo({ list, stall, seed }: { list: string[]; stall: Face[]; seed: string }) {
-  const word = list[0];
-  const answer = stall.findIndex((face) => wordOf(face) === word);
-  const shown = shuffle([answer, ...stall.map((_, i) => i).filter((i) => i !== answer).slice(0, 2)], seed);
-  const { empty, inside } = POT;
-  const [left, top, width, height] = inside;
-  const boxW = 58;
-  const boxH = (boxW * empty.height) / empty.width;
-  const boxTop = 25 + (74 - boxH) / 2;
-  const target = { x: 38 + (boxW * (left + width / 2)) / 100, y: boxTop + (boxH * (top + height * 0.62)) / 100 };
-  return (
-    /* Sized by its own box (`cqi`): the same demo fills the popup and the
-       small panel docked beside a tablet's step. */
-    <div dir="ltr" className="@container relative h-full w-full">
-      <span className="absolute inset-x-0 top-[3%] flex justify-center [&>span]:text-[13cqi]">
-        <ClayWord word={word} size="demo" />
-      </span>
-      <span className="absolute left-[38%]" style={{ top: `${boxTop}%`, width: `${boxW}%`, height: `${boxH}%` }}>
-        <Image src={empty} alt="" fill sizes="12rem" className="object-contain" />
-      </span>
-      {shown.map((index, slot) => {
-        const tileTop = 25 + slot * 26;
-        const fly = { "--fly-x": `${((target.x - 17.5) / 25) * 100}%`, "--fly-y": `${((target.y - (tileTop + 11)) / 22) * 100}%` } as CSSProperties;
-        return (
-          <span key={index} className="absolute left-[5%] h-[22%] w-[25%]" style={{ top: `${tileTop}%` }}>
-            <span className={`card card-clay-white absolute inset-0 flex items-center justify-center ${index === answer ? "demo-press" : ""}`}>
-              {index === answer ? (
-                <span className="demo-fly absolute inset-0 z-[1] flex items-center justify-center" style={fly}>
-                  <FaceView face={stall[index]} size="tile" />
-                </span>
-              ) : (
-                <FaceView face={stall[index]} size="tile" />
-              )}
-            </span>
-            {index === answer && (
-              <span className="absolute left-1/2 top-1/2">
-                <Finger />
-              </span>
-            )}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
 /** Feed the animal: the finger carries a food up into the animal's mouth.
     Another animal and its own food, NOT the step's — HOW to feed, never
     what this one eats. One 3.6s loop with the finger: it presses at 36%,
@@ -421,8 +367,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <SortDemo item={demo.item} bins={demo.bins} />;
     case "order":
       return <OrderDemo items={demo.items} seed={demo.seed} />;
-    case "make":
-      return <MakeDemo list={demo.list} stall={demo.stall} seed={demo.seed} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
     case "basket":
