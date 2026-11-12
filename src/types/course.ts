@@ -34,10 +34,9 @@ export type Target = { shape: ShapeId } | { color: ColorId } | { group: Group };
 
 /** A thing to show: a clay picture, one of the taught shapes, or text (a
     number, "+", "="). `word` is the English name — the taught word, and the
-    picture's alt text. A `full` picture (a whole scene, not one thing)
-    fills its tile edge to edge. */
+    picture's alt text. */
 export type Face =
-  | { kind: "picture"; src: StaticImageData; word: string; full?: boolean }
+  | { kind: "picture"; src: StaticImageData; word: string }
   | { kind: "shape"; shape: ShapeId }
   | { kind: "text"; text: string };
 
@@ -90,14 +89,6 @@ export interface Ask {
  * the question sits (`lessonCue`), so there is no second copy to drift.
  */
 export type Question =
-  /** Tap the right tile. `show` is what the question is about, drawn above
-      the tiles (an equation made of pictures); `word` is a taught word in
-      clay letters above them instead — `plain` writes it in one quiet ink,
-      for a word that must be READ (a color word). `answer` indexes `options` before they
-      are shuffled. `blind`: the task button's demo shows blank tiles — a
-      lesson's own word, whose answer it must not give away. `round`: the
-      tiles are circles, each picture filling its own (Seasons and Weather). */
-  | { type: "pick"; ask: Ask; show?: Face[]; word?: string; plain?: boolean; options: Face[]; answer: number; blind?: boolean; round?: boolean }
   /** Trace the shape over its dotted outline, after Pinki draws it. */
   | { type: "trace"; ask: Ask; shape: ShapeId }
   /** Meet the word: a big speaker, the shape (or picture) it names, and the
