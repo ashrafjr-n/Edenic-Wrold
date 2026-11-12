@@ -4,13 +4,12 @@ import { Check, Pointer, Volume2 } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { isTarget } from "@/lib/target";
 import { strokeToPath } from "@/lib/trace-score";
-import type { Basket, Face, Food, Scene, ShapeId, SortBin, Target, Thing } from "@/types/course";
+import type { Basket, Face, Food, Scene, ShapeId, Target } from "@/types/course";
 import { FaceView } from "./face";
 import { ClayWord, letterTones, PLAIN_TONE } from "./clay-word";
 import { deal } from "./spell-word";
 import { place } from "./find-shapes";
 import { ClayFilter } from "./trace-board";
-import { binFor } from "./sort-shapes";
 
 /** What a step's task button shows: how the step is played — only its first
     move, never the whole answer. Each is one looping CSS animation
@@ -22,7 +21,6 @@ export type TaskDemoDef =
   | { kind: "build"; word: string; seed: string }
   | { kind: "find"; scene: Scene; target: Target }
   | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
-  | { kind: "sort"; item: Thing; bins: SortBin[] }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
   | { kind: "basket"; food: Food; basket: Basket };
 
@@ -205,55 +203,6 @@ function PickDemo({ word, plain, show, options, answer }: { word?: string; plain
   );
 }
 
-/** Sort: the finger taps the right box and the thing flies into it. Laid
-    out in % of the square stage so the flight can be worked out: the thing
-    is 30% wide, centred at (50, 17); box i sits in a 2x2 grid below. */
-function SortDemo({ item, bins }: { item: Thing; bins: SortBin[] }) {
-  const i = bins.indexOf(binFor(bins, item) ?? bins[0]);
-  const centre = { x: i % 2 === 0 ? 26 : 74, y: i < 2 ? 53.5 : 83.5 };
-  const fly = {
-    "--fly-x": `${((centre.x - 50) / 30) * 100}%`,
-    "--fly-y": `${((centre.y - 17) / 30) * 100}%`,
-  } as CSSProperties;
-  return (
-    <div className="relative h-full w-full">
-      <span className="card card-clay-white absolute left-[35%] top-[2%] h-[30%] w-[30%]" />
-      <span className="demo-fly absolute left-[35%] top-[2%] z-[1] h-[30%] w-[30%] p-[4%]" style={fly}>
-        <span className="relative block h-full w-full">
-          <Image src={item.src} alt="" fill sizes="6rem" className="object-contain" />
-        </span>
-      </span>
-      {bins.map(({ word, face: picture, tone: { face, edge, text } }, b) => (
-        <span
-          key={word}
-          className={`clay absolute flex h-[27%] w-[44%] flex-col items-center justify-center gap-1 rounded-[1.2rem] ${b === i ? "demo-press" : ""}`}
-          style={
-            {
-              left: b % 2 === 0 ? "4%" : "52%",
-              top: b < 2 ? "40%" : "70%",
-              backgroundColor: face,
-              color: text,
-              "--clay-edge": edge,
-            } as CSSProperties
-          }
-        >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
-            <FaceView face={picture} size="tile" />
-          </span>
-          <span dir="ltr" className="text-sm font-bold">
-            {word}
-          </span>
-          {b === i && (
-            <span className="absolute left-1/2 top-1/2">
-              <Finger />
-            </span>
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 /** Feed the animal: the finger carries a food up into the animal's mouth.
     Another animal and its own food, NOT the step's — HOW to feed, never
     what this one eats. One 3.6s loop with the finger: it presses at 36%,
@@ -325,8 +274,6 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
       return <FindDemo scene={demo.scene} target={demo.target} />;
     case "pick":
       return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
-    case "sort":
-      return <SortDemo item={demo.item} bins={demo.bins} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
     case "basket":
