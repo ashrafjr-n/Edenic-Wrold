@@ -197,7 +197,6 @@ export const ku: Dictionary = {
     find: "بدۆزە",
     pick: "هەلبژێرە",
     sort: "ڕێک بێخە",
-    order: "ڕیز بکە",
     feed: "خوارن بدە",
     basket: "دانە",
   },
