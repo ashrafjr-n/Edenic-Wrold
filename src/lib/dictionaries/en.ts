@@ -228,7 +228,7 @@ export const en = {
     puzzleSubtitle: "Complete the puzzles!",
     memoryTitle: "Memory Match",
     memorySubtitle: "Find the matching friends!",
-    backToActivities: "Back to Play",
+    backToGames: "Back to the games",
     puzzleCtaButton: "Puzzle Time",
     puzzleCtaAlt: "Colourful puzzle pieces scattered across the card",
     memoryCtaButton: "Memory Match",
@@ -265,20 +265,28 @@ export const en = {
       brand name, the same rule that keeps Edenic World, Pinki, Nova and Bloo
       English inside an Arabic or Kurdish sentence. It replaced `worldTeaser`,
       the friend-world "Coming Soon" card this one was built over. */
-  trail: {
-    title: "Edenic Trail",
-    description:
-      "A path of adventures winding up through the sky. Climb it with Pinki, Nova and Bloo — one stop at a time.",
-    cta: "Start your adventure",
-    ctaContinue: "Continue",
-    /* Nova's welcome, the two beats she greets a child with on `/trail`.
-       She names herself in the first because a child meeting her here has
-       only seen her locked on `/learn`. The second deliberately does NOT
-       say "tap the cloud": tapping a stop does nothing yet, and promising
-       an action that isn't built is worse than pointing at one. */
-    introHello: "Hi! I am Nova, your guide up the sky.",
-    introStart: "Come on — our journey starts here!",
-    introSkip: "Skip",
+  /** The Sky Trail — the Play game on `/play` (2026-11-12): cloud levels up
+      the sky, each three short challenges, Edenic's big star at the end.
+      `pinkiHello` / `pinkiPower` are what Pinki says when she joins on
+      level 4 (`FriendSays`), one bubble a tap. */
+  sky: {
+    title: "Sky Trail",
+    back: "Back to the sky",
+    games: "Games",
+    gamesAria: "All the games",
+    startLevelAria: "Start level {n}",
+    lockedLevelAria: "Level {n}, locked",
+    starAria: "Edenic's big star",
+    levelTitle: "Sky Trail, level {n}",
+    challengeOf: "Challenge {n} of {total}",
+    levelDone: "Level complete!",
+    levelDoneLine: "Cloud {n} is yours. Fly on!",
+    allDoneLine: "You flew all the way to the big star!",
+    nextLevel: "Next level",
+    toTheStar: "To the star",
+    pinkiHello: "Hi! I am Pinki. Let's fly together!",
+    pinkiPower: "Stuck on a puzzle? Tap the lightbulb and I will help.",
+    skip: "Skip",
   },
   ui: {
     /** Read out while something loads (nothing is written on screen). */
