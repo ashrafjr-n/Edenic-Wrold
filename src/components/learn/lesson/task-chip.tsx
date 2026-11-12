@@ -31,11 +31,10 @@ interface TaskChipProps {
   target?: string;
   /** The full instruction — the button's name for a screen reader. */
   label: string;
-  /** How the step is played, shown in a popup on press. Steps without one
-      (a Pick of pictures, Count) get the round badge alone. */
+  /** How the step is played, shown in a popup on press. A step without one
+      (the reel) gets the round badge alone. */
   demo?: TaskDemoDef;
   closeLabel: string;
-  /** The course's colour. */
   /** The course's colour, and what sits on it. */
   tone: { face: string; edge: string; ink: string };
   dir: "rtl" | "ltr";
