@@ -30,7 +30,6 @@ import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { SortShapes } from "./sort-shapes";
 import { OrderLine } from "./order-line";
-import { MakeFood } from "./make-food";
 import { FeedAnimal } from "./feed-animal";
 import { BasketTime } from "./basket-time";
 import { LessonDone, type DoneNext } from "./lesson-done";
@@ -54,12 +53,11 @@ const STEP_LEAVE_MS = 200;
 
 /* A solved step goes on BY ITSELF once its cheer has played — no Next
    (direct request 2026-11-02). How long each cheer runs: a
-   feed/basket/make has already played its own ending before it reports. */
+   feed/basket has already played its own ending before it reports. */
 const SOLVED_HOLD_MS: Partial<Record<Question["type"], number>> = {
   spell: 2100,
   feed: 700,
   basket: 700,
-  make: 700,
 };
 const SOLVED_HOLD_DEFAULT_MS = 1900;
 
@@ -553,20 +551,6 @@ export function LessonPlayer({
       );
     } else if (q.type === "order") {
       body = <OrderLine key={seed} items={q.items} seed={seed} itemAria={lines.findItemAria} onSolved={onSolved} onMiss={onMiss} />;
-    } else if (q.type === "make") {
-      body = (
-        <MakeFood
-          key={seed}
-          list={q.list}
-          stall={q.stall}
-          full={q.full}
-          seed={seed}
-          itemAria={lines.findItemAria}
-          hearLabel={lines.hearWord}
-          onSolved={onSolved}
-          onMiss={onMiss}
-        />
-      );
     } else if (q.type === "feed") {
       body = <FeedAnimal key={seed} word={q.word} picture={q.picture} mouth={q.mouth} foods={q.foods} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "basket") {
