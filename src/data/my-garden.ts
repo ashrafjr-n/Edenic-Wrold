@@ -38,19 +38,9 @@ import l6_s1_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s
 import p6_s1_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s1.jpg";
 import l6_s2_jpg from "../../public/assets/learn/nova/garden/world/6/landscape/s2.jpg";
 import p6_s2_jpg from "../../public/assets/learn/nova/garden/world/6/portrait/s2.jpg";
-import l7_s0_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s0.jpg";
-import p7_s0_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s0.jpg";
-import l7_s1_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s1.jpg";
-import p7_s1_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s1.jpg";
-import l7_s2_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s2.jpg";
-import p7_s2_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s2.jpg";
-import l7_s3_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s3.jpg";
-import p7_s3_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s3.jpg";
-import l7_s4_jpg from "../../public/assets/learn/nova/garden/world/7/landscape/s4.jpg";
-import p7_s4_jpg from "../../public/assets/learn/nova/garden/world/7/portrait/s4.jpg";
 
-/** Each My Garden lesson's camera through the garden (7 is the review): a
-    still per step after the reel and the move into each (0: the entry). */
+/** Each My Garden lesson's camera through the garden: a still per
+    step after the reel and the move into each (0: the entry). */
 export const MY_GARDEN: Record<number, LessonWorld> = {
   1: {
     stations: [
@@ -122,22 +112,6 @@ export const MY_GARDEN: Record<number, LessonWorld> = {
       { landscape: "/assets/learn/nova/garden/world/6/landscape/m0.mp4?v=c4ba14b6", portrait: "/assets/learn/nova/garden/world/6/portrait/m0.mp4?v=61666d61" },
       { landscape: "/assets/learn/nova/garden/world/6/landscape/m1.mp4?v=12238024", portrait: "/assets/learn/nova/garden/world/6/portrait/m1.mp4?v=cdcaeac5" },
       { landscape: "/assets/learn/nova/garden/world/6/landscape/m2.mp4?v=20b8cba2", portrait: "/assets/learn/nova/garden/world/6/portrait/m2.mp4?v=85e2b5ea" },
-    ],
-  },
-  7: {
-    stations: [
-      { landscape: l7_s0_jpg, portrait: p7_s0_jpg },
-      { landscape: l7_s1_jpg, portrait: p7_s1_jpg },
-      { landscape: l7_s2_jpg, portrait: p7_s2_jpg },
-      { landscape: l7_s3_jpg, portrait: p7_s3_jpg },
-      { landscape: l7_s4_jpg, portrait: p7_s4_jpg },
-    ],
-    moves: [
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m0.mp4?v=2d0b6359", portrait: "/assets/learn/nova/garden/world/7/portrait/m0.mp4?v=fe5e2ae3" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m1.mp4?v=ac0b8864", portrait: "/assets/learn/nova/garden/world/7/portrait/m1.mp4?v=4dd1376e" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m2.mp4?v=5f8ec29e", portrait: "/assets/learn/nova/garden/world/7/portrait/m2.mp4?v=8272ef74" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m3.mp4?v=67fa918f", portrait: "/assets/learn/nova/garden/world/7/portrait/m3.mp4?v=c13d34fa" },
-      { landscape: "/assets/learn/nova/garden/world/7/landscape/m4.mp4?v=ad850e93", portrait: "/assets/learn/nova/garden/world/7/portrait/m4.mp4?v=53456495" },
     ],
   },
 };
