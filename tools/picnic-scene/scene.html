@@ -1302,6 +1302,103 @@ const ITEMS = {
     return g;
   },
 
+  // the series' star (2026-11-12, from the user's two stills of episode 1): a plump gold
+  // star with big brown eyes — `sad` as it is when it falls (brows up in the middle, a
+  // small frown), `happy` once it is found (a smile, cheeks), `plain` with no face: the
+  // star a Learn course's gold chest gives
+  fallenStar(mood = "sad") {
+    const g = new THREE.Group();
+    /* The outline: five points, every corner (tips and hollows) round. */
+    const shape = new THREE.Shape();
+    const pts = [];
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2 + Math.PI / 2;
+      const r = i % 2 ? 0.5 : 0.9;
+      pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r));
+    }
+    pts.forEach((pt, i) => {
+      const prev = pts[(i + 9) % 10], next = pts[(i + 1) % 10];
+      const cut = i % 2 ? 0.34 : 0.36;
+      const a = pt.clone().lerp(prev, cut), b = pt.clone().lerp(next, cut);
+      if (i === 0) shape.moveTo(a.x, a.y);
+      else shape.lineTo(a.x, a.y);
+      shape.quadraticCurveTo(pt.x, pt.y, b.x, b.y);
+    });
+    shape.closePath();
+    /* A pillow: a deep round bevel, its normals smoothed so it reads as inflated. */
+    let geo = new THREE.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: true, bevelThickness: 0.27, bevelSize: 0.13, bevelSegments: 28, curveSegments: 64 });
+    geo.center();
+    geo.deleteAttribute("uv");
+    geo = mergeVertices(geo, 1e-4);
+    geo.computeVertexNormals();
+    /* Lighter in the middle, a warmer orange out at the points. */
+    const mid = new THREE.Color(0xffe066), rim = new THREE.Color(0xff9d14);
+    tint(geo, (v) => [mid.clone().lerp(rim, Math.min(1, Math.hypot(v.x, v.y) / 1.0) ** 1.5), 0]);
+    const glow = mood === "sad" ? 0.12 : 0.26;
+    const body = mesh(geo, new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.52, clearcoat: 0.3, clearcoatRoughness: 0.45, sheen: 0.6, sheenColor: 0xfff0c0, emissive: 0xff9a1e, emissiveIntensity: glow }));
+    g.add(body);
+    const front = 0.31;
+    /* Small lights in its skin. */
+    const speck = new THREE.MeshBasicMaterial({ color: 0xfff3b8, toneMapped: false });
+    for (const [x, y, r] of [[0.07, 0.66, 0.02], [-0.56, 0.2, 0.017], [0.66, 0.12, 0.018], [0.36, -0.5, 0.017], [-0.32, -0.56, 0.015], [-0.14, 0.5, 0.012], [0.52, 0.34, 0.011], [-0.62, -0.02, 0.011]]) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), speck);
+      dot.position.set(x, y, front + 0.002);
+      g.add(dot);
+    }
+    if (mood === "plain") return g;
+    const happy = mood === "happy";
+    const brown = soft(0x6b3618, { roughness: 0.5 });
+    const white = soft(0xfffaf2, { roughness: 0.35, clearcoat: 0.6 });
+    const iris = soft(0x9a5222, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.1 });
+    const pupil = soft(0x2a1208, { roughness: 0.25, clearcoat: 1 });
+    const shine = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+    const stroke = (points, thick, material = brown) => mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(([x, y]) => new THREE.Vector3(x, y, 0))), 32, thick, 12), material);
+    for (const s of [-1, 1]) {
+      const eye = new THREE.Group();
+      const ball = mesh(new THREE.SphereGeometry(0.155, 48, 32), white);
+      ball.scale.set(1, 1.06, 0.3);
+      eye.add(ball);
+      const ring = mesh(new THREE.SphereGeometry(0.112, 40, 28), iris);
+      ring.scale.set(1, 1, 0.3);
+      ring.position.set(-s * 0.012, happy ? 0 : 0.008, 0.03);
+      eye.add(ring);
+      const dark = mesh(new THREE.SphereGeometry(0.064, 32, 24), pupil);
+      dark.scale.set(1, 1, 0.3);
+      dark.position.set(-s * 0.012, happy ? 0 : 0.008, 0.052);
+      eye.add(dark);
+      for (const [x, y, r] of [[0.04, 0.05, 0.03], [-0.035, -0.04, 0.014]]) {
+        const glint = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), shine);
+        glint.position.set(x - s * 0.012, y, 0.075);
+        eye.add(glint);
+      }
+      /* Its upper lid, a dark line over the eye. */
+      const lid = stroke([[-0.15, 0.03], [-0.09, 0.135], [0, 0.17], [0.09, 0.135], [0.15, 0.03]], 0.014);
+      lid.position.z = 0.02;
+      eye.add(lid);
+      eye.scale.setScalar(1.28);
+      eye.position.set(s * 0.25, 0.04, front);
+      g.add(eye);
+      /* The brow: up in the middle when sad, a soft arch when happy. */
+      const brow = happy
+        ? stroke([[-0.12, 0.36], [0, 0.415], [0.12, 0.36]], 0.02)
+        : stroke([[-s * 0.15, 0.45], [-s * 0.03, 0.42], [s * 0.14, 0.33]], 0.026);
+      brow.position.set(s * 0.26, 0, front - 0.01);
+      g.add(brow);
+      if (happy) {
+        const blush = mesh(new THREE.SphereGeometry(0.075, 24, 16), soft(0xff8e7a, { clearcoat: 0, sheen: 0.2 }));
+        blush.scale.set(1.3, 0.75, 0.2);
+        blush.position.set(s * 0.45, -0.17, front - 0.03);
+        g.add(blush);
+      }
+    }
+    const mouth = happy
+      ? stroke([[-0.15, -0.25], [-0.08, -0.33], [0, -0.355], [0.08, -0.33], [0.15, -0.25]], 0.024)
+      : stroke([[-0.1, -0.36], [-0.05, -0.31], [0, -0.295], [0.05, -0.31], [0.1, -0.36]], 0.021);
+    mouth.position.z = front - 0.01;
+    g.add(mouth);
+    return g;
+  },
+
   // the Sky Trail's balloon (2026-11-12): the child's marker over a cloud — a hot-air
   // balloon in the friends' colours, a little basket under it
   hotAirBalloon() {
@@ -4642,7 +4739,7 @@ if (THING) {
   /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
      what is worn for it; the videos' vegetables): a softer, fuller light —
      their felt is evenly lit, with no hard dark side. */
-  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food", "garden"].includes(THING)) {
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food", "garden", "fallenStar"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
