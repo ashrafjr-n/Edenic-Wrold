@@ -74,16 +74,8 @@ import l9_s2_jpg from "../../public/assets/learn/bloo/animals/world/9/landscape/
 import p9_s2_jpg from "../../public/assets/learn/bloo/animals/world/9/portrait/s2.jpg";
 import l9_s3_jpg from "../../public/assets/learn/bloo/animals/world/9/landscape/s3.jpg";
 import p9_s3_jpg from "../../public/assets/learn/bloo/animals/world/9/portrait/s3.jpg";
-import l10_s0_jpg from "../../public/assets/learn/bloo/animals/world/10/landscape/s0.jpg";
-import p10_s0_jpg from "../../public/assets/learn/bloo/animals/world/10/portrait/s0.jpg";
-import l10_s1_jpg from "../../public/assets/learn/bloo/animals/world/10/landscape/s1.jpg";
-import p10_s1_jpg from "../../public/assets/learn/bloo/animals/world/10/portrait/s1.jpg";
-import l10_s2_jpg from "../../public/assets/learn/bloo/animals/world/10/landscape/s2.jpg";
-import p10_s2_jpg from "../../public/assets/learn/bloo/animals/world/10/portrait/s2.jpg";
-import l10_s3_jpg from "../../public/assets/learn/bloo/animals/world/10/landscape/s3.jpg";
-import p10_s3_jpg from "../../public/assets/learn/bloo/animals/world/10/portrait/s3.jpg";
 
-/** Each Animals lesson's camera through the farm (10 is the review): a still per
+/** Each Animals lesson's camera through the farm: a still per
     step after the reel and the move into each (0: the entry). */
 export const ANIMALS_FARM: Record<number, LessonWorld> = {
   1: {
@@ -220,19 +212,5 @@ export const ANIMALS_FARM: Record<number, LessonWorld> = {
       { landscape: "/assets/learn/bloo/animals/world/9/landscape/m3.mp4?v=2531a244", portrait: "/assets/learn/bloo/animals/world/9/portrait/m3.mp4?v=d469a257" },
     ],
     animalInWorld: true,
-  },
-  10: {
-    stations: [
-      { landscape: l10_s0_jpg, portrait: p10_s0_jpg },
-      { landscape: l10_s1_jpg, portrait: p10_s1_jpg },
-      { landscape: l10_s2_jpg, portrait: p10_s2_jpg },
-      { landscape: l10_s3_jpg, portrait: p10_s3_jpg },
-    ],
-    moves: [
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m0.mp4?v=39dd07d0", portrait: "/assets/learn/bloo/animals/world/10/portrait/m0.mp4?v=815e2a81" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m1.mp4?v=9c8e753d", portrait: "/assets/learn/bloo/animals/world/10/portrait/m1.mp4?v=c11f68e5" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m2.mp4?v=87c5b73c", portrait: "/assets/learn/bloo/animals/world/10/portrait/m2.mp4?v=cfea126b" },
-      { landscape: "/assets/learn/bloo/animals/world/10/landscape/m3.mp4?v=78bc6aed", portrait: "/assets/learn/bloo/animals/world/10/portrait/m3.mp4?v=5496251b" },
-    ],
   },
 };
