@@ -140,12 +140,6 @@ export type Question =
       like" or the "I don't like" plate — no wrong answer: the sentences
       ("I like apples.") are the lesson. `things` is each one's plural. */
   | { type: "likes"; ask: Ask; items: { face: Face; things: string }[] }
-  /** Pick what Nova's note says (a review's exam): three plants, the
-      note — "3 apples, 1 banana, 2 oranges" — and her basket beside them.
-      Tap one and it is picked (pulled up) into the basket, its word popping
-      up where it was; one more than the note says wiggles back. `order` is
-      each line: the English word, its plural and how many. */
-  | { type: "harvest"; ask: Ask; order: { word: string; things: string; count: number }[]; garden: Garden }
   /** Basket Time (Nova's Vegetables, the user's design, 2026-11-01 — Find
       It! merged in): the kitchen, its friend behind the counter, the word
       up on the wall; drag its vegetable from the counter into the basket
@@ -172,23 +166,6 @@ export type Question =
 export interface Food {
   word: string;
   src: StaticImageData;
-}
-
-/** Where the foods grow, to pick them (Nova's Fruits review) — one render
-    (`tools/picnic-scene`, `?harvest=`): the garden without its food, each
-    kind of food (all of one kind are alike) and what stands in front of
-    them (the beds' near halves) — and the basket they are picked into. */
-export interface Garden {
-  ground: StaticImageData;
-  /** Each kind of food that grows here, by its English word. */
-  foods: Record<string, StaticImageData>;
-  /** Each food: which it is, where its picture sits, what of it can be
-      tapped (the part not behind the front), and how far it is turned (°,
-      about its stem) so they are not all alike. */
-  items: { food: string; box: SceneRect; hit: SceneRect; tilt: number }[];
-  /** None in a garden of trees alone. */
-  front?: { src: StaticImageData; box: SceneRect };
-  basket: Basket;
 }
 
 /** Nova's basket, standing beside her garden (`?basket`): the basket, its
