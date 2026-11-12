@@ -184,7 +184,9 @@ export function MemoryBoard({ level, nextHref, host, dict }: MemoryBoardProps) {
               round. At zero it empties and the whole dial goes quiet rather
               than red: the clock stops mattering there, it does not start
               threatening. */}
+          {/* A Sky Trail level is not timed: its three dots take the middle. */}
           <div
+            hidden={Boolean(host)}
             className={`memory-clock mt-4 sm:mt-6 ${remaining === 0 ? "is-spent" : ""}`}
             style={
               {
