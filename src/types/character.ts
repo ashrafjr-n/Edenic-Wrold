@@ -8,7 +8,6 @@ export interface Character {
   name: string;
   image: string;
   accent: string;
-  accentSoft: string;
   accentDark: string;
   locked: boolean;
   /** The "Learn With" button's colours on `/learn`, when they are not the
