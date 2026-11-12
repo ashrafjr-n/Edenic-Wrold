@@ -8,7 +8,7 @@ import { shuffle } from "@/lib/seeded";
 import type { ColorId } from "@/types/course";
 import { ClayWord } from "./clay-word";
 
-/** After this many misses the answer glows, as on a Pick. */
+/** After this many misses the answer glows. */
 const HELP_AFTER = 2;
 
 interface MixColorsProps {
