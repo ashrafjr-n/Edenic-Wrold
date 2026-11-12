@@ -1302,6 +1302,36 @@ const ITEMS = {
     return g;
   },
 
+  // the Sky Trail's balloon (2026-11-12): the child's marker over a cloud — a hot-air
+  // balloon in the friends' colours, a little basket under it
+  hotAirBalloon() {
+    const g = new THREE.Group();
+    const profile = [[0.2, 0], [0.34, 0.16], [0.62, 0.52], [0.86, 0.95], [0.95, 1.35], [0.9, 1.72], [0.7, 2.05], [0.4, 2.27], [0.12, 2.36], [0, 2.38]].map(([r, y]) => new THREE.Vector2(r, y));
+    const curve = new THREE.SplineCurve(profile).getPoints(64);
+    const gores = 8;
+    [0xff5fa8, 0xffffff, 0x4fa8f4, 0xffffff, 0xffc93a, 0xffffff, 0xb79cf0, 0xffffff].forEach((color, i) => {
+      const gore = mesh(new THREE.LatheGeometry(curve, 12, (i / gores) * Math.PI * 2, (Math.PI * 2) / gores), soft(color, { roughness: 0.6, sheen: 0.7, emissive: color, emissiveIntensity: 0.38 }));
+      gore.position.y = 1.0;
+      g.add(gore);
+    });
+    const collar = mesh(new THREE.TorusGeometry(0.21, 0.05, 16, 48), soft(0xffc93a, { roughness: 0.6 }));
+    collar.rotation.x = Math.PI / 2;
+    collar.position.y = 1.0;
+    g.add(collar);
+    const wicker = soft(0xd9a05a, { roughness: 0.85 });
+    const basket = mesh(new RoundedBoxGeometry(0.46, 0.34, 0.46, 4, 0.09), wicker);
+    basket.position.y = 0.42;
+    g.add(basket);
+    const rim = mesh(new RoundedBoxGeometry(0.52, 0.08, 0.52, 4, 0.04), soft(0xb9803f, { roughness: 0.8 }));
+    rim.position.y = 0.6;
+    g.add(rim);
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const rope = new THREE.LineCurve3(new THREE.Vector3(x * 0.2, 0.6, z * 0.2), new THREE.Vector3(x * 0.14, 1.0, z * 0.14));
+      g.add(mesh(new THREE.TubeGeometry(rope, 4, 0.014, 8), wicker));
+    }
+    return g;
+  },
+
   whale() {
     const g = new THREE.Group();
     const blue = clay(0x3f86e8, { clearcoat: 0.85, clearcoatRoughness: 0.18 });
@@ -4594,11 +4624,15 @@ const GARDEN_STOPS = STOPS && params.get("course") === "garden";
 const ANIMALS_STOPS = STOPS && params.get("course") === "animals";
 const WEATHER_STOPS = STOPS && params.get("course") === "weather";
 const BLOO_STOPS = ANIMALS_STOPS || WEATHER_STOPS;
-/* Nova's two worlds of stops and Bloo's share their shape (milk slabs, gold stones). */
-const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS;
+/* The Sky Trail (2026-11-12): the Play game's world of stops (`&course=sky`) — its levels
+   on clouds up in the sky, white stars the way between them (the page turns them gold),
+   Edenic's big star the nearest stop (it lights, as a chest opens). */
+const SKY_STOPS = STOPS && params.get("course") === "sky";
+/* Nova's two worlds of stops and Bloo's share their shape (milk slabs, gold stones); the sky its way. */
+const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS || SKY_STOPS;
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 /* The colours' words need a font (only the worlds that show them load it). */
-const WORD_FONT = COLORS_STOPS || WEATHER_STOPS ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
+const WORD_FONT = COLORS_STOPS || WEATHER_STOPS || SKY_STOPS ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
 if (THING) {
@@ -5531,16 +5565,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, SKY_STOPS ? "#4fa3ee" : LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, SKY_STOPS ? "#86c5f6" : LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, SKY_STOPS ? "#a9d6f8" : LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, SKY_STOPS ? "#8cc6f4" : LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(LAND ? 0xf2e6ff : 0xeaf4ff);
   sky.groundColor.set(LAND ? 0xd4e8a8 : 0xc0e0a4);
@@ -7366,13 +7400,20 @@ if (THING) {
     sun.shadow.radius = 14;
     Object.assign(sun.shadow.camera, { left: -32, right: 32, top: 32, bottom: -32, far: 120 });
     sun.shadow.camera.updateProjectionMatrix();
+    /* The sky: no ground under it, the light of open air. */
+    if (SKY_STOPS) {
+      lawn.visible = false;
+      sky.color.set(0xffffff);
+      sky.groundColor.set(0xcfe4fa);
+      sky.intensity = 1.7;
+    }
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
     const FRUIT_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-    const SET_KINDS = ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
+    const SET_KINDS = SKY_STOPS ? ["1", "2", "3", "4", "5"] : ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
     stopsApi.pictures = [];
     const SPOTS = MILK_STOPS
-      ? [...SET_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (SET_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
+      ? [...SET_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? (SKY_STOPS ? 1.2 : 2.4) : 4.8), -6 - (SET_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
       : COLORS_STOPS
       ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
       : portrait
@@ -7448,13 +7489,97 @@ if (THING) {
       }
       return g;
     };
+    /* ---- The sky's own pieces ---- */
+    /* A fixed scatter (never `Math.random`: the same sky on every render). */
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+    const cloudM = soft(0xffffff, { roughness: 0.96, sheen: 0.9, emissive: 0xffffff, emissiveIntensity: 0.16 });
+    /* A cloud to stand on: a low bed with a nearly flat top, round puffs all
+       about its rim and a belly under it. */
+    const cloudBed = (wd, dp) => {
+      const g = new THREE.Group();
+      const puff = (r, x, y, z, sy = 1) => {
+        const m = ball(r, cloudM, 40);
+        m.scale.y = sy;
+        m.position.set(x, y, z);
+        m.castShadow = false;
+        g.add(m);
+      };
+      const bed = ball(1, cloudM, 64);
+      bed.scale.set(wd / 2, 0.95, dp / 2);
+      bed.position.y = 0.6;
+      bed.castShadow = false;
+      g.add(bed);
+      const n = 11;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + 0.3;
+        const r = 1.05 + rnd() * 0.55;
+        puff(r, Math.cos(a) * (wd / 2 - 0.25), 0.25 + rnd() * 0.25, Math.sin(a) * (dp / 2 - 0.35), 0.82);
+      }
+      for (const [x, z, r] of [[-wd * 0.2, 0.3, 1.5], [wd * 0.22, -0.2, 1.35], [0, 0.9, 1.25]]) puff(r, x, -0.45, z, 0.8);
+      g.top = 1.5;
+      /* What the page lays its link over (`boxes`): the middle of the cloud and what
+         stands on it — the whole cloud is wider than the page lets a stop be on a phone. */
+      const hit = new THREE.Mesh(new THREE.BoxGeometry(Math.min(wd, 6) - 0.6, 4.9, 3.6), new THREE.MeshBasicMaterial());
+      hit.position.y = 2.45;
+      /* Not seen — the OBJECT, not its material: a way's mask is rendered with one
+         material over everything, and a box "hidden" by its material hid the stars behind it. */
+      hit.visible = false;
+      g.add(hit);
+      g.userData.hit = hit;
+      return g;
+    };
+    /* A five-point star, plump: rounded tips, a deep bevel. */
+    const starGeo = (R, depth, bevel) => {
+      const shape = new THREE.Shape();
+      const pts = [];
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2 + Math.PI / 2;
+        const r = i % 2 ? R * 0.52 : R;
+        pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r));
+      }
+      /* Each corner cut and rounded with a curve through it. */
+      const cut = 0.3;
+      pts.forEach((pt, i) => {
+        const prev = pts[(i + 9) % 10], next = pts[(i + 1) % 10];
+        const a = pt.clone().lerp(prev, cut), b = pt.clone().lerp(next, cut);
+        if (i === 0) shape.moveTo(a.x, a.y);
+        else shape.lineTo(a.x, a.y);
+        shape.quadraticCurveTo(pt.x, pt.y, b.x, b.y);
+      });
+      shape.closePath();
+      const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 14, curveSegments: 24 });
+      geo.center();
+      return geo;
+    };
+    /* A level's number, puffed up, in its own colour (4 and 5 are Pinki's pink). */
+    const SKY_NUMBER = { 1: [0x1f86f2, 0x7cc4ff], 2: [0xffa800, 0xffe14a], 3: [0x7a4df0, 0xc39bff], 4: [0xff2d92, 0xff9ccb], 5: [0xff2d92, 0xff9ccb] };
+    const skyNumber = (kind) => {
+      const [low, high] = SKY_NUMBER[kind];
+      const holder = new THREE.Group();
+      const w = furWord(WORD_FONT, kind, low, { height: 3.3, top: high });
+      holder.add(w);
+      /* Level 4: Pinki waits on its cloud — her own picture, laid in later (`setPictures`). */
+      /* A phone's frame is narrow: the clouds stand nearer its middle there (`SPOTS`), and she nearer her number. */
+      if (kind === "4") {
+        w.position.x = portrait ? -1.35 : -1.55;
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).translate(0, 0.5, 0), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false }));
+        plane.scale.setScalar(portrait ? 3.3 : 3.6);
+        plane.position.set(portrait ? 1.2 : 1.45, -1.72, -0.5);
+        plane.rotation.x = -0.2;
+        plane.userData.noMerge = true;
+        holder.add(plane);
+        stopsApi.pictures.push({ kind: "friend", mesh: plane });
+      }
+      return holder;
+    };
     const stops = [];
     /* The drops alone (Colors): the page greys the ones not yet open. */
     const statues = [];
     KINDS.forEach((kind, i) => {
       const [x, z] = SPOTS[i];
       const g = new THREE.Group();
-      const ped = slab(5.8, 5);
+      const ped = SKY_STOPS ? cloudBed(6.4, 5) : slab(5.8, 5);
       g.add(ped);
       /* The shape: chubby, soft, its front still plainly the shape. */
       const clayM = soft(COLORS_STOPS ? PAINT[kind] : SHAPE_COLOR[kind], { roughness: 0.68, sheen: 0.45 });
@@ -7540,8 +7665,8 @@ if (THING) {
       };
       /* The four shapes as the reels show them: see `furBody` (top level). */
       const furShape = () => furBody(kind);
-      const body = WEATHER_STOPS ? seasonWord() : BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? word() : furShape();
-      if (BLOO_STOPS) body.rotation.y = 0;
+      const body = SKY_STOPS ? skyNumber(kind) : WEATHER_STOPS ? seasonWord() : BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? word() : furShape();
+      if (BLOO_STOPS || SKY_STOPS) body.rotation.y = 0;
       else if (MILK_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
       const statue = new THREE.Group();
       statue.add(body);
@@ -7558,13 +7683,89 @@ if (THING) {
       const beside = i % 2 ? sprig() : chubby(flowerColors[i % 3]);
       beside.position.set(x < 0 ? -2.1 : 2.1, ped.top - 0.06, -1.1);
       beside.scale.setScalar(i % 2 ? 0.72 : 0.85);
-      g.add(beside);
+      if (!SKY_STOPS) g.add(beside);
       add(g, x, 0, z);
       stops.push(g);
     });
+    /* The sky's last stop: Edenic's big star on the nearest cloud — pale until
+       every level is done, then it lights (`state(p)`, played as the chest's opening). */
+    if (SKY_STOPS) {
+      const [x, z] = SPOTS[SPOTS.length - 1];
+      const g = new THREE.Group();
+      const ped = cloudBed(8, 6);
+      g.add(ped);
+      const PALE = new THREE.Color(0xf3f0ff), GOLD = new THREE.Color(0xffc400), GLOW = new THREE.Color(0xffa800);
+      const starM = soft(PALE.getHex(), { roughness: 0.5, sheen: 0.5, clearcoat: 0.35, emissive: 0x000000, emissiveIntensity: 0 });
+      const star = mesh(starGeo(1.85, 0.8, 0.38), starM);
+      const holder = new THREE.Group();
+      holder.add(star);
+      /* Its face, there only once it is lit. */
+      const look = dotFace(1.25, soft(0x8a4a00, { roughness: 0.6 }));
+      look.position.set(0, -0.1, 0.8);
+      holder.add(look);
+      const starY = ped.top + 1.72;
+      holder.position.set(0, starY, 0.2);
+      holder.rotation.x = -0.16;
+      g.add(holder);
+      const haloCanvas = document.createElement("canvas");
+      haloCanvas.width = haloCanvas.height = 256;
+      const hc = haloCanvas.getContext("2d");
+      const grad = hc.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grad.addColorStop(0, "rgba(255,244,190,1)");
+      grad.addColorStop(0.4, "rgba(255,214,96,0.55)");
+      grad.addColorStop(1, "rgba(255,200,80,0)");
+      hc.fillStyle = grad;
+      hc.fillRect(0, 0, 256, 256);
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(haloCanvas), depthWrite: false, fog: false, transparent: true, opacity: 0 }));
+      halo.position.set(0, starY, -0.9);
+      halo.scale.set(8, 8, 1);
+      g.add(halo);
+      /* Little stars thrown out round it as it lights. */
+      const sparkM = soft(0xffd24a, { roughness: 0.5, emissive: 0xffb400, emissiveIntensity: 0.45 });
+      const sparkGeo = starGeo(0.34, 0.12, 0.08);
+      const sparks = [[-2.9, 1.5, 0.5], [2.8, 1.9, 0.3], [-2.2, -0.9, 0.9], [2.4, -0.6, 0.8], [-0.9, 2.7, 0.2], [1.3, 2.9, 0.1]].map(([dx, dy, dz], i) => {
+        const m = mesh(sparkGeo, sparkM);
+        m.castShadow = false;
+        m.userData.to = [dx, dy, dz];
+        m.rotation.z = i * 0.9;
+        g.add(m);
+        return m;
+      });
+      stopsApi.star = {
+        /* `p` 0..1: a wobble, then it swells and turns gold, its face comes and
+           little stars fly out; 1 = lit. */
+        state(p) {
+          const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+          const shake = k(0, 0.4);
+          const fade = shake < 1 ? Math.sin(Math.PI * shake) : 0;
+          holder.rotation.z = Math.sin(shake * Math.PI * 6) * 0.11 * fade;
+          const o = k(0.4, 0.85);
+          const back = (v) => 1 + 2.2 * (v - 1) ** 3 + 1.2 * (v - 1) ** 2;
+          holder.scale.setScalar(1 + 0.1 * (o > 0 ? back(o) : 0) + 0.04 * fade);
+          const g2 = k(0.42, 0.9);
+          const glow = g2 * g2 * (3 - 2 * g2);
+          starM.color.copy(PALE).lerp(GOLD, glow);
+          starM.emissive.copy(GLOW);
+          starM.emissiveIntensity = 0.2 * glow;
+          halo.material.opacity = 0.75 * glow;
+          /* Gone while unlit, for the same reason as the stops' boxes: it would hide stars in a way's mask. */
+          halo.visible = glow > 0;
+          look.scale.setScalar(Math.max(0.001, k(0.6, 0.9)));
+          const out = o > 0 ? back(o) : 0;
+          sparks.forEach((m) => {
+            const [dx, dy, dz] = m.userData.to;
+            m.position.set(dx * out, starY + dy * out, 0.2 + dz);
+            m.scale.setScalar(Math.max(0.001, out));
+          });
+        },
+      };
+      stopsApi.star.state(0);
+      add(g, x, 0, z);
+      stops.push(g);
+    }
     /* The review: the chest — a gold frame, orange panels, a round lid, a
        keyhole plate — shut, on the nearest slab. */
-    {
+    if (!SKY_STOPS) {
       const [x, z] = SPOTS[SPOTS.length - 1];
       const g = new THREE.Group();
       const ped = slab(7.4, 5.8);
@@ -7660,7 +7861,8 @@ if (THING) {
     }
     /* The stepping stones, white: a group a way between two lessons (the
        page turns a way pink, stone by stone, once its lesson is done). */
-    const stoneM = soft(0xffffff, { roughness: 0.85 });
+    const stoneM = SKY_STOPS ? soft(0xffffff, { roughness: 0.7, emissive: 0xffffff, emissiveIntensity: 0.22 }) : soft(0xffffff, { roughness: 0.85 });
+    const skyStarGeo = SKY_STOPS ? starGeo(0.98, 0.26, 0.2) : null;
     const ways = [];
     for (let i = 0; i < SPOTS.length - 1; i++) {
       const [ax, az] = SPOTS[i], [bx, bz] = SPOTS[i + 1];
@@ -7670,14 +7872,20 @@ if (THING) {
       for (let k = 0; k < n; k++) {
         const u = 0.21 + (k / (n - 1)) * 0.58;
         const pt = curve.getPoint(u), t = curve.getTangent(u);
-        const st = rbox(2, 0.5, 1.55, stoneM, 0.24);
-        st.position.set(pt.x, 0.25, pt.y);
+        const st = SKY_STOPS ? mesh(skyStarGeo, stoneM) : rbox(2, 0.5, 1.55, stoneM, 0.24);
+        st.position.set(pt.x, SKY_STOPS ? 0.75 : 0.25, pt.y);
         st.rotation.y = Math.atan2(t.x, t.y) * 0.35;
+        /* A star of the way: lying back, its face up to the camera, each turned a little. */
+        if (SKY_STOPS) {
+          st.rotation.set(-0.95, 0, (k % 2 ? 1 : -1) * 0.22 + i * 0.3);
+          st.castShadow = false;
+        }
         way.add(st);
       }
       scene.add(way);
       ways.push(way);
     }
+    if (!SKY_STOPS) {
     /* Round about, the same pink: bell hills. */
     const bell = (r, ht, color = PAL_HILL) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
     const side = portrait ? 11.5 : 15.5;
@@ -7787,6 +7995,34 @@ if (THING) {
       const look = dotFace(1.05 * k);
       look.position.set(0, 0.75 * k, 1.05 * k);
       add(MILK_STOPS ? c : group(c, look), portrait ? x * 0.55 : x, y, z + dz);
+    }
+    }
+    /* Round about the sky: a sea of cloud far below, clouds drifting at the sides
+       at every height, the friends' rainbow past the first level, three balloons. */
+    if (SKY_STOPS) {
+      /* The sea far below is the sky's own blue, so the white clouds a child lands on stand out of it. */
+      const seaM = soft(0x9ccbf3, { roughness: 1, sheen: 0.4 });
+      const drift = (k, x, y, z, sx = 1, material = cloudM) => {
+        const c = cloud(k);
+        c.scale.x *= sx;
+        c.traverse((o) => {
+          if (!o.isMesh) return;
+          o.material = material;
+          o.receiveShadow = false;
+        });
+        add(c, x, y, z);
+      };
+      for (let z = 30; z > FIRST_Z - 130; z -= 10) {
+        for (let x = -96; x <= 96; x += 14) drift(9 + rnd() * 6, x + (rnd() - 0.5) * 10, -30 - rnd() * 7, z + (rnd() - 0.5) * 7, 1.5, seaM);
+      }
+      const edge = portrait ? 8.5 : 15;
+      for (let z = 14; z > FIRST_Z - 40; z -= 7) {
+        for (const sx of [-1, 1]) drift(2.2 + rnd() * 2.2, sx * (edge + rnd() * (portrait ? 9 : 16)), -3 + rnd() * 13, z + (rnd() - 0.5) * 5, 1.25);
+      }
+      [[9.4, 0xff8fbf], [7.7, 0xffd24d], [6, 0x6bb8f0]].forEach(([r, color]) => {
+        add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, -1.5, FIRST_Z - 19);
+      });
+      for (const sx of [-1, 1]) drift(4.6, sx * 8.6, -2.6, FIRST_Z - 18.2, 1.3);
     }
     stopsApi.stops = stops;
     stopsApi.statues = statues;
@@ -8319,6 +8555,7 @@ if (THING) {
        wobble (the lid rattling), then the lid swings open on its hinge with a
        little overshoot as the light inside comes up; 1 = open and lit. */
     const chestState = (p) => {
+      if (stopsApi.star) return stopsApi.star.state(p);
       const c = stopsApi.chest;
       if (!c) return;
       const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
@@ -8344,6 +8581,16 @@ if (THING) {
         aim(camAt(t));
         return render("image/jpeg", 0.95);
       },
+      /* The sky with nothing to land on, from the camera at `t` (the Sky Trail's
+         levels are played over it, out of focus). */
+      emptyAt(t) {
+        const things = [...stopsApi.stops, ...stopsApi.ways];
+        things.forEach((g) => (g.visible = false));
+        aim(camAt(t));
+        const url = render("image/jpeg", 0.95);
+        things.forEach((g) => (g.visible = true));
+        return url;
+      },
       /* The chest at `p` of its opening, from the camera at `t`. */
       chestAt(t, p) {
         chestState(p);
@@ -8363,7 +8610,11 @@ if (THING) {
         const [bg, fog] = [scene.background, scene.fog];
         scene.background = null;
         scene.fog = null;
+        /* The sky's friend is a flat picture: its empty corners hide no star. */
+        const flat = SKY_STOPS ? stopsApi.pictures.map((picture) => picture.mesh) : [];
+        flat.forEach((m) => (m.visible = false));
         const url = maskOf([[stopsApi.ways[k], -Infinity]], view);
+        flat.forEach((m) => (m.visible = true));
         scene.background = bg;
         scene.fog = fog;
         return url;
@@ -8398,6 +8649,7 @@ if (THING) {
           m.material.map = texes[i];
           m.material.color.set(0xffffff);
           m.material.needsUpdate = true;
+          if (kind === "friend") m.scale.x = m.scale.y * (texes[i].image.width / texes[i].image.height);
           if (kind === "animal") {
             const aspect = texes[i].image.width / texes[i].image.height;
             const [wd, ht] = 4.2 * aspect > 5 ? [5, 5 / aspect] : [4.2 * aspect, 4.2];
@@ -8408,7 +8660,7 @@ if (THING) {
       boxes(t) {
         aim(camAt(t));
         return stopsApi.stops.map((g) => {
-          const b = new THREE.Box3().setFromObject(g);
+          const b = new THREE.Box3().setFromObject(g.children.find((c) => c.userData.hit)?.userData.hit ?? g);
           let [l, tp, r, bt] = [Infinity, Infinity, -Infinity, -Infinity];
           for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
             const p = new THREE.Vector3(x, y, z).project(view);
