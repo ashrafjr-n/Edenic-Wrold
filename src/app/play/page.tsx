@@ -3,6 +3,7 @@ import { PuzzleCta } from "@/components/activities/puzzle-cta";
 import { MemoryMatchCta } from "@/components/activities/memory-match-cta";
 import { TrailCta } from "@/components/activities/trail-cta";
 import { CupsCta } from "@/components/activities/cups-cta";
+import { BackRow } from "@/components/ui/back-button";
 import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
@@ -39,34 +40,37 @@ export default async function ActivitiesPage() {
   const dict = await getDictionary();
 
   return (
-    <main className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 sm:py-14">
-      <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:max-w-6xl lg:grid-cols-3">
-        {/* Spans every column, first in the grid — the Trail is a section
+    <main className="flex flex-1 flex-col overflow-x-clip">
+      <BackRow href="/discover" label={dict.discover.backToDiscover} />
+      <div className="flex flex-1 flex-col justify-center px-4 pb-10 pt-6 sm:px-8 sm:pb-14">
+        <div className="mx-auto grid w-full max-w-5xl gap-6 sm:gap-8 lg:max-w-6xl lg:grid-cols-3">
+          {/* Spans every column, first in the grid — the Trail is a section
             of the site, not a game, and leading the page at full width is
             what says so. */}
-        <TrailCta
-          dict={dict}
-          className="anim-rise-in lg:col-span-3"
-          style={{ animationDelay: `${ITEM_DELAY}s` }}
-        />
+          <TrailCta
+            dict={dict}
+            className="anim-rise-in lg:col-span-3"
+            style={{ animationDelay: `${ITEM_DELAY}s` }}
+          />
 
-        <PuzzleCta
-          dict={dict}
-          className="anim-rise-in"
-          style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
-        />
+          <PuzzleCta
+            dict={dict}
+            className="anim-rise-in"
+            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
+          />
 
-        <MemoryMatchCta
-          dict={dict}
-          className="anim-rise-in"
-          style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 2}s` }}
-        />
+          <MemoryMatchCta
+            dict={dict}
+            className="anim-rise-in"
+            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 2}s` }}
+          />
 
-        <CupsCta
-          dict={dict}
-          className="anim-rise-in"
-          style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 3}s` }}
-        />
+          <CupsCta
+            dict={dict}
+            className="anim-rise-in"
+            style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER * 3}s` }}
+          />
+        </div>
       </div>
     </main>
   );
