@@ -24,7 +24,6 @@ import { demoFor, lessonFaces, starsFor, taskFor, type Step } from "./lesson-ste
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { MixColors } from "./mix-colors";
-import { PickQuestion } from "./pick-question";
 import { TraceQuestion } from "./trace-question";
 import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
@@ -108,9 +107,8 @@ interface LessonPlayerProps {
  * exception: it fills the whole stage and has no bands at all (on a desktop
  * it takes the board's column, between the same two panels as the steps).
  *
- * The first question is shown before it is asked: a Pick's answer glows,
- * and a Trace always starts with the shape drawing itself. Then it is the
- * child's turn.
+ * A Trace is shown before it is asked: the shape draws itself, then it is
+ * the child's turn.
  */
 export function LessonPlayer({
   lesson,
@@ -149,7 +147,6 @@ export function LessonPlayer({
   /* Letters in the spelling board's spaces — "Start over" shows then. */
   const [spelling, setSpelling] = useState(false);
   const [board, setBoard] = useState(false);
-  const [demo, setDemo] = useState(true);
   const [mistakes, setMistakes] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
@@ -165,10 +162,6 @@ export function LessonPlayer({
   const step = steps[at];
   const finished = at >= steps.length;
   const question = step?.kind === "question" ? step.question : undefined;
-  const first = step?.kind === "question" && step.index === 0;
-  /* The demo's turn on the first question — only while the child has not been
-     handed it yet. A Trace's demo is its own (the pen draws before the board). */
-  const showing = first && demo && question?.type === "pick";
 
   useScrollLock(question?.type === "trace" && board);
 
@@ -236,16 +229,8 @@ export function LessonPlayer({
       setAt(0);
       setMistakes(0);
       setDrawing(undefined);
-      setDemo(true);
       setRound((value) => value + 1);
     }, 0);
-  /* Out of the demo, the camera stays where it is. */
-  const endDemo = () =>
-    go(() => {
-      setDemo(false);
-      setArrived(true);
-    });
-
   const onHeld = useEffectEvent(advance);
   const holdMs = world
     ? ((question && WORLD_HOLD_MS[question.type]) ?? WORLD_HOLD_DEFAULT_MS)
@@ -269,14 +254,11 @@ export function LessonPlayer({
   /* And as the current stop of the desktop's step trail. */
   let current: ReactNode = null;
   /* Deals the step's board — and the build demo, so both show one order. */
-  const seed =
-    step?.kind === "question"
-      ? `${characterId}.${courseId}.${n}.${step.index}.${round}.${showing ? "demo" : "play"}`
-      : "";
+  const seed = step?.kind === "question" ? `${characterId}.${courseId}.${n}.${step.index}.${round}.play` : "";
   if (!finished && step.kind === "question") {
     const q = step.question;
-    const { kind, target } = taskFor(q, showing);
-    const demo = showing ? undefined : demoFor(q, tone.face, seed);
+    const { kind, target } = taskFor(q);
+    const demo = demoFor(q, tone.face, seed);
     /* The animal stands in the world itself: the Listen demo shows no second picture of it. */
     const how = demo?.kind === "listen" && (world?.animalInWorld || world?.wordInSky) ? { ...demo, face: undefined } : demo;
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
@@ -321,7 +303,7 @@ export function LessonPlayer({
     );
   }
 
-  const kinds = steps.map((s) => (s.kind === "watch" ? "watch" : taskFor(s.question, false).kind));
+  const kinds = steps.map((s) => (s.kind === "watch" ? "watch" : taskFor(s.question).kind));
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
@@ -456,26 +438,7 @@ export function LessonPlayer({
   } else if (step.kind === "question") {
     const q = step.question;
 
-    if (q.type === "pick") {
-      body = (
-        <PickQuestion
-          key={seed}
-          show={q.show}
-          word={q.word}
-          plain={q.plain}
-          options={q.options}
-          answer={q.answer}
-          round={q.round}
-          seed={seed}
-          demo={showing}
-          onSolved={onSolved}
-          onMiss={onMiss}
-        />
-      );
-      action = showing ? (
-        <NextButton label={lines.yourTurn} tone={onward} onPress={endDemo} dir={dir} className="lesson-onward" />
-      ) : null;
-    } else if (q.type === "mix") {
+    if (q.type === "mix") {
       body = <MixColors key={seed} a={q.a} b={q.b} color={q.color} others={q.others} seed={seed} onSolved={onSolved} onMiss={onMiss} />;
     } else if (q.type === "word") {
       body = (
@@ -654,7 +617,7 @@ export function LessonPlayer({
               for its end. */}
           <StageFrame world={Boolean(world)}>
             <div
-              key={`${round}-${at}-${demo}`}
+              key={`${round}-${at}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
                 leaving ? "stage-swap--out" : ""
               } ${world && !arrived ? "world-wait" : ""}`}
@@ -677,7 +640,7 @@ export function LessonPlayer({
           so a pressed (collapsed) Next never carries over into the next
           step's button. */}
       <div
-        key={`${round}-${at}-${demo}`}
+        key={`${round}-${at}`}
         className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
       >
         {footStart}

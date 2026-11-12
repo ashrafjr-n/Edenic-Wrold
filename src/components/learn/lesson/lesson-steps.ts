@@ -26,8 +26,7 @@ export type Step = { kind: "watch"; src?: string } | { kind: "question"; questio
 
 /** What the task chip shows for a step: its kind (icon + colour) and the
     English word the step is about. */
-export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target?: string } {
-  if (showing) return { kind: "watch" };
+export function taskFor(q: Question): { kind: TaskKind; target?: string } {
   switch (q.type) {
     case "word":
       return { kind: "listen" };
@@ -45,16 +44,12 @@ export function taskFor(q: Question, showing: boolean): { kind: TaskKind; target
       return { kind: "basket" };
     case "mix":
       return { kind: "pick" };
-    case "pick": {
-      const named = q.ask.vars?.shape ?? q.ask.vars?.color;
-      return { kind: "pick", target: named === undefined ? undefined : String(named) };
-    }
   }
 }
 
 /** How a step is played, for the task button's popup. The spelling demo
     deals with the board's own seed, so it shows the very letters the child
-    sees. A Pick of pictures with nothing above it (no word, no sum) has none. */
+    sees. */
 export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef | undefined {
   switch (q.type) {
     case "word":
@@ -80,9 +75,6 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
         options: [q.color, ...q.others].map(() => ({ kind: "text", text: "" })),
         answer: 1,
       };
-    case "pick":
-      if (q.blind) return { kind: "pick", word: q.word, plain: q.plain, options: q.options.map(() => ({ kind: "text", text: "" })), answer: 1 };
-      return q.word || q.show ? { kind: "pick", word: q.word, plain: q.plain, show: q.show, options: q.options, answer: q.answer } : undefined;
     default:
       return undefined;
   }
@@ -95,10 +87,6 @@ export function lessonFaces(lesson: LessonDef): Face[] {
   const faces = lesson.questions.flatMap((q): Face[] => {
     if (q.type === "trace") return [{ kind: "shape", shape: q.shape }];
     if (q.type === "find" && "shape" in q.target) return [{ kind: "shape", shape: q.target.shape }];
-    if (q.type === "pick") {
-      const answer = q.options[q.answer];
-      return answer.kind === "text" ? [] : [answer];
-    }
     if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
     return [];
   });
