@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fredoka, Baloo_Bhaijaan_2, Vazirmatn } from "next/font/google";
 import Script from "next/script";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { BackAutoHide } from "@/components/ui/back-auto-hide";
 import { Header } from "@/components/layout/header";
 import { PageTransitionOverlay } from "@/components/ui/page-transition-overlay";
 import { ThemeSync } from "@/components/ui/theme-sync";
@@ -175,6 +176,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <PageTransitionOverlay />
         <Header dict={dict} locale={locale} />
         {children}
+        <BackAutoHide />
         <BottomNav dict={dict} />
       </body>
     </html>
