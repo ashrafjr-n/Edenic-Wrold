@@ -20,7 +20,7 @@ export type TaskDemoDef =
   | { kind: "draw"; shape: ShapeId; accent: string }
   | { kind: "build"; word: string; seed: string }
   | { kind: "find"; scene: Scene; target: Target }
-  | { kind: "pick"; word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }
+  | { kind: "pick"; show: Face[]; options: Face[]; answer: number }
   | { kind: "feed"; picture: StaticImageData; mouth: readonly [number, number]; food: Food }
   | { kind: "basket"; food: Food; basket: Basket };
 
@@ -163,19 +163,16 @@ function FindDemo({ scene, target: looking }: { scene: Scene; target: Target }) 
   );
 }
 
-/** Pick: under the word (or the sum), the finger taps the answer and a
-    tick pops on it. */
-function PickDemo({ word, plain, show, options, answer }: { word?: string; plain?: boolean; show?: Face[]; options: Face[]; answer: number }) {
+/** Pick (Mix's demo): under the sum, the finger taps an answer and a tick
+    pops on it. */
+function PickDemo({ show, options, answer }: { show: Face[]; options: Face[]; answer: number }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      {word && <ClayWord word={word} size="demo" tone={plain ? PLAIN_TONE : undefined} />}
-      {show && (
-        <div className="flex items-center justify-center gap-1.5">
-          {show.map((face, i) => (
-            <FaceView key={i} face={face} size="inline" />
-          ))}
-        </div>
-      )}
+      <div className="flex items-center justify-center gap-1.5">
+        {show.map((face, i) => (
+          <FaceView key={i} face={face} size="inline" />
+        ))}
+      </div>
       <div className={`grid gap-3 ${options.length === 4 ? "w-[62%] grid-cols-2" : "w-[86%] grid-cols-3"}`}>
         {options.map((face, i) => (
           <span
@@ -273,7 +270,7 @@ export function TaskDemo({ demo }: { demo: TaskDemoDef }) {
     case "find":
       return <FindDemo scene={demo.scene} target={demo.target} />;
     case "pick":
-      return <PickDemo word={demo.word} plain={demo.plain} show={demo.show} options={demo.options} answer={demo.answer} />;
+      return <PickDemo show={demo.show} options={demo.options} answer={demo.answer} />;
     case "feed":
       return <FeedDemo picture={demo.picture} mouth={demo.mouth} food={demo.food} />;
     case "basket":
