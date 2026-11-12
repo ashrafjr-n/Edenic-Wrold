@@ -189,6 +189,11 @@ export const ar: Dictionary = {
     watchAlt: "بينكي ونوفا وبلو يتجوّلون في عالم إيدينيك",
     backToDiscover: "العودة إلى اكتشف",
     watchClipAria: "شاهد الفيديو: {title}",
+    episodesTitle: "الحلقات",
+    reelsTitle: "فيديوهات قصيرة",
+    filterAll: "الكل",
+    filterAria: "تصفية الفيديوهات القصيرة",
+    episodeAria: "شغّل الحلقة: {title}",
   },
   activities: {
     /** Nova's Cups on /play (2026-10-23 — the Vegetables lessons' third
