@@ -913,7 +913,7 @@ stills the wind — and it smiles and lights; the hardest puzzle closes it: the 
    next world shut behind cloud), its entry scene, the door's "0 of 2". `/play` shows
    world 1; the built day sky is parked for stage 8.
    *Test:* the night's look on phone / tablet / desktop, the entry scene, the door.
-3. **World 1, its three levels.** Word (sound slot + letters in order), the search in
+3. **World 1, its three levels — DONE 2026-11-13.** Word (sound slot + letters in order), the search in
    the level's own scene, the closing Puzzle / Memory at the medium step, with the
    levels' own pictures.
    *Test:* play 1–3 to the door; with Pinki's two stars it opens.
