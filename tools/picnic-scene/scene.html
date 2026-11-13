@@ -1399,6 +1399,43 @@ const ITEMS = {
     return g;
   },
 
+  // the night sky's things, for the Sky Trail's memory cards (2026-11-12)
+  skyMoon() {
+    const g = new THREE.Group();
+    const cream = soft(0xfff0bf, { roughness: 0.7, emissive: 0xffe9a8, emissiveIntensity: 0.35 });
+    g.add(mesh(new THREE.SphereGeometry(0.8, 64, 48), cream));
+    const dent = soft(0xf0d896, { roughness: 0.8, emissive: 0xe6c878, emissiveIntensity: 0.3 });
+    for (const [x, y, r] of [[-0.28, 0.22, 0.17], [0.24, -0.12, 0.21], [0.3, 0.36, 0.1], [-0.14, -0.38, 0.12]]) {
+      const c = mesh(new THREE.SphereGeometry(r, 24, 16), dent);
+      c.scale.z = 0.25;
+      c.position.set(x, y, Math.sqrt(Math.max(0, 0.64 - x * x - y * y)) - 0.01);
+      g.add(c);
+    }
+    g.position.y = 0.9;
+    return g;
+  },
+  skyRainbow() {
+    const g = new THREE.Group();
+    [[0.95, 0xff8fbf], [0.74, 0xffd24d], [0.53, 0x6bb8f0]].forEach(([r, color]) => {
+      g.add(mesh(new THREE.TorusGeometry(r, 0.11, 24, 96, Math.PI), soft(color, { roughness: 0.7, emissive: color, emissiveIntensity: 0.25 })));
+    });
+    const white = soft(0xffffff, { roughness: 0.9, emissive: 0xffffff, emissiveIntensity: 0.3 });
+    for (const sx of [-1, 1]) for (const [dx, dy, r] of [[0, 0, 0.3], [0.24, -0.04, 0.22], [-0.24, -0.04, 0.22]]) {
+      const puff = mesh(new THREE.SphereGeometry(r, 32, 24), white);
+      puff.position.set(sx * 0.74 + dx, dy, 0.1);
+      g.add(puff);
+    }
+    g.position.y = 0.35;
+    return g;
+  },
+  skyCloud() {
+    const g = ITEMS.cloud();
+    g.traverse((o) => {
+      if (o.isMesh) o.material = soft(0xe6eaff, { roughness: 0.95, sheen: 0.9, emissive: 0x9aa6ff, emissiveIntensity: 0.3 });
+    });
+    return g;
+  },
+
   // the Sky Trail's balloon (2026-11-12): the child's marker over a cloud — a hot-air
   // balloon in the friends' colours, a little basket under it
   hotAirBalloon() {
@@ -4744,7 +4781,7 @@ if (THING) {
   /* The friends' look (Nova's cup; Bloo's animals' homes, the weather and
      what is worn for it; the videos' vegetables): a softer, fuller light —
      their felt is evenly lit, with no hard dark side. */
-  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food", "garden", "fallenStar"].includes(THING)) {
+  if (["cup", "catBed", "kennel", "fishbowl", "wear", "weather", "video", "food", "garden", "fallenStar", "skyMoon", "skyRainbow", "skyCloud"].includes(THING)) {
     sun.intensity = 1.9;
     sky.intensity = 1.15;
     scene.environmentIntensity = 0.5;
@@ -8360,6 +8397,127 @@ if (THING) {
       burst.visible = false;
       scene.add(burst);
       stopsApi.fall = { faller, tail, burst };
+      /* The levels' searches (stage 3): what a child looks for in each level's own
+         view of the night — laid at chosen places of the FRAME (`at`: x, y in -1..1,
+         then how far off), so each frame size has its own composition. `covers` are
+         the things a cloud lies over on the page until it is tapped away. */
+      const SEARCH = {
+        /* 1: the small stars left in the sky, each peeping over a puff of cloud. */
+        1: { cam: [0, 7, 16, 0, 12, -60], covers: [], at: portrait ? [[-0.56, 0.34, 46], [0.5, 0.4, 52], [-0.08, 0.14, 40], [0.58, -0.04, 48], [-0.5, -0.18, 44]] : [[-0.66, 0.26, 46], [-0.28, 0.44, 52], [0.12, 0.12, 40], [0.48, 0.4, 50], [0.72, -0.02, 44]] },
+        /* 2: the moon and the star's dust — three of them (and the moon) under cloud. */
+        2: { cam: [0, 7, 10, moonX * 0.55, 15, FAR_Z - 150], covers: [0, 2, 4], moon: true, at: portrait ? [[-0.56, 0.32, 50], [0.54, 0.36, 50], [-0.5, -0.22, 50], [0.56, -0.12, 50], [0.04, -0.46, 50]] : [[-0.66, 0.3, 50], [-0.3, -0.3, 50], [0.34, 0.4, 50], [0.66, 0.0, 50], [0.1, -0.42, 50]] },
+        /* 3: far ahead, three lights — the friends' houses. */
+        3: { cam: [0, 9, -8, 0, 8, -140], covers: [], at: portrait ? [[-0.1, 0.2, 105], [0.46, 0.34, 120], [0.56, 0.14, 110]] : [[-0.16, 0.18, 105], [0.3, 0.36, 120], [0.7, 0.24, 110]] },
+      };
+      const gold = new THREE.MeshBasicMaterial({ color: 0xffe38a, fog: false, toneMapped: false });
+      const sparkle = () => {
+        const g = new THREE.Group();
+        for (const [sx, sy] of [[1, 0.16], [0.16, 1]]) {
+          const ray = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 12), gold);
+          ray.scale.set(sx, sy, 0.14);
+          g.add(ray);
+        }
+        for (const [x, y, r] of [[0.5, 0.42, 0.1], [-0.46, -0.36, 0.08], [0.4, -0.44, 0.06]]) {
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), gold);
+          dot.position.set(x, y, 0);
+          g.add(dot);
+        }
+        const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, "rgba(255,236,170,0.8)"], [0.5, "rgba(255,214,120,0.25)"], [1, "rgba(255,200,120,0)"]]), depthWrite: false, fog: false, transparent: true }));
+        halo.scale.set(1.9, 1.9, 1);
+        g.add(halo);
+        return g;
+      };
+      const farHouse = (color) => {
+        const g = new THREE.Group();
+        const m = new THREE.MeshBasicMaterial({ color, fog: false, toneMapped: false });
+        const walls = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.55, 0.6), m);
+        walls.position.y = -0.2;
+        g.add(walls);
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(0.62, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), m);
+        dome.scale.y = 0.7;
+        dome.position.y = 0.05;
+        g.add(dome);
+        const pane = new THREE.Mesh(new THREE.CircleGeometry(0.14, 24), new THREE.MeshBasicMaterial({ color: 0xfff0a8, fog: false, toneMapped: false }));
+        pane.position.set(0, -0.2, 0.31);
+        g.add(pane);
+        const c = new THREE.Color(color);
+        const rgb = `${Math.round(c.r * 255)},${Math.round(c.g * 255)},${Math.round(c.b * 255)}`;
+        const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowOf([[0, `rgba(${rgb},0.85)`], [0.45, `rgba(${rgb},0.3)`], [1, `rgba(${rgb},0)`]]), depthWrite: false, fog: false, transparent: true }));
+        halo.scale.set(3.4, 3.4, 1);
+        halo.position.z = -0.2;
+        g.add(halo);
+        return g;
+      };
+      const boxOf = (thing) => {
+        /* Its solid parts only: a glow round it is not what a finger aims at. */
+        const b = new THREE.Box3();
+        thing.updateMatrixWorld(true);
+        thing.traverse((o) => {
+          if (o.isMesh) b.expandByObject(o);
+        });
+        let [l, tp, r2, bt] = [Infinity, Infinity, -Infinity, -Infinity];
+        for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+          const pt = new THREE.Vector3(x, y, z).project(view);
+          const [px, py] = [((pt.x + 1) / 2) * 100, ((1 - pt.y) / 2) * 100];
+          [l, tp, r2, bt] = [Math.min(l, px), Math.min(tp, py), Math.max(r2, px), Math.max(bt, py)];
+        }
+        return [l, tp, r2 - l, bt - tp].map((v) => Math.round(v * 10) / 10);
+      };
+      /* Level `n`'s search, built in front of the camera; what it returns is taken
+         away again by `clear`. */
+      stopsApi.search = (n) => {
+        const def = SEARCH[n];
+        aim(def.cam);
+        const tall = 2 * Math.tan(THREE.MathUtils.degToRad(view.fov / 2));
+        const made = [], hits = [];
+        def.at.forEach(([nx, ny, far], i) => {
+          const dir = new THREE.Vector3(nx, ny, 0.5).unproject(view).sub(view.position).normalize();
+          const pos = view.position.clone().addScaledVector(dir, far);
+          /* How tall it stands on the picture, as a share of the frame's height. */
+          const size = (portrait ? 0.075 : 0.11) * tall * far;
+          let thing;
+          if (n === 1) {
+            thing = ITEMS.fallenStar("plain");
+            thing.traverse((o) => {
+              if (!o.isMesh) return;
+              o.material = o.material.clone();
+              o.material.fog = false;
+              if (o.material.vertexColors) o.material.emissiveIntensity = 0.5;
+            });
+            thing.scale.setScalar(size / 1.8);
+            thing.rotation.z = (i % 2 ? 1 : -1) * 0.25;
+            /* A puff of cloud in front of its feet: it peeps over it. */
+            const puff = cloud(size * 0.62);
+            puff.traverse((o) => {
+              if (o.isMesh) o.material = cloudM;
+            });
+            puff.position.copy(pos).addScaledVector(dir, -2.5);
+            puff.position.y -= size * 0.98;
+            puff.lookAt(view.position.x, puff.position.y, view.position.z);
+            scene.add(puff);
+            made.push(puff);
+          } else if (n === 2) {
+            thing = sparkle();
+            thing.scale.setScalar(size * 0.8);
+          } else {
+            thing = farHouse([0xff7fb8, 0xb99cf5, 0x6bb8f0][i]);
+            thing.scale.setScalar(size * 0.9);
+          }
+          thing.position.copy(pos);
+          thing.lookAt(view.position);
+          thing.traverse((o) => (o.userData.noMerge = true));
+          scene.add(thing);
+          made.push(thing);
+          hits.push(thing);
+        });
+        scene.updateMatrixWorld(true);
+        const items = hits.map(boxOf);
+        /* A cover is wider than what it hides; the moon's is its own disc. */
+        const grow = ([l, tp, wd, ht], k) => [l - (wd * (k - 1)) / 2, tp - (ht * (k - 1)) / 2, wd * k, ht * k].map((v) => Math.round(v * 10) / 10);
+        const covers = def.covers.map((i) => ({ box: grow(items[i], 2.3), item: i }));
+        if (def.moon) covers.push({ box: grow(boxOf(moon), 1.25), item: -1 });
+        return { items, covers, clear: () => made.forEach((m) => scene.remove(m)) };
+      };
       const wallM = soft(0xc9c4f2, { roughness: 0.96, sheen: 0.9, emissive: 0xb07ad8, emissiveIntensity: 0.32 });
       for (let i = 0; i < 26; i++) {
         const row = i % 3;
@@ -8961,6 +9119,17 @@ if (THING) {
         fall.faller.visible = false;
         fall.burst.visible = false;
         return url;
+      },
+      /* Level `n`'s search (stage 3): the night from that level's place, nothing of
+         the trail in it, the hidden things in — the picture and where they are (%). */
+      searchAt(n) {
+        const things = [...stopsApi.stops, ...stopsApi.ways];
+        things.forEach((g) => (g.visible = false));
+        const { items, covers, clear } = stopsApi.search(n);
+        const url = render("image/jpeg", 0.95);
+        clear();
+        things.forEach((g) => (g.visible = true));
+        return { url, items, covers };
       },
       /* The sky with nothing to land on, from the camera at `t` (the Sky Trail's
          levels are played over it, out of focus). */
