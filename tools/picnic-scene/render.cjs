@@ -193,7 +193,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest", "intro"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest", "intro", "search"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu, executablePath: process.env.CHROME });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -293,6 +293,26 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
       }
       fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify({ rest, play: PLAY, open }));
       console.log(`chest ${course} ${frame}: rest ${rest}, ${open.length} open frames`);
+    }
+  } else if (mode === "search") {
+    /* A Sky Trail world's levels' searches (2026-11-12, stage 3): `render.cjs search
+       sky-night` → `out/search-<course>-<frame>/<n>.jpg` + `meta.json` (where the
+       hidden things and their covers are), then `crop.py search sky-night`. */
+    const course = specs[0] ?? "sky-night";
+    for (const frame of ["landscape", "portrait"]) {
+      const out = path.join(__dirname, "out", `search-${course}-${frame}`);
+      fs.rmSync(out, { recursive: true, force: true });
+      fs.mkdirSync(out, { recursive: true });
+      await page.goto("file://" + path.join(__dirname, "scene.html") + `?garden=1&frame=${frame}&px=1&world=stops&course=${course}`);
+      await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+      const meta = {};
+      for (const n of [1, 2, 3]) {
+        const { url, items, covers } = await page.evaluate((n) => window.garden.searchAt(n), n);
+        fs.writeFileSync(path.join(out, `${n}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+        meta[n] = { items, covers };
+      }
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(meta));
+      console.log(`search ${course} ${frame}: done`);
     }
   } else if (mode === "intro") {
     /* A Sky Trail world's entry scene (2026-11-12): `render.cjs intro sky-night` (after
