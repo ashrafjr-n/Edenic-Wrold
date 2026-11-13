@@ -38,6 +38,15 @@ export const memoryFaces: Record<string, MemoryFace> = {
   pinki: { id: "pinki", src: "/assets/friends/pinki.png", label: "Pinki" },
   nova: { id: "nova", src: "/assets/friends/nova.png", label: "Nova" },
   bloo: { id: "bloo", src: "/assets/friends/bloo.png", label: "Bloo" },
+
+  /* The night sky's things — the Sky Trail's world 1 (`data/sky-levels.ts`); the
+     two stars are its look-alikes. */
+  skyStar: { id: "skyStar", src: "/assets/learn/chest-star.png", label: "Star" },
+  skyFallen: { id: "skyFallen", src: "/assets/play/sky/star-sad.png", label: "The sad star" },
+  skyMoon: { id: "skyMoon", src: "/assets/play/sky/sky-moon.png", label: "Moon" },
+  skyCloud: { id: "skyCloud", src: "/assets/play/sky/sky-cloud.png", label: "Cloud" },
+  skyRainbow: { id: "skyRainbow", src: "/assets/play/sky/sky-rainbow.png", label: "Rainbow" },
+  skyBalloon: { id: "skyBalloon", src: "/assets/play/sky/balloon.png", label: "Balloon" },
 };
 
 /**
