@@ -903,6 +903,18 @@ stills the wind — and it smiles and lights; the hardest puzzle closes it: the 
 
 #### The build, stage by stage (the user tests each; the next waits for "go on")
 
+> **WHERE WE STOPPED (2026-11-13).** Stages 1, 2 and 3 are DONE and committed; the user
+> tested 1 and 2 and said go on, and has NOT yet tested stage 3 — ask for that first.
+> **Next: stage 4** (world 2, sunrise: its look and the way in), then 5 … 10 as listed.
+> Playable now: `/play` = world 1, night — the entry scene, levels 1–3 (word → spell →
+> search → closing game), Pinki's house with its star-gated door, which opens with her
+> two Learn stars. Past the open door there is nothing yet (world 2 is stage 4).
+> How each piece is built, the render commands and the traps met: `claude-docs/
+> play-page.md`, top section. Still to come from the user: more exact pictures of the
+> star found on level 18 (stage 9) — its design differs a little from the one modelled.
+> Open, the user never answered: whether a closing game ends EVERY level of every world
+> (built so far that way) or only worlds 1 and 4.
+
 1. **The base — DONE 2026-11-12** (the worlds' data and the count at the door moved to
    stage 2, where they are first read). A Learn course's gold chest gives its star (`stars[courseId]` in the
    progress store; the star seen coming out of the chest; the count shown at the friend's
