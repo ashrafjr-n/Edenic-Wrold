@@ -1745,6 +1745,85 @@ button.course-stop {
   height: 1.1rem;
 }
 
+/* A level's search (`SkySearchPlay`): tap targets over the things hidden in
+   the picture, clouds that drift off when tapped. The frame is the worlds'
+   own fixed cover, which takes no taps — its targets do. */
+.sky-search button {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sky-search-thing {
+  border-radius: 999px;
+}
+
+.sky-search-thing:focus-visible {
+  outline: 4px solid var(--color-gold);
+}
+
+/* Found: a gold ring that pops round it and stays — a true circle about its
+   middle, whatever the shape of the target. */
+.sky-search-thing[data-found] {
+  cursor: default;
+}
+
+.sky-search-thing[data-found]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 0.25rem rgb(255 214 96 / 95%),
+    0 0 1.4rem 0.4rem rgb(255 214 96 / 55%);
+  animation: sky-search-found 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@keyframes sky-search-found {
+  from {
+    scale: 0.5;
+    opacity: 0;
+  }
+}
+
+.sky-search-cloud {
+  filter: drop-shadow(0 0.5rem 0.8rem rgb(20 20 90 / 40%));
+}
+
+/* Tapped: it drifts away up and to the side, and is gone. */
+.sky-search-cloud[data-lifted] {
+  pointer-events: none;
+  animation-name: sky-search-drift;
+  animation-timing-function: ease-in;
+  animation-fill-mode: both;
+}
+
+@keyframes sky-search-drift {
+  to {
+    translate: 60% -90%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-search-thing[data-found]::after {
+    animation: none;
+  }
+
+  .sky-search-cloud[data-lifted] {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /* A world's entry scene over the whole screen, under the chrome (z-30). */
 .world-intro {
   position: fixed;
