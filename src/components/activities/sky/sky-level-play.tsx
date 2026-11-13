@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { MemoryBoard } from "@/components/activities/memory/memory-board";
 import { PuzzlePlay } from "@/components/activities/puzzle/puzzle-play";
+import { SkySearchPlay } from "@/components/activities/sky/sky-search";
+import { SpellWord } from "@/components/learn/lesson/spell-word";
+import { WordCard } from "@/components/learn/lesson/word-card";
 import { WorldDone } from "@/components/learn/lesson/world-done";
 import { worldCover } from "@/components/learn/lesson/lesson-world";
 import { BackRow, characterAccent, pageAccent } from "@/components/ui/back-button";
@@ -12,18 +15,17 @@ import { LevelBadge } from "@/components/ui/level-badge";
 import { NextButton } from "@/components/ui/morph-button";
 import { characters } from "@/data/characters";
 import { CLASSROOMS } from "@/data/classroom";
-import { findMemoryLevel } from "@/data/memory-levels";
-import { findPuzzleStage } from "@/data/puzzles";
 import { SKY_KEY, findSkyLevel, worldOf, type SkyHost, type SkyLevel } from "@/data/sky-levels";
 import { askChest } from "@/lib/chest-run";
+import { lessonCue } from "@/lib/cue";
 import { dirFor, format } from "@/lib/format-dict";
 import { isUpright } from "@/lib/puzzle-pieces";
 import { useWide } from "@/lib/use-wide";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import balloon from "../../../../public/assets/play/sky/balloon.png";
-import skyLandscape from "../../../../public/assets/play/sky/level-landscape.jpg";
-import skyPortrait from "../../../../public/assets/play/sky/level-portrait.jpg";
+import skyLandscape from "../../../../public/assets/play/sky/night/level-landscape.jpg";
+import skyPortrait from "../../../../public/assets/play/sky/night/level-portrait.jpg";
 import pinkiHello from "../../../../public/assets/friends/pinki.png";
 
 /** A level is finished or not, like a puzzle. */
@@ -43,13 +45,16 @@ interface SkyLevelPlayProps {
 }
 
 /**
- * One level of the Sky Trail (2026-11-12): its short challenges, one after
- * another, out of the games that exist — a hosted game (`SkyHost`) keeps its
- * own board and chrome, goes back to the sky, wears this level's number and
- * records nothing of its own. A solved challenge cheers and the next arrives
- * by itself; the last finishes the level (`play.sky.<n>`), and the done card
- * (the lessons' own `WorldDone`) leads straight to the next level — the last
- * one back to the sky, where the camera walks on and the big star lights.
+ * One level of the Sky Trail (2026-11-12): its steps, one after another
+ * (`SkyStep`) — the word (the lessons' own `WordCard`, then `SpellWord`), a
+ * search in the level's view of the sky (`SkySearchPlay`), and a closing game
+ * that already exists: a hosted game (`SkyHost`) keeps its own board and
+ * chrome, goes back to the sky, wears this level's number and records nothing
+ * of its own. A solved step cheers and the next arrives by itself (only the
+ * word card, with nothing to solve, has a Next); the last finishes the level
+ * (`play.sky.<n>`), and the done card (the lessons' own `WorldDone`) leads
+ * straight to the next level — a world's last one back to the sky, where the
+ * camera walks on to the friend's house.
  *
  * The level happens in the sky: its world out of focus behind the games, as a
  * lesson's world is behind its steps. A friend who joins on this level says
@@ -73,7 +78,7 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
     [],
   );
 
-  const last = step === level.challenges.length - 1;
+  const last = step === level.steps.length - 1;
   const solved = () => {
     /* Recorded in the handler that finished it, never in an effect. */
     if (last) complete(itemKey(SKY_KEY.owner, SKY_KEY.course, level.value), DONE);
@@ -81,11 +86,11 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
   };
 
   const host: SkyHost = { level: level.value, backHref: "/play", backLabel: words.back, onSolved: solved, help: level.friend === "pinki" };
-  const challenge = level.challenges[step];
-  const memory = challenge.game === "memory" ? findMemoryLevel(challenge.level) : undefined;
-  const puzzle = challenge.game === "puzzle" ? findPuzzleStage(challenge.stage) : undefined;
+  const now = level.steps[step];
   /* An upright puzzle has to fit one phone screen with its heap: the padding its own page gives it. */
-  const upright = Boolean(puzzle?.picture && isUpright(puzzle.picture.image));
+  const upright = now.kind === "puzzle" && isUpright(now.picture.image);
+  /* A hosted game brings its own chrome row; the level's own steps stand under the back row. */
+  const hosted = now.kind === "memory" || now.kind === "puzzle";
   /* On within its world; its last level leads to the friend's house at the world's end. */
   const world = worldOf(level.value);
   const nextLevel = world?.levels.includes(level.value + 1) ? findSkyLevel(level.value + 1) : undefined;
@@ -97,7 +102,7 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
   return (
     <main
       className={`relative flex flex-1 flex-col overflow-x-clip ${
-        phase !== "play" ? "" : puzzle && upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
+        phase !== "play" || !hosted ? "" : upright ? "pb-2 pt-3 sm:pb-8 sm:pt-5" : "pb-16 pt-5 sm:pb-20"
       }`}
       /* The sky's blue; a friend's own colour once they fly along. */
       style={friend ? characterAccent(friend) : pageAccent("var(--brand)", "var(--brand-dark)", "#fff")}
@@ -114,12 +119,12 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
       {phase === "play" && (
         /* Which challenge this is: on the chrome's own line, between the
            back button and the level's badge. */
-        <div className={`pointer-events-none absolute inset-x-0 z-20 flex h-12 items-center justify-center sm:h-14 ${puzzle && upright ? "top-3 sm:top-5" : "top-5"}`}>
+        <div className={`pointer-events-none absolute inset-x-0 z-20 flex h-12 items-center justify-center sm:h-14 ${upright ? "top-3 sm:top-5" : "top-5"}`}>
           <ol
             className="card card-clay-white card-pill flex items-center gap-2 px-3.5 py-2.5"
-            aria-label={format(words.challengeOf, { n: step + 1, total: level.challenges.length })}
+            aria-label={format(words.challengeOf, { n: step + 1, total: level.steps.length })}
           >
-            {level.challenges.map((_, i) => (
+            {level.steps.map((_, i) => (
               <li
                 key={i}
                 className={`h-3 rounded-full transition-all duration-300 ${
@@ -170,11 +175,42 @@ export function SkyLevelPlay({ level, dict }: SkyLevelPlayProps) {
             )}
           </div>
         </>
-      ) : memory ? (
-        <MemoryBoard key={step} level={memory} host={host} dict={dict} />
-      ) : puzzle?.picture && puzzle.grid ? (
-        <PuzzlePlay key={step} stage={puzzle.value} picture={puzzle.picture} grid={puzzle.grid} upright={upright} host={host} dict={dict} />
-      ) : null}
+      ) : now.kind === "memory" ? (
+        <MemoryBoard key={step} level={now.level} host={host} dict={dict} />
+      ) : now.kind === "puzzle" ? (
+        <PuzzlePlay key={step} stage={level.value} picture={now.picture} grid={now.grid} upright={upright} host={host} dict={dict} />
+      ) : (
+        <>
+          <BackRow href="/play" label={words.back}>
+            {badge}
+          </BackRow>
+          {now.kind === "search" ? (
+            <SkySearchPlay key={step} scene={now.scene} ask={words[now.ask]} thingAria={words.searchThingAria} cloudAria={words.searchCloudAria} dir={dir} onSolved={solved} />
+          ) : (
+            /* The word, as a lesson gives it: on white clay over the sky. `--stage-h`
+               is what the lessons' word card sizes its picture by on a desktop. */
+            <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-5 px-4 pb-8 sm:gap-7 sm:px-8" style={{ "--stage-h": "30rem" } as CSSProperties}>
+              <div className="card card-clay-white anim-pop-in flex w-full max-w-xl flex-col items-center px-3 py-4 sm:px-6 sm:py-6 lg:w-auto lg:max-w-none">
+                {now.kind === "word" ? (
+                  <WordCard word={now.word} picture={now.picture} cue={lessonCue.word(now.word)} label={format(dict.lessonPlayer.hearWord, { word: now.word })} />
+                ) : (
+                  <SpellWord
+                    key={step}
+                    word={now.word}
+                    seed={`sky.${level.value}.${step}`}
+                    letterAria={dict.lessonPlayer.letterAria}
+                    hint
+                    onSolved={solved}
+                    onMiss={() => undefined}
+                    onStarted={() => undefined}
+                  />
+                )}
+              </div>
+              {now.kind === "word" && <NextButton key={step} label={dict.lessonPlayer.next} tone={GO_TONE} onPress={() => setStep(step + 1)} dir={dir} />}
+            </div>
+          )}
+        </>
+      )}
     </main>
   );
 }
