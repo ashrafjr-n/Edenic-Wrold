@@ -199,6 +199,21 @@ export const en = {
     basket: "Put",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  /** Play's Sleeping Lab (2026-11-15): the world of stops on `/play`. */
+  lab: {
+    title: "The Sleeping Lab",
+    back: "Back to the lab",
+    games: "Games",
+    gamesAria: "All the games",
+    stageLabel: "Stage {value}",
+    startStageAria: "Start stage {n}",
+    lockedStageAria: "Stage {n}, locked",
+    doorAria: "The lab's door",
+    skip: "Skip",
+    welcome1: "Shh… the lab is asleep!",
+    welcome2: "Will you help us wake it up? Hop on the first cookie!",
+    stageSoon: "This stage is on its way!",
+  },
   discover: {
     playButton: "Play",
     watchButton: "Watch",
