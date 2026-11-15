@@ -30,6 +30,7 @@ export function CupsCta({
           sentence — see `lib/format-dict.ts`'s `dirFor`. */}
       <Image
         src={cupsCard}
+        placeholder="blur"
         alt={dict.activities.cupsCtaAlt}
         dir={dirFor(dict.locale)}
         fill

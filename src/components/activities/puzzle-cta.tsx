@@ -44,6 +44,7 @@ export function PuzzleCta({
     >
       <Image
         src={puzzleCard}
+        placeholder="blur"
         alt={dict.activities.puzzleCtaAlt}
         fill
         sizes="(min-width: 1024px) 32rem, 100vw"

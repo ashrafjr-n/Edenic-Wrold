@@ -49,6 +49,7 @@ export function MemoryMatchCta({
           fails to load — see `lib/format-dict.ts`'s `dirFor`. */}
       <Image
         src={memoryCard}
+        placeholder="blur"
         alt={dict.activities.memoryCtaAlt}
         dir={dirFor(dict.locale)}
         fill
