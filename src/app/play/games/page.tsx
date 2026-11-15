@@ -15,7 +15,7 @@ const ITEM_STAGGER = 0.12;
 
 /**
  * Free play: the three games, cards only, no heading or copy — behind the
- * "Games" chip of `/play`, which is the Sleeping Lab (2026-11-15).
+ * "Games" chip of `/play`, which is the Sleeping Lab.
  *
  * The cards rise in, staggered (`anim-rise-in`), wider apart than the
  * fifteen-card grids' `0.06s` so it reads as one-then-the-other.

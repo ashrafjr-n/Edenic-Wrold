@@ -12,7 +12,7 @@ interface CharacterLayoutProps {
 }
 
 /**
- * A friend's classroom round their hub and their course pages (2026-11-04):
+ * A friend's classroom round their hub and their course pages:
  * a layout, so it persists across the navigations between them — only
  * what is on the board changes (`ClassroomShell`). An unknown or locked
  * friend gets the page alone (it 404s or redirects).

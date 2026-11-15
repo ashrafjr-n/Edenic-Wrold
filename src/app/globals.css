@@ -288,7 +288,7 @@
   --font-sans: Fredoka, var(--font-rtl), var(--font-fredoka);
 }
 
-/* The page never bounces past its ends (2026-11-05): a rubber-band scroll
+/* The page never bounces past its ends: a rubber-band scroll
    dragged the sticky header off the top and showed what is behind it. */
 html,
 body {
@@ -769,14 +769,14 @@ bdi {
     0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
 }
 
-/* `/watch`'s short videos (2026-11-15, the user): the shadow still deepens on
+/* `/watch`'s short videos: the shadow still deepens on
    hover, the card no longer rises. */
 .card-lift--still:hover {
   translate: none;
 }
 
 /* ---------------------------------------------------------------
-   Discover's two doors (2026-11-15). Both pinned colours, the same in
+   Discover's two doors. Both pinned colours, the same in
    either theme (white type on them), the card's radius and shadow.
    --------------------------------------------------------------- */
 /* No `display` here: unlayered, it would beat the doors' Tailwind `flex`. */
@@ -945,7 +945,7 @@ bdi {
 }
 
 /* ---------------------------------------------------------------
-   `/watch`'s episode hero (2026-11-15): the episodes cross-fade in place,
+   `/watch`'s episode hero: the episodes cross-fade in place,
    each still easing in from a touch closer; a dot fills over the time the
    episode stays (`--hero-ms`).
    --------------------------------------------------------------- */
@@ -1676,7 +1676,7 @@ bdi {
   --cloud-pale: #dfeafb;
 }
 
-/* The same clouds, pink: going in to Pinki's course world (2026-11-05). Fixed
+/* The same clouds, pink: going in to Pinki's course world. Fixed
    in dark mode too — it is her colour, not the sky's. */
 .page-veil--pink .page-veil-cloud--far,
 [data-theme="dark"] .page-veil--pink .page-veil-cloud--far {
@@ -1702,7 +1702,7 @@ bdi {
   --cloud-deep: color-mix(in srgb, var(--color-pinki) 74%, #ffffff);
 }
 
-/* The same clouds, lavender: going in to Nova's course world (2026-11-06). Fixed
+/* The same clouds, lavender: going in to Nova's course world. Fixed
    in dark mode too — it is her colour, not the sky's. */
 .page-veil--lavender .page-veil-cloud--far,
 [data-theme="dark"] .page-veil--lavender .page-veil-cloud--far {
@@ -1728,7 +1728,7 @@ bdi {
   --cloud-deep: color-mix(in srgb, var(--color-nova) 74%, #ffffff);
 }
 
-/* The same clouds, blue: going in to Bloo's course world (2026-11-08). Fixed
+/* The same clouds, blue: going in to Bloo's course world. Fixed
    in dark mode too — it is his colour, not the sky's. */
 .page-veil--bloo .page-veil-cloud--far,
 [data-theme="dark"] .page-veil--bloo .page-veil-cloud--far {
@@ -1796,7 +1796,7 @@ button.course-stop {
   border-radius: 999px;
   background: #fffafc;
   box-shadow: 0 5px 9px -3px var(--mark-shadow, rgb(190 60 120 / 45%));
-  /* Black on the white chip in both themes (the user, 2026-11-06): the ink
+  /* Black on the white chip in both themes: the ink
      tokens turn light in dark mode and the icon vanished on the chip. */
   color: #14111f;
 }
@@ -1858,7 +1858,7 @@ button.course-stop {
 }
 
 /* ---------------------------------------------------------------
-   The star a course's gold chest gives (2026-11-12): over the open chest,
+   The star a course's gold chest gives: over the open chest,
    inside the chest's own stop (`cqi` of its box). It comes up out of the
    chest once (`data-rise`), then hangs there, bobbing — on later visits it
    is simply there. Both animate `translate`, which carries the centring
