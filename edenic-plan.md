@@ -760,7 +760,7 @@ deleted the same day (they are in git history before `play cleanup V1.0`). The
 render tools' `sky` / `sky-night` / `search` / `intro` modes in `tools/picnic-scene`
 are kept: they are how the lab below gets made. **Don't bring the sky back.**
 
-### Play = "The Sleeping Lab" (the user, 2026-11-15) — THE PLAN, NOT BUILT
+### Play = "The Sleeping Lab" (the user, 2026-11-15) — THE PLAN, step 1 (the world) BUILT 2026-11-15
 
 The user's brief: no villain, no "game" in the full sense, no losing. Short,
 educational stages and focus games, built around **music and sound** (the company's
@@ -934,7 +934,7 @@ again from its cookie, and the door stays open.
 - **Everywhere:** a soft "try again" whoosh and a soft cheer for a solved round.
 
 #### The build, step by step (one step, then the user tests and says go on)
-1. **The lab world.**
+1. **The lab world — BUILT 2026-11-15** (waits for the user's test; how it is made: `claude-docs/play-page.md`).
    - A `LAB` branch in `scene.html`, modelled from the episode-2 stills. The five
      cookie stops on the path and the door as the last stop.
    - `render.cjs stops lab` + `crop.py stops lab` produce `data/lab-stops.ts`, and
