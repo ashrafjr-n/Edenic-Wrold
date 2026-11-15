@@ -16,10 +16,6 @@ const CHALK = {
 } as CSSProperties;
 
 interface ChalkboardProps {
-  /** `hub`: the board on Pinki's wall. `course`: up close, filling the
-      screen — a course's lessons. `stage`: what one of her lessons' steps
-      are on. `strip`: a slim one, no tray — the desktop lesson's steps. */
-  size: "hub" | "course" | "stage" | "strip";
   className?: string;
   children: ReactNode;
 }
@@ -27,28 +23,20 @@ interface ChalkboardProps {
 /**
  * Pinki's chalkboard (2026-10-14): a slate, wiped but never quite clean, in
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
- * language. ONE board for the hub and its course pages (`ClassroomShell`,
- * a layout): tapping a course changes its size and what is written on it,
- * and its view transition (`class-board`) animates that `update` — up
- * close on a wide screen, a touch bigger on a phone — and back. A lesson's
- * boards (`stage`, `strip`) take no part in it — a lesson opens through
- * its loader, nothing grows.
+ * language — the board on the friend's classroom wall (`ClassroomShell`).
  */
-export function Chalkboard({ size, className = "", children }: ChalkboardProps) {
+export function Chalkboard({ className = "", children }: ChalkboardProps) {
   const board = (
-    <div className={`chalkboard chalkboard--${size} ${className}`} style={CHALK}>
+    <div className={`chalkboard chalkboard--hub ${className}`} style={CHALK}>
       <div className="chalkboard-slate">{children}</div>
-      {size !== "strip" && (
-        <span className="chalkboard-tray" aria-hidden>
-          <span />
-          <span />
-          <span />
-          <span className="chalkboard-eraser" />
-        </span>
-      )}
+      <span className="chalkboard-tray" aria-hidden>
+        <span />
+        <span />
+        <span />
+        <span className="chalkboard-eraser" />
+      </span>
     </div>
   );
-  if (size === "stage" || size === "strip") return board;
   return (
     <ViewTransition name="class-board" share="board-morph" update="board-morph" default="none">
       {board}

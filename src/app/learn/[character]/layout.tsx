@@ -5,7 +5,6 @@ import { characterAccent } from "@/components/ui/back-button";
 import { ClassroomShell } from "@/components/learn/classroom/classroom-shell";
 import { CLASSROOMS, classroomStyle } from "@/data/classroom";
 import { getDictionary } from "@/lib/locale";
-import { format } from "@/lib/format-dict";
 
 interface CharacterLayoutProps {
   children: ReactNode;
@@ -36,7 +35,6 @@ export default async function CharacterLayout({ children, params }: CharacterLay
       courses={courses}
       labels={{
         backFromHub: dict.characterHub.backToLearn,
-        backFromCourse: format(dict.lessonPicker.backTo, { characterName: character.name }),
         friend: character.name,
       }}
     >

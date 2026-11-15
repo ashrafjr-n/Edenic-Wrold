@@ -6,9 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Play, RotateCcw } from "lucide-react";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
-import { COURSE_STOPS } from "@/data/course-stops";
 import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
-import type { LessonId } from "@/types/lesson";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import { itemKey, useProgress } from "@/store/progress";
@@ -115,7 +113,7 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
             <Link
               key={course.id}
               href={`/learn/${characterId}/${course.id}`}
-              onClick={COURSE_STOPS[course.id as LessonId] ? (event) => intoWorld(event, `/learn/${characterId}/${course.id}`) : undefined}
+              onClick={(event) => intoWorld(event, `/learn/${characterId}/${course.id}`)}
               aria-label={format(announce, { name: course.name })}
               className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
               style={{ animationDelay: `${0.7 + i * 0.18}s` }}

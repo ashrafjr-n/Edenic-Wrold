@@ -11,7 +11,7 @@ import type { LessonId } from "@/types/lesson";
 /** The courses that open as a world of stops (`CourseWorld`) instead of the
     friend's board — Shapes on trial (2026-11-05), Colors and Nova's
     Vegetables the same design (2026-11-06), Nova's My Garden and Bloo's Animals and Seasons and Weather (2026-11-08). */
-export const COURSE_STOPS: Partial<Record<LessonId, CourseStops>> = {
+export const COURSE_STOPS: Record<LessonId, CourseStops> = {
   shapes: { ...SHAPE_STOPS, chest: CHEST_OPEN.shapes },
   colors: { ...COLOR_STOPS, chest: CHEST_OPEN.colors },
   fruits: { ...VEG_STOPS, chest: CHEST_OPEN.fruits },
