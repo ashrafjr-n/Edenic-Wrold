@@ -33,6 +33,7 @@ export default async function WatchPage() {
               watchNow: dict.discover.watchNow,
               more: dict.discover.more,
               close: dict.lessonPlayer.close,
+              showEpisode: dict.discover.showEpisode,
             }}
             dir={dirFor(dict.locale)}
           />

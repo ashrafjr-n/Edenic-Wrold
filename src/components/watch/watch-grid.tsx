@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { ChevronDown, Play, X } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
@@ -23,11 +23,15 @@ interface WatchGridProps {
     watchNow: string;
     more: string;
     close: string;
+    showEpisode: string;
   };
   dir: "rtl" | "ltr";
 }
 
 type Playing = { kind: "episode"; item: WatchEpisode } | { kind: "clip"; item: WatchClip };
+
+/** How long each episode stays in the hero before the next fades in. */
+const HERO_MS = 6000;
 
 /** Short videos shown at first, and added by each press of "More" (8 fills
     2, 4 and — with the sidebar — 4 columns evenly). */
@@ -54,9 +58,12 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
 );
 
 /**
- * `/watch`. Episodes lead: the newest as a hero (picture + a panel with its
- * title and one Watch-now button, side by side from `lg`), older ones in a
- * row under it. Then the short videos — the lessons' reels: a filter (chips
+ * `/watch`. Episodes lead: ONE hero (picture + a panel with its title and one
+ * Watch-now button, side by side from `lg`) through which every episode passes,
+ * newest first, one every `HERO_MS` — the pictures cross-fade, the panel's
+ * words fade up, a dot per episode fills as it stays (2026-11-15). It holds
+ * while hovered, focused or a video is open, never moves for reduced motion,
+ * and a dot jumps to its episode. Then the short videos — the lessons' reels: a filter (chips
  * in a scrolling row on a phone, a sticky side list from `lg`), "All" in a
  * random order reshuffled each time it is picked, 8 at a time with a More
  * button. Whatever is tapped plays in a native `<dialog>` that mounts its
@@ -106,60 +113,96 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
     );
   };
 
-  const [latest, ...older] = episodes;
+  const [at, setAt] = useState(0);
+  const [still, setStill] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const hero = episodes[at];
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setStill(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  /* The next episode after `HERO_MS` — re-armed whenever the episode changes,
+     so a dot pressed by hand gets its full time too. */
+  useEffect(() => {
+    if (episodes.length < 2 || still || hovered || playing) return;
+    const timer = setTimeout(() => setAt((i) => (i + 1) % episodes.length), HERO_MS);
+    return () => clearTimeout(timer);
+  }, [at, episodes.length, still, hovered, playing]);
 
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 lg:gap-16">
         <section aria-label={words.episodesTitle} className="flex flex-col gap-5">
-          <div className="card grid overflow-hidden lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+          <div
+            className="watch-hero card grid overflow-hidden lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]"
+            style={{ "--hero-ms": `${HERO_MS}ms` } as CSSProperties}
+            onPointerEnter={() => setHovered(true)}
+            onPointerLeave={() => setHovered(false)}
+            onFocus={() => setHovered(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setHovered(false);
+            }}
+          >
             <button
               type="button"
-              onClick={() => play({ kind: "episode", item: latest })}
-              aria-label={format(words.episodeAria, { title: latest.title })}
-              className="group relative block aspect-video w-full cursor-pointer"
+              onClick={() => play({ kind: "episode", item: hero })}
+              aria-label={format(words.episodeAria, { title: hero.title })}
+              className="group relative block aspect-video w-full cursor-pointer overflow-hidden"
             >
-              <Image src={latest.poster} alt="" fill preload sizes="(min-width: 1280px) 46rem, (min-width: 1024px) 60vw, 100vw" className="object-cover" />
+              {episodes.map((episode, i) => (
+                <Image
+                  key={episode.id}
+                  src={episode.poster}
+                  alt=""
+                  fill
+                  preload={i === 0}
+                  sizes="(min-width: 1280px) 46rem, (min-width: 1024px) 60vw, 100vw"
+                  className="watch-slide object-cover"
+                  data-on={i === at || undefined}
+                />
+              ))}
               <PlayBadge size="h-16 w-16 sm:h-20 sm:w-20" icon="h-8 w-8 sm:h-10 sm:w-10" />
             </button>
             <div className="flex flex-col items-start justify-center gap-4 p-5 sm:p-8">
-              <span dir={dir} className="rounded-full bg-[var(--accent)] px-3.5 py-1 text-sm font-bold text-white">
-                {words.latestEpisode}
-              </span>
-              <p dir="ltr" className="text-start text-2xl font-bold leading-tight text-[var(--color-ink)] sm:text-3xl">
-                {latest.title}
-              </p>
+              <div key={hero.id} className="anim-rise-in flex flex-col items-start gap-4">
+                <span dir={dir} className="rounded-full bg-[var(--accent)] px-3.5 py-1 text-sm font-bold text-white">
+                  {at === 0 ? words.latestEpisode : words.episodesTitle}
+                </span>
+                <p dir="ltr" className="min-h-[2lh] text-start text-2xl font-bold leading-tight text-[var(--color-ink)] sm:text-3xl">
+                  {hero.title}
+                </p>
+              </div>
               <Button3D
                 tone={{ face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" }}
-                onClick={() => play({ kind: "episode", item: latest })}
+                onClick={() => play({ kind: "episode", item: hero })}
                 className="px-7 py-3 text-lg"
               >
                 <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
                 <span dir={dir}>{words.watchNow}</span>
               </Button3D>
+              {episodes.length > 1 && (
+                <div className="mt-1 flex items-center gap-2">
+                  {episodes.map((episode, i) => (
+                    <button
+                      key={episode.id}
+                      type="button"
+                      onClick={() => setAt(i)}
+                      aria-label={format(words.showEpisode, { n: episodes.length - i })}
+                      aria-current={i === at || undefined}
+                      className={`relative h-2.5 cursor-pointer overflow-hidden rounded-full bg-[rgb(var(--shadow-hue)/16%)] transition-[width] duration-500 ${i === at ? "w-10" : "w-2.5 hover:bg-[rgb(var(--shadow-hue)/28%)]"}`}
+                    >
+                      {i === at && <span key={`${episode.id}-${hovered}-${Boolean(playing)}`} aria-hidden className={`absolute inset-0 rounded-full bg-[var(--brand)] ${still ? "" : "watch-dot-fill"}`} />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-
-          {older.length > 0 && (
-            <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {older.map((episode) => (
-                <li key={episode.id}>
-                  <button
-                    type="button"
-                    onClick={() => play({ kind: "episode", item: episode })}
-                    aria-label={format(words.episodeAria, { title: episode.title })}
-                    className="card card-lift group relative block aspect-video w-full cursor-pointer overflow-hidden"
-                  >
-                    <Image src={episode.poster} alt="" fill sizes="(min-width: 1024px) 24rem, (min-width: 640px) 45vw, 100vw" className="object-cover" />
-                    <span dir="ltr" className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-10 text-start text-base font-bold text-white">
-                      {episode.title}
-                    </span>
-                    <PlayBadge />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
         </section>
 
         <section aria-label={words.reelsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
@@ -181,7 +224,7 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
                     type="button"
                     onClick={() => play({ kind: "clip", item: clip })}
                     aria-label={format(words.clipAria, { title: clip.title })}
-                    className="card card-lift group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden"
+                    className="card card-lift card-lift--still group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden"
                   >
                     <Image src={clip.poster} alt="" fill sizes="(min-width: 1280px) 15rem, (min-width: 1024px) 18vw, (min-width: 640px) 22vw, 45vw" className="object-cover" />
                     <span dir="ltr" className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-3 pt-10 text-center text-lg font-bold text-white">
