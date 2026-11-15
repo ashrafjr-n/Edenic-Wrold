@@ -68,10 +68,10 @@ export const en = {
       action: "Start learning",
     },
     play: {
-      title: "Play",
+      title: "Discover",
       description:
-        "Trace letters with a finger, match the shapes, find the odd one out — small hands-on practice after every lesson.",
-      action: "Start playing",
+        "Watch the Edenic World episodes and short videos with Pinki, Nova and Bloo — and games on the way.",
+      action: "Start discovering",
     },
   },
   learnPicker: {
