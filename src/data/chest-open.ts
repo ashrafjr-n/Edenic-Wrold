@@ -4,7 +4,7 @@
 import type { ChestOpening } from "@/types/course";
 import type { LessonId } from "@/types/lesson";
 
-export const CHEST_OPEN: Partial<Record<LessonId, ChestOpening>> = {
+export const CHEST_OPEN: Partial<Record<LessonId | "lab", ChestOpening>> = {
   shapes: {
     landscape: {
       rest: 3,

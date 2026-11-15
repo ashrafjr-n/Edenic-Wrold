@@ -310,7 +310,7 @@ if NAME == "chest":
     # its shut twin). The page lays them over its own frame, after the
     # stones are tinted — a lid in front of a stone stays gold. Then writes
     # `src/data/chest-open.ts`.
-    DEST = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}
+    DEST = {"lab": "public/assets/play/lab/stops", "shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}
 
     def changed(im, base, to):
         """`im` where it differs from `base`, as an RGBA crop; its box in %."""
@@ -378,7 +378,7 @@ if NAME == "chest":
         "   world of stops (2026-11-11). Edit the scene, not this file. */\n"
         'import type { ChestOpening } from "@/types/course";\n'
         'import type { LessonId } from "@/types/lesson";\n\n'
-        'export const CHEST_OPEN: Partial<Record<LessonId, ChestOpening>> = {\n' + "\n".join(entries) + "\n};\n"
+        'export const CHEST_OPEN: Partial<Record<LessonId | "lab", ChestOpening>> = {\n' + "\n".join(entries) + "\n};\n"
     )
     sys.exit()
 
@@ -393,8 +393,8 @@ if NAME == "stops":
     course = sys.argv[2] if len(sys.argv) > 2 else "shapes"
     # `fruits` (2026-11-06, Nova's Vegetables) is like colors: each frame's mask
     # sheet holds only the ways it shows; golden stones; no drops.
-    colors = course in ("colors", "fruits", "garden", "animals", "weather")
-    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}[course]
+    colors = course in ("colors", "fruits", "garden", "animals", "weather", "lab")
+    dest = {"lab": "public/assets/play/lab/stops", "shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}[course]
     imports, parts = [], []
     # How the picture moves between frames (where it grows from, % of the frame,
     # and how much), measured by best fit on neighbouring frames: re-measure if
@@ -408,6 +408,8 @@ if NAME == "stops":
         # Bloo's (2026-11-08): best fit on neighbouring frames, as the others.
         "animals": {"landscape": [50, 12, 1.024], "portrait": [50, 20, 1.037]},
         "weather": {"landscape": [50, 0, 1.015], "portrait": [50, 18, 1.032]},
+        # Play's lab (2026-11-15): measured on its own frames (`measure` in the notes).
+        "lab": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
@@ -474,6 +476,7 @@ if NAME == "stops":
         "garden": ("Nova's My Garden course", "GARDEN_STOPS", "garden-stops.ts", "2026-11-08", 450),
         "animals": ("Bloo's Animals course", "ANIMALS_STOPS", "animals-stops.ts", "2026-11-08", 720),
         "weather": ("Bloo's Seasons and Weather course", "WEATHER_STOPS", "weather-stops.ts", "2026-11-08", 340),
+        "lab": ("Play's Sleeping Lab", "LAB_STOPS", "lab-stops.ts", "2026-11-15", 380),
     }[course]
     arg = "" if course == "shapes" else f" {course}"
     ts = (
