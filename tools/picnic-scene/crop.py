@@ -408,8 +408,8 @@ if NAME == "stops":
         # Bloo's (2026-11-08): best fit on neighbouring frames, as the others.
         "animals": {"landscape": [50, 12, 1.024], "portrait": [50, 20, 1.037]},
         "weather": {"landscape": [50, 0, 1.015], "portrait": [50, 18, 1.032]},
-        # Play's lab (2026-11-15): measured on its own frames (`measure` in the notes).
-        "lab": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
+        # Play's lab (2026-11-15): best fit on frames 10-90, as the others.
+        "lab": {"landscape": [50, 0, 1.01], "portrait": [50, 16, 1.016]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
