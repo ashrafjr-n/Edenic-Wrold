@@ -4767,11 +4767,14 @@ const BLOO_STOPS = ANIMALS_STOPS || WEATHER_STOPS;
    behind a bank of cloud with the dawn behind it. */
 const SKY_NIGHT = STOPS && params.get("course") === "sky-night";
 const SKY_STOPS = STOPS && (params.get("course") === "sky" || SKY_NIGHT);
+/* Play's Sleeping Lab (2026-11-15): the candy laboratory of episode 2 as a world of stops
+   (`&course=lab`) — five cookies on the path to its door, the door the last stop. */
+const LAB = STOPS && params.get("course") === "lab";
 /* Nova's two worlds of stops and Bloo's share their shape (milk slabs, gold stones); the sky its way. */
 const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS || SKY_STOPS;
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 /* The colours' words need a font (only the worlds that show them load it). */
-const WORD_FONT = COLORS_STOPS || WEATHER_STOPS || SKY_STOPS ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
+const WORD_FONT = COLORS_STOPS || WEATHER_STOPS || SKY_STOPS || LAB ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
 const def = THING || HARVEST || BASKET || SEASON || BACKDROP || (GARDEN && !FOREST) ? null : SCENES[FOREST ? COLOR_LESSONS[Number(GARDEN) - 1] : SCENE];
 
 if (THING) {
@@ -5704,16 +5707,16 @@ if (THING) {
   skyCanvas.height = 512;
   const sctx = skyCanvas.getContext("2d");
   const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
-  skyGrad.addColorStop(0, SKY_NIGHT ? "#0f1446" : SKY_STOPS ? "#4fa3ee" : LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
-  skyGrad.addColorStop(0.5, SKY_NIGHT ? "#3b3f9e" : SKY_STOPS ? "#86c5f6" : LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
-  skyGrad.addColorStop(0.85, SKY_NIGHT ? "#2f3890" : SKY_STOPS ? "#a9d6f8" : LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
-  skyGrad.addColorStop(1, SKY_NIGHT ? "#262d7a" : SKY_STOPS ? "#8cc6f4" : LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
+  skyGrad.addColorStop(0, LAB ? "#5fb7f1" : SKY_NIGHT ? "#0f1446" : SKY_STOPS ? "#4fa3ee" : LAND ? "#9eaff2" : FARM ? SKY[0] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#d9c6f2" : MY_GARDEN ? "#c9b3ee" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[0] : VEG ? "#a4c6f0" : FOREST ? "#9fd2ee" : "#8ec8f6");
+  skyGrad.addColorStop(0.5, LAB ? "#9dd4f7" : SKY_NIGHT ? "#3b3f9e" : SKY_STOPS ? "#86c5f6" : LAND ? "#d9a8f0" : FARM ? SKY[1] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#f6d2e4" : MY_GARDEN ? "#f3c2dc" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[1] : VEG ? "#d8d4f3" : FOREST ? "#cfe8e4" : "#c4e2fa");
+  skyGrad.addColorStop(0.85, LAB ? "#d6ecfb" : SKY_NIGHT ? "#2f3890" : SKY_STOPS ? "#a9d6f8" : LAND ? "#f8b8de" : FARM ? SKY[2] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fbd9e3" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[2] : VEG ? "#f7e6ee" : FOREST ? "#e8f1dc" : "#f4eef2");
+  skyGrad.addColorStop(1, LAB ? "#e4f1fb" : SKY_NIGHT ? "#262d7a" : SKY_STOPS ? "#8cc6f4" : LAND ? "#fde0c8" : FARM ? SKY[3] : BLOO_STOPS ? "#d9ecfc" : GARDEN_STOPS ? "#fadbe8" : MY_GARDEN ? "#fde6df" : STOPS ? (FRUITS_STOPS ? "#e8def9" : "#f7b9d5") : YEAR_HILL ? HILL_SKY[3] : VEG ? "#fff0dc" : FOREST ? "#eef3d8" : "#fbefe9");
   sctx.fillStyle = skyGrad;
   sctx.fillRect(0, 0, 4, 512);
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = SKY_NIGHT ? new THREE.Fog(0x2b3486, 52, 175) : SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = LAB ? new THREE.Fog(0xd9eafa, 55, 175) : SKY_NIGHT ? new THREE.Fog(0x2b3486, 52, 175) : SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(LAND ? 0xf2e6ff : 0xeaf4ff);
   sky.groundColor.set(LAND ? 0xd4e8a8 : 0xc0e0a4);
@@ -7524,7 +7527,7 @@ if (THING) {
   if (STOPS) {
     /* Pinki's pink; Nova's lavender and milk. */
     /* My Garden's: the videos' light pink, milk-white slabs. */
-    const GROUND = BLOO_STOPS ? 0xbcdcf6 : GARDEN_STOPS ? 0xf7c6d8 : FRUITS_STOPS ? 0xd7c9f2 : 0xf5b2d0, LIGHT = MILK_STOPS ? 0xfbf6ee : 0xfccfe2;
+    const GROUND = LAB ? 0xbdd78f : BLOO_STOPS ? 0xbcdcf6 : GARDEN_STOPS ? 0xf7c6d8 : FRUITS_STOPS ? 0xd7c9f2 : 0xf5b2d0, LIGHT = MILK_STOPS ? 0xfbf6ee : 0xfccfe2;
     const PAL_HILL = BLOO_STOPS ? 0xa8d0f2 : GARDEN_STOPS ? 0xf2b0ca : FRUITS_STOPS ? 0xc6b5ee : 0xf2a6c8;
     lawn.material = soft(GROUND, { roughness: 0.98, sheen: 0.1 });
     lawn.scale.set(1, 3, 1);
@@ -7555,12 +7558,25 @@ if (THING) {
       sky.intensity = 1.2;
       scene.environmentIntensity = 0.2;
     }
+    /* The lab: a sunny candy afternoon — warm sun, a bright blue sky, a pink bounce off the cobbles. */
+    if (LAB) {
+      sun.color.set(0xfff0dc);
+      sun.intensity = 2.2;
+      sky.color.set(0xeaf4ff);
+      sky.groundColor.set(0xf0d2dc);
+      sky.intensity = 1.05;
+      scene.environmentIntensity = 0.3;
+      sun.shadow.radius = 7;
+    }
 
     /* Lessons in order: the first is the farthest, the chest the nearest. */
     const FRUIT_KINDS = ["carrot", "broccoli", "potato", "tomato", "pepper"];
-    const SET_KINDS = SKY_NIGHT ? ["1", "2", "3"] : SKY_STOPS ? ["1", "2", "3", "4", "5"] : ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
+    const SET_KINDS = LAB ? ["1", "2", "3", "4", "5"] : SKY_NIGHT ? ["1", "2", "3"] : SKY_STOPS ? ["1", "2", "3", "4", "5"] : ANIMALS_STOPS ? ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"] : WEATHER_STOPS ? ["spring", "summer", "fall", "winter"] : GARDEN_STOPS ? GARDEN_KINDS : FRUIT_KINDS;
     stopsApi.pictures = [];
-    const SPOTS = SKY_NIGHT
+    const SPOTS = LAB
+      ? /* The path to the lab: cookie 1 the nearest, the door the farthest. */
+        [...SET_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 1.1 : 1.7), 6 - i * 7]), [0, -33.3]]
+      : SKY_NIGHT
       ? /* Going away: level 1 where a course's chest stands, the house the farthest. */
         [[portrait ? -1.2 : -4.8, 5], [portrait ? 1.2 : 4.8, -6], [portrait ? -1.2 : -4.8, -17], [0, -29]]
       : MILK_STOPS
@@ -7575,7 +7591,7 @@ if (THING) {
     const FAR_Z = Math.min(...SPOTS.map((spot) => spot[1]));
     /* How far the Shapes world's far scenery moves back for a longer way. */
     const DZ = COLORS_STOPS || MILK_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
-    const KINDS = MILK_STOPS ? SET_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
+    const KINDS = LAB || MILK_STOPS ? SET_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
     const slabM = soft(LIGHT, { roughness: 0.9 });
     const INK = soft(0x6a5898, { roughness: 0.7 });
     /* The picture's face: two plain dots, a small smile. */
@@ -7728,13 +7744,46 @@ if (THING) {
       }
       return holder;
     };
+    /* The lab's stops (2026-11-15): a round cookie on the path, its number standing on it
+       in pink icing; a hidden box over it is what the page's link covers. */
+    const labCookieM = soft(0xe9a85e, { roughness: 0.86, sheen: 0.3 });
+    const labChipM = soft(0x9a4044, { roughness: 0.55, clearcoat: 0.3 });
+    const cookieStop = () => {
+      const g = new THREE.Group();
+      const [R, h] = [1.75, 0.42];
+      g.add(mesh(smoothLathe([[0, 0], [R * 0.88, 0], [R * 0.99, h * 0.22], [R, h * 0.55], [R * 0.93, h * 0.88], [R * 0.72, h], [0, h]], 96), labCookieM));
+      for (let i = 0; i < 9; i++) {
+        const a = rnd() * Math.PI * 2, r = R * (0.15 + 0.6 * Math.sqrt(rnd()));
+        const chip = mesh(new THREE.SphereGeometry(0.14, 14, 10), labChipM);
+        chip.scale.set(1.1, 0.5, 0.9);
+        chip.position.set(Math.cos(a) * r, h, Math.sin(a) * r);
+        chip.rotation.y = rnd() * 3;
+        chip.castShadow = false;
+        g.add(chip);
+      }
+      g.top = h;
+      const hit = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.6, 3.6), new THREE.MeshBasicMaterial());
+      hit.position.y = 1.3;
+      hit.visible = false;
+      g.add(hit);
+      g.userData.hit = hit;
+      return g;
+    };
+    const icingDigit = (text) => {
+      const geo = new TextGeometry(text, { font: WORD_FONT, size: 1.1, depth: 0.26, curveSegments: 14, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.07, bevelSegments: 6 });
+      geo.center();
+      const holder = new THREE.Group();
+      holder.add(mesh(geo, clay(0xff86b6, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15 })));
+      holder.rotation.x = -0.35;
+      return holder;
+    };
     const stops = [];
     /* The drops alone (Colors): the page greys the ones not yet open. */
     const statues = [];
     KINDS.forEach((kind, i) => {
       const [x, z] = SPOTS[i];
       const g = new THREE.Group();
-      const ped = SKY_STOPS ? cloudBed(6.4, 5) : slab(5.8, 5);
+      const ped = LAB ? cookieStop() : SKY_STOPS ? cloudBed(6.4, 5) : slab(5.8, 5);
       g.add(ped);
       /* The shape: chubby, soft, its front still plainly the shape. */
       const clayM = soft(COLORS_STOPS ? PAINT[kind] : SHAPE_COLOR[kind], { roughness: 0.68, sheen: 0.45 });
@@ -7820,8 +7869,8 @@ if (THING) {
       };
       /* The four shapes as the reels show them: see `furBody` (top level). */
       const furShape = () => furBody(kind);
-      const body = SKY_STOPS ? skyNumber(kind) : WEATHER_STOPS ? seasonWord() : BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? word() : furShape();
-      if (BLOO_STOPS || SKY_STOPS) body.rotation.y = 0;
+      const body = LAB ? icingDigit(kind) : SKY_STOPS ? skyNumber(kind) : WEATHER_STOPS ? seasonWord() : BLOO_STOPS ? bloo() : GARDEN_STOPS ? gardenStatue() : FRUITS_STOPS ? veggie() : COLORS_STOPS ? word() : furShape();
+      if (BLOO_STOPS || SKY_STOPS || LAB) body.rotation.y = 0;
       else if (MILK_STOPS) body.rotation.y = x < 0 ? 0.35 : -0.35;
       const statue = new THREE.Group();
       statue.add(body);
@@ -7831,14 +7880,14 @@ if (THING) {
       face.position.set(0, COLORS_STOPS ? -0.55 : kind === "triangle" ? -0.42 : 0.02, COLORS_STOPS ? box.max.z * 0.985 : box.max.z - 0.02);
       
       statue.position.set(0, ped.top - box.min.y - 0.04, 0.1);
-      statue.rotation.y = MILK_STOPS ? 0 : x < 0 ? 0.26 : -0.26;
+      statue.rotation.y = MILK_STOPS || LAB ? 0 : x < 0 ? 0.26 : -0.26;
       g.add(statue);
       statues.push(statue);
       /* A flower or a sprig on the slab's far corner. */
       const beside = i % 2 ? sprig() : chubby(flowerColors[i % 3]);
       beside.position.set(x < 0 ? -2.1 : 2.1, ped.top - 0.06, -1.1);
       beside.scale.setScalar(i % 2 ? 0.72 : 0.85);
-      if (!SKY_STOPS) g.add(beside);
+      if (!SKY_STOPS && !LAB) g.add(beside);
       add(g, x, 0, z);
       stops.push(g);
     });
@@ -7975,6 +8024,577 @@ if (THING) {
       add(g, x, 0, z);
       stops.push(g);
     }
+    /* ---- Play's Sleeping Lab (2026-11-15): the Edenic Laboratory of episode 2 — a candy
+       lab at the end of a cookie path, on a round lawn ringed by pastel cobbles. The five
+       stages are the round cookies laid on the path (the nearest first), sugar pearls the
+       way between them (the page turns them gold); the lab's pink door is the last stop
+       and opens as a chest does (`state(p)`). Everything the stages wake later — the
+       gears, the pipes, the bubbles, the microscope — stands still and quiet here. ---- */
+    if (LAB) {
+      const WX = portrait ? 0.8 : 1;
+      const candy = (color, extra = {}) => soft(color, { roughness: 0.62, clearcoat: 0.25, clearcoatRoughness: 0.45, sheen: 0.5, ...extra });
+      const gloss = (color, extra = {}) => clay(color, { roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.15, ...extra });
+      const mallow = (color) => soft(color, { roughness: 0.92, sheen: 0.85, sheenRoughness: 0.55 });
+      const [PINK, SALMON, MAUVE, BLUE, PEACH, CREAM, LAV, MINT, BUTTER, ORANGE] = [0xf59ab9, 0xf4a0b4, 0xe8a3cf, 0x93c5ee, 0xf8bd92, 0xfbe8cf, 0xcdb9f0, 0xc6e9cf, 0xfbe39a, 0xf7a66e];
+      const glassM = new THREE.MeshPhysicalMaterial({ color: 0xf3f8ff, transmission: 0.86, thickness: 0.6, roughness: 0.12, ior: 1.35, clearcoat: 1, clearcoatRoughness: 0.08, transparent: true });
+      /* The cartoon's cue for glass: a soft white streak down one side. */
+      const shineM = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, depthWrite: false, toneMapped: false });
+      const shine = (w, h, x, y, z) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), shineM);
+        m.position.set(x, y, z);
+        m.castShadow = false;
+        m.userData.noMerge = true;
+        return m;
+      };
+      /* Striped candy: bands that wind round a tube — `p` band widths of shear over one
+         turn (an integer, so the picture tiles), `along` band sets down the tube. */
+      const stripeTex = (colors, p = 4, along = 6) => {
+        const c = document.createElement("canvas");
+        c.width = 512;
+        c.height = 128;
+        const x = c.getContext("2d");
+        const img = x.createImageData(512, 128);
+        const rgb = colors.map((h) => [(h >> 16) & 255, (h >> 8) & 255, h & 255]);
+        const w = 512 / colors.length;
+        for (let v = 0; v < 128; v++) {
+          for (let u = 0; u < 512; u++) {
+            const band = Math.floor(((((u - (p * w * v) / 128) % 512) + 512) % 512) / w);
+            const i = (v * 512 + u) * 4;
+            [img.data[i], img.data[i + 1], img.data[i + 2]] = rgb[band];
+            img.data[i + 3] = 255;
+          }
+        }
+        x.putImageData(img, 0, 0);
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(along, 1);
+        tex.anisotropy = 8;
+        return tex;
+      };
+      const candyTube = (pts, r, colors, { p = 4, along = 6, closed = false } = {}) => {
+        const curve = new THREE.CatmullRomCurve3(pts.map((q) => new THREE.Vector3(...q)), closed, "centripetal");
+        return mesh(new THREE.TubeGeometry(curve, 200, r, 32, closed), candy(0xffffff, { map: stripeTex(colors, p, along), roughness: 0.5 }));
+      };
+      const cuff = (color, r, len, x, y, z, turn = 0) => {
+        const m = mesh(new THREE.CylinderGeometry(r, r, len, 48), candy(color));
+        m.position.set(x, y, z);
+        m.rotation.z = turn;
+        return m;
+      };
+      /* A gear: trapezoid teeth softened by the bevel, a round hole. */
+      const gearGeo = (R, teeth, hole, depth = 0.5) => {
+        const pts = [];
+        const N = teeth * 12;
+        for (let i = 0; i < N; i++) {
+          const a = (i / N) * Math.PI * 2, ph = (i % 12) / 12;
+          const up = ph < 0.1 ? ph / 0.1 : ph < 0.42 ? 1 : ph < 0.52 ? 1 - (ph - 0.42) / 0.1 : 0;
+          const r = R * (0.8 + 0.2 * up);
+          pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r));
+        }
+        const s = new THREE.Shape(pts);
+        if (hole) {
+          const h = new THREE.Path();
+          h.absarc(0, 0, hole, 0, Math.PI * 2, true);
+          s.holes.push(h);
+        }
+        const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: true, bevelThickness: 0.15, bevelSize: 0.14, bevelSegments: 6, curveSegments: 10 });
+        g.center();
+        return g;
+      };
+      const cookieM = soft(0xe9a85e, { roughness: 0.86, sheen: 0.3 });
+      const chipM = soft(0x8a4a3a, { roughness: 0.55, clearcoat: 0.3 });
+      const sugarM = soft(0xfbe3bc, { roughness: 0.6 });
+      let cseed = 11;
+      const crnd = () => ((cseed = (cseed * 16807) % 2147483647) - 1) / 2147483646;
+      /* Chocolate chips half sunk in a face at z = `front`, within `reach` of the middle. */
+      const chips = (g, n, reach, front, k = 1) => {
+        for (let i = 0; i < n; i++) {
+          const a = crnd() * Math.PI * 2, r = reach * (0.2 + 0.78 * Math.sqrt(crnd()));
+          const chip = mesh(new THREE.SphereGeometry(0.13 * k, 14, 10), chipM);
+          chip.scale.set(1.1, 0.95, 0.7);
+          chip.position.set(Math.cos(a) * r, Math.sin(a) * r, front + 0.05);
+          chip.rotation.z = crnd() * 3;
+          chip.castShadow = false;
+          g.add(chip);
+        }
+      };
+      const cookieGear = (R, teeth, { donut = false, color = cookieM } = {}) => {
+        const g = new THREE.Group();
+        const hole = donut ? R * 0.52 : R * 0.19;
+        g.add(mesh(gearGeo(R, teeth, hole, 0.5), color));
+        if (donut) {
+          const ring = mesh(new THREE.TorusGeometry(R * 0.42, R * 0.22, 28, 72), gloss(0xfff6f9));
+          ring.position.z = 0.1;
+          g.add(ring);
+        } else if (color === cookieM) chips(g, 7, R * 0.78, 0.41, R / 2);
+        if (color === cookieM) {
+          for (let i = 0; i < 14; i++) {
+            const a = crnd() * Math.PI * 2, r = R * (0.25 + 0.65 * Math.sqrt(crnd()));
+            const dot = mesh(new THREE.SphereGeometry(0.06, 10, 8), sugarM);
+            dot.position.set(Math.cos(a) * r, Math.sin(a) * r, 0.44);
+            dot.castShadow = false;
+            g.add(dot);
+          }
+        }
+        return g;
+      };
+      /* A cookie lying on the path: a soft puck, its chips, a lighter rim. */
+      const cookieDisc = (R, h = 0.4) => {
+        const g = new THREE.Group();
+        const geo = smoothLathe([[0, 0], [R * 0.88, 0], [R * 0.99, h * 0.22], [R, h * 0.55], [R * 0.93, h * 0.88], [R * 0.72, h], [0, h]], 96);
+        g.add(mesh(geo, cookieM));
+        const face = new THREE.Group();
+        face.rotation.x = -Math.PI / 2;
+        face.position.y = h;
+        chips(face, 9, R * 0.78, 0, R / 1.7);
+        g.add(face);
+        return g;
+      };
+      const gumdrop = (color) => mesh(smoothLathe([[0, 0], [0.76, 0], [0.8, 0.3], [0.7, 0.8], [0.46, 1.25], [0.2, 1.5], [0, 1.56]], 64), candy(color, { roughness: 0.8, sheen: 0.7 }));
+
+      /* ---- The lab ---- */
+      const lab = new THREE.Group();
+      const put = (thing) => {
+        lab.add(thing);
+        return thing;
+      };
+      const [LW, LH, LD] = [5.2, 6.4, 5.4];
+      const front = LD / 2;
+      put(at(rbox(LW, LH, LD, candy(MAUVE), 0.6), 0, LH / 2, 0));
+      put(at(rbox(4.8, 5.6, 5.0, candy(SALMON), 0.55), -4.6 * WX, 2.8, -0.3));
+      put(at(rbox(4.8, 5.3, 5.0, candy(BLUE), 0.55), 4.6 * WX, 2.65, -0.3));
+      const barrel = mesh(new THREE.CylinderGeometry(LD * 0.46, LD * 0.46, LW + 0.3, 64, 1, false, 0, Math.PI), candy(SALMON));
+      barrel.rotation.set(0, 0, Math.PI / 2);
+      barrel.scale.set(0.55, 1, 1);
+      barrel.position.set(0, LH - 0.1, -0.4);
+      lab.add(barrel);
+      /* The door: an arched frame in peach, a pink door of planks with a round window
+         and a gold knob, hinged on its left; dark behind it until it opens. */
+      const arched = (w, h) => {
+        const r = w / 2;
+        const s = new THREE.Shape();
+        s.moveTo(-r, 0);
+        s.lineTo(r, 0);
+        s.lineTo(r, h - r);
+        s.absarc(0, h - r, r, 0, Math.PI, false);
+        s.lineTo(-r, 0);
+        return s;
+      };
+      const [DW, DH] = [2.0, 3.6];
+      const frameShape = arched(DW + 0.56, DH + 0.28);
+      frameShape.holes.push(arched(DW, DH));
+      const frameGeo = new THREE.ExtrudeGeometry(frameShape, { depth: 0.3, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.07, bevelSegments: 4, curveSegments: 48 });
+      put(at(mesh(frameGeo, candy(ORANGE)), 0, 0.02, front - 0.02));
+      const DARK = new THREE.Color(0x5a2f58), WARM = new THREE.Color(0xffe2a6);
+      const insideM = new THREE.MeshBasicMaterial({ color: DARK.getHex(), fog: false, toneMapped: false });
+      const inside = new THREE.Mesh(new THREE.ShapeGeometry(arched(DW, DH), 48), insideM);
+      inside.position.set(0, 0.02, front + 0.04);
+      lab.add(inside);
+      const door = new THREE.Group();
+      door.position.set(-DW / 2, 0.02, front + 0.16);
+      const doorM = candy(0xef8aa0, { roughness: 0.55 });
+      const leaf = mesh(new THREE.ExtrudeGeometry(arched(DW, DH), { depth: 0.18, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 3, curveSegments: 48 }), doorM);
+      leaf.position.x = DW / 2;
+      door.add(leaf);
+      for (const sx of [-1, 1]) door.add(at(rbox(0.05, DH - 1.1, 0.06, candy(0xd96f88), 0.02), DW / 2 + sx * 0.34, (DH - 1.1) / 2 + 0.1, 0.22));
+      door.add(at(mesh(new THREE.TorusGeometry(0.46, 0.08, 16, 64), candy(ORANGE)), DW / 2, 2.45, 0.24));
+      const UNLIT = new THREE.Color(0xefd9b6), LIT = new THREE.Color(0xfff3a3);
+      const paneM = new THREE.MeshBasicMaterial({ color: UNLIT.getHex(), fog: false, toneMapped: false });
+      const pane = new THREE.Mesh(new THREE.CircleGeometry(0.42, 48), paneM);
+      pane.position.set(DW / 2, 2.45, 0.23);
+      door.add(pane);
+      door.add(at(ball(0.1, gloss(0xffcc55), 20), DW - 0.3, 1.55, 0.28));
+      lab.add(door);
+      const glowOf = (stops) => {
+        const c = document.createElement("canvas");
+        c.width = c.height = 256;
+        const x2 = c.getContext("2d");
+        const gr = x2.createRadialGradient(128, 128, 0, 128, 128, 128);
+        stops.forEach(([at2, color]) => gr.addColorStop(at2, color));
+        x2.fillStyle = gr;
+        x2.fillRect(0, 0, 256, 256);
+        return new THREE.CanvasTexture(c);
+      };
+      /* Light as flat planes before the door, added to what is behind them (a sprite sits
+         at one depth and lost to the frame and the marshmallows). */
+      const glowPlane = (tex, size) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false, fog: false, toneMapped: false, blending: THREE.AdditiveBlending, opacity: 0 }));
+        m.visible = false;
+        m.userData.noMerge = true;
+        return m;
+      };
+      const paneHalo = glowPlane(glowOf([[0, "rgba(255,240,170,0.85)"], [0.4, "rgba(255,220,130,0.3)"], [1, "rgba(255,210,120,0)"]]), 2.8);
+      paneHalo.position.set(0, 2.47, front + 0.62);
+      lab.add(paneHalo);
+      const spill = glowPlane(glowOf([[0, "rgba(255,240,190,0.7)"], [0.4, "rgba(255,214,140,0.28)"], [1, "rgba(255,200,120,0)"]]), 6);
+      spill.position.set(0, 2.0, front + 0.66);
+      lab.add(spill);
+      /* Marshmallows round the door: three stacked each side, five over the arch. */
+      const archCols = [PINK, PEACH, CREAM, LAV, MINT, PINK, PEACH, CREAM, LAV, PINK, PEACH];
+      const AR = 2.0, ACY = DH - DW / 2;
+      const places = [];
+      for (const sx of [-1, 1]) for (const y of [0.72, 1.44, 2.16]) places.push([sx * AR, y]);
+      for (let i = 0; i <= 6; i++) places.push([Math.cos(Math.PI * (i / 6)) * AR, ACY + Math.sin(Math.PI * (i / 6)) * AR]);
+      places.forEach(([x, y], i) => {
+        const m = ball(1, mallow(archCols[i % archCols.length]), 40);
+        m.scale.set(0.7, 0.76, 0.52);
+        m.position.set(x, y, front + 0.22);
+        m.rotation.z = (i % 2 ? 1 : -1) * 0.2;
+        lab.add(m);
+      });
+      /* Two steps, sunk half into the wall. */
+      put(at(mesh(new THREE.CylinderGeometry(2.2, 2.3, 0.3, 64), candy(LAV)), 0, 0.15, front + 0.45)).scale.z = 0.62;
+      put(at(mesh(new THREE.CylinderGeometry(1.65, 1.75, 0.32, 64), candy(0xf7c3d4)), 0, 0.42, front + 0.25)).scale.z = 0.6;
+      /* The sign: a cream plaque with a raised top, a candy-stripe frame, the name in
+         pink icing script. */
+      const signShape = () => {
+        const s = new THREE.Shape();
+        const [w, h, r, bump] = [3.6, 1.5, 0.5, 0.5];
+        s.moveTo(-w + r, -h);
+        s.lineTo(w - r, -h);
+        s.quadraticCurveTo(w, -h, w, -h + r);
+        s.lineTo(w, h - r - 0.3);
+        s.quadraticCurveTo(w, h - 0.3, w - r, h - 0.3);
+        s.quadraticCurveTo(w * 0.5, h - 0.3, w * 0.36, h + bump - 0.55);
+        s.quadraticCurveTo(0, h + bump + 0.15, -w * 0.36, h + bump - 0.55);
+        s.quadraticCurveTo(-w * 0.5, h - 0.3, -w + r, h - 0.3);
+        s.quadraticCurveTo(-w, h - 0.3, -w, h - r - 0.3);
+        s.lineTo(-w, -h + r);
+        s.quadraticCurveTo(-w, -h, -w + r, -h);
+        return s;
+      };
+      const sign = new THREE.Group();
+      const plaqueGeo = new THREE.ExtrudeGeometry(signShape(), { depth: 0.28, bevelEnabled: true, bevelThickness: 0.12, bevelSize: 0.12, bevelSegments: 6, curveSegments: 32 });
+      sign.add(mesh(plaqueGeo, candy(0xfbe3cd, { roughness: 0.5, clearcoat: 0.4 })));
+      const rim = new THREE.CatmullRomCurve3(signShape().getPoints(60).map((q) => new THREE.Vector3(q.x, q.y, 0.14)), true, "centripetal");
+      sign.add(mesh(new THREE.TubeGeometry(rim, 320, 0.24, 24, true), candy(0xffffff, { map: stripeTex([0xf48fb0, 0xfff6f8, 0xf9a86e], 2, 36), roughness: 0.5 })));
+      await document.fonts.load('900 300px "Snell Roundhand"');
+      const textCanvas = document.createElement("canvas");
+      textCanvas.width = 2048;
+      textCanvas.height = 880;
+      const tc = textCanvas.getContext("2d");
+      tc.textAlign = "center";
+      tc.textBaseline = "alphabetic";
+      tc.lineJoin = "round";
+      const line = (text, y, size) => {
+        tc.font = `900 ${size}px "Snell Roundhand", "Savoye LET", cursive`;
+        tc.lineWidth = 22;
+        tc.strokeStyle = "rgba(190,70,110,0.4)";
+        tc.strokeText(text, 1024 + 8, y + 14);
+        tc.strokeStyle = "#fff4f7";
+        tc.strokeText(text, 1024, y - 12);
+        tc.fillStyle = "#fff4f7";
+        tc.fillText(text, 1024, y - 12);
+        tc.strokeStyle = "#ec6a92";
+        tc.strokeText(text, 1024, y);
+        tc.fillStyle = "#ec6a92";
+        tc.fillText(text, 1024, y);
+      };
+      line("Edenic", 340, 330);
+      line("Laboratory", 700, 310);
+      const textTex = new THREE.CanvasTexture(textCanvas);
+      textTex.colorSpace = THREE.SRGBColorSpace;
+      textTex.anisotropy = 8;
+      const words = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 2.75), new THREE.MeshBasicMaterial({ map: textTex, transparent: true, toneMapped: false }));
+      words.position.set(0, 0.0, 0.43);
+      words.userData.noMerge = true;
+      sign.add(words);
+      sign.position.set(0, 6.95, front + 0.3);
+      sign.rotation.x = -0.06;
+      lab.add(sign);
+      /* On the roof: three gumdrops. */
+      [[-1.5, 0x8fd27a], [-0.3, 0xf9b25a], [0.95, 0xf07a9e]].forEach(([x, color]) => add(gumdrop(color), x, LH + 0.6, -0.9, { k: 1.8, parent: lab }));
+      /* The pipes: a twisted candy pole from the little pink tank at the left, up and over
+         into the roof; a blue pipe from the roof into the glass tank's dome. */
+      const TX = -8.6 * WX;
+      put(at(mesh(new THREE.CylinderGeometry(1.5, 1.55, 2.5, 64), candy(0xf2a1c3)), TX, 1.25, 0.6));
+      put(at(mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.7, 48), candy(BLUE)), TX, 2.8, 0.6));
+      put(at(rbox(0.5, 0.9, 0.12, candy(BLUE), 0.12), TX + 0.3, 1.05, 2.1));
+      put(at(rbox(0.3, 0.12, 0.08, candy(PEACH), 0.03), TX + 0.3, 0.85, 2.18));
+      lab.add(candyTube([[TX, 3.0, 0.6], [TX, 9.6, 0.6], [TX + 0.25, 10.9, 0.5], [TX + 1.4, 11.9, 0.3], [TX + 3.3, 12.0, 0.0], [TX + 5.0, 11.3, -0.4], [TX + 5.8, 9.9, -0.8], [TX + 5.9, 7.0, -1.0]], 0.7, [0xf7a3c2, 0xa8d1f2, 0xfbe39a, 0xc6e9cf], { p: 4, along: 6 }));
+      lab.add(cuff(0x9fd57a, 0.9, 0.9, TX, 10.2, 0.55));
+      lab.add(cuff(0xf4a0b4, 0.88, 0.8, TX + 5.9, 7.7, -1.0));
+      lab.add(cuff(BLUE, 0.88, 0.5, TX, 3.3, 0.6));
+      const PX = 1.1;
+      lab.add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[PX, 7.4, -1.6], [PX, 10.1, -1.6], [PX + 0.6, 11.2, -1.7], [PX + 1.9, 11.5, -1.8], [PX + 2.9, 10.9, -1.9]].map((q) => new THREE.Vector3(...q)), false, "centripetal"), 120, 0.44, 32, false), candy(0x8fbfee)));
+      lab.add(cuff(0xf4a0b4, 0.58, 0.5, PX, 7.9, -1.6));
+      /* The glass tank of pink liquid, on its pink pedestal behind the roof line. */
+      const GX = 4.0 * WX, GZ = -1.9;
+      put(at(mesh(new THREE.CylinderGeometry(1.65, 1.7, 1.6, 64), candy(0xf2a1c3)), GX, 5.7, GZ));
+      put(at(mesh(new THREE.TorusGeometry(1.6, 0.15, 20, 72), candy(PEACH)), GX, 6.5, GZ)).rotation.x = Math.PI / 2;
+      const liquidM = gloss(0xf06aa6, { emissive: 0xff5a9a, emissiveIntensity: 0.1 });
+      put(at(mesh(new THREE.CylinderGeometry(1.36, 1.36, 4.5, 64), liquidM), GX, 8.75, GZ));
+      for (let i = 0; i < 6; i++) {
+        const b = ball(0.12 + crnd() * 0.14, gloss(0xffbfdc), 20);
+        b.position.set(GX + (crnd() - 0.5) * 1.8, 7.0 + crnd() * 3.8, GZ + (crnd() - 0.5) * 1.8);
+        b.castShadow = false;
+        lab.add(b);
+      }
+      const tank = mesh(new THREE.CylinderGeometry(1.56, 1.56, 5.2, 64, 1, true), glassM);
+      tank.position.set(GX, 9.1, GZ);
+      tank.castShadow = false;
+      lab.add(tank);
+      const dome = mesh(new THREE.SphereGeometry(1.56, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), glassM);
+      dome.position.set(GX, 11.7, GZ);
+      dome.castShadow = false;
+      lab.add(dome);
+      lab.add(shine(0.26, 4.4, GX - 1.1, 9.1, GZ + 1.12));
+      lab.add(shine(0.18, 0.9, GX - 0.95, 12.3, GZ + 1.0));
+      /* The cookie gears on the left wing: a big cookie gear, a donut gear, a blue gear
+         behind them, a white donut gear low. */
+      const gz = 2.2;
+      const gear = (make, x, y, z, turn) => {
+        const g = make;
+        g.position.set(x * WX, y, z);
+        g.rotation.z = turn;
+        lab.add(g);
+      };
+      gear(cookieGear(1.55, 10, { color: candy(BLUE) }), -6.7, 3.1, gz + 0.1, 0.2);
+      gear(cookieGear(2.15, 9), -5.1, 5.55, gz + 0.5, 0.1);
+      gear(cookieGear(1.5, 10, { donut: true }), -3.1, 3.95, gz + 0.7, 0.35);
+      gear(cookieGear(1.35, 10, { donut: true, color: candy(BLUE) }), -5.3, 1.75, gz + 0.45, 0.05);
+      /* The microscope on its own pedestal, in front of the blue wing. */
+      const microscope = () => {
+        const g = new THREE.Group();
+        const white = candy(0xf7eef4, { roughness: 0.45, clearcoat: 0.5 }), blue = candy(0xa9c9f0), lilac = candy(0xd6c7f2), pink = candy(0xf4a0c0), peach = candy(0xf9b28a);
+        const ped1 = mesh(new THREE.CylinderGeometry(2.7, 2.9, 0.75, 64), candy(0xf8dfe9));
+        ped1.scale.z = 0.72;
+        ped1.position.y = 0.37;
+        g.add(ped1);
+        const ped2 = mesh(new THREE.CylinderGeometry(2.0, 2.15, 0.55, 64), lilac);
+        ped2.scale.z = 0.75;
+        ped2.position.y = 1.0;
+        g.add(ped2);
+        g.add(at(rbox(1.7, 2.3, 1.5, blue, 0.3), 0.9, 2.4, -0.5));
+        g.add(at(rbox(0.9, 1.9, 0.9, pink, 0.25), 1.95, 2.0, -0.2));
+        const knob = mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.24, 40), peach);
+        knob.rotation.z = Math.PI / 2;
+        knob.position.set(2.5, 2.2, -0.2);
+        g.add(knob);
+        const knobIn = mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.3, 32), lilac);
+        knobIn.rotation.z = Math.PI / 2;
+        knobIn.position.set(2.56, 2.2, -0.2);
+        g.add(knobIn);
+        g.add(at(mesh(new THREE.CylinderGeometry(0.62, 0.7, 0.32, 48), candy(0xdca36d, { roughness: 0.4, clearcoat: 0.6 })), -0.9, 1.43, 0.5));
+        g.add(at(mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.1, 48), candy(0xf0c38e)), -0.9, 1.63, 0.5));
+        g.add(at(rbox(1.1, 2.3, 1.1, lilac, 0.2), -0.1, 2.4, 0.1));
+        g.add(at(rbox(3.4, 0.3, 2.2, blue, 0.1), -0.2, 3.65, 0.2));
+        g.add(at(rbox(1.3, 0.06, 0.08, white, 0.02), -0.4, 3.84, -0.3));
+        const arm = mesh(new THREE.TorusGeometry(1.9, 0.6, 32, 96, Math.PI * 0.95), white);
+        arm.position.set(0.9, 4.6, -0.4);
+        arm.rotation.z = -0.35;
+        g.add(arm);
+        const armIn = mesh(new THREE.TorusGeometry(1.55, 0.25, 24, 96, Math.PI * 0.95), pink);
+        armIn.position.set(0.9, 4.6, -0.3);
+        armIn.rotation.z = -0.35;
+        g.add(armIn);
+        const tube = new THREE.Group();
+        tube.position.set(-0.55, 6.1, -0.2);
+        tube.rotation.z = -0.3;
+        tube.add(mesh(new THREE.CylinderGeometry(0.62, 0.66, 4.2, 48), white));
+        for (const [y, r, h, m] of [[2.05, 0.74, 0.42, blue], [1.4, 0.7, 0.3, blue], [-2.1, 0.78, 0.46, blue], [-1.7, 0.68, 0.3, lilac]]) tube.add(at(mesh(new THREE.CylinderGeometry(r, r, h, 48), m), 0, y, 0));
+        tube.add(at(mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.5, 48), pink), 0, 2.4, 0));
+        for (const [dx, dz] of [[-0.3, 0.25], [0.3, -0.1]]) {
+          tube.add(at(mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.62, 32), candy(0xdcd6f2, { roughness: 0.25, clearcoat: 0.9 })), dx, -2.6, dz));
+          tube.add(at(mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 32), candy(0x8fb4e6)), dx, -2.92, dz));
+        }
+        g.add(tube);
+        const fk = mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.36, 48), pink);
+        fk.rotation.x = Math.PI / 2;
+        fk.position.set(0.95, 6.0, 0.35);
+        g.add(fk);
+        const fkIn = mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.4, 40), lilac);
+        fkIn.rotation.x = Math.PI / 2;
+        fkIn.position.set(0.95, 6.0, 0.38);
+        g.add(fkIn);
+        return g;
+      };
+      add(microscope(), 6.3 * WX, 0, 2.4, { parent: lab, k: 0.95 });
+      /* The test tube on its peach stand, a round flask beside it. */
+      const SX = 9.9 * WX;
+      put(at(rbox(2.4, 1.7, 1.8, candy(0xf6b07f), 0.3), SX, 0.85, 0.4));
+      put(at(mesh(new THREE.TorusGeometry(0.3, 0.07, 14, 48), candy(BLUE)), SX - 0.4, 0.85, 1.32));
+      put(at(mesh(new THREE.CircleGeometry(0.26, 32), candy(LAV)), SX - 0.4, 0.85, 1.33));
+      put(at(mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.3, 48), candy(0xf4a0b4)), SX, 1.85, 0.4));
+      put(at(mesh(new THREE.CylinderGeometry(0.34, 0.34, 1.1, 48), liquidM), SX, 2.55, 0.4));
+      const tt = mesh(new THREE.CylinderGeometry(0.44, 0.44, 2.9, 48, 1, true), glassM);
+      tt.position.set(SX, 3.4, 0.4);
+      tt.castShadow = false;
+      lab.add(tt);
+      put(at(ball(0.16, gloss(0xffbfdc), 16), SX + 0.05, 2.75, 0.45)).castShadow = false;
+      put(at(mesh(new THREE.TorusGeometry(0.46, 0.09, 14, 48), candy(PEACH)), SX, 4.85, 0.4)).rotation.x = Math.PI / 2;
+      const fl = mesh(new THREE.SphereGeometry(1.2, 48, 32), glassM);
+      fl.position.set(SX + 2.1 * WX, 1.3, 0.8);
+      fl.castShadow = false;
+      lab.add(fl);
+      lab.add(shine(0.14, 2.2, SX - 0.3, 3.5, 0.4 + 0.33));
+      lab.add(shine(0.22, 0.9, SX + 2.1 * WX - 0.75, 1.7, 0.8 + 0.95));
+      const flLiquid = mesh(new THREE.SphereGeometry(1.1, 48, 32, 0, Math.PI * 2, Math.PI * 0.55, Math.PI * 0.45), liquidM);
+      flLiquid.position.copy(fl.position);
+      lab.add(flLiquid);
+      put(at(mesh(new THREE.CylinderGeometry(0.7, 0.8, 0.3, 48), candy(0xf6b07f)), SX + 2.1 * WX, 0.15, 0.8));
+      /* Cookies lying about at the lab's feet, a bobble bush, flowers. */
+      const lean = cookieDisc(1.0);
+      lean.rotation.set(-1.25, 0, 0.15);
+      lean.position.set(-6.4 * WX, 0.5, 3.4);
+      lab.add(lean);
+      const lean2 = cookieDisc(0.9);
+      lean2.rotation.set(-1.1, 0.3, -0.3);
+      lean2.position.set(-5.4 * WX, 0.45, 3.3);
+      lab.add(lean2);
+      add(cookieDisc(0.95, 0.3), -1.9 * WX, 0, 4.6, { parent: lab, ry: 0.4 });
+      add(cookieDisc(0.8, 0.3), 9.0 * WX, 0, 3.9, { parent: lab, ry: 1.2 });
+      const bobble = (r, color) => {
+        const g = new THREE.Group();
+        const m = leafy(color);
+        for (let i = 0; i < 26; i++) {
+          const a = crnd() * Math.PI * 2, b = crnd() * Math.PI * 0.5;
+          const p = ball(r * 0.28, m, 16);
+          p.position.set(Math.cos(a) * Math.cos(b) * r * 0.78, Math.sin(b) * r * 0.78, Math.sin(a) * Math.cos(b) * r * 0.78);
+          g.add(p);
+        }
+        const core = ball(r * 0.8, m, 24);
+        core.position.y = r * 0.4;
+        g.add(core);
+        return g;
+      };
+      add(bobble(1.1, 0xb6cf6c), -7.6 * WX, 0, 3.3, { parent: lab });
+      add(bobble(0.9, 0xa9c968), 8.2 * WX, 0, 3.6, { parent: lab });
+      add(bobble(0.8, 0xb6cf6c), 11.6 * WX, 0, 1.4, { parent: lab });
+      [[-3.3, 4.6, 0xff8fa8], [3.2, 4.7, 0xffffff], [7.6, 4.4, 0xff8fa8], [-9.6, 2.4, 0xffd267]].forEach(([x, z, color]) => add(chubby(color), x * WX, 0, z, { parent: lab, k: 0.8 }));
+      /* What the page lays its link over: the door and its arch. */
+      const hit = new THREE.Mesh(new THREE.BoxGeometry(5.0, 6.4, 1.6), new THREE.MeshBasicMaterial());
+      hit.position.set(0, 3.2, front);
+      hit.visible = false;
+      lab.add(hit);
+      lab.userData.hit = hit;
+      const [lx, lz] = SPOTS[SPOTS.length - 1];
+      const LZ = lz - front;
+      const g = new THREE.Group();
+      g.add(lab);
+      stopsApi.last = {
+        /* `p` 0..1: the door's round window lights, the lab gives a little shiver, the
+           door swings in and the warm light of the lab comes out of it; 1 = open. */
+        state(p) {
+          const k = (a, b) => Math.max(0, Math.min(1, (p - a) / (b - a)));
+          const back = (v) => 1 + 2.2 * (v - 1) ** 3 + 1.2 * (v - 1) ** 2;
+          const lit = k(0, 0.3);
+          paneM.color.copy(UNLIT).lerp(LIT, lit);
+          paneHalo.material.opacity = 0.55 * lit;
+          paneHalo.visible = lit > 0;
+          const shake = k(0.3, 0.44);
+          const fade = shake > 0 && shake < 1 ? Math.sin(Math.PI * shake) : 0;
+          lab.rotation.z = Math.sin(shake * Math.PI * 4) * 0.012 * fade;
+          const o = k(0.44, 0.82);
+          door.rotation.y = -1.45 * (o > 0 ? back(o) : 0);
+          const g2 = k(0.46, 0.88);
+          const glow = g2 * g2 * (3 - 2 * g2);
+          insideM.color.copy(DARK).lerp(WARM, glow);
+          spill.material.opacity = 0.42 * glow;
+          spill.visible = glow > 0;
+        },
+      };
+      stopsApi.last.state(0);
+      add(g, lx, 0, LZ);
+      stops.push(g);
+
+      /* ---- The ground: a round lawn under the lab, pastel cobbles everywhere else
+         inside the garden, green lawn and candy trees beyond. ---- */
+      const PASTELS = [0xfbc6d4, 0xfcd7bd, 0xfdebc9, 0xd6e7f7, 0xdfd3f5, 0xd7eed9].map((h) => new THREE.Color(h));
+      const [RX, RZ, RCZ] = [portrait ? 11.5 : 15.5, 8.6, LZ + 3.2];
+      const inRing = (x, z, grow = 0) => ((x / (RX + grow)) ** 2 + ((z - RCZ) / (RZ + grow)) ** 2) < 1;
+      const onPath = (x, z) => Math.abs(x) < 2.7 && z > LZ + front - 0.3;
+      const [GX2, GZ2, GCZ] = [portrait ? 26 : 34, 36, RCZ];
+      const inRingBand = (x, z) => inRing(x, z, 3.4) && !inRing(x, z);
+      const inGarden = (x, z) => (z > RCZ - 1 && ((x / GX2) ** 2 + ((z - GCZ) / GZ2) ** 2) < 1) || (Math.abs(x) < 3.2 && z > LZ + front - 0.3);
+      const spots = [];
+      for (let z = LZ - 34; z < 36; z += 1.02) {
+        for (let x = -GX2 - 2; x <= GX2 + 2; x += 1.08) {
+          const jx = x + (crnd() - 0.5) * 0.36, jz = z + (crnd() - 0.5) * 0.36;
+          if (!(inGarden(jx, jz) || inRingBand(jx, jz)) || (inRing(jx, jz) && !onPath(jx, jz))) continue;
+          spots.push([jx, jz, 0.5 + crnd() * 0.16, Math.floor(crnd() * PASTELS.length), 0.12]);
+        }
+      }
+      /* The ring's edge and the path's edges: a tidy line of bigger cobbles. */
+      for (let a = 0; a < Math.PI * 2; a += 0.052) spots.push([Math.cos(a) * (RX + 0.5), RCZ + Math.sin(a) * (RZ + 0.5), 0.66, Math.floor(crnd() * PASTELS.length), 0.2]);
+      for (let z = LZ + front + 0.2; z < 36; z += 0.95) for (const sx of [-1, 1]) spots.push([sx * 3.0, z, 0.62, Math.floor(crnd() * PASTELS.length), 0.18]);
+      const cobble = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 16, 12), soft(0xffffff, { roughness: 0.78, sheen: 0.5, clearcoat: 0.1 }), spots.length);
+      const dummy = new THREE.Object3D();
+      spots.forEach(([x, z, r, c, h], i) => {
+        dummy.position.set(x, 0, z);
+        dummy.scale.set(r, h + r * 0.12, r * (0.72 + crnd() * 0.42));
+        dummy.rotation.y = crnd() * Math.PI;
+        dummy.updateMatrix();
+        cobble.setMatrixAt(i, dummy.matrix);
+        cobble.setColorAt(i, PASTELS[c]);
+      });
+      cobble.castShadow = cobble.receiveShadow = true;
+      cobble.userData.noMerge = true;
+      scene.add(cobble);
+      /* A pastel bed under the cobbles inside the garden, the lawn beyond it. */
+      const bedM = soft(0xf0c6d4, { roughness: 0.95 });
+      const bedShape = new THREE.Shape();
+      bedShape.absellipse(0, 0, GX2 + 1.5, GZ2 + 1.5, Math.PI, Math.PI * 2, false);
+      bedShape.closePath();
+      const bed = mesh(new THREE.ShapeGeometry(bedShape, 96), bedM);
+      bed.rotation.x = -Math.PI / 2;
+      bed.position.set(0, 0.02, GCZ);
+      bed.castShadow = false;
+      scene.add(bed);
+      const ringShape = new THREE.Shape();
+      ringShape.absellipse(0, 0, RX + 3.8, RZ + 3.8, 0, Math.PI * 2, false);
+      const ringBed = mesh(new THREE.ShapeGeometry(ringShape, 96), bedM);
+      ringBed.rotation.x = -Math.PI / 2;
+      ringBed.position.set(0, 0.025, RCZ);
+      ringBed.castShadow = false;
+      scene.add(ringBed);
+      const strip = mesh(new THREE.PlaneGeometry(6.4, 80), soft(0xf0c6d4, { roughness: 0.95 }));
+      strip.rotation.x = -Math.PI / 2;
+      strip.position.set(0, 0.021, 0);
+      strip.castShadow = false;
+      scene.add(strip);
+      /* The lab's lawn: a round felt island, the path cut through its front. */
+      const lawnShape = new THREE.Shape();
+      lawnShape.absellipse(0, 0, RX, RZ, 0, Math.PI * 2, false);
+      const cut = new THREE.Path();
+      const [cz0, cz1] = [-(RZ + 1), front - 0.35 - 3.2];
+      cut.moveTo(-2.75, cz0);
+      cut.lineTo(2.75, cz0);
+      cut.lineTo(2.75, cz1);
+      cut.lineTo(-2.75, cz1);
+      cut.closePath();
+      lawnShape.holes.push(cut);
+      const lawnGeo = new THREE.ExtrudeGeometry(lawnShape, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.14, bevelSize: 0.14, bevelSegments: 5, curveSegments: 96 });
+      const isle = mesh(lawnGeo, soft(0xc4cf72, { roughness: 0.95, sheen: 0.45 }));
+      isle.rotation.x = Math.PI / 2;
+      isle.position.set(0, 0.3, RCZ);
+      isle.castShadow = false;
+      scene.add(isle);
+      /* Pebbles and flowers on the lawn, candy trees and bobble bushes beyond the garden. */
+      for (const [x, z, r, c] of [[-7.5, 6.2, 0.55, 3], [-8.4, 5.4, 0.42, 0], [6.8, 6.4, 0.5, 4], [9.4, 5.2, 0.38, 1], [-10.8, 1.2, 0.5, 5], [11.2, 0.6, 0.44, 2]]) {
+        const p = ball(r, soft(PASTELS[c].getHex(), { roughness: 0.75, sheen: 0.5 }), 24);
+        p.scale.y = 0.7;
+        p.position.set(x * WX, 0.3, LZ + z);
+        scene.add(p);
+      }
+      const tree = (tone, k, x, z) => add(gardenScenery("tree", tone), x, 0, z, { k, ry: crnd() * 3 });
+      const side = portrait ? 0.78 : 1;
+      [[0, 3.0, -15, -2], [2, 2.5, -20, -11], [3, 2.2, -27, -22], [0, 2.8, -17, -30], [2, 2.4, -24, -38], [0, 2.6, -13, -44]].forEach(([tone, k, x, dz]) => tree(tone, k, x * side, LZ + dz));
+      [[0, 3.1, 15, -4], [0, 2.4, 21, -12], [2, 2.6, 26, -22], [3, 2.3, 18, -31], [0, 2.7, 24, -40], [2, 2.5, 14, -46]].forEach(([tone, k, x, dz]) => tree(tone, k, x * side, LZ + dz));
+      [[-19, -6, 1.3], [-23, -16, 1.1], [19, -8, 1.2], [23, -18, 1.0], [-15, -36, 1.2], [16, -37, 1.1]].forEach(([x, dz, r]) => add(bobble(r, crnd() > 0.5 ? 0xb6cf6c : 0xa9c968), x * side, 0, LZ + dz));
+      /* Clouds in the blue, far off. */
+      for (const [x, y, z, k] of [[-26, 14, -42, 3.2], [20, 17, -50, 2.8], [38, 12, -34, 2.4], [-9, 19, -58, 2.6], [8, 15, -46, 2.0], [-42, 11, -30, 2.2]]) add(cloud(k), x * side, y, LZ + z);
+      /* Soft hills on the horizon, in the haze. */
+      for (const [x, z, r, color] of [[-40, -74, 30, 0xc9df9a], [12, -84, 36, 0xd2e3a4], [52, -76, 28, 0xc4dc96], [-10, -96, 44, 0xe5d9ef], [34, -100, 34, 0xf0d2e0]]) {
+        const hill = mesh(new THREE.SphereGeometry(r, 48, 24), soft(color, { roughness: 0.95 }));
+        hill.scale.y = 0.15;
+        hill.castShadow = false;
+        add(hill, x * side, 0, LZ + z);
+      }
+      /* A far row of candy trees along the horizon. */
+      for (let x = -40; x <= 40; x += 6.5) tree([0, 2, 3, 0][Math.floor(crnd() * 4)], 2.0 + crnd() * 0.8, x * side + (crnd() - 0.5) * 3, LZ - 50 - crnd() * 8);
+    }
     /* The sky's last stop: Edenic's big star on the nearest cloud — pale until
        every level is done, then it lights (`state(p)`, played as the chest's opening). */
     if (SKY_STOPS && !SKY_NIGHT) {
@@ -8053,7 +8673,7 @@ if (THING) {
     }
     /* The review: the chest — a gold frame, orange panels, a round lid, a
        keyhole plate — shut, on the nearest slab. */
-    if (!SKY_STOPS) {
+    if (!SKY_STOPS && !LAB) {
       const [x, z] = SPOTS[SPOTS.length - 1];
       const g = new THREE.Group();
       const ped = slab(7.4, 5.8);
@@ -8149,19 +8769,20 @@ if (THING) {
     }
     /* The stepping stones, white: a group a way between two lessons (the
        page turns a way pink, stone by stone, once its lesson is done). */
-    const stoneM = SKY_STOPS ? soft(0xffffff, { roughness: 0.7, emissive: 0xffffff, emissiveIntensity: SKY_NIGHT ? 0.55 : 0.22 }) : soft(0xffffff, { roughness: 0.85 });
+    const stoneM = LAB ? clay(0xffffff, { roughness: 0.35, clearcoat: 0.8, clearcoatRoughness: 0.2 }) : SKY_STOPS ? soft(0xffffff, { roughness: 0.7, emissive: 0xffffff, emissiveIntensity: SKY_NIGHT ? 0.55 : 0.22 }) : soft(0xffffff, { roughness: 0.85 });
     const skyStarGeo = SKY_STOPS ? starGeo(0.98, 0.26, 0.2) : null;
     const ways = [];
     for (let i = 0; i < SPOTS.length - 1; i++) {
       const [ax, az] = SPOTS[i], [bx, bz] = SPOTS[i + 1];
       const way = new THREE.Group();
       const curve = new THREE.QuadraticBezierCurve(new THREE.Vector2(ax, az), new THREE.Vector2((ax + bx) / 2 + (bx > ax ? 1.6 : -1.6), (az + bz) / 2), new THREE.Vector2(bx, bz));
-      const n = 4;
+      /* The lab: sugar pearls, more of them on the long last way to the door. */
+      const n = LAB && i === SPOTS.length - 2 ? 6 : 4;
       for (let k = 0; k < n; k++) {
         const u = 0.21 + (k / (n - 1)) * 0.58;
         const pt = curve.getPoint(u), t = curve.getTangent(u);
-        const st = SKY_STOPS ? mesh(skyStarGeo, stoneM) : rbox(2, 0.5, 1.55, stoneM, 0.24);
-        st.position.set(pt.x, SKY_STOPS ? 0.75 : 0.25, pt.y);
+        const st = LAB ? ball(0.36, stoneM, 28) : SKY_STOPS ? mesh(skyStarGeo, stoneM) : rbox(2, 0.5, 1.55, stoneM, 0.24);
+        st.position.set(pt.x, LAB ? 0.4 : SKY_STOPS ? 0.75 : 0.25, pt.y);
         st.rotation.y = Math.atan2(t.x, t.y) * 0.35;
         /* A star of the way: lying back, its face up to the camera, each turned a little. */
         if (SKY_STOPS) {
@@ -8173,7 +8794,7 @@ if (THING) {
       scene.add(way);
       ways.push(way);
     }
-    if (!SKY_STOPS) {
+    if (!SKY_STOPS && !LAB) {
     /* Round about, the same pink: bell hills. */
     const bell = (r, ht, color = PAL_HILL) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
     const side = portrait ? 11.5 : 15.5;
@@ -9048,7 +9669,13 @@ if (THING) {
       view.fov = FOV;
       view.updateProjectionMatrix();
     }
-    const [FROM, TO] = portrait
+    /* The lab's camera is lower — a child before a building — and stops further off at
+       the end, so the whole lab stands in the frame at its door. */
+    const [FROM, TO] = LAB
+      ? portrait
+        ? [[0, 7.4, 23, 0, 1.6, 4], [0, 6.4, first + 25, 0, 5.0, first - 3]]
+        : [[0, 6.6, 23, 0, 1.8, 4], [0, 5.8, first + 19.5, 0, 4.6, first - 3]]
+      : portrait
       ? [[0, 10.5, 24, 0, 1.6, 3], [0, 12, first + 21, 0, 2.6, first - 2]]
       : [[0, 8.4 + UP, 20.5 + BACK, 0, 1.8, 3], [0, 9.6 + UP, first + 17 + BACK, 0, 2.8, first - 2]];
     const camAt = (t) => lerp(FROM, TO, t);
