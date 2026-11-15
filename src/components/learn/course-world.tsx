@@ -805,7 +805,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         <div className="world-cover" style={{ ...worldCover(wide), ...(world.guided ? { backgroundColor: GROUND } : null) }}>
           {/* A guided course paints its first frame itself: it must not show
               what is closed (or already done) for a moment. */}
-          {!world.guided && <Image src={data.first} alt="" fill preload sizes="100vw" className="object-cover" />}
+          {!world.guided && <Image src={data.first} alt="" fill preload placeholder="blur" sizes="100vw" className="object-cover" />}
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
         </div>
       </div>

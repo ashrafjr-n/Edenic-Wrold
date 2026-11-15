@@ -30,8 +30,8 @@ export function ClassroomBackdrop({ wall: room, desk: chairs, still = false }: C
   const wall = (
     <div className="class-wall">
       <div className={`class-wall-view ${still ? "class-wall-view--zoomed" : ""}`}>
-        <Image src={room.portrait} alt="" fill sizes="100vw" className="object-cover landscape:hidden" />
-        <Image src={room.landscape} alt="" fill sizes="100vw" className="object-cover portrait:hidden" />
+        <Image src={room.portrait} alt="" fill placeholder="blur" sizes="100vw" className="object-cover landscape:hidden" />
+        <Image src={room.landscape} alt="" fill placeholder="blur" sizes="100vw" className="object-cover portrait:hidden" />
       </div>
     </div>
   );

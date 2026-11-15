@@ -126,6 +126,7 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
                   src={course.art.src}
                   alt=""
                   fill
+                  placeholder="blur"
                   sizes="(min-width: 1024px) 24rem, 45vw"
                   className="object-cover"
                   style={{ objectPosition: course.art.focus }}
