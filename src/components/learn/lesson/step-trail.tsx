@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
-import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { TASK_ICONS, type TaskKind } from "./task-chip";
 
 interface StepTrailProps {
@@ -10,19 +9,15 @@ interface StepTrailProps {
   at: number;
   /** What stands in the current step's place: its round task button. */
   current: ReactNode;
-  /** A lesson out in its world: the trail is a white clay strip, not a
-      strip of the friend's board. */
-  world?: boolean;
 }
 
 /**
- * The desktop's lesson steps, at the back row's far right, written in
- * chalk on a slim strip of the friend's board: a small disc per step,
- * joined by a line. Done steps are ticked in the friend's chalk, the
+ * The desktop's lesson steps, at the back row's far right, on a white clay
+ * strip: a small disc per step, joined by a line. Done steps are ticked in the friend's chalk, the
  * current one is its round task button (the how-to), the ones to come
  * show their icon, faint.
  */
-export function StepTrail({ kinds, at, current, world = false }: StepTrailProps) {
+export function StepTrail({ kinds, at, current }: StepTrailProps) {
   const trail = (
       <ol className="chalk-trail">
         {kinds.map((kind, i) => {
@@ -42,6 +37,5 @@ export function StepTrail({ kinds, at, current, world = false }: StepTrailProps)
         })}
       </ol>
   );
-  if (world) return <div className="world-trail">{trail}</div>;
-  return <Chalkboard size="strip">{trail}</Chalkboard>;
+  return <div className="world-trail">{trail}</div>;
 }

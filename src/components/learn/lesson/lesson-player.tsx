@@ -6,21 +6,18 @@ import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
-import { isTarget } from "@/lib/target";
 import { lessonCue } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import type { LessonDef, Question } from "@/types/course";
-import type { StrokePoint } from "@/types/stroke";
 import { BackRow } from "@/components/ui/back-button";
-import { Chalkboard } from "@/components/learn/classroom/chalkboard";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { askChest } from "@/lib/chest-run";
 import { Button3D } from "@/components/ui/button-3d";
 import { TaskChip, TaskPanel } from "./task-chip";
 import type { StaticImageData } from "next/image";
-import { demoFor, lessonFaces, starsFor, taskFor, type Step } from "./lesson-steps";
+import { demoFor, starsFor, taskFor, type Step } from "./lesson-steps";
 import { FindShapes } from "./find-shapes";
 import { ReelVideo } from "./reel-video";
 import { MixColors } from "./mix-colors";
@@ -29,7 +26,6 @@ import { WordCard } from "./word-card";
 import { SpellWord, type SpellWordHandle } from "./spell-word";
 import { FeedAnimal } from "./feed-animal";
 import { BasketTime } from "./basket-time";
-import { LessonDone, type DoneNext } from "./lesson-done";
 import { LessonWorldView } from "./lesson-world";
 import { WorldDone } from "./world-done";
 import { LessonAbout } from "./lesson-about";
@@ -48,20 +44,10 @@ const GO_TONE = {
 /** Kept in step with `.stage-swap--out`'s 0.2s in `globals.css`. */
 const STEP_LEAVE_MS = 200;
 
-/* A solved step goes on BY ITSELF once its cheer has played — no Next
-   (direct request 2026-11-02). How long each cheer runs: a
-   feed/basket has already played its own ending before it reports. */
-const SOLVED_HOLD_MS: Partial<Record<Question["type"], number>> = {
-  spell: 2100,
-  feed: 700,
-  basket: 700,
-};
-const SOLVED_HOLD_DEFAULT_MS = 1900;
-
-/* In a lesson with a world the camera's move to the next step is part of
-   the cheer (`edenic-plan.md` Phase 7: no dead pause after a solve) — a
-   step is held only for its own ending: a shape filling, a word built,
-   every circle found jumping. */
+/* A solved step goes on BY ITSELF once its cheer has played — no Next.
+   The camera's move to the next step is part of the cheer (no dead pause
+   after a solve): a step is held only for its own ending — a shape
+   filling, a word built, every circle found jumping. */
 const WORLD_HOLD_MS: Partial<Record<Question["type"], number>> = {
   trace: 1300,
   spell: 1250,
@@ -151,11 +137,9 @@ export function LessonPlayer({
   const [leaving, setLeaving] = useState(false);
   const leaveTimer = useRef<number | undefined>(undefined);
   const world = lesson.world;
-  /* In a world, a step shows once the camera has arrived where it plays. */
-  const [arrived, setArrived] = useState(!world);
+  /* A step shows once the camera has arrived where it plays. */
+  const [arrived, setArrived] = useState(false);
   const spell = useRef<SpellWordHandle>(null);
-  /* The child's passing trace, kept for the done screen. */
-  const [drawing, setDrawing] = useState<StrokePoint[] | undefined>(undefined);
 
   useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
 
@@ -197,7 +181,6 @@ export function LessonPlayer({
   /* The station of the world the camera stands at for step `i` of `steps` (-1
      during the reel; one past the last step is the lesson's end). */
   const stationAt = (i: number): number => {
-    if (!world) return -1;
     const own = world.stepStation;
     if (i >= steps.length) return world.stations.length - 1;
     const there = steps[i];
@@ -215,7 +198,7 @@ export function LessonPlayer({
     leaveTimer.current = window.setTimeout(() => {
       change();
       setSolved(false);
-      if (world && (to === undefined || stationAt(to) !== stationAt(at))) setArrived(false);
+      if (to === undefined || stationAt(to) !== stationAt(at)) setArrived(false);
       setStepMisses(0);
       setSpelling(false);
       setBoard(false);
@@ -228,13 +211,10 @@ export function LessonPlayer({
     go(() => {
       setAt(0);
       setMistakes(0);
-      setDrawing(undefined);
       setRound((value) => value + 1);
     }, 0);
   const onHeld = useEffectEvent(advance);
-  const holdMs = world
-    ? ((question && WORLD_HOLD_MS[question.type]) ?? WORLD_HOLD_DEFAULT_MS)
-    : ((question && SOLVED_HOLD_MS[question.type]) ?? SOLVED_HOLD_DEFAULT_MS);
+  const holdMs = (question && WORLD_HOLD_MS[question.type]) ?? WORLD_HOLD_DEFAULT_MS;
   useEffect(() => {
     if (!solved) return;
     const timer = window.setTimeout(onHeld, holdMs);
@@ -260,7 +240,7 @@ export function LessonPlayer({
     const { kind, target } = taskFor(q);
     const demo = demoFor(q, tone.face, seed);
     /* The animal stands in the world itself: the Listen demo shows no second picture of it. */
-    const how = demo?.kind === "listen" && (world?.animalInWorld || world?.wordInSky) ? { ...demo, face: undefined } : demo;
+    const how = demo?.kind === "listen" && (world.animalInWorld || world.wordInSky) ? { ...demo, face: undefined } : demo;
     const label = format(dict.asks[q.ask.key], q.ask.vars ?? {});
     const verb = dict.tasks[kind];
     task = (
@@ -323,7 +303,7 @@ export function LessonPlayer({
   /* Basket Time's end: its scene stays (same slot, same key, so it is not
      built again — the vegetable stays in the basket), only blurred. */
   const lastQuestion = lesson.questions[lesson.questions.length - 1];
-  if (finished && world && lastQuestion.type === "basket") {
+  if (finished && lastQuestion.type === "basket") {
     inWorld = (
       <BasketTime
         key={`${characterId}.${courseId}.${n}.${lesson.questions.length - 1}.${round}.play`}
@@ -338,21 +318,10 @@ export function LessonPlayer({
   }
 
   if (finished) {
-    /* Onward goes straight on to the next lesson (direct request
-       2026-10-02): its sheet, pinned up on the board — the course page
-       is only for coming back; after the last lesson it is where Finish
-       goes. */
-    const next: DoneNext | undefined = nextTitle
-      ? {
-          href: `${coursePath}/${n + 1}`,
-          label: format(dict.lessonPicker.lessonN, { n: n + 1 }),
-          word: nextTitle,
-          art: covers[n] ?? [],
-          go: nextIsShape ? lines.nextShape : lines.nextLesson,
-          aria: format(dict.lessonPicker.startLessonAria, { n: n + 1, title: nextTitle }),
-        }
-      : undefined;
-    if (world && arrived) {
+    /* Onward goes straight on to the next lesson; after the last one,
+       Finish goes back to the course page, where the chest opens. */
+    const next = nextTitle ? { href: `${coursePath}/${n + 1}`, go: nextIsShape ? lines.nextShape : lines.nextLesson } : undefined;
+    if (arrived) {
       /* In the world (2026-11-04, on request): once the camera has risen
          over the lesson's path in bloom, the friend cheering, two short
          lines, and the one way on — no Play again. */
@@ -387,39 +356,6 @@ export function LessonPlayer({
       );
       footStart = again;
       footEnd = onward;
-    } else if (!world) {
-      /* What the child found, the Find's things. */
-      const found = lesson.questions.flatMap((q) =>
-        q.type === "find" ? q.scene.items.filter((item) => isTarget(item, q.target)).map((item) => item.src) : [],
-      );
-      body = (
-        <LessonDone
-          title={lines.lessonDone}
-          path={kinds}
-          words={lesson.questions.flatMap((q) =>
-            q.type === "word" ? [{ word: q.word, tone: q.color && COLORS[q.color].letter }] : [],
-          )}
-          faces={lessonFaces(lesson)}
-          drawing={drawing}
-          found={found}
-          accent={tone.face}
-          cheer={cheer}
-          next={next}
-          dir={dir}
-        />
-      );
-      const again = <AgainButton label={lines.playAgain} onPress={restart} dir={dir} />;
-      const finish = next ? null : (
-        <NextButton label={lines.finish} tone={GO_TONE} href={coursePath} onPress={toChest} dir={dir} className="lesson-onward" />
-      );
-      action = (
-        <div className="flex items-center gap-3 sm:gap-4">
-          {again}
-          {finish}
-        </div>
-      );
-      footStart = again;
-      footEnd = finish;
     }
   } else if (step.kind === "watch" && (step.src ?? lesson.reel)) {
     body = (
@@ -443,11 +379,11 @@ export function LessonPlayer({
     } else if (q.type === "word") {
       body = (
         <WordCard
-          onScene={Boolean(world && (!q.picture || world.animalInWorld))}
-          inSky={Boolean(world && (q.color || world.wordInSky))}
+          onScene={!q.picture || Boolean(world.animalInWorld)}
+          inSky={Boolean(q.color || world.wordInSky)}
           word={q.word}
           shape={q.shape}
-          picture={world?.animalInWorld ? undefined : q.picture}
+          picture={world.animalInWorld ? undefined : q.picture}
           tilt={q.tilt}
           tone={q.color && COLORS[q.color].letter}
           cue={lessonCue.word(q.word)}
@@ -516,7 +452,7 @@ export function LessonPlayer({
         <FindShapes
           key={seed}
           scene={q.scene}
-          world={world && q.world}
+          world={q.world}
           hidden={!arrived}
           target={q.target}
           itemAria={lines.findItemAria}
@@ -524,7 +460,7 @@ export function LessonPlayer({
           onMiss={onMiss}
         />
       );
-      if (world && q.world) inWorld = find;
+      if (q.world) inWorld = find;
       else body = find;
     } else {
       body = (
@@ -534,10 +470,7 @@ export function LessonPlayer({
           accent={tone.face}
           dict={lines}
           board={board}
-          onSolved={(stroke) => {
-            setDrawing(stroke);
-            onSolved();
-          }}
+          onSolved={onSolved}
           onMiss={onMiss}
         />
       );
@@ -565,7 +498,7 @@ export function LessonPlayer({
       <BackRow href={coursePath} label={format(lines.backTo, { lessonName: courseName })}>
         <div className="flex min-w-0 flex-1 justify-end lg:hidden">{task}</div>
         <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
-          <StepTrail kinds={kinds} at={at} current={current} world={Boolean(world)} />
+          <StepTrail kinds={kinds} at={at} current={current} />
         </div>
       </BackRow>
       {/* After the back row (it must be `<main>`'s first child): the page's
@@ -610,17 +543,14 @@ export function LessonPlayer({
               className="anim-fade-up hidden sm:flex lg:hidden"
             />
           )}
-          {/* The friend's board (2026-10-23): it stays put while the steps
-              swap on it — every step is written up on it. A lesson with a
-              world (2026-11-02) has its steps out in the world instead, on
-              a stage with no board of its own, and comes back to the board
-              for its end. */}
-          <StageFrame world={Boolean(world)}>
+          {/* The steps are out in the world: a stage with nothing of its
+              own, the world showing round the step. */}
+          <div className="world-stage lesson-board sm:col-span-2 sm:row-start-2">
             <div
               key={`${round}-${at}`}
               className={`stage-swap mx-auto flex w-full max-w-3xl flex-1 flex-col items-center px-6 pb-[min(2.5rem,4svh)] pt-5 sm:col-span-2 sm:row-start-2 sm:px-0 sm:pb-0 sm:pt-4 lg:max-w-none lg:p-6 ${
                 leaving ? "stage-swap--out" : ""
-              } ${world && !arrived ? "world-wait" : ""}`}
+              } ${arrived ? "" : "world-wait"}`}
             >
               <div className="flex w-full flex-1 flex-col items-center justify-center py-4 sm:py-6 lg:py-3 [@media(max-height:700px)]:py-2">
                 {body}
@@ -631,7 +561,7 @@ export function LessonPlayer({
                 {action}
               </div>
             </div>
-          </StageFrame>
+          </div>
         </div>
       )}
 
@@ -647,26 +577,8 @@ export function LessonPlayer({
         {footEnd}
       </div>
 
-      {world && (
-        <LessonWorldView
-          world={world}
-          station={stationAt(at)}
-          onArrive={() => setArrived(true)}
-        />
-      )}
+      <LessonWorldView world={world} station={stationAt(at)} onArrive={() => setArrived(true)} />
       {inWorld}
     </>
-  );
-}
-
-/** What a lesson's steps stand on: the friend's board, or — in a lesson
-    with a world — a stage of the same size with nothing of its own, the
-    world showing round the step. */
-function StageFrame({ world, children }: { world: boolean; children: ReactNode }) {
-  if (world) return <div className="world-stage lesson-board sm:col-span-2 sm:row-start-2">{children}</div>;
-  return (
-    <Chalkboard size="stage" className="lesson-board sm:col-span-2 sm:row-start-2">
-      {children}
-    </Chalkboard>
   );
 }

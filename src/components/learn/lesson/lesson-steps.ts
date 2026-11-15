@@ -1,5 +1,5 @@
 import { dotFace } from "@/data/colors";
-import type { Face, LessonDef, Question, Target } from "@/types/course";
+import type { Question, Target } from "@/types/course";
 import type { TaskKind } from "./task-chip";
 import type { TaskDemoDef } from "./task-demo";
 
@@ -76,18 +76,4 @@ export function demoFor(q: Question, accent: string, seed: string): TaskDemoDef 
     default:
       return undefined;
   }
-}
-
-/** What a lesson was about, for the done screen: the shapes it traces,
-    finds and sorts, and the pictures it names (a color's pot) — on the word
-    card, in a pick's answer, or to spell from. Each once. */
-export function lessonFaces(lesson: LessonDef): Face[] {
-  const faces = lesson.questions.flatMap((q): Face[] => {
-    if (q.type === "trace") return [{ kind: "shape", shape: q.shape }];
-    if (q.type === "find" && "shape" in q.target) return [{ kind: "shape", shape: q.target.shape }];
-    if ((q.type === "word" || q.type === "spell") && q.picture) return [{ kind: "picture", src: q.picture, word: q.word }];
-    return [];
-  });
-  const key = (face: Face) => (face.kind === "shape" ? face.shape : face.kind === "picture" ? face.src.src : face.text);
-  return faces.filter((face, i) => faces.findIndex((other) => key(other) === key(face)) === i);
 }

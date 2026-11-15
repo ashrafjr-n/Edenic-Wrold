@@ -253,9 +253,8 @@ export interface LessonDef {
   cover: readonly StaticImageData[];
   /** Empty until the lesson is written; the page then says it is on its way. */
   questions: Question[];
-  /** Its course's world, when the course has one; without it the steps are
-      on the friend's board in their classroom. */
-  world?: LessonWorld;
+  /** Its course's world: every step happens out in it. */
+  world: LessonWorld;
   /** A second reel inside the lesson, played before question `at` (Seasons
       and Weather: the season's steps, then the weather's reel and steps). */
   midReel?: { src: string; at: number };
