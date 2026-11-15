@@ -154,6 +154,7 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
               aria-label={format(words.episodeAria, { title: hero.title })}
               className="group relative block aspect-video w-full cursor-pointer overflow-hidden"
             >
+              <span aria-hidden className="img-wait" />
               {episodes.map((episode, i) => (
                 <Image
                   key={episode.id}
@@ -161,6 +162,8 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
                   alt=""
                   fill
                   preload={i === 0}
+                  /* Our own stills blur in; a YouTube thumbnail (a URL) has none. */
+                  placeholder={typeof episode.poster === "string" ? "empty" : "blur"}
                   sizes="(min-width: 1280px) 46rem, (min-width: 1024px) 60vw, 100vw"
                   className="watch-slide object-cover"
                   data-on={i === at || undefined}
@@ -226,6 +229,7 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
                     aria-label={format(words.clipAria, { title: clip.title })}
                     className="card card-lift card-lift--still group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden"
                   >
+                    <span aria-hidden className="img-wait" />
                     <Image src={clip.poster} alt="" fill sizes="(min-width: 1280px) 15rem, (min-width: 1024px) 18vw, (min-width: 640px) 22vw, 45vw" className="object-cover" />
                     <span dir="ltr" className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-3 pt-10 text-center text-lg font-bold text-white">
                       {clip.title}
