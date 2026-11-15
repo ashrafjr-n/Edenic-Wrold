@@ -19,6 +19,26 @@ const nextConfig: NextConfig = {
     /* Episode thumbnails on /watch come from YouTube. */
     remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
   },
+  /* `/public` files are served `max-age=0` by default: every visit
+     re-asked the server for each of a world's hundreds of frames. A file
+     whose URL carries `?v=<hash>` (frames, world clips, chest crops — the
+     generators bump it on every re-render) never changes under that URL, so
+     it is cached for good. The rest (reels, their posters, the nav icons)
+     can change in place: a day, then refreshed in the background. The last
+     matching rule wins, so the `?v=` one comes second. */
+  headers() {
+    return [
+      {
+        source: "/assets/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+      {
+        source: "/assets/:path*",
+        has: [{ type: "query", key: "v" }],
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
+  },
   /* The Play section lived at `/activities` until it was renamed. A child
      who bookmarked a puzzle, or anyone holding a link to one, must still
      land on it — so both the section itself and everything under it are
