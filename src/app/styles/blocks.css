@@ -1,0 +1,542 @@
+/* ---------------------------------------------------------------
+   Three building blocks. Everything on the site is one of these.
+
+   `.card`  — a white panel on the lavender ground, generous radius, one
+              wide soft purple-tinted shadow. The default container.
+   `.tile`  — a pale pastel rounded square that an icon or character sits
+              on, inside a card. Tinted per subject, never white.
+   `.clay`  — a colored, softly inflated shape: CTAs and anything that
+              should look squeezable. `--clay-edge` is the darker companion
+              of the fill.
+
+   All radii are large and all shadows are wide and low-contrast; nothing
+   on this site has a hard edge or a tight drop shadow.
+   --------------------------------------------------------------- */
+
+/* Shadows run a little heavier than the tinting alone would suggest: the ground
+   sits very close to white, so there is less white-on-lavender contrast to do
+   the lifting than there used to be. */
+.card {
+  background: var(--surface);
+  border-radius: 1.75rem;
+  box-shadow:
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+.card-lift {
+  transition:
+    translate 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+  translate: 0 -6px;
+  box-shadow:
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* `/watch`'s short videos: the shadow still deepens on
+   hover, the card no longer rises. */
+.card-lift--still:hover {
+  translate: none;
+}
+
+/* ---------------------------------------------------------------
+   Discover's two doors. Both pinned colours, the same in
+   either theme (white type on them), the card's radius and shadow.
+   --------------------------------------------------------------- */
+/* No `display` here: unlayered, it would beat the doors' Tailwind `flex`. */
+.discover-door {
+  border-radius: 1.75rem;
+  isolation: isolate;
+  box-shadow:
+    inset 0 10px 18px -10px rgb(255 255 255 / 45%),
+    inset 0 -14px 22px -12px rgb(20 40 110 / 28%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 38%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 22%);
+}
+
+/* Play: a soft summer sky, Bloo's blue deepening up to the top. */
+.discover-door--play {
+  background: linear-gradient(180deg, #4f9fe0 0%, #7cc0f2 55%, #b9e0fb 100%);
+}
+
+/* The felt cloud at its foot bobs; the small clay ones drift. */
+.discover-cloud {
+  filter: drop-shadow(0 18px 26px rgb(30 80 150 / 28%));
+  animation: discover-bob 5.5s ease-in-out infinite alternate;
+}
+
+@keyframes discover-bob {
+  to {
+    translate: 0 -4%;
+  }
+}
+
+.discover-drift {
+  animation: discover-drift 9s ease-in-out infinite alternate;
+}
+
+@keyframes discover-drift {
+  to {
+    translate: 14px -4px;
+  }
+}
+
+/* The doors' chips are the site's own clay: on the sky, the white clay chip
+   (`.btn3d--clay-white`'s shading, no grain — white carries none); on the
+   episode, the pink clay of `.clay` (grain and all, below). */
+.discover-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.05rem;
+  border-radius: 999px;
+  background-color: #fff;
+  color: var(--color-ink-fixed);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -5px rgb(var(--shadow-hue) / 22%),
+    0 14px 26px -10px rgb(var(--shadow-hue) / 45%);
+}
+
+/* The grain every coloured surface of the site wears, over the doors' fill
+   and picture, under their words. */
+.discover-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Watch: the episode still under a cinema shade, deepest at the foot. */
+.discover-door--watch {
+  background: #1d1b4a;
+}
+
+/* Behind it all: the newest still, soft and deep. */
+.discover-backdrop {
+  filter: blur(22px) saturate(1.25);
+  scale: 1.2;
+}
+
+.discover-shade {
+  background:
+    linear-gradient(0deg, rgb(22 18 64 / 92%) 0%, rgb(22 18 64 / 55%) 30%, rgb(22 18 64 / 35%) 60%, rgb(22 18 64 / 55%) 100%);
+}
+
+/* The fan of stills: the newest flat on top, the next two tilted out behind it. */
+.discover-still {
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow:
+    0 0 0 3px rgb(255 255 255 / 85%),
+    0 22px 40px -14px rgb(5 5 30 / 70%);
+  transition:
+    rotate 0.6s cubic-bezier(0.3, 1.3, 0.5, 1),
+    translate 0.6s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.discover-still--1 {
+  rotate: -8deg;
+  translate: -13% 2%;
+  scale: 0.86;
+  filter: brightness(0.8);
+}
+
+.discover-still--2 {
+  rotate: 8deg;
+  translate: 13% 2%;
+  scale: 0.86;
+  filter: brightness(0.8);
+}
+
+.discover-door--watch:hover .discover-still--1 {
+  rotate: -11deg;
+  translate: -17% 1%;
+}
+
+.discover-door--watch:hover .discover-still--2 {
+  rotate: 11deg;
+  translate: 17% 1%;
+}
+
+.discover-chip--new {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+/* The frosted play button: glass, a white ring, a slow halo. */
+.discover-play {
+  color: #fff;
+  background: rgb(255 255 255 / 22%);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 2px rgb(255 255 255 / 75%),
+    0 10px 30px -8px rgb(10 10 40 / 55%);
+  transition: scale 0.35s cubic-bezier(0.3, 1.4, 0.5, 1), background-color 0.35s ease;
+}
+
+.discover-play::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 45%);
+  animation: discover-halo 2.4s ease-out infinite;
+}
+
+@keyframes discover-halo {
+  from {
+    scale: 0.9;
+    opacity: 1;
+  }
+  to {
+    scale: 1.35;
+    opacity: 0;
+  }
+}
+
+.discover-door--watch:hover .discover-play,
+.discover-door--watch:focus-visible .discover-play {
+  scale: 1.1;
+  background-color: rgb(255 255 255 / 32%);
+}
+
+.discover-door--watch:focus-visible {
+  outline: 4px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------
+   `/watch`'s episode hero: the episodes cross-fade in place,
+   each still easing in from a touch closer; a dot fills over the time the
+   episode stays (`--hero-ms`).
+   --------------------------------------------------------------- */
+.watch-slide {
+  opacity: 0;
+  scale: 1.04;
+  transition:
+    opacity 1s ease,
+    scale 6s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.watch-slide[data-on] {
+  opacity: 1;
+  scale: 1;
+}
+
+.watch-dot-fill {
+  transform-origin: left center;
+  animation: watch-dot var(--hero-ms, 6s) linear forwards;
+}
+
+[dir="rtl"] .watch-dot-fill {
+  transform-origin: right center;
+}
+
+.watch-hero:is(:hover, :focus-within) .watch-dot-fill {
+  animation-play-state: paused;
+}
+
+@keyframes watch-dot {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discover-cloud,
+  .discover-drift,
+  .discover-play::after,
+  .watch-dot-fill {
+    animation: none;
+  }
+
+  .discover-still,
+  .watch-slide {
+    transition: opacity 0.3s ease;
+  }
+}
+
+/* A white `.card` with the full clay treatment — inner top highlight, inner
+   bottom shade, wide tinted drop shadow — instead of `.card`'s single flat
+   shadow. Same recipe as `.btn3d--clay-white`, scaled to a card's shadow
+   weight. Used where a card's body is plain white but still needs to read
+   as an inflated shape (the lesson hub's cards, now that their fill is no
+   longer the character's own color). Declared after `.card` so it wins. */
+.card-clay-white {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* `.card-lift:hover` alone would win on hover (same specificity, later
+   source) and wipe the inset shading back to a flat shadow. This combined
+   selector is more specific, so the clay insets survive the lift instead of
+   flickering off for the hover duration. */
+.card-clay-white.card-lift:hover {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 24%),
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* ---------------------------------------------------------------
+   Locked, in clay.
+
+   A locked thing used to be a flat white disc with a grey padlock in it —
+   the only object on the site made of neither clay nor card, and the reason
+   "locked" read as *silver* rather than as *not yet*. `.lock-chip` is the
+   same material as everything else: a dormant lavender face carrying the
+   site's grain, an inner highlight along the top, an inner shade along the
+   bottom and one wide tinted drop shadow, with a white padlock on it.
+
+   The face is `--color-locked-text` — the deepest of the three locked tokens,
+   and the only one a white icon can sit on — so this introduces no new hue,
+   the same rule every other coloured surface here follows. `--lock-face` is
+   overridable for the one caller that wants a locked badge in its own colour.
+   --------------------------------------------------------------- */
+.lock-chip {
+  --lock-face: var(--color-locked-text);
+  --lock-edge: color-mix(in srgb, var(--lock-face) 55%, #2c2340);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: #fff;
+  background-color: var(--lock-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 5px 9px -3px rgb(255 255 255 / 50%),
+    inset 0 -6px 10px -3px color-mix(in srgb, var(--lock-edge) 70%, transparent),
+    0 10px 20px -8px color-mix(in srgb, var(--lock-edge) 55%, transparent);
+}
+
+/* `.card` and `.tile` are unlayered, and Tailwind's utilities live in
+   `@layer utilities` — unlayered CSS wins over layered CSS whatever the source
+   order, so a `rounded-full` utility on a `.card` silently does nothing. Radius
+   changes have to be modifiers on the block itself. */
+.card-pill {
+  border-radius: 9999px;
+}
+
+/* ---------------------------------------------------------------
+   A character's voice, in the site's own clay.
+
+   Nova's bubble on the Edenic Trail is `.card .card-clay-white` — the white
+   clay panel every other white chrome surface on this site is made of — plus
+   this one declaration. There is no bordered, masked or otherwise special
+   bubble shape any more: a version with a lavender OUTLINE and a scalloped
+   cloud silhouette was built and cut on direct request ("remove the borders,
+   make it claymorphism"), and this is what replaced it — 122 lines of custom
+   mask geometry for one line of reuse.
+
+   **The face carries a whisper of the speaker's colour; nothing carries a
+   border.** It is the only change from a plain white card, and it is not
+   decoration: the trail's stage nodes are WHITE clouds, so a pure-white
+   bubble floating in that sky reads as one more cloud rather than as
+   somebody speaking. 8% is enough to separate them and far too little to
+   read as a coloured panel. `--bubble-ink` is the identity token
+   (`--color-nova` here, `--color-pinki` by fallback), never `--accent` —
+   recolouring a mascot must not recolour the brand.
+
+   Mixed into `--surface`, not into a literal white, so the whisper follows
+   the theme with the card underneath it and dark mode needs no second rule.
+   Declared after `.card` so it beats that block's `background` SHORTHAND;
+   it deliberately does not touch `box-shadow`, which is `.card-clay-white`'s
+   job and already has its own dark-mode override.
+   --------------------------------------------------------------- */
+.speech-clay {
+  background: color-mix(in srgb, var(--bubble-ink, var(--color-pinki)) 8%, var(--surface));
+}
+
+/* ---------------------------------------------------------------
+   The social chips (home + footer).
+
+   Each one wears its own platform colour with the site's grain over it. They
+   used to be white at rest and only took the brand colour on hover, so the
+   row wouldn't read as a rainbow beside the characters — that was reversed
+   on direct request; the colour is now the point.
+
+   Declared AFTER `.card`, which sets the `background` SHORTHAND — the same
+   trap `.card-grain` and `.tile-grain` already carry a note about, since a
+   shorthand resets `background-image` back to `none`. `--social-brand` and
+   `--social-ink` arrive per platform from `data/socials.ts`; the icon reads
+   `currentColor`, so `--social-ink` is what keeps a black ghost on
+   Snapchat's yellow while everything else stays white.
+   --------------------------------------------------------------- */
+.social-chip {
+  background-color: var(--social-brand);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: var(--social-ink);
+  transition: background-color 0.2s ease;
+}
+
+/* Hover darkens the face and nothing else — the same language every coloured
+   `.btn3d` on the site already uses. No lift, no shadow change. */
+.social-chip:hover {
+  background-color: color-mix(in srgb, var(--social-brand) 85%, black 15%);
+}
+
+.tile {
+  border-radius: 1.25rem;
+  background: var(--tile-tint);
+}
+
+.tile-round {
+  border-radius: 9999px;
+}
+
+/* Grain on a pastel tile. Must come after `.tile`: `.tile` sets the
+   `background` shorthand, which would reset `background-image` back to none.
+   Only worth it on a tinted tile — on a near-white one the overlay blend has
+   almost nothing to push against and the texture disappears. */
+.tile-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+/* The fill arrives as `background-color` from the element, so the grain can ride
+   on `background-image` and blend with it — no pseudo-element, and the panel's
+   own content stays crisp above it. */
+.clay {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 40%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--clay-edge) 45%, transparent),
+    0 12px 22px -8px color-mix(in srgb, var(--clay-edge) 55%, transparent);
+}
+
+/* `.card-lift:hover` is `(0,2,0)` and `.clay` is `(0,1,0)`, so on hover it
+   would win and wipe both of `.clay`'s insets — an inflated card flattening
+   into a plain shadowed one for the duration of the lift. The same trap
+   `.card-clay-white.card-lift:hover` above documents, and it matters here now
+   that the lesson hub's LIFTING card is the coloured one. Declared with
+   `.clay` so the two can't drift. */
+.clay.card-lift:hover {
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 40%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--clay-edge) 45%, transparent),
+    0 20px 34px -10px color-mix(in srgb, var(--clay-edge) 62%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   Art on a colored panel.
+
+   A photo dropped on a `.clay` panel ends on a rectangle and instantly reads
+   as a sticker. Fading it into the fill from the left and the bottom lets the
+   panel's own color close over it, so it reads as part of the material.
+   --------------------------------------------------------------- */
+.panel-art {
+  mask-image: var(--panel-art-fade);
+  mask-composite: intersect;
+}
+
+/* ---------------------------------------------------------------
+   A flat PNG icon that still recolors like an SVG one.
+
+   `BottomNav`'s three tab icons are plain black-on-transparent PNGs
+   (`public/assets/nav-icons`), not lucide — masked to `currentColor` instead of
+   drawn as an `<img>`, so a parent's `color` drives the icon exactly like it
+   would drive an inline SVG's `fill`. Lightning CSS adds the
+   `-webkit-mask-*` prefixes automatically (same as `.hero-clip`/`.panel-art`
+   above) — only the unprefixed properties are declared here. The image
+   itself arrives per-icon via `--icon-src`, set inline. Structural only —
+   no color, no grain — so it stays reusable for whatever needs a colorable
+   PNG icon next; `.icon-mask-grain` and `.nav-tab` below are what give
+   `BottomNav` its own specific look. */
+.icon-mask {
+  mask-image: var(--icon-src);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
+}
+
+/* Grain riding on top of whatever `currentColor` resolved the icon to —
+   same `.card-grain`/`.tile-grain` pattern (background-image only, so it
+   layers over `.icon-mask`'s own `background-color` instead of replacing
+   it). A separate modifier, not baked into `.icon-mask` itself, because not
+   every future user of `.icon-mask` will want grain. */
+.icon-mask-grain {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+/* ---------------------------------------------------------------
+   `BottomNav`'s own color language — every tab blue by default, the CURRENT
+   page's tab pink, with heavier grain at rest and lighter grain on the
+   current tab. Driven by the `active` boolean (from `pathname`), not
+   `:hover`/`:active`/`:focus-visible` — an earlier round tried CSS
+   interaction states here and it was wrong for this bar specifically:
+   `BottomNav` only renders below `sm`, a touch-only context with no real
+   `:hover`, and `:active` only lasts for the touch itself, so the color
+   snapped back to blue the instant a finger lifted instead of staying pink
+   on the page the child actually landed on. `.nav-tab`/`.nav-tab--current`
+   are unlayered, like `.card`/`.tile`, so they win over the Tailwind
+   `text-*` utility on the same `<a>` regardless of source order — the same
+   reason those two classes can't take a Tailwind radius utility either.
+   --------------------------------------------------------------- */
+.nav-tab {
+  color: var(--brand);
+}
+
+.nav-tab--current {
+  color: var(--accent);
+}
+
+.nav-tab--current .icon-mask-grain {
+  background-image: var(--noise-soft);
+}
+
+/* ---------------------------------------------------------------
+   Wavy hero cut.
+
+   The image is cut to an organic silhouette with a crisp edge. An earlier
+   version feathered it out with gradients instead; that read as the image
+   fading rather than as a deliberate shape, so it's gone — don't bring the
+   gradient mask back.
+
+   The silhouette is an SVG path used as a mask rather than as a `clip-path`,
+   for two reasons: `preserveAspectRatio='none'` lets one path stretch to fill
+   any box, so the curve stays right at every viewport width; and a mask edge
+   is antialiased, where `clip-path` stair-steps along a diagonal.
+
+   Only the left and bottom are cut. The right edge stays straight because the
+   image runs off the side of the page there.
+   --------------------------------------------------------------- */
+.hero-clip {
+  mask-image: var(--hero-shape-narrow);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+@media (width >= 64rem) {
+  .hero-clip {
+    mask-image: var(--hero-shape);
+  }
+
+  .hero-clip--rtl {
+    mask-image: var(--hero-shape-rtl);
+  }
+}
