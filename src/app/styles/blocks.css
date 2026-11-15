@@ -557,3 +557,46 @@
     mask-image: var(--hero-shape-rtl);
   }
 }
+
+/* ---------------------------------------------------------------
+   A picture still on its way (`.img-wait`): a pale clay ground with a soft
+   light sweeping across, laid UNDER an opaque picture that has no blur
+   placeholder of its own (a reel poster, a YouTube thumbnail) — the picture
+   covers it when it lands. The sweep is a `translate` (compositor only) and
+   stops after a few passes, so a covered one costs nothing.
+   --------------------------------------------------------------- */
+.img-wait {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: #dfe8f5;
+}
+
+.img-wait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 25%, rgb(255 255 255 / 55%) 50%, transparent 75%);
+  translate: -100% 0;
+  animation: img-wait 1.6s ease-in-out 6;
+}
+
+[data-theme="dark"] .img-wait {
+  background-color: #2b3253;
+}
+
+[data-theme="dark"] .img-wait::after {
+  background: linear-gradient(100deg, transparent 25%, rgb(255 255 255 / 10%) 50%, transparent 75%);
+}
+
+@keyframes img-wait {
+  to {
+    translate: 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img-wait::after {
+    animation: none;
+  }
+}
