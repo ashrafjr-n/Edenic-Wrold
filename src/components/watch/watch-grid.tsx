@@ -61,7 +61,7 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
  * `/watch`. Episodes lead: ONE hero (picture + a panel with its title and one
  * Watch-now button, side by side from `lg`) through which every episode passes,
  * newest first, one every `HERO_MS` — the pictures cross-fade, the panel's
- * words fade up, a dot per episode fills as it stays (2026-11-15). It holds
+ * words fade up, a dot per episode fills as it stays. It holds
  * while hovered, focused or a video is open, never moves for reduced motion,
  * and a dot jumps to its episode. Then the short videos — the lessons' reels: a filter (chips
  * in a scrolling row on a phone, a sticky side list from `lg`), "All" in a

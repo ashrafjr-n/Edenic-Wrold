@@ -34,7 +34,7 @@ interface CourseUnlockOptions {
  * Where a child is in a course: each lesson's stars, the next one to play,
  * and — on the first visit since it opened — the lesson whose padlock
  * springs off. A finished lesson's Next goes straight on to the next lesson
- * (direct request 2026-10-02), so the course page only ever sees a child
+ *, so the course page only ever sees a child
  * coming BACK; the lock is how it shows what opened while they were away.
  */
 export function useCourseUnlock({ characterId, lessonId, count, rootRef, nextRef, scroll }: CourseUnlockOptions) {

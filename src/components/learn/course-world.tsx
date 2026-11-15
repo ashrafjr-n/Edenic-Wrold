@@ -264,7 +264,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     if (chestNow.current.open) return;
     playChest.current(still);
     chestSeen.mark(`${characterId}.${lessonId}`);
-    /* Its star (2026-11-12): only a chest reached — every lesson done — gives it,
+    /* Its star: only a chest reached — every lesson done — gives it,
        once. Read off the store itself: this can be called from an effect of the
        first render, whose own `nextIndex` is from before the store was read. */
     const { items, complete } = useProgress.getState();

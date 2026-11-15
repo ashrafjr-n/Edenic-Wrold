@@ -16,7 +16,7 @@ const rest = (e: PointerEvent<HTMLSpanElement>) => {
 /**
  * The videos' own animal, cut out of its still, leans toward the finger or
  * the pointer — a picture that reads as round, the 3D animal it stands in
- * for (direct request 2026-10-13). Fills its positioned parent; the lean is
+ * for. Fills its positioned parent; the lean is
  * CSS (`.tilt`), off under reduced motion.
  */
 export function TiltPicture({ children }: { children: ReactNode }) {

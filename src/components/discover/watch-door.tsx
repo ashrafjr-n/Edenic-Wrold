@@ -16,7 +16,7 @@ interface WatchDoorProps {
 }
 
 /**
- * Discover's Watch door (2026-11-15): the whole card is the link. A cinema card —
+ * Discover's Watch door: the whole card is the link. A cinema card —
  * the newest episode's still blurred and shaded over the whole card, and in the
  * middle the episodes' own stills, sharp and whole, fanned like a stack of
  * tickets with the newest on top under a frosted play button; a "New episodes"

@@ -55,7 +55,7 @@ interface BasketTimeProps {
   /** Waiting for the camera to come in at the door (it ends on this very
       picture) — laid out, not shown. */
   hidden?: boolean;
-  /** The lesson is over (2026-11-06, the user): the scene stays exactly as
+  /** The lesson is over: the scene stays exactly as
       the child left it — the vegetable in the basket — and only blurs, the
       way on over it. */
   done?: boolean;

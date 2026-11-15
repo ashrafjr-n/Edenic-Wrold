@@ -287,7 +287,7 @@ export function LessonPlayer({
 
   /* ---- The step itself, and the way onward ---- */
   const coursePath = `/learn/${characterId}/${courseId}`;
-  /* The last lesson's Finish: the course page walks to the gold chest and opens it (2026-11-11). */
+  /* The last lesson's Finish: the course page walks to the gold chest and opens it. */
   const toChest = () => askChest(`${characterId}.${courseId}`);
   let body: ReactNode = null;
   /* Phone and tablet: the one slot under the step. */
@@ -322,7 +322,7 @@ export function LessonPlayer({
        Finish goes back to the course page, where the chest opens. */
     const next = nextTitle ? { href: `${coursePath}/${n + 1}`, go: nextIsShape ? lines.nextShape : lines.nextLesson } : undefined;
     if (arrived) {
-      /* In the world (2026-11-04, on request): once the camera has risen
+      /* In the world: once the camera has risen
          over the lesson's path in bloom, the friend cheering, two short
          lines, and the one way on — no Play again. */
       const words = lesson.questions.flatMap((q) => (q.type === "word" ? [q.word] : []));
@@ -339,7 +339,7 @@ export function LessonPlayer({
         <NextButton
           label={next ? next.go : lines.finish}
           tone={GO_TONE}
-          /* Straight on to the next lesson (the user, 2026-11-06), in a course
+          /* Straight on to the next lesson, in a course
              with a world of stops too: its stones and tiles are seen by going
              back with the back button. */
           href={next ? next.href : coursePath}

@@ -14,7 +14,7 @@ interface PlayDoorProps {
 }
 
 /**
- * Discover's Play door while Play is being built (2026-11-15): NOT a link — a sky
+ * Discover's Play door while Play is being built: NOT a link — a sky
  * card with the old Play card's own felt cloud (`play-cloud.png`, once
  * `trail-cloud.png`) floating in the middle, small clay clouds drifting at the
  * sides, the name over it and a "Coming soon" chip. Three rows — the words, the

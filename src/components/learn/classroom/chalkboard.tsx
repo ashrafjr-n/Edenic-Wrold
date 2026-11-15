@@ -21,7 +21,7 @@ interface ChalkboardProps {
 }
 
 /**
- * Pinki's chalkboard (2026-10-14): a slate, wiped but never quite clean, in
+ * Pinki's chalkboard: a slate, wiped but never quite clean, in
  * a clay wood frame on a tray of chalk and an eraser, drawn by the page — so what is written on it stays sharp in every
  * language — the board on the friend's classroom wall (`ClassroomShell`).
  */

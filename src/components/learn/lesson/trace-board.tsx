@@ -152,7 +152,7 @@ export function ChalkFilter({ id }: { id: string }) {
  *
  * The markers are lucide icons laid over the SVG, never drawn in it.
  *
- * It is drawn ON the friend's board (2026-10-23): the guide dots, the
+ * It is drawn ON the friend's board: the guide dots, the
  * child's line in white chalk and the fill are rubbed chalk
  * (`ChalkFilter`); the start disc stays clay.
  */
