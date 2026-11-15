@@ -1,0 +1,272 @@
+/* ---------------------------------------------------------------
+   One puzzle's board and heap, when the picture is UPRIGHT — square or
+   taller. (Stages 1–3 are landscape and use none of this.)
+
+   An upright picture cannot take the board's plain width cap: 32rem of a
+   square scene is 32rem tall, and the heap of loose pieces still has to fit
+   as well. So an upright board is capped by HEIGHT and its width falls out of
+   the picture's own aspect ratio (`--puzzle-w` in `PuzzleBoard`).
+
+   `svh`, not `vh`: on a phone `vh` is measured against the viewport with the
+   browser's chrome hidden, which is exactly the amount a board sized to "the
+   whole screen" would then overflow by.
+
+   Two layouts:
+
+   - Below `lg` the board and the heap are STACKED, and they must fit the
+     screen TOGETHER — a child who has to scroll between the pieces and the
+     board cannot drag one to the other at all. `--puzzle-space` is what the
+     two have left once the page's own chrome is out of the way (header, the
+     `View` row, the page and card padding, the gap, and the phone's bottom
+     nav); `--board-share` — inline from `PuzzleBoard`, because it depends on
+     the stage's own cut — is the board's share of it, the rest being exactly
+     the height the heap needs.
+   - From `lg` they sit SIDE BY SIDE, so the board stops sharing its height
+     with the heap and takes everything but the chrome, and the heap takes
+     whatever width the board leaves (`6rem` covers the page's own padding
+     plus the gap between the two cards).
+
+   `--tray-w` is declared here rather than inline in `PuzzleBoard` precisely
+   because it changes at that breakpoint: an inline custom property would beat
+   this stylesheet and the heap would keep the phone's full-width value on a
+   desktop, running off the side of the page. A landscape stage has neither
+   layout to switch between, so it does set its own inline.
+   --------------------------------------------------------------- */
+.puzzle-upright {
+  /* Measured, never derived — header, the chrome row, page and card padding,
+     the gap, and the phone's bottom nav. It came down by the 1rem (1.5rem
+     from `sm`) the chrome row lost when "View" became a back-button-sized
+     hint chip; re-measure again if that row ever changes height. */
+  --puzzle-space: calc(100svh - 19.25rem);
+  --board-max-h: calc(var(--puzzle-space) * var(--board-share));
+  /* Stacked, the heap is exactly as wide as the board, so the two cards are
+     twins sitting one above the other — any difference reads as a mistake
+     when they are that close together. */
+  --tray-w: var(--puzzle-w);
+}
+
+/* A tablet has no bottom nav and a little more room to give back. */
+@media (width >= 40rem) {
+  .puzzle-upright {
+    --puzzle-space: calc(100svh - 24rem);
+  }
+}
+
+@media (width >= 64rem) {
+  .puzzle-upright {
+    --board-max-h: calc(100svh - 22.5rem);
+    /* Side by side, the heap takes the width the board leaves rather than
+       matching it: the two cards are no longer stacked, so they no longer
+       have to be twins, and the pieces would rather have the room. */
+    --tray-w: min(100vw - 6rem - var(--puzzle-w), 32rem);
+  }
+}
+
+/* ---------------------------------------------------------------
+   The stage grid on `/activities/puzzle`.
+
+   Every card shows its PICTURE now, open or not — a locked stage is the
+   same picture behind a soft blur and a pale wash, so the fifteen read as
+   fifteen real places that exist and have not been opened yet, rather than
+   as a wall of coloured number buttons. The picture is the card's subject;
+   the number and the lock/tick are small status marks on top of it.
+
+   `.puzzle-veil` is that wash. It is white with a SIXTH of the stage's own
+   colour mixed into it, not plain white: fifteen identical white cards lose
+   the thing the colours were there for, and a mix this light still reads as
+   frosted rather than tinted. `--veil-tone` comes from the stage.
+   --------------------------------------------------------------- */
+/* The wash started at 0.85, which left a locked card as a near-blank pastel
+   square — the picture behind it had effectively gone. Lowered once to 0.6
+   and then again to 0.4 on direct request ("still too frosted"): the blur is
+   what hides the detail, so the wash only needs to knock the colour back
+   enough that a child reads "there is a scene here, and it's shut" rather
+   than "this is a blank tile." Don't push it back toward 0.6+. */
+.puzzle-veil {
+  background-color: color-mix(in srgb, var(--veil-tone) 16%, #fff);
+  opacity: 0.4;
+}
+
+/* "Level 1", and the site's smallest clay object. Self-contained (size,
+   radius, type all here) for the usual reason — it sits inside
+   `.card`/`.clay`, which are unlayered, so a Tailwind utility for any
+   property those blocks already set would silently lose.
+
+   **One colour for all fifteen, not the stage's own tone.** It briefly took
+   `stage.tone.face`, and fifteen differently-coloured labels read as fifteen
+   different KINDS of thing rather than as the same label repeated — the
+   colours still do their job on the padlock and the locked wash. Brand blue,
+   the site's own primary, so the chip says "this is a level" the same way on
+   every picture behind it. */
+.stage-chip {
+  --chip-face: var(--brand);
+  --chip-edge: var(--brand-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+  background-color: var(--chip-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 4px 7px -2px rgb(255 255 255 / 50%),
+    inset 0 -5px 8px -2px color-mix(in srgb, var(--chip-edge) 70%, transparent),
+    0 8px 16px -7px color-mix(in srgb, var(--chip-edge) 60%, transparent);
+}
+
+/* The word is the smaller half of the label — "Level" says what the number
+   means, the number is the thing being read. */
+.stage-chip-word {
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+@media (width >= 40rem) {
+  .stage-chip {
+    height: 1.875rem;
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ---------------------------------------------------------------
+   "9 / 15" above the grid.
+
+   Clay, like every other object here: the track is pressed INTO the page
+   (an inner shade along the top, no outer shadow at all — the same language
+   a disabled `Button3D` speaks) and the fill is inflated out of it, so the
+   bar reads as a groove with a bar of clay lying in it. Never a flat two-tone
+   rectangle, and never `<progress>`, which cannot be styled into either.
+
+   The track deliberately does NOT get `overflow: hidden` — the fill's own
+   drop shadow is what lifts it out of the groove, and clipping the fill to
+   the track would cut that away. The fill can never exceed the track's width,
+   so nothing needs containing.
+   --------------------------------------------------------------- */
+.puzzle-progress-track {
+  height: 0.875rem;
+  border-radius: 9999px;
+  background-color: var(--color-locked);
+  box-shadow:
+    inset 0 3px 6px -1px color-mix(in srgb, var(--color-locked-dark) 95%, transparent),
+    inset 0 -2px 3px -1px rgb(255 255 255 / 70%);
+}
+
+@media (width >= 40rem) {
+  .puzzle-progress-track {
+    height: 1rem;
+  }
+}
+
+/* Green, not brand blue: `--color-go` is already the site's "you have passed
+   this, carry on" colour (see the three-button rule in the numbers lesson),
+   and a bar filling up with finished puzzles is saying exactly that. Grained
+   like every other coloured surface. */
+.puzzle-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  /* Green by default — the site's "you passed this" colour, and what the
+     puzzles have always used. Memory match overrides the pair with gold, its
+     own hero token; nothing else about the bar changes. */
+  --bar-face: var(--color-go);
+  --bar-edge: var(--color-go-dark);
+  background-color: var(--bar-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 4px 6px -2px rgb(255 255 255 / 55%),
+    inset 0 -5px 8px -2px
+      color-mix(in srgb, var(--bar-edge) 70%, transparent),
+    0 7px 14px -7px color-mix(in srgb, var(--bar-edge) 60%, transparent);
+  /* The bar starts empty on the server and on the first client render (the
+     progress store has not read localStorage yet), so this transition is
+     also the bar filling itself in on arrival — no separate entrance. */
+  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-body {
+    transform: none;
+  }
+
+  .anim-drop-in,
+  .anim-pop-in,
+  .anim-fade-up,
+  .anim-rise-in,
+  .stage-swap,
+  .stage-swap--out,
+  .anim-wiggle,
+  .anim-jump,
+  .stroke-draw,
+  .pen-tip,
+  .say-pulse,
+  .say-pulse--invite,
+  .anim-breathe,
+  .anim-pinki-lean-in,
+  .anim-pulse-invite,
+  .guide-target::after,
+  .trace-guide-glow,
+  .trace-start::after,
+  .trace-fill,
+  .find-cheer,
+  .anim-reveal,
+  .anim-hero-parallax,
+  .lang-orb,
+  .page-veil--in .page-veil-cloud,
+  .page-veil--out .page-veil-cloud {
+    animation: none;
+  }
+
+  .confetti-piece {
+    display: none;
+  }
+
+  /* The demos hold their "tapped" frame: the finger on the target, the
+     first part drawn, the ring round the thing found. */
+  .demo-finger,
+  .demo-press,
+  .demo-wave,
+  .demo-fly,
+  .demo-feed,
+  .demo-feed-pen,
+  .demo-draw,
+  .demo-pen,
+  .demo-ring,
+  .demo-tick,
+  .feed-no,
+  .basket-bin--in {
+    animation: none;
+  }
+
+  /* Fed: the hearts simply stand over its mouth. */
+  .feed-heart {
+    animation: none;
+    opacity: 1;
+    translate: 0 -140%;
+  }
+
+  .demo-pen {
+    offset-distance: 40%;
+  }
+
+  /* The Again/Next buttons are a TRANSITION, not a keyframe animation, so the
+     `animation: none` list above cannot reach them. The press still collapses
+     the word and shrinks the pill to a disc — that is the button telling the
+     child it was pressed — it just does all of it instantly, with no turn. */
+  .morph-btn,
+  .morph-btn__icon,
+  .morph-btn__label {
+    transition: none;
+  }
+}
