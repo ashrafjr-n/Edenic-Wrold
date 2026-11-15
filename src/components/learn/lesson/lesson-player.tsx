@@ -570,7 +570,7 @@ export function LessonPlayer({
           so a pressed (collapsed) Next never carries over into the next
           step's button. */}
       <div
-        key={`${round}-${at}`}
+        key={`foot-${round}-${at}`}
         className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
       >
         {footStart}
