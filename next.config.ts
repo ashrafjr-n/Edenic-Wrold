@@ -39,6 +39,10 @@ const nextConfig: NextConfig = {
       /* The Edenic Trail's own page became the Play game itself (the Sky
          Trail, 2026-11-12): `/play` is the sky now. */
       { source: "/trail", destination: "/play", permanent: true },
+      /* The Sky Trail was cancelled (2026-11-15): its levels are gone and
+         the free games moved back from `/play/games` to `/play` itself. */
+      { source: "/play/games", destination: "/play", permanent: true },
+      { source: "/play/sky/:path*", destination: "/play", permanent: true },
     ];
   },
 };
