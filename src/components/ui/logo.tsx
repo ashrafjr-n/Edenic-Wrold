@@ -14,7 +14,6 @@ export function Logo({ className = "" }: { className?: string }) {
         src={logo}
         alt="Edenic World"
         preload
-        placeholder="blur"
         className={`w-auto ${className}`}
       />
     </Link>
