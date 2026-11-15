@@ -125,7 +125,6 @@ export const ku: Dictionary = {
     replayLesson: "{name} دووبارە یاری بکە",
     youCanDoIt: "تو دشێی!",
     allDone: "تە هەمی فێربوو! دەستخۆش!",
-    learnedOf: "{done} ژ {total} فێربوو",
   },
   lessonPicker: {
     backTo: "ڤەگەڕان بۆ وانەیێن {characterName}",
@@ -137,7 +136,6 @@ export const ku: Dictionary = {
     ctaContinue: "بەردەوام بە",
     openChest: "سندوقێ ڤەکە",
     /** Over the next lesson on a friend's course board. */
-    lessonN: "وانا {n}",
   },
   lessonPlayer: {
     backTo: "ڤەگەڕان بۆ {lessonName}",
