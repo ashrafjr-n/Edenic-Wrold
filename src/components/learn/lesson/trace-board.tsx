@@ -15,7 +15,7 @@ interface TraceBoardProps {
   /** How much of the shape one stroke has to go round. It eases a little
       with every miss, so a child always gets there. */
   minCoverage: number;
-  /** Passed: the stroke the child drew, for the done screen. */
+  /** Passed: the stroke the child drew. */
   onFinish: (stroke: StrokePoint[]) => void;
   /** A finished stroke that did not pass. */
   onMiss: () => void;

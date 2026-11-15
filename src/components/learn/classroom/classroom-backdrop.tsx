@@ -25,14 +25,6 @@ interface ClassroomBackdropProps {
  * portrait and a landscape frame, the one that fits the screen shown — the
  * other is never fetched (lazy and `display: none`) — and preloaded, so the
  * room is there with the page, not a moment after.
- *
- * In the classroom (`ClassroomShell`, a layout — 2026-11-04) it is mounted
- * ONCE for the hub and its course pages: going in to a course the camera
- * comes closer (`.class-page--course` — the zoom is on the view INSIDE the
- * wall: a transition's snapshot is the named element's box, and a wall
- * scaled past the page would cover the header), the chairs slide away on
- * a wide screen and come closer on a phone; each is a view transition that
- * animates that `update`, never a page built again.
  */
 export function ClassroomBackdrop({ wall: room, desk: chairs, still = false }: ClassroomBackdropProps) {
   const wall = (

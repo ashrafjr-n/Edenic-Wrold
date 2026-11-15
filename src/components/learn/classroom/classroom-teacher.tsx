@@ -19,11 +19,6 @@ interface ClassroomTeacherProps {
  * The friend beside their board, their stick raised to it (their own pose;
  * it does not move — direct request), and jumping when tapped; they say
  * nothing. When every lesson is learned they celebrate instead.
- *
- * Mounted once for the hub and its course pages (`ClassroomShell`): going
- * in to a course they step out of the picture on a wide screen and come a
- * little closer on a phone (`.class-page--course`), their view transition
- * animating that `update` — the same friend, never gone and back.
  */
 export function ClassroomTeacher({ characterId, teacher, cheer, courses, label }: ClassroomTeacherProps) {
   const allDone = useUpNext(characterId, courses) === null;

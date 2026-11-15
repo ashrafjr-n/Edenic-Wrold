@@ -86,7 +86,6 @@ export function WordCard({ word, shape, picture, tilt, onScene = false, inSky = 
     </>
   );
 
-  /* On the friend's board: no card of its own — the word goes up on a
-     paper strip (`.chalkboard--stage .clay-word`). */
+  /* In front of the world: no card of its own. */
   return <div className={`max-w-xl lg:w-auto lg:max-w-none ${layout}`}>{content}</div>;
 }

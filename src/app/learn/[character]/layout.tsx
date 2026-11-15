@@ -12,9 +12,8 @@ interface CharacterLayoutProps {
 }
 
 /**
- * A friend's classroom round their hub and their course pages:
- * a layout, so it persists across the navigations between them — only
- * what is on the board changes (`ClassroomShell`). An unknown or locked
+ * A friend's classroom round their hub (`ClassroomShell`); a course's world,
+ * a lesson and a 404 under it are the page alone. An unknown or locked
  * friend gets the page alone (it 404s or redirects).
  */
 export default async function CharacterLayout({ children, params }: CharacterLayoutProps) {

@@ -19,7 +19,7 @@ interface TraceQuestionProps {
   /** The demo is over and the board is up — the player's "Your turn!"
       button, in the action band like every other button. */
   board: boolean;
-  /** Passed, with the stroke the child drew (the done screen shows it). */
+  /** Passed, with the stroke the child drew. */
   onSolved: (stroke: StrokePoint[]) => void;
   onMiss: () => void;
 }
