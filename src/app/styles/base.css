@@ -1,0 +1,729 @@
+/* ---------------------------------------------------------------
+   Palette sampled from the character renders themselves, not picked by
+   eye. Each friend owns a "world": Pinki → pink, Nova → lavender,
+   Bloo → blue.
+
+   Nova's world is lavender rather than a neutral for a specific reason:
+   her body is cream (#f5f1f0), not white, so on a white surface she
+   disappears. A tinted stage is what makes her readable — never put her
+   on plain white.
+   --------------------------------------------------------------- */
+:root {
+  /* ---------------------------------------------------------------
+     Claymorphism. The ground is a pale blue tint now, not lavender — it
+     followed the brand accent's purple-to-blue swap even though it's a
+     separate token (`--background`), so the whole site reads as one family
+     instead of a blue accent on a violet ground.
+
+     The ground is a light, barely-there tint — never plain white — and the
+     things that sit on it are WHITE cards with a wide, soft shadow (tied to
+     `--shadow-hue`, still its old purple-leaning tint — see the note there).
+     That contrast (white on the tinted ground) is what gives the surfaces
+     their lift; shadows alone on a white page would be invisible.
+
+     The brand accent (sky blue, `--brand`) carries every primary action: the
+     main CTA, the active chip, the circular go buttons. Character colors stay
+     for identity, but the brand accent is the one that repeats.
+     --------------------------------------------------------------- */
+  /* Very close to white, but still unmistakably blue-tinted — a true white
+     ground would leave the white cards with nothing to lift off. Card shadows
+     are tuned a little heavier to compensate for the reduced contrast. Was
+     `#f6f4fd` (pale violet) before the ground followed `--brand` to blue. */
+  --background: #f3f8fd;
+  --surface: #ffffff;
+
+  /* Clay grain. Claymorphism reads as *material*, and a perfectly flat fill
+     reads as plastic — this is the tooth that sells it. Applied only to
+     colored surfaces (`.clay`, colored `.btn3d`), never to white chips, and
+     always through `background-blend-mode: overlay` so it lightens and darkens
+     the fill instead of greying it down. */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.62'/%3E%3C/svg%3E");
+
+  /* Same turbulence, a lighter baked-in opacity (0.28 vs 0.62) — for a spot
+     that needs to read as grained but subtler, not a second material. Used
+     by `BottomNav`'s press/focus icon state. */
+  --noise-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+
+  /* The hero silhouette, as a stretchable SVG path. See `.hero-clip`. */
+  --hero-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M1200,0 L1200,600 C1000,600 900,548 740,566 S470,620 330,594 S160,516 150,452 S190,300 176,196 S214,44 268,0 Z'/%3E%3C/svg%3E");
+  /* Same silhouette, mirrored left-for-right (x -> 1200-x) — the desktop hero
+     moves to the LEFT edge in Arabic (see CLAUDE.md's language switcher
+     conventions: the one deliberate layout exception), so the straight
+     "runs off the page" edge has to move from right to left with it, and the
+     wave cuts the right (now inward) edge instead. */
+  --hero-shape-rtl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L0,600 C200,600 300,548 460,566 S730,620 870,594 S1040,516 1050,452 S1010,300 1024,196 S986,44 932,0 Z'/%3E%3C/svg%3E");
+  --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
+
+  /* Cloud silhouettes for `<Cloud />` (Edenic Trail's sky), as MASKS — the
+     same technique `--hero-shape` uses, and for the same reason: one shape
+     definition scales to any box, and a mask edge antialiases where a
+     `clip-path` stair-steps.
+
+     Each is four overlapping circles on an ELLIPSE base, and **the CIRCLES
+     own the left and right extremes — the ellipse is narrower than they are
+     and hides inside them.** Drawn the other way round (a base wider than
+     its lobes, which is what these were first drawn with) the silhouette's
+     own sides are the ellipse's ends, so the shape reads as a hill with
+     bumps on top rather than as a cloud. Four lobes of clearly different
+     sizes, one of them a small one off to one side: three even lobes read as
+     a logo, and the odd small one is what makes it look drawn rather than
+     constructed. Not a rounded BAR base either — A bar gives a dead-flat
+     bottom edge, and a cloud with a ruled-off underside reads as a sticker
+     however well it is shaded; an ellipse curves the underside so the whole
+     silhouette is round and the clay lighting has something to sit on.
+     Overlapping
+     OPAQUE shapes in a mask union cleanly — there is no seam where two lobes
+     meet, which is exactly what a stack of `border-radius` divs could not
+     give: separate divs each carry their own shading and the joins show.
+     One mask, one element, one continuous clay gradient underneath it.
+
+     Three silhouettes so a sky full of clouds isn't the same shape repeated;
+     `variant` on the component picks one. All share the 20:11 viewBox the
+     `.cloud` wrapper's `aspect-ratio` is locked to, so nothing distorts. */
+  --cloud-shape-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26' cy='64' r='26'/%3E%3Ccircle cx='58' cy='48' r='27'/%3E%3Ccircle cx='98' cy='46' r='40'/%3E%3Ccircle cx='140' cy='50' r='28'/%3E%3Ccircle cx='174' cy='64' r='26'/%3E%3Crect x='26' y='68' width='148' height='22'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='24' cy='66' r='24'/%3E%3Ccircle cx='62' cy='44' r='34'/%3E%3Ccircle cx='104' cy='50' r='34'/%3E%3Ccircle cx='142' cy='52' r='26'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='24' y='68' width='152' height='22'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-shape-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26' cy='64' r='26'/%3E%3Ccircle cx='62' cy='52' r='26'/%3E%3Ccircle cx='100' cy='48' r='34'/%3E%3Ccircle cx='140' cy='44' r='36'/%3E%3Ccircle cx='176' cy='66' r='24'/%3E%3Crect x='26' y='68' width='150' height='22'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* A WIDE, FLAT bank — six lobes across a 40:11 box, against the puffy
+     three-lobe clouds above. **Restored, having been deleted once** (the
+     card that needed it was redesigned): the page-transition drift is the
+     new caller, and it needs exactly what this exists for. A puffy cloud
+     cannot be stretched to span a screen — blown up that wide its middle
+     lobe alone fills the box and it reads as a white dome — while a bank
+     keeps its lobes small relative to its width and stays a cloud at any
+     width. Every neighbouring pair of lobes OVERLAPS (14-18 units of the
+     400-wide viewBox); two that merely touch meet in a cusp, which in a
+     white silhouette against a coloured sky reads as a crack. */
+  --cloud-shape-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 110' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='200' cy='84' rx='192' ry='22'/%3E%3Ccircle cx='58' cy='64' r='34'/%3E%3Ccircle cx='118' cy='50' r='42'/%3E%3Ccircle cx='182' cy='60' r='36'/%3E%3Ccircle cx='246' cy='48' r='44'/%3E%3Ccircle cx='308' cy='62' r='36'/%3E%3Ccircle cx='358' cy='72' r='26'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* Fades the art on a colored panel into its fill instead of letting it end
+     on a rectangle edge. See `.panel-art`. */
+  --panel-art-fade: linear-gradient(to right, transparent 0%, #000 46%),
+    linear-gradient(to top, transparent 0%, #000 20%);
+
+  /* Two hero colors, not one: a sky blue and a bubblegum pink. Blue leads
+     (primary actions, the lesson-hub banner); pink is the counterweight that
+     keeps the site from reading as a single-hue gradient — it takes the second
+     CTA in a pair, the emphasis word in a headline, the social chips.
+
+     These are deliberately NOT the character tokens below. `--color-pinki` is
+     Pinki's identity; `--accent` is the brand's. Recoloring the mascot must
+     never recolor the site, which is the same reason the headline owns its own
+     `--color-head-*` pair.
+
+     `--brand` was purple (`#6d55e0`) until it was swapped to sky blue. The
+     home page's Learn panel (`data/home-paths.ts`) is the one deliberate
+     exception — it keeps the old purple hardcoded rather than following this
+     token, so it doesn't move when `--brand` does. */
+  --brand: #1c86e0;
+  --brand-dark: #124f7d;
+  --brand-soft: #e0f2fe;
+
+  --accent: #f2569b;
+  --accent-dark: #c8306f;
+
+  /* **The colour of the section you are standing in.** Each route sets these
+     three on its own `<main>` and everything section-coloured inside reads
+     them instead of naming a colour itself — today that is `BackButton`, on
+     all seven pages that have one. Pinki's hub is pink, the puzzles are
+     green, Memory Match is gold, and Nova's and Bloo's hubs will be right by
+     default the day they open, because the route hands over the character's
+     accent rather than the button reaching for one.
+
+     The default is the brand's accent pink, which is what any page that
+     doesn't set them gets — the value every back button used to hardcode, so
+     an unclaimed page looks exactly as it did.
+
+     `--page-accent-ink` is what sits ON the face, and it is not always white:
+     gold is the one face on the site pale enough that white type disappears
+     on it (the same call Memory Match's CTA button and the puzzle hint chip
+     already make), so those pages hand over `--color-ink`. */
+  --page-accent-color: var(--accent);
+  --page-accent-edge: var(--accent-dark);
+  --page-accent-ink: #fff;
+
+  /* Every shadow on the site is a tint of this, never a neutral grey — a
+     grey shadow on a tinted ground reads as dirt. Still the old purple-leaning
+     triple from when the ground was lavender — the ground moved to a pale
+     blue tint and this wasn't asked to follow, so shadows are very slightly
+     off-hue from the ground now. Not touched without being asked; revisit if
+     it reads as mismatched in the browser. */
+  --shadow-hue: 92 78 190;
+
+  --foreground: #2f2a52;
+
+  /* Pinki — warm bubblegum, not a cold pink. */
+  --color-pinki: #f76fa8;
+  --color-pinki-dark: #c94a7e;
+
+  /* Nova — cream body, lavender world. */
+  --color-nova: #9b86e0;
+  --color-nova-dark: #6b54b8;
+
+  /* Bloo — light sky, not navy. */
+  --color-bloo: #6bb8f0;
+  --color-bloo-dark: #2f86c4;
+
+  /* The chalk on a friend's board — what is learned, the next lesson's
+     ring, the stars: Pinki's pink unless the page sets its friend's own
+     (`classroomStyle`, `data/classroom.ts`). */
+  --chalk-accent: #ffb0d4;
+  --chalk-glow: #ff9ec8;
+
+  /* ---------------------------------------------------------------
+     The old lesson subjects' hues — Letters violet, Colors blue, Shapes
+     amber — kept as tones: the puzzles' stages borrow all three, the
+     clay word its amber. Deliberately NOT the character tokens above.
+     Same separation as `--color-head-*`: the values sit in the family,
+     the tokens don't.
+     --------------------------------------------------------------- */
+  --color-subject-letters: #9b7ce8;
+  --color-subject-letters-dark: #6845b8;
+
+  --color-subject-colors: #4fa9ef;
+  --color-subject-colors-dark: #1f6fb0;
+
+  --color-subject-shapes: #f7a83c;
+  --color-subject-shapes-dark: #c2701a;
+
+  /* Green means GO, and only that: the button that carries the child forward
+     once a step is passed. Deliberately outside the brand pair — blue leads
+     ordinary primary actions, this one is reserved for "you got it, continue",
+     so it never appears on a step that isn't finished. */
+  --color-go: #35b567;
+  --color-go-dark: #197a43;
+
+  /* A deliberate, scoped exception to "nothing on this site marks an answer
+     wrong in color" — the trace board's own miss flash, added on direct
+     request so a child sees the failed stroke clearly before it clears
+     itself. Soft coral, not an alarming stop-sign red, to stay in the
+     palette's family. Nowhere else on the site should reach for this. */
+  --color-miss: #f2685f;
+
+  /* The gold horns are the one feature all three characters share, so
+     gold is the signature accent: it marks what's active/unlocked
+     (borders, badges, dividers) and never fills a large surface. */
+  --color-gold: #f7c948;
+  --color-gold-dark: #c9891a;
+
+  /* **Three STATES of the same gold, not twelve shades of it.** Memory
+     Match's level cards are coloured by what a card IS, never by where it
+     sits in the list: finished cards all wear the base gold above, the one
+     level to play next wears `-deep`, and every locked level wears `-quiet`.
+     So the colour is a fact a child can read — done / open / shut — rather
+     than a gradient down the page.
+
+     They were a per-level ladder for exactly one round (1–4 light, 5–8 base,
+     9–12 deep, four to a rung) and that was reverted: a shade that changes
+     with the level number is decoration, because nothing about the card
+     tells you which rung it is on. `--color-gold-soft`, the light end of
+     that ladder, is deleted with it. The deep pair survived because it now
+     means something.
+
+     Both are mixed FROM the base pair, never picked by eye — one hue at
+     three depths, and recolouring `--color-gold` once moves all of them. */
+  --color-gold-deep: color-mix(in srgb, var(--color-gold) 72%, var(--color-gold-dark));
+  --color-gold-deep-dark: color-mix(in srgb, var(--color-gold-dark) 78%, #000);
+  /* Shut: the gold drained into the site's own dormant tone, so a locked
+     card reads as the same material resting rather than as a different
+     colour. Every locked level is this exact pair — no ladder here either. */
+  --color-gold-quiet: color-mix(in srgb, var(--color-gold) 30%, var(--color-locked));
+  --color-gold-quiet-dark: color-mix(in srgb, var(--color-gold-dark) 26%, var(--color-locked-dark));
+
+  /* The "next to play" card's own "Next" pill (`memory-grid.tsx`) used to sit
+     in `--color-gold-deep-dark`, the SAME gold family as the card underneath
+     it — a dark-brown-ish gold on a golden-yellow card, which reads as low
+     contrast next to the ✓ and 🔒 marks the other two states use (both
+     genuinely different hues from gold). A bright, warm orange instead: same
+     temperature as the gold family so it still belongs on this page, but far
+     enough off gold's own hue and considerably lighter/more saturated that it
+     actually pops as "look here" rather than blending into the card. */
+  --color-gold-glow: #ffa733;
+
+  /* The word "black" in black clay letters (Colors course). On the dark
+     theme's card black letters vanish, so there they lift a little and
+     take a pale edge to read by. */
+  --color-letter-black: #3a3640;
+  --color-letter-black-edge: #1b1820;
+
+  /* Deep violet, sampled from the eyes — every piece of text on the site. */
+  --color-ink: #2f2a52;
+  /* The SAME violet, but never overridden in dark mode — unlike `--color-ink`
+     itself (see `[data-theme="dark"]` below, where it flips light so body
+     text stays readable on a dark ground). This is for the opposite case:
+     text/icons sitting on a face that does NOT move with the theme (a gold
+     button, a chip pinned to a fixed pale value like `.btn3d--icon-accent`
+     or `.btn3d--clay-white`) still need genuinely DARK content regardless of
+     page theme, and reading `--color-ink` there would silently go light the
+     moment dark mode turns on — that bug is exactly why this token exists.
+     Every `tone.text`/`ink` prop on a gold or pinned-pale face uses this
+     one, never `--color-ink`. */
+  --color-ink-fixed: #2f2a52;
+  --color-ink-soft: #7b76a3;
+
+  /* Locked state: warm-neutral, so it reads as "resting" rather than
+     as a cold grey foreign to the palette. */
+  --color-locked: #ebe6f2;
+  --color-locked-dark: #cdc5db;
+  --color-locked-text: #9990ad;
+
+  /* Headline colors are deliberately independent of the character accent
+     tokens — recoloring a mascot must never recolor the headline. They're
+     tuned to sit in the same family, but they are not the same tokens.
+
+     `--color-head-grow` is a literal snapshot of `--brand`'s current value, by
+     request — "World." in the hero should read as the same blue as the
+     buttons right now. It's still its own token, not `var(--brand)`: a future
+     brand recolor won't drag the headline along unless asked again. */
+  --color-head-play: #f2569b;
+  --color-head-grow: #1c86e0;
+}
+
+/* Colors are consumed as `var(--color-*)` arbitrary values throughout, never as
+   generated utilities (`bg-pinki` etc.), so only the font is mapped into the
+   Tailwind theme. Keep it that way — one system, not two. */
+@theme inline {
+  --font-sans: Fredoka, var(--font-rtl), var(--font-fredoka);
+}
+
+/* The page never bounces past its ends: a rubber-band scroll
+   dragged the sticky header off the top and showed what is behind it. */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Flat, single-color ground. The pastel radial gradients that used to live
+   here are gone on purpose: a neumorphic surface has to be an even color, or
+   the raised/inset shadows stop reading as one consistent light source and
+   the whole effect collapses. The color comes from the surface, not from a
+   gradient painted on top of it. */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  /* Fredoka has no Arabic glyphs, so `--font-rtl` is the face the browser
+     reaches for per-character on any Arabic-script run — Latin text keeps
+     rendering in Fredoka throughout, which is what keeps "Pinki" and every
+     digit looking the same in all three locales.
+
+     **The bare `Fredoka` first, then `var(--font-fredoka)` further down, is
+     deliberate and is the whole reason this works.** That variable expands to
+     `"Fredoka", "Fredoka Fallback"`, and next/font backs the fallback with
+     `src: local(Arial)` — a font that HAS full Arabic coverage, so putting
+     the variable first meant Arial served every Arabic and Kurdish character
+     and `--font-rtl` was never reached (see `layout.tsx`). Naming the real
+     family first gives Latin its font, `--font-rtl` then catches the
+     Arabic-script run, and the variable still trails behind so the
+     metric-matched fallback keeps doing its job before Fredoka loads. */
+  font-family: Fredoka, var(--font-rtl), var(--font-fredoka), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+/* Which Arabic-script face serves the current language. Baloo Bhaijaan 2 is
+   rounded and playful and is the right partner for Fredoka, but it has no
+   glyph for ڕ ڵ ێ ۆ — so Kurdish, which needs all four, gets Vazirmatn
+   instead (see `layout.tsx`). One custom property switched on `<html lang>`,
+   which `layout.tsx` already sets from the locale cookie: no component knows
+   about fonts, and neither locale downloads the other's face. */
+:root {
+  --font-rtl: var(--font-baloo);
+}
+
+html[lang="ku"] {
+  --font-rtl: var(--font-kurdish);
+}
+
+/* ---------------------------------------------------------------
+   The language switcher's fan of circles.
+
+   Pressing the header's language chip does NOT open a panel: three more
+   circles the same size as the chip itself come out of it — to its LEFT on a
+   desktop, DOWNWARDS on a phone, where there is no room beside it. Each one
+   is a language written in its own script, so the choice needs no label.
+
+   `--lang-from` is where a circle starts: back toward the chip it came out
+   of, which is the whole reason the two layouts need different values. The
+   overshoot at 60% is the clay bounce every other press on this site has.
+
+   `backwards`, not `both`: the `from` values have to apply during the
+   stagger delay (or the circles flash in at full size first), but the
+   animation must RELEASE `translate` when it ends, since `.btn3d:active`
+   animates the same property for the press.
+   --------------------------------------------------------------- */
+.lang-orb {
+  --lang-from: 0 -2.25rem;
+  animation: lang-pop 0.42s cubic-bezier(0.34, 1.32, 0.64, 1) backwards;
+}
+
+/* Phone only: one clay plate behind the three circles. There, the fan drops
+   over whatever the page happens to be showing, and three white clay circles
+   on a saturated heading read as three loose buttons rather than one control.
+   The plate is what gathers them — it replaced a thin accent ring drawn on
+   each unchosen circle, which did the same job one circle at a time and put
+   a second pink outline next to the chip's own.
+
+   From `sm` the fan opens inside the header's solid white bar, with nothing
+   behind it to fight, so the plate is switched off rather than restated. */
+.lang-fan {
+  padding: 0.5rem;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow:
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+@media (width >= 40rem) {
+  .lang-fan {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+@media (width >= 40rem) {
+  .lang-orb {
+    --lang-from: 2.75rem 0;
+  }
+}
+
+@keyframes lang-pop {
+  from {
+    opacity: 0;
+    scale: 0.3;
+    translate: var(--lang-from);
+  }
+
+  60% {
+    opacity: 1;
+    scale: 1.08;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+/* An English value (a character name, a number, a taught word) sitting
+   inside an Arabic sentence needs its own bidi run, or the browser can
+   reorder the whole line around it — "Learn With Pinki" rendering as
+   "Pinki Learn With" once the surrounding words are Arabic. `format()`
+   (`lib/format-dict.ts`) already isolates every interpolated value with
+   Unicode FSI/PDI marks, which is the same isolation this gives an
+   element — this rule covers any `<bdi>` used directly in JSX on top of
+   that. */
+bdi {
+  unicode-bidi: isolate;
+}
+
+/* ---------------------------------------------------------------
+   Dark mode — SITE-WIDE. `data-theme="dark"` lands on `<html>` itself
+   (`ThemeSync`, `components/ui/theme-sync.tsx`, syncing
+   `store/theme.ts`'s `theme`; the header's Moon/Sun `ThemeToggle` is what
+   sets it), so every selector below reaches every page. A `beforeInteractive`
+   inline script in `layout.tsx` sets the same attribute from `localStorage`
+   before the first paint, so a returning visitor never sees a flash of the
+   wrong theme.
+
+   Absolute black (`#000`/`#0A0A0A`) is deliberately avoided: claymorphism
+   reads from the GAP between an inset highlight and an inset shade, and a
+   true black leaves no room on either side of it — the inflated look goes
+   flat. `--background` is a deep, quiet violet-navy instead, one step
+   DARKER than `--surface`, so a card still visibly lifts off the page the
+   same way a white card lifts off the pale ground in light mode.
+
+   `--shadow-hue: 0 0 0` is the one line doing the most work here: every
+   neutral shadow on the site is written as `rgb(var(--shadow-hue) / X%)`
+   (`.card`, `.card-lift:hover`, `.card-clay-white`,
+   `.btn3d--calm` and its hover/active states, the memory
+   clock, the level badge, and more) — flipping the token from its
+   purple-leaning triple to black recolors all of them from "a tinted shadow
+   tuned for a pale ground" (reads as almost nothing against a dark one) to
+   a real dark shadow, at each rule's own already-tuned opacity, with zero
+   need to touch every consumer individually.
+
+   What's still handled per-rule below is only what `--shadow-hue` can't
+   reach: LITERAL white insets (highlights meant to read as light bouncing
+   off a pale surface — meaningless once that surface goes dark navy) and
+   the few places that assume a pale ground outright (the glow halos). */
+[data-theme="dark"] {
+  --background: #1e1b2e;
+  --surface: #2a2b3d;
+  --foreground: #ece8f7;
+
+  --color-letter-black: #4a4553;
+  --color-letter-black-edge: #9c95b5;
+
+  --color-ink: #ece8f7;
+  --color-ink-soft: #b3addc;
+
+  --shadow-hue: 0 0 0;
+
+  /* Raised a touch off their light-mode values: the same hue read straight
+     against a near-black ground comes across muddier than it does against
+     a pale one — especially where it's carrying TEXT (the "Meet the
+     friends" eyebrow, the scroll cue label, nav labels) rather than sitting
+     as a solid button fill, which reads fine either way. */
+  --brand: #4dabf5;
+  --accent: #ff7fb8;
+
+  /* Memory Match's "locked" gold is `--color-gold` mixed INTO
+     `--color-locked` (light lavender, unchanged in dark mode — see the note
+     on that token further down), so left alone it stays a pale cream
+     regardless of theme: quiet and recessive against the light ground it
+     was tuned for, but the single BRIGHTEST thing on a dark page — exactly
+     backwards from "dormant." Mixed into `--surface` here instead, so it
+     goes the same direction `--color-locked` does in light mode: a muted
+     step off the card's own fill, not off a token that stopped moving. */
+  --color-gold-quiet: color-mix(in srgb, var(--color-gold) 22%, var(--surface));
+  --color-gold-quiet-dark: color-mix(in srgb, var(--color-gold-dark) 30%, var(--surface));
+}
+
+/* The ground itself carries the site's grain in dark mode — direct request,
+   and a deliberate exception to the light-mode rule ("the site's near-white
+   `--background` deliberately carries no grain," `.tile-grain`'s own
+   comment): a near-white fill gives the overlay blend nothing to push
+   against, but a deep navy one does, so the grain actually reads as
+   material here instead of vanishing. `background-image`/`-size`/
+   `-blend-mode` only — `body`'s own `background-color` (via the `background`
+   shorthand) is untouched, so it still resolves through the new
+   `--background` above with no separate override needed. */
+[data-theme="dark"] body {
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+}
+
+/* `.card-clay-white`'s face is `.card`'s own `background: var(--surface)`,
+   which just went dark navy — its LITERAL 90% white highlight (tuned for a
+   white face) would read as an unmotivated bright streak across the top of
+   a dark card instead of a highlight. Redeclared rather than patched: a
+   `box-shadow` can't be partially overridden, so the whole stack is
+   repeated here with only the first (highlight) layer's opacity changed —
+   the rest still reads `rgb(var(--shadow-hue) / X%)` at the SAME
+   percentages as the light-mode rule, which resolve to a real dark shadow
+   now that `--shadow-hue` is flipped above. */
+[data-theme="dark"] .card-clay-white {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+[data-theme="dark"] .card-clay-white.card-lift:hover {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 24%),
+    0 28px 52px -18px rgb(var(--shadow-hue) / 38%),
+    0 6px 16px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* `.btn3d--clay-white` reads its face from `--surface` too, but every place
+   it's used (the lesson hub's back/achievements buttons, the home page's
+   two panel buttons, a locked lesson card's padlock chip) is a WHITE CHIP
+   sitting on a saturated colored surface, not on the page ground — that job
+   doesn't change with the page theme, so its face is pinned to a fixed pale
+   value instead of following `--surface` down into navy. Its own box-shadow
+   needs no override: the literal white highlight stays appropriate for a
+   face that's still pale, and the shade/outer shadow already flip to black
+   for free via `--shadow-hue`. */
+[data-theme="dark"] .btn3d--clay-white {
+  background-color: #f4f2fb;
+}
+
+/* Hover pin, dark mode: without this, `.btn3d--clay-white:hover`'s own
+   `background-color: var(--surface)` (added to stop the chip darkening
+   toward black on hover — see that rule's comment) resolves `--surface` to
+   the dark ground here and undoes this base rule's pale pin the moment the
+   pointer is over the chip. Same value as the base rule above, just
+   restated for `:hover`, at a specificity high enough (the `[data-theme]`
+   attribute plus `:hover:not(:disabled)`) to beat both the light-mode hover
+   rule and this file's plain `.btn3d--clay-white` base. */
+[data-theme="dark"] .btn3d--clay-white:hover:not(:disabled) {
+  background-color: #f4f2fb;
+}
+
+/* Clouds go dusk rather than white — still clearly the lightest thing in
+   the sky, but never a glare. Mixed off `--surface` (the dark card colour)
+   so they stay in the same family as every other raised surface on a dark
+   page. The first pass mixed too little colour in and the bank came out a
+   flat mid-grey that read as rock rather than cloud; these are tuned against
+   a dark-mode screenshot, not by arithmetic.
+
+   The per-lobe highlights are dimmed HARD here — 15% against daylight's
+   92%, not the third that was tried first. A white spot reads very
+   differently on a white face than on a grey-blue one: in daylight it melts
+   into the face and only shapes it, at night it sits ON it, and at a third
+   strength every lobe read as a separate polished sphere — a row of eggs
+   rather than one cloud. Only the two strength variables are overridden, so
+   every variant keeps its own lobe POSITIONS. */
+/* **On `.cloud`, NOT `.cloud-body`** — and that is a spec detail, not a
+   preference. `var()` inside a custom property is substituted when that
+   property is computed on the element DECLARING it, and `--cloud-lobes` is
+   declared on `.cloud`; `.cloud-body` only inherits the already-resolved
+   string. Setting these two on the body therefore changed nothing at all,
+   and the first dark pass shipped looking identical to daylight. */
+[data-theme="dark"] .cloud {
+  --cloud-hi: 15%;
+  --cloud-hi-soft: 9%;
+}
+
+/* The night ramp is computed ONCE here, and each tint below only supplies a
+   pale hue for it. Written per-tint at first, and the four drifted apart:
+   the white cloud was mixed from an already-pale value while the other three
+   were mixed from the SATURATED character tokens, so on a navy sky the blue
+   cloud was nearly invisible while the white one sat bright on top of it.
+   Clouds should differ in HUE at night, never in whether you can see them. */
+[data-theme="dark"] .cloud {
+  --cloud-face: color-mix(in srgb, var(--cloud-pale) 84%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--cloud-pale) 64%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--cloud-pale) 44%, var(--surface));
+}
+
+[data-theme="dark"] .cloud--white {
+  --cloud-pale: #dfeafb;
+}
+
+[data-theme="dark"] .cloud--sky {
+  --cloud-pale: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
+}
+
+[data-theme="dark"] .cloud--pink {
+  --cloud-pale: color-mix(in srgb, var(--color-pinki) 38%, #ffffff);
+}
+
+[data-theme="dark"] .cloud--lavender {
+  --cloud-pale: color-mix(in srgb, var(--color-nova) 40%, #ffffff);
+}
+
+/* Same specificity as the dark `.cloud` ramp above (attribute + one class),
+   so it has to sit after it to win on source order alone. Reads whichever
+   `--cloud-pale` that stop's own tint rule
+   already set (the first stop is tint "white", so `#dfeafb`), just mixed in
+   at a much higher share and with brighter lobes, so "the open one" still
+   reads brighter than every other cloud at night, not merely less dim. */
+[data-theme="dark"] .cloud--active {
+  --cloud-hi: 90%;
+  --cloud-hi-soft: 70%;
+  --cloud-face: color-mix(in srgb, var(--cloud-pale) 96%, var(--surface));
+  --cloud-shade: color-mix(in srgb, var(--cloud-pale) 78%, var(--surface));
+  --cloud-deep: color-mix(in srgb, var(--cloud-pale) 55%, var(--surface));
+}
+
+/* Header chrome, once dark mode is on: `--brand`/`--accent` were both raised
+   lighter above for legibility as TEXT elsewhere on the page — but the
+   language chip, the dark-mode toggle, "Join Edenic World" (plain `.btn3d`,
+   `--brand` face) and the active `MainNav` pill (`.clay` + `text-white`, not
+   a `.btn3d` at all — the selector list has to name it separately) all use
+   those same tokens as a BUTTON FACE, and a lighter face is exactly the case
+   where white content starts to wash out. Scoped to `header` only, not every
+   `.btn3d` on the site: everywhere else a colored button's face didn't
+   change (only `--brand`/`--accent`, both header-only faces here, moved).
+
+   **`--color-ink-fixed`, not `--color-ink`.** The first version of this used
+   `--color-ink`, which flips LIGHT in dark mode (it's body text, further up
+   in this same block) — so "make the icon black" silently produced a pale
+   lavender icon instead, direct request corrected the same round. Unlayered,
+   so the `a.clay` branch wins over the Tailwind `text-white` utility on that
+   pill regardless of source order. */
+[data-theme="dark"] header .btn3d,
+[data-theme="dark"] header a.clay {
+  color: var(--color-ink-fixed);
+}
+
+/* Two more literal-white-highlight cases, same reasoning as `.card-clay-white`
+   above: both faces read `var(--surface)` for their fill (a Memory Match card
+   face-up, the clock's own centre disc), which just went dark navy, so their
+   90%/95% highlights need the same dim-instead-of-redeclare-everything
+   treatment — only the first shadow layer changes, the rest already flips to
+   black for free via `--shadow-hue`. */
+[data-theme="dark"] .memory-face--front {
+  box-shadow:
+    inset 0 8px 13px -6px rgb(255 255 255 / 6%),
+    inset 0 -9px 14px -6px rgb(var(--shadow-hue) / 20%),
+    0 14px 28px -12px rgb(var(--shadow-hue) / 32%);
+}
+
+/* `.memory-card.is-matched .memory-face--front` (3 classes) outranks the
+   plain dark override above (attribute + 1 class) on specificity alone, so a
+   found pair would otherwise fall back to the light-tuned 90% highlight the
+   instant it matched. Same dim, gold ring layer untouched. */
+[data-theme="dark"] .memory-card.is-matched .memory-face--front {
+  box-shadow:
+    inset 0 0 0 3px var(--color-gold),
+    inset 0 8px 13px -6px rgb(255 255 255 / 6%),
+    inset 0 -9px 14px -6px color-mix(in srgb, var(--color-gold-dark) 30%, transparent),
+    0 14px 28px -12px color-mix(in srgb, var(--color-gold-dark) 45%, transparent);
+}
+
+[data-theme="dark"] .memory-clock-face {
+  box-shadow:
+    inset 0 8px 13px -5px rgb(255 255 255 / 8%),
+    inset 0 -9px 15px -5px color-mix(in srgb, var(--color-gold-dark) 32%, transparent),
+    0 14px 26px -12px color-mix(in srgb, var(--color-gold-dark) 50%, transparent);
+}
+
+/* `.memory-clock.is-spent .memory-clock-face` (3 classes) outranks the plain
+   dark override above the same way the matched memory card does — the spent
+   clock's face would otherwise revert to the light-tuned 95% highlight the
+   moment the timer runs out. */
+[data-theme="dark"] .memory-clock.is-spent .memory-clock-face {
+  box-shadow:
+    inset 0 8px 13px -5px rgb(255 255 255 / 8%),
+    inset 0 -9px 15px -5px rgb(var(--shadow-hue) / 18%),
+    0 12px 22px -12px rgb(var(--shadow-hue) / 30%);
+}
+
+/* `paths-section.tsx`'s two "Start learning"/"Start playing" buttons — pale
+   `.btn3d--clay-white` chips in light mode (correct there: a white chip
+   reads against the panel's own saturated color). Direct request for dark
+   mode specifically: these two become a dark-purple colored clay button
+   instead, white text. `#4a34b0` is the Learn panel's own `edge` value
+   (`data/home-paths.ts`) — the site's existing "dark purple," not a new hue.
+   `.home-path-btn` is what tags just these two (added in `paths-section.tsx`)
+   so the lesson hub's own `.btn3d--clay-white` chips elsewhere are untouched;
+   combined with the class for specificity, since a bare
+   `[data-theme="dark"] .home-path-btn` alone would tie with the plain
+   `.btn3d--clay-white` dark override above and lose on source order. */
+[data-theme="dark"] .home-path-btn.btn3d--clay-white {
+  background-color: #4a34b0;
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: #fff;
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 30%),
+    inset 0 -7px 11px -4px color-mix(in srgb, #2c1f75 60%, transparent),
+    0 14px 26px -10px color-mix(in srgb, #2c1f75 55%, transparent);
+  transition: background-color 0.2s ease;
+}
+
+[data-theme="dark"] .home-path-btn.btn3d--clay-white:hover:not(:disabled) {
+  background-color: color-mix(in srgb, #4a34b0 85%, black 15%);
+}
+
+[data-theme="dark"] .home-path-btn.btn3d--clay-white:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow:
+    inset 0 7px 12px -4px color-mix(in srgb, #2c1f75 65%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 20%),
+    0 5px 12px -8px color-mix(in srgb, #2c1f75 50%, transparent);
+}
+
+/* `PuzzleCta`'s "Puzzle Time" button — direct request: black/ink text in
+   dark mode instead of the white it wears in light mode. `--color-go`
+   itself is unchanged by theme (a colored clay face is self-consistent
+   regardless of page ground, same as every other colored `.btn3d`), so only
+   the text needs to move. `--color-ink-fixed`, not `--color-ink` — same bug
+   as the header rule above, corrected the same round: `--color-ink` flips
+   light in dark mode, which would have made this text paler instead of
+   black. `MemoryMatchCta`'s button reads `var(--color-ink-fixed)` too now
+   (`memory-match-cta.tsx`) — it LOOKED already-correct in light mode (where
+   `--color-ink` happens to already be dark) but was carrying the identical
+   bug, invisible until dark mode actually shipped. */
+[data-theme="dark"] .puzzle-cta-btn {
+  color: var(--color-ink-fixed);
+}
