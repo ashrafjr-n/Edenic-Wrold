@@ -1,0 +1,891 @@
+/* ---------------------------------------------------------------
+   Flat pill button.
+
+   No bevel, no inner highlight, no stacked edge, no "3D" — those all read
+   as dated next to the character renders. A solid face, a generous radius
+   and one soft shadow tinted by the button's own color is the whole design.
+
+   Two variants:
+   - default (`playful`) — colored face, grain, colored shadow. Kid-facing CTAs.
+   - `--calm` — a plain white chip, no color and no grain. Chrome.
+
+   NOTHING here moves on hover. Buttons used to lift 2px and that was removed
+   deliberately — hover deepens the shadow, and that is the whole cue. The
+   press-down on `:active` stays; that's touch feedback, not hover.
+
+   `--btn-face`/`--btn-edge` are supplied per tone; the shadow derives from
+   them with color-mix(), so a new tone needs no new CSS.
+   --------------------------------------------------------------- */
+
+.btn3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--btn-text, #fff);
+  background-color: var(--btn-face);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  /* Clay: inner highlight along the top, inner shade along the bottom, one
+     wide tinted drop shadow. The pill reads as soft and slightly inflated —
+     the same material the characters are modelled in. */
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--btn-edge) 60%, transparent),
+    0 12px 22px -8px color-mix(in srgb, var(--btn-edge) 60%, transparent);
+  transition:
+    background-color 0.2s ease,
+    translate 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+/* Hover: only the face color darkens, smoothly, via the `background-color`
+   transition on the base rule above. Nothing else — no `box-shadow` declared
+   here on purpose, so it stays exactly the rest-state shadow from `.btn3d`. */
+.btn3d:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--btn-face) 85%, black 15%);
+}
+
+/* Pressed: the inner shade flips to the top so the clay looks squashed in. */
+.btn3d:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow:
+    inset 0 7px 12px -4px color-mix(in srgb, var(--btn-edge) 65%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 30%),
+    0 5px 12px -8px color-mix(in srgb, var(--btn-edge) 50%, transparent);
+}
+
+/* Declared after the base hover/active rules so it wins on source order.
+   Chrome is a plain white chip — the same material as a card, just small. No
+   color, so it never competes with the purple CTA sitting next to it, and no
+   grain either: the tooth is for colored surfaces only. */
+.btn3d--calm {
+  font-weight: 600;
+  background-color: var(--surface);
+  background-image: none;
+  box-shadow:
+    0 10px 22px -12px rgb(var(--shadow-hue) / 34%),
+    0 2px 6px -3px rgb(var(--shadow-hue) / 18%);
+}
+
+.btn3d--calm:hover:not(:disabled) {
+  box-shadow:
+    0 14px 28px -12px rgb(var(--shadow-hue) / 42%),
+    0 3px 8px -3px rgb(var(--shadow-hue) / 22%);
+}
+
+.btn3d--calm:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow: 0 4px 10px -6px rgb(var(--shadow-hue) / 30%);
+}
+
+/* The language chip AND the dark-mode toggle are always accent pink, grain
+   and all — not just on hover, and not just in light mode. The toggle wore a
+   gold variant for one round, swapping its whole FACE once dark mode turned
+   on; reverted on direct request — the face stays pink always, only the
+   icon/text INSIDE it is allowed to change (see the `[data-theme="dark"]
+   header .btn3d` rule further down, which uses `--color-ink-fixed`, not
+   `--color-ink` — the bug that round shipped with, since `--color-ink`
+   itself goes light in dark mode and silently undid the "make it black"
+   request). Declared after `.btn3d--calm` so it wins on source order. */
+.btn3d--icon-accent {
+  background-color: var(--accent);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  color: #fff;
+  box-shadow:
+    inset 0 6px 10px -4px rgb(255 255 255 / 45%),
+    inset 0 -7px 11px -4px color-mix(in srgb, var(--accent-dark) 60%, transparent),
+    0 14px 26px -10px color-mix(in srgb, var(--accent-dark) 55%, transparent);
+  /* `.btn3d--calm` (which this overrides) declares no `background-color`
+     transition, so this needs its own for the hover darken below to fade
+     smoothly. */
+  transition: background-color 0.2s ease;
+}
+
+/* Same hover language as the base `.btn3d`: only the face darkens, shadow
+   untouched. */
+.btn3d--icon-accent:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--accent) 85%, black 15%);
+}
+
+/* A WHITE clay chip — the same inflated material as a colored `.btn3d`
+   (inner top highlight, inner bottom shade, wide tinted drop shadow), just
+   with no hue. `.btn3d--calm` is deliberately flatter: a card-like chip that
+   reads fine on the site's pale ground; a flat white chip beside a saturated
+   surface reads as a sticker instead of as clay, so the chrome that sits
+   there uses this instead — the achievements crown on every `/learn` route,
+   and the padlock chip on a locked lesson card. (The BACK buttons wore this
+   too until they went accent pink, which is now the one thing telling the
+   two header chips apart at a glance.)
+
+   The inner bottom shade is what sells it — a white surface can't darken its
+   own face, so the shading is the only cue that the shape is inflated.
+   Declared after `.btn3d--calm` so it wins on source order. */
+.btn3d--clay-white {
+  background-color: var(--surface);
+  background-image: none;
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -5px rgb(var(--shadow-hue) / 22%),
+    0 14px 26px -10px rgb(var(--shadow-hue) / 45%);
+  transition: box-shadow 0.2s ease;
+}
+
+/* No face color to darken, so hover deepens the shading instead — same
+   choice `.btn3d--calm` already makes for the same reason. `background-color`
+   has to be restated here: the base `.btn3d:hover` rule (equal specificity,
+   earlier in source) sets it to a 15%-black mix of `--btn-face`, and since
+   this rule didn't declare that property at all, that darkening mix was
+   winning by default — a white chip (the language switcher's unchosen
+   circles among them) went visibly grey/black on hover instead of staying
+   white. Pinning it back to `--surface` here is what the comment above
+   already claimed was true.
+
+   `var(--surface)` is a LIGHT-MODE-ONLY fix, not a theme-proof one — in dark
+   mode `--surface` itself resolves to the dark ground, so this rule would
+   otherwise flip the same white chip dark again on hover the moment dark
+   mode is on (the exact bug it exists to fix, reappearing one theme over).
+   The dark-mode hover pin lives next to `[data-theme="dark"]
+   .btn3d--clay-white`'s own pinned-pale base rule, not here. */
+.btn3d--clay-white:hover:not(:disabled) {
+  background-color: var(--surface);
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -9px 13px -5px rgb(var(--shadow-hue) / 28%),
+    0 16px 30px -10px rgb(var(--shadow-hue) / 52%);
+}
+
+/* Pressed: the inner shade flips to the top, exactly like `.btn3d:active`. */
+.btn3d--clay-white:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow:
+    inset 0 8px 12px -5px rgb(var(--shadow-hue) / 26%),
+    inset 0 -6px 10px -5px rgb(255 255 255 / 70%),
+    0 6px 14px -8px rgb(var(--shadow-hue) / 38%);
+}
+
+.btn3d:focus-visible {
+  outline: 3px solid rgb(61 36 114 / 45%);
+  outline-offset: 3px;
+}
+
+/* Locked keeps the clay but turns it the other way up: the grain stays, and
+   the shading is INSET on the top edge with the highlight underneath — the
+   pill reads as pressed into the page instead of standing out of it. There is
+   still no outer drop shadow, which is what makes "inactive" land before the
+   label does; it just no longer reads as a flat silver slab, the one dead
+   material on a site that has no dead materials anywhere else. */
+.btn3d:disabled {
+  background-color: var(--color-locked);
+  background-image: var(--noise);
+  background-size: 180px 180px;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 6px 11px -4px color-mix(in srgb, var(--color-locked-dark) 85%, transparent),
+    inset 0 -5px 9px -4px rgb(255 255 255 / 65%);
+}
+
+/* ---------------------------------------------------------------
+   The "Again" / "Try Again" and "Next" buttons.
+
+   TWO buttons, ONE recipe (`components/ui/morph-button.tsx`). Every screen
+   that offers a replay carries the first — the trace board, the lost balloon
+   round, the celebration screen, a finished puzzle, a finished memory level —
+   and every screen with a way onward carries the second. The design is the
+   header's own: the dark-mode chip spins its icon a full turn on every press,
+   and that acknowledgement is what this borrows.
+
+   At rest each is a pill with an icon and a word. On press the word collapses
+   to nothing and the button's own side padding shrinks to match its height —
+   what is left is a disc exactly the size of the back button in the corner,
+   with the icon centred in it. **`AgainButton` also turns its icon a full
+   circle; `NextButton` deliberately does not** — an arrow that spun would say
+   "start over" in the one place that means the opposite (direct request).
+
+   The COLOUR is not declared here: both take the section's `--page-accent-*`
+   trio (`components/ui/back-button.tsx`) by default, the same way the back
+   button does, so a replay is Pinki's pink inside the numbers lesson without
+   any call site naming a colour. A caller passes its own tone where the
+   section colour is already spoken for by the button standing beside it.
+
+   Sizes are fixed HERE rather than by Tailwind at each call site, because the
+   circle is arithmetic: the pressed padding is exactly
+   `(block-size - icon width) / 2`, so a call site free to set `px-6` could
+   only ever get an oval. Change one of these four numbers and change its
+   pair with it.
+   --------------------------------------------------------------- */
+.morph-btn {
+  block-size: 3rem;
+  padding-inline: 1.5rem;
+  /* The icon-to-word gap lives on the LABEL (see below) so that it can
+     collapse with it — `.btn3d`'s own gap would survive the collapse and
+     leave the icon sitting off-centre in the finished circle. */
+  gap: 0;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  /* `.btn3d` already declares a `transition`, and this block is unlayered at
+     the same specificity, so the whole list has to be restated — dropping the
+     first four here would take the button's own hover and press with it. */
+  transition:
+    background-color 0.2s ease,
+    translate 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease,
+    padding 0.45s ease;
+}
+
+/* The turn itself, on `AgainButton` alone — `NextButton` renders this element
+   too but never changes its `rotate`. It is its own property in Tailwind v4
+   and in the cascade, so it composes with `.btn3d:active`'s press `translate`
+   instead of overwriting it, which is the same reason the header's chip
+   animates this and not `transform`. `inline-flex`, because a transform on a
+   non-replaced INLINE element does nothing at all. */
+.morph-btn__icon {
+  display: inline-flex;
+  transition: rotate 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* **A 1fr → 0fr grid track, not a `max-width`.** Collapsing a `max-width`
+   from a guessed ceiling spends the first part of the transition doing
+   nothing at all (until the ceiling drops below the text's real width), which
+   reads as a stutter, and the width it has to clear is different in all three
+   languages. A grid track interpolates from the label's OWN measured width,
+   so the collapse starts on the first frame everywhere. The inner span is
+   what actually clips — the track shrinking does not hide overflow by
+   itself. */
+.morph-btn__label {
+  display: grid;
+  grid-template-columns: 1fr;
+  transition:
+    grid-template-columns 0.45s ease,
+    padding 0.45s ease,
+    opacity 0.22s ease;
+}
+
+.morph-btn__label > span {
+  overflow: hidden;
+}
+
+/* The gap, on whichever side of the word the icon actually sits — `Again`
+   leads with its icon, `Next` trails with its arrow. **Physical `left`/
+   `right`, not `padding-inline-*`**: the site's layout never mirrors (see the
+   language-switcher notes), so the word keeps the same side of the icon in
+   every locale — but an Arabic label carries `dir="rtl"`, which would flip a
+   logical property onto the wrong side. */
+.morph-btn__label--trailing {
+  padding-left: 0.5rem;
+}
+
+.morph-btn__label--leading {
+  padding-right: 0.5rem;
+}
+
+.morph-btn.is-morphed {
+  /* (3rem − 1.25rem icon) / 2 — the pill lands exactly on a circle. */
+  padding-inline: 0.875rem;
+}
+
+.morph-btn.is-morphed .morph-btn__label {
+  grid-template-columns: 0fr;
+  padding-left: 0;
+  padding-right: 0;
+  opacity: 0;
+}
+
+@media (width >= 40rem) {
+  .morph-btn {
+    block-size: 3.5rem;
+    padding-inline: 1.75rem;
+    font-size: 1rem;
+  }
+
+  .morph-btn.is-morphed {
+    /* (3.5rem − 1.25rem) / 2. */
+    padding-inline: 1.125rem;
+  }
+}
+
+/* ---------------------------------------------------------------
+   "Watch me draw it."
+
+   The shape draws itself along the same centreline the child then traces,
+   so the demonstration and the guide can never disagree about how it is
+   drawn. The dash offset starts at the full path length and runs to 0 —
+   both are set inline from the measured length, in the strokes' own 0–100
+   units.
+   --------------------------------------------------------------- */
+/* **`--stroke-offset` is how a drawing with more than one stroke draws them
+   IN ORDER.** One `<path>` holding every stroke, joined by a `moveto`, does
+   not work: the dash pattern RESTARTS at every subpath, so every stroke
+   would be revealed at once. So each stroke is its own `<path>`, told how
+   much of the drawing comes BEFORE it out of the whole (`--stroke-length`).
+   The dash pattern is the drawing's full length on every one of them, and
+   the offset starts that stroke's own dash further back — it sits in the
+   gap until the pen reaches it and finishes exactly when the pen leaves it.
+   One shared animation; a one-stroke shape (every shape today) draws as
+   plainly as it looks.
+
+   **Both ends are handed over as finished numbers (`--stroke-from` /
+   `--stroke-to`), never assembled here with `calc()`.** Chrome leaves a
+   `calc()` in a keyframe unresolved — the computed value stays the literal
+   string `calc(226.246px)` — and then cannot interpolate it against a plain
+   number, so it swaps between the two keyframes discretely instead: the
+   drawing sat invisible for the whole draw and appeared complete in a single
+   frame. Measured with `getComputedStyle`, not guessed. Do the arithmetic in
+   `StrokeDemo` and keep these two values plain. */
+@keyframes stroke-draw {
+  0% {
+    stroke-dashoffset: var(--stroke-from, var(--stroke-length));
+  }
+  /* Drawn by 62%, then held: the finished shape has to sit still long
+     enough to be read before the loop starts over. A keyframe stop cannot be
+     a variable, so the hold is a fixed share of the cycle and the component
+     sizes the duration around it. */
+  62%,
+  100% {
+    stroke-dashoffset: var(--stroke-to, 0);
+  }
+}
+
+.stroke-draw {
+  stroke-dasharray: var(--stroke-length);
+  animation: stroke-draw var(--stroke-duration, 1.6s) ease-in-out
+    var(--stroke-delay, 0s) infinite;
+}
+
+/* The pencil tip riding the same path. Hidden unless `offset-path` is
+   supported — same reasoning as `.anim-reveal`: without the gate an
+   unsupporting browser parks it at the origin, in the corner, looking broken.
+   The line still draws itself either way. */
+.pen-tip {
+  display: none;
+}
+
+@supports (offset-path: path("M 0 0")) {
+  .pen-tip {
+    display: block;
+    offset-path: var(--pen-path);
+    offset-rotate: 0deg;
+    animation: pen-travel var(--stroke-duration, 1.6s) ease-in-out
+      var(--stroke-delay, 0s) infinite;
+  }
+}
+
+@keyframes pen-travel {
+  0% {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+  62% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  /* Gone during the hold — a pencil parked on the finished shape reads as
+     part of the shape. */
+  72%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* A right answer jumps rather than flashing a tick — the motion says "yes"
+   without a word, which is the whole approach on these pages. */
+@keyframes jump {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(0, -22px, 0) scale(1.06);
+  }
+  55% {
+    transform: translate3d(0, 0, 0) scale(0.98);
+  }
+  75% {
+    transform: translate3d(0, -8px, 0) scale(1.02);
+  }
+}
+
+.anim-jump {
+  animation: jump 0.7s cubic-bezier(0.3, 0.8, 0.4, 1);
+}
+
+/* The ring that pulses out of the "say it" button. There is no audio yet —
+   this is the slot it will play into, and it reads as sound on its own. */
+@keyframes say-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+.say-pulse {
+  animation: say-pulse 1.4s ease-out infinite;
+}
+
+/* A slower, fainter loop of the same ring — the invite before the first
+   press, not the "it's speaking now" cue. Its own keyframes rather than a
+   scaled-down `.say-pulse` so the peak opacity can be held down too, not
+   just the timing. */
+@keyframes say-pulse-invite {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.say-pulse--invite {
+  animation: say-pulse-invite 2.2s ease-out infinite;
+}
+
+/* ---------------------------------------------------------------
+   Entrance choreography (pure CSS timeline, no JS)
+   --------------------------------------------------------------- */
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -38px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale(0.85);
+  }
+  62% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) scale(1.035);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Back buttons (`BackAutoHide`): slide up out of the way while the page is
+   scrolled down, back on the first scroll up. `translate` is its own property,
+   so it doesn't fight `anim-drop-in`'s `transform`; `visibility` goes after
+   the slide so a hidden one can't be tapped. */
+.back-spot {
+  transition:
+    translate 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+:root[data-back-hidden] .back-spot {
+  translate: 0 -7rem;
+  visibility: hidden;
+  transition:
+    translate 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s 0.3s;
+}
+
+.anim-drop-in {
+  animation: drop-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-pop-in {
+  animation: pop-in 0.75s cubic-bezier(0.34, 1.4, 0.5, 1) both;
+  will-change: transform, opacity;
+}
+
+/* `TiltPicture`: the cut-out animal leans toward the finger (`--tilt-x/-y`,
+   −0.5…0.5 from the picture's centre) and eases back when let go. */
+.tilt {
+  perspective: 36rem;
+  touch-action: none;
+}
+
+.tilt-body {
+  transform: rotateY(calc(var(--tilt-x, 0) * 28deg)) rotateX(calc(var(--tilt-y, 0) * -28deg));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.anim-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A plain fade-and-grow, deliberately NOT `pop-in`: pop-in's
+   travel-and-overshoot reads as a thing being thrown in rather than a thing
+   appearing. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-rise-in {
+  animation: rise-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------------------------------------------------------------
+   Moving between two steps of a lesson.
+
+   ONE transition owns the whole swap: the step on screen fades and lifts out
+   (`.stage-swap--out`, 0.2s — `STEP_LEAVE_MS` in `lesson-player.tsx` waits
+   for it), then the next one mounts and fades in. A `key` on the group
+   remounts it, which is what replays the IN half. `opacity` and `translate`
+   only — both compositor properties.
+   --------------------------------------------------------------- */
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes stage-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+
+.stage-swap {
+  animation: stage-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Declared after `.stage-swap` so it wins on source order — both land on the
+   same element while a stage is on its way out. */
+.stage-swap--out {
+  animation: stage-out 0.2s ease-in forwards;
+}
+
+/* The desktop lesson (`lg`): an open stage, no board and no cards.
+
+   `.lesson-board` is the step's box only — it paints nothing, so the step
+   stands straight on the page ground. `--stage-h` is the height a step has
+   inside it — the screen less the header (5.5rem), the back row (4.75rem),
+   the stage's own gaps (2rem) and padding (4.5rem) and the button row
+   (6rem) — so every step can size itself to fit without a scroll.
+
+   `.card-bare-lg` strips a step's own wrapping card at `lg` (its contents
+   stay as they are).
+   `.card` is unlayered, so a Tailwind `lg:bg-*` on it loses; this rule is
+   declared after `.card-clay-white` and its dark twin, so it wins at the
+   same specificity. */
+@media (width >= 64rem) {
+  .lesson-board {
+    --stage-h: calc(100svh - 22.75rem);
+  }
+
+  .card.card-bare-lg {
+    background: none;
+    box-shadow: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Celebration confetti.
+
+   CSS rather than canvas-confetti: the whole site's animation is keyframes,
+   and a two-second burst of a dozen squares does not earn a dependency. Each
+   piece is handed its own vector and spin inline, so one keyframe covers the
+   scatter.
+   --------------------------------------------------------------- */
+@keyframes confetti-fly {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.4) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-x), var(--confetti-y), 0) scale(1)
+      rotate(var(--confetti-spin));
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 0.15rem;
+  animation: confetti-fly 2s cubic-bezier(0.15, 0.6, 0.3, 1) both;
+}
+
+/* Idle "breathing" float for unlocked characters — deliberately small, so it
+   reads as alive rather than as a bouncing animation. Starts after pop-in. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+.anim-breathe {
+  animation: breathe 3.6s ease-in-out infinite both;
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------------
+   Pinki leaning into the number picker.
+
+   She ENTERS FROM THE EDGE SHE IS CUT OFF BY, which is the point: the crop
+   is deliberate, and an entrance that slides her in from off-card explains
+   it as "she just leaned in" rather than leaving it looking like a mistake.
+   A plain fade would not.
+
+   `translate`, never `transform`: the layer also carries a `rotate` utility
+   for her lean, and the image inside it runs `.anim-breathe` on `transform`.
+   All three are separate properties, so they compose instead of overwriting
+   each other on every tick.
+   --------------------------------------------------------------- */
+@keyframes pinki-lean-in {
+  from {
+    opacity: 0;
+    translate: 38% 6%;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.anim-pinki-lean-in {
+  /* Slower than the page's other entrances (0.6s): she is the biggest thing
+     on the card, and a large object arriving quickly reads as a jump. */
+  animation: pinki-lean-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Invites a tap on the one thing the child has actually reached (the open
+   trail cloud). Uses the standalone `scale` property (not `transform`) so it
+   never fights a hover `scale-*` utility or a `translate`. */
+@keyframes pulse-invite {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.08;
+  }
+}
+
+.anim-pulse-invite {
+  animation: pulse-invite 1.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
+   "Look here." — the thing Pinki is pointing at.
+
+   A soft halo behind the one element the child has to act on, so a glance at
+   the screen lands on the target rather than searching it. It only ever
+   appears where she is holding the stick (`pointsAtTarget` in
+   `data/number-guide.ts`): a light with nothing aiming at it is decoration,
+   and this site does not do decoration that pretends to be guidance.
+
+   **It animates `opacity` and `scale` and NOTHING else.** Both are handled by
+   the compositor, so the loop costs no layout and no repaint — this runs
+   under a child's finger on a cheap tablet while a drag is in flight. A
+   `filter: drop-shadow` pulse (the obvious alternative) re-filters the whole
+   subtree every frame instead, and an animated `box-shadow` spread repaints
+   it; neither is worth it for a halo.
+
+   `isolation: isolate` on the target is what lets the halo sit BEHIND its own
+   element at `z-index: -1` without falling behind the card underneath.
+   --------------------------------------------------------------- */
+@keyframes guide-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    scale: 0.94;
+  }
+  50% {
+    opacity: 0.7;
+    scale: 1.06;
+  }
+}
+
+.guide-target {
+  position: relative;
+  isolation: isolate;
+}
+
+.guide-target::after {
+  content: "";
+  position: absolute;
+  /* **Reaches WELL past the element, and the two numbers below are why.**
+     `closest-side` measures to the halo box's own edge, so with the old
+     `inset: -12%` and a `transparent 72%` stop the gradient faded out to
+     nothing INSIDE the element it was meant to ring — invisible on anything
+     with a fill. The
+     colour now holds to 45% of the radius and fades over the rest, so there
+     is real light outside the element's own edge. */
+  inset: -24%;
+  z-index: -1;
+  border-radius: 999px;
+  /* The page's own accent, so the mark means the same thing on every
+     character's lesson. No shape keyword, so it is an ELLIPSE — it has to
+     stretch to whatever box it is put on, and a circle on a wide target
+     would light the middle and leave the ends dark. */
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--page-accent-color) 55%, transparent) 45%,
+    transparent 100%
+  );
+  animation: guide-glow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------
+   The dotted shape, before the first stroke.
+
+   A second, much wider copy of the guide path lying under the dots, breathing
+   in the character's accent — the trace board's version of the halo above.
+   It is drawn only while the board is untouched: once the child is drawing,
+   the thing to look at is their own line, and a glow under it competes.
+
+   `stroke-opacity` rather than `opacity` so the animation touches the one
+   path and not the group, and NO SVG filter anywhere — filters are markedly
+   slow on mobile Safari, which is exactly the device doing the tracing.
+   --------------------------------------------------------------- */
+@keyframes trace-guide-glow {
+  0%,
+  100% {
+    stroke-opacity: 0.12;
+  }
+  50% {
+    stroke-opacity: 0.34;
+  }
+}
+
+.trace-guide-glow {
+  animation: trace-guide-glow 2s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
+   Scroll reveal for the sections below the fold.
+
+   The load-time timeline above is useless down here — those sections have
+   already finished animating by the time you scroll to them. This uses a
+   scroll-driven timeline instead, which keeps the sections Server Components
+   with zero JS (no IntersectionObserver, no `"use client"`).
+
+   Gated behind @supports on purpose: `both` would otherwise leave the content
+   parked at the `from` keyframe — invisible — in a browser without
+   `animation-timeline`. Unsupported means no animation, never no content.
+   --------------------------------------------------------------- */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .anim-reveal {
+    animation: reveal-up 1s linear both;
+    animation-timeline: view();
+    animation-range: entry 4% cover 26%;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Hero parallax.
+
+   A subtle drift as the page scrolls — the image itself moves a few px
+   within `.hero-clip`'s fixed wavy frame, the frame stays put. Driven by
+   `animation-timeline: scroll()` rather than JS/IntersectionObserver, same
+   reasoning as `.anim-reveal` below: gated behind @supports so an
+   unsupporting browser gets the static crop, never a parked invisible
+   frame. The slight `scale` keeps the translated image covering the box
+   at both ends of the range. --------------------------------------------------------------- */
+@keyframes hero-parallax {
+  from {
+    transform: translate3d(0, -22px, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(0, 22px, 0) scale(1.1);
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .anim-hero-parallax {
+    animation: hero-parallax 1s linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 70lvh;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  40% {
+    transform: rotate(9deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  80% {
+    transform: rotate(6deg);
+  }
+}
+
+/* A wrong answer shakes its head rather than showing an error. Nothing on this site tells a
+   child they are wrong in words. */
+.anim-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
