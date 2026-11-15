@@ -132,7 +132,6 @@ export const en = {
     /** On the board once every lesson of the friend's is learned. */
     allDone: "You learned it all! Well done!",
     /** A course's board: how far along it is. */
-    learnedOf: "{done} of {total} learned",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
@@ -144,7 +143,6 @@ export const en = {
     ctaContinue: "Continue",
     openChest: "Open the chest",
     /** Over the next lesson on a friend's course board. */
-    lessonN: "Lesson {n}",
   },
   /** The lesson player's own chrome and Pinki's lines in a lesson. Taught
       words arrive in `{…}` and stay English. */
