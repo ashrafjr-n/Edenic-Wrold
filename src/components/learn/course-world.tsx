@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
@@ -189,15 +189,8 @@ interface CourseWorldProps {
   dict: Dictionary["lessonPicker"];
   dir: "rtl" | "ltr";
   /** The star this course's chest gives (its picture); absent, the last stop
-      gives none (the Sky Trail's is the big star itself). */
+      gives none. */
   star?: StaticImageData;
-  /** While set, the last stop is shut and shows this instead (the Sky Trail's
-      friend's door: "1 of 2" and the way to Learn); it does not open, even with
-      every lesson done. */
-  gate?: ReactNode;
-  /** Something that stands at the child's place — the stop to play next, the
-      last stop once all are done (the Sky Trail's balloon). */
-  marker?: ReactNode;
 }
 
 /**
@@ -218,7 +211,7 @@ interface CourseWorldProps {
  * lesson just done, its way turns pink stone by stone, and the camera goes on
  * to the next lesson.
  */
-export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir, star, gate, marker }: CourseWorldProps) {
+export function CourseWorld({ world, titles, characterId, lessonId, basePath, dict, dir, star }: CourseWorldProps) {
   const wide = useWide();
   const data = world[wide ? "landscape" : "portrait"];
   /* The ways between the lessons: one fewer than the stops. */
@@ -267,9 +260,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
      `still` (a later visit: simply open). Once open it stays open. */
   /* It opens once and stays open: a shake and the lid swinging open the first
      time, simply open (`still`) on a later visit. */
-  const gated = gate != null;
   const open = (still = false) => {
-    if (chestNow.current.open || gated) return;
+    if (chestNow.current.open) return;
     playChest.current(still);
     chestSeen.mark(`${characterId}.${lessonId}`);
     /* Its star (2026-11-12): only a chest reached — every lesson done — gives it,
@@ -881,12 +873,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   /* Every lesson done = the child has reached the chest: it opens by itself once
      the camera is at it — shaking the first time, simply open after that. */
   useEffect(() => {
-    if (!hydrated || nextIndex >= 0 || chestAsked || gated) return;
+    if (!hydrated || nextIndex >= 0 || chestAsked) return;
     const first = !chestSeen.has(`${characterId}.${lessonId}`);
     const timer = window.setTimeout(() => open(!first), first ? 1400 : 300);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `open` only reads what is here.
-  }, [hydrated, nextIndex, chestAsked, characterId, lessonId, gated]);
+  }, [hydrated, nextIndex, chestAsked, characterId, lessonId]);
 
   /* The first picture painted: the Start button may come. */
   useEffect(() => {
@@ -965,7 +957,6 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
                 className="course-stop"
                 style={place(box)}
               >
-                {isNext && marker}
                 {isNext && (
                   <span className="course-stop-go" data-shown={world.guided ? showStart : undefined} style={{ "--go": "var(--page-accent-color)" } as CSSProperties}>
                     <Play className="fill-current" strokeWidth={2.5} />
@@ -975,20 +966,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
               </Link>
             );
           })}
-          {/* The gold chest, the nearest stop: a tap shakes it and opens it (a star comes out of it, later).
-              Gated (the Sky Trail's door), it is a plain box holding what the door asks for. */}
-          {gated ? (
-            <div
-              ref={(element) => {
-                stopRefs.current[ways] = element;
-              }}
-              className="course-stop"
-              style={place(data.keys[data.keys.length - 1][ways])}
-            >
-              {gate}
-              {hydrated && nextIndex < 0 && marker}
-            </div>
-          ) : (
+          {/* The gold chest, the nearest stop: a tap shakes it and opens it, and its star comes out. */}
           <button
             type="button"
             ref={(element) => {
@@ -1000,9 +978,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             style={place(data.keys[data.keys.length - 1][ways])}
           >
             {star && starOut && <Image src={star} alt="" sizes="(orientation: landscape) 12vw, 34vw" className="chest-star" data-rise={starOut === "rise" || undefined} />}
-            {hydrated && nextIndex < 0 && marker}
           </button>
-          )}
         </div>
       </div>
 
