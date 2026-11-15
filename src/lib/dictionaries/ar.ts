@@ -183,6 +183,21 @@ export const ar: Dictionary = {
     basket: "ضع",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  /** مختبر Play النائم (2026-11-15). */
+  lab: {
+    title: "المختبر النائم",
+    back: "العودة إلى المختبر",
+    games: "الألعاب",
+    gamesAria: "كل الألعاب",
+    stageLabel: "المرحلة {value}",
+    startStageAria: "ابدأ المرحلة {n}",
+    lockedStageAria: "المرحلة {n}، مقفلة",
+    doorAria: "باب المختبر",
+    skip: "تخطَّ",
+    welcome1: "هسسس… المختبر نائم!",
+    welcome2: "هل تساعدنا لنوقظه؟ اقفز على أول كعكة!",
+    stageSoon: "هذه المرحلة في الطريق!",
+  },
   discover: {
     playButton: "العب",
     watchButton: "شاهد",
