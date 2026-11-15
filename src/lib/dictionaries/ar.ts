@@ -121,7 +121,6 @@ export const ar: Dictionary = {
     replayLesson: "العب {name} مرة أخرى",
     youCanDoIt: "يمكنك فعلها!",
     allDone: "تعلّمت كل شيء! أحسنت!",
-    learnedOf: "تعلّمت {done} من {total}",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",
@@ -133,7 +132,6 @@ export const ar: Dictionary = {
     ctaContinue: "تابع",
     openChest: "افتح الصندوق",
     /** Over the next lesson on a friend's course board. */
-    lessonN: "الدرس {n}",
   },
   lessonPlayer: {
     backTo: "العودة إلى {lessonName}",
