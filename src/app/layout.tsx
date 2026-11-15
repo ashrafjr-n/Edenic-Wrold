@@ -8,6 +8,7 @@ import { PageTransitionOverlay } from "@/components/ui/page-transition-overlay";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { getDictionary, getLocale } from "@/lib/locale";
 import "./globals.css";
+import { Splash } from "@/components/layout/splash";
 
 /* Runs before hydration (`beforeInteractive`) so `<html>` already carries
    the right `data-theme` on the very first paint — without it, a returning
@@ -23,6 +24,18 @@ const THEME_INIT_SCRIPT = `
     var theme = raw ? JSON.parse(raw).state.theme : "light";
     if (theme === "dark") document.documentElement.dataset.theme = "dark";
   } catch (e) {}
+`;
+
+/* The opening splash plays once per visit (`Splash`): a later load in the
+   same tab session is marked before the first paint so the CSS hides it.
+   Storage blocked: no splash, never a throw. */
+const SPLASH_INIT_SCRIPT = `
+  try {
+    if (sessionStorage.getItem("edenic-splash")) document.documentElement.dataset.splash = "seen";
+    else sessionStorage.setItem("edenic-splash", "1");
+  } catch (e) {
+    document.documentElement.dataset.splash = "seen";
+  }
 `;
 
 /* `--font-fredoka` does NOT expand to just "Fredoka". next/font emits a
@@ -172,6 +185,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Script id="theme-init" strategy="beforeInteractive">
           {THEME_INIT_SCRIPT}
         </Script>
+        <Script id="splash-init" strategy="beforeInteractive">
+          {SPLASH_INIT_SCRIPT}
+        </Script>
+        <Splash />
         <ThemeSync />
         <PageTransitionOverlay />
         <Header dict={dict} locale={locale} />
