@@ -1,0 +1,403 @@
+/* ---------------------------------------------------------------
+   Clay letters — the taught word (`ClayWord`) and the spelling board
+   (`SpellWord`).
+
+   A letter is its own colour, glossy on top and extruded underneath: the
+   face is a gradient clipped to the glyph, and the extrusion is a hard
+   `drop-shadow` in the letter's edge colour under a soft tinted one. Both
+   shadows are `filter`, not `text-shadow` — with a transparent fill a
+   text-shadow would show THROUGH the letter instead of under it.
+   --------------------------------------------------------------- */
+.clay-letter {
+  display: inline-block;
+  line-height: 1;
+  color: transparent;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--letter-face) 50%, #fff) 0%,
+    var(--letter-face) 38%,
+    var(--letter-face) 72%,
+    color-mix(in srgb, var(--letter-face) 78%, var(--letter-edge)) 100%
+  );
+  background-clip: text;
+  filter: drop-shadow(0 0.05em 0 var(--letter-edge))
+    drop-shadow(0 0.12em 0.1em rgb(var(--shadow-hue) / 30%));
+}
+
+/* An empty space on the spelling board: a pressed-in well in the page ground,
+   with a short dash where the letter goes. Filled, it holds a letter tile and
+   the dash goes (`:empty`). */
+.letter-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28%;
+  background: var(--background);
+  box-shadow:
+    inset 0 5px 9px -3px rgb(var(--shadow-hue) / 24%),
+    inset 0 -3px 5px -3px rgb(255 255 255 / 90%);
+}
+
+.letter-slot:empty::after {
+  content: "";
+  position: absolute;
+  inset-inline: 26%;
+  bottom: 22%;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--page-accent-color) 45%, transparent);
+}
+
+[data-theme="dark"] .letter-slot {
+  box-shadow: inset 0 5px 9px -3px rgb(0 0 0 / 50%);
+}
+
+/* ---------------------------------------------------------------
+   The tracing board (`TraceBoard`, `TraceQuestion`).
+
+   `.trace-start` is the clay disc where the stroke begins; a ring keeps
+   breathing out of it, so the eye lands there first. On a pass the shape
+   fills (`.trace-fill`) — and stays the shape.
+   --------------------------------------------------------------- */
+.trace-start {
+  position: relative;
+}
+
+.trace-start::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 999px;
+  border: 3px solid var(--page-accent-color);
+  animation: trace-start-ring 1.6s ease-out infinite;
+}
+
+@keyframes trace-start-ring {
+  from {
+    opacity: 0.75;
+    scale: 0.85;
+  }
+  to {
+    opacity: 0;
+    scale: 1.55;
+  }
+}
+
+.trace-fill {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trace-fill 0.6s cubic-bezier(0.34, 1.3, 0.5, 1) both;
+}
+
+@keyframes trace-fill {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Find the shapes (`FindShapes`): a ring draws itself round each thing
+   found — green over a white under-stroke, so it reads on grass and on the
+   blanket alike — and on the last one they all jump again, one after
+   another (`.find-cheer`, the `jump` keyframes restarted under a new name).
+   --------------------------------------------------------------- */
+.find-ring {
+  fill: none;
+  stroke: var(--color-go);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  vector-effect: non-scaling-stroke;
+  animation: find-ring 0.5s ease-out forwards;
+}
+
+.find-ring--under {
+  stroke: #fff;
+  stroke-width: 7;
+}
+
+@keyframes find-ring {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.find-cheer {
+  animation: jump 0.7s cubic-bezier(0.3, 0.8, 0.4, 1) both;
+}
+
+/* ---------------------------------------------------------------
+   The task button's demos (`TaskDemo`): one 3.6s loop each, all on the
+   same beat — the finger comes in, taps at ~36%, the thing it tapped
+   answers (a press, rings of sound, a letter flying, a ring drawing, the
+   first part of a stroke), holds, and everything fades for the next loop.
+   Only standalone `translate`/`scale`, so nothing fights a utility.
+   --------------------------------------------------------------- */
+.demo-finger {
+  animation: demo-finger 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-finger {
+  0% {
+    translate: 2.5rem 3rem;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    translate: 0 0;
+    scale: 1;
+  }
+  36% {
+    translate: 0 0;
+    scale: 0.82;
+  }
+  42%,
+  70% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  84%,
+  100% {
+    translate: 2.5rem 3rem;
+    opacity: 0;
+  }
+}
+
+.demo-press {
+  animation: demo-press 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-press {
+  0%,
+  32%,
+  44%,
+  100% {
+    scale: 1;
+  }
+  37% {
+    scale: 0.88;
+  }
+}
+
+.demo-wave {
+  opacity: 0;
+  animation: demo-wave 3.6s ease-out infinite;
+}
+
+.demo-wave--late {
+  animation-delay: 0.35s;
+}
+
+@keyframes demo-wave {
+  0%,
+  37% {
+    opacity: 0;
+    scale: 1;
+  }
+  40% {
+    opacity: 0.6;
+    scale: 1;
+  }
+  72%,
+  100% {
+    opacity: 0;
+    scale: 1.9;
+  }
+}
+
+/* Feed the animal's demo: the food carried up into the mouth while the
+   finger presses (36–64%), eaten (shrinking away), and back (95%). */
+.demo-feed {
+  animation: demo-feed 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-feed {
+  0%,
+  36% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+  64% {
+    translate: var(--to-x) var(--to-y);
+    scale: 0.5;
+    opacity: 1;
+  }
+  74%,
+  94% {
+    translate: var(--to-x) var(--to-y);
+    scale: 0.1;
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.demo-feed-pen {
+  animation: demo-feed-pen 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-feed-pen {
+  0%,
+  36% {
+    translate: 0 0;
+  }
+  64%,
+  100% {
+    translate: var(--to-x) var(--to-y);
+  }
+}
+
+.demo-fly {
+  animation: demo-fly 3.6s cubic-bezier(0.34, 1.25, 0.5, 1) infinite;
+}
+
+@keyframes demo-fly {
+  0%,
+  38% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  54%,
+  84% {
+    translate: var(--fly-x) var(--fly-y);
+    opacity: 1;
+  }
+  94% {
+    translate: var(--fly-x) var(--fly-y);
+    opacity: 0;
+  }
+  95% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+/* The drawing demo: a dash of 40 (of `pathLength` 100) drawn in from the
+   start, the finger (`.demo-pen`) riding its tip along the same path. */
+.demo-draw {
+  stroke-dasharray: 40 100;
+  animation: demo-draw 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-draw {
+  0%,
+  12% {
+    stroke-dashoffset: 40;
+    opacity: 1;
+  }
+  62%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.demo-pen {
+  offset-path: var(--pen-path);
+  offset-rotate: 0deg;
+  animation: demo-pen 3.6s ease-in-out infinite;
+}
+
+@keyframes demo-pen {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8%,
+  12% {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+  62%,
+  72% {
+    offset-distance: 40%;
+    opacity: 1;
+  }
+  84%,
+  100% {
+    offset-distance: 40%;
+    opacity: 0;
+  }
+}
+
+.demo-ring {
+  fill: none;
+  stroke: var(--color-go);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  vector-effect: non-scaling-stroke;
+  animation: demo-ring 3.6s ease-out infinite;
+}
+
+.demo-ring.find-ring--under {
+  stroke: #fff;
+  stroke-width: 7;
+}
+
+@keyframes demo-ring {
+  0%,
+  38% {
+    stroke-dashoffset: 100;
+    opacity: 1;
+  }
+  52%,
+  84% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.demo-tick {
+  animation: demo-tick 3.6s cubic-bezier(0.34, 1.3, 0.5, 1) infinite;
+}
+
+@keyframes demo-tick {
+  0%,
+  46% {
+    scale: 0;
+  }
+  54%,
+  84% {
+    scale: 1;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    scale: 1;
+    opacity: 0;
+  }
+}
