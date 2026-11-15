@@ -24,7 +24,7 @@ export const homePaths: HomePath[] = [
   {
     id: "play",
     art: { src: "/assets/icons/cloud.png", fit: "contain" },
-    href: "/play",
+    href: "/discover",
     face: "var(--accent)",
     edge: "var(--accent-dark)",
   },
