@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import type { PuzzleGrid, PuzzlePicture } from "@/types/puzzle";
-import type { SkyHost } from "@/data/sky-levels";
 import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { PuzzleHint } from "@/components/activities/puzzle/puzzle-hint";
@@ -20,9 +19,6 @@ interface PuzzlePlayProps {
   picture: PuzzlePicture;
   grid: PuzzleGrid;
   nextHref?: string;
-  /** Played as a challenge of a Sky Trail level (see `SkyHost`); Help is
-      Pinki's power there, so without her it starts spent. */
-  host?: SkyHost;
   /** Whether this stage's picture is square or taller, which changes how much
       padding the two rows can afford. Resolved by the route from the same
       `isUpright` the board keys off, so the two can never disagree. */
@@ -49,7 +45,6 @@ export function PuzzlePlay({
   picture,
   grid,
   nextHref,
-  host,
   upright,
   dict,
 }: PuzzlePlayProps) {
@@ -62,7 +57,7 @@ export function PuzzlePlay({
   useScrollLock(true);
 
   const board = useRef<PuzzleBoardHandle>(null);
-  const [helpsLeft, setHelpsLeft] = useState(host && !host.help ? 0 : HELP_LIMIT);
+  const [helpsLeft, setHelpsLeft] = useState(HELP_LIMIT);
 
   /* Only spend a press that actually placed something: the board says no when
      the picture is already finished or a piece is still in the air. */
@@ -83,20 +78,17 @@ export function PuzzlePlay({
           className="anim-drop-in flex items-center justify-between"
           style={{ animationDelay: "0.1s" }}
         >
-          <BackButton href={host?.backHref ?? "/play/puzzle"} label={host?.backLabel ?? dict.activities.backToPuzzles} />
+          <BackButton href="/play/puzzle" label={dict.activities.backToPuzzles} />
 
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* `levelLabel`, not `puzzleLabel`: the badge SAYS "Level" now, so
                 reading out "Puzzle 7" would disagree with what is on it. */}
-            {/* A Sky Trail level keeps the row's middle for its three dots: no badge. */}
-            {!host && (
-              <LevelBadge
-                value={stage}
-                word={dict.activities.levelWord}
-                label={format(dict.activities.levelLabel, { value: stage })}
-                dir={dirFor(dict.locale)}
-              />
-            )}
+            <LevelBadge
+              value={stage}
+              word={dict.activities.levelWord}
+              label={format(dict.activities.levelLabel, { value: stage })}
+              dir={dirFor(dict.locale)}
+            />
 
             <PuzzleHint picture={picture} helpsLeft={helpsLeft} onHelp={help} dict={dict.activities} />
           </div>
@@ -114,7 +106,6 @@ export function PuzzlePlay({
           picture={picture}
           grid={grid}
           nextHref={nextHref}
-          onSolved={host?.onSolved}
           dict={dict}
         />
       </div>

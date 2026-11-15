@@ -42,9 +42,6 @@ interface PuzzleBoardProps {
   grid: PuzzleGrid;
   /** The next puzzle, or back to the list when there isn't a playable one. */
   nextHref?: string;
-  /** Played as a challenge of a Sky Trail level: the whole picture tells the
-      level instead of being recorded, and no Again / Next follows it. */
-  onSolved?: () => void;
   /** How `PuzzlePlay` reaches `solveOne` from the hint overlay's Help button.
       An imperative handle rather than a signal prop watched by an effect: a
       button press is an event, and an effect reacting to a nonce is the
@@ -132,7 +129,6 @@ export function PuzzleBoard({
   picture,
   grid,
   nextHref,
-  onSolved,
   dict,
   ref,
 }: PuzzleBoardProps) {
@@ -152,8 +148,8 @@ export function PuzzleBoard({
      it actually lies in the heap rather than from its scatter percentages. */
   const looseRefs = useRef(new Map<number, HTMLButtonElement>());
   const complete = useProgress((state) => state.complete);
-  /* The picture made whole: recorded as this stage, or handed to the level hosting it. */
-  const finish = () => (onSolved ? onSolved() : complete(puzzleKey(stage), DONE));
+  /* The picture made whole: recorded as this stage. */
+  const finish = () => complete(puzzleKey(stage), DONE);
 
   const [placed, setPlaced] = useState<number[]>([]);
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -565,7 +561,7 @@ export function PuzzleBoard({
         )}
       </div>
 
-      {solved && !onSolved && (
+      {solved && (
         /* No stars: the finished picture IS the reward here, and a second
            star currency next to the lessons' own would only muddy both. */
         <div className="anim-pop-in flex flex-wrap items-center justify-center gap-3 sm:gap-4">
