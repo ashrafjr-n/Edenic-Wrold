@@ -185,7 +185,7 @@ export const ku: Dictionary = {
     basket: "دانە",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
-  /** تاقیگەها نڤستی یا Play (2026-11-15). */
+  /** تاقیگەها نڤستی یا Play. */
   lab: {
     title: "تاقیگەها نڤستی",
     back: "ڤەگەڕان بۆ تاقیگەهێ",

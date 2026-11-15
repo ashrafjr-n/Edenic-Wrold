@@ -197,7 +197,7 @@ export const en = {
     basket: "Put",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
-  /** Play's Sleeping Lab (2026-11-15): the world of stops on `/play`. */
+  /** Play's Sleeping Lab: the world of stops on `/play`. */
   lab: {
     title: "The Sleeping Lab",
     back: "Back to the lab",

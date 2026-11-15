@@ -53,11 +53,11 @@ export const useProgress = create<ProgressState>()(
       /* `hydrated` is derived, never stored — persisting it would make a fresh
          load start out claiming it had already read storage. */
       partialize: (state) => ({ items: state.items }),
-      /* v0 → v1 (2026-10-14): courses gained, lost and renumbered lessons
+      /* v0 → v1: courses gained, lost and renumbered lessons
          (Vegetables, Animals, Colors), so a stored `nova.fruits.9` named a
          different lesson than it does now. Course progress starts over; the
          play games (`puzzle.*`, `memory.*`) never moved and are kept. */
-      /* v1 → v2 (2026-11-08): Nova's Seasons and Bloo's Weather merged into
+      /* v1 → v2: Nova's Seasons and Bloo's Weather merged into
          Bloo's Seasons and Weather (still `bloo.weather.*`, other lessons):
          both courses' progress starts over, nothing else moves. */
       version: 2,

@@ -21,7 +21,7 @@ import lettuce from "../../../public/assets/learn/bloo/animals/food/lettuce.png"
 import cricket from "../../../public/assets/learn/bloo/animals/food/cricket.png";
 
 /** Every lesson's animal and its picture, in teaching order — the animal on
-    its own, no world behind it (direct request 2026-10-12), cut out of its
+    its own, no world behind it, cut out of its
     video's still (2026-10-13; an animal with no still has no lesson — the
     cow went). */
 const TAUGHT: [string, StaticImageData][] = Object.entries({ cat, dog, fish, elephant, mouse, bird, parrot, turtle, gecko });

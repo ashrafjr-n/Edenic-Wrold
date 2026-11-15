@@ -15,7 +15,7 @@ export type Weather = "sunny" | "rainy" | "windy" | "snowy";
 /** The five vegetables Nova's Vegetables course teaches, in order. */
 export type Vegetable = "carrot" | "broccoli" | "potato" | "tomato" | "pepper";
 
-/** The six things Nova's My Garden teaches, in order (2026-11-08). */
+/** The six things Nova's My Garden teaches, in order. */
 export type GardenThing = "flower" | "tree" | "leaf" | "grass" | "nest" | "bench";
 
 /** What a Find looks for: a shape or a color. */
@@ -145,7 +145,7 @@ export interface KitchenFrame {
 }
 
 /** The kitchen, framed for a wide board and for a phone's, and the
-    friend in it — always their picture, never 3D (the user, 2026-11-01). */
+    friend in it — always their picture, never 3D. */
 export interface Kitchen {
   landscape: KitchenFrame;
   portrait: KitchenFrame;
@@ -174,16 +174,16 @@ export interface LessonWorld {
   moves: readonly (Framed<string> | null)[];
   /** The station each step plays at (the last holds for the steps after it):
       absent, step `i` is at station `i`. Several steps at one station never
-      change the picture between them — Nova's kitchen (2026-11-06): a blurred
+      change the picture between them — Nova's kitchen: a blurred
       wide view that never moves for the word and the spelling (its station has
       no clip, `null`: it just fades in), one move in to the counter, the focus
       coming, for Basket Time, and the counter blurring again for the end.
       The lesson's end is always the last station. */
   stepStation?: readonly number[];
-  /** Bloo's farm (2026-11-10): the word step's animal stands sharp in the world itself,
+  /** Bloo's farm: the word step's animal stands sharp in the world itself,
       so the page lays no picture of its own — just the speaker and the word. */
   animalInWorld?: boolean;
-  /** Bloo's island (2026-11-10): the word step's station is the season (or its weather)
+  /** Bloo's island: the word step's station is the season (or its weather)
       itself, sharp — the page writes the word in the sky, as Colors does. */
   wordInSky?: boolean;
 }

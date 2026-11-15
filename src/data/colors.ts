@@ -16,7 +16,7 @@ import empty from "../../public/assets/learn/pinki/colors/dots/empty.png";
 export const EMPTY_DOT = empty;
 
 interface ColorDef {
-  /** A plain dot of this color (2026-11-05, on request) — how the course
+  /** A plain dot of this color — how the course
       SHOWS a color: its stop on the board, Mix's sum. */
   dot: StaticImageData;
   /** The color itself, as paint. */

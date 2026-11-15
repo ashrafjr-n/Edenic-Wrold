@@ -181,7 +181,7 @@ export const ar: Dictionary = {
     basket: "ضع",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
-  /** مختبر Play النائم (2026-11-15). */
+  /** مختبر Play النائم. */
   lab: {
     title: "المختبر النائم",
     back: "العودة إلى المختبر",

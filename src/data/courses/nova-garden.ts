@@ -16,7 +16,7 @@ const ORDER = Object.keys(THINGS) as GardenThing[];
 const REELS = "/assets/learn/nova/garden/reels";
 
 /**
- * One garden thing, one lesson (the user, 2026-11-08), all in Nova's garden
+ * One garden thing, one lesson, all in Nova's garden
  * (`data/my-garden.ts`, the videos' candy-pink garden): its reel → the word,
  * the thing itself big on a plinth on the lawn → spell it among letter blocks
  * (2026-11-09: the Find was removed — nothing comes after the spelling).

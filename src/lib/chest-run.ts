@@ -1,5 +1,5 @@
 /** The course whose last lesson was just finished (its Finish pressed) (`pinki.shapes`): the course page then walks to the chest and opens
-    it (2026-11-11). Kept in memory — only that click may ask for it, never a
+    it. Kept in memory — only that click may ask for it, never a
     reload or the back button. */
 let asked: string | null = null;
 

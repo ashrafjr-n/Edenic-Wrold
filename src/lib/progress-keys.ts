@@ -40,7 +40,7 @@ export function memoryKey(level: number): ItemKey {
 }
 
 /** The star a Learn course's gold chest gives (`star.pinki.shapes`), one a
-    course, earned when every lesson is done and the chest opens (2026-11-12). */
+    course, earned when every lesson is done and the chest opens. */
 export function chestStarKey(characterId: string, lessonId: string): ItemKey {
   return `star.${characterId}.${lessonId}`;
 }

@@ -83,7 +83,7 @@ export function classroomStyle({ chalk }: Classroom): CSSProperties {
 }
 
 /** The one clear 3D thing each course wears on its sheet on the board
-    (2026-10-14): Shapes wears its lessons' own four things — the book,
+   : Shapes wears its lessons' own four things — the book,
     the cheese, the toast and the donut — laid together (2026-11-02, they
     replaced a tower of toy blocks); a painter's palette for Colors —
     rendered by `tools/picnic-scene` (`ITEMS.palette`). A course without one
@@ -93,7 +93,7 @@ export const classroomModels: Partial<Record<LessonId, StaticImageData>> = {
   colors: courseColors,
 };
 
-/** The big picture on a course's sheet on the hub (2026-11-09): the scene
+/** The big picture on a course's sheet on the hub: the scene
     of the course's own world, cropped square by `object-fit: cover` — `focus`
     is the crop's centre (`object-position`) so the friends stay in it. */
 export const courseCardArt: Partial<Record<LessonId, { src: StaticImageData; focus: string }>> = {
