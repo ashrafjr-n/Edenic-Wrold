@@ -64,7 +64,7 @@ export interface Scene {
 
 /** Pinki's question, as a key into `dict.asks` plus its values. The taught
     words in `vars` stay English in every locale. */
-export interface Ask {
+interface Ask {
   key: keyof Dictionary["asks"];
   vars?: Record<string, string | number>;
 }

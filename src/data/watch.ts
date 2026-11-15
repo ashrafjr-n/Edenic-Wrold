@@ -9,7 +9,7 @@ import episode3 from "../../public/assets/watch/episode-3.webp";
 
 /** The YouTube series, newest first. A new episode = one line here: its
     video id and its title exactly as on the channel. */
-export const EPISODES: readonly { id: string; title: string; poster?: StaticImageData }[] = [
+const EPISODES: readonly { id: string; title: string; poster?: StaticImageData }[] = [
   { id: "ZulDqDkCN4w", title: "Edenic World - Episode 3 {English Version}", poster: episode3 },
   { id: "JBYQuKUrk9g", title: "Edenic World Episode-2 | English version 💕", poster: episode2 },
   { id: "S0-dQzksqmY", title: "Edenic World Episode-1 ( English version)", poster: episode1 },

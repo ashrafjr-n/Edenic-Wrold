@@ -34,7 +34,7 @@ import cardWeather from "../../public/assets/learn-cards/seasons-and-weathers-ca
 /** A friend's classroom (2026-10-14 Pinki's; Nova's and Bloo's
     2026-10-23): the same board, chalk, paper sheets and loader for every
     friend — one way to learn — in a room of their own. */
-export interface Classroom {
+interface Classroom {
   /** The room round the board, sharp — `render.cjs classroom <id>` →
       `crop.py classroom <id>`. */
   wall: Framed;

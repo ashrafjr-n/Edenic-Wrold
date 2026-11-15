@@ -13,7 +13,7 @@ export const CUP: StaticImageData = cup;
 /** One level of Nova's Cups: the vegetable that hides (English, and its
     picture — the Vegetables course's own), and how hard the cups move:
     `swaps` swaps of `swapMs` each. */
-export interface CupsLevel {
+interface CupsLevel {
   value: number;
   word: string;
   picture: StaticImageData;

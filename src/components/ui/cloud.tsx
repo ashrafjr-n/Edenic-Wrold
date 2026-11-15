@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export type CloudSize = "sm" | "md" | "lg";
+type CloudSize = "sm" | "md" | "lg";
 /**
  * Which silhouette, so a sky full of clouds isn't one shape repeated. All
  * three share the 20:11 box `.cloud` locks its aspect ratio to.
@@ -14,8 +14,8 @@ export type CloudSize = "sm" | "md" | "lg";
  * an explicit height; the shape is authored `preserveAspectRatio='none'`, so
  * it simply reads as a longer bank.
  */
-export type CloudVariant = 1 | 2 | 3 | 4;
-export type CloudTint = "white" | "sky" | "pink" | "lavender";
+type CloudVariant = 1 | 2 | 3 | 4;
+type CloudTint = "white" | "sky" | "pink" | "lavender";
 
 interface CloudProps {
   size?: CloudSize;
