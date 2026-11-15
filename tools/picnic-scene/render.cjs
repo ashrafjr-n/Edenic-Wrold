@@ -206,12 +206,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        100 frames, five ways of stars, Pinki's picture on level 4's cloud. */
     /* `stops sky-night` (2026-11-12): the trail's first world, night, three levels and
        Pinki's house: `out/stops-sky-night-<frame>/`, 90 frames. */
-    const course = ["colors", "fruits", "garden", "animals", "weather", "sky", "sky-night"].includes(specs[0]) ? specs[0] : "shapes";
+    /* `stops lab` (2026-11-15): Play's Sleeping Lab — five cookies and the lab's door:
+       `out/stops-lab-<frame>/`, 100 frames. */
+    const course = ["colors", "fruits", "garden", "animals", "weather", "sky", "sky-night", "lab"].includes(specs[0]) ? specs[0] : "shapes";
     const colors = course !== "shapes";
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" ? [100, 41] : course === "sky-night" ? [90, 31] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" || course === "lab" ? [100, 41] : course === "sky-night" ? [90, 31] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -258,8 +260,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        shows the chest, with it open. Then `crop.py chest <course>`. */
     const course = specs[0] ?? "shapes";
     const PLAY = 46;
-    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100, "sky-night": 90 }[course] ?? 90;
-    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky", "sky-night": "sky-night" }[course];
+    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100, "sky-night": 90, lab: 100 }[course] ?? 90;
+    const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky", "sky-night": "sky-night", lab: "lab" }[course];
     const source = fs.readFileSync(path.join(__dirname, `../../src/data/${stops}-stops.ts`), "utf8");
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       /* Where the page stands at the chest: its focus, the last stop's. */
@@ -282,8 +284,8 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
          chest is under the camera); each with its shut twin (`s<frame>`), so
          only the chest differs between them. */
       const open = [];
-      /* The night's last stop (the house) is the FARTHEST: it shows in every frame. */
-      const far = course === "sky-night" ? FRAMES - 1 : Math.round(focus[focus.length - 2] * (FRAMES - 1));
+      /* The night's last stop (the house) and the lab's door are the FARTHEST: they show in every frame. */
+      const far = course === "sky-night" || course === "lab" ? FRAMES - 1 : Math.round(focus[focus.length - 2] * (FRAMES - 1));
       for (let f = 0; f <= far; f++) {
         const tf = f / (FRAMES - 1);
         open.push(f);
