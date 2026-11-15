@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Gamepad2, Hourglass } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
 import { Cloud } from "@/components/ui/cloud";
 import playCloud from "../../../public/assets/discover/play-cloud.png";
 
@@ -29,9 +29,8 @@ export function PlayDoor({ title, subtitle, soon, dir, className = "", style }: 
       <Cloud size="sm" variant={3} className="discover-drift absolute right-[6%] top-[58%] opacity-80" style={{ "--cloud-w": "3.6rem", animationDelay: "-3s" } as CSSProperties} />
       <Cloud size="sm" className="discover-drift absolute right-[16%] top-[36%] opacity-70" style={{ "--cloud-w": "2.8rem", animationDelay: "-6s" } as CSSProperties} />
 
-      <div className="relative z-10 flex flex-col items-center px-6 pt-6 text-center sm:pt-9">
+      <div className="relative z-10 flex flex-col items-center px-6 pt-4 text-center sm:pt-6">
         <span dir={dir} className="discover-chip">
-          <Hourglass className="h-4 w-4" strokeWidth={2.5} />
           {soon}
         </span>
         <h2 dir={dir} className="mt-3 flex items-center gap-2.5 text-4xl font-bold text-white drop-shadow-[0_3px_0_rgb(30_80_150/35%)] sm:mt-4 sm:text-5xl">

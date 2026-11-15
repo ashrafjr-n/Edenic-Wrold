@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Play, Sparkles } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface WatchDoorProps {
   /** The episodes' stills, newest first; the first leads, the next two fan out behind it. */
@@ -31,10 +31,9 @@ export function WatchDoor({ stills, alt, title, subtitle, badge, dir, className 
       <span aria-hidden className="discover-shade absolute inset-0" />
       <span aria-hidden className="discover-grain absolute inset-0" />
 
-      <span className="relative z-10 flex px-4 pt-4 sm:px-6 sm:pt-6">
+      <span className="relative z-10 flex justify-center px-4 pt-4 sm:px-6 sm:pt-6">
         <span dir={dir} className="clay discover-chip discover-chip--new"
           style={{ "--clay-edge": "var(--accent-dark)" } as CSSProperties}>
-          <Sparkles className="h-4 w-4" strokeWidth={2.5} />
           {badge}
         </span>
       </span>
