@@ -24,6 +24,7 @@ interface PlayDoorProps {
 export function PlayDoor({ title, subtitle, soon, dir, className = "", style }: PlayDoorProps) {
   return (
     <div aria-disabled className={`discover-door discover-door--play relative flex min-h-48 flex-1 basis-0 flex-col overflow-hidden ${className}`} style={style}>
+      <span aria-hidden className="discover-grain absolute inset-0" />
       <Cloud size="sm" variant={2} className="discover-drift absolute left-[5%] top-[46%] opacity-90" style={{ "--cloud-w": "4.5rem" } as CSSProperties} />
       <Cloud size="sm" variant={3} className="discover-drift absolute right-[6%] top-[58%] opacity-80" style={{ "--cloud-w": "3.6rem", animationDelay: "-3s" } as CSSProperties} />
       <Cloud size="sm" className="discover-drift absolute right-[16%] top-[36%] opacity-70" style={{ "--cloud-w": "2.8rem", animationDelay: "-6s" } as CSSProperties} />

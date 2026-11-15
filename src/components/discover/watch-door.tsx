@@ -29,9 +29,11 @@ export function WatchDoor({ stills, alt, title, subtitle, badge, dir, className 
     <Link href="/watch" className={`discover-door discover-door--watch group relative flex min-h-48 flex-1 basis-0 flex-col overflow-hidden ${className}`} style={style}>
       <Image src={lead} alt="" fill sizes="(min-width: 640px) 25vw, 50vw" className="discover-backdrop object-cover" />
       <span aria-hidden className="discover-shade absolute inset-0" />
+      <span aria-hidden className="discover-grain absolute inset-0" />
 
       <span className="relative z-10 flex px-4 pt-4 sm:px-6 sm:pt-6">
-        <span dir={dir} className="discover-chip discover-chip--new">
+        <span dir={dir} className="clay discover-chip discover-chip--new"
+          style={{ "--clay-edge": "var(--accent-dark)" } as CSSProperties}>
           <Sparkles className="h-4 w-4" strokeWidth={2.5} />
           {badge}
         </span>
