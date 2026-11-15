@@ -259,16 +259,6 @@ export const en = {
     secondsLeftAria: "{n} seconds left",
     cardFaceDownAria: "Card {index} face down",
   },
-  /** The Edenic Trail — the adventure map. Its own namespace, not part of
-      `activities`: it is a section of the site in its own right, not one of
-      the two games. **"Edenic Trail" itself never translates** — it is a
-      brand name, the same rule that keeps Edenic World, Pinki, Nova and Bloo
-      English inside an Arabic or Kurdish sentence. It replaced `worldTeaser`,
-      the friend-world "Coming Soon" card this one was built over. */
-  /** The Sky Trail — the Play game on `/play` (2026-11-12): cloud levels up
-      the sky, each three short challenges, Edenic's big star at the end.
-      `pinkiHello` / `pinkiPower` are what Pinki says when she joins on
-      level 4 (`FriendSays`), one bubble a tap. */
   ui: {
     /** Read out while something loads (nothing is written on screen). */
     loading: "Loading…",
