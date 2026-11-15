@@ -26,7 +26,7 @@ interface WatchDoorProps {
 export function WatchDoor({ stills, alt, title, subtitle, badge, dir, className = "", style }: WatchDoorProps) {
   const [lead, ...behind] = stills;
   return (
-    <Link href="/watch" className={`discover-door discover-door--watch group relative flex min-h-48 flex-1 basis-0 flex-col overflow-hidden ${className}`} style={style}>
+    <Link href="/watch" className={`discover-door discover-door--watch group relative flex min-h-48 flex-[3] basis-0 flex-col overflow-hidden ${className}`} style={style}>
       <Image src={lead} alt="" fill sizes="(min-width: 640px) 25vw, 50vw" className="discover-backdrop object-cover" />
       <span aria-hidden className="discover-shade absolute inset-0" />
       <span aria-hidden className="discover-grain absolute inset-0" />
