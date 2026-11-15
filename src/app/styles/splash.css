@@ -1,0 +1,166 @@
+/* ---------------------------------------------------------------
+   The opening splash (`Splash`): the logo's three clay pieces land one
+   after another, the logo tilts in 3D as it settles, the star spins on,
+   then the ground fades over the page. ~1.5 s in all; transform and
+   opacity only, so it runs on the compositor and never blocks the page.
+   --------------------------------------------------------------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: var(--background);
+  animation: splash-out 0.4s ease-in 1.15s forwards;
+}
+
+/* A later load in the same visit (set before the first paint). */
+html[data-splash="seen"] .splash {
+  display: none;
+}
+
+@keyframes splash-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.splash-logo {
+  position: relative;
+  width: min(70vw, 22rem);
+  aspect-ratio: 632 / 395;
+  perspective: 900px;
+  animation: splash-zoom 0.4s ease-in 1.15s forwards;
+}
+
+@keyframes splash-zoom {
+  to {
+    scale: 1.12;
+  }
+}
+
+/* The whole logo, tipped back and turned at first, rocks past level and
+   settles: what makes the flat pieces read as one clay object in space. */
+.splash-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: splash-tilt 1.05s cubic-bezier(0.3, 1.35, 0.5, 1) both;
+}
+
+@keyframes splash-tilt {
+  from {
+    transform: rotateX(30deg) rotateY(-20deg);
+  }
+  60% {
+    transform: rotateX(-7deg) rotateY(7deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.splash-piece {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 10px 12px rgb(var(--shadow-hue) / 26%));
+}
+
+/* Each word squashes from its own foot (its box on the logo's canvas):
+   "Edenic" drops in from above, "World" pops up from below a beat after. */
+.splash-piece--edenic {
+  transform-origin: 50% 55%;
+  animation: splash-drop 0.75s both;
+}
+
+.splash-piece--world {
+  transform-origin: 50% 97%;
+  animation: splash-pop 0.7s 0.22s both;
+}
+
+@keyframes splash-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-120%) scale(0.92, 1.1);
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+  }
+  12% {
+    opacity: 1;
+  }
+  48% {
+    transform: translateY(0) scale(1.14, 0.8);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  68% {
+    transform: translateY(-8%) scale(0.95, 1.07);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  }
+  84% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes splash-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(40%) scale(0.5);
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateY(-14%) scale(0.94, 1.1);
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.7);
+  }
+  66% {
+    transform: translateY(0) scale(1.12, 0.84);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  84% {
+    transform: translateY(0) scale(0.97, 1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* The star spins onto the "c" once both words are down, overshoots, twinkles. */
+.splash-piece--star {
+  transform-origin: 79.4% 10.1%;
+  animation: splash-star 0.55s cubic-bezier(0.3, 1.5, 0.55, 1) 0.7s both;
+}
+
+@keyframes splash-star {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-200deg);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.35) rotate(18deg);
+    filter: drop-shadow(0 0 12px rgb(255 214 64 / 95%));
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Less motion: the logo is simply there, then the ground fades. */
+@media (prefers-reduced-motion: reduce) {
+  .splash-tilt,
+  .splash-piece,
+  .splash-logo {
+    animation: none;
+  }
+
+  .splash {
+    animation: splash-out 0.3s ease 0.5s forwards;
+  }
+}
