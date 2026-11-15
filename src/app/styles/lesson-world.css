@@ -1,0 +1,629 @@
+/* ---------- Something on its way (`Loader`) ----------
+   Three clay magnets — her board's pink, blue and gold — hop one after
+   another, each squashing a little as it lands. */
+.loader {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  height: 3.4rem;
+}
+
+.loader > [aria-hidden] {
+  width: 1.4rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 75%) 0 16%, transparent 22%),
+    var(--magnet, #f776ac);
+  box-shadow:
+    inset 0 -3px 4px rgb(0 0 0 / 22%),
+    0 5px 8px -3px rgb(0 0 0 / 35%);
+  transform-origin: 50% 100%;
+  animation: loader-hop 1s cubic-bezier(0.4, 0, 0.4, 1) infinite;
+}
+
+.loader > [aria-hidden]:nth-child(2) {
+  --magnet: #4da3ec;
+  animation-delay: 0.15s;
+}
+
+.loader > [aria-hidden]:nth-child(3) {
+  --magnet: #ffc93a;
+  animation-delay: 0.3s;
+}
+
+@keyframes loader-hop {
+  0%,
+  64%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  10% {
+    scale: 1.12 0.88;
+  }
+  32% {
+    translate: 0 -1.6rem;
+    scale: 0.94 1.06;
+  }
+  54% {
+    translate: 0 0;
+    scale: 1.1 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader > [aria-hidden] {
+    animation: loader-fade 1.2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes loader-fade {
+  from {
+    opacity: 0.35;
+  }
+}
+
+/* Basket Time's word, over the kitchen wall: under the back row, in the
+   middle of the screen whatever a frame crops; sized to it (`--word`, by its
+   frame), no magnets of its own, a ring in the course colour. */
+.world-kitchen-word {
+  position: absolute;
+  inset-inline: 0;
+  top: 8.25rem;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+@media (width >= 40rem) {
+  .world-kitchen-word {
+    top: 10rem;
+  }
+}
+
+.kitchen-word .clay-word {
+  font-size: min(3.5rem, var(--word));
+  box-shadow:
+    inset 0 0 0 0.12em color-mix(in srgb, var(--chalk-accent) 75%, white),
+    0 10px 16px -8px rgb(0 0 0 / 45%);
+}
+
+.kitchen-word .clay-word::before,
+.kitchen-word .clay-word::after {
+  content: none;
+}
+
+/* ---------- A lesson's world (2026-11-02, Pinki's Shapes first) ----------
+   `LessonWorldView`: the world fixed under the page — the whole large
+   viewport, so the phone's bar never uncovers its edge — and the picture
+   laid in it as `object-fit: cover` would lay it, but as a BOX
+   (`.world-cover`, the picture's own aspect `--world-ar`), so a Find in it
+   can lay its things over the very same pixels. */
+.world-frame {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 100lvh;
+  overflow: hidden;
+  container-type: size;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.world-cover {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, calc(100cqh * var(--world-ar)));
+  height: max(100cqh, calc(100cqw / var(--world-ar)));
+  translate: -50% -50%;
+}
+
+/* A still that takes over from a clip (a restart, reduced motion). */
+.world-fade {
+  animation: world-fade 0.45s ease both;
+}
+
+@keyframes world-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A Find played in the world (its picnic on the lawn, the camera looking
+   down at it): its things take taps, the rest of the picture lets them
+   through to nothing. Shown once the camera has pulled focus onto this
+   very frame — no movement, the picture is already there. */
+.world-find button {
+  pointer-events: auto;
+}
+
+.world-find--hidden {
+  opacity: 0;
+}
+
+.world-find--hidden button {
+  pointer-events: none;
+}
+
+/* Basket Time's end: the same scene, blurred (a hair larger, so the blur's
+   edge never shows), the way on over it. */
+.world-find--done button {
+  pointer-events: none;
+}
+
+.world-find--done .world-cover {
+  filter: blur(0.9cqmax);
+  scale: 1.05;
+  transition:
+    filter 0.7s ease,
+    scale 0.7s ease;
+}
+
+@starting-style {
+  .world-find--done .world-cover {
+    filter: blur(0);
+    scale: 1;
+  }
+}
+
+/* The tray of found things, floating at the foot of the world — over the
+   phone's tab bar. */
+.world-tray {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(4rem + env(safe-area-inset-bottom) + 0.85rem);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+@media (width >= 40rem) {
+  .world-tray {
+    bottom: 1.75rem;
+  }
+}
+
+/* The steps' stage in a world: the board's box with nothing of its own. */
+.world-stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0.25rem 0.75rem 1rem;
+}
+
+@media (width >= 40rem) {
+  .world-stage {
+    margin: 0.5rem 0 0.9rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .world-stage {
+    margin: 0.25rem 0 0.75rem;
+  }
+
+  .world-stage.lesson-board {
+    --stage-h: calc(100svh - 26.5rem);
+  }
+}
+
+/* Out in the world the trace is on a white sheet, in crayon (the board's
+   chalk on a white sheet would vanish): the friend's colour for the line,
+   a soft pink fill, the guide and its marks in faint ink. The sheet keeps
+   its card at every width — a step straight on a blurred world has
+   nothing under the finger. */
+.world-stage {
+  --trace-line: var(--page-accent-color);
+  --trace-pen: var(--page-accent-color);
+  --trace-fill: color-mix(in srgb, var(--page-accent-color) 38%, white);
+  --trace-guide: color-mix(in srgb, var(--color-ink-soft) 34%, transparent);
+  --trace-mark: color-mix(in srgb, var(--color-ink-soft) 55%, transparent);
+  --trace-ghost: color-mix(in srgb, var(--page-accent-color) 16%, transparent);
+}
+
+.world-stage .trace-sheet {
+  background: var(--surface);
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 90%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+[data-theme="dark"] .world-stage .trace-sheet {
+  box-shadow:
+    inset 0 10px 16px -8px rgb(255 255 255 / 5%),
+    inset 0 -12px 18px -8px rgb(var(--shadow-hue) / 20%),
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+}
+
+/* The desktop's step trail out in the world: a white clay strip, its
+   steps in faint ink, the done ones in the friend's colour. */
+.world-trail {
+  padding: 0.3rem;
+  border-radius: 9999px;
+  background: var(--surface);
+  box-shadow:
+    inset 0 6px 10px -6px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -6px rgb(var(--shadow-hue) / 18%),
+    0 12px 26px -14px rgb(var(--shadow-hue) / 40%);
+}
+
+[data-theme="dark"] .world-trail {
+  box-shadow:
+    inset 0 6px 10px -6px rgb(255 255 255 / 5%),
+    inset 0 -8px 12px -6px rgb(var(--shadow-hue) / 18%),
+    0 12px 26px -14px rgb(var(--shadow-hue) / 40%);
+}
+
+.world-trail .chalk-trail-dot,
+.world-trail .chalk-trail-line {
+  mask-image: none;
+}
+
+.world-trail .chalk-trail-dot {
+  border-color: color-mix(in srgb, var(--color-ink-soft) 30%, transparent);
+  color: color-mix(in srgb, var(--color-ink-soft) 55%, transparent);
+}
+
+.world-trail .chalk-trail-dot--done {
+  border-color: var(--page-accent-color);
+  color: var(--page-accent-color);
+  background-color: color-mix(in srgb, var(--page-accent-color) 12%, transparent);
+}
+
+.world-trail .chalk-trail-line {
+  border-top-color: color-mix(in srgb, var(--color-ink-soft) 25%, transparent);
+}
+
+.world-trail .chalk-trail-line--done {
+  border-color: var(--page-accent-color);
+}
+
+/* A step waits, laid out but unseen, while the camera walks to it; then
+   it comes in as every step does (`stage-in`). */
+.stage-swap.world-wait {
+  animation: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The end of a lesson in a world (`WorldDone`, 2026-11-04): the friend
+   hopping over a white clay card of two short lines — the title in the
+   friend's colour, the line in ink. The world, blurred, all round it. */
+.world-done {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(1rem, 2svh);
+  margin-block: auto;
+}
+
+.world-done-friend {
+  width: auto;
+  height: min(15rem, 34svh);
+  filter: drop-shadow(0 14px 16px rgb(var(--shadow-hue) / 35%));
+}
+
+.world-done-card {
+  padding: min(1.1rem, 2.2svh) 1.9rem;
+  text-align: center;
+}
+
+.world-done-title {
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--page-accent-color);
+}
+
+.world-done-line {
+  margin-top: 0.2rem;
+  font-size: clamp(1.05rem, 4vw, 1.35rem);
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+@media (width >= 64rem) {
+  .world-done-friend {
+    height: min(20rem, calc(var(--stage-h) * 0.62));
+  }
+
+  .world-done-card {
+    padding: 1.25rem 2.5rem;
+  }
+}
+
+/* The friend hops for joy, again and again, once it has popped in. */
+.done-hop {
+  transform-origin: 50% 100%;
+  animation: done-hop 1.5s ease-in-out 0.8s infinite;
+}
+
+@keyframes done-hop {
+  0%,
+  45%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  8% {
+    transform: translateY(0) scale(1.05, 0.94);
+  }
+  22% {
+    transform: translateY(-9%) scale(0.97, 1.04);
+  }
+  36% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+}
+
+.chalk-trail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.9rem;
+  padding-inline: 0.45rem;
+}
+
+/* A step written in chalk: faint to come, pink once done. */
+.chalk-trail-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 2.5px solid rgb(251 248 240 / 45%);
+  border-radius: 9999px;
+  color: rgb(251 248 240 / 60%);
+  mask-image: var(--chalk-grain);
+  mask-size: 6rem;
+}
+
+.chalk-trail-dot--done {
+  border-color: var(--chalk-accent);
+  color: var(--chalk-accent);
+  background-color: color-mix(in srgb, var(--chalk-accent) 14%, transparent);
+}
+
+.chalk-trail-line {
+  width: 1.5rem;
+  border-top: 3px dashed rgb(251 248 240 / 35%);
+  mask-image: var(--chalk-grain);
+  mask-size: 6rem;
+  transition: border-color 0.3s;
+}
+
+.chalk-trail-line--done {
+  border-top-style: solid;
+  border-color: var(--chalk-accent);
+}
+
+@media (width >= 80rem) {
+  .chalk-trail-line {
+    width: 2rem;
+  }
+}
+
+/* ---------- Going in to a course and back (view transitions) ---------- */
+::view-transition-group(.board-morph),
+::view-transition-group(.class-morph) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+/* The wall keeps its box; what is in it zooms — in going to a course,
+   out coming back (the new picture is the zoomed one or not). */
+::view-transition-group(.class-morph) {
+  overflow: clip;
+}
+
+::view-transition-old(.class-morph),
+::view-transition-new(.class-morph) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .class-wall-view,
+  .class-desk-view,
+  .class-board,
+  .class-card,
+  .class-doodles img,
+  .class-cheer-doodle,
+  .class-cheer .chalk-title,
+  .class-cheer-line,
+  .class-cheer-smile,
+  .class-teacher,
+  .done-hop,
+  .world-done-friend{
+    animation: none;
+    transition: none;
+  }
+
+  ::view-transition-group(.board-morph),
+  ::view-transition-group(.class-morph) {
+    animation: none;
+  }
+}
+
+/* ---------- Mix two paints (`MixColors`, 2026-11-05) ----------
+   A splash of paint: no shape of its own, slowly wobbling, lit like clay.
+   The sum is laid out by hand (`--b` a splash, `--s` a sign, `--g` a gap)
+   because the two splashes slide to its exact middle to run together. */
+.paint-blob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 58% 42% 53% 47% / 46% 56% 44% 54%;
+  background-color: var(--paint);
+  box-shadow:
+    inset -0.35rem -0.45rem 0.8rem rgb(0 0 0 / 16%),
+    inset 0.35rem 0.4rem 0.7rem rgb(255 255 255 / 38%);
+  animation: paint-wobble 4.5s ease-in-out infinite alternate;
+}
+
+.paint-blob--wobble {
+  animation: paint-wobble 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes paint-wobble {
+  from {
+    border-radius: 58% 42% 53% 47% / 46% 56% 44% 54%;
+  }
+  to {
+    border-radius: 44% 56% 46% 54% / 57% 43% 57% 43%;
+  }
+}
+
+.mix-sum {
+  --b: min(19vw, 6.5rem, 14svh);
+  --s: min(6vw, 2.1rem);
+  --g: min(1.4vw, 0.7rem);
+  --w: calc(var(--b) * 3 + var(--s) * 2 + var(--g) * 4);
+  position: relative;
+  width: var(--w);
+  height: var(--b);
+}
+
+.mix-op {
+  position: absolute;
+  top: calc((var(--b) - var(--s)) / 2);
+  width: var(--s);
+  height: var(--s);
+  color: var(--color-ink-soft);
+  transition: opacity 0.25s;
+}
+
+.mix-op--plus {
+  left: calc(var(--b) + var(--g));
+}
+
+.mix-op--equal {
+  left: calc(var(--b) * 2 + var(--s) + var(--g) * 3);
+}
+
+.mix-q {
+  position: absolute;
+  right: 0;
+  width: var(--b);
+  height: var(--b);
+  display: grid;
+  place-items: center;
+  border: 3px dashed color-mix(in srgb, var(--color-ink-soft) 45%, transparent);
+  font-size: calc(var(--b) * 0.42);
+  font-weight: 700;
+  color: var(--color-ink-soft);
+  transition: opacity 0.25s;
+}
+
+.mix-goo {
+  position: absolute;
+  inset: 0;
+}
+
+.mix-goo > * {
+  position: absolute;
+  top: 0;
+  width: var(--b);
+  height: var(--b);
+}
+
+.mix-a {
+  left: 0;
+  transition: translate 0.8s cubic-bezier(0.5, 0, 0.3, 1);
+}
+
+.mix-b {
+  left: calc(var(--b) + var(--s) + var(--g) * 2);
+  animation-delay: -2s;
+  transition: translate 0.8s cubic-bezier(0.5, 0, 0.3, 1);
+}
+
+/* What they make: nothing, until the two have met in the middle. */
+.mix-result {
+  left: calc((var(--w) - var(--b)) / 2);
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity 0.45s 0.55s,
+    scale 0.6s 0.55s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.mix--done .mix-op,
+.mix--done .mix-q {
+  opacity: 0;
+}
+
+.mix--done .mix-a {
+  translate: calc((var(--w) - var(--b)) / 2) 0;
+}
+
+.mix--done .mix-b {
+  translate: calc((var(--w) - var(--b)) / 2 - var(--b) - var(--s) - var(--g) * 2) 0;
+}
+
+.mix--done .mix-result {
+  opacity: 1;
+  scale: 1.25;
+}
+
+.mix-answers {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.mix-answers > * {
+  grid-area: 1 / 1;
+}
+
+.mix-options {
+  display: flex;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  transition: opacity 0.25s;
+}
+
+.mix--done .mix-options {
+  opacity: 0;
+}
+
+.mix-option {
+  display: block;
+  width: min(23vw, 7rem, 15svh);
+  aspect-ratio: 1;
+  padding: 16%;
+  transition: scale 0.15s;
+}
+
+.mix-option:hover:not(:disabled) {
+  scale: 1.05;
+}
+
+.mix-option:active:not(:disabled) {
+  scale: 0.95;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paint-blob,
+  .paint-blob--wobble {
+    animation: none;
+  }
+
+  .mix-a,
+  .mix-b,
+  .mix-result {
+    transition: none;
+  }
+
+  .mix--done .mix-a,
+  .mix--done .mix-b {
+    opacity: 0;
+  }
+}
