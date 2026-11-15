@@ -731,7 +731,7 @@ watches the year go by.*
   `render.cjs` + `crop.py`), each stop the lesson's thing on the path; Nova
   stays a picture. Built with Vegetables' gold stones.
 
-### Stars and the Play game (the user, 2026-11-06) — PLANNED, NOT BUILT, recorded only
+### Stars and the Play game (the user, 2026-11-06) — PLAY PART CANCELLED 2026-11-15 (the chest's one star stays, built in Learn; Play reads no stars — see "The Sleeping Lab" below)
 
 - **The gold chest at the end of a course's world gives ONE star** when the
   child reaches it and it opens (light). One star per course: Pinki 2
@@ -751,198 +751,210 @@ watches the year go by.*
   the big game?); a locked friend's look; the chest's opening. This
   REPLACES "no stars or rewards anywhere in Learn" for the chest only.
 
-### The Sky Trail — the Play game, full design (the user, 2026-11-12) — PLANNED, NOT BUILT
+### The Sky Trail — CANCELLED (the user, 2026-11-15)
 
-Settles the "open for when it is built" list above. **Discover's Play card = this game**
-(`/play` becomes the sky; the Trail card on `/play` goes; the old games stay as "free play").
+The Sky Trail (the night sky, a fallen star, four worlds, ten stages, the star gate)
+was built up to stage 3 and then **cancelled by the user on 2026-11-15**, together
+with its sky design and the fallen-star story. Its app code, data and pictures were
+deleted the same day (they are in git history before `play cleanup V1.0`). The
+render tools' `sky` / `sky-night` / `search` / `intro` modes in `tools/picnic-scene`
+are kept: they are how the lab below gets made. **Don't bring the sky back.**
 
-- **Shape:** the sky, the stops are CLOUDS, built like a Learn course page of stops
-  (`CourseWorld`: a rendered 3D world, scrolling moves the camera, locked cloud grey,
-  done cloud tinted). **18 levels**: 1–3 alone (NO friend), 4–8 with **Pinki**, 9–13 with
-  **Pinki + Nova**, 14–18 with **all three**. 3 + 5 + 5 + 5 = 18.
-- **The gate:** a sleeping friend sits in a cloud bubble at levels 4 (Pinki), 9 (Nova),
-  14 (Bloo); waking one costs **2 stars** (stars come from the Learn chests, one per
-  course; 6 chests = 6 stars = 3 friends x 2 — an exact fit, compute from the real course
-  count, never hard-code 6). Fixed order Pinki → Nova → Bloo whatever courses were done.
-  Show the sleeping friend + "1 of 2 stars" + a button back to Learn (never a dead end);
-  levels already passed stay replayable. Play only READS `stars[courseId]`.
-- **A level = 3 short challenges** (a lesson-like sequence), drawn from ~7 mechanics at a
-  rising difficulty, so 54 challenges need only ~7 builds:
-  1. Memory Match, 2. Puzzle, 3. Cups (all exist — parameterise difficulty from their
-  existing level data), 4. constellation trace (join stars; reuse the tracing board),
-  5. "what comes next" pattern of shapes/colours (new, tiny), 6. sort into baskets by
-  colour/animal (like Basket Time), 7. catch the falling stars by tapping (simplest),
-  plus 8. spell the word (exists). Content comes from Learn (shapes, colours, vegetables,
-  garden, animals, weather) — taught words stay English.
-- **Friends are PICTURES only, silent** (audio later). Each adds a power, not decoration:
-  Pinki = a hint button (like the puzzle's Help) + shapes/colours levels; Nova = one retry
-  or more time + vegetables/garden/cups levels; Bloo = animals/weather levels (wind moves
-  clouds, rain/snow change a level). Level 18: all three cheer, together they light the big
-  Edenic star.
-- **Story, no text:** the child flies a small balloon / paper plane (NOT a character);
-  sleeping friends in cloud bubbles; the goal is lighting Edenic's big star with all three.
-- **Rewards in Play: no stars** (they are the chest's, don't mix them) — a finished level
-  just lights its cloud.
-- **Conflicts to resolve when building:** `/trail`'s intro has Nova saying "I am Nova,
-  your guide up the sky" (clashes with levels 1–3 having no friend); the gate is heavy
-  (levels 4+ need two whole courses; Colors alone is 10 lessons) — hence the visible
-  progress + way back to Learn.
-- **Build small first:** a sky of 6 clouds (levels 1–3 + Pinki's first), the 3 existing
-  games, the star flags + the chest giving its star, the sleeping-Pinki gate. Then grow
-  clouds and add the new mechanics. Art is rendered by Claude (`tools/picnic-scene`).
+### Play = "The Sleeping Lab" (the user, 2026-11-15) — THE PLAN, NOT BUILT
 
-#### The Sky Trail in three build phases (the user, 2026-11-12) — SUPERSEDED the same day by "The Sky Trail: four worlds, one story" below (its phase 1 is built and stays the base)
+The user's brief: no villain, no "game" in the full sense, no losing. Short,
+educational stages and focus games, built around **music and sound** (the company's
+sound team makes every sound; we only list them). Stages, and at the end a goal: a
+door that opens. The friends are never animated; they are their pictures and speak
+through `FriendSays`. Puzzle and Memory Match are not used in the story. They stay
+as free games.
 
-The user's calls the same day: **no stars for now** (the chests give nothing yet, so no
-gate either), **no picture that does not exist** (no sleeping friends — a friend simply
-JOINS, with the pictures we have), the child's marker is a **balloon**, Nova's `/trail`
-intro goes but **its way of appearing is kept** (a life-size friend at the screen's edge,
-a white clay bubble, a tap moves on — `FriendSays`): the friends are to speak this way
-from now on.
+**The world is the Edenic Laboratory from episode 2** (`public/e-s/ep2-lab-front.png`,
+`ep2-lab-wide-friends-from-back.png`, `ep2-lab-door-closeup.png`; the screenshots are
+references only, untracked, never shipped). It is rebuilt in 3D in our own renderer, the
+same way the Learn worlds are made (`scene.html` + `render.cjs` + `crop.py`) and played
+by `CourseWorld`. What it shows:
+- **The lab:** a pink and blue house with a rounded roof, an arch of pastel balls
+  around a pink arched door with a round yellow window, and a big cream sign,
+  "Edenic Laboratory", in a striped candy frame.
+- **The machinery around it:**
+  - Twisted candy-stripe pipes arching over the roof.
+  - A tall glass tank of pink liquid.
+  - Gum-drops on top.
+  - Cookie and donut gears on the left wall.
+  - A giant white and blue microscope on the right.
+  - Bubbles rising from a glass tube.
+- **The ground:**
+  - A round lawn ringed by a pastel cobble path.
+  - Pink cotton-candy and green felt trees.
+  - Cookies lying about.
+- **The stops are already in the picture: five round cookies laid as stepping stones
+  on the path to the door.** Cookie 1 is farthest, then 2 to 5, and the DOOR is the
+  sixth and last stop, nearest the lab. A cookie that is done glows, the way a Learn
+  stone turns pink.
 
-1. **Phase 1 — the base, playable end to end** (BUILT 2026-11-12; how it is made:
-   `claude-docs/play-page.md`).
-   - `/play` IS the sky: a rendered world of stops (`render.cjs stops sky` + `crop.py
-     stops sky` → `data/sky-stops.ts`, played by `CourseWorld`): five cloud levels and,
-     the nearest stop, Edenic's big star.
-   - A level (`/play/sky/[level]`) = 3 short challenges out of the three games that
-     exist (Memory Match, Puzzle, Cups), their difficulty read from those games' own
-     level data (`data/sky-levels.ts`); a solved challenge goes on by itself; the third
-     finishes the level (`play.sky.<n>` in the progress store).
-   - Levels 1–3 alone; **Pinki joins at level 4** (her picture, the bubble) and brings
-     her power: the puzzle's Help.
-   - The balloon floats over the cloud the child is at. After the last level the camera
-     walks on and the big star lights (the chest's own machinery).
-   - The old cards move to `/play/games` (free play); the Trail card, `/trail`, its sky
-     of CSS clouds and Nova's intro are removed (`/trail` redirects to `/play`).
-   - Done when: a child plays levels 1–5 in order, Pinki arrives at 4, the star lights
-     — checked by a scripted play-through of levels 1 and 5 and screenshots at phone,
-     tablet and desktop sizes.
-2. **Phase 2 — the content: new mechanics, Pinki's and Nova's levels** (13 clouds).
-   - Four new mechanics, easiest first: catch the falling stars, what comes next, sort
-     into baskets, join the stars (the tracing board); plus Spell the word.
-   - Pinki's levels 4–8 (shapes, colours), her hint on every mechanic; Nova joins at 9
-     (levels 9–13: vegetables, garden, cups), her power one more try / more time.
-   - The world re-rendered with 13 clouds; the star gate (2 stars a friend) goes in here
-     once the chests give stars.
-   - Done when: levels 1–13 play, every mechanic at more than one difficulty.
-3. **Phase 3 — the end: Bloo, the finale, the clean-up** (18 clouds).
-   - Bloo joins at 14 (levels 14–18: animals, weather; wind moves clouds, rain and snow
-     change a level); level 18: all three light the big star.
-   - Free play's place on the site settled; three languages, dark mode, phone / tablet /
-     desktop checked; the docs brought up to date.
-   - Done when: a child goes from nothing to the big star with no dead end.
+**The idea: the lab is asleep, and each stage wakes one part of it.** At the start
+the lab stands still and quiet, its colours a little faded, with no bubbles, no
+turning gears and no light in the door's window. Each finished stage wakes one part,
+and **that part adds one layer to the world's music**. The child HEARS the world grow:
+coming back to the map plays only the layers they have opened. After stage 6 the whole
+lab is alive, the full song plays, and the door opens. The lab itself is the
+progress: there are no stars, points or counters.
 
-### The Sky Trail: four worlds, one story (the user, 2026-11-12) — THE PLAN, built stage by stage
+| Stage | Cookie | What wakes in the lab | Its music layer |
+| --- | --- | --- | --- |
+| 1 | 1 | the round window in the door lights up | a soft twinkle melody (the star) |
+| 2 | 2 | the cookie gears turn | rhythm (clicks, a light beat) |
+| 3 | 3 | colour runs through the striped pipes | a soft bass |
+| 4 | 4 | bubbles rise from the glass tube | bells / chimes |
+| 5 | 5 | the microscope lights and turns | the main tune |
+| 6 | the door | the door opens with light | the whole song |
 
-The user, after seeing phase 1: the build is fine, the STORY is the thing. Levels are not
-games in a row — each has a fixed scenario; Puzzle and Memory Match only close a level;
-**Cups is out of the trail** (it stays on `/play/games` for now, deleted later with the
-other old games). **Rule for the build: one stage at a time — the next stage starts only
-after the user has tested the one before and said so.**
+#### What the child sees and does
 
-**The story.** At night a star falls out of the sky and is gone, far beyond the clouds. The
-child sets off in the balloon to find it; on the way they find Pinki, then Nova, then Bloo
-to help; the star is reached on cloud 18 — sad, then smiling and alight. The star is the
-series' own (episode 1 on `/watch`; the user's two stills: a plump gold star, big brown
-eyes, sad brows and mouth) — to be modelled in 3D from them, a sad and a happy face.
-NOT in the story (the user): finding the star early, "sparks" in the chests. The gold stars
-of the way between clouds (built) are the trail the star left.
+**Arriving at `/play` the first time:** the camera walks along the candy path toward
+the lab. The lab is quiet and a little faded, and the only sound is soft ambience
+(birds, wind). Pinki appears at the screen's edge (`FriendSays`): *"The lab is
+asleep! Will you help us wake it up?"* A tap, and cookie 1 is ringed. Coming back
+later, the camera opens at the child's cookie, and the music plays the layers already
+opened.
 
-**Four worlds on one line** (3 + 5 + 5 + 5 = 18 levels). Only the world the child is in is
-shown; the next one is seen ahead, shut behind a bank of cloud, and opens when the world
-before it is done AND the friend's two stars are in hand (one star per Learn course chest;
-shown as "1 of 2" + a way back to Learn; the friend's cloud house has two star-shaped slots
-in its door — the friends stay their own pictures). Each world opens with a rendered entry
-scene (5–8 s, skippable), the camera carrying on along the same line.
+**Stage 1 — Where is the star?** (its own small 3D world, the only stage that leaves
+the lab)
+- Before: Nova says *"The door's light is lost somewhere in the garden. Can you find
+  it?"*
+- The place: the candy garden around the lab, seen in 3D close up — cotton-candy
+  trees, felt bushes, gum-drops, cookies on the grass.
+- The task: a small gold star is hidden in the scene. The child finds it **by ear**:
+  its twinkle gets louder and brighter as the finger (or mouse) comes near it. After
+  a while with no find, it glints on its own as a hint.
+- Rounds: three, the star somewhere new each time; the third time it is a little
+  better hidden.
+- After: the star flies to the lab and settles in the door's round window, which
+  lights up. The first music layer comes in.
+- Built from the Sky Trail's search (`SkySearchPlay`, in git history), which already
+  places hidden things in a rendered view, plus the "warmer / colder" sound.
+- Teaches: attention and listening.
 
-| World | Sky | Levels | With | Entry scene |
-| --- | --- | --- | --- | --- |
-| 1 Night sky | night, moon, stars | 1–3 | alone | a star falls with a tail of light and is gone; the camera comes down to cloud 1 and the balloon |
-| 2 Rainbow | sunrise, pink and orange | 4–8 | Pinki | her door opens; night melts into sunrise, the rainbow comes up |
-| 3 Sky garden | day, green floating islands | 9–13 | + Nova | Nova joins; the sun is up; her garden's islands |
-| 4 High clouds | day, the white sky built in phase 1 | 14–18 | + Bloo | Bloo joins; far off something glints — the star |
+**Stage 2 — The gears**
+- Before: Bloo says *"The gears fell off! Put each one back where it fits."*
+- The task: the cookie and donut gears lie on the lawn, and each has a SHAPE cut in
+  its middle (circle, square, triangle, star). The pegs on the lab's wall have the
+  same shapes. The child drags each gear to the peg of its shape, and it clicks in
+  with a sound.
+- Rounds: 2 gears, then 3, then 4.
+- Wrong peg: the gear slides back gently. No sound of failure, ever.
+- After: all the gears turn together, and the rhythm layer comes in.
+- Teaches: shapes (Pinki's Shapes course, never named as a lesson).
 
-**A level's fixed shape:** a short scene → the main activity → a closing game, Puzzle and
-Memory Match in turn, the puzzle's picture the level's own scene. Difficulty rises by
-world (the user: world 1 medium, world 4 the hardest): 12 pieces / 6 pairs → 16 / 8 →
-20 / 8 look-alikes → 25–30 / 10. (Read as: a closing game on EVERY level of every world —
-the user did not object; if it is to be worlds 1 and 4 only, drop it from 2 and 3.)
+**Stage 3 — Colours in the pipes**
+- Before: Pinki says *"The pipes are empty! Pour in the colour you hear."*
+- The task: a voice says a colour, e.g. *"Red!"*, and the child taps the jar of that
+  colour (three or four jars). The colour runs up through a striped pipe with a
+  liquid sound.
+- Rounds: three colours. In the last, *"Purple!"*, there is no purple jar, so the child
+  pours red and blue into a glass and it turns purple (the mix from Colors).
+- After: every pipe flows, and the bass layer comes in.
+- Teaches: colour words by ear, and mixing.
 
-**World 1 — night sky** (no reel: the word's sound, its letters put in order, then a
-search — never for the star):
+**Stage 4 — The bubbles**
+- Before: Nova says *"Pop the bubble with the thing you hear!"*
+- The task: big soap bubbles rise slowly from the glass tube, each with a picture
+  inside (an animal or a vegetable from Learn). The voice says *"Cat!"*, and the child
+  pops the cat's bubble with a tap. Each pop is a musical note.
+- Rounds: five words, two or three bubbles in the air at once, rising slowly.
+- A bubble that floats away comes back up again: nothing is ever missed.
+- After: the tube keeps bubbling, and the bells layer comes in.
+- Teaches: words by ear (Animals, Vegetables).
 
-| # | Level | Word | The search | Closes with |
-| --- | --- | --- | --- | --- |
-| 1 | A star fell | star | the small stars hidden among the clouds; one place is empty | Puzzle |
-| 2 | The moon saw it all | moon | move the clouds off the moon; find the star's dust that shows the way | Memory |
-| 3 | Who will help me? | cloud | three far lights (pink, lavender, blue): the friends' houses | Puzzle |
+**Stage 5 — The singing tubes** (the focus stage, all sound)
+- Before: Bloo says *"Listen to the tubes, then play it back!"*
+- The task: four glass test tubes, each a colour and each its own note. The tubes
+  play a short tune, each lighting as it sounds, and the child taps the same tubes
+  in the same order.
+- Rounds: 2 notes, then 3, then 4.
+- A mistake: the tubes simply play the tune again, slower. There is no penalty and no
+  counting.
+- After: the microscope lights up and turns, and the main tune comes in.
+- Teaches: listening memory and focus.
 
-**World 2 — rainbow (Pinki: shapes, colours):** 4 Shape bridge (the right piece into each
-gap) · 5 Colour works (mix two to paint each band of the bow) · 6 Gates of light (trace
-the shape, it becomes a gate for the balloon) · 7 Cloud bells (hear a run of colours, play
-it back) · 8 The grey cloud (paint it the colour its word says; it smiles and blows the
-balloon up).
+**Stage 6 — The door**
+- Before: all three friends together say *"Knock like the door does!"*
+- The task: the door knocks a little rhythm (*knock knock … knock*), and the child
+  taps it back on the door.
+- Rounds: two or three rhythms, each a little longer.
+- After: the door WOBBLES, swings open on its hinge and white light pours out,
+  rendered in the world's own scene (the Learn chest's machinery: `render.cjs chest`
+  + `crop.py chest`). The whole song plays.
+- The end: the three friends inside the lab (as in episode 2: the friends by a table
+  of glowing flasks and a star-shaped bottle), and one button to watch episode 2 on
+  `/watch`. That is Play linked to Watch indirectly.
 
-**World 3 — sky garden (Nova: vegetables, garden):** 9 The seed (put the real steps of
-growing in order; a giant stalk comes up) · 10 Food for the way (a recipe in pictures and
-numbers, the right vegetables into the basket) · 11 What is missing? (the wind took one
-thing from the garden — which?) · 12 The nest (find its pieces, bring the chicks back;
-the birds show where the star fell) · 13 Up the stalk (tap the leaf whose word matches
-the picture).
+**After the end:** the lab stays awake and playing its song. Any stage can be played
+again from its cookie, and the door stays open.
 
-**World 4 — high clouds (Bloo: animals, weather):** 14 The storm (steer the balloon
-between rain, wind and snow — the one fast level) · 15 Shadows on the clouds (each animal
-to its shadow) · 16 The animals' bridge (smallest to biggest) · 17 The last of the trail
-(join the star's dust in order to draw the way to its cloud) · 18 The star (it is there,
-sad; each friend does one small thing with the child — Pinki a colour, Nova a flower, Bloo
-stills the wind — and it smiles and lights; the hardest puzzle closes it: the star, happy).
+#### Rules for every stage
+- Three short rounds, about a minute in all. A solved round goes on by itself, as a
+  solved Learn step does.
+- No losing, no timer, no score, no error sound. A wrong move is undone gently and
+  the child tries again.
+- One `FriendSays` line before a stage and, if needed, one after. The friends are
+  their pictures, never animated.
+- Cookies open in order. A finished cookie stays playable.
+- Progress lives in the progress store (`play.lab.<n>`, read through
+  `lib/progress-keys.ts`; nothing reads it before `hydrated`).
+- Every sound goes through `playCue(id)` (`lib/cue.ts`). The layout never waits on
+  audio, so the sound team's files drop in later with no layout change. The music
+  layers start only after the child's first tap (browsers block autoplay with sound).
+- Taught words stay English (American) and the UI stays in three languages, as in
+  Learn.
+- Phone, tablet and desktop, and touch first, as everywhere.
 
-**Worlds 3 and 4 must not read as one** (the user): 3 is green islands in a warm morning,
-4 the bare white cloud tops of the built sky, higher and cooler.
+#### The sounds to hand to the sound team (when the stages are built)
+- **Music:** one song in **six stems** that play together in time:
+  - ambience,
+  - twinkle melody,
+  - rhythm,
+  - bass,
+  - bells,
+  - main tune.
+  The map plays the stems opened so far.
+- **Stage 1:** the star's twinkle at three distances (far, near, very near), and
+  "found".
+- **Stage 2:** a gear picked up, a gear clicking into place, gears turning.
+- **Stage 3:** pouring, colour running in a pipe, a glass mixing.
+- **Stage 4:** a bubble popping, as five pitched notes.
+- **Stage 5:** the four tube notes.
+- **Stage 6:** a knock, the door creaking open, the light.
+- **Words:**
+  - the colours used (red, blue, yellow, green, purple…),
+  - the animals and vegetables in stage 4,
+  - the shape names in stage 2 if they are spoken.
+- **Friends:** each `FriendSays` line, in English, Arabic and Badini Kurdish.
+- **Everywhere:** a soft "try again" whoosh and a soft cheer for a solved round.
 
-#### The build, stage by stage (the user tests each; the next waits for "go on")
-
-> **WHERE WE STOPPED (2026-11-13).** Stages 1, 2 and 3 are DONE and committed; the user
-> tested 1 and 2 and said go on, and has NOT yet tested stage 3 — ask for that first.
-> **Next: stage 4** (world 2, sunrise: its look and the way in), then 5 … 10 as listed.
-> Playable now: `/play` = world 1, night — the entry scene, levels 1–3 (word → spell →
-> search → closing game), Pinki's house with its star-gated door, which opens with her
-> two Learn stars. Past the open door there is nothing yet (world 2 is stage 4).
-> How each piece is built, the render commands and the traps met: `claude-docs/
-> play-page.md`, top section. Still to come from the user: more exact pictures of the
-> star found on level 18 (stage 9) — its design differs a little from the one modelled.
-> Open, the user never answered: whether a closing game ends EVERY level of every world
-> (built so far that way) or only worlds 1 and 4.
-
-1. **The base — DONE 2026-11-12** (the worlds' data and the count at the door moved to
-   stage 2, where they are first read). A Learn course's gold chest gives its star (`stars[courseId]` in the
-   progress store; the star seen coming out of the chest; the count shown at the friend's
-   door). The fallen star in 3D from the user's stills (sad, happy). The trail's data
-   becomes worlds (`SKY_WORLDS`: levels, friend, gate); Cups leaves the trail.
-   *Test:* finish a course → the chest gives one star, once; the star's two faces.
-2. **World 1, its look — DONE 2026-11-12.** The night sky (3 clouds, Pinki's house and door at its end, the
-   next world shut behind cloud), its entry scene, the door's "0 of 2". `/play` shows
-   world 1; the built day sky is parked for stage 8.
-   *Test:* the night's look on phone / tablet / desktop, the entry scene, the door.
-3. **World 1, its three levels — DONE 2026-11-13.** Word (sound slot + letters in order), the search in
-   the level's own scene, the closing Puzzle / Memory at the medium step, with the
-   levels' own pictures.
-   *Test:* play 1–3 to the door; with Pinki's two stars it opens.
-4. **World 2, its look and the way in.** The sunrise sky (5 clouds, Nova's door), the
-   entry scene (night into sunrise, Pinki out of her door, `FriendSays`).
-   *Test:* the passage from world 1 into 2, the look.
-5. **World 2, levels 4–8.** Five activities (bridge, mixing, gates, bells, grey cloud).
-   *Test:* play 4–8.
-6. **World 3, its look and the way in.** The garden sky, Nova joining, Bloo's door.
-7. **World 3, levels 9–13.**
-8. **World 4, its look and the way in.** The built day sky re-made for five clouds and
-   the star's cloud, told apart from world 3; Bloo joining; the glint far off.
-9. **World 4, levels 14–18 and the end.** The storm, shadows, bridge, the trail, the
-   star's scene and the hardest puzzle.
-10. **The finish.** Three languages read through, dark mode, weight and loading of four
-    worlds, the docs; the old five-level data gone. (Cups and the old games' own pages
-    are deleted only when the user says.)
+#### The build, step by step (one step, then the user tests and says go on)
+1. **The lab world.**
+   - A `LAB` branch in `scene.html`, modelled from the episode-2 stills. The five
+     cookie stops on the path and the door as the last stop.
+   - `render.cjs stops lab` + `crop.py stops lab` produce `data/lab-stops.ts`, and
+     `/play` shows it through `CourseWorld`, with the asleep (faded) and awake looks
+     of each part as rendered layers.
+   - Pinki's welcome line.
+   - *Test:* the world on phone, tablet and desktop, and scrolling to the door.
+2. **Stage 1, the star search** (its garden render, the search, the warmer/colder cue
+   slots).
+3. **Stage 2, the gears.**
+4. **Stage 3, the pipes.**
+5. **Stage 4, the bubbles.**
+6. **Stage 5, the singing tubes.**
+7. **Stage 6, the door** (the knock, the opening render, the end and its link to
+   Watch).
+8. **The finish:**
+   - the sound list handed to the sound team,
+   - the music stems wired in,
+   - three languages, dark mode,
+   - the docs.
 
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
