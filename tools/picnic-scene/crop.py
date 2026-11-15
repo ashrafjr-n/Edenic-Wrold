@@ -310,7 +310,7 @@ if NAME == "chest":
     # its shut twin). The page lays them over its own frame, after the
     # stones are tinted — a lid in front of a stone stays gold. Then writes
     # `src/data/chest-open.ts`.
-    DEST = {"sky": "public/assets/play/sky/stops", "sky-night": "public/assets/play/sky/night/stops", "shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}
+    DEST = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}
 
     def changed(im, base, to):
         """`im` where it differs from `base`, as an RGBA crop; its box in %."""
@@ -331,7 +331,7 @@ if NAME == "chest":
     # files and their entries as they stand in `chest-open.ts`.
     only = sys.argv[2] if len(sys.argv) > 2 else None
     kept = dict(re.findall(r'^  "?([\w-]+)"?: (\{\n.*?\n  \},)$', open(os.path.join(ROOT, "src/data/chest-open.ts")).read(), re.S | re.M)) if only else {}
-    # A key that is not a plain name (`sky-night`) is quoted.
+    # A key that is not a plain name is quoted.
     keyOf = lambda course: course if course.isidentifier() else f'"{course}"'
     entries = []
     for course in DEST:
@@ -378,7 +378,7 @@ if NAME == "chest":
         "   world of stops (2026-11-11). Edit the scene, not this file. */\n"
         'import type { ChestOpening } from "@/types/course";\n'
         'import type { LessonId } from "@/types/lesson";\n\n'
-        'export const CHEST_OPEN: Partial<Record<LessonId | "sky" | "sky-night", ChestOpening>> = {\n' + "\n".join(entries) + "\n};\n"
+        'export const CHEST_OPEN: Partial<Record<LessonId, ChestOpening>> = {\n' + "\n".join(entries) + "\n};\n"
     )
     sys.exit()
 
@@ -393,8 +393,8 @@ if NAME == "stops":
     course = sys.argv[2] if len(sys.argv) > 2 else "shapes"
     # `fruits` (2026-11-06, Nova's Vegetables) is like colors: each frame's mask
     # sheet holds only the ways it shows; golden stones; no drops.
-    colors = course in ("colors", "fruits", "garden", "animals", "weather", "sky", "sky-night")
-    dest = {"sky": "public/assets/play/sky/stops", "sky-night": "public/assets/play/sky/night/stops", "shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}[course]
+    colors = course in ("colors", "fruits", "garden", "animals", "weather")
+    dest = {"shapes": "public/assets/learn/pinki/shapes/stops", "colors": "public/assets/learn/pinki/colors/stops", "fruits": "public/assets/learn/nova/fruits/stops", "garden": "public/assets/learn/nova/garden/stops", "animals": "public/assets/learn/bloo/animals/stops", "weather": "public/assets/learn/bloo/weather/stops"}[course]
     imports, parts = [], []
     # How the picture moves between frames (where it grows from, % of the frame,
     # and how much), measured by best fit on neighbouring frames: re-measure if
@@ -408,10 +408,6 @@ if NAME == "stops":
         # Bloo's (2026-11-08): best fit on neighbouring frames, as the others.
         "animals": {"landscape": [50, 12, 1.024], "portrait": [50, 20, 1.037]},
         "weather": {"landscape": [50, 0, 1.015], "portrait": [50, 18, 1.032]},
-        # The Sky Trail (2026-11-12): Vegetables' camera (five stops and the last), so its flow.
-        "sky": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
-        # World 1, night (2026-11-12): the Shapes camera's length (four stops), so its flow.
-        "sky-night": {"landscape": [50, 6, 1.021], "portrait": [50, 16, 1.022]},
     }[course]
     for frame in ("landscape", "portrait"):
         out = os.path.join(HERE, "out", f"stops-{frame}" if course == "shapes" else f"stops-{course}-{frame}")
@@ -459,12 +455,6 @@ if NAME == "stops":
                         sheet.paste(Image.merge("LA", (Image.new("L", (tw, th), 255), alpha)), (0, th * i))
                     sheet.save(f"{to}/d{f:03d}.png", optimize=True)
                     crc = zlib.crc32(open(f"{to}/d{f:03d}.png", "rb").read(), crc)
-        if course in ("sky", "sky-night"):
-            # A level's ground: the sky alone, out of focus (the top of the trail,
-            # its rainbow), behind the level's games — `level-<frame>.jpg`.
-            soft = Image.open(f"{out}/empty.jpg").convert("RGB").filter(ImageFilter.GaussianBlur(16))
-            soft.thumbnail((1280, 1280), Image.LANCZOS)
-            soft.save(os.path.join(ROOT, os.path.dirname(dest), f"level-{frame}.jpg"), quality=80, optimize=True, progressive=True)
         keys = meta["keys"]
         focus = []
         for stop in range(len(keys[0])):
@@ -484,8 +474,6 @@ if NAME == "stops":
         "garden": ("Nova's My Garden course", "GARDEN_STOPS", "garden-stops.ts", "2026-11-08", 450),
         "animals": ("Bloo's Animals course", "ANIMALS_STOPS", "animals-stops.ts", "2026-11-08", 720),
         "weather": ("Bloo's Seasons and Weather course", "WEATHER_STOPS", "weather-stops.ts", "2026-11-08", 340),
-        "sky": ("the Sky Trail (the Play game)", "SKY_STOPS", "sky-stops.ts", "2026-11-12", 380),
-        "sky-night": ("the Sky Trail's world 1, night", "SKY_NIGHT_STOPS", "sky-night-stops.ts", "2026-11-12", 300),
     }[course]
     arg = "" if course == "shapes" else f" {course}"
     ts = (
