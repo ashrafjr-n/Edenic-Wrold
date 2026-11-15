@@ -269,34 +269,6 @@ export const en = {
       the sky, each three short challenges, Edenic's big star at the end.
       `pinkiHello` / `pinkiPower` are what Pinki says when she joins on
       level 4 (`FriendSays`), one bubble a tap. */
-  sky: {
-    title: "Sky Trail",
-    back: "Back to the sky",
-    games: "Games",
-    gamesAria: "All the games",
-    startLevelAria: "Start level {n}",
-    lockedLevelAria: "Level {n}, locked",
-    starAria: "Edenic's big star",
-    doorAria: "{name}'s house",
-    gateCount: "{n} of {total}",
-    gateAria: "{name}'s door opens with {total} stars from {name}'s lessons. You have {n}.",
-    replayIntro: "Watch the story again",
-    toTheDoor: "To {name}'s house",
-    searchStars: "Find the hidden stars!",
-    searchDust: "Tap the clouds away and find the stardust!",
-    searchLights: "Find the three far lights!",
-    searchThingAria: "Hidden thing {n}",
-    searchCloudAria: "A cloud. Tap it away.",
-    levelTitle: "Sky Trail, level {n}",
-    challengeOf: "Challenge {n} of {total}",
-    levelDone: "Level complete!",
-    levelDoneLine: "Cloud {n} is yours. Fly on!",
-    allDoneLine: "Look! A little house on the last cloud.",
-    nextLevel: "Next level",
-    pinkiHello: "Hi! I am Pinki. Let's fly together!",
-    pinkiPower: "Stuck on a puzzle? Tap the lightbulb and I will help.",
-    skip: "Skip",
-  },
   ui: {
     /** Read out while something loads (nothing is written on screen). */
     loading: "Loading…",
