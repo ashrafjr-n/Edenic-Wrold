@@ -1,0 +1,480 @@
+/* ---------------------------------------------------------------
+   Clouds — the Edenic Trail's scenery (`components/ui/cloud.tsx`).
+
+   TWO elements, and the split is load-bearing, not tidiness: `filter` is
+   applied BEFORE `mask` on the same element, so a drop shadow declared on
+   the masked body would be cut away with everything outside the silhouette
+   (the same trap the puzzle pieces' shadows avoid). The wrapper carries the soft
+   outer shadow; the body carries the mask and the fill.
+
+   The clay read comes from ONE continuous vertical gradient across the
+   whole silhouette — lightest at the top, the tint's own deeper value
+   underneath — plus a soft top highlight. That is only possible because the
+   shape is a mask over a single box: overlapping shaded divs would show a
+   seam at every join.
+
+   NO grain here, deliberately. `--noise` blends `overlay`, and a near-white
+   fill gives an overlay blend nothing to push against — the same reason
+   `.tile-grain` is only worth putting on a TINTED tile and the site's own
+   near-white `--background` carries none in light mode.
+
+   Motion is deliberately absent and deliberately easy to add: a float
+   animation belongs on `.cloud` (the wrapper) animating `translate`, which
+   is its own property in Tailwind v4 and composites, so it will not fight
+   the body's mask or the wrapper's filter. Nothing needs restructuring for
+   it — see the component's own comment.
+   --------------------------------------------------------------- */
+.cloud {
+  display: block;
+  width: var(--cloud-w);
+  aspect-ratio: 20 / 11;
+  /* TWO shadows, not one: a tight contact shadow just under the cloud plus a
+     wide ambient pool below it — the same two-layer grounding `.card` and the
+     friend-picker's characters use. One mid-distance shadow reads as a
+     sticker with a blur under it; a tight one plus a soft one reads as an
+     object resting in space. Kept low-opacity on purpose: the brief asked
+     for a soft shadow under the cloud, not a hard one. */
+  filter:
+    drop-shadow(0 6px 6px rgb(var(--shadow-hue) / 13%))
+    drop-shadow(0 18px 24px rgb(var(--shadow-hue) / 13%));
+  pointer-events: none;
+  /* How hard the lobe highlights burn. A variable, not a literal, so dark
+     mode dims every lobe of every variant by changing two numbers rather
+     than restating all sixteen gradients. */
+  --cloud-hi: 92%;
+  --cloud-hi-soft: 72%;
+  --cloud-lobes:
+    radial-gradient(9% 17% at 9.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 24.9% 35.3%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(14% 26% at 43.0% 29.5%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(10% 18% at 65.8% 36.8%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 83.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
+/* ---------------------------------------------------------------
+   What makes a masked shape read as CLAY rather than as a flat cut-out.
+
+   The first version was one linear gradient behind the mask, and it looked
+   exactly like what it was: a silhouette filled with a wash. A clay cloud is
+   several inflated BALLS stuck together, and a ball needs its own light —
+   so `--cloud-lobes` carries one soft white radial per lobe of that
+   variant's silhouette, each offset UP AND LEFT of the lobe's own centre so
+   every puff catches the light from the same direction. The middle lobe (the
+   tall one, nearest the viewer) is the brightest; the shoulders are dimmer.
+
+   Read the percentages against that variant's own viewBox in the shape
+   tokens above — they are the lobe centres, moved about a third of a radius
+   toward the light. **Redraw a shape and its lobe highlights have to move
+   with it**, or the light lands between the puffs instead of on them.
+
+   Under them: an underside band that darkens the bottom of the whole shape
+   with the tint's own shade colour (the "depth" that stops the bottom edge
+   floating), then the base top-to-bottom gradient. Four layers total, no
+   filters, no extra elements.
+   --------------------------------------------------------------- */
+.cloud-body {
+  width: 100%;
+  height: 100%;
+  mask-image: var(--cloud-shape-1);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-image:
+    var(--cloud-lobes),
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0%) var(--cloud-band, 46%),
+      color-mix(in srgb, var(--cloud-deep) 88%, transparent) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--cloud-face) 0%,
+      var(--cloud-face) 30%,
+      var(--cloud-shade) 100%
+    );
+}
+
+.cloud--v2 {
+  --cloud-lobes:
+    radial-gradient(9% 16% at 8.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 25.9% 29.5%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 46.9% 34.9%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 67.1% 39.2%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 16% at 84.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
+.cloud--v2 .cloud-body {
+  mask-image: var(--cloud-shape-2);
+}
+
+.cloud--v3 {
+  --cloud-lobes:
+    radial-gradient(9% 17% at 9.1% 50.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 17% at 27.1% 39.2%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(12% 22% at 44.9% 33.1%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(13% 24% at 64.6% 28.9%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(9% 16% at 84.4% 52.6%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
+.cloud--v3 .cloud-body {
+  mask-image: var(--cloud-shape-3);
+}
+
+/* The wide bank. Its own aspect ratio, not the puffs' 20:11 — and a caller
+   that gives it an explicit height (`.cloud--stretch`) drops the ratio
+   altogether and lets the mask stretch, which is safe here in a way it is
+   NOT for a puff: the shape is authored `preserveAspectRatio='none'`, and a
+   bank pulled taller or wider just reads as a longer bank. Six lobes, so six
+   highlights — narrower in x than the puffs' because this box is twice as
+   wide, so the same lobe is half the share of it. */
+.cloud--v4 {
+  aspect-ratio: 40 / 11;
+  /* The bank starts its underside band higher up than a free-standing puff
+     does. It is always used cropped — run off the edge of whatever it is
+     scenery for — so the deepest part of the band is off-screen, and at the
+     puffs' 46% the visible slice was an unshaded white expanse. */
+  --cloud-band: 26%;
+  --cloud-lobes:
+    radial-gradient(8% 28% at 58% 32%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(7.5% 27% at 26% 34%, rgb(255 255 255 / var(--cloud-hi)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 43% 45%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6.5% 23% at 74% 47%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(6% 22% at 12% 49%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%),
+    radial-gradient(4.5% 17% at 88% 58%, rgb(255 255 255 / var(--cloud-hi-soft)) 0%, rgb(255 255 255 / 0%) 100%);
+}
+
+.cloud--v4 .cloud-body {
+  mask-image: var(--cloud-shape-4);
+}
+
+/* Drops the aspect ratio so an explicit height applies. Bank only — a puff
+   stretched off its 20:11 loses the roundness its lobes are drawn for. */
+.cloud--stretch {
+  aspect-ratio: auto;
+}
+
+/* Sizes live here rather than as Tailwind widths so a caller can override
+   with one inline `--cloud-w` (an inline custom property beats a class,
+   where two competing `w-*` utilities would just race on source order).
+   Each steps up once at `sm` — a cloud sized for a phone reads as a speck
+   on a desktop sky. */
+.cloud--sm {
+  --cloud-w: 7rem;
+}
+
+.cloud--md {
+  --cloud-w: 11rem;
+}
+
+.cloud--lg {
+  --cloud-w: 17rem;
+}
+
+@media (width >= 40rem) {
+  .cloud--sm {
+    --cloud-w: 9rem;
+  }
+
+  .cloud--md {
+    --cloud-w: 15rem;
+  }
+
+  .cloud--lg {
+    --cloud-w: 24rem;
+  }
+}
+
+/* Tints: every one is a `color-mix` of an EXISTING character token into
+   white, never a new hue — the same rule the two Activities CTA washes
+   follow. White is the default cloud; the other three are barely-there
+   pastels, there so a sky of eight clouds isn't eight identical cut-outs.
+
+   THREE values each, not two, and the spread between them is what carries
+   the 3D: `--cloud-face` is the lit top, `--cloud-shade` the bottom of the
+   base gradient, `--cloud-deep` the underside band beneath that. The first
+   version ran face-to-shade only and at a much narrower spread, which is a
+   large part of why the clouds read flat — a clay object needs a real
+   distance between its lit and unlit sides, not a hint of one. */
+.cloud--white {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 46%, #ffffff);
+}
+
+.cloud--sky {
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 36%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 58%, #ffffff);
+}
+
+.cloud--pink {
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 30%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-pinki) 50%, #ffffff);
+}
+
+.cloud--lavender {
+  --cloud-face: color-mix(in srgb, var(--color-nova) 4%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 30%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 50%, #ffffff);
+}
+
+/* ---------------------------------------------------------------
+   The one stage that's open right now (`<Cloud active>`).
+
+   Brighter, not a different colour — the ask was "whiter than the others,
+   like it's glowing", never a lock/dim treatment on its neighbours. Declared
+   after every `.cloud--*` tint above so it wins on source order at equal
+   specificity, whichever tint this particular cloud was cycled onto.
+
+   `--cloud-hi`/`-soft` push the lobe highlights past daylight's own ceiling,
+   and `--cloud-face`/`-shade`/`-deep` are pulled toward pure white — the
+   same three-value ramp every tint uses, just barely tinted at all. The
+   glow itself is a soft white radial sitting BEHIND the cloud
+   (`isolation: isolate` + `z-index: -1`, the same halo technique
+   `.guide-target::after` uses), and the whole thing breathes via
+   `.anim-pulse-invite` (applied in the component) — reusing the numbers
+   picker's own "tap me" pulse rather than writing a second scale keyframe
+   for the same motion. */
+.cloud--active {
+  --cloud-hi: 100%;
+  --cloud-hi-soft: 92%;
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 10%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 22%, #ffffff);
+  /* **The glow is two white `drop-shadow`s on the same `filter` `.cloud`
+     already uses, NOT a positioned pseudo-element** — and that is a fix,
+     not a preference. The first version was a radial `::before`, which
+     needed `position: relative` on this class to anchor it: `.cloud--active`
+     is UNLAYERED css and Tailwind's `absolute` is in `@layer utilities`, so
+     that `position` silently beat the `absolute` every trail stop is placed
+     with and dropped the first cloud out of its lane into normal flow at
+     the top of the sky. Exactly the trap `.card`/`.tile` already document,
+     walked into anyway. A filter needs no positioning at all, and it hugs
+     the cloud's own silhouette instead of drawing a circle of light behind
+     a cloud-shaped object. The two grounding shadows below are `.cloud`'s
+     own, restated because `filter` replaces wholesale. */
+  filter:
+    drop-shadow(0 0 10px rgb(255 255 255 / 90%))
+    drop-shadow(0 0 28px rgb(255 255 255 / 65%))
+    drop-shadow(0 6px 6px rgb(var(--shadow-hue) / 13%))
+    drop-shadow(0 18px 24px rgb(var(--shadow-hue) / 13%));
+}
+
+/* ---------------------------------------------------------------
+   The cloud page transition (`PageTransitionOverlay`).
+
+   **THREE WIDE BANKS, not a crowd of puffs.** Each one spans more than the
+   full width of the screen, so the drift has no vertical seams at all —
+   which is what finally killed the gap problem. The first version packed
+   two dozen puffy clouds in a grid, and every gap it leaked was the V
+   between two neighbours in a row; the second widened them until the Vs
+   closed, at the cost of two dozen masked, filtered, animating elements on
+   screen at once. **Three is the same picture for an eighth of the work**,
+   and the shape reads better besides: a bank is long and flat, which is
+   what a cloud you fly THROUGH looks like.
+
+   **Clouds and nothing else.** No panel, no gradient, no sky behind them —
+   an earlier version painted `.trail-sky--day` as a "guaranteed coverage"
+   backing, which in dark mode dragged that palette's tiled STARFIELD along
+   with it, and both were rejected on sight. Don't put a fill back here.
+
+   **It passes UNDER the header and the bottom nav** — `z-index: 10` against
+   their `z-20`, deliberately the one overlay on the site that does NOT
+   out-rank the chrome (`puzzle-hint`'s modal at `z-50` is the opposite
+   case: it dims the page and owns the screen).
+
+   **Coverage is geometry, not luck.** A bank is opaque from roughly 40% of
+   its own height down to its base, so three of them at height H spaced
+   0.5H apart overlap by enough that the valleys between one bank's lobes
+   sit over the solid middle of the next — the sizes and offsets live in
+   `PageTransitionOverlay`, where they are derived from those two numbers.
+
+   **Each bank animates itself, staggered bottom-up.** They travel upward,
+   so the lowest sets off first; a top-down stagger reads as the drift
+   sinking while it rises. The x-centring lives INSIDE the keyframes
+   (`-50%`), never as a Tailwind `-translate-x-1/2`: v4 utilities set the
+   same standalone `translate` property these keyframes animate, and an
+   animation overrides it outright, so a class-based centring is dropped
+   for the whole flight. `both` fill mode, not `backwards` — the `from`
+   state has to hold through the stagger delay AND the `to` state through
+   the covered pause. (`.lang-orb` is `backwards` for the opposite reason:
+   it has to release `translate` back to a button's own press.) */
+.page-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* **No `filter` and no lobe highlights on a veil bank, and both are
+   PERFORMANCE decisions, not visual ones** — this transition was reported
+   as stuttering, and measured (a 6x-throttled CPU, frame deltas over the
+   whole transition) it was: a 450ms worst frame.
+
+   A `drop-shadow` is the expensive half. A `translate` animation normally
+   runs on the compositor thread, where a busy main thread — and the main
+   thread IS busy here, rendering the route we are navigating to — cannot
+   stall it. A filter on the animating element takes that away: the layer
+   has to be re-filtered rather than merely re-positioned, which puts the
+   drift back at the mercy of whatever else is running. Nothing separates
+   these three banks except their own three shades of white, which is what
+   the shades are for.
+
+   `--cloud-lobes: none` drops six radial gradients per bank. Each bank is
+   most of the screen, so that is millions of device pixels of gradient to
+   rasterize the moment the overlay mounts — paid exactly when the child
+   taps. The base gradient and the underside band stay, so a bank is still
+   shaded clay rather than a flat cut-out, and at this speed nobody reads
+   per-lobe highlights anyway. */
+.page-veil-cloud {
+  --cloud-lobes: none;
+  will-change: translate;
+}
+
+@keyframes veil-cloud-rise {
+  from {
+    translate: -50% 125lvh;
+  }
+  to {
+    translate: -50% 0;
+  }
+}
+
+@keyframes veil-cloud-exit {
+  from {
+    translate: -50% 0;
+  }
+  to {
+    translate: -50% -125lvh;
+  }
+}
+
+.page-veil--in .page-veil-cloud {
+  animation: veil-cloud-rise 700ms cubic-bezier(0.24, 0.72, 0.28, 1) both;
+}
+
+.page-veil--out .page-veil-cloud {
+  animation: veil-cloud-exit 640ms cubic-bezier(0.5, 0, 0.72, 0.25) both;
+}
+
+/* Three whites, back to front, on direct request — pale, plain, then pure.
+   They are what separates one bank from the next now that none of them
+   carries a drop shadow (see the note above on why the filter had to go),
+   and they are the reason the stack still reads as three clouds passing
+   rather than one white sheet. Declared after every `.cloud--*` tint so
+   they win on source order at equal specificity. Same three-value ramp as
+   any other tint: lit face, base-gradient bottom, underside band. */
+.page-veil-cloud--far {
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 9%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 34%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 52%, #ffffff);
+}
+
+.page-veil-cloud--mid {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 24%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
+}
+
+.page-veil-cloud--near {
+  --cloud-face: #ffffff;
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 12%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+}
+
+/* Dark mode keeps the same three-step order, but supplies it as three pale
+   HUES for the night ramp `[data-theme="dark"] .cloud` computes — a literal
+   white bank on a night sky is the brightest thing on the page, which is
+   backwards (the trap `--color-gold-quiet` documents). Equal specificity to
+   that ramp and to the tint rules, so these have to sit after both. */
+[data-theme="dark"] .page-veil-cloud--far {
+  --cloud-pale: #aebbd8;
+}
+
+[data-theme="dark"] .page-veil-cloud--mid {
+  --cloud-pale: #c8d5ef;
+}
+
+[data-theme="dark"] .page-veil-cloud--near {
+  --cloud-pale: #dfeafb;
+}
+
+/* The same clouds, pink: going in to Pinki's course world. Fixed
+   in dark mode too — it is her colour, not the sky's. */
+.page-veil--pink .page-veil-cloud--far,
+[data-theme="dark"] .page-veil--pink .page-veil-cloud--far {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 58%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 82%, #ffffff);
+  --cloud-deep: var(--color-pinki);
+}
+
+.page-veil--pink .page-veil-cloud--mid,
+[data-theme="dark"] .page-veil--pink .page-veil-cloud--mid {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 42%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 68%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-pinki) 88%, #ffffff);
+}
+
+.page-veil--pink .page-veil-cloud--near,
+[data-theme="dark"] .page-veil--pink .page-veil-cloud--near {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-pinki) 26%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-pinki) 52%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-pinki) 74%, #ffffff);
+}
+
+/* The same clouds, lavender: going in to Nova's course world. Fixed
+   in dark mode too — it is her colour, not the sky's. */
+.page-veil--lavender .page-veil-cloud--far,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--far {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 58%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 82%, #ffffff);
+  --cloud-deep: var(--color-nova);
+}
+
+.page-veil--lavender .page-veil-cloud--mid,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--mid {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 42%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 68%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 88%, #ffffff);
+}
+
+.page-veil--lavender .page-veil-cloud--near,
+[data-theme="dark"] .page-veil--lavender .page-veil-cloud--near {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-nova) 26%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-nova) 52%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-nova) 74%, #ffffff);
+}
+
+/* The same clouds, blue: going in to Bloo's course world. Fixed
+   in dark mode too — it is his colour, not the sky's. */
+.page-veil--bloo .page-veil-cloud--far,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--far {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 58%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 82%, #ffffff);
+  --cloud-deep: var(--color-bloo);
+}
+
+.page-veil--bloo .page-veil-cloud--mid,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--mid {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 42%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 68%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 88%, #ffffff);
+}
+
+.page-veil--bloo .page-veil-cloud--near,
+[data-theme="dark"] .page-veil--bloo .page-veil-cloud--near {
+  --cloud-pale: unset;
+  --cloud-face: color-mix(in srgb, var(--color-bloo) 26%, #ffffff);
+  --cloud-shade: color-mix(in srgb, var(--color-bloo) 52%, #ffffff);
+  --cloud-deep: color-mix(in srgb, var(--color-bloo) 74%, #ffffff);
+}
