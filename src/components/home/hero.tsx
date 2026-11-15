@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { getDictionary, getLocale } from "@/lib/locale";
 import { dirFor, isRtl } from "@/lib/format-dict";
+import heroArt from "../../../public/hero.webp";
 
 export async function Hero() {
   const [dict, locale] = await Promise.all([getDictionary(), getLocale()]);
@@ -33,8 +34,9 @@ export async function Hero() {
             renders visually when the picture fails to load, so it needs a
             base direction like any other mixed run (see `dirFor`). */}
         <Image
-          src="/hero.webp"
+          src={heroArt}
           alt={dict.home.heroAlt}
+          placeholder="blur"
           dir={dirFor(locale)}
           fill
           preload
