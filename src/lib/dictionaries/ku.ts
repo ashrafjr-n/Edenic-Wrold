@@ -187,6 +187,21 @@ export const ku: Dictionary = {
     basket: "دانە",
   },
   /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
+  /** تاقیگەها نڤستی یا Play (2026-11-15). */
+  lab: {
+    title: "تاقیگەها نڤستی",
+    back: "ڤەگەڕان بۆ تاقیگەهێ",
+    games: "یاری",
+    gamesAria: "هەمی یاری",
+    stageLabel: "قۆناغا {value}",
+    startStageAria: "قۆناغا {n} دەست پێ بکە",
+    lockedStageAria: "قۆناغا {n}، گرتییە",
+    doorAria: "دەرگەهێ تاقیگەهێ",
+    skip: "دەرباز ببە",
+    welcome1: "هێدی… تاقیگەه نڤستییە!",
+    welcome2: "تو دێ هاریکاریا مە کەی دا هشیار بکەین؟ باز بدە سەر کولیچا ئێکێ!",
+    stageSoon: "ئەڤ قۆناغە ل سەر ڕێیە!",
+  },
   discover: {
     playButton: "یاری",
     watchButton: "تەماشە بکە",
