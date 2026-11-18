@@ -121,6 +121,9 @@ export const ar: Dictionary = {
     replayLesson: "العب {name} مرة أخرى",
     youCanDoIt: "يمكنك فعلها!",
     allDone: "تعلّمت كل شيء! أحسنت!",
+    stars: "نجومي: {n} من {total}",
+    starEarned: "{name}: حصلت على النجمة",
+    starMissing: "{name}: لا نجمة بعد",
   },
   lessonPicker: {
     backTo: "العودة إلى دروس {characterName}",
