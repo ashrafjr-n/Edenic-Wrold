@@ -962,6 +962,43 @@ again from its cookie, and the door stays open.
    - three languages, dark mode,
    - the docs.
 
+### Stars → Play's games (the user, 2026-11-18) — PLANNED, NOT BUILT
+
+The chest's star now has somewhere to go, and Play spends them. Six stars in
+all (two per friend, one per course).
+
+**1. The star pod (Learn — build FIRST, waiting for the user's go).**
+- On a friend's pages (hub + course pages = `ClassroomShell`, the layout, so
+  it is mounted once and never remounts): a white clay chip with a star icon,
+  just under the header on the LEFT, under the back button's row (that spot
+  is the back button's — `BackRow` — so the pod sits below it, never on it).
+  Layout never mirrors, so it stays left in Arabic and Kurdish too.
+- Pressed, it opens like the language switcher (`.lang-orb`): two clay circles spring
+  out to its right, staggered, on one white clay plate (`.lang-fan`'s
+  recipe); pressed again, outside click or Escape closes it.
+- Each circle is ONE course's slot: empty = a pale 3D clay star, rendered
+  (`tools/picnic-scene`); earned = `learn/chest-star.png`, the chest's
+  star. The course's name in `aria-label` (3 languages). The chip shows "1/2".
+- The moment a star is earned (the chest opens on the course page — the
+  pod is in the layout, so it is there): the pod opens by itself, the star
+  pops into its slot with the `star` sound, then it closes after ~2.5 s.
+- Reads only `chestStarKey` from the progress store — no new state. Empty
+  until `hydrated`. Grain on the coloured parts, dark-mode twin rules,
+  checked at 390/820/1440 with screenshots.
+- POSTPONED by the user: the all-six celebration and a certificate.
+
+**2. Play: stars open games (later, when Play comes back).**
+- Every TWO stars = one game to open; the child goes to Play and CHOOSES
+  which one to open. Puzzle costs 2, Memory Match 2, Find 2 → six stars
+  open all three. Stored as opened games (e.g. `play.open.<game>`); stars
+  left = earned − 2 × opened.
+- **Nova's Cups — REMOVE it** (the user doesn't like it): `/play/cups`,
+  `CupsPlay`, `CupsCta`, `cupsKey`.
+- **New game: Find (3D).** Each stage is a rendered 3D place and one thing
+  to find: the kitchen — find the carrot: a table full of vegetables, pick
+  the carrot and put it on the plate; the forest — find the flower; and so
+  on. Same render pipeline as the course worlds. Not built.
+
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
 The user: after the reel everything sits on the same board — a lesson
