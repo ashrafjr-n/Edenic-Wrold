@@ -25,7 +25,7 @@ interface Button3DProps
   /** Fires on BOTH branches — the `<button>` and the `<Link>`. Deliberately
       argument-less: the two elements hand back different event types, and no
       caller on the site has ever needed the event itself. Anything that does
-      (the Play page's trail card, which has to let a modified click through)
+      (a friend's course card, which has to let a modified click through)
       uses a raw `<Link>` rather than this component. */
   onClick?: () => void;
   variant?: ButtonVariant;

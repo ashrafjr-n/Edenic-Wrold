@@ -81,8 +81,7 @@ const BANKS: VeilBank[] = [
 /**
  * Three wide banks of clay cloud that rise from below the viewport, cover
  * the screen, then carry on up and off the top — the transition a friend's
- * hub card plays on the way into a course's world (it was built for the old
- * Edenic Trail card, deleted 2026-11-12).
+ * hub card plays on the way into a course's world.
  *
  * **Three elements, not the two dozen puffs this started as.** Banks span
  * more than the full width, so the drift has no vertical seams to leak the

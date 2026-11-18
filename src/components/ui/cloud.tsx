@@ -53,7 +53,7 @@ interface CloudProps {
  * **Sizing is `--cloud-w`, not a `w-*` utility.** Two competing Tailwind
  * width classes race on source order, so a caller could not reliably widen a
  * `size="lg"` cloud; an inline `--cloud-w` always wins over the size class.
- * The trail card uses that to run one cloud the full width of its scene.
+ * The cloud veil uses that to run each bank wider than the screen.
  *
  * **Built for motion, with none of it built.** A later idle float belongs on
  * the WRAPPER as a `translate` animation (its own property in Tailwind v4,
