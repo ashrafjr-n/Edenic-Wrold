@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { Blocks, Ear, Eye, Pencil, Pointer, Search, ShoppingBasket, Utensils, X, type LucideIcon } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import type { Dictionary } from "@/lib/dictionaries/en";
+import { playSfx } from "@/lib/cue";
 import { TaskDemo, type TaskDemoDef } from "./task-demo";
 
 export type TaskKind = keyof Dictionary["tasks"];
@@ -72,6 +73,7 @@ export function TaskChip({ kind, verb, target, label, demo, closeLabel, tone, di
 
   const show = () => {
     setOpen(true);
+    playSfx("whoosh");
     dialog.current?.showModal();
   };
 
