@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Celebration } from "@/components/ui/celebration";
-import { lessonCue, playCue } from "@/lib/cue";
+import { lessonCue, playCue, playSfx } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import type { Basket, Kitchen, SceneRect } from "@/types/course";
@@ -156,6 +156,7 @@ export function BasketTime({ word, kitchen, hidden = false, done = false, itemAr
     }
     after(still() ? 0 : FLY_MS, () => {
       setLanded(true);
+      playSfx("plop");
       navigator.vibrate?.([10, 40, 14]);
       after(250, () => void playCue(lessonCue.word(word)));
       after(DONE_MS, onSolved);
@@ -166,6 +167,7 @@ export function BasketTime({ word, kitchen, hidden = false, done = false, itemAr
   const onPointerDown = (index: number) => (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (busy.current) return;
     dragged.current = false;
+    playSfx("pickup");
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({ index, x: event.clientX, y: event.clientY, dx: 0, dy: 0, moved: false });
   };
@@ -258,6 +260,7 @@ export function BasketTime({ word, kitchen, hidden = false, done = false, itemAr
             type="button"
             aria-label={format(itemAria, { word: item.word })}
             disabled={refused.includes(item.id) || landed}
+            data-sfx="none"
             onClick={() => {
               if (!dragged.current) put(index);
             }}
