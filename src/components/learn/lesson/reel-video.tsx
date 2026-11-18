@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { Loader } from "@/components/ui/loader";
+import { LoadingCover } from "./loading-room";
 import { playSfx } from "@/lib/cue";
 
 /** Kept in step with `.morph-btn__icon`'s 0.55s turn in `globals.css`: the
@@ -12,8 +13,10 @@ import { playSfx } from "@/lib/cue";
 const SKIP_SPIN_MS = 520;
 
 /** The loader always comes first (direct request: "loading, THEN the
-    video") — at least this long, however fast the clip arrives. */
-const LOADER_MS = 1200;
+    video") — at least this long, however fast the clip arrives: 1.5 s, to be
+    seen calmly, not glimpsed (the user, 2026-11-18). The world's pictures
+    load behind it (`LessonWorldView`). */
+const LOADER_MS = 1500;
 
 interface ReelVideoProps {
   src: string;
@@ -31,6 +34,10 @@ interface ReelVideoProps {
   /** Watched again ("Play again"): the clip is already in the browser, so no
       loader first. */
   replay?: boolean;
+  /** The lesson's opening reel: its loader is the whole-screen cover the
+      route's `loading.tsx` shows (one wait, not two). A reel mid-lesson
+      waits in its own frame. */
+  cover?: boolean;
   /** The reel ended, or the child skipped it. Called once. */
   onDone: () => void;
 }
@@ -47,7 +54,7 @@ interface ReelVideoProps {
  * exception: there it sits in the lesson's middle column, on the board the
  * steps after it play on, with the watch and lesson panels either side.
  */
-export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabel, tone, replay = false, onDone }: ReelVideoProps) {
+export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabel, tone, replay = false, cover = false, onDone }: ReelVideoProps) {
   const video = useRef<HTMLVideoElement>(null);
   const done = useRef(false);
   const timer = useRef<number | undefined>(undefined);
@@ -122,11 +129,14 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
               className="select-none object-contain p-12 opacity-90"
             />
           )}
-          {!ready && !failed && (
-            <span className="absolute inset-0 flex items-center justify-center">
-              <Loader label={loadingLabel} />
-            </span>
-          )}
+          {!ready && !failed &&
+            (cover ? (
+              <LoadingCover label={loadingLabel} />
+            ) : (
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Loader label={loadingLabel} />
+              </span>
+            ))}
 
           <video
             ref={video}
