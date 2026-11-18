@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Lock, Play } from "lucide-react";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
 import { chestSeen, peekChest, takeChest } from "@/lib/chest-run";
+import { playSfx } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
 import { chestStarKey, itemKey, useProgress } from "@/store/progress";
@@ -177,7 +178,13 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
     const key = chestStarKey(characterId, lessonId);
     const fresh = !items[key];
     complete(key, 1);
-    starTimer.current = window.setTimeout(() => setStarOut(fresh ? "rise" : "rest"), fresh ? (still ? STAR_BEAT_MS : STAR_AFTER_MS) : 0);
+    starTimer.current = window.setTimeout(
+      () => {
+        setStarOut(fresh ? "rise" : "rest");
+        if (fresh) playSfx("star");
+      },
+      fresh ? (still ? STAR_BEAT_MS : STAR_AFTER_MS) : 0,
+    );
   };
   /* The star over the open chest: `rise` as it comes out the first time, `rest` after. */
   const [starOut, setStarOut] = useState<"rise" | "rest" | null>(null);
@@ -594,6 +601,8 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
         if (gone.signal.aborted) return crops.forEach((crop) => crop?.close());
         playCrops = crops;
         now.playStart = -2;
+        /* Its sound starts with its first frame. */
+        playSfx("chest");
         show();
       });
     };
