@@ -308,9 +308,15 @@ color-mixing and color-hunt activities for 4–7 year olds
 (littlebinsforlittlehands.com, empoweredparents.co).
 
 ## 7. Sound
-None yet. Only the taught English words will be recorded (the word card's big
-speaker). Step instructions are not spoken: the round task button SHOWS how
-instead (decided 2026-09-28).
+BUILT 2026-11-18 (the user: "every childlike sound, all of Learn"). Every taught
+word is spoken (Kokoro TTS, `af_heart`, `tools/sounds/words.py` →
+`public/assets/audio/words/`); it plays on the word card's big speaker, after a
+word is spelled or a colour mixed, and as an animal eats or a vegetable lands.
+Sound effects are synthesised (`tools/sounds/sfx.py` → `audio/sfx/`): a pop on
+every button in Learn, a cheer on a solved step, a soft "uh-oh" on a miss (no
+buzzer), letters and finds climbing a scale, chomp, plop, bubbles, whoosh, a
+hooray at a lesson's end, the chest and its star. Step instructions are still
+not spoken: the round task button SHOWS how instead (decided 2026-09-28).
 
 ## 8. Not now (on purpose)
 Collections, "Is Pinki right?", hint friends, translate button, questions inside
@@ -1138,9 +1144,10 @@ leads; the older items below fold into it:
        the next lesson big in the middle, every lesson in order in
        rows of cards (2026-11-05; numbered, learned ticked, the next ringed,
        the review a paper sheet).
-3. [ ] **Audio** — every taught word and line recorded (§7), `playCue`
-       wired (`lib/cue.ts`, howler.js — a new dependency, ask first); one
-       tap starts sound (iOS blocks autoplay); a mute switch.
+3. [x] **Audio** — done 2026-11-18 (§7): every taught word spoken and the
+       sound effects, `playCue`/`playSfx` on the Web Audio API (`lib/cue.ts`,
+       no howler — no dependency); the first tap starts sound. Still open:
+       a mute switch.
 4. [ ] **Videos** — every lesson's real reel in place of the placeholder
        (same file names); compressed (H.264 MP4, a poster frame); decide
        where they are hosted (the repo is no place for big files).
