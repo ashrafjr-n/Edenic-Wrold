@@ -1,19 +1,17 @@
-import { Loader } from "@/components/ui/loader";
 import { getDictionary } from "@/lib/locale";
-import { LoadingRoom } from "@/components/learn/lesson/loading-room";
+import { LoadingCover } from "@/components/learn/lesson/loading-room";
 
 /**
  * A lesson on its way: shown the moment a lesson is tapped (the route is
  * dynamic — without this the tap waited on the server with nothing to
- * show), then the lesson replaces it, its reel loading behind the same
- * loader.
+ * show), then the lesson takes over with the same cover while its reel
+ * loads (`ReelVideo` `cover`).
  */
 export default async function LessonLoading() {
   const dict = await getDictionary();
   return (
-    <main className="relative isolate flex flex-1 flex-col items-center justify-center">
-      <LoadingRoom />
-      <Loader label={dict.ui.loading} />
+    <main className="flex flex-1 flex-col">
+      <LoadingCover label={dict.ui.loading} />
     </main>
   );
 }
