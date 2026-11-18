@@ -45,7 +45,3 @@ export function chestStarKey(characterId: string, lessonId: string): ItemKey {
   return `star.${characterId}.${lessonId}`;
 }
 
-/** Nova's Cups' five levels (`cups.1`) — finished or not, like a puzzle. */
-export function cupsKey(level: number): ItemKey {
-  return `cups.${level}`;
-}
