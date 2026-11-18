@@ -10,10 +10,6 @@ import pink from "../../public/assets/learn/pinki/colors/dots/pink.png";
 import brown from "../../public/assets/learn/pinki/colors/dots/brown.png";
 import black from "../../public/assets/learn/pinki/colors/dots/black.png";
 import white from "../../public/assets/learn/pinki/colors/dots/white.png";
-import empty from "../../public/assets/learn/pinki/colors/dots/empty.png";
-
-/** A dot with no color yet, plain grey — a color still to learn. */
-export const EMPTY_DOT = empty;
 
 interface ColorDef {
   /** A plain dot of this color — how the course
