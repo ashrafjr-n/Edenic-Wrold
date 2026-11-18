@@ -71,6 +71,7 @@ export function CueButton({ cue, label, children, size = "lg", invite = false }:
         tone={GOLD}
         onClick={play}
         aria-label={label}
+        data-sfx="none"
         className={`relative font-bold ${box} ${speaking ? "anim-jump" : ""}`}
       >
         <Volume2 className={icon} strokeWidth={2.75} />
