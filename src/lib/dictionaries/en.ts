@@ -132,6 +132,10 @@ export const en = {
     /** On the board once every lesson of the friend's is learned. */
     allDone: "You learned it all! Well done!",
     /** A course's board: how far along it is. */
+    /** The star pod: the chip, and each course's slot. */
+    stars: "My stars: {n} of {total}",
+    starEarned: "{name}: star earned",
+    starMissing: "{name}: no star yet",
   },
   lessonPicker: {
     backTo: "Back to {characterName}'s lessons",
