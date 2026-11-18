@@ -384,6 +384,7 @@ export function LessonPlayer({
         playLabel={lines.playReel}
         tone={onward}
         replay={round > 0}
+        cover={!step.src}
         onDone={advance}
       />
     );
