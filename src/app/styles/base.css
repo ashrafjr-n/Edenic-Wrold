@@ -54,7 +54,7 @@
   --hero-shape-rtl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L0,600 C200,600 300,548 460,566 S730,620 870,594 S1040,516 1050,452 S1010,300 1024,196 S986,44 932,0 Z'/%3E%3C/svg%3E");
   --hero-shape-narrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath fill='%23fff' d='M0,0 L1200,0 L1200,468 C1020,468 930,548 750,556 S450,606 300,570 S120,466 0,482 Z'/%3E%3C/svg%3E");
 
-  /* Cloud silhouettes for `<Cloud />` (Edenic Trail's sky), as MASKS — the
+  /* Cloud silhouettes for `<Cloud />` (the cloud veil, a friend's classroom), as MASKS — the
      same technique `--hero-shape` uses, and for the same reason: one shape
      definition scales to any box, and a mask edge antialiases where a
      `clip-path` stair-steps.

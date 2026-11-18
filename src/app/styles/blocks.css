@@ -353,7 +353,7 @@
 /* ---------------------------------------------------------------
    A character's voice, in the site's own clay.
 
-   Nova's bubble on the Edenic Trail is `.card .card-clay-white` — the white
+   A friend's bubble (`FriendSays`) is `.card .card-clay-white` — the white
    clay panel every other white chrome surface on this site is made of — plus
    this one declaration. There is no bordered, masked or otherwise special
    bubble shape any more: a version with a lavender OUTLINE and a scalloped

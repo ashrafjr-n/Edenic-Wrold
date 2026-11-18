@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------
-   Clouds — the Edenic Trail's scenery (`components/ui/cloud.tsx`).
+   Clouds — `components/ui/cloud.tsx`: the cloud veil between pages, a classroom's sky.
 
    TWO elements, and the split is load-bearing, not tidiness: `filter` is
    applied BEFORE `mask` on the same element, so a drop shadow declared on
