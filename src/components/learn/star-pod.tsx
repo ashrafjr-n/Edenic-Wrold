@@ -74,9 +74,6 @@ export function StarPod({ characterId, courses, labels }: StarPodProps) {
     const timer = window.setTimeout(
       () => {
         writeSeen([...seen, ...unseen]);
-        /* The camera has scrolled down to the chest, which hid the back row
-           (`BackAutoHide`) and the pod with it: bring it back to be seen. */
-        document.documentElement.removeAttribute("data-back-hidden");
         setFresh(unseen);
         setOpen(true);
         window.setTimeout(() => playSfx("star"), POP_MS);
