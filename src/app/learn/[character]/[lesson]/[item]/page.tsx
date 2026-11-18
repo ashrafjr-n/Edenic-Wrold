@@ -72,6 +72,7 @@ export default async function LessonItemPage({ params }: LessonItemPageProps) {
           title={title}
           nextTitle={course.items[n]}
           nextIsShape={courseLessons[lesson.id][n]?.questions.some((q) => q.type === "word" && q.shape !== undefined)}
+          nextReel={courseLessons[lesson.id][n]?.reel}
           image={lesson.image}
           tone={{ face: character.accent, edge: character.accentDark }}
           courseTone={{ face: lesson.theme.accent, edge: lesson.theme.accentDark, ink: lesson.theme.ink }}
