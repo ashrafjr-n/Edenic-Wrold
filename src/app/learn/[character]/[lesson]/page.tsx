@@ -3,6 +3,8 @@ import { resolveLessonRoute } from "@/lib/learn-route";
 import { CourseWorld } from "@/components/learn/course-world";
 import { BackRow, characterAccent } from "@/components/ui/back-button";
 import { COURSE_STOPS } from "@/data/course-stops";
+import { lessonsByCharacter } from "@/data/lessons";
+import { StarPod } from "@/components/learn/star-pod";
 import { getDictionary } from "@/lib/locale";
 import { dirFor, format } from "@/lib/format-dict";
 import chestStar from "../../../../../public/assets/learn/chest-star.png";
@@ -38,7 +40,15 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
   return (
     <main className="relative flex flex-1 flex-col overflow-x-clip" style={characterAccent(character)}>
-      <BackRow href={`/learn/${character.id}`} label={format(dict.lessonPicker.backTo, { characterName: character.name })} />
+      <BackRow href={`/learn/${character.id}`} label={format(dict.lessonPicker.backTo, { characterName: character.name })}>
+        <StarPod
+          characterId={character.id}
+          courses={lessonsByCharacter[character.id]
+            .filter((entry) => !entry.locked)
+            .map((entry) => ({ id: entry.id, name: dict.lessons[entry.id].name }))}
+          labels={dict.characterHub}
+        />
+      </BackRow>
       <h1 className="sr-only">{course.name}</h1>
       <CourseWorld
         world={world}
