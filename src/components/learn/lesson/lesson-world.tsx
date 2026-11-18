@@ -121,6 +121,14 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
             className="world-fade object-cover"
           />
         )}
+        {/* Every station's still, loading from the start (behind the reel's
+            loader): a later step, a restart or a stalled clip never waits on
+            the network. The same `sizes`, so the same file the still uses. */}
+        {world.stations.map((at, i) =>
+          i === shown ? null : (
+            <Image key={`load-${frame}-${i}`} src={at[frame]} alt="" fill loading="eager" fetchPriority="low" sizes="100vw" className="opacity-0" />
+          ),
+        )}
         {mounted.map((i) => (
           <video
             key={`${frame}-${i}`}
