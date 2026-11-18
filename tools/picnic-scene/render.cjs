@@ -154,10 +154,9 @@
  *                                   pixels, so the page can grey the closed ones)
  *
  * A game card's picture on /play (2026-10-23) uses the same worlds —
- * `play-cups` is Nova's Cups (her garden, her cups, a carrot under the
- * tipped one); then `crop.py playcard cups` (sharp, no blur):
- *
- *   node tools/picnic-scene/render.cjs backdrop play-cups
+ * `backdrop play-<name>`, then `crop.py playcard <name>` (sharp, no blur).
+ * The one card it made, Nova's Cups (`play-cups` in `scene.html`), went with
+ * the game on 2026-11-18.
  *
  * A friend's classroom (Pinki's 2026-10-14, Nova's and Bloo's 2026-10-23 —
  * `THEMES` in `scene.html`) — their hub's and course pages' room, in both

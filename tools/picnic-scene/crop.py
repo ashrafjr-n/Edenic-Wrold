@@ -84,7 +84,7 @@ A game card's picture on /play — run after `render.cjs backdrop
 play-<name>`: the landscape frame, sharp, 1376px wide, into
 `public/assets/play/<name>/<name>-card.jpg`.
 
-    python3 tools/picnic-scene/crop.py playcard cups
+    python3 tools/picnic-scene/crop.py playcard <name>
 
 Single things — run after `render.cjs thing ...`: crops each named PNG in
 `out/things/` to its pixels (shadow included) and writes it, at most 512px,
