@@ -79,7 +79,7 @@
  * Mac's GPU. Then `crop.py garden`, which blurs, encodes the clips and
  * writes `src/data/shape-garden.ts`:
  *
- *   node tools/picnic-scene/render.cjs garden 1 2 3 4 5
+ *   node tools/picnic-scene/render.cjs garden 1 2 3 4 5 6 7
  *
  * Pinki's colour forest (2026-11-05) — the Colors course's world, the
  * same kit as the garden (`scene.html?garden=<1-11>&world=forest`; lessons 1-10
@@ -213,7 +213,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     /* `stops colors drops`: only each drop's pixels (`d<frame>-<k>.png`, the
        page greys the ones not yet open), into the frames already rendered. */
     const dropsOnly = course === "colors" && specs[1] === "drops";
-    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" || course === "lab" ? [100, 41] : course === "sky-night" ? [90, 31] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [90, 31];
+    const [FRAMES, KEYS] = course === "colors" ? [180, 61] : course === "fruits" || course === "sky" || course === "lab" ? [100, 41] : course === "sky-night" ? [90, 31] : course === "garden" ? [120, 49] : course === "animals" ? [180, 61] : course === "weather" ? [90, 31] : [135, 46];
     /* `ONLY=landscape` renders one frame size (the other's pictures stay). */
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
       const out = path.join(__dirname, "out", colors ? `stops-${course}-${frame}` : `stops-${frame}`);
@@ -260,7 +260,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        shows the chest, with it open. Then `crop.py chest <course>`. */
     const course = specs[0] ?? "shapes";
     const PLAY = 46;
-    const FRAMES = { colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100, "sky-night": 90, lab: 100 }[course] ?? 90;
+    const FRAMES = { shapes: 135, colors: 180, fruits: 100, garden: 120, animals: 180, weather: 90, sky: 100, "sky-night": 90, lab: 100 }[course] ?? 90;
     const stops = { shapes: "shape", colors: "color", fruits: "veg", garden: "garden", animals: "animals", weather: "weather", sky: "sky", "sky-night": "sky-night", lab: "lab" }[course];
     const source = fs.readFileSync(path.join(__dirname, `../../src/data/${stops}-stops.ts`), "utf8");
     for (const frame of process.env.ONLY ? [process.env.ONLY] : ["landscape", "portrait"]) {
@@ -397,7 +397,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
        bloom; a walk opens on the flower of the step just done blooming),
        and a shape lesson's Find (its picnic on the lawn, from above) in
        layers at 1.6x. */
-    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, blur: 1.6 } : { entry: 2.4, step: 2.3, walk: 3.4, end: 2.8 };
+    const SECONDS = mode === "hill" ? { entry: 2.4, step: 3, end: 4.6 } : mode === "veg" ? { entry: 2.4, step: 2.6, blur: 1.6 } : { entry: 2.4, step: 2.3, end: 2.8 };
     const FPS = 30;
     for (const lesson of specs) {
       for (const frame of (process.env.FRAMES ?? "landscape,portrait").split(",")) {
@@ -429,7 +429,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? (i === 2 ? SECONDS.blur : SECONDS.step) : i === stations - 1 ? SECONDS.end : mode === "garden" && lesson === "5" ? SECONDS.walk : SECONDS.step));
+          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? (i === 2 ? SECONDS.blur : SECONDS.step) : i === stations - 1 ? SECONDS.end : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
@@ -444,7 +444,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           fs.mkdirSync(kitchen);
           fs.writeFileSync(path.join(out, "kitchen.json"), JSON.stringify(await page.evaluate(() => window.garden.kitchenMeta())));
           for (const [layer, url] of Object.entries(await page.evaluate(() => window.garden.kitchenLayers()))) save(kitchen, layer, url);
-        } else if (mode !== "hill" && mode !== "farm" && mode !== "seasons" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 0 : 4)) {
+        } else if (mode !== "hill" && mode !== "farm" && mode !== "seasons" && Number(lesson) <= (mode === "forest" ? 10 : mode === "mygarden" ? 0 : 7)) {
           await open(1.6);
           const layers = await page.evaluate(() => window.garden.findLayers());
           const find = path.join(out, "find");
