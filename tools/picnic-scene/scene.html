@@ -171,6 +171,30 @@ function furBody(kind, opts = {}) {
       patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
         float m = max(max(smoothstep(0.07, -0.07, tri(p.xy - vec2(0.0, 0.62), 0.36) - 0.07), smoothstep(0.07, -0.07, tri(p.xy - vec2(-0.78, -0.62), 0.36) - 0.07)), smoothstep(0.07, -0.07, tri(p.xy - vec2(0.78, -0.62), 0.36) - 0.07));
         return f * m; }`;
+    } else if (kind === "heart") {
+      /* The reel's heart (2026-11-18): plump, sky blue fading into pink across it. */
+      const s = heartShape(0.1);
+      geo = new THREE.ExtrudeGeometry(s, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.3, bevelSegments: 14 });
+      geo.center();
+      opts = { green: 0x9fd6f2, pink: 0xf9a6c8, ...opts };
+      patch = `float patchAt(vec3 p, vec3 n) { return smoothstep(-0.55, 0.55, p.x); }`;
+    } else if (kind === "diamond") {
+      /* The reel's diamond: a green felt frame round four pink panes. */
+      const s = diamondShape(2.7, 3.6);
+      geo = new THREE.ExtrudeGeometry(s, { depth: 0.7, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.34, bevelSegments: 14, curveSegments: 48 });
+      geo.center();
+      /* The panes: four rounded squares, turned with the diamond. */
+      patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
+        vec2 q = vec2(p.x / 1.35 + p.y / 1.8, p.y / 1.8 - p.x / 1.35) * 0.7071;
+        float m = 0.0;
+        for (int i = 0; i < 4; i++) { vec2 c = vec2(i < 2 ? -0.2 : 0.2, mod(float(i), 2.0) < 1.0 ? -0.2 : 0.2); m = max(m, rr(q, c, vec2(0.15), 0.06)); }
+        return f * m; }`;
+    } else if (kind === "oval") {
+      /* The reel's oval: an egg, sky blue with two pink bands. */
+      geo = new THREE.SphereGeometry(1, 192, 128);
+      geo.scale(1.15, 1.62, 1.15);
+      opts = { green: 0x9fd0f4, ...opts };
+      patch = `float patchAt(vec3 p, vec3 n) { return max(smoothstep(0.2, 0.1, abs(p.y - 0.45)), smoothstep(0.2, 0.1, abs(p.y + 0.5))); }`;
     } else {
       geo = new RoundedBoxGeometry(2.3, 3.0, 1.5, 24, 0.42);
       patch = `float patchAt(vec3 p, vec3 n) { float f = smoothstep(0.55, 0.85, n.z);
@@ -218,6 +242,30 @@ const lathe = (points, segments = 160) =>
 /* A lathe through a smooth curve: the profile's points are only guides. */
 const smoothLathe = (points, segments = 160) =>
   new THREE.LatheGeometry(new THREE.SplineCurve(points.map(([x, y]) => new THREE.Vector2(x, y))).getPoints(72), segments);
+
+/* A heart, `k` = 0.1 about 3.2 across, its dip up (+y), its tip down. */
+function heartShape(k, n = 96) {
+  const s = new THREE.Shape();
+  for (let i = 0; i <= n; i++) {
+    const t = (i / n) * Math.PI * 2;
+    const [x, y] = [16 * Math.sin(t) ** 3 * k, (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * k];
+    if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+  }
+  return s;
+}
+/* A diamond `w` across and `h` tall, its four corners rounded (`cut` of each side). */
+function diamondShape(w, h, cut = 0.17) {
+  const s = new THREE.Shape();
+  const pts = [[0, h / 2], [w / 2, 0], [0, -h / 2], [-w / 2, 0]];
+  pts.forEach((p, i) => {
+    const [a, b] = [pts[(i + 3) % 4], pts[(i + 1) % 4]];
+    const [p0, p1] = [[p[0] + (a[0] - p[0]) * cut, p[1] + (a[1] - p[1]) * cut], [p[0] + (b[0] - p[0]) * cut, p[1] + (b[1] - p[1]) * cut]];
+    if (i === 0) s.moveTo(p0[0], p0[1]); else s.lineTo(p0[0], p0[1]);
+    s.quadraticCurveTo(p[0], p[1], p1[0], p1[1]);
+  });
+  s.closePath();
+  return s;
+}
 
 function roundedShapeExtrude(shape, depth, bevel) {
   return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 8, curveSegments: 64 });
@@ -644,6 +692,192 @@ const ITEMS = {
         g.add(bow);
       }
     }
+    return g;
+  },
+
+  /* ---- Hearts, diamonds and ovals (2026-11-18): Shapes lessons 5-7. Each
+     lies flat, its shape facing up to the picnic's camera. ---- */
+  // a sugar cookie in a heart, pink icing, sprinkles
+  heartCookie() {
+    const g = new THREE.Group();
+    const dough = mesh(roundedShapeExtrude(heartShape(0.046), 0.1, 0.05), clay(0xe7b57a, { clearcoat: 0.2, roughness: 0.75 }));
+    dough.rotation.x = -Math.PI / 2;
+    dough.position.y = 0.05;
+    g.add(dough);
+    const icing = mesh(roundedShapeExtrude(heartShape(0.039), 0.03, 0.03), clay(0xf9a3c7, { clearcoat: 0.9, clearcoatRoughness: 0.1, roughness: 0.3 }));
+    icing.rotation.x = -Math.PI / 2;
+    icing.position.y = 0.2;
+    g.add(icing);
+    const colors = [0xffffff, 0x8cc8f5, 0xffe07a, 0x9be38f];
+    for (const [i, [x, z]] of [[-0.3, -0.2], [0.25, -0.25], [0, 0.1], [-0.2, 0.3], [0.22, 0.28], [0.02, 0.45], [-0.38, 0.0], [0.4, 0.02]].entries()) {
+      const sp = mesh(new THREE.CapsuleGeometry(0.02, 0.06, 4, 8), clay(colors[i % 4], { clearcoat: 0.9 }));
+      sp.position.set(x, 0.27, z);
+      sp.rotation.set(Math.PI / 2, 0, i * 0.9);
+      g.add(sp);
+    }
+    return g;
+  },
+  // a heart box of sweets: a red base, a glossy lid, a gold ribbon and bow
+  heartBox() {
+    const g = new THREE.Group();
+    const base = mesh(roundedShapeExtrude(heartShape(0.05), 0.3, 0.04), clay(0xe8475f, { clearcoat: 0.4, roughness: 0.55 }));
+    base.rotation.x = -Math.PI / 2;
+    base.position.y = 0.04;
+    g.add(base);
+    const lid = mesh(roundedShapeExtrude(heartShape(0.053), 0.08, 0.04), clay(0xf25a73, { clearcoat: 0.8, clearcoatRoughness: 0.15, roughness: 0.35 }));
+    lid.rotation.x = -Math.PI / 2;
+    lid.position.y = 0.32;
+    g.add(lid);
+    const gold = clay(0xffd45e, { clearcoat: 0.7, roughness: 0.4 });
+    g.add(at(mesh(new RoundedBoxGeometry(0.12, 0.03, 1.5, 4, 0.01), gold), [0.0, 0.46, 0.05]));
+    for (const sx of [-1, 1]) {
+      const loop = mesh(new THREE.TorusGeometry(0.13, 0.04, 12, 32), gold);
+      loop.rotation.set(-Math.PI / 2, 0, sx * 0.5);
+      loop.scale.set(1.3, 0.8, 1);
+      loop.position.set(sx * 0.15, 0.5, -0.3);
+      g.add(loop);
+    }
+    g.add(at(mesh(new THREE.SphereGeometry(0.07, 20, 13), gold), [0, 0.5, -0.3]));
+    return g;
+  },
+  // a soft heart cushion, puffed up, with a little button in the middle
+  heartPillow() {
+    const g = new THREE.Group();
+    const m = mesh(new THREE.ExtrudeGeometry(heartShape(0.044), { depth: 0.08, bevelEnabled: true, bevelThickness: 0.17, bevelSize: 0.13, bevelSegments: 10 }), soft(0xffb3cf, { roughness: 0.85, sheen: 0.8 }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.y = 0.17;
+    g.add(m);
+    const button = mesh(new THREE.SphereGeometry(0.07, 20, 13), clay(0xffffff, { clearcoat: 0.6 }));
+    button.scale.y = 0.5;
+    button.position.set(0, 0.42, 0.05);
+    g.add(button);
+    return g;
+  },
+  // a heart lollipop: a glossy red heart on a white stick
+  heartLolly() {
+    const g = new THREE.Group();
+    const candy = mesh(new THREE.ExtrudeGeometry(heartShape(0.034), { depth: 0.08, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.06, bevelSegments: 8 }), clay(0xff4f6e, { clearcoat: 1, clearcoatRoughness: 0.08, roughness: 0.25 }));
+    candy.rotation.x = -Math.PI / 2;
+    candy.position.set(0, 0.08, -0.3);
+    g.add(candy);
+    const stick = mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.95, 16), clay(0xfffaf0));
+    stick.rotation.x = Math.PI / 2;
+    stick.position.set(0, 0.04, 0.6);
+    g.add(stick);
+    return g;
+  },
+  // a crunchy diamond biscuit, little holes pricked in it
+  diamondCookie() {
+    const g = new THREE.Group();
+    const d = mesh(roundedShapeExtrude(diamondShape(1.0, 1.45, 0.12), 0.1, 0.05), clay(0xf0c27a, { clearcoat: 0.2, roughness: 0.75 }));
+    d.rotation.x = -Math.PI / 2;
+    d.position.y = 0.05;
+    g.add(d);
+    for (const [x, z] of [[0, -0.38], [-0.15, -0.12], [0.15, -0.12], [0, 0.0], [-0.15, 0.13], [0.15, 0.13], [0, 0.38], [-0.28, 0.0], [0.28, 0.0]]) {
+      const hole = mesh(new THREE.SphereGeometry(0.035, 12, 8), clay(0xb98445));
+      hole.scale.y = 0.4;
+      hole.position.set(x, 0.2, z);
+      g.add(hole);
+    }
+    return g;
+  },
+  // a lilac diamond cushion, a gold tassel at each corner
+  diamondPillow() {
+    const g = new THREE.Group();
+    const m = mesh(new THREE.ExtrudeGeometry(diamondShape(1.15, 1.6, 0.14), { depth: 0.08, bevelEnabled: true, bevelThickness: 0.17, bevelSize: 0.12, bevelSegments: 10, curveSegments: 24 }), soft(0xc9a9f0, { roughness: 0.85, sheen: 0.8 }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.y = 0.17;
+    g.add(m);
+    const gold = clay(0xffd45e, { clearcoat: 0.5 });
+    for (const [x, z] of [[0, -0.9], [0.66, 0], [0, 0.9], [-0.66, 0]]) g.add(at(mesh(new THREE.SphereGeometry(0.07, 16, 10), gold), [x, 0.16, z]));
+    const button = mesh(new THREE.SphereGeometry(0.07, 20, 13), clay(0xffffff, { clearcoat: 0.6 }));
+    button.scale.y = 0.5;
+    button.position.y = 0.42;
+    g.add(button);
+    return g;
+  },
+  // a yellow diamond sign with a black rim, lying flat
+  diamondSign() {
+    const g = new THREE.Group();
+    const rim = mesh(roundedShapeExtrude(diamondShape(1.2, 1.7, 0.1), 0.04, 0.02), clay(0x2e2b35, { roughness: 0.5 }));
+    rim.rotation.x = -Math.PI / 2;
+    rim.position.y = 0.02;
+    g.add(rim);
+    const face = mesh(roundedShapeExtrude(diamondShape(1.04, 1.5, 0.1), 0.04, 0.02), clay(0xffd23a, { clearcoat: 0.6, roughness: 0.4 }));
+    face.rotation.x = -Math.PI / 2;
+    face.position.y = 0.06;
+    g.add(face);
+    return g;
+  },
+  // a decorated egg lying on its side, sky blue with pink bands
+  paintedEgg() {
+    const g = new THREE.Group();
+    const egg = mesh(new THREE.SphereGeometry(0.5, 96, 64), clay(0x9fd0f4, { clearcoat: 0.7, clearcoatRoughness: 0.2, roughness: 0.4 }));
+    egg.scale.set(0.72, 0.62, 1.0);
+    egg.position.y = 0.31;
+    g.add(egg);
+    for (const z of [-0.22, 0.22]) {
+      const band = mesh(new THREE.TorusGeometry(1, 0.06, 12, 64), clay(0xf9a6c8, { clearcoat: 0.7 }));
+      const r = Math.sqrt(1 - (z / 0.5) ** 2) * 0.5;
+      band.scale.set(r * 0.73, r * 0.63, 0.5);
+      band.position.set(0, 0.31, z);
+      g.add(band);
+    }
+    return g;
+  },
+  // a football: a brown oval with white laces and stripes
+  football() {
+    const g = new THREE.Group();
+    const brown = clay(0xa65a2e, { clearcoat: 0.3, roughness: 0.6 });
+    const b = mesh(new THREE.SphereGeometry(0.5, 96, 64), brown);
+    b.scale.set(0.95, 0.8, 1.55);
+    b.position.y = 0.4;
+    g.add(b);
+    const white = clay(0xffffff, { roughness: 0.5 });
+    for (const z of [-0.5, 0.5]) {
+      const r = Math.sqrt(1 - (z / 0.775) ** 2) * 0.5;
+      const stripe = mesh(new THREE.TorusGeometry(1, 0.03, 10, 64), white);
+      stripe.scale.set(r * 0.97, r * 0.82, 0.5);
+      stripe.position.set(0, 0.4, z);
+      g.add(stripe);
+    }
+    g.add(at(mesh(new RoundedBoxGeometry(0.06, 0.03, 0.5, 4, 0.01), white), [0, 0.8, 0]));
+    for (const z of [-0.18, -0.06, 0.06, 0.18]) g.add(at(mesh(new RoundedBoxGeometry(0.2, 0.03, 0.04, 4, 0.01), white), [0, 0.8, z]));
+    return g;
+  },
+  // a pink hand mirror: an oval glass in a frame, and its handle
+  mirror() {
+    const g = new THREE.Group();
+    const pink = clay(0xff8fbf, { clearcoat: 0.6, roughness: 0.4 });
+    const frame = mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.1, 64), pink);
+    frame.scale.set(1.15, 1, 1.5);
+    frame.position.set(0, 0.05, -0.2);
+    g.add(frame);
+    const glass = mesh(new THREE.CylinderGeometry(0.43, 0.43, 0.04, 64), clay(0xd8ecfb, { clearcoat: 1, clearcoatRoughness: 0.05, roughness: 0.1, metalness: 0.2 }));
+    glass.scale.set(1.15, 1, 1.5);
+    glass.position.set(0, 0.11, -0.2);
+    g.add(glass);
+    g.add(at(mesh(new RoundedBoxGeometry(0.16, 0.1, 0.6, 4, 0.05), pink), [0, 0.05, 0.75]));
+    return g;
+  },
+  // a watermelon: an oval, dark stripes down its green
+  melon() {
+    const g = new THREE.Group();
+    const geo = new THREE.SphereGeometry(0.5, 128, 64);
+    const cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 64;
+    const ctx = cv.getContext("2d");
+    ctx.fillStyle = "#7ccf63";
+    ctx.fillRect(0, 0, 512, 64);
+    ctx.fillStyle = "#3f9a44";
+    for (let i = 0; i < 12; i++) ctx.fillRect(i * (512 / 12), 0, 512 / 24, 64);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const m = mesh(geo, clay(0xffffff, { map: tex, clearcoat: 0.6, roughness: 0.4 }));
+    m.rotation.x = Math.PI / 2;
+    m.scale.set(1.15, 1.65, 0.95);
+    m.position.y = 0.47;
+    g.add(m);
     return g;
   },
 
@@ -3432,6 +3666,47 @@ const SCENES = {
       donut: { at: [1.15, ON_BLANKET, 2.35] },
     },
   },
+  /* Shapes lessons 5-7 (2026-11-18): four of the shape, three others — an oval
+     picnic has a round cookie, so a circle and an oval are told apart. */
+  hearts: {
+    blanket: "creamChecks",
+    deep: [0.98, 1.43],
+    items: {
+      cookie: { model: "heartCookie", at: [-1.4, ON_BLANKET, -2.35], rotY: 0.15 },
+      box: { model: "heartBox", at: [1.4, ON_BLANKET, -2.4], rotY: -0.15 },
+      donut: { at: [0.0, ON_BLANKET, -0.75], scale: 0.9 },
+      pillow: { model: "heartPillow", at: [-1.45, ON_BLANKET, 0.7], rotY: -0.1, scale: 0.85 },
+      toast: { at: [1.45, ON_BLANKET, 0.8], rotY: 0.3 },
+      lollipop: { model: "heartLolly", at: [-1.35, ON_BLANKET, 2.55], rotY: 1.1 },
+      cheese: { at: [1.35, ON_BLANKET, 2.45], rotY: 0.4, scale: 0.8 },
+    },
+  },
+  diamonds: {
+    blanket: "lilacPlain",
+    deep: [0.98, 1.43],
+    items: {
+      kite: { at: [-1.4, ON_BLANKET, -2.65], rotY: 0.1, scale: 0.6 },
+      cookie: { model: "diamondCookie", at: [1.4, ON_BLANKET, -2.4] },
+      plate: { at: [0.0, ON_BLANKET, -0.6], scale: 0.7 },
+      pillow: { model: "diamondPillow", at: [-1.45, ON_BLANKET, 0.6], scale: 0.85 },
+      book: { at: [1.45, ON_BLANKET, 0.8], rotY: -0.3, scale: 0.85 },
+      sign: { model: "diamondSign", at: [-1.3, ON_BLANKET, 2.55], scale: 0.95 },
+      cheese: { at: [1.35, ON_BLANKET, 2.45], rotY: 2.4, scale: 0.8 },
+    },
+  },
+  ovals: {
+    blanket: "blueStripes",
+    deep: [0.98, 1.43],
+    items: {
+      egg: { model: "paintedEgg", at: [-1.4, ON_BLANKET, -2.35], rotY: 0.2, scale: 1.3 },
+      football: { at: [1.4, ON_BLANKET, -2.4], rotY: -0.25, scale: 0.85 },
+      cookie: { at: [0.0, ON_BLANKET, -0.75] },
+      mirror: { at: [-1.2, ON_BLANKET, 0.7], rotY: -1.35, scale: 0.85 },
+      toast: { at: [1.45, ON_BLANKET, 0.8], rotY: -0.25 },
+      melon: { at: [-1.3, ON_BLANKET, 2.55], rotY: 0.3, scale: 0.8 },
+      pizza: { at: [1.35, ON_BLANKET, 2.4], rotY: 3.3, scale: 0.9 },
+    },
+  },
   /* The Colors course: four things of the lesson's color, three of others.
      Things are laid down with `rot` and stood on the ground by their box. */
   red: {
@@ -3573,7 +3848,9 @@ const SHAPE_OF = {
   toast: "square", cracker: "square", gift: "square", dice: "square",
   cheese: "triangle", pizza: "triangle", sandwich: "triangle", flag: "triangle",
   book: "rectangle", chocolate: "rectangle", juice: "rectangle", ruler: "rectangle",
-  kite: null,
+  heartCookie: "heart", heartBox: "heart", heartPillow: "heart", heartLolly: "heart",
+  kite: "diamond", diamondCookie: "diamond", diamondPillow: "diamond", diamondSign: "diamond",
+  paintedEgg: "oval", football: "oval", mirror: "oval", melon: "oval",
 };
 const COLOR_OF = {
   apple: "red", strawberry: "red", cherries: "red", ladybug: "red",
@@ -3869,6 +4146,8 @@ ITEMS.video = (what) => VIDEO_THINGS[what]();
    its colours, so four of a kind in a Find are not all alike.
    `?thing=garden&arg=<kind>[-tone]`. ---------- */
 const GARDEN_KINDS = ["flower", "tree", "leaf", "grass", "nest", "bench"];
+/* The Shapes course's lessons in order (heart, diamond, oval added 2026-11-18). */
+const SHAPE_LESSONS = ["circle", "square", "triangle", "rectangle", "heart", "diamond", "oval"];
 /* Bloo's farm (2026-11-08): the Animals course's world, one lesson an animal. */
 const FARM_KINDS = ["cat", "dog", "fish", "elephant", "mouse", "bird", "parrot", "turtle", "gecko"];
 const GARDEN_TONES = {
@@ -4772,6 +5051,8 @@ const SKY_STOPS = STOPS && (params.get("course") === "sky" || SKY_NIGHT);
 const LAB = STOPS && params.get("course") === "lab";
 /* Nova's two worlds of stops and Bloo's share their shape (milk slabs, gold stones); the sky its way. */
 const MILK_STOPS = FRUITS_STOPS || GARDEN_STOPS || BLOO_STOPS || SKY_STOPS;
+/* Shapes' own (no `course`): seven lessons since 2026-11-18. */
+const SHAPES_STOPS = STOPS && !params.get("course");
 const COLOR_LESSONS = ["red", "blue", "yellow", "green", "orange", "purple", "pink", "brown", "black", "white"];
 /* The colours' words need a font (only the worlds that show them load it). */
 const WORD_FONT = COLORS_STOPS || WEATHER_STOPS || SKY_STOPS || LAB ? await new FontLoader().loadAsync("https://cdn.jsdelivr.net/npm/three@0.170.0/examples/fonts/droid/droid_sans_bold.typeface.json") : null;
@@ -5912,7 +6193,7 @@ if (THING) {
   }
 
   /* ---- The four corners ---- */
-  const CORNER = { 1: 0, 2: 40, 3: 80, 4: 120 };
+  const CORNER = { 1: 0, 2: 40, 3: 80, 4: 120, 5: 160, 6: 200, 7: 240 };
   /* Where this lesson's Find looks (its corner + 5): nothing planted
      there stands in front of the things to find. */
   /* The forest: the places along the path, 5.6 apart — the word, the
@@ -5934,7 +6215,7 @@ if (THING) {
      2026-11-10). The review (9): the four quarters, the whole year. */
   const isleSeason = (x, z) => (LESSON <= 8 ? SEAS_SEASON : SEAS_SEASONS[(SEAS_SEASONS.indexOf(SEAS_SEASON) + isleQuarter(x, z)) % 4]);
   const onIsle = (x, z, margin = 1) => Math.hypot(x - ISLE.cx, z - ISLE.cz) < ISLE.r - margin;
-  const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 4 ? CORNER[LESSON] + 5 : null;
+  const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 7 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
   /* Round: a moon gate in the wall, a fountain of round bowls, lollipop
@@ -6605,7 +6886,7 @@ if (THING) {
 
   /* Giant felt things behind, in rows, the farther the hazier: the kind that
      leads each corner stands most. */
-  const KIND_AT = (x) => (x < 20 ? "circle" : x < 60 ? "square" : x < 100 ? "triangle" : "rectangle");
+  const KIND_AT = (x) => (x < 20 ? "circle" : x < 60 ? "square" : x < 100 ? "triangle" : x < 140 ? "rectangle" : x < 180 ? "heart" : x < 220 ? "diamond" : "oval");
   const stemM = (c) => furShells(new THREE.CylinderGeometry(0.3, 0.38, 3, 24, 1), { green: c, pink: c, dens: 60, length: 0.04, shells: 8, key: "stem" });
   function feltThing(kind) {
     const c = pick(PASTEL);
@@ -6625,7 +6906,7 @@ if (THING) {
       g.add(post);
     } else {
       const body = furBody(kind, opts);
-      body.position.y = kind === "triangle" ? 1.9 : 1.55;
+      body.position.y = { triangle: 1.9, heart: 1.95, diamond: 2.3, oval: 1.75 }[kind] ?? 1.55;
       g.add(body);
     }
     return g;
@@ -6675,6 +6956,47 @@ if (THING) {
   /* Close to the camera: a border of flowers sliding past in the walk. */
   for (let x = -30; x < 168; x += 5 + rand() * 3) border(x - 1.6, x + 1.6, 8.2, [0xffa6cf, 0xffd45e, 0xc7a3f0, 0xffffff], { k: 1.2, clear: false, tulips: false });
 
+  /* Past the rectangle's corner (2026-11-18): the heart's, the diamond's and the
+     oval's (x 160, 200, 240) — the same land, from a seed of its own, so the
+     first four lessons' land stays exactly as it was rendered. */
+  const seed0 = seed;
+  seed = 11;
+  for (let x = 170; x < 290; x += 0.44) {
+    for (let k = -2; k <= 2; k++) {
+      const st = ball(0.23 + rand() * 0.05, pick(pebbleM), 14);
+      st.scale.set(1, 0.38, 0.85);
+      st.castShadow = false;
+      add(st, x + (rand() - 0.5) * 0.16 + (k % 2) * 0.22, 0.06, pathZ(x) + k * 0.42 + (rand() - 0.5) * 0.08, { ry: rand() * 3 });
+    }
+  }
+  for (let row = 0; row < 4; row++) {
+    const z0 = -17 - row * 9;
+    for (let x = 168 + rand() * 4; x < 290; x += 8.5 + rand() * 6) {
+      const kind = rand() < 0.72 ? KIND_AT(x) : pick(["circle", "square", "triangle", "rectangle", "heart", "diamond", "oval"]);
+      add(feltThing(kind), x + (rand() - 0.5) * 2.2, 0, z0 - rand() * 3, { k: (1.25 + row * 0.4) * (0.85 + rand() * 0.45), ry: (rand() - 0.5) * 1.1 });
+    }
+  }
+  for (let x = 195; x < 320; x += 30 + rand() * 12) {
+    const hill = furShells(new THREE.SphereGeometry(1, 64, 32), { green: pick([0xf2b0d0, 0xd6bdf2, 0xb8e0a0, 0xf6d9a0]), pink: 0xffffff, dens: 5, length: 0.05, shells: 6, key: "hill" });
+    hill.scale.set(20 + rand() * 8, 7 + rand() * 4, 14);
+    add(hill, x, -1.2, -78 - rand() * 14);
+  }
+  for (const [x, y, z, k] of [[188, 26, -114, 30], [236, 24, -118, 26], [284, 27, -112, 32]]) {
+    const disc = new THREE.Mesh(new THREE.PlaneGeometry(k, k), new THREE.MeshBasicMaterial({ map: sunTex, transparent: true, fog: false, toneMapped: false, depthWrite: false }));
+    disc.userData.noMerge = true;
+    disc.position.set(x, y, z);
+    scene.add(disc);
+  }
+  for (const [x, y, z, k] of [[182, 16, -82, 3.6], [214, 14, -80, 3.2], [246, 17, -86, 4], [278, 15, -80, 3.4]]) add(cloud(k), x, y, z);
+  for (let i = 0; i < 70; i++) {
+    const cx = 156 + rand() * 130, cz = -9 + rand() * 11;
+    if (cz > -4.5 && cz < 2.4) continue;
+    const c = pick(petals);
+    for (let j = 0; j < 4 + Math.floor(rand() * 4); j++) add(hillFlower(c), cx + (rand() - 0.5) * 1.8, 0, cz + (rand() - 0.5) * 1.2, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
+  }
+  for (let x = 170; x < 290; x += 5 + rand() * 3) border(x - 1.6, x + 1.6, 8.2, [0xffa6cf, 0xffd45e, 0xc7a3f0, 0xffffff], { k: 1.2, clear: false, tulips: false });
+  seed = seed0;
+
   } else {
   /* The whole garden: the wall (the moon gate and the door cut through
      it), what lies beyond, the four corners, the hedges between them. */
@@ -6705,8 +7027,8 @@ if (THING) {
      very blanket and things of `SCENES` — laid on the lawn in its corner.
      The camera's last move tilts down onto it, and the Find is played
      there, in the garden itself. ---- */
-  const PICNIC = ON_PATH ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles" };
-  const HAS_FIND = VEG || YEAR_HILL || STOPS || FARM ? false : FOREST ? Boolean(COLOR_ID) : MY_GARDEN ? false : LESSON <= 4;
+  const PICNIC = ON_PATH ? {} : { 1: "picnic", 2: "squares", 3: "triangles", 4: "rectangles", 5: "hearts", 6: "diamonds", 7: "ovals" };
+  const HAS_FIND = VEG || YEAR_HILL || STOPS || FARM ? false : FOREST ? Boolean(COLOR_ID) : MY_GARDEN ? false : LESSON <= 7;
   const FIND_Z = -1.6;
   const things = {};
   /* What the lawn's tufts keep off (the blanket, each activity's place). */
@@ -6896,8 +7218,8 @@ if (THING) {
   const WOOD = soft(0xf3d3a6, { roughness: 0.8 });
   const PLACE_Z = 0.6;
   /* What the lawn's tufts keep off in Nova's garden. */
-  const SHAPE_OF_LESSON = ["circle", "square", "triangle", "rectangle"];
-  const SHAPE_COLOR = { circle: 0x5aa9ee, square: 0x58c27d, triangle: 0xffc93a, rectangle: 0xff8fbf };
+  const SHAPE_OF_LESSON = SHAPE_LESSONS;
+  const SHAPE_COLOR = { circle: 0x5aa9ee, square: 0x58c27d, triangle: 0xffc93a, rectangle: 0xff8fbf, heart: 0xf76fa8, diamond: 0x9b7ce8, oval: 0xf7a83c };
   /* A shape's outline, about `k` across, centred. */
   function outline(shape, k = 1) {
     const s = new THREE.Shape();
@@ -6972,7 +7294,7 @@ if (THING) {
     if (shape && SHAPE_LAND) {
       /* The reels' felt shape, flattened onto the board. */
       const felt = furBody(shape, { shells: 12, dens: 120, length: 0.035 });
-      const k = { circle: 0.36, square: 0.34, triangle: 0.3, rectangle: 0.3 }[shape];
+      const k = { circle: 0.36, square: 0.34, triangle: 0.3, rectangle: 0.3, heart: 0.34, diamond: 0.27, oval: 0.35 }[shape];
       felt.scale.set(k, k, 0.12);
       felt.position.set(0, 0, 0.2);
       board.add(felt);
@@ -7583,15 +7905,13 @@ if (THING) {
       ? [...SET_KINDS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? (SKY_STOPS ? 1.2 : 2.4) : 4.8), -6 - (SET_KINDS.length - 1 - i) * 11]), [0, portrait ? 6 : 5]]
       : COLORS_STOPS
       ? [...COLOR_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (COLOR_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]]
-      : portrait
-      ? [[-2.3, -39], [2.4, -28], [-2.4, -17], [2.4, -6], [0, 6]]
-      : [[-4.8, -38], [4.8, -27.5], [-4.8, -17], [4.8, -6.5], [0, 5]];
+      : [...SHAPE_LESSONS.map((_, i) => [(i % 2 ? 1 : -1) * (portrait ? 2.4 : 4.8), -6 - (SHAPE_LESSONS.length - 1 - i) * 10.5]), [0, portrait ? 6 : 5]];
     const FIRST_Z = SPOTS[0][1];
     /* The far end of the way (the first lesson's — or, at night, the house's). */
     const FAR_Z = Math.min(...SPOTS.map((spot) => spot[1]));
     /* How far the Shapes world's far scenery moves back for a longer way. */
-    const DZ = COLORS_STOPS || MILK_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
-    const KINDS = LAB || MILK_STOPS ? SET_KINDS : COLORS_STOPS ? COLOR_LESSONS : ["circle", "square", "triangle", "rectangle"];
+    const DZ = COLORS_STOPS || MILK_STOPS || SHAPES_STOPS ? FIRST_Z + (portrait ? 39 : 38) : 0;
+    const KINDS = LAB || MILK_STOPS ? SET_KINDS : COLORS_STOPS ? COLOR_LESSONS : SHAPE_LESSONS;
     const slabM = soft(LIGHT, { roughness: 0.9 });
     const INK = soft(0x6a5898, { roughness: 0.7 });
     /* The picture's face: two plain dots, a small smile. */
@@ -8804,7 +9124,7 @@ if (THING) {
       ? Array.from({ length: SET_KINDS.length + 2 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 11, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
       : COLORS_STOPS
       ? Array.from({ length: 12 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 10.5, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
-      : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9]];
+      : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9], [1, -58, 6, 8], [-1, -68, 6.5, 9], [1, -79, 6, 8], [-1, -89, 6.5, 9]];
     for (const [sx, z, r, ht] of hills) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
     /* Past the first lesson: the bow in the shapes' colours, the hills at its
        feet, a tall hill with a wavy golden top. */
@@ -8886,7 +9206,7 @@ if (THING) {
       : [[-1, 2, () => lollipop(0x5aa9ee)], [1, -3, () => coneTopiary(3.2, 0xffc93a)], [-1, -12, () => boxTopiary(1.7, 0x58c27d)], [1, -22, () => lollipop(0xff8fbf)], [-1, -33, () => coneTopiary(3, 0x5aa9ee)], [1, -44, () => lollipop(0xffc93a)]];
     const inner = portrait ? 7.4 : 12;
     /* A longer way repeats the garden's dressing, every 46 units. */
-    const REPEATS = COLORS_STOPS || ANIMALS_STOPS ? [0, -46, -92, -138] : MILK_STOPS ? [0, -46] : [0];
+    const REPEATS = COLORS_STOPS || ANIMALS_STOPS ? [0, -46, -92, -138] : MILK_STOPS || SHAPES_STOPS ? [0, -46] : [0];
     if (FRUITS_STOPS) add(cottage(), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { ry: 0.5 });
     if (BLOO_STOPS) add(cottage(0x6bb8f0), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { k: 1.2, ry: 0.5 });
     if (GARDEN_STOPS) add(pinkCottage(), portrait ? -9.5 : -16, 0, FIRST_Z - 12, { k: 1.3, ry: 0.5 });
@@ -9253,7 +9573,7 @@ if (THING) {
           { x: STEP_DX * 3, make: () => letterBlocks("green"), k: 1.7, color: PAINT.pink },
           { x: STEP_DX * 4, make: () => letterBlocks("pink"), k: 1.7, color: PAINT.purple },
         ]
-    : LESSON <= 4
+    : LESSON <= 7
       ? [
           { x: fx - 16, make: () => easel(undefined, SHAPE_OF_LESSON[LESSON - 1]), k: 1.25 },
           { x: fx - 10.6, make: drawingTable },
@@ -9309,8 +9629,11 @@ if (THING) {
 
   /* Tufts of grass and clover over the open lawn — never under the
      blanket or an activity's place. */
-  for (let i = 0; i < 900 && !YEAR_HILL && !STOPS && !VEG; i++) {
-    const x = -24 + rand() * 170, z = -12 + rand() * 14.5;
+  /* The shape land's last three corners (2026-11-18) get theirs from a seed of their own. */
+  let tuftSeed = seed;
+  for (let i = 0; i < (SHAPE_LAND ? 1550 : 900) && !YEAR_HILL && !STOPS && !VEG; i++) {
+    if (i === 900) [tuftSeed, seed] = [seed, 23];
+    const x = i < 900 ? -24 + rand() * 170 : 146 + rand() * 130, z = -12 + rand() * 14.5;
     if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
     if (SEAS && (!onIsle(x, z, 1.5) || isleSeason(x, z) === "winter")) continue;
     const tuft = new THREE.Group();
@@ -9324,6 +9647,7 @@ if (THING) {
     }
     add(tuft, x, 0, z);
   }
+  if (SHAPE_LAND) seed = tuftSeed;
 
   /* Everything that never moves, merged into one mesh per material — some
      ten thousand flowers, tufts and stones would otherwise be as many draw
@@ -9403,7 +9727,7 @@ if (THING) {
     ? portrait
       ? [mid - 1, 15, 31, mid - 1, 0, -1]
       : [mid + 1, 12, 29, mid + 1, 0.2, -1.5]
-    : LESSON <= 4
+    : LESSON <= 7
       ? portrait
         ? [mid - 1, 11, 22, mid - 1, 0, -1]
         : [mid, 8.5, 17.5, mid, 0.2, -1.5]
