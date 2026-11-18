@@ -992,8 +992,8 @@ all (two per friend, one per course).
   which one to open. Puzzle costs 2, Memory Match 2, Find 2 → six stars
   open all three. Stored as opened games (e.g. `play.open.<game>`); stars
   left = earned − 2 × opened.
-- **Nova's Cups — REMOVE it** (the user doesn't like it): `/play/cups`,
-  `CupsPlay`, `CupsCta`, `cupsKey`.
+- **Nova's Cups — REMOVED 2026-11-18** (the user doesn't like it): `/play/cups`
+  (now a 308 to `/play/games`), `CupsPlay`, `CupsCta`, `cupsKey`, its strings and pictures.
 - **New game: Find (3D).** Each stage is a rendered 3D place and one thing
   to find: the kitchen — find the carrot: a table full of vegetables, pick
   the carrot and put it on the plate; the forest — find the flower; and so
