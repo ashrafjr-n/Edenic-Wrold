@@ -1,7 +1,7 @@
 import type { StaticImageData } from "next/image";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
-export type ShapeId = "circle" | "square" | "triangle" | "rectangle";
+export type ShapeId = "circle" | "square" | "triangle" | "rectangle" | "heart" | "diamond" | "oval";
 
 /** The ten colors the Colors course teaches, in the order it teaches them. */
 export type ColorId = "red" | "blue" | "yellow" | "green" | "orange" | "purple" | "pink" | "brown" | "black" | "white";
