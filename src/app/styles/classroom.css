@@ -707,3 +707,82 @@
     padding-block: 0.8rem 1rem;
   }
 }
+
+/* ---------------------------------------------------------------
+   The star pod (`StarPod`, 2026-11-18): a friend's chest stars, under the
+   back button. Its chip is `.btn3d--clay-white`; pressed, it opens like the
+   language switcher — one white clay plate (`.lang-fan`'s recipe) springing
+   out of the chip, a slot per course on it, each a hollow pressed into the
+   clay with a pale star in it, or the gold star its chest gave.
+   --------------------------------------------------------------- */
+.star-pod-icon {
+  fill: var(--color-gold);
+  color: var(--color-gold-dark);
+}
+
+.star-pod-fan {
+  --lang-from: -2.5rem 0;
+  padding: 0.375rem;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow:
+    0 20px 44px -18px rgb(var(--shadow-hue) / 34%),
+    0 5px 14px -6px rgb(var(--shadow-hue) / 20%);
+  animation: lang-pop 0.42s cubic-bezier(0.34, 1.32, 0.64, 1) backwards;
+}
+
+.star-pod-slot {
+  --lang-from: -1.5rem 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, rgb(var(--shadow-hue)));
+  box-shadow:
+    inset 0 5px 9px -4px rgb(var(--shadow-hue) / 30%),
+    inset 0 -3px 6px -4px rgb(var(--shadow-hue) / 12%);
+  animation: lang-pop 0.42s cubic-bezier(0.34, 1.32, 0.64, 1) backwards;
+}
+
+@media (width >= 40rem) {
+  .star-pod-slot {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+/* Both stars sit on one spot: the gold lands exactly on the pale. */
+.star-pod-star {
+  grid-area: 1 / 1;
+  width: 72%;
+  height: auto;
+  filter: drop-shadow(0 3px 3px rgb(var(--shadow-hue) / 25%));
+}
+
+.star-pod-star--new {
+  animation: star-pod-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s backwards;
+}
+
+@keyframes star-pod-in {
+  from {
+    opacity: 0;
+    scale: 0.2;
+    rotate: -50deg;
+  }
+
+  60% {
+    opacity: 1;
+    scale: 1.3;
+    rotate: 8deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-pod-fan,
+  .star-pod-slot,
+  .star-pod-star--new {
+    animation: none;
+  }
+}
