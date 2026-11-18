@@ -1,5 +1,5 @@
 import type { LessonDef, Scene, ShapeId } from "@/types/course";
-import { picnic, rectangles, squares, triangles } from "@/data/scenes";
+import { diamonds, hearts, ovals, picnic, rectangles, squares, triangles } from "@/data/scenes";
 import { SHAPES } from "@/data/shapes";
 import { GARDEN, GARDEN_FIND } from "@/data/shape-garden";
 import donut from "../../../public/assets/learn/pinki/shapes/find/donut.png";
@@ -13,13 +13,15 @@ import donut from "../../../public/assets/learn/pinki/shapes/find/donut.png";
     on the course path wears its shape's thing, unless a clearer one is
     given. */
 function shapeLesson(n: number, shape: ShapeId, picnic: Scene, cover = SHAPES[shape].thing.src): LessonDef {
+  /* English's article for the shape ("an oval"); the other languages have no `{a}`. */
+  const a = /^[aeiou]/.test(shape) ? "an" : "a";
   return {
     reel: `/assets/learn/pinki/shapes/reels/${shape}.mp4`,
     cover: [cover],
     world: GARDEN[n],
     questions: [
-      { type: "word", ask: { key: "thisIs", vars: { shape } }, word: shape, shape },
-      { type: "trace", ask: { key: "draw", vars: { shape } }, shape },
+      { type: "word", ask: { key: "thisIs", vars: { shape, a } }, word: shape, shape },
+      { type: "trace", ask: { key: "draw", vars: { shape, a } }, shape },
       { type: "spell", ask: { key: "spell", vars: { word: shape } }, word: shape },
       { type: "find", ask: { key: "findAll", vars: { shape } }, target: { shape }, scene: picnic, world: GARDEN_FIND[n] },
     ],
@@ -35,4 +37,8 @@ export const pinkiShapes: LessonDef[] = [
   shapeLesson(2, "square", squares),
   shapeLesson(3, "triangle", triangles),
   shapeLesson(4, "rectangle", rectangles),
+  /* Added 2026-11-18, the reels from the user's videos. */
+  shapeLesson(5, "heart", hearts),
+  shapeLesson(6, "diamond", diamonds),
+  shapeLesson(7, "oval", ovals),
 ];
