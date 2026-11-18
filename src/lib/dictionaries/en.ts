@@ -93,7 +93,7 @@ export const en = {
     shapes: {
       name: "Shapes",
       description: "Circles, squares and triangles",
-      items: ["Circle", "Square", "Triangle", "Rectangle"],
+      items: ["Circle", "Square", "Triangle", "Rectangle", "Heart", "Diamond", "Oval"],
     },
     colors: {
       name: "Colors",
@@ -170,10 +170,10 @@ export const en = {
     playReel: "Play the video",
     findItemAria: "Tap the {word}",
   },
-  /** Pinki's questions. `{shape}`, `{item}` are English taught words. */
+  /** Pinki's questions. `{shape}`, `{item}` are English taught words; `{a}` is the shape's "a"/"an". */
   asks: {
-    draw: "Draw a {shape}!",
-    thisIs: "This is a {shape}!",
+    draw: "Draw {a} {shape}!",
+    thisIs: "This is {a} {shape}!",
     spell: "Build the word {word}!",
     findAll: "Find all the {shape}s!",
     thisColor: "This is {color}!",
