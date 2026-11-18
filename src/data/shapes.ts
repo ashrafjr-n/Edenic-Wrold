@@ -4,6 +4,9 @@ import ball from "../../public/assets/learn/pinki/shapes/find/ball.png";
 import toast from "../../public/assets/learn/pinki/shapes/find/toast.png";
 import cheese from "../../public/assets/learn/pinki/shapes/find/cheese.png";
 import book from "../../public/assets/learn/pinki/shapes/find/book.png";
+import heartCookie from "../../public/assets/learn/pinki/shapes/find/hearts/cookie.png";
+import kite from "../../public/assets/learn/pinki/shapes/find/kite.png";
+import egg from "../../public/assets/learn/pinki/shapes/find/ovals/egg.png";
 import type { Stroke } from "@/types/stroke";
 
 /** A closed ring of points around (50, 50) — the circle's centreline. */
@@ -14,6 +17,28 @@ function ring(radius: number, points: number): Stroke {
       Math.round((50 + radius * Math.cos(angle)) * 10) / 10,
       Math.round((50 + radius * Math.sin(angle)) * 10) / 10,
     ] as const;
+  });
+}
+
+/** A closed loop round (50, 50), `rx` across and `ry` down — the oval's centreline. */
+function ellipse(rx: number, ry: number, points: number): Stroke {
+  return Array.from({ length: points + 1 }, (_, i) => {
+    const angle = -Math.PI / 2 + (i / points) * Math.PI * 2;
+    return [
+      Math.round((50 + rx * Math.cos(angle)) * 10) / 10,
+      Math.round((50 + ry * Math.sin(angle)) * 10) / 10,
+    ] as const;
+  });
+}
+
+/** The heart's centreline (the classic heart curve), from the dip at its top
+    round to the tip and back, about 77 across. */
+function heart(points: number): Stroke {
+  return Array.from({ length: points + 1 }, (_, i) => {
+    const t = (i / points) * Math.PI * 2;
+    const x = 16 * Math.sin(t) ** 3;
+    const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+    return [Math.round((50 + x * 2.4) * 10) / 10, Math.round((50 - (y + 2.5) * 2.4) * 10) / 10] as const;
   });
 }
 
@@ -51,4 +76,12 @@ export const SHAPES: Record<ShapeId, ShapeDef> = {
     edge: "var(--accent-dark)",
     thing: { src: book, word: "book" },
   },
+  heart: { strokes: [heart(48)], color: "var(--color-pinki)", edge: "var(--color-pinki-dark)", thing: { src: heartCookie, word: "cookie" } },
+  diamond: {
+    strokes: [[[50, 10], [80, 50], [50, 90], [20, 50], [50, 10]]],
+    color: "var(--color-subject-letters)",
+    edge: "var(--color-subject-letters-dark)",
+    thing: { src: kite, word: "kite" },
+  },
+  oval: { strokes: [ellipse(27, 38, 40)], color: "var(--color-subject-shapes)", edge: "var(--color-subject-shapes-dark)", thing: { src: egg, word: "egg" } },
 };
