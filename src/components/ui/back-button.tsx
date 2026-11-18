@@ -111,6 +111,9 @@ export const BACK_FIXED = `back-spot fixed left-6 z-20 sm:left-8 lg:left-[max(2r
 interface BackRowProps extends BackButtonProps {
   /** Anything that shares the row with the button, to its right. */
   children?: ReactNode;
+  /** Never hides on scroll (`BackAutoHide`): a course's world of stops,
+      where the whole page is the scroll (the user, 2026-11-18). */
+  stay?: boolean;
 }
 
 /**
@@ -124,10 +127,10 @@ interface BackRowProps extends BackButtonProps {
  * The row is `pointer-events-none` — it is full width and sticky, so it
  * would otherwise swallow taps on whatever scrolls under its empty middle.
  */
-export function BackRow({ href, label, children }: BackRowProps) {
+export function BackRow({ href, label, children, stay = false }: BackRowProps) {
   return (
     <div
-      className={`back-spot anim-drop-in pointer-events-none sticky z-20 mx-auto mt-5 flex w-full max-w-7xl items-center justify-between gap-3 px-6 sm:gap-6 sm:px-8 [&>*]:pointer-events-auto ${BACK_TOP}`}
+      className={`back-spot ${stay ? "back-spot--stay" : ""} anim-drop-in pointer-events-none sticky z-20 mx-auto mt-5 flex w-full max-w-7xl items-center justify-between gap-3 px-6 sm:gap-6 sm:px-8 [&>*]:pointer-events-auto ${BACK_TOP}`}
       style={{ animationDelay: "0.1s" }}
     >
       <BackButton href={href} label={label} />
