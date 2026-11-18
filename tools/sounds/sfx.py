@@ -230,7 +230,26 @@ def star():
     return finish(room(mix(1.8, *run, glow), 0.8, 0.3), 0.6)
 
 
-SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star]
+def clouds():
+    """The friend's clouds rising over the page: three soft breaths of air, one
+    per bank (they set off 0.11 s apart and cover in 0.7 s), and a harp-like
+    run up as they pass."""
+    def breath(seconds):
+        n = int(SR * seconds)
+        size, hop = 2048, 512
+        window = np.hanning(size)
+        out = np.zeros(n + size)
+        for i in range(0, n, hop):
+            p = i / n
+            centre = 300 + 900 * p
+            out[i:i + size] += noise_band(size / SR, centre * 0.5, centre * 1.6) * window * np.sin(np.pi * p) ** 2
+        return out[:n]
+    air = [(0.11 * k, breath(1.1), 1 - 0.15 * k) for k in range(3)]
+    harp = [(0.15 + 0.08 * k, glock(note(n), 0.8), 0.07) for k, n in enumerate(["C6", "E6", "G6", "A6", "C7"])]
+    return finish(room(mix(2.0, *air, *harp), 0.8, 0.25), 0.4)
+
+
+SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds]
 
 
 def write_mp3(name, signal):
@@ -246,7 +265,11 @@ def write_mp3(name, signal):
 
 
 if __name__ == "__main__":
+    import sys
     os.makedirs(OUT, exist_ok=True)
+    only = sys.argv[1:]  # e.g. `sfx.py clouds` makes that one alone
     for make in SOUNDS:
+        if only and make.__name__ not in only:
+            continue
         write_mp3(make.__name__, make())
         print(make.__name__)
