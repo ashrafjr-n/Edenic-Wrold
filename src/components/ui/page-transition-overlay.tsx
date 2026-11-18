@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { Cloud } from "@/components/ui/cloud";
+import { playSfx } from "@/lib/cue";
 import { usePageTransition } from "@/store/page-transition";
 
 /** How long the drift holds packed once the destination page has actually
@@ -122,7 +123,10 @@ export function PageTransitionOverlay() {
   const wasActiveRef = useRef(active);
 
   useEffect(() => {
-    if (active && !wasActiveRef.current) startPathRef.current = pathname;
+    if (active && !wasActiveRef.current) {
+      startPathRef.current = pathname;
+      playSfx("clouds");
+    }
     wasActiveRef.current = active;
   }, [active, pathname]);
 

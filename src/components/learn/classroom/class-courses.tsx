@@ -116,6 +116,8 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
               onClick={(event) => intoWorld(event, `/learn/${characterId}/${course.id}`)}
               aria-label={format(announce, { name: course.name })}
               className={`class-card ${i === nextIndex ? "class-card--next" : ""}`}
+              /* Its sound is the clouds' (`PageTransitionOverlay`), not a tap. */
+              data-sfx="none"
               style={{ animationDelay: `${0.7 + i * 0.18}s` }}
             >
               <span dir={dir} className="class-card-tag" style={{ "--chars": course.name.length } as CSSProperties}>
