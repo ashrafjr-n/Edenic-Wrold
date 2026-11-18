@@ -40,8 +40,7 @@ const bite = ({ word, picture }: Veg): Food => ({ word, src: picture });
  * to the counter for Basket Time — read its word and put it from the counter,
  * among everything else on it, into the basket (the user's design,
  * 2026-11-01: Find It! merged into it). Its demo carries another vegetable.
- * (Grow it, the third step from 2026-10-24, was removed 2026-11-01; Nova's
- * cups, before it, are a game on `/play`.)
+ * (Grow it, the third step from 2026-10-24, was removed 2026-11-01.)
  */
 function foodLesson(veg: Veg, i: number): LessonDef {
   const { word, picture } = veg;
