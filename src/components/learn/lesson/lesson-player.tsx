@@ -6,7 +6,7 @@ import { Lightbulb } from "lucide-react";
 import { SHAPES } from "@/data/shapes";
 import { COLORS } from "@/data/colors";
 import { format } from "@/lib/format-dict";
-import { lessonCue } from "@/lib/cue";
+import { lessonCue, playCue, playSfx } from "@/lib/cue";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { itemKey, useProgress } from "@/store/progress";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -56,6 +56,8 @@ const WORLD_HOLD_MS: Partial<Record<Question["type"], number>> = {
   basket: 300,
 };
 const WORLD_HOLD_DEFAULT_MS = 1100;
+/** A word built or a colour mixed is said once the cheer's two notes have rung. */
+const SAY_AFTER_MS = 450;
 
 interface LessonPlayerProps {
   lesson: LessonDef;
@@ -221,11 +223,25 @@ export function LessonPlayer({
     return () => window.clearTimeout(timer);
   }, [solved, holdMs]);
 
-  const onSolved = () => setSolved(true);
+  /* Every step's cheer and miss sound, here once; a word built or a colour
+     mixed is then said. */
+  const onSolved = () => {
+    setSolved(true);
+    playSfx("correct");
+    const said = question?.type === "spell" ? question.word : question?.type === "mix" ? question.color : undefined;
+    if (said) window.setTimeout(() => void playCue(lessonCue.word(said)), SAY_AFTER_MS);
+  };
   const onMiss = () => {
     setStepMisses((count) => count + 1);
     setMistakes((count) => count + 1);
+    playSfx("oops");
   };
+
+  /* The lesson's end: a hooray as the friend comes up to cheer. */
+  const cheering = finished && arrived;
+  useEffect(() => {
+    if (cheering) playSfx("hooray");
+  }, [cheering]);
 
   /* ---- The task chip: what to do on this step ---- */
   let task: ReactNode = null;
