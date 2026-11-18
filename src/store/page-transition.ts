@@ -11,7 +11,7 @@ import { create } from "zustand";
     clearing, so an early push costs nothing and a late one just makes the
     whole transition feel slow. Hand-synced with those two — it's a handful
     of numbers, not worth threading a shared constant through CSS. */
-export const TRAIL_COVER_MS = 700;
+export const VEIL_COVER_MS = 700;
 
 interface PageTransitionState {
   /** True from the moment a cloud-veil navigation starts until the veil has

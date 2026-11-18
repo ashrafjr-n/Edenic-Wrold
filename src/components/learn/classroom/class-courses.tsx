@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Play, RotateCcw } from "lucide-react";
 import { useUpNext, type UpNextCourse } from "@/components/learn/up-next";
-import { TRAIL_COVER_MS, usePageTransition } from "@/store/page-transition";
+import { VEIL_COVER_MS, usePageTransition } from "@/store/page-transition";
 import { Celebration } from "@/components/ui/celebration";
 import { format } from "@/lib/format-dict";
 import { itemKey, useProgress } from "@/store/progress";
@@ -92,7 +92,7 @@ export function ClassCourses({ characterId, courses, labels, dir }: ClassCourses
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     startVeil(characterId === "nova" ? "lavender" : characterId === "bloo" ? "bloo" : "pink");
-    window.setTimeout(() => router.push(href), TRAIL_COVER_MS);
+    window.setTimeout(() => router.push(href), VEIL_COVER_MS);
   };
 
   const learned = courses.map(
