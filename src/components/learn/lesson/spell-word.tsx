@@ -5,6 +5,7 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent, Ref } from "reac
 import Image, { type StaticImageData } from "next/image";
 import { shuffle } from "@/lib/seeded";
 import { format } from "@/lib/format-dict";
+import { playSfx } from "@/lib/cue";
 import { Celebration } from "@/components/ui/celebration";
 import { ClayWord, letterTones, type LetterTone } from "./clay-word";
 
@@ -225,6 +226,9 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
     } else {
       nextTray[home()] = id;
     }
+    /* A letter set in a space knocks one note higher per space; one sent home just pops. */
+    if (target.zone === "slot") playSfx("letter", target.i);
+    else playSfx("tap");
     place(nextSlots, nextTray);
   };
 
@@ -354,6 +358,8 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
       const keptIds = kept.filter((id): id is number => id !== null);
       const used = new Set(keptIds);
       const steps: Slots[] = [];
+      /* The space each step fills, for its note. */
+      const spaces: number[] = [];
       let state = kept;
       kept.forEach((id, i) => {
         if (id !== null) return;
@@ -361,6 +367,7 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         used.add(pick);
         state = state.map((value, j) => (j === i ? pick : value));
         steps.push(state);
+        spaces.push(i);
       });
 
       /* Everything not kept is in the tray, each where it can go. */
@@ -377,6 +384,7 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
             snapshot();
             setSlots(step);
             setTray(trayNow.map((id) => (id !== null && step.includes(id) ? null : id)));
+            playSfx("letter", spaces[k]);
             if (k === steps.length - 1) {
               setSolved(true);
               onSolved();
@@ -407,6 +415,7 @@ export function SpellWord({ word, tone, picture, seed, letterAria, hint, onSolve
         }}
         type="button"
         aria-label={format(letterAria, { letter })}
+        data-sfx="none"
         onClick={() => onClick(id)}
         onPointerDown={(event) => onPointerDown(event, id)}
         onPointerMove={(event) => onPointerMove(event, id)}
