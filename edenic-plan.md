@@ -967,7 +967,7 @@ again from its cookie, and the door stays open.
 The chest's star now has somewhere to go, and Play spends them. Six stars in
 all (two per friend, one per course).
 
-**1. The star pod (Learn — build FIRST, waiting for the user's go).**
+**1. The star pod (Learn) — BUILT 2026-11-18** (`StarPod`, `components/learn/star-pod.tsx`; as planned, except: from `lg` it sits BESIDE the back button — under it the open plate covered the board's corner; a star it has not shown yet is remembered in `localStorage` `edenic-stars-seen`; opening by itself it brings the back row back, which the camera's scroll to the chest had hidden).
 - On a friend's pages (hub + course pages = `ClassroomShell`, the layout, so
   it is mounted once and never remounts): a white clay chip with a star icon,
   just under the header on the LEFT, under the back button's row (that spot
