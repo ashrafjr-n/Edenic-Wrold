@@ -508,7 +508,8 @@
     visibility 0s;
 }
 
-:root[data-back-hidden] .back-spot {
+/* `.back-spot--stay` (a course's world of stops) never hides. */
+:root[data-back-hidden] .back-spot:not(.back-spot--stay) {
   translate: 0 -7rem;
   visibility: hidden;
   transition:
