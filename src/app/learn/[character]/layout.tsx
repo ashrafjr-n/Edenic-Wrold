@@ -25,7 +25,7 @@ export default async function CharacterLayout({ children, params }: CharacterLay
   const room = CLASSROOMS[character.id];
   const courses = lessonsByCharacter[character.id]
     .filter((lesson) => !lesson.locked)
-    .map((lesson) => ({ id: lesson.id, titles: dict.lessons[lesson.id].items }));
+    .map((lesson) => ({ id: lesson.id, name: dict.lessons[lesson.id].name, titles: dict.lessons[lesson.id].items }));
   return (
     <ClassroomShell
       characterId={character.id}
@@ -36,6 +36,7 @@ export default async function CharacterLayout({ children, params }: CharacterLay
         backFromHub: dict.characterHub.backToLearn,
         friend: character.name,
       }}
+      starLabels={dict.characterHub}
     >
       {children}
     </ClassroomShell>

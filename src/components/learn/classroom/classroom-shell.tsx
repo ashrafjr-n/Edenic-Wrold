@@ -1,11 +1,12 @@
 "use client";
 
-import { ViewTransition, type CSSProperties, type ReactNode } from "react";
+import { ViewTransition, type ComponentProps, type CSSProperties, type ReactNode } from "react";
 import { useSelectedLayoutSegments } from "next/navigation";
 import type { StaticImageData } from "next/image";
 import { BackRow } from "@/components/ui/back-button";
 import type { UpNextCourse } from "@/components/learn/up-next";
 import type { Framed } from "@/types/course";
+import { StarPod } from "@/components/learn/star-pod";
 import { ClassroomBackdrop } from "./classroom-backdrop";
 import { Chalkboard } from "./chalkboard";
 import { ClassroomTeacher } from "./classroom-teacher";
@@ -15,13 +16,14 @@ interface ClassroomShellProps {
   /** The page's accent and chalk colours (`characterAccent`, `classroomStyle`). */
   style: CSSProperties;
   room: { wall: Framed; desk: Framed; teacher: StaticImageData; cheer: StaticImageData };
-  courses: readonly Pick<UpNextCourse, "id" | "titles">[];
+  courses: readonly (Pick<UpNextCourse, "id" | "titles"> & { name: string })[];
   labels: {
     /** Back from the hub (to the friend picker). */
     backFromHub: string;
     /** The friend's name, for their button. */
     friend: string;
   };
+  starLabels: ComponentProps<typeof StarPod>["labels"];
   /** The page: what is written on the board — the hub's course cards. */
   children: ReactNode;
 }
@@ -32,7 +34,7 @@ interface ClassroomShellProps {
  * on the board). Everything under the hub — a course's world of stops
  * (`CourseWorld`), a lesson, a 404 — is the page alone.
  */
-export function ClassroomShell({ characterId, style, room, courses, labels, children }: ClassroomShellProps) {
+export function ClassroomShell({ characterId, style, room, courses, labels, starLabels, children }: ClassroomShellProps) {
   const segments = useSelectedLayoutSegments();
   if (segments.length > 0) return children;
   return (
@@ -40,7 +42,9 @@ export function ClassroomShell({ characterId, style, room, courses, labels, chil
       <ClassroomBackdrop wall={room.wall} desk={room.desk} />
       {/* Its own transition group, so the zooming wall never covers it. */}
       <ViewTransition name="class-back">
-        <BackRow href="/learn" label={labels.backFromHub} />
+        <BackRow href="/learn" label={labels.backFromHub}>
+          <StarPod characterId={characterId} courses={courses} labels={starLabels} />
+        </BackRow>
       </ViewTransition>
       <div className="class-hub">
         <div className="class-stage">
