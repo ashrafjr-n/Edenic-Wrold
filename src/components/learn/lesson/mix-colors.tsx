@@ -5,6 +5,7 @@ import { Equal, Plus } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
 import { COLORS } from "@/data/colors";
 import { shuffle } from "@/lib/seeded";
+import { playSfx } from "@/lib/cue";
 import type { ColorId } from "@/types/course";
 import { ClayWord } from "./clay-word";
 
@@ -42,6 +43,7 @@ export function MixColors({ a, b, color, others, seed, onSolved, onMiss }: MixCo
     if (solved) return;
     if (option === color) {
       setSolved(true);
+      playSfx("bubbles");
       onSolved();
       return;
     }
