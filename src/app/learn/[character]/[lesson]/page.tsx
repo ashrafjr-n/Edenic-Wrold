@@ -40,7 +40,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
   return (
     <main className="relative flex flex-1 flex-col overflow-x-clip" style={characterAccent(character)}>
-      <BackRow href={`/learn/${character.id}`} label={format(dict.lessonPicker.backTo, { characterName: character.name })}>
+      <BackRow href={`/learn/${character.id}`} label={format(dict.lessonPicker.backTo, { characterName: character.name })} stay>
         <StarPod
           characterId={character.id}
           courses={lessonsByCharacter[character.id]
