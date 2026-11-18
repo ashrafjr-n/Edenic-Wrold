@@ -400,7 +400,8 @@ if NAME == "stops":
     # and how much), measured by best fit on neighbouring frames: re-measure if
     # the camera's way or the number of frames changes.
     flows = {
-        "shapes": {"landscape": [50, 6, 1.021], "portrait": [50, 16, 1.022]},
+        # Seven lessons (2026-11-18): re-measured, best fit on frames 10-125.
+        "shapes": {"landscape": [50, 8, 1.024], "portrait": [50, 16, 1.028]},
         "colors": {"landscape": [50, 8, 1.023], "portrait": [50, 20, 1.03]},
         "fruits": {"landscape": [50, 2, 1.022], "portrait": [50, 18, 1.027]},
         # My Garden (2026-11-08): measured the same way (best fit on frames 10-110).
@@ -470,7 +471,7 @@ if NAME == "stops":
             + f'    keys: {json.dumps(keys, separators=(",", ":"))},\n  }},'
         )
     what, const, file, date, run = {
-        "shapes": ("the Shapes course", "SHAPE_STOPS", "shape-stops.ts", "2026-11-05", None),
+        "shapes": ("the Shapes course", "SHAPE_STOPS", "shape-stops.ts", "2026-11-05", 510),
         "colors": ("Pinki's Colors course", "COLOR_STOPS", "color-stops.ts", "2026-11-06", 720),
         "fruits": ("Nova's Vegetables course", "VEG_STOPS", "veg-stops.ts", "2026-11-06", 380),
         "garden": ("Nova's My Garden course", "GARDEN_STOPS", "garden-stops.ts", "2026-11-08", 450),
@@ -487,6 +488,7 @@ if NAME == "stops":
         + "\n".join(imports)
         + f"\n\n/** The camera going in as the page scrolls: {meta['frames']} frames, each stop's box\n    (% of the frame) at even steps along the way. */\nexport const {const}: CourseStops = {{\n  frames: {meta['frames']},\n"
         + (f'  tint: "#ffc72e",\n  run: {run},\n' if colors else "")
+        + (f"  run: {run},\n" if run and not colors else "")
         + "\n".join(parts) + "\n};\n"
     )
     open(os.path.join(ROOT, "src/data", file), "w").write(ts)
@@ -565,14 +567,14 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
 
     BLUR = 0.009  # σ as a share of the picture's long side
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 9)) if SEAS else list(range(1, 10)) if FARM else list(range(1, 7)) if MYG else list(range(1, 11)) if FOREST else [1] if VEG else [1, 2, 3, 4, 5] if HILL else [1, 2, 3, 4])
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 9)) if SEAS else list(range(1, 10)) if FARM else list(range(1, 7)) if MYG else list(range(1, 11)) if FOREST else [1] if VEG else [1, 2, 3, 4, 5] if HILL else [1, 2, 3, 4, 5, 6, 7])
     base = "public/assets/learn/bloo/seasons-weather/world" if SEAS else "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
-    has_find = lambda lesson: not HILL and not FARM and lesson <= (0 if MYG else 10 if FOREST else 5 if VEG else 4)
+    has_find = lambda lesson: not HILL and not FARM and lesson <= (0 if MYG else 10 if FOREST else 5 if VEG else 7)
     GENERATED = "src/data/seasons-farm.ts" if SEAS else "src/data/animals-farm.ts" if FARM else "src/data/my-garden.ts" if MYG else "src/data/color-forest.ts" if FOREST else "src/data/veg-kitchen.ts" if VEG else "src/data/season-hill.ts" if HILL else "src/data/shape-garden.ts"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
-    sharp0 = lambda lesson: (lesson <= 8 if SEAS else lesson <= 9) if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 4
+    sharp0 = lambda lesson: (lesson <= 8 if SEAS else lesson <= 9) if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 7
 
     def sigma(lesson, move, last, t):
         # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
@@ -646,7 +648,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     saved = os.path.join(HERE, "out", f"{NAME}.json")
     data = {**({int(k): v for k, v in json.load(open(saved)).items()} if os.path.exists(saved) else {}), **data}
     # No review lessons (removed 2026-11-11): what an earlier run saved for one is dropped.
-    data.pop(9 if SEAS else 10 if FARM else 7 if MYG else 11 if FOREST else 6 if VEG else None if HILL else 5, None)
+    data.pop(9 if SEAS else 10 if FARM else 7 if MYG else 11 if FOREST else 6 if VEG else None, None)
     json.dump(data, open(saved, "w"))
 
     # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
