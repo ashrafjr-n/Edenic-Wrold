@@ -56,12 +56,12 @@ const nextConfig: NextConfig = {
         destination: "/play/:path*",
         permanent: true,
       },
-      /* The Edenic Trail's own page became the Play game itself (the Sky
-         Trail, 2026-11-12): `/play` is the sky now. */
+      /* The Edenic Trail's page (2026-11-12) and the Sky Trail after it
+         (cancelled 2026-11-15) are gone: `/play` is the Sleeping Lab. */
       { source: "/trail", destination: "/play", permanent: true },
-      /* The Sky Trail was cancelled (2026-11-15): its levels are gone;
-         `/play` is the Sleeping Lab now. */
       { source: "/play/sky/:path*", destination: "/play", permanent: true },
+      /* Nova's Cups was removed (2026-11-18): back to the games. */
+      { source: "/play/cups", destination: "/play/games", permanent: true },
     ];
   },
 };
