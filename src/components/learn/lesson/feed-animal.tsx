@@ -5,7 +5,7 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Heart } from "lucide-react";
 import { Celebration } from "@/components/ui/celebration";
-import { lessonCue, playCue } from "@/lib/cue";
+import { lessonCue, playCue, playSfx } from "@/lib/cue";
 import { shuffle } from "@/lib/seeded";
 import type { Food } from "@/types/course";
 
@@ -131,6 +131,7 @@ export function FeedAnimal({ word, picture, mouth, foods, seed, onSolved, onMiss
     }
     after(still() ? 0 : FLY_MS, () => {
       setEaten(true);
+      playSfx("chomp");
       navigator.vibrate?.([10, 40, 14]);
       /* Three bites. Reduced motion: none — the hearts are enough. */
       if (!still()) {
@@ -156,6 +157,7 @@ export function FeedAnimal({ word, picture, mouth, foods, seed, onSolved, onMiss
   const onPointerDown = (index: number) => (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (busy.current) return;
     dragged.current = false;
+    playSfx("pickup");
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({ index, x: event.clientX, y: event.clientY, dx: 0, dy: 0, moved: false });
   };
@@ -221,6 +223,7 @@ export function FeedAnimal({ word, picture, mouth, foods, seed, onSolved, onMiss
                 type="button"
                 aria-label={name}
                 disabled={off || eaten}
+                data-sfx="none"
                 onClick={() => {
                   if (!dragged.current) give(index);
                 }}
