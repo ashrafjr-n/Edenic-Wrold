@@ -125,6 +125,9 @@ export const ku: Dictionary = {
     replayLesson: "{name} دووبارە یاری بکە",
     youCanDoIt: "تو دشێی!",
     allDone: "تە هەمی فێربوو! دەستخۆش!",
+    stars: "ستێرێن من: {n} ژ {total}",
+    starEarned: "{name}: تە ستێر وەرگرت",
+    starMissing: "{name}: هێشتا ستێر نینە",
   },
   lessonPicker: {
     backTo: "ڤەگەڕان بۆ وانەیێن {characterName}",
