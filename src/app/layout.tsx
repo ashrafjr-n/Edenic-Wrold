@@ -72,6 +72,10 @@ const balooBhaijaan = Baloo_Bhaijaan_2({
      render Latin text in Baloo for the moment before Fredoka loads. */
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700", "800"],
+  /* Not preloaded (2026-11-18): a preload is fetched on EVERY page, in every
+     locale. Unpreloaded, the browser fetches it only when Arabic text shows
+     (its `unicode-range` is Arabic) — an English page never does. */
+  preload: false,
 });
 
 /* Badini Kurdish, and ONLY Badini Kurdish. Baloo Bhaijaan 2 is the better
@@ -88,6 +92,8 @@ const balooBhaijaan = Baloo_Bhaijaan_2({
 const vazirmatn = Vazirmatn({
   variable: "--font-kurdish",
   subsets: ["arabic"],
+  /* Fetched only on a Kurdish page — see Baloo's `preload` above. */
+  preload: false,
 });
 
 /* Shared by the page itself and by the share card, so the two can never
