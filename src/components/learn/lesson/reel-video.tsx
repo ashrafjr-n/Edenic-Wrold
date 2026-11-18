@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Play, SkipForward } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { Loader } from "@/components/ui/loader";
+import { playSfx } from "@/lib/cue";
 
 /** Kept in step with `.morph-btn__icon`'s 0.55s turn in `globals.css`: the
     Skip button finishes its spin before the lesson moves on. */
@@ -101,6 +102,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
   const skip = () => {
     if (spinning) return;
     setSpinning(true);
+    playSfx("whoosh");
     video.current?.pause();
     timer.current = window.setTimeout(finish, SKIP_SPIN_MS);
   };
