@@ -72,6 +72,9 @@ interface LessonPlayerProps {
   nextTitle?: string;
   /** The next lesson teaches one shape — its button says "Next shape". */
   nextIsShape?: boolean;
+  /** The next lesson's reel: fetched behind the done screen, so Next plays
+      it straight from the browser's cache. */
+  nextReel?: string;
   /** Art behind the reel while it loads. */
   image: string;
   /** The character's colour — the lesson wears it. */
@@ -107,6 +110,7 @@ export function LessonPlayer({
   title,
   nextTitle,
   nextIsShape = false,
+  nextReel,
   image,
   tone,
   courseTone,
@@ -238,6 +242,11 @@ export function LessonPlayer({
   };
 
   /* The lesson's end: a hooray as the friend comes up to cheer. */
+  /* Done: the next lesson's reel comes down while the child is here (the
+     reels' `/assets` cache keeps it a day), so Next does not wait on it. */
+  useEffect(() => {
+    if (finished && nextReel) void fetch(nextReel, { priority: "low" }).catch(() => undefined);
+  }, [finished, nextReel]);
   const cheering = finished && arrived;
   useEffect(() => {
     if (cheering) playSfx("hooray");
