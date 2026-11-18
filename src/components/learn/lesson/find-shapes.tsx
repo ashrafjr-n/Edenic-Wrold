@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Check } from "lucide-react";
 import { format } from "@/lib/format-dict";
+import { playSfx } from "@/lib/cue";
 import { Celebration } from "@/components/ui/celebration";
 import { isTarget } from "@/lib/target";
 import { useWide } from "@/lib/use-wide";
@@ -101,6 +102,8 @@ export function FindShapes({ scene: card, world, hidden = false, target, itemAri
     if (isTarget(item, target)) {
       const next = [...found, item.id];
       setFound(next);
+      /* Each find rings a note higher. */
+      playSfx("found", next.length - 1);
       if (next.length === targets.length) onSolved();
       return;
     }
@@ -178,6 +181,7 @@ export function FindShapes({ scene: card, world, hidden = false, target, itemAri
           aria-label={format(itemAria, { word: item.word })}
           aria-pressed={found.includes(item.id)}
           onClick={() => tap(item)}
+          data-sfx="none"
           /* The radius is the hit shape too: a round thing is only tappable
              on its round part, so a corner of its box never steals a tap. */
           className={`absolute focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)] ${
