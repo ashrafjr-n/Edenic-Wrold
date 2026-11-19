@@ -161,17 +161,22 @@ export function PlayLock({ game, name, words, dir, className = "", style, childr
           document.body,
         )}
 
-      {asking && (
-        <FriendSays
-          picture={CLASSROOMS.nova.cheer}
-          ink="var(--color-nova)"
-          lines={[words.needStars1, words.needStars2]}
-          skipLabel={words.okay}
-          action={{ href: "/learn", label: words.goLearn }}
-          dir={dir}
-          onDone={() => setAsking(false)}
-        />
-      )}
+      {/* A portal too: the card's entrance (`anim-rise-in`) leaves a
+          transform on this wrapper, which would make it Nova's frame
+          instead of the screen. */}
+      {asking &&
+        createPortal(
+          <FriendSays
+            picture={CLASSROOMS.nova.cheer}
+            ink="var(--color-nova)"
+            lines={[words.needStars1, words.needStars2]}
+            skipLabel={words.okay}
+            action={{ href: "/learn", label: words.goLearn }}
+            dir={dir}
+            onDone={() => setAsking(false)}
+          />,
+          document.body,
+        )}
     </div>
   );
 }
