@@ -1,28 +1,123 @@
 /* ---------------------------------------------------------------
-   Play's star locks (2026-11-19, `PlayLock`): a game card stays shut
-   until the child spends two of Learn's chest stars on it. The lock is a
-   soft scrim over the card (the card's own radius), a white clay sign in
-   the middle; opening it, two gold stars fly from the bank (`PlayStars`)
-   into the sign, the padlock springs open, the scrim lifts.
+   `/play`'s game cards (`GameCard`, 2026-11-19): a clay tile in the game's
+   colour (`--card-face`, grain from `.clay`) holding the picture in a
+   white-rimmed window, the name and the card's action in the foot under it.
+   --------------------------------------------------------------- */
+.game-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  border-radius: 2rem;
+  background-color: var(--card-face);
+}
+
+.game-card-window {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1.4rem;
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 92%),
+    0 10px 18px -8px color-mix(in srgb, var(--clay-edge) 70%, transparent);
+}
+
+/* The window's glass: a soft highlight at the top, a shade at the foot. */
+.game-card-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 10px 16px -10px rgb(255 255 255 / 70%),
+    inset 0 -12px 18px -12px rgb(0 0 0 / 22%);
+}
+
+.game-card-art {
+  transition: scale 0.6s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+
+.game-card--live:hover .game-card-art {
+  scale: 1.06;
+}
+
+.game-card-title {
+  color: var(--card-ink);
+  line-height: 1.1;
+}
+
+/* The foot's dot: white clay, the play sign in the card's own colour. */
+.game-card-go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.4rem;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background-color: #fff;
+  color: color-mix(in srgb, var(--card-face) 80%, #000);
+  box-shadow:
+    inset 0 6px 9px -5px rgb(255 255 255 / 90%),
+    inset 0 -7px 10px -5px color-mix(in srgb, var(--clay-edge) 40%, transparent),
+    0 10px 18px -8px color-mix(in srgb, var(--clay-edge) 80%, transparent);
+  transition: scale 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.game-card--live:hover .game-card-go,
+.game-card--live:focus-visible .game-card-go {
+  scale: 1.12;
+}
+
+.game-card--live:focus-visible,
+button.game-card:focus-visible {
+  outline: 4px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* A shut game the child cannot open yet: the padlock, quiet. */
+.game-card-go--shut {
+  width: 3rem;
+  color: color-mix(in srgb, var(--color-ink-fixed) 55%, #fff);
+}
+
+/* "Coming soon" in a card's foot: a size down from Discover's sign. */
+.discover-soon.discover-soon--sm {
+  gap: 0.45rem;
+  padding: 0.35rem 1rem 0.35rem 0.35rem;
+  font-size: 1rem;
+}
+
+.discover-soon--sm .discover-soon-icon {
+  width: 2rem;
+}
+
+/* ---------------------------------------------------------------
+   Play's star locks (`PlayLock`): a game stays shut until the child spends
+   two of Learn's chest stars on it. Shut, the window is frosted in the
+   card's colour under a white clay padlock and a white sign with two empty
+   star sockets. Opening it, two gold stars fly from the bank (`PlayStars`)
+   into the sockets, the padlock springs open, the frost lifts.
    --------------------------------------------------------------- */
 .play-lock {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.9rem;
-  padding: 1rem;
-  border-radius: 1.75rem;
-  background: rgb(var(--shadow-hue) / 34%);
-  backdrop-filter: blur(3px) saturate(0.75);
-}
-
-/* Tapped without stars enough: the whole scrim is the button. */
-button.play-lock {
-  cursor: pointer;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--card-face) 30%, rgb(255 255 255 / 25%)) 0%,
+    color-mix(in srgb, var(--clay-edge) 55%, transparent) 100%
+  );
+  backdrop-filter: blur(4px) saturate(0.8);
 }
 
 .play-lock--opening {
@@ -32,15 +127,96 @@ button.play-lock {
 @keyframes play-lock-lift {
   to {
     opacity: 0;
-    scale: 1.03;
+    scale: 1.04;
   }
 }
 
-/* The sign's two stars: the price, and where the flying ones land. */
-.play-lock-star {
-  width: 1.9rem;
-  height: 1.9rem;
+/* The padlock: a white clay block, the lock in the card's own deep colour —
+   a slow sway while shut, a jump when it opens. */
+.play-padlock {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  aspect-ratio: 1;
+  border-radius: 1.4rem;
+  background-color: #fff;
+  color: var(--clay-edge);
+  rotate: -4deg;
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -5px color-mix(in srgb, var(--clay-edge) 35%, transparent),
+    0 14px 24px -10px color-mix(in srgb, var(--clay-edge) 85%, #000);
+  animation: play-padlock-sway 3.2s ease-in-out infinite;
+}
+
+@keyframes play-padlock-sway {
+  50% {
+    rotate: 4deg;
+  }
+}
+
+.play-padlock--open {
+  animation: play-padlock-jump 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+@keyframes play-padlock-jump {
+  0% {
+    rotate: 0deg;
+    scale: 1;
+  }
+  40% {
+    rotate: 0deg;
+    scale: 1.22;
+  }
+  100% {
+    rotate: 0deg;
+    scale: 1.1;
+  }
+}
+
+/* The price: white clay, two star sockets, "Two stars open it". */
+.play-lock-sign {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 1.1rem 0.3rem 0.4rem;
+  border-radius: 999px;
+  background-color: #fff;
+  color: var(--color-ink-fixed);
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -5px rgb(var(--shadow-hue) / 22%),
+    0 12px 22px -10px rgb(20 40 90 / 50%);
+}
+
+/* A socket: where a flying star lands. */
+.play-socket {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+}
+
+.play-socket-star {
+  width: 1.85rem;
+  height: 1.85rem;
   object-fit: contain;
+}
+
+@media (width >= 40rem) {
+  .game-card {
+    padding: 0.9rem;
+  }
+
+  .play-lock-sign {
+    font-size: 1.1rem;
+  }
+
+  .play-padlock {
+    width: 5rem;
+  }
 }
 
 /* A star on its way from the bank to the lock: fixed to the screen (a
@@ -82,5 +258,12 @@ button.play-lock {
 
   .play-lock--opening {
     animation-delay: 0s;
+  }
+
+  .play-padlock,
+  .game-card-art,
+  .game-card-go {
+    animation: none;
+    transition: none;
   }
 }
