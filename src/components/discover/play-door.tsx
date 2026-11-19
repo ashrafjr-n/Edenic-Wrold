@@ -1,13 +1,15 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Gamepad2, Hourglass } from "lucide-react";
+import Link from "next/link";
+import { Gamepad2, Play } from "lucide-react";
 import { Cloud } from "@/components/ui/cloud";
 import playCloud from "../../../public/assets/discover/play-cloud.png";
 
 interface PlayDoorProps {
   title: string;
   subtitle: string;
-  soon: string;
+  /** The sign where the home panels have their button ("Let's play"). */
+  go: string;
   dir: "rtl" | "ltr";
   className?: string;
   style?: CSSProperties;
@@ -16,18 +18,18 @@ interface PlayDoorProps {
 type ClayVars = CSSProperties & { "--clay-edge"?: string };
 
 /**
- * Discover's Play door while Play is being built: NOT a link. The home
+ * Discover's Play door: the whole card is the link to `/play` (opened
+ * 2026-11-19 — it was "Coming soon" while Play was being built). The home
  * page's path panels' recipe (`PathsSection`): a `.clay` panel in one
  * colour (Bloo's sky), the felt cloud (`play-cloud.png`) bedded into its
  * right side with `.panel-art`, the name and its line at the top left —
- * and where those panels have their white button, a "Coming soon" sign
- * (`.discover-soon`: white clay, an hourglass in a sky-blue dot). Nothing
- * on it moves. When Play opens, the sign becomes the panel's button.
+ * and where those panels have their white button, a white clay sign
+ * (`.discover-soon`, a play icon in a sky-blue dot). Nothing on it moves.
  */
-export function PlayDoor({ title, subtitle, soon, dir, className = "", style }: PlayDoorProps) {
+export function PlayDoor({ title, subtitle, go, dir, className = "", style }: PlayDoorProps) {
   return (
-    <div
-      aria-disabled
+    <Link
+      href="/play"
       className={`clay relative isolate flex min-h-48 flex-[2] basis-0 flex-col items-start overflow-hidden rounded-[1.75rem] p-6 sm:p-8 lg:p-10 ${className}`}
       style={{ backgroundColor: "#5aaee8", "--clay-edge": "#2f78b8", ...style } as ClayVars}
     >
@@ -49,10 +51,10 @@ export function PlayDoor({ title, subtitle, soon, dir, className = "", style }: 
 
       <span dir={dir} className="discover-soon mt-auto">
         <span aria-hidden className="discover-soon-icon">
-          <Hourglass className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />
+          <Play className="ms-0.5 h-4 w-4 fill-current sm:h-5 sm:w-5" strokeWidth={2.5} />
         </span>
-        {soon}
+        {go}
       </span>
-    </div>
+    </Link>
   );
 }
