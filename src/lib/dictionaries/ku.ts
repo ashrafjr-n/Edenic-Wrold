@@ -206,7 +206,7 @@ export const ku: Dictionary = {
   discover: {
     playGo: "وەرە یاری بکەین",
     watchNew: "ئەلقێن نوو",
-    watchSub: "ئەلقە و ڤیدیۆیێن کورت",
+    watchSub: "ئەلقە، ستران و ڤیدیۆیێن کورت",
     playSub: "یاری و سەرهاتی",
     showEpisode: "ئەلقا {n} نیشان بدە",
     playButton: "یاری",
@@ -216,6 +216,8 @@ export const ku: Dictionary = {
     watchClipAria: "ڤیدیۆیا {title} تەماشە بکە",
     episodesTitle: "پشکێن",
     reelsTitle: "ڤیدیۆیێن کورت",
+    songsTitle: "ستران",
+    songAria: "سترانا {n} لێبدە",
     filterAll: "هەمی",
     filterAria: "ڤیدیۆیێن کورت فلتەر بکە",
     episodeAria: "پشکا {title} بلێزە",
