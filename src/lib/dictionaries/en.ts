@@ -217,7 +217,7 @@ export const en = {
     stageSoon: "This stage is on its way!",
   },
   discover: {
-    playSoon: "Coming soon",
+    playGo: "Let's play",
     watchNew: "New episodes",
     watchSub: "Episodes and short videos",
     playSub: "Games and adventures",
@@ -246,6 +246,9 @@ export const en = {
     puzzleCtaAlt: "Colourful puzzle pieces scattered across the card",
     memoryCtaButton: "Memory Match",
     memoryCtaAlt: "Pinki, Nova and Bloo playing a memory card game",
+    findCtaButton: "Find",
+    findCtaAlt: "Vegetables, cheese and a blender on Nova's kitchen counter",
+    findSoon: "Coming soon",
     puzzlesLabel: "Puzzles",
     levelsLabel: "Levels",
     finished: "Finished",
