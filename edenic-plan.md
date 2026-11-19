@@ -1135,9 +1135,6 @@ Only what is still open. **A finished item leaves this list** (the user,
 - [ ] **Pinki** (Shapes, Colors): small design polish and detail fixes only.
 - [ ] **The user's checks:** Vegetables (Basket Time) and Seasons and
       Weather → fixes.
-- [ ] **The word card scrolls 18px at 360x640** (every course): on the
-      smallest phones the step is 18px taller than the screen, so it can be
-      dragged a little. Make it fit.
 - [ ] The sun, clouds and snowman from their stills — still wanted?
 - [ ] A native speaker checks every Kurdish (Badini) string; Arabic too.
 - [ ] A production build and a real phone/tablet run (never done yet):
