@@ -679,10 +679,10 @@ leaves). The question's three circles: the right weather + two others.
 - When built: the `<video>` takes the `poster` (no blank frame), only the
   current lesson's reel loads (already so); later an optional AV1 copy as a
   second `<source>` (~30% smaller) — not now.
-- **Hosting (decide before the real launch):** hundreds of MB of video do
-  not belong in git — move `reels/` to a CDN bucket (Vercel Blob /
-  Cloudflare R2) and keep only the URLs in the data. Until then they sit in
-  `public/` UNTRACKED.
+- **Hosting (the user, 2026-11-19):** the first version keeps the 45 reels
+  (~260 MB) in git, in `public/`. The NEXT version moves `reels/` to cloud
+  storage — Cloudflare R2 (free: 10 GB, and no charge for downloads) — and
+  keeps only the URLs in the data.
 - The same script makes Shapes', Colors', Vegetables' and Animals' reels
   once the user picks from `edenic world learn`.
 
@@ -1196,7 +1196,7 @@ cookie, ball, toast, cheese, book, kite); `squares/`, `triangles/`,
 | Folder | Files |
 | --- | --- |
 | `public/assets/learn/pinki/shapes/reels/` | `circle.mp4` … `rectangle.mp4` (the real clips since 2026-11-08) |
-| `public/assets/learn/{friend}/{course}/reels/` | `<word>.mp4` (+ `<word>.jpg`), one per lesson, made by `tools/reels/encode.sh`; Shapes, Colors, Vegetables, Animals real since 2026-11-08 (UNTRACKED until a CDN); Weather and Seasons still numbered placeholders until the merge |
+| `public/assets/learn/{friend}/{course}/reels/` | `<word>.mp4` (+ `<word>.jpg`), one per lesson, made by `tools/reels/encode.sh`; all six courses' real reels (45), tracked in git for the first version, cloud storage in the next |
 
 Pictures are imported in code; reels are played by path.
 
