@@ -204,7 +204,7 @@ export const ku: Dictionary = {
     stageSoon: "ئەڤ قۆناغە ل سەر ڕێیە!",
   },
   discover: {
-    playSoon: "بزوویی",
+    playGo: "وەرە یاری بکەین",
     watchNew: "ئەلقێن نوو",
     watchSub: "ئەلقە و ڤیدیۆیێن کورت",
     playSub: "یاری و سەرهاتی",
@@ -233,6 +233,9 @@ export const ku: Dictionary = {
     puzzleCtaAlt: "پارچەیێن پازلێ یێن ڕەنگین ل سەر کارتێ بەلاڤبووی",
     memoryCtaButton: "بیرا خۆ تاقی بکە",
     memoryCtaAlt: "Pinki، Nova و Bloo یاریا کارتێن بیرێ دکەن",
+    findCtaButton: "بگەڕە",
+    findCtaAlt: "سەوزە، پەنیر و تێکەلکەرەک ل سەر مێزا مەتبەخا Nova",
+    findSoon: "بزوویی",
     puzzlesLabel: "پازل",
     levelsLabel: "ئاست",
     finished: "تەمام",
