@@ -33,7 +33,7 @@ export function WatchDoor({ still, alt, title, subtitle, badge, go, dir, classNa
   return (
     <Link
       href="/watch"
-      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col overflow-hidden rounded-[1.75rem] p-5 lg:flex-[3] sm:p-8 lg:p-10 ${className}`}
+      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col items-start overflow-hidden rounded-[1.75rem] p-5 lg:flex-[3] sm:p-8 lg:p-10 ${className}`}
       style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)", ...style } as ClayVars}
     >
       <span dir={dir} className="text-3xl font-bold text-white sm:text-5xl">
