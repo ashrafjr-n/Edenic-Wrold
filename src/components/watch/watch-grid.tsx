@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ChevronDown, Music, Play, X } from "lucide-react";
+import { ChevronDown, Play, X } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
 import type { LessonId } from "@/types/lesson";
@@ -76,8 +76,8 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
  * in a scrolling row on a phone, a sticky side list from `lg`), "All" in a
  * random order reshuffled each time it is picked, 8 at a time with a More
  * button. Between the two, the songs (2026-11-19): the series' songs the
- * puzzles were cut from, 16:9 cards with a white clay "♪ n" chip — n is the
- * puzzle it belongs to — six at a time with a More button. Whatever is tapped plays in a native `<dialog>` that mounts its
+ * puzzles were cut from, in puzzle order: white clay cards, the frame in a
+ * rounded window, the song's name under it — six at a time with a More button. Whatever is tapped plays in a native `<dialog>` that mounts its
  * player only while open.
  */
 export function WatchGrid({ episodes, songs, courses, clips, words, dir }: WatchGridProps) {
@@ -232,16 +232,17 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
                   <button
                     type="button"
                     onClick={() => play({ kind: "song", item: song })}
-                    aria-label={format(words.songAria, { n: song.n })}
-                    className="card card-lift card-lift--still watch-song group relative block aspect-video w-full cursor-pointer overflow-hidden"
+                    aria-label={format(words.songAria, { title: song.title })}
+                    className="card card-clay-white card-lift card-lift--still watch-song group flex h-full w-full cursor-pointer flex-col gap-2 p-2 text-start sm:gap-2.5 sm:p-2.5"
                   >
-                    <span aria-hidden className="img-wait" />
-                    <Image src={song.poster} alt="" fill sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 45vw" className="object-cover" />
-                    <span aria-hidden dir="ltr" className="watch-song-chip">
-                      <Music className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
-                      {song.n}
+                    <span className="watch-song-window">
+                      <span aria-hidden className="img-wait" />
+                      <Image src={song.poster} alt="" fill sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 45vw" className="object-cover" />
+                      <PlayBadge size="h-11 w-11 sm:h-12 sm:w-12" icon="h-5 w-5 sm:h-6 sm:w-6" />
                     </span>
-                    <PlayBadge size="h-11 w-11 sm:h-12 sm:w-12" icon="h-5 w-5 sm:h-6 sm:w-6" />
+                    <span dir="ltr" className="px-1.5 pb-1 text-[0.95rem] font-bold leading-snug text-[var(--color-ink)] sm:px-2 sm:text-lg">
+                      {song.title}
+                    </span>
                   </button>
                 </li>
               ))}
@@ -298,7 +299,7 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
 
       <dialog
         ref={dialog}
-        aria-label={playing?.kind === "song" ? format(words.songAria, { n: playing.item.n }) : playing?.item.title}
+        aria-label={playing?.item.title}
         onClose={() => setPlaying(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
