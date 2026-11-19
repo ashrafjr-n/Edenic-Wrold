@@ -260,6 +260,7 @@ export const ar: Dictionary = {
     help: "مساعدة",
     closeHint: "إغلاق والعودة إلى البازل",
     again: "مرة أخرى",
+    watchSongAria: "شاهد الأغنية",
     next: "التالي",
     secondsLeftAria: "{n} ثانية متبقية",
     cardFaceDownAria: "البطاقة {index}، مقلوبة",
