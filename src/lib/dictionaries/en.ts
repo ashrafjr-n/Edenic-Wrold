@@ -219,7 +219,7 @@ export const en = {
   discover: {
     playGo: "Let's play",
     watchNew: "New episodes",
-    watchSub: "Episodes and short videos",
+    watchSub: "Episodes, songs and short videos",
     playSub: "Games and adventures",
     showEpisode: "Show episode {n}",
     playButton: "Play",
@@ -229,6 +229,8 @@ export const en = {
     watchClipAria: "Watch the video: {title}",
     episodesTitle: "Episodes",
     reelsTitle: "Short videos",
+    songsTitle: "Songs",
+    songAria: "Play song {n}",
     filterAll: "All",
     filterAria: "Filter the short videos",
     episodeAria: "Play episode: {title}",
