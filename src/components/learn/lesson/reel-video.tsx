@@ -7,6 +7,7 @@ import { Button3D } from "@/components/ui/button-3d";
 import { Loader } from "@/components/ui/loader";
 import { LoadingCover } from "./loading-room";
 import { playSfx } from "@/lib/cue";
+import { useSound } from "@/store/sound";
 
 /** Kept in step with `.morph-btn__icon`'s 0.55s turn in `globals.css`: the
     Skip button finishes its spin before the lesson moves on. */
@@ -69,8 +70,14 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
   const [canPlay, setCanPlay] = useState(false);
   const [failed, setFailed] = useState(false);
   const ready = waited && canPlay;
+  const muted = useSound((state) => state.muted);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  /* The header's speaker chip silences the reel too, mid-clip as well. */
+  useEffect(() => {
+    if (video.current) video.current.muted = muted;
+  }, [muted]);
 
   useEffect(() => {
     const wait = window.setTimeout(() => setWaited(true), LOADER_MS);
@@ -95,7 +102,7 @@ export function ReelVideo({ src, label, image, loadingLabel, skipLabel, playLabe
   const play = () => {
     const el = video.current;
     if (!el) return;
-    el.muted = false;
+    el.muted = muted;
     setBlocked(false);
     el.play().catch(() => setBlocked(true));
   };
