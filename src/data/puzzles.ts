@@ -59,10 +59,15 @@ const TONES: PuzzleTone[] = [
  *
  * The grids are not chosen for their piece count alone — each one is picked
  * so its CELLS COME OUT NEARLY SQUARE against its own picture. Stages 1–3 are
- * landscape (1376 × 768) and 4–15 are square (4–9 were cropped to it, 10–15
- * arrived that way at 1024 × 1024), so a cut that suits one is wrong for the
- * other: 4 × 3 on a square picture would give pieces a third wider than they
- * are tall. Change a picture's shape and its grid has to be re-picked with it.
+ * landscape (1376 × 774) and 4–15 are square (1024 × 1024), so a cut that
+ * suits one is wrong for the other: 4 × 3 on a square picture would give
+ * pieces a third wider than they are tall. Change a picture's shape and its
+ * grid has to be re-picked with it.
+ *
+ * **Every picture is a frame of its stage's song** (2026-11-19): the finished
+ * puzzle offers that song (`song`, 720p in `public/assets/watch/songs/`). The
+ * frames were picked by hand from the songs, the sharpest moment with no
+ * transition on it, a 1080 square cut from the 1920 frame for 4–15.
  */
 export const puzzleStages: PuzzleStage[] = [
   {
@@ -71,7 +76,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 3, rows: 3 },
     picture: {
       image: puzzle1,
-      alt: "Pinki, Nova and Bloo drawing together at a little table",
+      alt: "Pinki and Bloo on their armchairs, Nova sitting with them",
+      song: "/assets/watch/songs/song-002.mp4",
     },
   },
   {
@@ -80,7 +86,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 4, rows: 3 },
     picture: {
       image: puzzle2,
-      alt: "Pinki, Bloo and Nova playing with a ball in the park",
+      alt: "Nova with a giraffe, an elephant, a hippo and a lion by the pond",
+      song: "/assets/watch/songs/song-004.mp4",
     },
   },
   {
@@ -89,20 +96,20 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 4, rows: 3 },
     picture: {
       image: puzzle3,
-      alt: "Pinki, Nova and Bloo picking flowers on a green hill",
+      alt: "Bloo, Nova and Pinki playing with blocks in their room",
+      song: "/assets/watch/songs/song-011.mp4",
     },
   },
-  /* 4–9 are SQUARE (768 × 768, or 848 × 848 for 5 and 8) — cropped from the
-     tall originals rather than scaled, so nothing is squashed and every
-     character is still in frame. A tall board leaves a phone no room for the
-     heap of loose pieces underneath it; a square one does. */
+  /* 4–15 are SQUARE — a tall board leaves a phone no room for the heap of
+     loose pieces underneath it; a square one does. */
   {
     value: 4,
     tone: TONES[3],
     grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle4,
-      alt: "Pinki, Nova and Bloo splashing in a paddling pool with rubber rings",
+      alt: "Nova building a tower of soft blocks",
+      song: "/assets/watch/songs/song-001.mp4",
     },
   },
   {
@@ -111,7 +118,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 4, rows: 4 },
     picture: {
       image: puzzle5,
-      alt: "Pinki, Nova and Bloo climbing a climbing wall",
+      alt: "Bloo in front of a wall of soft blocks",
+      song: "/assets/watch/songs/song-005.mp4",
     },
   },
   {
@@ -120,7 +128,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 5, rows: 4 },
     picture: {
       image: puzzle6,
-      alt: "Pinki, Nova and Bloo flying a spaceship past the planets",
+      alt: "Pinki in a field of big flowers in the sunshine",
+      song: "/assets/watch/songs/song-006.mp4",
     },
   },
   {
@@ -129,7 +138,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle7,
-      alt: "Pinki, Nova and Bloo riding a little train through the hills",
+      alt: "Nova and Pinki sweeping the street",
+      song: "/assets/watch/songs/song-007.mp4",
     },
   },
   {
@@ -138,7 +148,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 5, rows: 5 },
     picture: {
       image: puzzle8,
-      alt: "Pinki, Nova and Bloo playing basketball together",
+      alt: "Bloo riding a cloud with the birds",
+      song: "/assets/watch/songs/song-008.mp4",
     },
   },
   {
@@ -147,7 +158,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 6, rows: 5 },
     picture: {
       image: puzzle9,
-      alt: "Pinki, Nova and Bloo painting a big picture on an easel",
+      alt: "Nova and the turtle at the lemonade stand",
+      song: "/assets/watch/songs/song-009.mp4",
     },
   },
   {
@@ -156,7 +168,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 6, rows: 6 },
     picture: {
       image: puzzle10,
-      alt: "Pinki, Nova and Bloo planting and watering flowers in a garden",
+      alt: "Bloo sweeping the room with a rainbow broom",
+      song: "/assets/watch/songs/song-003.mp4",
     },
   },
   {
@@ -165,7 +178,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 7, rows: 6 },
     picture: {
       image: puzzle11,
-      alt: "Pinki, Nova and Bloo mixing colours in a little science lab",
+      alt: "Pinki in her rocking chair outside her house",
+      song: "/assets/watch/songs/song-012.mp4",
     },
   },
   {
@@ -174,7 +188,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 7, rows: 7 },
     picture: {
       image: puzzle12,
-      alt: "Pinki, Nova and Bloo having a picnic beside a tent",
+      alt: "Bloo, the turtle and Nova under a rainbow arch of blocks",
+      song: "/assets/watch/songs/song-013.mp4",
     },
   },
   {
@@ -183,7 +198,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 8, rows: 7 },
     picture: {
       image: puzzle13,
-      alt: "Pinki, Nova and Bloo potting flowers in a fenced garden",
+      alt: "Bloo with a glass of milk",
+      song: "/assets/watch/songs/song-014.mp4",
     },
   },
   {
@@ -192,7 +208,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 8, rows: 8 },
     picture: {
       image: puzzle14,
-      alt: "Pinki, Nova and Bloo looking at the planets through a telescope",
+      alt: "Pinki and Bloo cleaning up their room",
+      song: "/assets/watch/songs/clean-up.mp4",
     },
   },
   {
@@ -201,7 +218,8 @@ export const puzzleStages: PuzzleStage[] = [
     grid: { cols: 9, rows: 8 },
     picture: {
       image: puzzle15,
-      alt: "Pinki, Nova and Bloo building a little town out of blocks",
+      alt: "Bloo jumping on the path among the shape lollipops",
+      song: "/assets/watch/songs/song-010.mp4",
     },
   },
 ];
