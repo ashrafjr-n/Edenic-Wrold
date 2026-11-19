@@ -202,7 +202,7 @@ export const ar: Dictionary = {
   discover: {
     playGo: "هيا نلعب",
     watchNew: "حلقات جديدة",
-    watchSub: "حلقات وفيديوهات قصيرة",
+    watchSub: "حلقات وأغاني وفيديوهات قصيرة",
     playSub: "ألعاب ومغامرات",
     showEpisode: "اعرض الحلقة {n}",
     playButton: "العب",
@@ -212,6 +212,8 @@ export const ar: Dictionary = {
     watchClipAria: "شاهد الفيديو: {title}",
     episodesTitle: "الحلقات",
     reelsTitle: "فيديوهات قصيرة",
+    songsTitle: "أغاني",
+    songAria: "شغّل الأغنية {n}",
     filterAll: "الكل",
     filterAria: "تصفية الفيديوهات القصيرة",
     episodeAria: "شغّل الحلقة: {title}",
