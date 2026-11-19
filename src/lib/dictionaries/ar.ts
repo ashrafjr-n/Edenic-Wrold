@@ -200,7 +200,7 @@ export const ar: Dictionary = {
     stageSoon: "هذه المرحلة في الطريق!",
   },
   discover: {
-    playSoon: "قريباً",
+    playGo: "هيا نلعب",
     watchNew: "حلقات جديدة",
     watchSub: "حلقات وفيديوهات قصيرة",
     playSub: "ألعاب ومغامرات",
@@ -229,6 +229,9 @@ export const ar: Dictionary = {
     puzzleCtaAlt: "قطع بازل ملوّنة متناثرة على البطاقة",
     memoryCtaButton: "اختبر ذاكرتك",
     memoryCtaAlt: "بينكي ونوفا وبلو يلعبون لعبة بطاقات الذاكرة",
+    findCtaButton: "ابحث",
+    findCtaAlt: "خضار وجبنة وخلاط على طاولة مطبخ نوفا",
+    findSoon: "قريباً",
     puzzlesLabel: "البازل",
     levelsLabel: "المستويات",
     finished: "مكتمل",
