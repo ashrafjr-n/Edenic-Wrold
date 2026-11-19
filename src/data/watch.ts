@@ -37,14 +37,13 @@ export interface WatchSong {
   src: string;
   /** The frame its puzzle picture was cut from, 1280 × 720, next to the video. */
   poster: string;
-  /** Song n is puzzle n's song, so a child who just finished puzzle 3 finds it as 3. */
-  n: number;
+  title: string;
 }
 
 /** `/watch`'s songs: the series' songs the puzzles were cut from, in puzzle
     order. */
-export const watchSongs: WatchSong[] = puzzleStages.flatMap((stage, i) =>
-  stage.picture ? [{ src: stage.picture.song, poster: stage.picture.song.replace(/\.mp4$/, ".jpg"), n: i + 1 }] : [],
+export const watchSongs: WatchSong[] = puzzleStages.flatMap(({ picture }) =>
+  picture ? [{ ...picture.song, poster: picture.song.src.replace(/\.mp4$/, ".jpg") }] : [],
 );
 
 export interface WatchClip {
