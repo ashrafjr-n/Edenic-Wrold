@@ -1,7 +1,6 @@
 import { LogIn } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { Logo } from "@/components/ui/logo";
-import { SoundToggle } from "@/components/ui/sound-toggle";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { dirFor } from "@/lib/format-dict";
@@ -55,15 +54,13 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   );
 }
 
-/* Sound (`SoundToggle`), dark mode (`ThemeToggle`) and the language switcher
-   are the real controls in this row. "Join Edenic World" is still presentation only —
+/* Dark mode (`ThemeToggle`) and the language switcher are the two real
+   controls in this row. "Join Edenic World" is still presentation only —
    there is no profile to show until someone joins. */
 function HeaderChrome({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
     <>
       <LanguageSwitcher dict={dict} locale={locale} />
-
-      <SoundToggle offLabel={dict.header.soundOff} onLabel={dict.header.soundOn} />
 
       <ThemeToggle />
 
