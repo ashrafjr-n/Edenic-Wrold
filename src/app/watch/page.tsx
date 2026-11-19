@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BackRow } from "@/components/ui/back-button";
 import { Footer } from "@/components/layout/footer";
 import { WatchGrid } from "@/components/watch/watch-grid";
-import { watchClips, watchEpisodes } from "@/data/watch";
+import { watchClips, watchEpisodes, watchSongs } from "@/data/watch";
 import { dirFor } from "@/lib/format-dict";
 import { getDictionary } from "@/lib/locale";
 
@@ -21,10 +21,13 @@ export default async function WatchPage() {
           <h1 className="sr-only">{dict.discover.watchButton}</h1>
           <WatchGrid
             episodes={watchEpisodes}
+            songs={watchSongs}
             {...watchClips(dict)}
             words={{
               episodesTitle: dict.discover.episodesTitle,
               reelsTitle: dict.discover.reelsTitle,
+              songsTitle: dict.discover.songsTitle,
+              songAria: dict.discover.songAria,
               filterAll: dict.discover.filterAll,
               filterAria: dict.discover.filterAria,
               clipAria: dict.discover.watchClipAria,
