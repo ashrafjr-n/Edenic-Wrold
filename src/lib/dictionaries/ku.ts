@@ -264,6 +264,7 @@ export const ku: Dictionary = {
     help: "هاریکاری",
     closeHint: "دگرە و ڤەگەڕە بۆ پازلێ",
     again: "جارەکا دی",
+    watchSongAria: "تەماشەی سترانێ بکە",
     next: "یا دی",
     secondsLeftAria: "{n} چرکە مایە",
     cardFaceDownAria: "کارتا {index}، سەرەژێر",
