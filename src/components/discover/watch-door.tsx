@@ -2,65 +2,71 @@ import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
+import pinki from "../../../public/assets/friends/pinki.png";
 
 interface WatchDoorProps {
-  /** The episodes' stills, newest first; the first leads, the next two fan out behind it. */
-  stills: readonly StaticImageData[];
+  /** The newest episode's still — on the TV's screen. */
+  still: StaticImageData;
   alt: string;
   title: string;
   subtitle: string;
   badge: string;
+  go: string;
   dir: "rtl" | "ltr";
   className?: string;
   style?: CSSProperties;
 }
 
+type ClayVars = CSSProperties & { "--clay-edge": string };
+
 /**
- * Discover's Watch door: the whole card is the link. A cinema card —
- * the newest episode's still blurred and shaded over the whole card, and in the
- * middle the episodes' own stills, sharp and whole, fanned like a stack of
- * tickets with the newest on top under a frosted play button; a "New episodes"
- * chip above, the name and its line below. On hover the fan opens a little and
- * the play button swells; the card itself never moves.
+ * Discover's Watch door (2026-11-19): the whole card is the link to `/watch`.
+ * A pink clay panel (grain from `.clay`) with the name and its line at the
+ * top, a white clay TV in the middle — the newest episode on its screen
+ * under a frosted play button, "New episodes" stuck on its corner, Pinki
+ * standing at its side — and the white "Watch now" sign at the foot. The
+ * TV is sized by the middle row (`container-type: size`), so it fills a
+ * tall desktop card and fits a short phone one. On hover the TV leans and
+ * the play button swells; the card and Pinki never move.
  */
-export function WatchDoor({ stills, alt, title, subtitle, badge, dir, className = "", style }: WatchDoorProps) {
-  const [lead, ...behind] = stills;
+export function WatchDoor({ still, alt, title, subtitle, badge, go, dir, className = "", style }: WatchDoorProps) {
   return (
-    <Link href="/watch" className={`discover-door discover-door--watch group relative flex min-h-48 flex-[3] basis-0 flex-col overflow-hidden ${className}`} style={style}>
-      <Image src={lead} alt="" fill placeholder="blur" sizes="(min-width: 640px) 25vw, 50vw" className="discover-backdrop object-cover" />
-      <span aria-hidden className="discover-shade absolute inset-0" />
-      <span aria-hidden className="discover-grain absolute inset-0" />
-
-      <span className="relative z-10 flex justify-center px-4 pt-4 sm:px-6 sm:pt-6">
-        <span dir={dir} className="clay discover-chip discover-chip--new"
-          style={{ "--clay-edge": "var(--accent-dark)" } as CSSProperties}>
-          {badge}
-        </span>
+    <Link
+      href="/watch"
+      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col overflow-hidden rounded-[1.75rem] p-5 lg:flex-[3] sm:p-8 lg:p-10 ${className}`}
+      style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)", ...style } as ClayVars}
+    >
+      <span dir={dir} className="text-3xl font-bold text-white sm:text-5xl">
+        {title}
+      </span>
+      <span dir={dir} className="mt-1 text-base font-semibold text-white/90 sm:mt-2 sm:text-lg">
+        {subtitle}
       </span>
 
-      <span className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-6 py-3 [container-type:size]">
-        <span className="discover-fan relative aspect-video w-[min(86cqw,152cqh,30rem)]">
-          {behind.slice(0, 2).map((still, i) => (
-            <span key={still.src} aria-hidden className={`discover-still discover-still--${i + 1} absolute inset-0`}>
-              <Image src={still} alt="" fill placeholder="blur" sizes="(min-width: 640px) 24rem, 80vw" className="object-cover" />
+      <span className="discover-stage">
+        <span className="discover-tv">
+          <span aria-hidden className="discover-tv-antenna">
+            <span />
+            <span />
+          </span>
+          <span className="discover-tv-screen">
+            <Image src={still} alt={alt} fill preload placeholder="blur" sizes="(min-width: 640px) 34rem, 80vw" className="object-cover" />
+            <span aria-hidden className="discover-play">
+              <Play className="ms-1 h-[42%] w-[42%] fill-current" strokeWidth={2} />
             </span>
-          ))}
-          <span className="discover-still absolute inset-0">
-            <Image src={lead} alt={alt} fill preload placeholder="blur" sizes="(min-width: 640px) 30rem, 86vw" className="object-cover" />
           </span>
-          <span aria-hidden className="discover-play absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-20 sm:w-20">
-            <Play className="ms-1 h-7 w-7 fill-current sm:h-9 sm:w-9" strokeWidth={2} />
+          <span dir={dir} className="discover-sticker">
+            {badge}
           </span>
+          <Image src={pinki} alt="" sizes="(min-width: 640px) 12rem, 6rem" className="discover-friend discover-friend--pinki" />
         </span>
       </span>
 
-      <span className="relative z-10 flex flex-col items-start gap-1 px-5 pb-5 sm:px-7 sm:pb-7">
-        <span dir={dir} className="text-4xl font-bold text-white sm:text-5xl">
-          {title}
+      <span dir={dir} className="discover-soon">
+        <span aria-hidden className="discover-soon-icon" style={{ "--dot": "var(--accent)" } as CSSProperties}>
+          <Play className="ms-0.5 h-4 w-4 fill-current sm:h-5 sm:w-5" strokeWidth={2.5} />
         </span>
-        <span dir={dir} className="text-base font-semibold text-white/85 sm:text-lg">
-          {subtitle}
-        </span>
+        {go}
       </span>
     </Link>
   );
