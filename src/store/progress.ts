@@ -2,14 +2,15 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { itemKey, type ItemKey } from "@/lib/progress-keys";
+import { isChestStarKey, itemKey, playOpenKey, STARS_PER_GAME, type ItemKey, type PlayGame } from "@/lib/progress-keys";
 
 /* The key builders are pure, and they live in `lib/progress-keys.ts` rather
    than here so a SERVER component can call them — anything exported from a
    `"use client"` module can only be invoked from client code. Re-exported
    from this file so every existing `@/store/progress` import still works. */
 export type { ItemKey } from "@/lib/progress-keys";
-export { itemKey, puzzleKey, memoryKey, chestStarKey } from "@/lib/progress-keys";
+export { itemKey, puzzleKey, memoryKey, chestStarKey, playOpenKey, STARS_PER_GAME } from "@/lib/progress-keys";
+export type { PlayGame } from "@/lib/progress-keys";
 
 interface ItemProgress {
   /** 1–3, scored across the whole journey, not per stage. */
@@ -90,6 +91,20 @@ export function useCourseStars(characterId: string, lessonId: string, count: num
   return Array.from({ length: count }, (_, i) =>
     hydrated ? (items[itemKey(characterId, lessonId, i + 1)]?.stars ?? 0) : 0,
   );
+}
+
+const PLAY_GAMES: PlayGame[] = ["puzzle", "memory"];
+
+/** Play's stars: the chest stars earned in Learn, the games they have
+    opened, and what is left to spend (earned − 2 × opened). Nothing earned
+    and nothing open until the store has read localStorage. */
+export function usePlayStars() {
+  const items = useProgress((state) => state.items);
+  const hydrated = useProgress((state) => state.hydrated);
+  const keys = hydrated ? Object.keys(items) : [];
+  const earned = keys.filter(isChestStarKey).length;
+  const opened = PLAY_GAMES.filter((game) => hydrated && items[playOpenKey(game)]);
+  return { hydrated, earned, opened, left: Math.max(0, earned - STARS_PER_GAME * opened.length) };
 }
 
 /* **The failure path cannot flip `hydrated` from inside `create()`, so it is
