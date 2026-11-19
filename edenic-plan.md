@@ -1,7 +1,7 @@
 # Edenic World — the Learn plan
 
 > The one plan for the new Learn. Pinki first; Nova and Bloo follow the same pattern.
-> Last updated: 2026-10-08
+> Last updated: 2026-11-19
 
 ---
 
@@ -605,37 +605,14 @@ the nearest; white stepping stones that turn pink as lessons are done; pink
 clouds on the way in; the scroll moves the camera, low, in and out. Pinki's
 picture comes back when the user brings better ones. Built for Shapes. **The user decides whether it goes to the other courses.**
 
-### The road from here (the user, 2026-11-05) — THIS ORDER LEADS
+### The road from here (updated 2026-11-19) — THIS ORDER LEADS
 
-Animals' **activities** are **POSTPONED** (Seasons and Weather were merged into one Bloo course and built 2026-11-08; both Bloo course PAGES became worlds of stops the same day): their activities wait until
-better ideas come (Seasons' hill world is built and stays; Animals' and
-Weather's worlds wait with them). Nothing is built for them until then.
-
-1. **Now: improve the design of the other courses** (Shapes, Colors,
-   Vegetables), until better ideas come for the three.
-   Colors got Shapes' world of stops on 2026-11-06 (gold stones), scrolling
-   like Shapes (a guided, no-scroll version with silver closed lessons was built
-   and the user chose scrolling instead; it stays off, `CourseStops.guided`);
-   Nova's Vegetables got it the same day (lavender and milk-white garden, gold
-   stones, lavender clouds); the other courses stay on the board.
-2. **Then build the three postponed courses**, once the ideas are found
-   (the proposals so far are below; nothing is chosen).
-3. **Then put in the audio and the videos** — and Learn is finished.
-4. **Then think about Play**: what to do in it, and how to link it
-   INDIRECTLY with Learn and with **Watch**, a section to be built along
-   with Play.
-
-**Proposals so far, undecided (2026-11-05):**
-- Animals (replaces Feed the animal): hide and seek — read the word, find
-  it among 4 hidden animals; bath time — rub the mud off with a finger; walk
-  it home along a path; build it from 3 pieces.
-- Seasons (a third step; it has word → spell only): what's wrong? — things of
-  another season in the scene, tap them away; catch the season's things as
-  they fall; a game per season (butterflies, ice creams, raking leaves, a
-  snowman).
-- Weather (Which weather? is deleted; superseded by the merge below): help Bloo in it (hang the washing, hold
-  the umbrella over him, hold the kite's string, roll a snowball); pack his
-  bag; open the right window; the weather reporter.
+1. **Now: finish Learn** — what is left is in "Phase 6 — Finish Learn"
+   below. All six courses, their worlds, the reels, the sound and the mute
+   switch are in.
+2. **Then Play: three games opened by stars** — "Stars → Play's games"
+   below.
+3. **Then Watch**, linked to Learn and Play indirectly.
 
 ### Seasons and Weather become ONE course, under Bloo (the user, 2026-11-08) — PLANNED, NOT BUILT
 
