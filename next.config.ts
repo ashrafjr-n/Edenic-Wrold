@@ -60,8 +60,10 @@ const nextConfig: NextConfig = {
          (cancelled 2026-11-15) are gone: `/play` is the Sleeping Lab. */
       { source: "/trail", destination: "/play", permanent: true },
       { source: "/play/sky/:path*", destination: "/play", permanent: true },
-      /* Nova's Cups was removed (2026-11-18): back to the games. */
-      { source: "/play/cups", destination: "/play/games", permanent: true },
+      /* Nova's Cups was removed (2026-11-18), and the games' own page
+         (2026-11-19) — `/play` itself is the games now. */
+      { source: "/play/cups", destination: "/play", permanent: true },
+      { source: "/play/games", destination: "/play", permanent: true },
     ];
   },
 };
