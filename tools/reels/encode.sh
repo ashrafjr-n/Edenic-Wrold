@@ -7,14 +7,20 @@
 # 50-75 Mbit/s .mp4 — both far too heavy or not playable in Chrome).
 #
 #   sh tools/reels/encode.sh "<source video>" public/assets/learn/<friend>/<course>/reels/<word>
+#
+# `wide` as a third argument keeps a landscape video landscape — 1280x720,
+# stereo 128k (the songs under public/assets/watch/songs):
+#   sh tools/reels/encode.sh "<source video>" public/assets/watch/songs/<name> wide
 set -e
 src="$1"; out="$2"
+size="720:1280"; audio="-b:a 96k -ac 1"
+[ "$3" = wide ] && { size="1280:720"; audio="-b:a 128k -ac 2"; }
 [ -f "$src" ] && [ -n "$out" ] || { echo "usage: encode.sh <source> <out-without-extension>"; exit 1; }
 mkdir -p "$(dirname "$out")"
 ffmpeg -nostdin -v error -y -i "$src" -map 0:v:0 -map 0:a:0? \
-  -vf "scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280" \
+  -vf "scale=$size:force_original_aspect_ratio=increase,crop=$size" \
   -c:v libx264 -preset slow -crf 27 -profile:v high -pix_fmt yuv420p \
-  -af "loudnorm=I=-16:TP=-1.5:LRA=11" -c:a aac -b:a 96k -ac 1 -ar 44100 \
+  -af "loudnorm=I=-16:TP=-1.5:LRA=11" -c:a aac $audio -ar 44100 \
   -movflags +faststart "$out.mp4"
 ffmpeg -nostdin -v error -y -ss 1 -i "$out.mp4" -frames:v 1 -q:v 4 "$out.jpg"
 echo "$out.mp4 $(du -h "$out.mp4" | cut -f1)"
