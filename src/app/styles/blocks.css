@@ -362,43 +362,30 @@
   }
 }
 
-/* `/watch`'s song cards: a smaller radius than `.card`'s — on a short 16:9
-   card a phone's half-width, `.card`'s round corners read as a pill. */
+/* `/watch`'s song cards: white clay (`.card-clay-white`), a smaller radius
+   than `.card`'s — on a phone's half-width card `.card`'s corners read as a
+   pill — and the frame in a rounded window inside it. */
 .card.watch-song {
-  border-radius: 1.1rem;
+  border-radius: 1.25rem;
+}
+
+.watch-song-window {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  box-shadow: inset 0 0 0 1px rgb(var(--shadow-hue) / 10%);
 }
 
 @media (width >= 40rem) {
   .card.watch-song {
-    border-radius: 1.5rem;
+    border-radius: 1.6rem;
   }
-}
 
-/* Their white clay chip, "♪ n", bottom-left. */
-.watch-song-chip {
-  position: absolute;
-  left: 0.6rem;
-  bottom: 0.6rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.7rem 0.25rem 0.55rem;
-  border-radius: 999px;
-  background-color: #fff;
-  color: var(--accent);
-  font-size: 0.95rem;
-  font-weight: 700;
-  box-shadow:
-    inset 0 5px 8px -4px rgb(255 255 255 / 90%),
-    inset 0 -6px 9px -4px rgb(var(--shadow-hue) / 22%),
-    0 8px 16px -8px rgb(20 20 60 / 55%);
-}
-
-@media (width >= 40rem) {
-  .watch-song-chip {
-    left: 0.8rem;
-    bottom: 0.8rem;
-    font-size: 1.05rem;
+  .watch-song-window {
+    border-radius: 1.15rem;
   }
 }
 
