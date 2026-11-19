@@ -1,0 +1,86 @@
+/* ---------------------------------------------------------------
+   Play's star locks (2026-11-19, `PlayLock`): a game card stays shut
+   until the child spends two of Learn's chest stars on it. The lock is a
+   soft scrim over the card (the card's own radius), a white clay sign in
+   the middle; opening it, two gold stars fly from the bank (`PlayStars`)
+   into the sign, the padlock springs open, the scrim lifts.
+   --------------------------------------------------------------- */
+.play-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 1.75rem;
+  background: rgb(var(--shadow-hue) / 34%);
+  backdrop-filter: blur(3px) saturate(0.75);
+}
+
+/* Tapped without stars enough: the whole scrim is the button. */
+button.play-lock {
+  cursor: pointer;
+}
+
+.play-lock--opening {
+  animation: play-lock-lift 0.5s ease-in 1.05s both;
+}
+
+@keyframes play-lock-lift {
+  to {
+    opacity: 0;
+    scale: 1.03;
+  }
+}
+
+/* The sign's two stars: the price, and where the flying ones land. */
+.play-lock-star {
+  width: 1.9rem;
+  height: 1.9rem;
+  object-fit: contain;
+}
+
+/* A star on its way from the bank to the lock: fixed to the screen (a
+   portal to `body`, so no animated ancestor re-anchors it), under the
+   header (`z-20`, the back row's tier). `--from`, `--mid` (the arc's top)
+   and `--to` are set from the measured boxes. */
+.play-star-fly {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  width: 2.6rem;
+  height: 2.6rem;
+  pointer-events: none;
+  translate: var(--from-x) var(--from-y);
+  animation: play-star-fly 0.8s cubic-bezier(0.45, 0, 0.35, 1) both;
+}
+
+@keyframes play-star-fly {
+  0% {
+    translate: var(--from-x) var(--from-y);
+    scale: 1;
+  }
+  45% {
+    translate: var(--mid-x) var(--mid-y);
+    scale: 1.4;
+  }
+  100% {
+    translate: var(--to-x) var(--to-y);
+    scale: 0.8;
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-star-fly {
+    display: none;
+  }
+
+  .play-lock--opening {
+    animation-delay: 0s;
+  }
+}
