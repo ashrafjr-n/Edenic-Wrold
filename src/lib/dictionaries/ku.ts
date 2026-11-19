@@ -34,8 +34,6 @@ export const ku: Dictionary = {
     kurdish: "کوردی",
     joinFull: "بەشدارە ل Edenic World",
     join: "بەشدارە",
-    soundOff: "دەنگی ڤەمرینە",
-    soundOn: "دەنگی هەلکە",
   },
   footer: {
     tagline:
