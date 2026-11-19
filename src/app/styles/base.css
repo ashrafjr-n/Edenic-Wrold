@@ -713,17 +713,3 @@ bdi {
     0 5px 12px -8px color-mix(in srgb, #2c1f75 50%, transparent);
 }
 
-/* `PuzzleCta`'s "Puzzle Time" button — direct request: black/ink text in
-   dark mode instead of the white it wears in light mode. `--color-go`
-   itself is unchanged by theme (a colored clay face is self-consistent
-   regardless of page ground, same as every other colored `.btn3d`), so only
-   the text needs to move. `--color-ink-fixed`, not `--color-ink` — same bug
-   as the header rule above, corrected the same round: `--color-ink` flips
-   light in dark mode, which would have made this text paler instead of
-   black. `MemoryMatchCta`'s button reads `var(--color-ink-fixed)` too now
-   (`memory-match-cta.tsx`) — it LOOKED already-correct in light mode (where
-   `--color-ink` happens to already be dark) but was carrying the identical
-   bug, invisible until dark mode actually shipped. */
-[data-theme="dark"] .puzzle-cta-btn {
-  color: var(--color-ink-fixed);
-}
