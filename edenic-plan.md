@@ -612,8 +612,8 @@ picture comes back when the user brings better ones. Built for Shapes. **The use
 ### The road from here (updated 2026-11-19) — THIS ORDER LEADS
 
 1. **Now: finish Learn** — what is left is in "Phase 6 — Finish Learn"
-   below. All six courses, their worlds, the reels, the sound and the mute
-   switch are in.
+   below. All six courses, their worlds, the reels and the sound are in.
+   (Mute waits for accounts — §7.)
 2. **Then Play: three games opened by stars** — "Stars → Play's games"
    below.
 3. **Then Watch**, linked to Learn and Play indirectly.
