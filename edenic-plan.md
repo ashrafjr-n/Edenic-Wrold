@@ -766,7 +766,7 @@ deleted the same day (they are in git history before `play cleanup V1.0`). The
 render tools' `sky` / `sky-night` / `search` / `intro` modes in `tools/picnic-scene`
 are kept: they are how the lab below gets made. **Don't bring the sky back.**
 
-### Play = "The Sleeping Lab" (the user, 2026-11-15) — THE PLAN, step 1 (the world) BUILT 2026-11-15
+### Play = "The Sleeping Lab" (the user, 2026-11-15) — PAUSED; step 1 (the world) BUILT 2026-11-15. Play's first plan is the three star-opened games ("Stars → Play's games" below)
 
 The user's brief: no villain, no "game" in the full sense, no losing. Short,
 educational stages and focus games, built around **music and sound** (the company's
