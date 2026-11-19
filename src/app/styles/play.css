@@ -26,7 +26,7 @@ button.play-lock {
 }
 
 .play-lock--opening {
-  animation: play-lock-lift 0.5s ease-in 1.05s both;
+  animation: play-lock-lift 0.5s ease-in 0.35s both;
 }
 
 @keyframes play-lock-lift {
