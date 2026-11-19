@@ -988,13 +988,13 @@ all (two per friend, one per course).
 - POSTPONED by the user: the all-six celebration (no certificate — dropped
   2026-11-19).
 
-**2. Play: stars open games (later, when Play comes back).**
-- Every TWO stars = one game to open; the child goes to Play and CHOOSES
-  which one to open. Puzzle costs 2, Memory Match 2, Find 2 → six stars
-  open all three. Stored as opened games (e.g. `play.open.<game>`); stars
-  left = earned − 2 × opened.
-- **Nova's Cups — REMOVED 2026-11-18** (the user doesn't like it): `/play/cups`
-  (now a 308 to `/play/games`), `CupsPlay`, `CupsCta`, `cupsKey`, its strings and pictures.
+**2. Play = three games, opened by stars (the user, 2026-11-19 — THIS is
+Play's plan; built later, Learn comes first).**
+- Play starts with THREE games: **Puzzle**, **Memory Match** and **Find**.
+- Every game is closed until the child has TWO stars from Learn. Each time
+  the child has two stars to spend, they go to Play and CHOOSE which game to
+  open. Six stars open all three. Stored as opened games (e.g.
+  `play.open.<game>`); stars left = earned − 2 × opened.
 - **New game: Find (3D).** Each stage is a rendered 3D place and one thing
   to find: the kitchen — find the carrot: a table full of vegetables, pick
   the carrot and put it on the plate; the forest — find the flower; and so
