@@ -985,7 +985,8 @@ all (two per friend, one per course).
 - Reads only `chestStarKey` from the progress store — no new state. Empty
   until `hydrated`. Grain on the coloured parts, dark-mode twin rules,
   checked at 390/820/1440 with screenshots.
-- POSTPONED by the user: the all-six celebration and a certificate.
+- POSTPONED by the user: the all-six celebration (no certificate — dropped
+  2026-11-19).
 
 **2. Play: stars open games (later, when Play comes back).**
 - Every TWO stars = one game to open; the child goes to Play and CHOOSES
