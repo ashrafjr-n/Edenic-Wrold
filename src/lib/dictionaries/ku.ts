@@ -217,7 +217,7 @@ export const ku: Dictionary = {
     episodesTitle: "پشکێن",
     reelsTitle: "ڤیدیۆیێن کورت",
     songsTitle: "ستران",
-    songAria: "سترانا {n} لێبدە",
+    songAria: "سترانێ لێبدە: {title}",
     filterAll: "هەمی",
     filterAria: "ڤیدیۆیێن کورت فلتەر بکە",
     episodeAria: "پشکا {title} بلێزە",
