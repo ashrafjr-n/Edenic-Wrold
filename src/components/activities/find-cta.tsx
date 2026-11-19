@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Hourglass } from "lucide-react";
+import { Hourglass, Search } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { dirFor } from "@/lib/format-dict";
 import findCard from "../../../public/assets/play/find/find-card.jpg";
@@ -46,7 +46,15 @@ export function FindCta({
       />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4">
-        <span dir={dir} className="text-3xl font-bold text-white drop-shadow-[0_2px_6px_rgb(0_0_0/25%)] sm:text-4xl">
+        {/* Its name on Watch's pink clay chip (`.discover-chip--new`), a size
+            up — a chip, not a button, while there is nowhere to go. The
+            chip's classes are unlayered, so the size rides on `style`. */}
+        <span
+          dir={dir}
+          className="clay discover-chip discover-chip--new"
+          style={{ "--clay-edge": "var(--accent-dark)", fontSize: "1.3rem", padding: "0.6rem 1.4rem" } as CSSProperties}
+        >
+          <Search className="h-5 w-5" strokeWidth={2.5} />
           {dict.activities.findCtaButton}
         </span>
         <span dir={dir} className="discover-soon">
