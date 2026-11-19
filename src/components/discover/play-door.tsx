@@ -1,55 +1,62 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Gamepad2, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { Cloud } from "@/components/ui/cloud";
-import playCloud from "../../../public/assets/discover/play-cloud.png";
+import bloo from "../../../public/assets/friends/bloo.png";
 
 interface PlayDoorProps {
+  /** The games' own card pictures, in `/play`'s order; the middle one leads. */
+  games: readonly StaticImageData[];
   title: string;
   subtitle: string;
-  /** The sign where the home panels have their button ("Let's play"). */
+  /** The sign at the foot ("Let's play"). */
   go: string;
   dir: "rtl" | "ltr";
   className?: string;
   style?: CSSProperties;
 }
 
-type ClayVars = CSSProperties & { "--clay-edge"?: string };
+type ClayVars = CSSProperties & { "--clay-edge": string };
 
 /**
- * Discover's Play door: the whole card is the link to `/play` (opened
- * 2026-11-19 — it was "Coming soon" while Play was being built). The home
- * page's path panels' recipe (`PathsSection`): a `.clay` panel in one
- * colour (Bloo's sky), the felt cloud (`play-cloud.png`) bedded into its
- * right side with `.panel-art`, the name and its line at the top left —
- * and where those panels have their white button, a white clay sign
- * (`.discover-soon`, a play icon in a sky-blue dot). Nothing on it moves.
+ * Discover's Play door (2026-11-19): the whole card is the link to `/play`.
+ * Watch's recipe in Bloo's sky: a sky-blue clay panel, the name and its line
+ * at the top, the three games' own pictures fanned in the middle like a hand
+ * of white-rimmed cards (the one in the middle on top), Bloo standing by
+ * them, two still clay clouds, and the white "Let's play" sign at the foot.
+ * On hover the fan opens a little; the card and Bloo never move.
  */
-export function PlayDoor({ title, subtitle, go, dir, className = "", style }: PlayDoorProps) {
+export function PlayDoor({ games, title, subtitle, go, dir, className = "", style }: PlayDoorProps) {
+  const [left, middle, right] = games;
   return (
     <Link
       href="/play"
-      className={`clay relative isolate flex min-h-48 flex-[2] basis-0 flex-col items-start overflow-hidden rounded-[1.75rem] p-6 sm:p-8 lg:p-10 ${className}`}
+      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col overflow-hidden rounded-[1.75rem] p-5 lg:flex-[2] sm:p-8 lg:p-10 ${className}`}
       style={{ backgroundColor: "#5aaee8", "--clay-edge": "#2f78b8", ...style } as ClayVars}
     >
-      {/* A phone's short card: bedded in at the foot, as on the home panels.
-          A tall wide-screen card: big, in the middle of the right side. */}
-      <div className="panel-art pointer-events-none absolute inset-y-0 right-0 -z-10 w-[62%] sm:bottom-[12%] sm:top-[20%] sm:w-[96%]">
-        <Image src={playCloud} alt="" fill sizes="(min-width: 640px) 36vw, 62vw" className="object-contain object-bottom sm:object-right" />
-      </div>
-      <Cloud size="sm" variant={2} className="absolute right-[8%] top-[12%] -z-10 opacity-90" style={{ "--cloud-w": "3.6rem" } as CSSProperties} />
-      <Cloud size="sm" variant={3} className="absolute right-[30%] top-[24%] -z-10 opacity-75" style={{ "--cloud-w": "2.6rem" } as CSSProperties} />
+      <Cloud size="sm" variant={2} className="absolute right-[8%] top-[9%] -z-10 opacity-90" style={{ "--cloud-w": "3.6rem" } as CSSProperties} />
+      <Cloud size="sm" variant={3} className="absolute right-[30%] top-[19%] -z-10 opacity-75 max-sm:hidden" style={{ "--cloud-w": "2.6rem" } as CSSProperties} />
 
-      <h2 dir={dir} className="flex items-center gap-2.5 text-3xl font-bold text-white sm:text-4xl">
-        <Gamepad2 className="h-8 w-8 sm:h-9 sm:w-9" strokeWidth={2.25} />
+      <span dir={dir} className="text-3xl font-bold text-white sm:text-5xl">
         {title}
-      </h2>
-      <p dir={dir} className="mt-2 max-w-[17rem] text-base font-semibold leading-relaxed text-white/90 sm:text-lg">
+      </span>
+      <span dir={dir} className="mt-1 text-base font-semibold text-white/90 sm:mt-2 sm:text-lg">
         {subtitle}
-      </p>
+      </span>
 
-      <span dir={dir} className="discover-soon mt-auto">
+      <span className="discover-stage">
+        <span aria-hidden className="discover-hand">
+          {[left, right, middle].map((art, i) => (
+            <span key={art.src} className={`discover-hand-card discover-hand-card--${["left", "right", "middle"][i]}`}>
+              <Image src={art} alt="" fill placeholder="blur" sizes="(min-width: 640px) 18rem, 50vw" className="object-cover" />
+            </span>
+          ))}
+          <Image src={bloo} alt="" sizes="(min-width: 640px) 12rem, 6rem" className="discover-friend discover-friend--bloo" />
+        </span>
+      </span>
+
+      <span dir={dir} className="discover-soon">
         <span aria-hidden className="discover-soon-icon">
           <Play className="ms-0.5 h-4 w-4 fill-current sm:h-5 sm:w-5" strokeWidth={2.5} />
         </span>
