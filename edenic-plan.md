@@ -951,13 +951,11 @@ Six stars in all (two per friend, one per course), each from a course's gold
 chest, shown in the friend's star pod (built 2026-11-18). Still open: the
 all-six celebration (postponed; no certificate).
 
-**Play = three games, opened by stars (the user, 2026-11-19).** The page is
-BUILT (2026-11-19): `/play` shows three cards — Puzzle, Memory Match, Find
-(Find "Coming soon", not a link) — and Discover's Play door opens it. Open:
-- Every game is closed until the child has TWO stars from Learn. Each time
-  the child has two stars to spend, they go to Play and CHOOSE which game to
-  open. Six stars open all three. Stored as opened games (e.g.
-  `play.open.<game>`); stars left = earned − 2 × opened.
+**Play = three games, opened by stars (the user, 2026-11-19).** BUILT
+2026-11-19: `/play` shows the three cards with a star bank; Puzzle and Memory
+Match each open for two chest stars, the child choosing which. Open:
+- **When Find is built**, it gets the same lock (a third `PlayGame`), so six
+  stars open all three.
 - **New game: Find (3D).** Each stage is a rendered 3D place and one thing
   to find: the kitchen — find the carrot: a table full of vegetables, pick
   the carrot and put it on the plate; the forest — find the flower; and so
