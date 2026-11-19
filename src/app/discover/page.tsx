@@ -17,8 +17,8 @@ const ITEM_STAGGER = 0.12;
  * Discover: two doors, Play and Watch, and nothing else — no heading, no copy
  * around them. Each card takes half the height that is left (and, from `sm`,
  * half the width), so the page is exactly one screen: no scroll on a phone and
- * no empty band under the cards. Watch leads; Play is "coming soon" for now:
- * its door is not a link.
+ * no empty band under the cards. Watch leads; Play's door
+ * opens `/play`, its three games.
  */
 export default async function DiscoverPage() {
   const dict = await getDictionary();
@@ -41,7 +41,7 @@ export default async function DiscoverPage() {
         <PlayDoor
           title={words.playButton}
           subtitle={words.playSub}
-          soon={words.playSoon}
+          go={words.playGo}
           dir={dir}
           className="anim-rise-in"
           style={{ animationDelay: `${ITEM_DELAY + ITEM_STAGGER}s` }}
