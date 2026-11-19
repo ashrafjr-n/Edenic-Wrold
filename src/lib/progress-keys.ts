@@ -45,3 +45,20 @@ export function chestStarKey(characterId: string, lessonId: string): ItemKey {
   return `star.${characterId}.${lessonId}`;
 }
 
+
+/** Play's games that stars open (`edenic-plan.md` "Stars → Play's games"). */
+export type PlayGame = "puzzle" | "memory";
+
+/** What one Play game costs: two chest stars. */
+export const STARS_PER_GAME = 2;
+
+/** A Play game the child has opened with their stars (`play.open.puzzle`) —
+    kept for good: the stars are spent, the game stays open. */
+export function playOpenKey(game: PlayGame): ItemKey {
+  return `play.open.${game}`;
+}
+
+/** Every key that is a chest star — `chestStarKey`'s shape. */
+export function isChestStarKey(key: ItemKey): boolean {
+  return key.startsWith("star.");
+}
