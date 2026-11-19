@@ -77,7 +77,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle1,
       alt: "Pinki and Bloo on their armchairs, Nova sitting with them",
-      song: "/assets/watch/songs/song-002.mp4",
+      song: { src: "/assets/watch/songs/song-002.mp4", title: "Home with My Friends" },
     },
   },
   {
@@ -87,7 +87,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle2,
       alt: "Nova with a giraffe, an elephant, a hippo and a lion by the pond",
-      song: "/assets/watch/songs/song-004.mp4",
+      song: { src: "/assets/watch/songs/song-004.mp4", title: "Nova's Animal Friends" },
     },
   },
   {
@@ -97,7 +97,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle3,
       alt: "Bloo, Nova and Pinki playing with blocks in their room",
-      song: "/assets/watch/songs/song-011.mp4",
+      song: { src: "/assets/watch/songs/song-011.mp4", title: "Playtime with Blocks" },
     },
   },
   /* 4–15 are SQUARE — a tall board leaves a phone no room for the heap of
@@ -109,7 +109,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle4,
       alt: "Nova building a tower of soft blocks",
-      song: "/assets/watch/songs/song-001.mp4",
+      song: { src: "/assets/watch/songs/song-001.mp4", title: "Nova Builds a Tower" },
     },
   },
   {
@@ -119,7 +119,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle5,
       alt: "Bloo in front of a wall of soft blocks",
-      song: "/assets/watch/songs/song-005.mp4",
+      song: { src: "/assets/watch/songs/song-005.mp4", title: "Bloo's Happy Day" },
     },
   },
   {
@@ -129,7 +129,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle6,
       alt: "Pinki in a field of big flowers in the sunshine",
-      song: "/assets/watch/songs/song-006.mp4",
+      song: { src: "/assets/watch/songs/song-006.mp4", title: "Pinki's Flower Garden" },
     },
   },
   {
@@ -139,7 +139,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle7,
       alt: "Nova and Pinki sweeping the street",
-      song: "/assets/watch/songs/song-007.mp4",
+      song: { src: "/assets/watch/songs/song-007.mp4", title: "Helping Hands" },
     },
   },
   {
@@ -149,7 +149,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle8,
       alt: "Bloo riding a cloud with the birds",
-      song: "/assets/watch/songs/song-008.mp4",
+      song: { src: "/assets/watch/songs/song-008.mp4", title: "Bloo on a Cloud" },
     },
   },
   {
@@ -159,7 +159,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle9,
       alt: "Nova and the turtle at the lemonade stand",
-      song: "/assets/watch/songs/song-009.mp4",
+      song: { src: "/assets/watch/songs/song-009.mp4", title: "Lemonade Day" },
     },
   },
   {
@@ -169,7 +169,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle10,
       alt: "Bloo sweeping the room with a rainbow broom",
-      song: "/assets/watch/songs/song-003.mp4",
+      song: { src: "/assets/watch/songs/song-003.mp4", title: "Tidy Up Time" },
     },
   },
   {
@@ -179,7 +179,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle11,
       alt: "Pinki in her rocking chair outside her house",
-      song: "/assets/watch/songs/song-012.mp4",
+      song: { src: "/assets/watch/songs/song-012.mp4", title: "Pinki's Starry Night" },
     },
   },
   {
@@ -189,7 +189,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle12,
       alt: "Bloo, the turtle and Nova under a rainbow arch of blocks",
-      song: "/assets/watch/songs/song-013.mp4",
+      song: { src: "/assets/watch/songs/song-013.mp4", title: "The Rainbow Arch" },
     },
   },
   {
@@ -199,7 +199,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle13,
       alt: "Bloo with a glass of milk",
-      song: "/assets/watch/songs/song-014.mp4",
+      song: { src: "/assets/watch/songs/song-014.mp4", title: "Bloo's Busy Morning" },
     },
   },
   {
@@ -209,7 +209,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle14,
       alt: "Pinki and Bloo cleaning up their room",
-      song: "/assets/watch/songs/clean-up.mp4",
+      song: { src: "/assets/watch/songs/clean-up.mp4", title: "Let Us Clean Up" },
     },
   },
   {
@@ -219,7 +219,7 @@ export const puzzleStages: PuzzleStage[] = [
     picture: {
       image: puzzle15,
       alt: "Bloo jumping on the path among the shape lollipops",
-      song: "/assets/watch/songs/song-010.mp4",
+      song: { src: "/assets/watch/songs/song-010.mp4", title: "Bloo's Shape Walk" },
     },
   },
 ];
