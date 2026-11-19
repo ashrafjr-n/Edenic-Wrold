@@ -32,7 +32,7 @@ export function PlayDoor({ games, title, subtitle, go, dir, className = "", styl
   return (
     <Link
       href="/play"
-      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col overflow-hidden rounded-[1.75rem] p-5 lg:flex-[2] sm:p-8 lg:p-10 ${className}`}
+      className={`discover-door clay group relative isolate flex min-h-64 flex-1 basis-0 flex-col items-start overflow-hidden rounded-[1.75rem] p-5 lg:flex-[2] sm:p-8 lg:p-10 ${className}`}
       style={{ backgroundColor: "#5aaee8", "--clay-edge": "#2f78b8", ...style } as ClayVars}
     >
       <Cloud size="sm" variant={2} className="absolute right-[8%] top-[9%] -z-10 opacity-90" style={{ "--cloud-w": "3.6rem" } as CSSProperties} />
