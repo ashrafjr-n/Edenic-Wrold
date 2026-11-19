@@ -2,19 +2,22 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ChevronDown, Play, X } from "lucide-react";
+import { ChevronDown, Music, Play, X } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
 import type { LessonId } from "@/types/lesson";
-import type { WatchClip, WatchCourse, WatchEpisode } from "@/data/watch";
+import type { WatchClip, WatchCourse, WatchEpisode, WatchSong } from "@/data/watch";
 
 interface WatchGridProps {
   episodes: readonly WatchEpisode[];
+  songs: readonly WatchSong[];
   courses: readonly WatchCourse[];
   clips: readonly WatchClip[];
   words: {
     episodesTitle: string;
     reelsTitle: string;
+    songsTitle: string;
+    songAria: string;
     filterAll: string;
     filterAria: string;
     clipAria: string;
@@ -28,7 +31,10 @@ interface WatchGridProps {
   dir: "rtl" | "ltr";
 }
 
-type Playing = { kind: "episode"; item: WatchEpisode } | { kind: "clip"; item: WatchClip };
+type Playing =
+  | { kind: "episode"; item: WatchEpisode }
+  | { kind: "song"; item: WatchSong }
+  | { kind: "clip"; item: WatchClip };
 
 /** How long each episode stays in the hero before the next fades in. */
 const HERO_MS = 6000;
@@ -36,6 +42,9 @@ const HERO_MS = 6000;
 /** Short videos shown at first, and added by each press of "More" (8 fills
     2, 4 and — with the sidebar — 4 columns evenly). */
 const PAGE = 8;
+
+/** Songs shown at first, and added by each press of "More" (6 fills 2 and 3 columns evenly). */
+const SONG_PAGE = 6;
 
 /** A fresh random order — only ever called after mount, never while the
     server renders, so the two can't disagree. */
@@ -66,15 +75,18 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
  * and a dot jumps to its episode. Then the short videos — the lessons' reels: a filter (chips
  * in a scrolling row on a phone, a sticky side list from `lg`), "All" in a
  * random order reshuffled each time it is picked, 8 at a time with a More
- * button. Whatever is tapped plays in a native `<dialog>` that mounts its
+ * button. Between the two, the songs (2026-11-19): the series' songs the
+ * puzzles were cut from, 16:9 cards with a white clay "♪ n" chip — n is the
+ * puzzle it belongs to — six at a time with a More button. Whatever is tapped plays in a native `<dialog>` that mounts its
  * player only while open.
  */
-export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridProps) {
+export function WatchGrid({ episodes, songs, courses, clips, words, dir }: WatchGridProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [playing, setPlaying] = useState<Playing | null>(null);
   const [filter, setFilter] = useState<LessonId | "all">("all");
   const [order, setOrder] = useState<readonly WatchClip[]>(clips);
   const [count, setCount] = useState(PAGE);
+  const [songCount, setSongCount] = useState(SONG_PAGE);
 
   /* After mount, so the server's fixed order and the first client render agree. */
   useEffect(() => {
@@ -208,6 +220,41 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
           </div>
         </section>
 
+        <section aria-label={words.songsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
+          <h2 dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:sticky lg:top-28 lg:self-start lg:text-2xl">
+            {words.songsTitle}
+          </h2>
+
+          <div className="flex flex-col items-center gap-8">
+            <ul className="grid w-full grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5">
+              {songs.slice(0, songCount).map((song) => (
+                <li key={song.src}>
+                  <button
+                    type="button"
+                    onClick={() => play({ kind: "song", item: song })}
+                    aria-label={format(words.songAria, { n: song.n })}
+                    className="card card-lift card-lift--still watch-song group relative block aspect-video w-full cursor-pointer overflow-hidden"
+                  >
+                    <span aria-hidden className="img-wait" />
+                    <Image src={song.poster} alt="" fill sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 45vw" className="object-cover" />
+                    <span aria-hidden dir="ltr" className="watch-song-chip">
+                      <Music className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.75} />
+                      {song.n}
+                    </span>
+                    <PlayBadge size="h-11 w-11 sm:h-12 sm:w-12" icon="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {songCount < songs.length && (
+              <Button3D tone={{ face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" }} onClick={() => setSongCount(songCount + SONG_PAGE)} className="px-8 py-3 text-lg">
+                <span dir={dir}>{words.more}</span>
+                <ChevronDown className="h-5 w-5" strokeWidth={3} />
+              </Button3D>
+            )}
+          </div>
+        </section>
+
         <section aria-label={words.reelsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
           <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
             <h2 dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-2xl">
@@ -251,13 +298,13 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
 
       <dialog
         ref={dialog}
-        aria-label={playing?.item.title}
+        aria-label={playing?.kind === "song" ? format(words.songAria, { n: playing.item.n }) : playing?.item.title}
         onClose={() => setPlaying(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
         }}
         className={`m-auto overflow-visible bg-transparent p-0 backdrop:bg-[rgb(var(--shadow-hue)/65%)] ${
-          playing?.kind === "episode" ? "w-[min(60rem,calc(100%-2rem))]" : "w-[min(24rem,calc(100%-2.5rem))]"
+          playing && playing.kind !== "clip" ? "w-[min(60rem,calc(100%-2rem))]" : "w-[min(24rem,calc(100%-2.5rem))]"
         }`}
       >
         {playing && (
@@ -269,6 +316,16 @@ export function WatchGrid({ episodes, courses, clips, words, dir }: WatchGridPro
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
                 className="aspect-video w-full rounded-2xl bg-black"
+              />
+            ) : playing.kind === "song" ? (
+              <video
+                key={playing.item.src}
+                src={playing.item.src}
+                poster={playing.item.poster}
+                controls
+                autoPlay
+                playsInline
+                className="aspect-video max-h-[78svh] w-full rounded-2xl bg-black object-contain"
               />
             ) : (
               <video
