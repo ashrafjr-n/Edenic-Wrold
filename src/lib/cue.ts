@@ -9,6 +9,8 @@
  * on the first tap (`unlockSound`), as browsers ask.
  */
 
+import { useSound } from "@/store/sound";
+
 /** Audio ids for a lesson. Step instructions have no clip — the task button
     shows how instead of saying it (direct request). */
 export const lessonCue = {
@@ -70,6 +72,9 @@ function load(id: string): Promise<AudioBuffer | null> {
 /** Plays clip `id`; resolves when it ends (at once if it cannot play).
     `rate` raises the pitch (and quickens it) — the letters' and finds' scale. */
 function play(id: string, rate = 1, volume = 1): Promise<boolean> {
+  /* Muted (the header's speaker chip): nothing plays, and a word still has
+     its speaking beat (`playCue`'s fallback). */
+  if (useSound.getState().muted) return Promise.resolve(false);
   const ctx = audio();
   if (!ctx) return Promise.resolve(false);
   return load(id).then(
