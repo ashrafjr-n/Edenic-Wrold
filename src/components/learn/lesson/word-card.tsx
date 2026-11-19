@@ -58,7 +58,7 @@ export function WordCard({ word, shape, picture, tilt, onScene = false, inSky = 
      the word on the right. The two wrappers are `contents` below `lg`, so
      the phone's column is exactly what it was. */
   const layout =
-    "flex w-full flex-col items-center gap-4 px-6 py-6 sm:gap-7 sm:py-10 lg:grid lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5";
+    "flex w-full flex-col items-center gap-4 px-6 py-6 sm:gap-4 sm:py-5 lg:grid lg:grid-cols-[auto_auto] lg:grid-rows-2 lg:items-center lg:gap-x-16 lg:gap-y-6 lg:px-16 lg:py-12 [@media(max-height:700px)]:gap-2 [@media(max-height:700px)]:py-2.5";
   const content = (
     <>
       <span className="contents lg:col-start-2 lg:row-start-1 lg:flex lg:items-end lg:justify-center lg:self-end">
@@ -66,7 +66,7 @@ export function WordCard({ word, shape, picture, tilt, onScene = false, inSky = 
       </span>
       {(shape || picture) && (
         <span
-          className={`anim-pop-in relative flex h-[min(10rem,17svh)] w-[min(10rem,17svh)] items-center justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]`}
+          className={`anim-pop-in relative flex h-[min(10rem,17svh,calc(100svh-35.75rem))] w-[min(10rem,17svh,calc(100svh-35.75rem))] items-center max-sm:[@media(max-height:700px)]:h-[min(10rem,17svh,calc(100svh-34.75rem))] max-sm:[@media(max-height:700px)]:w-[min(10rem,17svh,calc(100svh-34.75rem))] sm:h-[min(10rem,calc(100svh-56rem))] sm:w-[min(10rem,calc(100svh-56rem))] justify-center lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:h-[min(15rem,calc(var(--stage-h)-6rem))] lg:w-[min(15rem,calc(var(--stage-h)-6rem))]`}
           style={{ animationDelay: "0.05s" }}
         >
           {picture && tilt ? (
