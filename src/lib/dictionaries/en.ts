@@ -230,7 +230,7 @@ export const en = {
     episodesTitle: "Episodes",
     reelsTitle: "Short videos",
     songsTitle: "Songs",
-    songAria: "Play song {n}",
+    songAria: "Play the song: {title}",
     filterAll: "All",
     filterAria: "Filter the short videos",
     episodeAria: "Play episode: {title}",
