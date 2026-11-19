@@ -1,6 +1,7 @@
 import type { StaticImageData } from "next/image";
 import { courseLessons } from "@/data/courses";
 import { lessonsByCharacter } from "@/data/lessons";
+import { puzzleStages } from "@/data/puzzles";
 import type { LessonId } from "@/types/lesson";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import episode1 from "../../public/assets/watch/episode-1.webp";
@@ -31,6 +32,20 @@ export const watchEpisodes: WatchEpisode[] = EPISODES.map(({ id, title, poster }
   title,
   poster: poster ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
 }));
+
+export interface WatchSong {
+  src: string;
+  /** The frame its puzzle picture was cut from, 1280 × 720, next to the video. */
+  poster: string;
+  /** Song n is puzzle n's song, so a child who just finished puzzle 3 finds it as 3. */
+  n: number;
+}
+
+/** `/watch`'s songs: the series' songs the puzzles were cut from, in puzzle
+    order. */
+export const watchSongs: WatchSong[] = puzzleStages.flatMap((stage, i) =>
+  stage.picture ? [{ src: stage.picture.song, poster: stage.picture.song.replace(/\.mp4$/, ".jpg"), n: i + 1 }] : [],
+);
 
 export interface WatchClip {
   /** Unique: the video's path. */
