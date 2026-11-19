@@ -280,6 +280,7 @@ export const en = {
     help: "Help",
     closeHint: "Close and go back to the puzzle",
     again: "Again",
+    watchSongAria: "Watch the song",
     next: "Next",
     secondsLeftAria: "{n} seconds left",
     cardFaceDownAria: "Card {index} face down",
