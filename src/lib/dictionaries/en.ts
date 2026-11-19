@@ -37,6 +37,8 @@ export const en = {
     kurdish: "کوردی",
     joinFull: "Join Edenic World",
     join: "Join",
+    soundOff: "Turn the sound off",
+    soundOn: "Turn the sound on",
   },
   footer: {
     tagline:
