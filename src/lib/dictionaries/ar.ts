@@ -30,8 +30,6 @@ export const ar: Dictionary = {
     kurdish: "کوردی",
     joinFull: "انضم إلى Edenic World",
     join: "انضم",
-    soundOff: "إيقاف الصوت",
-    soundOn: "تشغيل الصوت",
   },
   footer: {
     tagline:
