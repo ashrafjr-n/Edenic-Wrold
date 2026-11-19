@@ -23,6 +23,7 @@ import { PieceArt } from "./piece-art";
 import { puzzleKey, useProgress } from "@/store/progress";
 import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Celebration } from "@/components/ui/celebration";
+import { SongButton } from "./song-button";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
@@ -564,7 +565,7 @@ export function PuzzleBoard({
       {solved && (
         /* No stars: the finished picture IS the reward here, and a second
            star currency next to the lessons' own would only muddy both. */
-        <div className="anim-pop-in flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <div className="anim-pop-in flex flex-wrap items-center justify-center gap-2 sm:gap-4">
           {/* The shared replay button, keeping the
               WHITE clay face rather than this section's green: the "Next"
               beside it is already green, and the pair would stop reading as
@@ -574,6 +575,15 @@ export function PuzzleBoard({
             onPress={reset}
             tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
             className="btn3d--clay-white"
+          />
+
+          {/* The song this picture is a frame of. */}
+          <SongButton
+            src={picture.song}
+            poster={picture.image.src}
+            label={dict.discover.watchButton}
+            ariaLabel={dict.activities.watchSongAria}
+            closeLabel={dict.lessonPlayer.close}
           />
 
           {/* The shared forward button — it closes into its own arrow on
