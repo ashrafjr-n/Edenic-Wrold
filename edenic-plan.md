@@ -662,8 +662,10 @@ leaves). The question's three circles: the right weather + two others.
   second `<source>` (~30% smaller) — not now.
 - **Hosting (the user, 2026-11-19):** the first version keeps the 45 reels
   (~260 MB) in git, in `public/`. The NEXT version moves `reels/` to cloud
-  storage — Cloudflare R2 (free: 10 GB, and no charge for downloads) — and
-  keeps only the URLs in the data.
+  storage — Cloudflare R2 (free: 10 GB, and no charge for downloads; it
+  asks for a card or PayPal to switch on, but charges nothing inside the
+  free limits) — and keeps only the URLs in the data. The user makes the
+  account and the bucket; Claude moves the reels and the code to it.
 - The same script makes Shapes', Colors', Vegetables' and Animals' reels
   once the user picks from `edenic world learn`.
 
