@@ -130,7 +130,9 @@ export function PlayLock({ game, name, words, dir, className = "", style, childr
         (left >= STARS_PER_GAME || phase !== "idle" ? (
           <div role="group" aria-label={label} className={`play-lock ${phase === "open" ? "play-lock--opening" : ""}`}>
             {sign}
-            {phase === "idle" && (
+            {/* Hidden, not removed, once pressed: the sign must not move
+                while the stars fly to where it is. */}
+            <span className={phase === "idle" ? "" : "invisible"}>
               <Button3D
                 tone={{ face: "var(--brand)", edge: "var(--brand-dark)" }}
                 onClick={open}
@@ -140,7 +142,7 @@ export function PlayLock({ game, name, words, dir, className = "", style, childr
                 <LockOpen className="h-5 w-5" strokeWidth={2.25} />
                 <span dir={dir}>{words.openWithStars}</span>
               </Button3D>
-            )}
+            </span>
           </div>
         ) : (
           <button type="button" aria-label={label} onClick={() => setAsking(true)} className="play-lock">
