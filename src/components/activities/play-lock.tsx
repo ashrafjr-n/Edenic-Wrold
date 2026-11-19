@@ -21,8 +21,9 @@ const FLY_MS = 800;
 const STAGGER_MS = 150;
 /** The padlock springs open once both stars are in… */
 const OPEN_MS = FLY_MS + STAGGER_MS;
-/** …and the scrim has lifted (`.play-lock--opening`: 1.05 s + 0.5 s). */
-const DONE_MS = 1550;
+/** …and the scrim has lifted (`.play-lock--opening`, from the padlock
+    opening: 0.35 s held open, then 0.5 s). */
+const DONE_MS = OPEN_MS + 850;
 /** The flying star's box (`.play-star-fly`, 2.6rem). */
 const STAR_PX = 41.6;
 
@@ -66,7 +67,8 @@ export function PlayLock({ game, name, words, dir, className = "", style, childr
 
   const open = () => {
     if (phase !== "idle" || left < STARS_PER_GAME) return;
-    /* From the bank's star to the sign's stars, arcing up between them. */
+    /* From the bank's star to the sign's stars, on a soft arc — never
+       above the bank, where the header would hide it. */
     const bank = document.querySelector("[data-star-bank] img")?.getBoundingClientRect();
     const to = target.current?.getBoundingClientRect();
     if (bank && to) {
@@ -74,7 +76,7 @@ export function PlayLock({ game, name, words, dir, className = "", style, childr
       setFlights(
         [-0.5, 0.5].map((side) => {
           const end = { x: to.left + to.width / 2 + side * 34 - STAR_PX / 2, y: to.top + to.height / 2 - STAR_PX / 2 };
-          const mid = { x: (from.x + end.x) / 2, y: Math.min(from.y, end.y) - 90 };
+          const mid = { x: (from.x + end.x) / 2 + (end.x - from.x) * 0.25, y: Math.max(from.y, (from.y + end.y) / 2 - 70) };
           return {
             "--from-x": `${from.x}px`, "--from-y": `${from.y}px`,
             "--mid-x": `${mid.x}px`, "--mid-y": `${mid.y}px`,
