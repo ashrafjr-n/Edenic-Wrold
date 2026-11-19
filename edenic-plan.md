@@ -945,35 +945,15 @@ again from its cookie, and the door stays open.
    - three languages, dark mode,
    - the docs.
 
-### Stars → Play's games (the user, 2026-11-18) — PLANNED, NOT BUILT
+### Stars → Play's games (the user, 2026-11-18 / 2026-11-19) — what is left
 
-The chest's star now has somewhere to go, and Play spends them. Six stars in
-all (two per friend, one per course).
+Six stars in all (two per friend, one per course), each from a course's gold
+chest, shown in the friend's star pod (built 2026-11-18). Still open: the
+all-six celebration (postponed; no certificate).
 
-**1. The star pod (Learn) — BUILT 2026-11-18** (`StarPod`, `components/learn/star-pod.tsx`; as planned, except: from `lg` it sits BESIDE the back button — under it the open plate covered the board's corner; a star it has not shown yet is remembered in `localStorage` `edenic-stars-seen`; a course page's back row never hides, so the pod is seen after the camera's scroll to the chest).
-- On a friend's pages (hub + course pages = `ClassroomShell`, the layout, so
-  it is mounted once and never remounts): a white clay chip with a star icon,
-  just under the header on the LEFT, under the back button's row (that spot
-  is the back button's — `BackRow` — so the pod sits below it, never on it).
-  Layout never mirrors, so it stays left in Arabic and Kurdish too.
-- Pressed, it opens like the language switcher (`.lang-orb`): two clay circles spring
-  out to its right, staggered, on one white clay plate (`.lang-fan`'s
-  recipe); pressed again, outside click or Escape closes it.
-- Each circle is ONE course's slot: empty = a pale 3D clay star, rendered
-  (`tools/picnic-scene`); earned = `learn/chest-star.png`, the chest's
-  star. The course's name in `aria-label` (3 languages). The chip shows "1/2".
-- The moment a star is earned (the chest opens on the course page — the
-  pod is in the layout, so it is there): the pod opens by itself, the star
-  pops into its slot with the `star` sound, then it closes after ~2.5 s.
-- Reads only `chestStarKey` from the progress store — no new state. Empty
-  until `hydrated`. Grain on the coloured parts, dark-mode twin rules,
-  checked at 390/820/1440 with screenshots.
-- POSTPONED by the user: the all-six celebration (no certificate — dropped
-  2026-11-19).
-
-**2. Play = three games, opened by stars (the user, 2026-11-19 — THIS is
-Play's plan; built later, Learn comes first).**
-- Play starts with THREE games: **Puzzle**, **Memory Match** and **Find**.
+**Play = three games, opened by stars (the user, 2026-11-19).** The page is
+BUILT (2026-11-19): `/play` shows three cards — Puzzle, Memory Match, Find
+(Find "Coming soon", not a link) — and Discover's Play door opens it. Open:
 - Every game is closed until the child has TWO stars from Learn. Each time
   the child has two stars to spend, they go to Play and CHOOSE which game to
   open. Six stars open all three. Stored as opened games (e.g.
