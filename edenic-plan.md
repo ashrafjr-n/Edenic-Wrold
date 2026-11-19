@@ -317,9 +317,10 @@ every button in Learn, a cheer on a solved step, a soft "uh-oh" on a miss (no
 buzzer), letters and finds climbing a scale, chomp, plop, bubbles, whoosh, a
 hooray at a lesson's end, the chest and its star. Step instructions are still
 not spoken: the round task button SHOWS how instead (decided 2026-09-28).
-**Mute switch BUILT 2026-11-19:** a pink speaker chip in the header, beside
-dark mode (`SoundToggle`, `store/sound.ts`, kept in `localStorage`). Off
-silences the words, the effects and the lessons' reels.
+**Mute — LATER, with accounts (the user, 2026-11-19):** a header chip was
+built and taken out the same day. Muting comes back as a setting of the
+child's account once accounts are built (the removed code: commits
+`mute switch V1.0`–`V1.7`, removed by `remove mute switch V1.0`–`V1.7`).
 
 ## 8. Not now (on purpose)
 Collections, "Is Pinki right?", hint friends, translate button, questions inside
