@@ -213,7 +213,7 @@ export const ar: Dictionary = {
     episodesTitle: "الحلقات",
     reelsTitle: "فيديوهات قصيرة",
     songsTitle: "أغاني",
-    songAria: "شغّل الأغنية {n}",
+    songAria: "شغّل الأغنية: {title}",
     filterAll: "الكل",
     filterAria: "تصفية الفيديوهات القصيرة",
     episodeAria: "شغّل الحلقة: {title}",
