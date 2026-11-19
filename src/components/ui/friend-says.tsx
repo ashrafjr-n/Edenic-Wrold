@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
+import { Button3D } from "@/components/ui/button-3d";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import { usePageTransition } from "@/store/page-transition";
 
@@ -19,6 +20,9 @@ interface FriendSaysProps {
   skipLabel: string;
   dir: "rtl" | "ltr";
   onDone: () => void;
+  /** A way on, beside the skip chip: the brand-blue button to a page
+      ("Go to Learn" when a Play game needs stars). */
+  action?: { href: string; label: string };
 }
 
 /**
@@ -49,7 +53,7 @@ interface FriendSaysProps {
  * - Their feet stand ON the phone's bottom nav, never under it (the bar's
  *   height + the safe area + a cushion for the lean's bounding box).
  */
-export function FriendSays({ picture, ink, lines, skipLabel, dir, onDone }: FriendSaysProps) {
+export function FriendSays({ picture, ink, lines, skipLabel, dir, onDone, action }: FriendSaysProps) {
   const transitionActive = usePageTransition((state) => state.active);
   const [at, setAt] = useState(0);
   const [shown, setShown] = useState(false);
@@ -110,17 +114,26 @@ export function FriendSays({ picture, ink, lines, skipLabel, dir, onDone }: Frie
 
         {/* A real button (keyboard), `Button3D`'s classes by hand as on the
             clay-white chips: its face is pinned pale, so its ink is too. */}
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onDone();
-          }}
-          className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto mt-4 px-5 py-2 text-sm sm:mt-5 sm:px-6 sm:py-2.5 sm:text-base"
-          style={{ "--btn-text": "var(--color-ink-fixed)" } as CSSProperties}
-        >
-          <span dir={dir}>{skipLabel}</span>
-        </button>
+        <div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-5">
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDone();
+            }}
+            className="btn3d btn3d--calm btn3d--clay-white pointer-events-auto px-5 py-2 text-sm sm:px-6 sm:py-2.5 sm:text-base"
+            style={{ "--btn-text": "var(--color-ink-fixed)" } as CSSProperties}
+          >
+            <span dir={dir}>{skipLabel}</span>
+          </button>
+          {action && (
+            <span className="pointer-events-auto" onClick={(event) => event.stopPropagation()}>
+              <Button3D href={action.href} tone={{ face: "var(--brand)", edge: "var(--brand-dark)" }} className="px-5 py-2 text-sm sm:px-6 sm:py-2.5 sm:text-base">
+                <span dir={dir}>{action.label}</span>
+              </Button3D>
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Cropped by the right edge — the crop is the design, and they enter
