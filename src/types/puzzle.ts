@@ -13,6 +13,8 @@ export interface PuzzlePicture {
   image: StaticImageData;
   /** What the finished picture shows — the board's accessible name. */
   alt: string;
+  /** The song the picture is a frame of — the finished puzzle's Watch plays it. */
+  song: string;
 }
 
 /** A stage card's clay fill and the darker companion its shading is mixed
