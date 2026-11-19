@@ -49,7 +49,7 @@ export function CueButton({ cue, label, children, size = "lg", invite = false }:
     : size === "2xl"
       ? "h-36 w-36 sm:h-44 sm:w-44"
     : size === "xl"
-      ? "h-24 w-24 sm:h-28 sm:w-28"
+      ? "h-24 w-24 sm:h-28 sm:w-28 max-sm:[@media(max-height:700px)]:h-20 max-sm:[@media(max-height:700px)]:w-20"
       : size === "lg"
         ? "h-14 w-14 sm:h-16 sm:w-16"
         : "h-11 w-11";
