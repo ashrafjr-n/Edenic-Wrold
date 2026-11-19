@@ -579,7 +579,7 @@ export function PuzzleBoard({
 
           {/* The song this picture is a frame of. */}
           <SongButton
-            src={picture.song}
+            src={picture.song.src}
             poster={picture.image.src}
             label={dict.discover.watchButton}
             ariaLabel={dict.activities.watchSongAria}
