@@ -954,10 +954,9 @@ all-six celebration (postponed; no certificate).
 **Play = three games, opened by stars (the user, 2026-11-19).** BUILT
 2026-11-19: `/play` shows the three cards with a star bank; Puzzle and Memory
 Match each open for two chest stars, the child choosing which. Open:
-- **Find's stages 4–9** (stages 1–3 BUILT 2026-11-20: Nova's kitchen,
-  her garden, Bloo's farm; design in `claude-docs/play-page.md` "Find").
+- **Find's stages 5–9** (stages 1–4 BUILT 2026-11-20: Nova's kitchen,
+  her garden, Bloo's farm, Pinki's shape land; design in `claude-docs/play-page.md` "Find").
   The plan the user agreed (one at a time, each checked; words with audio):
-  4 Pinki's shape land — heart, diamond, among look-alike shapes;
   5 Bloo's farm pond — fish, turtle, bird (the first THREE);
   6 Pinki's colour land — purple, yellow (find a COLOUR: a colour dot on
     the list, any thing of it counts — needs a little code);
