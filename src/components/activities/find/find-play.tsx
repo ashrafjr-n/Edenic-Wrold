@@ -4,8 +4,7 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import Link from "next/link";
-import { Camera, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Search, Sparkles } from "lucide-react";
 import { BackRow } from "@/components/ui/back-button";
 import { Button3D } from "@/components/ui/button-3d";
 import { FriendSays } from "@/components/ui/friend-says";
@@ -22,6 +21,7 @@ import { findKey, useProgress } from "@/store/progress";
 
 type Place = (typeof FIND_PLACES)[keyof typeof FIND_PLACES];
 type Shape = Place["landscape"] | Place["portrait"];
+type Spot = { box: readonly number[]; leaf: readonly number[] };
 
 /** The room slides this much slower than the counter; the near things `kFront` faster. */
 const K_BACK = 0.55;
@@ -31,24 +31,28 @@ const MIN_LOOK = 0.15;
 const TAP_PX = 10;
 /** The near layer counts as in the way where its picture is this opaque (0–255). */
 const COVERED = 140;
-/** The hints, from when the hunt starts: the thing stirs (and rustles) every
-    `WIGGLE_MS` (`find-stir`'s period); then twinkles; then the arrow its way pulses; then it glows. */
+/** The hints, from the hunt's start and again after each find, for what is
+    still hidden: it stirs (and rustles, the nearest) every `WIGGLE_MS`
+    (`find-stir`'s period); then twinkles; then the arrow to the nearest
+    pulses; then they glow. */
 const WIGGLE_MS = 5000;
 const SPARKLE_MS = 10000;
 const POINT_MS = 15000;
 const GLOW_MS = 22000;
-/** Found: it pops, the camera frames it, the flash, the photo, the photo into the album. */
-const FLASH_MS = 700;
-const PHOTO_MS = FLASH_MS + 250;
-const FLY_MS = PHOTO_MS + 1700;
-const TALK_MS = FLY_MS + 900;
+const TICK_MS = 250;
+/** A find: it jumps, then flies into its slot on the list (`.find-fly`). */
+const POP_MS = 450;
+const FLY_MS = 750;
+/** All found: a beat, the flash and the photo, the photo off to the album, Nova. */
+const PHOTO_MS = 550;
+const AWAY_MS = PHOTO_MS + 2100;
+const TALK_MS = AWAY_MS + 800;
 
-type Phase = "intro" | "play" | "found" | "photo" | "fly" | "talk" | "done";
+type Phase = "intro" | "play" | "photo" | "away" | "talk" | "done";
 
 interface FindPlayProps {
   stage: FindStage;
   place: Place;
-  total: number;
   words: Dictionary["findGame"];
   again: string;
   next: string;
@@ -58,8 +62,7 @@ interface FindPlayProps {
 interface Frame {
   w: number;
   h: number;
-  /** The layers' height, and the middle layer's width. */
-  l: number;
+  /** The middle layer's width. */
   midW: number;
   /** How far the camera can move each way from the middle, px. */
   reach: number;
@@ -67,52 +70,56 @@ interface Frame {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const ease = (t: number) => 1 - (1 - t) ** 3;
+const NO_HINT = { stir: false, sparkle: false, point: 0, glow: false };
 
 /**
  * One stage of Find: a place seen through a camera, in three depth layers
  * (the room, the counter, the near things before the lens) that slide at
  * their own speeds as the child drags to look round — a parallax, so the
- * near things pass in front of what is behind them, and the thing to find
- * is peeked out from behind one. Visual first: it stirs, twinkles, the
- * arrow its way pulses, at last it glows; its rustle (from its side of the
- * screen) is only an extra. Found: it pops, the camera frames it, a flash,
- * and its photo flies into the album (the chip in the back row), then Nova
- * cheers. Arrow buttons and the arrow keys look round too; the thing itself
- * is a button for a keyboard.
+ * near things pass in front of what is behind them, and what is hidden is
+ * peeked out from behind them. Two things to find, three in a harder stage,
+ * shown on Nova's list in the back row (tap one to hear its word). Visual
+ * first: they stir, twinkle, the arrow to the nearest pulses, at last they
+ * glow; the rustle (from its side of the screen) is only an extra. Each find
+ * jumps and flies into its slot, which gets a green tick; all found, a flash
+ * and the photo of them together, off to the album, then Nova cheers. Arrow
+ * buttons and the arrow keys look round too; each thing is a button for a
+ * keyboard.
  */
-export function FindPlay({ stage, place, total, words, again, next, dir }: FindPlayProps) {
+export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProps) {
   const done = useProgress((state) => state.hydrated && Boolean(state.items[findKey(stage.n)]));
-  const photos = useProgress((state) =>
-    state.hydrated ? Object.keys(state.items).filter((key) => key.startsWith("find.")).length : 0,
-  );
   const complete = useProgress((state) => state.complete);
   const hydrated = useProgress((state) => state.hydrated);
-  const thing = stage.thing;
   /* A wide screen's frame, or a phone's (taller, a near table below). */
   const wide = useWide();
   const art = stage.art[wide ? "landscape" : "portrait"];
   const shape: Shape = place[wide ? "landscape" : "portrait"];
-  const say = (line: string) => format(line, { thing });
+  const spot = (thing: string) => (shape.things as Record<string, Spot>)[thing];
 
   const boxRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
   const midRef = useRef<HTMLDivElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
-  const thingRef = useRef<HTMLButtonElement>(null);
-  const frame = useRef<Frame>({ w: 0, h: 0, l: 0, midW: 0, reach: 0 });
+  const thingRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const slotRefs = useRef<Record<string, HTMLSpanElement | null>>({});
+  const frame = useRef<Frame>({ w: 0, h: 0, midW: 0, reach: 0 });
   /* Where the camera stands: -reach … reach from the middle. */
   const dx = useRef(0);
   const glide = useRef(0);
   const frontAlpha = useRef<{ data: Uint8ClampedArray; w: number; h: number } | null>(null);
   const timers = useRef<number[]>([]);
+  const rippleId = useRef(0);
 
   const [chosen, setPhase] = useState<Phase | null>(null);
   /* The first time, Nova asks; a stage already found starts straight in. */
   const phase: Phase | null = chosen ?? (!hydrated ? null : done ? "play" : "intro");
   const [loaded, setLoaded] = useState(0);
-  const [hint, setHint] = useState({ stir: false, sparkle: false, point: 0, glow: false });
+  /* Found: `taken` the moment it is tapped (it jumps, then flies), `got` once in its slot. */
+  const [taken, setTaken] = useState<string[]>([]);
+  const [got, setGot] = useState<string[]>([]);
+  const [flights, setFlights] = useState<{ thing: string; style: CSSProperties }[]>([]);
+  const [hint, setHint] = useState(NO_HINT);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
-  const [flight, setFlight] = useState<CSSProperties | null>(null);
   const [round, setRound] = useState(0);
 
   useScrollLock(true);
@@ -138,7 +145,7 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
     const { width: w, height: h } = box.getBoundingClientRect();
     const l = Math.max(h, w / (shape.aMid * (1 - MIN_LOOK)));
     const midW = shape.aMid * l;
-    frame.current = { w, h, l, midW, reach: Math.max(0, (midW - w) / 2) };
+    frame.current = { w, h, midW, reach: Math.max(0, (midW - w) / 2) };
     const top = (h - l) * 0.6;
     const size = (el: HTMLDivElement | null, width: number) => {
       if (!el) return;
@@ -159,7 +166,7 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
     return () => observer.disconnect();
   }, [measure]);
 
-  /* A smooth move of the camera to `to` (the arrows, the keys, framing the find). */
+  /* A smooth move of the camera to `to` (the arrows, the keys, a swipe's glide). */
   const moveTo = useCallback(
     (to: number, ms = 650) => {
       cancelAnimationFrame(glide.current);
@@ -206,49 +213,74 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
     return alpha.data[(py * alpha.w + px) * 4 + 3] > COVERED;
   };
 
-  /* ---- Found ---- */
-  const found = () => {
-    if (phase !== "play") return;
-    setPhase("found");
-    setHint({ stir: false, sparkle: false, point: 0, glow: false });
-    playSfx("found");
-    void playCue(lessonCue.word(thing));
-    /* The camera frames it: the thing to the middle of the screen. */
-    const rect = thingRef.current?.getBoundingClientRect();
+  /* How far each still-hidden thing is from the middle of the view (-1 left … 1 right). */
+  const hiding = stage.things.filter((thing) => !taken.includes(thing));
+  const sideOf = (thing: string) => {
+    const rect = thingRefs.current[thing]?.getBoundingClientRect();
     const box = boxRef.current?.getBoundingClientRect();
-    if (rect && box) moveTo(dx.current + (rect.left + rect.width / 2 - (box.left + box.width / 2)), 600);
-    later(FLASH_MS, () => {
+    if (!rect || !box) return 0;
+    return (rect.left + rect.width / 2 - (box.left + box.width / 2)) / (box.width / 2);
+  };
+  const nearest = () => hiding.reduce<string | null>((best, thing) => (best === null || Math.abs(sideOf(thing)) < Math.abs(sideOf(best)) ? thing : best), null);
+
+  /* ---- A find ---- */
+  const find = (thing: string) => {
+    if (phase !== "play" || taken.includes(thing)) return;
+    const left = hiding.length - 1;
+    setTaken((list) => [...list, thing]);
+    setHint(NO_HINT);
+    playSfx("found", stage.things.length - 1 - left);
+    void playCue(lessonCue.word(thing));
+    /* After its jump: from where it is to its slot on the list. */
+    later(POP_MS, () => {
+      const from = thingRefs.current[thing]?.querySelector("img")?.getBoundingClientRect();
+      const to = slotRefs.current[thing]?.querySelector("img")?.getBoundingClientRect();
+      if (from && to) {
+        setFlights((list) => [
+          ...list,
+          {
+            thing,
+            style: {
+              left: from.left,
+              top: from.top,
+              width: from.width,
+              height: from.height,
+              "--dx": `${to.left - from.left}px`,
+              "--dy": `${to.top - from.top}px`,
+              "--s": to.width / from.width,
+            } as CSSProperties,
+          },
+        ]);
+      }
+      playSfx("whoosh");
+    });
+    later(POP_MS + FLY_MS, () => {
+      setFlights((list) => list.filter((f) => f.thing !== thing));
+      setGot((list) => [...list, thing]);
+      playSfx("plop");
+    });
+    if (left > 0) return;
+    /* The last one: the photo of them together. */
+    const end = POP_MS + FLY_MS;
+    later(end + PHOTO_MS, () => {
       setPhase("photo");
       playSfx("snap");
     });
-    later(FLY_MS, () => {
-      /* Into the album: from the middle of the stage to the chip. */
-      const chip = document.querySelector("[data-find-album]")?.getBoundingClientRect();
-      const stageBox = boxRef.current?.getBoundingClientRect();
-      if (chip && stageBox) {
-        setFlight({
-          "--to-x": `${chip.left + chip.width / 2 - (stageBox.left + stageBox.width / 2)}px`,
-          "--to-y": `${chip.top + chip.height / 2 - (stageBox.top + stageBox.height / 2)}px`,
-        } as CSSProperties);
-      }
-      setPhase("fly");
-      playSfx("whoosh");
-    });
-    later(FLY_MS + 700, () => {
+    later(end + AWAY_MS, () => {
+      setPhase("away");
       complete(findKey(stage.n), 1);
-      playSfx("plop");
     });
-    later(TALK_MS, () => setPhase("talk"));
+    later(end + TALK_MS, () => setPhase("talk"));
   };
 
   /* ---- Dragging, tapping, the wheel, the keys ---- */
-  const drag = useRef<{ id: number; x: number; y: number; at: number; t: number; moved: boolean; v: number; last: [number, number] } | null>(null);
+  const drag = useRef<{ id: number; x: number; y: number; at: number; moved: boolean; v: number; last: [number, number] } | null>(null);
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (phase !== "play" || (event.target as HTMLElement).closest("[data-find-ui]")) return;
     cancelAnimationFrame(glide.current);
     event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, at: dx.current, t: performance.now(), moved: false, v: 0, last: [event.clientX, performance.now()] };
+    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, at: dx.current, moved: false, v: 0, last: [event.clientX, performance.now()] };
   };
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const d = drag.current;
@@ -275,18 +307,22 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
     tap(event.clientX, event.clientY);
   };
 
+  /* A tap finds what it lands on — unless a near thing is in the way there. */
   const tap = (x: number, y: number) => {
-    const rect = thingRef.current?.getBoundingClientRect();
-    const pad = rect ? Math.min(rect.width, rect.height) * 0.12 : 0;
-    const onThing = rect && x >= rect.left - pad && x <= rect.right + pad && y >= rect.top - pad && y <= rect.bottom + pad;
-    if (onThing && !coveredAt(x, y)) {
-      found();
+    const hit = hiding.find((thing) => {
+      const rect = thingRefs.current[thing]?.getBoundingClientRect();
+      if (!rect) return false;
+      const pad = Math.min(rect.width, rect.height) * 0.12;
+      return x >= rect.left - pad && x <= rect.right + pad && y >= rect.top - pad && y <= rect.bottom + pad;
+    });
+    if (hit && !coveredAt(x, y)) {
+      find(hit);
       return;
     }
     const box = boxRef.current?.getBoundingClientRect();
     if (!box) return;
     playSfx("tap");
-    const id = performance.now();
+    const id = ++rippleId.current;
     setRipples((list) => [...list.slice(-3), { id, x: x - box.left, y: y - box.top }]);
     later(700, () => setRipples((list) => list.filter((r) => r.id !== id)));
   };
@@ -305,33 +341,36 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
     return () => box.removeEventListener("wheel", onWheel);
   }, [phase, paint]);
 
-  /* ---- The hints: seen first, heard as an extra ---- */
+  /* ---- The hints: seen first, heard as an extra; afresh after each find ---- */
   useEffect(() => {
-    if (phase !== "play") return;
-    const start = performance.now();
-    const side = () => {
-      const rect = thingRef.current?.getBoundingClientRect();
-      const box = boxRef.current?.getBoundingClientRect();
-      if (!rect || !box) return 0;
-      return clamp((rect.left + rect.width / 2 - (box.left + box.width / 2)) / (box.width / 2), -1, 1);
-    };
+    if (phase !== "play" || !hiding.length) return;
+    /* Counted in ticks (TICK_MS each) from the hunt's start or the last find. */
+    let t = 0;
     const tick = window.setInterval(() => {
-      const t = performance.now() - start;
-      setHint({ stir: t >= WIGGLE_MS, sparkle: t >= SPARKLE_MS, point: t >= POINT_MS ? (side() < 0 ? -1 : 1) : 0, glow: t >= GLOW_MS });
-    }, 250);
-    const rustle = window.setInterval(() => playSfx("rustle", undefined, { pan: side(), volume: 0.55 }), WIGGLE_MS);
+      t += TICK_MS;
+      const goal = nearest();
+      const side = goal ? sideOf(goal) : 0;
+      setHint({ stir: t >= WIGGLE_MS, sparkle: t >= SPARKLE_MS, point: t >= POINT_MS ? (side < 0 ? -1 : 1) : 0, glow: t >= GLOW_MS });
+    }, TICK_MS);
+    const rustle = window.setInterval(() => {
+      const goal = nearest();
+      if (goal) playSfx("rustle", undefined, { pan: clamp(sideOf(goal), -1, 1), volume: 0.55 });
+    }, WIGGLE_MS);
     return () => {
       window.clearInterval(tick);
       window.clearInterval(rustle);
     };
-  }, [phase, round]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `nearest`/`sideOf` read refs; a find (`taken`) restarts the hints.
+  }, [phase, round, taken.length]);
 
   const replay = () => {
     timers.current.forEach(window.clearTimeout);
     timers.current = [];
-    setFlight(null);
+    setTaken([]);
+    setGot([]);
+    setFlights([]);
     setRipples([]);
-    setHint({ stir: false, sparkle: false, point: 0, glow: false });
+    setHint(NO_HINT);
     dx.current = 0;
     paint();
     setRound((r) => r + 1);
@@ -340,43 +379,52 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
 
   const ready = loaded >= 3;
   const hunting = phase === "play";
-  const shown = phase === "found" || phase === "photo" || phase === "fly";
-  const thingBox = { left: `${shape.thing[0]}%`, top: `${shape.thing[1]}%`, width: `${shape.thing[2]}%`, height: `${shape.thing[3]}%` };
-  const counted = Math.min(total, photos);
+  const ended = phase === "photo" || phase === "away" || phase === "talk" || phase === "done";
 
   return (
     <>
       <BackRow href="/play/find" label={words.backToAlbum}>
-        <span className="flex items-center gap-2.5 sm:gap-3">
-          <Button3D
-            tone={{ face: "var(--surface)", text: "var(--color-ink-fixed)" }}
-            variant="calm"
-            aria-label={say(words.hearAria)}
-            onClick={() => void playCue(lessonCue.word(thing))}
-            data-sfx="none"
-            className="btn3d--clay-white h-12 shrink-0 gap-2 ps-2 pe-4 text-base font-bold sm:h-14 sm:text-lg"
-          >
-            <Image src={art.thing} alt="" sizes="40px" className="h-9 w-9 object-contain sm:h-10 sm:w-10" />
-            <span dir={dir}>{format(words.ask, { thing })}</span>
-          </Button3D>
-          <Link
-            href="/play/find"
-            data-find-album
-            aria-label={format(words.albumAria, { n: counted, total })}
-            className={`discover-chip find-album-chip ${phase === "talk" || phase === "done" ? "find-album-chip--got" : ""}`}
-          >
-            <Camera className="h-6 w-6" strokeWidth={2.4} aria-hidden />
-            <span aria-hidden dir="ltr">
-              {counted}/{total}
-            </span>
-          </Link>
+        {/* Nova's list: a magnifier, then a slot per thing to find — its picture,
+            its word on a tap; a green tick once it is found. */}
+        <span role="list" aria-label={words.listAria} className="find-list">
+          <span aria-hidden className="find-list-glass">
+            <Search strokeWidth={3} />
+          </span>
+          {stage.things.map((thing) => {
+            const has = got.includes(thing);
+            return (
+              <button
+                key={thing}
+                type="button"
+                role="listitem"
+                data-sfx="none"
+                aria-label={format(has ? words.slotFoundAria : words.slotAria, { thing })}
+                onClick={() => void playCue(lessonCue.word(thing))}
+                className={`find-slot ${has ? "find-slot--got" : ""}`}
+              >
+                <span
+                  ref={(el) => {
+                    slotRefs.current[thing] = el;
+                  }}
+                  className="find-slot-pic"
+                >
+                  <Image src={art.things[thing]} alt="" sizes="48px" />
+                </span>
+                {has && (
+                  <span className="find-slot-tick" aria-hidden>
+                    <Check strokeWidth={4} />
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </span>
       </BackRow>
 
       <div
         ref={boxRef}
         role="group"
-        aria-label={say(words.sceneAria)}
+        aria-label={words.sceneAria}
         tabIndex={0}
         onKeyDown={(event) => {
           if (phase !== "play") return;
@@ -387,7 +435,7 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={() => (drag.current = null)}
-        className={`find-stage ${ready ? "find-stage--ready" : ""} ${phase !== null && phase !== "intro" && phase !== "play" ? "find-stage--found" : ""}`}
+        className={`find-stage ${ready ? "find-stage--ready" : ""} ${ended ? "find-stage--found" : ""}`}
       >
         {/* The layers wait for the client: only it knows the screen's frame (the server answers portrait). */}
         <div ref={backRef} className="find-layer" aria-hidden>
@@ -395,32 +443,36 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
         </div>
         <div ref={midRef} className="find-layer">
           {hydrated && <Image key={`m${wide}`} src={art.mid} alt="" fill sizes="(orientation: portrait) 330vw, 160vw" onLoad={() => setLoaded((n) => n + 1)} />}
-          <button
-            ref={thingRef}
-            type="button"
-            data-find-ui
-            aria-label={thing}
-            tabIndex={hunting ? 0 : -1}
-            onClick={(event) => {
-              /* A pointer's tap is judged by the stage (in the way or not); this is the keyboard's. */
-              if (event.detail === 0) found();
-            }}
-            className={`find-thing ${shown ? "find-thing--found" : ""} ${hint.glow ? "find-thing--glow" : ""}`}
-            style={thingBox}
-          >
-            <Image
-              src={art.thing}
-              alt=""
-              fill
-              sizes="(orientation: portrait) 40vw, 16vw"
-              className={`find-thing-pic ${hunting && hint.stir ? "find-thing-pic--stir" : ""}`}
-            />
-            {hunting && hint.sparkle && (
-              <span className="find-twinkle" style={{ left: `${shape.leaf[0]}%`, top: `${shape.leaf[1]}%` }} aria-hidden>
-                <Sparkles strokeWidth={2.2} />
-              </span>
-            )}
-          </button>
+          {stage.things.map((thing) => {
+            const { box, leaf } = spot(thing);
+            const out = taken.includes(thing);
+            const flying = out && (got.includes(thing) || flights.some((f) => f.thing === thing));
+            return (
+              <button
+                key={thing}
+                ref={(el) => {
+                  thingRefs.current[thing] = el;
+                }}
+                type="button"
+                data-find-ui
+                aria-label={thing}
+                tabIndex={hunting && !out ? 0 : -1}
+                onClick={(event) => {
+                  /* A pointer's tap is judged by the stage (in the way or not); this is the keyboard's. */
+                  if (event.detail === 0) find(thing);
+                }}
+                className={`find-thing ${out ? "find-thing--found" : ""} ${flying ? "find-thing--gone" : ""} ${hunting && !out && hint.glow ? "find-thing--glow" : ""}`}
+                style={{ left: `${box[0]}%`, top: `${box[1]}%`, width: `${box[2]}%`, height: `${box[3]}%` }}
+              >
+                <Image src={art.things[thing]} alt="" fill sizes="(orientation: portrait) 40vw, 16vw" className={`find-thing-pic ${hunting && !out && hint.stir ? "find-thing-pic--stir" : ""}`} />
+                {hunting && !out && hint.sparkle && (
+                  <span className="find-twinkle" style={{ left: `${leaf[0]}%`, top: `${leaf[1]}%` }} aria-hidden>
+                    <Sparkles strokeWidth={2.2} />
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
         <div ref={frontRef} className="find-layer find-layer--front" aria-hidden>
           {hydrated && (
@@ -468,11 +520,15 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
           </>
         )}
 
-        {phase === "photo" || phase === "fly" ? <span className="find-flash" aria-hidden /> : null}
-        {(phase === "photo" || phase === "fly") && (
-          <figure className={`find-photo ${phase === "fly" ? "find-photo--fly" : ""}`} style={flight ?? undefined}>
+        {phase === "photo" && <span className="find-flash" aria-hidden />}
+        {(phase === "photo" || phase === "away") && (
+          <figure className={`find-photo ${phase === "away" ? "find-photo--away" : ""}`}>
             <Image src={stage.art.photo} alt="" sizes="(orientation: portrait) 60vw, 22vw" className="find-photo-pic" />
-            <figcaption>{thing}</figcaption>
+            <figcaption>
+              {stage.things.map((thing) => (
+                <Image key={thing} src={art.things[thing]} alt="" sizes="40px" className="find-photo-thing" />
+              ))}
+            </figcaption>
           </figure>
         )}
 
@@ -484,13 +540,23 @@ export function FindPlay({ stage, place, total, words, again, next, dir }: FindP
         )}
       </div>
 
+      {flights.length > 0 &&
+        createPortal(
+          flights.map(({ thing, style }) => (
+            <span key={thing} className="find-fly" style={style} aria-hidden>
+              <Image src={art.things[thing]} alt="" fill sizes="(orientation: portrait) 40vw, 16vw" />
+            </span>
+          )),
+          document.body,
+        )}
+
       {(phase === "intro" || phase === "talk") &&
         createPortal(
           <FriendSays
             key={phase}
             picture={CLASSROOMS.nova.cheer}
             ink="var(--color-nova)"
-            lines={phase === "intro" ? [say(words.intro1), words.intro2] : [say(words.found1), words.found2]}
+            lines={phase === "intro" ? [words.intro1, words.intro2] : [words.found1, words.found2]}
             skipLabel={words.letsGo}
             dir={dir}
             onDone={() => setPhase(phase === "intro" ? "play" : "done")}
