@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { Hourglass } from "lucide-react";
-import { GameCard } from "@/components/activities/game-card";
 import { PlayLock } from "@/components/activities/play-lock";
 import { PlayStars } from "@/components/activities/play-stars";
 import { BackRow } from "@/components/ui/back-button";
@@ -18,9 +16,8 @@ const ITEM_STAGGER = 0.12;
 
 /**
  * Play = three games, cards only, no heading or copy (the user, 2026-11-19):
- * Puzzle, Memory Match and Find (not built yet — its card is not a link).
- * Every card is a `GameCard`; Puzzle and Memory Match each open for two of
- * the stars a child earns in Learn (`PlayLock`); the bank of stars left sits
+ * Puzzle, Memory Match and Find. Every card is a `GameCard`; each opens for
+ * two of the stars a child earns in Learn (`PlayLock`); the bank of stars left sits
  * at the right of the back row (`PlayStars`). The Sleeping Lab is paused.
  *
  * Phone: one column. Tablet: two, Find centred under them. Desktop: three in
@@ -44,23 +41,10 @@ export default async function PlayPage() {
             words={words} dir={dir} className="anim-rise-in" style={delay(0)} />
           <PlayLock game="memory" card={PLAY_CARDS.memory} title={words.memoryTitle} alt={words.memoryCtaAlt}
             words={words} dir={dir} className="anim-rise-in" style={delay(1)} />
-          <GameCard
-            card={PLAY_CARDS.find}
-            title={words.findCtaButton}
-            alt={words.findCtaAlt}
-            dir={dir}
-            label={`${words.findCtaButton} — ${words.findSoon}`}
-            action={
-              <span dir={dir} className="discover-soon discover-soon--sm">
-                <span aria-hidden className="discover-soon-icon">
-                  <Hourglass className="h-4 w-4" strokeWidth={2.5} />
-                </span>
-                {words.findSoon}
-              </span>
-            }
+          <PlayLock game="find" card={PLAY_CARDS.find} title={words.findCtaButton} alt={words.findCtaAlt}
+            words={words} dir={dir}
             className="anim-rise-in sm:col-span-2 sm:w-[calc(50%-1rem)] sm:justify-self-center lg:col-span-1 lg:w-auto lg:justify-self-stretch"
-            style={delay(2)}
-          />
+            style={delay(2)} />
         </div>
       </div>
     </main>
