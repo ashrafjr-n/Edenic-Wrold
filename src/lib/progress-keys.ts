@@ -46,6 +46,12 @@ export function chestStarKey(characterId: string, lessonId: string): ItemKey {
 }
 
 
+/** A Find stage the child has found its thing in (`find.1`) — its photo is
+    in the album. */
+export function findKey(stage: number): ItemKey {
+  return `find.${stage}`;
+}
+
 /** Play's games that stars open (`edenic-plan.md` "Stars → Play's games"). */
 export type PlayGame = "puzzle" | "memory" | "find";
 
