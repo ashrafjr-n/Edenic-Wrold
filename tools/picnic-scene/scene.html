@@ -9653,6 +9653,17 @@ if (THING) {
       scene.add(way);
       ways.push(way);
     }
+    /* Seasons and Weather's page (2026-11-20): the way goes through the year — the ground, the hills, the
+       trees and the things round each stop in its season (spring the farthest, winter by the chest), each
+       with its weather's thing; the island's own pieces (`seasonThing`, `weatherThing`). */
+    const YEAR_BANDS = [
+      { season: "spring", weather: "rainy", ground: 0xd3edbd, hill: 0xf7c9dd, tone: 0 },
+      { season: "summer", weather: "sunny", ground: 0xb9e3a0, hill: 0xa6db8e, tone: 4 },
+      { season: "fall", weather: "windy", ground: 0xf1dba6, hill: 0xf3bb86, tone: 8 },
+      { season: "winter", weather: "snowy", ground: 0xf2f6fd, hill: 0xe3ebf8, tone: 12 },
+    ];
+    /* A z's band: the stops are 11 apart (spring at -39 … winter at -6), the edges halfway between. */
+    const yearBand = (z) => (z < -33.5 ? 0 : z < -22.5 ? 1 : z < -11.5 ? 2 : 3);
     if (!SKY_STOPS && !LAB) {
     /* Round about, the same pink: bell hills. */
     const bell = (r, ht, color = PAL_HILL) => mesh(smoothLathe([[r, 0], [r * 0.84, ht * 0.42], [r * 0.58, ht * 0.8], [r * 0.26, ht * 0.98], [0, ht]], 96), soft(color, { roughness: 0.92 }));
