@@ -31,7 +31,7 @@
  * the counter, the thing to find, the near things before the lens) and the
  * album's photo, `out/find-<place>/`. Then `crop.py find <place>`:
  *
- *   node tools/picnic-scene/render.cjs find kitchen
+ *   node tools/picnic-scene/render.cjs find kitchen garden farm
  *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
@@ -475,9 +475,14 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
   } else if (mode === "find") {
     /* Play's Find (2026-11-20): a stage's place in depth layers —
        `out/find-<place>/<frame>/` (back, mid, the thing, front, photo, all). */
-    for (const place of specs.length ? specs : ["kitchen"]) {
+    for (const place of specs.length ? specs : ["kitchen", "garden", "farm"]) {
+      /* Bloo's animals stand in as their own pictures (data URLs: a `file:` image taints the canvas). */
+      const pictures = place === "farm" ? Object.fromEntries(["cat", "dog"].map((a) => [a, "data:image/png;base64," + fs.readFileSync(path.join(__dirname, `../../public/assets/learn/bloo/animals/things/${a}.png`)).toString("base64")])) : null;
       for (const frame of ["landscape", "portrait"]) {
-        const layers = await render(page, `find=${place}&frame=${frame}`);
+        await page.goto("file://" + path.join(__dirname, "scene.html") + `?find=${place}&frame=${frame}`);
+        await page.waitForFunction(() => window.ready, null, { timeout: 60000 });
+        if (pictures) await page.evaluate((urls) => window.setPictures(urls), pictures);
+        const layers = await page.evaluate(() => window.renderLayers());
         const out = path.join(__dirname, "out", `find-${place}`, frame);
         fs.rmSync(out, { recursive: true, force: true });
         fs.mkdirSync(out, { recursive: true });
