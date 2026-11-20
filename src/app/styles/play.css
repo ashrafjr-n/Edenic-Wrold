@@ -84,17 +84,6 @@ button.game-card:focus-visible {
   color: color-mix(in srgb, var(--color-ink-fixed) 55%, #fff);
 }
 
-/* "Coming soon" in a card's foot: a size down from Discover's sign. */
-.discover-soon.discover-soon--sm {
-  gap: 0.45rem;
-  padding: 0.35rem 1rem 0.35rem 0.35rem;
-  font-size: 1rem;
-}
-
-.discover-soon--sm .discover-soon-icon {
-  width: 2rem;
-}
-
 /* ---------------------------------------------------------------
    Play's star locks (`PlayLock`): a game stays shut until the child spends
    two of Learn's chest stars on it. Shut, the window is frosted in the
