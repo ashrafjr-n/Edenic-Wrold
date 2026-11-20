@@ -474,15 +474,17 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
     }
   } else if (mode === "find") {
     /* Play's Find (2026-11-20): a stage's place in depth layers —
-       `out/find-<place>/` (back, mid, the thing, front, photo, all). */
+       `out/find-<place>/<frame>/` (back, mid, the thing, front, photo, all). */
     for (const place of specs.length ? specs : ["kitchen"]) {
-      const layers = await render(page, `find=${place}`);
-      const out = path.join(__dirname, "out", `find-${place}`);
-      fs.rmSync(out, { recursive: true, force: true });
-      fs.mkdirSync(out, { recursive: true });
-      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
-      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
-      console.log(`find ${place}: done`);
+      for (const frame of ["landscape", "portrait"]) {
+        const layers = await render(page, `find=${place}&frame=${frame}`);
+        const out = path.join(__dirname, "out", `find-${place}`, frame);
+        fs.rmSync(out, { recursive: true, force: true });
+        fs.mkdirSync(out, { recursive: true });
+        for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+        fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+        console.log(`find ${place} ${frame}: done`);
+      }
     }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
