@@ -8,7 +8,7 @@ import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Find — Edenic World",
-  description: "Find what is hidden in Nova's kitchen and keep its photo in your album.",
+  description: "Find what is hidden in Nova's kitchen and keep the photo in your album.",
 };
 
 /* The heading's mark: the other games' three chips, in Find's pink, one camera. */
@@ -17,7 +17,9 @@ const CHIPS: HeadingChip[] = HEADING_CHIP_SHAPE.map((shape) => ({ ...shape, face
 /** Every page of the album, built or not. */
 const SLOTS: AlbumSlot[] = Array.from({ length: FIND_STAGE_COUNT }, (_, i) => {
   const stage = findStage(i + 1);
-  return stage ? { n: stage.n, thing: stage.thing, photo: stage.art.photo, place: stage.art.place } : { n: i + 1 };
+  return stage
+    ? { n: stage.n, things: stage.things.map((word) => ({ word, pic: stage.art.landscape.things[word] })), photo: stage.art.photo, place: stage.art.place }
+    : { n: i + 1 };
 });
 
 /**
