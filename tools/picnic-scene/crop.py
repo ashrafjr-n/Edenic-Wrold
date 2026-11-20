@@ -257,7 +257,7 @@ if NAME == "find":
     # layers' shape, each hidden thing's box and its tip).
     #
     #     python3 tools/picnic-scene/crop.py find kitchen
-    places = {"kitchen": ["carrot", "broccoli"], "garden": ["flower", "leaf"], "farm": ["cat", "dog"]}
+    places = {"kitchen": ["carrot", "broccoli"], "garden": ["flower", "leaf"], "farm": ["cat", "dog"], "shapes": ["heart", "diamond"]}
     lines = []
     for place in sys.argv[2:] or list(places):
         frames = []
