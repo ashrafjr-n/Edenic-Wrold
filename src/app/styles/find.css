@@ -319,12 +319,16 @@
 }
 
 .find-photo figcaption {
-  padding: 0.55rem 0 0.7rem;
-  text-align: center;
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--color-ink-fixed);
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0 0.6rem;
+}
+
+.find-photo-thing {
+  width: 2.6rem;
+  height: 2.6rem;
+  object-fit: contain;
 }
 
 @keyframes find-photo-in {
@@ -335,11 +339,12 @@
   }
 }
 
-.find-photo--fly {
-  animation: find-photo-fly 0.75s cubic-bezier(0.55, 0, 0.35, 1) forwards;
+/* Off to the album: up and away, turning, fading. */
+.find-photo--away {
+  animation: find-photo-away 0.8s cubic-bezier(0.55, 0, 0.35, 1) forwards;
 }
 
-@keyframes find-photo-fly {
+@keyframes find-photo-away {
   from {
     translate: -50% -50%;
     scale: 1;
@@ -347,19 +352,182 @@
     opacity: 1;
   }
 
-  85% {
-    opacity: 1;
-  }
-
   to {
-    translate: calc(-50% + var(--to-x)) calc(-50% + var(--to-y));
-    scale: 0.1;
-    rotate: 18deg;
+    translate: -50% -140%;
+    scale: 0.3;
+    rotate: 14deg;
     opacity: 0;
   }
 }
 
-/* The album chip in the back row; it bumps as the photo lands. */
+/* ---- Nova's list, in the back row: a magnifier and a slot per thing ---- */
+.find-list {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.45rem 0.35rem 0.35rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow:
+    inset 0 7px 10px -5px rgb(255 255 255 / 90%),
+    inset 0 -8px 12px -5px rgb(var(--shadow-hue) / 22%),
+    0 14px 26px -10px rgb(var(--shadow-hue) / 45%);
+}
+
+/* The magnifier: a little pink clay ball, grain and all. */
+.find-list-glass {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  color: #fff;
+  background-color: var(--accent);
+  background-image: var(--noise);
+  background-blend-mode: soft-light;
+  box-shadow:
+    inset 0 5px 8px -4px rgb(255 255 255 / 55%),
+    inset 0 -5px 8px -4px color-mix(in srgb, var(--accent-dark) 80%, transparent);
+}
+
+.find-list-glass svg {
+  width: 52%;
+  height: 52%;
+}
+
+/* A slot: a hollow pressed into the clay, the thing's picture in it. */
+.find-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, #fff 88%, rgb(var(--shadow-hue)));
+  box-shadow:
+    inset 0 5px 9px -4px rgb(var(--shadow-hue) / 30%),
+    inset 0 -3px 6px -4px rgb(var(--shadow-hue) / 12%);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.find-slot:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.find-slot-pic {
+  display: grid;
+  place-items: center;
+  width: 82%;
+  height: 82%;
+}
+
+.find-slot-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgb(var(--shadow-hue) / 25%));
+}
+
+/* Found: the hollow goes a soft green and a green clay tick pops on. */
+.find-slot--got {
+  background: color-mix(in srgb, #fff 70%, var(--color-go));
+  animation: find-got 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes find-got {
+  45% {
+    scale: 1.22;
+  }
+}
+
+.find-slot-tick {
+  position: absolute;
+  right: -0.25rem;
+  bottom: -0.25rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  color: #fff;
+  background-color: var(--color-go);
+  background-image: var(--noise);
+  background-blend-mode: soft-light;
+  box-shadow:
+    inset 0 3px 5px -3px rgb(255 255 255 / 60%),
+    0 3px 6px -2px rgb(var(--shadow-hue) / 40%);
+  animation: find-tick 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+}
+
+.find-slot-tick svg {
+  width: 68%;
+  height: 68%;
+}
+
+@keyframes find-tick {
+  from {
+    scale: 0;
+    rotate: -40deg;
+  }
+}
+
+@media (width >= 40rem) {
+  .find-list {
+    gap: 0.5rem;
+    padding: 0.4rem 0.55rem 0.4rem 0.4rem;
+  }
+
+  .find-list-glass {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+
+  .find-slot {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+/* A find on its way from the counter to its slot (portalled, fixed, under
+   the header's z-30): it swells and tips, then shrinks into the hollow. */
+.find-fly {
+  position: fixed;
+  z-index: 25;
+  pointer-events: none;
+  transform-origin: 0 0;
+  filter: drop-shadow(0 0 0.8rem rgb(255 236 170 / 95%));
+  animation: find-fly 0.75s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+}
+
+@keyframes find-fly {
+  from {
+    translate: 0 0;
+    scale: 1;
+    rotate: 0deg;
+  }
+
+  40% {
+    scale: 1.15;
+    rotate: -12deg;
+  }
+
+  to {
+    translate: var(--dx) var(--dy);
+    scale: var(--s);
+    rotate: 0deg;
+  }
+}
+
+/* Gone from the counter once it flies. */
+.find-thing--gone {
+  visibility: hidden;
+}
+
+/* The album's count chip (`FindAlbum`). */
 .find-album-chip {
   font-size: 1.25rem;
   padding: 0.55rem 1rem 0.55rem 0.8rem;
@@ -368,16 +536,6 @@
 
 .find-album-chip svg {
   color: var(--accent);
-}
-
-.find-album-chip--got {
-  animation: find-bump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes find-bump {
-  50% {
-    scale: 1.2;
-  }
 }
 
 .find-done {
@@ -465,6 +623,19 @@ a.find-polaroid:focus-visible {
   color: var(--color-ink-fixed);
 }
 
+/* A found stage's caption: what was found, in little pictures. */
+.find-polaroid--done .find-polaroid-caption {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.find-polaroid-thing {
+  width: clamp(1.2rem, 6vw, 2rem);
+  height: clamp(1.2rem, 6vw, 2rem);
+  object-fit: contain;
+}
+
 .find-polaroid--soon .find-polaroid-caption,
 .find-polaroid--locked .find-polaroid-caption {
   font-size: clamp(0.65rem, 2.6vw, 0.95rem);
@@ -530,12 +701,14 @@ a.find-polaroid:focus-visible {
   .find-twinkle,
   .find-look--point,
   .find-photo,
-  .find-photo--fly,
-  .find-album-chip--got {
+  .find-photo--away,
+  .find-slot--got,
+  .find-slot-tick,
+  .find-fly {
     animation: none;
   }
 
-  .find-photo--fly {
+  .find-photo--away {
     opacity: 0;
   }
 }
