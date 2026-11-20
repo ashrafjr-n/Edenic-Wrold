@@ -287,6 +287,26 @@ export const en = {
     secondsLeftAria: "{n} seconds left",
     cardFaceDownAria: "Card {index} face down",
   },
+  /** Play's Find (2026-11-20): the album and its stages. `{thing}` is the taught English word. */
+  findGame: {
+    album: "My photo album",
+    albumAria: "My photo album: {n} of {total} photos",
+    photoAria: "Photo {n}: the {thing}. Play it again",
+    playAria: "Play stage {n}",
+    lockedAria: "Stage {n}, locked",
+    soonAria: "Stage {n}, coming soon",
+    ask: "Find the {thing}!",
+    hearAria: "Hear the word {thing}",
+    sceneAria: "Drag to look around, then tap the {thing}",
+    lookLeft: "Look left",
+    lookRight: "Look right",
+    intro1: "Help me find the {thing}!",
+    intro2: "Drag the kitchen to look around. Peek behind things!",
+    found1: "You found the {thing}!",
+    found2: "Snap! Your photo is in the album.",
+    letsGo: "Let's go!",
+    backToAlbum: "Back to the album",
+  },
   ui: {
     /** Read out while something loads (nothing is written on screen). */
     loading: "Loading…",
