@@ -1,5 +1,35 @@
 import type { StaticImageData } from "next/image";
 import { FIND_PLACES, type FindPlace } from "./find-places";
+import gardenBackWide from "../../public/assets/play/find/garden/landscape/back.jpg";
+import gardenMidWide from "../../public/assets/play/find/garden/landscape/mid.webp";
+import gardenFrontWide from "../../public/assets/play/find/garden/landscape/front.webp";
+import gardenFlowerWide from "../../public/assets/play/find/garden/landscape/flower.webp";
+import gardenLeafWide from "../../public/assets/play/find/garden/landscape/leaf.webp";
+import gardenBack from "../../public/assets/play/find/garden/portrait/back.jpg";
+import gardenMid from "../../public/assets/play/find/garden/portrait/mid.webp";
+import gardenFront from "../../public/assets/play/find/garden/portrait/front.webp";
+import gardenFlower from "../../public/assets/play/find/garden/portrait/flower.webp";
+import gardenLeaf from "../../public/assets/play/find/garden/portrait/leaf.webp";
+import gardenPhoto from "../../public/assets/play/find/garden/photo.jpg";
+import gardenPlace from "../../public/assets/play/find/garden/place.jpg";
+import farmBackWide from "../../public/assets/play/find/farm/landscape/back.jpg";
+import farmMidWide from "../../public/assets/play/find/farm/landscape/mid.webp";
+import farmFrontWide from "../../public/assets/play/find/farm/landscape/front.webp";
+import farmCatWide from "../../public/assets/play/find/farm/landscape/cat.webp";
+import farmDogWide from "../../public/assets/play/find/farm/landscape/dog.webp";
+import farmBack from "../../public/assets/play/find/farm/portrait/back.jpg";
+import farmMid from "../../public/assets/play/find/farm/portrait/mid.webp";
+import farmFront from "../../public/assets/play/find/farm/portrait/front.webp";
+import farmCat from "../../public/assets/play/find/farm/portrait/cat.webp";
+import farmDog from "../../public/assets/play/find/farm/portrait/dog.webp";
+import farmPhoto from "../../public/assets/play/find/farm/photo.jpg";
+import farmPlace from "../../public/assets/play/find/farm/place.jpg";
+import kitchenCarrotIcon from "../../public/assets/play/find/kitchen/carrot-icon.webp";
+import kitchenBroccoliIcon from "../../public/assets/play/find/kitchen/broccoli-icon.webp";
+import gardenFlowerIcon from "../../public/assets/play/find/garden/flower-icon.webp";
+import gardenLeafIcon from "../../public/assets/play/find/garden/leaf-icon.webp";
+import farmCatIcon from "../../public/assets/play/find/farm/cat-icon.webp";
+import farmDogIcon from "../../public/assets/play/find/farm/dog-icon.webp";
 import kitchenBackWide from "../../public/assets/play/find/kitchen/landscape/back.jpg";
 import kitchenBroccoliWide from "../../public/assets/play/find/kitchen/landscape/broccoli.webp";
 import kitchenCarrotWide from "../../public/assets/play/find/kitchen/landscape/carrot.webp";
@@ -23,10 +53,13 @@ export interface FindLayers {
 }
 
 /** A stage's pictures: its place in both frames (a wide screen's and a
-    phone's), the album's photo of what was found and its small picture of the place. */
+    phone's), each thing whole (the list's, the photo's and the album's
+    picture of it — in the place it may be half hidden), the album's photo of
+    what was found and its small picture of the place. */
 export interface FindArt {
   landscape: FindLayers;
   portrait: FindLayers;
+  icons: Record<string, StaticImageData>;
   photo: StaticImageData;
   place: StaticImageData;
 }
@@ -38,6 +71,8 @@ export interface FindArt {
 export interface FindStage {
   n: number;
   place: FindPlace;
+  /** Whose world it is: they ask and cheer (their picture, `FriendSays`). */
+  friend: "pinki" | "nova" | "bloo";
   things: readonly string[];
   art: FindArt;
 }
@@ -50,12 +85,40 @@ export const FIND_STAGES: readonly FindStage[] = [
   {
     n: 1,
     place: "kitchen",
+    friend: "nova",
     things: ["carrot", "broccoli"],
     art: {
       landscape: { back: kitchenBackWide, mid: kitchenMidWide, front: kitchenFrontWide, things: { carrot: kitchenCarrotWide, broccoli: kitchenBroccoliWide } },
       portrait: { back: kitchenBack, mid: kitchenMid, front: kitchenFront, things: { carrot: kitchenCarrot, broccoli: kitchenBroccoli } },
+      icons: { carrot: kitchenCarrotIcon, broccoli: kitchenBroccoliIcon },
       photo: kitchenPhoto,
       place: kitchenPlace,
+    },
+  },
+  {
+    n: 2,
+    place: "garden",
+    friend: "nova",
+    things: ["flower", "leaf"],
+    art: {
+      landscape: { back: gardenBackWide, mid: gardenMidWide, front: gardenFrontWide, things: { flower: gardenFlowerWide, leaf: gardenLeafWide } },
+      portrait: { back: gardenBack, mid: gardenMid, front: gardenFront, things: { flower: gardenFlower, leaf: gardenLeaf } },
+      icons: { flower: gardenFlowerIcon, leaf: gardenLeafIcon },
+      photo: gardenPhoto,
+      place: gardenPlace,
+    },
+  },
+  {
+    n: 3,
+    place: "farm",
+    friend: "bloo",
+    things: ["cat", "dog"],
+    art: {
+      landscape: { back: farmBackWide, mid: farmMidWide, front: farmFrontWide, things: { cat: farmCatWide, dog: farmDogWide } },
+      portrait: { back: farmBack, mid: farmMid, front: farmFront, things: { cat: farmCat, dog: farmDog } },
+      icons: { cat: farmCatIcon, dog: farmDogIcon },
+      photo: farmPhoto,
+      place: farmPlace,
     },
   },
 ];
