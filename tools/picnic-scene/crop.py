@@ -246,6 +246,66 @@ if NAME == "classroom":
         Image.fromarray((out_px * 255).round().astype(np.uint8), "RGBA").save(f"{dest}/{frame}-desk.png", optimize=True)
     sys.exit()
 
+if NAME == "find":
+    # Play's Find (2026-11-20) — run after `render.cjs find <place>`: the room
+    # (`back.jpg`), the counter and its things (`mid.webp`), the near things
+    # blurred as a lens sees them (`front.webp`, half size: it is soft), the
+    # thing to find cut to its pixels (`<thing>.webp`), the album's photo
+    # and the album's small picture of the place, into
+    # `public/assets/play/find/<place>/`. Writes `src/data/find-places.ts`
+    # (each place's layers' shape, the thing's box and its leaves' spot).
+    #
+    #     python3 tools/picnic-scene/crop.py find kitchen
+    places = {"kitchen": "carrot"}
+    lines = []
+    for place in sys.argv[2:] or list(places):
+        thing = places[place]
+        src = os.path.join(HERE, "out", f"find-{place}")
+        dest = os.path.join(ROOT, f"public/assets/play/find/{place}")
+        os.makedirs(dest, exist_ok=True)
+        meta = json.load(open(os.path.join(src, "meta.json")))
+        Image.open(os.path.join(src, "back.png")).convert("RGB").save(f"{dest}/back.jpg", quality=82, optimize=True, progressive=True)
+        mid = Image.open(os.path.join(src, "mid.png")).convert("RGBA")
+        mid.save(f"{dest}/mid.webp", quality=86, method=6)
+        # The lens's blur: on premultiplied colour, so no dark rim bleeds in.
+        front = np.asarray(Image.open(os.path.join(src, "front.png")).convert("RGBA")).astype(np.float32) / 255
+        pre = np.concatenate([front[..., :3] * front[..., 3:], front[..., 3:]], axis=-1)
+        soft = Image.fromarray((pre * 255 + 0.5).astype(np.uint8), "RGBA")
+        soft = soft.resize((soft.width // 2, soft.height // 2), Image.LANCZOS)
+        channels = [ch.filter(ImageFilter.GaussianBlur(4)) for ch in soft.split()]
+        pre = np.stack([np.asarray(ch) for ch in channels], axis=-1).astype(np.float32) / 255
+        a = pre[..., 3:]
+        rgb = np.where(a > 0.004, pre[..., :3] / np.maximum(a, 1e-4), 0)
+        Image.fromarray((np.clip(np.concatenate([rgb, a], axis=-1), 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA").save(f"{dest}/front.webp", quality=84, method=6)
+        cut = Image.open(os.path.join(src, f"{thing}.png")).convert("RGBA")
+        box = alpha_box(cut, threshold=10, pad=4)
+        piece = cut.crop(box)
+        piece.save(f"{dest}/{thing}.webp", quality=88, method=6)
+        # Its leaves: where its green is (the hint's twinkle), % of the piece.
+        px = np.asarray(piece).astype(np.int32)
+        green = (px[..., 1] > px[..., 2] + 40) & (px[..., 1] >= px[..., 0] - 10) & (px[..., 3] > 200)
+        ys, xs = np.nonzero(green)
+        leaf = [float(round(xs.mean() / piece.width * 100, 1)), float(round(ys.min() / piece.height * 100 + 6, 1))] if len(xs) else [50, 20]
+        Image.open(os.path.join(src, "photo.png")).convert("RGB").resize((720, 720), Image.LANCZOS).save(f"{dest}/photo.jpg", quality=86, optimize=True, progressive=True)
+        everything = Image.open(os.path.join(src, "all.png")).convert("RGB")
+        w, h = everything.size
+        tw = round(h * 1.3)
+        everything.crop(((w - tw) // 2, 0, (w + tw) // 2, h)).resize((520, 400), Image.LANCZOS).save(f"{dest}/place.jpg", quality=82, optimize=True, progressive=True)
+        pct = [round(v * 100, 2) for v in (box[0] / w, box[1] / h, (box[2] - box[0]) / w, (box[3] - box[1]) / h)]
+        lines.append(f'  {place}: {{ aMid: {meta["aMid"]}, kFront: {meta["kFront"]}, thing: [{", ".join(map(str, pct))}], leaf: [{leaf[0]}, {leaf[1]}] }},')
+        print(place, thing, pct, leaf)
+    with open(os.path.join(ROOT, "src/data/find-places.ts"), "w") as f:
+        f.write(
+            "/* Written by `tools/picnic-scene/crop.py find` — do not edit by hand.\n"
+            "   Each Find place's layers: the middle layer's width ÷ height (`aMid`), how\n"
+            "   much faster the near layer slides (`kFront`; it is that much wider), the\n"
+            "   thing's box on the middle layer [x, y, w, h] % and its leaves' spot on\n"
+            "   its own picture [x, y] %. */\n"
+            "export const FIND_PLACES = {\n" + "\n".join(lines) + "\n} as const;\n\n"
+            "export type FindPlace = keyof typeof FIND_PLACES;\n"
+        )
+    sys.exit()
+
 if NAME == "playcard":
     # A game card's picture on /play (2026-10-23) — run after `render.cjs
     # backdrop play-<name>`: the landscape frame, sharp (the card lays its
