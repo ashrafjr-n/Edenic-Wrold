@@ -55,6 +55,23 @@ export const FIND_PLACES = {
       },
     },
   },
+  shapes: {
+    kFront: 1.5,
+    landscape: {
+      aMid: 2.7,
+      things: {
+        heart: { box: [79.63, 55.33, 9.41, 22.83], tip: [42.6, 8.2] },
+        diamond: { box: [18.15, 43.42, 6.6, 19.17], tip: [37.6, 8.2] },
+      },
+    },
+    portrait: {
+      aMid: 1.7,
+      things: {
+        heart: { box: [79.85, 53.33, 9.66, 14.67], tip: [43.0, 8.8] },
+        diamond: { box: [17.84, 45.67, 6.76, 12.5], tip: [36.7, 9.3] },
+      },
+    },
+  },
 } as const;
 
 export type FindPlace = keyof typeof FIND_PLACES;
