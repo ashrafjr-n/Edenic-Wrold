@@ -9673,7 +9673,7 @@ if (THING) {
       : COLORS_STOPS
       ? Array.from({ length: 12 }, (_, k) => [k % 2 ? 1 : -1, -6 - k * 10.5, 4.5 + (k % 3) * 0.9, 5 + (k % 4)])
       : [[-1, -6, 4.5, 5], [1, -17, 4.8, 6], [-1, -27, 5.5, 7], [1, -38, 5.5, 8], [-1, -47, 6.5, 9], [1, -58, 6, 8], [-1, -68, 6.5, 9], [1, -79, 6, 8], [-1, -89, 6.5, 9]];
-    for (const [sx, z, r, ht] of hills) add(bell(r, ht), sx * (side + r * 0.5), 0, z);
+    for (const [sx, z, r, ht] of hills) add(bell(r, ht, WEATHER_STOPS ? YEAR_BANDS[yearBand(z)].hill : PAL_HILL), sx * (side + r * 0.5), 0, z);
     /* Past the first lesson: the bow in the shapes' colours, the hills at its
        feet, a tall hill with a wavy golden top. */
     (BLOO_STOPS ? [[8.6, 0x6bb8f0], [6.9, 0xffd77a], [5.2, 0xfbf6ee]] : GARDEN_STOPS ? [[8.6, 0xffa3c8], [6.9, 0x9cc4f2], [5.2, 0xfbf6ee]] : FRUITS_STOPS ? [[8.6, 0xb9a3ec], [6.9, 0xf5d98a], [5.2, 0xfbf6ee]] : [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]]).forEach(([r, color]) => {
