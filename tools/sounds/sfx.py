@@ -249,7 +249,29 @@ def clouds():
     return finish(room(mix(2.0, *air, *harp), 0.8, 0.25), 0.4)
 
 
-SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds]
+def snap():
+    """Play's Find (2026-11-20): a toy camera taking the photo — a soft
+    click-clack of its shutter, a little whirr of the film winding on, and a
+    bright ding as the picture comes out."""
+    click = noise_band(0.03, 1500, 6000) * decay(0.03, 160)
+    clack = noise_band(0.04, 700, 3500) * decay(0.04, 120)
+    x = t(0.32)
+    whirr = noise_band(0.32, 2200, 5200) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 38 * x))) * np.sin(np.pi * x / 0.32) ** 2
+    ding = glock(note("E7"), 0.9) + 0.5 * glock(note("B7"), 0.9)
+    return finish(room(mix(1.4, (0, attack(click, 1), 0.9), (0.07, attack(clack, 1), 0.7), (0.16, attack(whirr, 5), 0.22), (0.42, ding, 0.35)), 0.6, 0.2), 0.6)
+
+
+def rustle():
+    """Play's Find: what is hidden stirring where it is — a soft rustle of
+    leaves, three little shakes."""
+    shakes = []
+    for k in range(3):
+        x = t(0.16)
+        shakes.append((0.12 * k, noise_band(0.16, 1800, 7000) * np.sin(np.pi * x / 0.16) ** 3, 0.8 - 0.15 * k))
+    return finish(room(mix(0.7, *shakes), 0.5, 0.15), 0.45)
+
+
+SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds, snap, rustle]
 
 
 def write_mp3(name, signal):
