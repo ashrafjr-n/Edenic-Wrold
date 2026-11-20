@@ -21,7 +21,8 @@ import { findKey, useProgress } from "@/store/progress";
 
 type Place = (typeof FIND_PLACES)[keyof typeof FIND_PLACES];
 type Shape = Place["landscape"] | Place["portrait"];
-type Spot = { box: readonly number[]; leaf: readonly number[] };
+type Spot = { box: readonly number[]; tip: readonly number[] };
+type Alpha = { data: Uint8ClampedArray; w: number; h: number };
 
 /** The room slides this much slower than the counter; the near things `kFront` faster. */
 const K_BACK = 0.55;
@@ -78,11 +79,12 @@ const NO_HINT = { stir: false, sparkle: false, point: 0, glow: false };
  * their own speeds as the child drags to look round — a parallax, so the
  * near things pass in front of what is behind them, and what is hidden is
  * peeked out from behind them. Two things to find, three in a harder stage,
- * shown on Nova's list in the back row (tap one to hear its word). Visual
+ * shown on the list in the back row (tap one to hear its word). Visual
  * first: they stir, twinkle, the arrow to the nearest pulses, at last they
  * glow; the rustle (from its side of the screen) is only an extra. Each find
  * jumps and flies into its slot, which gets a green tick; all found, a flash
- * and the photo of them together, off to the album, then Nova cheers. Arrow
+ * and the photo of them together, off to the album, then the place's
+ * friend cheers (they asked at the start). Arrow
  * buttons and the arrow keys look round too; each thing is a button for a
  * keyboard.
  */
@@ -106,7 +108,9 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
   /* Where the camera stands: -reach … reach from the middle. */
   const dx = useRef(0);
   const glide = useRef(0);
-  const frontAlpha = useRef<{ data: Uint8ClampedArray; w: number; h: number } | null>(null);
+  /* Small copies of the near layer's and each thing's picture: where they are solid. */
+  const frontAlpha = useRef<Alpha | null>(null);
+  const thingAlpha = useRef<Record<string, Alpha>>({});
   const timers = useRef<number[]>([]);
   const rippleId = useRef(0);
 
@@ -186,11 +190,10 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
   );
   const look = (side: -1 | 1) => moveTo(dx.current + side * frame.current.w * 0.55);
 
-  /* The near layer's picture, small, to know where it is in the way. */
-  const readFront = (img: HTMLImageElement) => {
+  /* A picture, small (`w` px wide), to know where it is solid. */
+  const readAlpha = (img: HTMLImageElement, w: number, keep: (alpha: Alpha) => void) => {
     const probe = new window.Image();
     probe.onload = () => {
-      const w = 512;
       const h = Math.round((w * probe.naturalHeight) / probe.naturalWidth);
       const canvas = document.createElement("canvas");
       canvas.width = w;
@@ -198,19 +201,33 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
       const context = canvas.getContext("2d", { willReadFrequently: true });
       if (!context) return;
       context.drawImage(probe, 0, 0, w, h);
-      frontAlpha.current = { data: context.getImageData(0, 0, w, h).data, w, h };
+      keep({ data: context.getImageData(0, 0, w, h).data, w, h });
     };
     probe.src = img.currentSrc || img.src;
   };
-
+  /* How solid `alpha` (laid over `box` on screen) is at (x, y): the most within `reach` of it, 0–255. */
+  const solidAt = (alpha: Alpha, box: DOMRect, x: number, y: number, reach = 0) => {
+    let most = 0;
+    const r = Math.round(reach * alpha.w);
+    for (let dy = -r; dy <= r; dy += Math.max(1, r)) {
+      for (let dx = -r; dx <= r; dx += Math.max(1, r)) {
+        const px = Math.floor(((x - box.left) / box.width) * alpha.w) + dx;
+        const py = Math.floor(((y - box.top) / box.height) * alpha.h) + dy;
+        if (px >= 0 && py >= 0 && px < alpha.w && py < alpha.h) most = Math.max(most, alpha.data[(py * alpha.w + px) * 4 + 3]);
+      }
+    }
+    return most;
+  };
   const coveredAt = (x: number, y: number) => {
-    const alpha = frontAlpha.current;
     const box = frontRef.current?.getBoundingClientRect();
-    if (!alpha || !box) return false;
-    const px = Math.floor(((x - box.left) / box.width) * alpha.w);
-    const py = Math.floor(((y - box.top) / box.height) * alpha.h);
-    if (px < 0 || py < 0 || px >= alpha.w || py >= alpha.h) return false;
-    return alpha.data[(py * alpha.w + px) * 4 + 3] > COVERED;
+    return Boolean(frontAlpha.current && box && solidAt(frontAlpha.current, box, x, y) > COVERED);
+  };
+  /* On the thing itself — what shows of it, give or take a child's fingertip. */
+  const onThing = (thing: string, x: number, y: number) => {
+    const rect = thingRefs.current[thing]?.getBoundingClientRect();
+    if (!rect || x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return false;
+    const alpha = thingAlpha.current[thing];
+    return !alpha || solidAt(alpha, rect, x, y, 0.1) > 90;
   };
 
   /* How far each still-hidden thing is from the middle of the view (-1 left … 1 right). */
@@ -231,11 +248,16 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
     setHint(NO_HINT);
     playSfx("found", stage.things.length - 1 - left);
     void playCue(lessonCue.word(thing));
-    /* After its jump: from where it is to its slot on the list. */
+    /* After its jump it comes out whole (its icon, round what showed of it)
+       and flies from there to its slot on the list. */
     later(POP_MS, () => {
-      const from = thingRefs.current[thing]?.querySelector("img")?.getBoundingClientRect();
+      const seen = thingRefs.current[thing]?.getBoundingClientRect();
       const to = slotRefs.current[thing]?.querySelector("img")?.getBoundingClientRect();
-      if (from && to) {
+      if (seen && to) {
+        const icon = stage.art.icons[thing];
+        const height = Math.max(seen.height, (seen.width * icon.height) / icon.width);
+        const width = (height * icon.width) / icon.height;
+        const from = { left: seen.left + seen.width / 2 - width / 2, top: seen.top + seen.height / 2 - height / 2 };
         setFlights((list) => [
           ...list,
           {
@@ -243,11 +265,11 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
             style: {
               left: from.left,
               top: from.top,
-              width: from.width,
-              height: from.height,
+              width,
+              height,
               "--dx": `${to.left - from.left}px`,
               "--dy": `${to.top - from.top}px`,
-              "--s": to.width / from.width,
+              "--s": to.width / width,
             } as CSSProperties,
           },
         ]);
@@ -309,12 +331,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
 
   /* A tap finds what it lands on — unless a near thing is in the way there. */
   const tap = (x: number, y: number) => {
-    const hit = hiding.find((thing) => {
-      const rect = thingRefs.current[thing]?.getBoundingClientRect();
-      if (!rect) return false;
-      const pad = Math.min(rect.width, rect.height) * 0.12;
-      return x >= rect.left - pad && x <= rect.right + pad && y >= rect.top - pad && y <= rect.bottom + pad;
-    });
+    const hit = hiding.find((thing) => onThing(thing, x, y));
     if (hit && !coveredAt(x, y)) {
       find(hit);
       return;
@@ -408,7 +425,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
                   }}
                   className="find-slot-pic"
                 >
-                  <Image src={art.things[thing]} alt="" sizes="48px" />
+                  <Image src={stage.art.icons[thing]} alt="" sizes="48px" />
                 </span>
                 {has && (
                   <span className="find-slot-tick" aria-hidden>
@@ -444,7 +461,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
         <div ref={midRef} className="find-layer">
           {hydrated && <Image key={`m${wide}`} src={art.mid} alt="" fill sizes="(orientation: portrait) 330vw, 160vw" onLoad={() => setLoaded((n) => n + 1)} />}
           {stage.things.map((thing) => {
-            const { box, leaf } = spot(thing);
+            const { box, tip } = spot(thing);
             const out = taken.includes(thing);
             const flying = out && (got.includes(thing) || flights.some((f) => f.thing === thing));
             return (
@@ -464,9 +481,15 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
                 className={`find-thing ${out ? "find-thing--found" : ""} ${flying ? "find-thing--gone" : ""} ${hunting && !out && hint.glow ? "find-thing--glow" : ""}`}
                 style={{ left: `${box[0]}%`, top: `${box[1]}%`, width: `${box[2]}%`, height: `${box[3]}%` }}
               >
-                <Image src={art.things[thing]} alt="" fill sizes="(orientation: portrait) 40vw, 16vw" className={`find-thing-pic ${hunting && !out && hint.stir ? "find-thing-pic--stir" : ""}`} />
+                <Image
+                  src={art.things[thing]}
+                  alt=""
+                  fill
+                  sizes="(orientation: portrait) 40vw, 16vw"
+                  onLoad={(event) => readAlpha(event.currentTarget, 128, (alpha) => (thingAlpha.current[thing] = alpha))}
+                  className={`find-thing-pic ${hunting && !out && hint.stir ? "find-thing-pic--stir" : ""}`} />
                 {hunting && !out && hint.sparkle && (
-                  <span className="find-twinkle" style={{ left: `${leaf[0]}%`, top: `${leaf[1]}%` }} aria-hidden>
+                  <span className="find-twinkle" style={{ left: `${tip[0]}%`, top: `${tip[1]}%` }} aria-hidden>
                     <Sparkles strokeWidth={2.2} />
                   </span>
                 )}
@@ -483,7 +506,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
               fill
               sizes="(orientation: portrait) 250vw, 120vw"
               onLoad={(event) => {
-                readFront(event.currentTarget);
+                readAlpha(event.currentTarget, 512, (alpha) => (frontAlpha.current = alpha));
                 setLoaded((n) => n + 1);
               }}
             />
@@ -526,7 +549,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
             <Image src={stage.art.photo} alt="" sizes="(orientation: portrait) 60vw, 22vw" className="find-photo-pic" />
             <figcaption>
               {stage.things.map((thing) => (
-                <Image key={thing} src={art.things[thing]} alt="" sizes="40px" className="find-photo-thing" />
+                <Image key={thing} src={stage.art.icons[thing]} alt="" sizes="40px" className="find-photo-thing" />
               ))}
             </figcaption>
           </figure>
@@ -544,7 +567,7 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
         createPortal(
           flights.map(({ thing, style }) => (
             <span key={thing} className="find-fly" style={style} aria-hidden>
-              <Image src={art.things[thing]} alt="" fill sizes="(orientation: portrait) 40vw, 16vw" />
+              <Image src={stage.art.icons[thing]} alt="" fill sizes="(orientation: portrait) 40vw, 16vw" />
             </span>
           )),
           document.body,
@@ -554,8 +577,8 @@ export function FindPlay({ stage, place, words, again, next, dir }: FindPlayProp
         createPortal(
           <FriendSays
             key={phase}
-            picture={CLASSROOMS.nova.cheer}
-            ink="var(--color-nova)"
+            picture={CLASSROOMS[stage.friend].cheer}
+            ink={`var(--color-${stage.friend})`}
             lines={phase === "intro" ? [words.intro1, words.intro2] : [words.found1, words.found2]}
             skipLabel={words.letsGo}
             dir={dir}
