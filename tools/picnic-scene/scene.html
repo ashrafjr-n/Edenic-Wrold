@@ -10052,21 +10052,15 @@ if (THING) {
        word, letter blocks for the spelling, a trough for the feeding. The review:
        the sort at hay, then two sets of letter blocks. */
     ? SEAS
-      /* Bloo's island (2026-11-10): the word = no prop, the page writes it in the sky over
-         the season (or its weather), sharp; then letter blocks; the pick and the review's
-         sorts blurred behind a big tree of the season. */
-      ? LESSON <= 8
-        ? [
-            { x: 0, cam: portrait ? [0, 2.2, 9.6, 0, 3.2, -4] : [0, 2.2, 9.4, 0, 2.8, -4], color: 0xffd45e },
-            { x: STEP_DX, make: () => letterBlocks(LESSON <= 4 ? SEAS_SEASON : SEAS_WEATHER), k: 1.7, color: 0x9cc4f2 },
-            ...(LESSON <= 4 ? [{ x: STEP_DX * 2, make: () => seasonTree(SEAS_SEASON), color: 0xff9f8a }] : []),
-          ]
-        : [
-            { x: 0, make: () => seasonTree("spring"), color: 0xffd45e },
-            { x: STEP_DX, make: () => seasonTree("fall"), color: 0x9cc4f2 },
-            { x: STEP_DX * 2, make: () => letterBlocks("winter"), k: 1.7, color: 0xff9f8a },
-            { x: STEP_DX * 3, make: () => letterBlocks("sunny"), k: 1.7, color: 0xffd45e },
-          ]
+      /* Bloo's island (2026-11-20): the season's word (no prop, sharp — the page writes the word in
+         the sky), its spelling at the season's own thing; on along the path the weather's word (sharp,
+         by the pond) and its spelling at the weather's thing. */
+      ? [
+          { x: 0, cam: portrait ? [0, 2.2, 9.6, 0, 3.2, -4] : [0, 2.2, 9.4, 0, 2.8, -4], color: 0xffd45e },
+          { x: STEP_DX, make: () => seasonThing(SEAS_SEASON), color: 0x9cc4f2 },
+          { x: STEP_DX * 2, cam: portrait ? [STEP_DX * 2, 2.2, 9.6, STEP_DX * 2, 3.2, -4] : [STEP_DX * 2, 2.2, 9.4, STEP_DX * 2, 2.8, -4], color: 0xffd45e },
+          { x: STEP_DX * 3, make: () => weatherThing(SEAS_WEATHER), color: 0x9cc4f2 },
+        ]
     : FARM_KIND
       ? [
           { x: 0, make: () => animalBoard(), cam: portrait ? [0, 2.2, 7.1, 0, 1.4, 0.6] : [0, 2.6, 8.4, 0, 2.0, 0.6], color: 0xffd45e },
