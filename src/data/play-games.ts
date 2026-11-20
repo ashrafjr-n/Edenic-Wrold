@@ -5,12 +5,11 @@ import puzzleCard from "../../public/assets/play/puzzle/puzzle-card.jpg";
 
 export type PlayCardId = "puzzle" | "memory" | "find";
 
-/** One of `/play`'s game cards (`GameCard`): its picture, where it goes (none
-    = not built yet) and its clay — face, edge, and the ink its name wears on
+/** One of `/play`'s game cards (`GameCard`): its picture, where it goes and its clay — face, edge, and the ink its name wears on
     that face (gold is too pale for white). */
 export interface PlayCard {
   art: StaticImageData;
-  href?: string;
+  href: string;
   face: string;
   edge: string;
   ink: string;
@@ -25,5 +24,5 @@ export const PLAY_CARDS: Record<PlayCardId, PlayCard> = {
     edge: "var(--color-gold-dark)",
     ink: "var(--color-ink-fixed)",
   },
-  find: { art: findCard, face: "var(--accent)", edge: "var(--accent-dark)", ink: "#fff" },
+  find: { art: findCard, href: "/play/find", face: "var(--accent)", edge: "var(--accent-dark)", ink: "#fff" },
 };
