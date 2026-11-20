@@ -17,6 +17,10 @@ export const takeChest = (course: string) => {
 /** The same, without using it up (a state initialiser can run twice). */
 export const peekChest = (course: string) => asked === course;
 
+/** A window event: the star pod has taken the chest's star (it flies to its
+    slot), so the one over the chest goes. */
+export const STAR_FLIGHT = "edenic:star-flight";
+
 /** The courses whose chest has opened on this device, so it opens by itself
     once and after that only when tapped. */
 const SEEN = "edenic-chest-opened";
