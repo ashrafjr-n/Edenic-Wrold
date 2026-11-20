@@ -594,10 +594,11 @@ export function LessonPlayer({
       {/* Desktop: the button row, on every step — centred under the stage,
           the ways back first and the way onward last. Keyed like the stage,
           so a pressed (collapsed) Next never carries over into the next
-          step's button. */}
+          step's button. It waits for the camera as the stage does (a long walk —
+          Seasons and Weather's weather rolling in — must not be skipped). */}
       <div
         key={`foot-${round}-${at}`}
-        className="mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex"
+        className={`stage-swap mx-auto hidden h-24 w-full max-w-5xl items-center justify-center gap-4 px-8 lg:flex ${arrived ? "" : "world-wait"}`}
       >
         {footStart}
         {footEnd}
