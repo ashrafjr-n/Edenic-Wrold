@@ -30,6 +30,20 @@ import gardenFlowerIcon from "../../public/assets/play/find/garden/flower-icon.w
 import gardenLeafIcon from "../../public/assets/play/find/garden/leaf-icon.webp";
 import farmCatIcon from "../../public/assets/play/find/farm/cat-icon.webp";
 import farmDogIcon from "../../public/assets/play/find/farm/dog-icon.webp";
+import shapesBackWide from "../../public/assets/play/find/shapes/landscape/back.jpg";
+import shapesMidWide from "../../public/assets/play/find/shapes/landscape/mid.webp";
+import shapesFrontWide from "../../public/assets/play/find/shapes/landscape/front.webp";
+import shapesHeartWide from "../../public/assets/play/find/shapes/landscape/heart.webp";
+import shapesDiamondWide from "../../public/assets/play/find/shapes/landscape/diamond.webp";
+import shapesBack from "../../public/assets/play/find/shapes/portrait/back.jpg";
+import shapesMid from "../../public/assets/play/find/shapes/portrait/mid.webp";
+import shapesFront from "../../public/assets/play/find/shapes/portrait/front.webp";
+import shapesHeart from "../../public/assets/play/find/shapes/portrait/heart.webp";
+import shapesDiamond from "../../public/assets/play/find/shapes/portrait/diamond.webp";
+import shapesHeartIcon from "../../public/assets/play/find/shapes/heart-icon.webp";
+import shapesDiamondIcon from "../../public/assets/play/find/shapes/diamond-icon.webp";
+import shapesPhoto from "../../public/assets/play/find/shapes/photo.jpg";
+import shapesPlace from "../../public/assets/play/find/shapes/place.jpg";
 import kitchenBackWide from "../../public/assets/play/find/kitchen/landscape/back.jpg";
 import kitchenBroccoliWide from "../../public/assets/play/find/kitchen/landscape/broccoli.webp";
 import kitchenCarrotWide from "../../public/assets/play/find/kitchen/landscape/carrot.webp";
@@ -119,6 +133,19 @@ export const FIND_STAGES: readonly FindStage[] = [
       icons: { cat: farmCatIcon, dog: farmDogIcon },
       photo: farmPhoto,
       place: farmPlace,
+    },
+  },
+  {
+    n: 4,
+    place: "shapes",
+    friend: "pinki",
+    things: ["heart", "diamond"],
+    art: {
+      landscape: { back: shapesBackWide, mid: shapesMidWide, front: shapesFrontWide, things: { heart: shapesHeartWide, diamond: shapesDiamondWide } },
+      portrait: { back: shapesBack, mid: shapesMid, front: shapesFront, things: { heart: shapesHeart, diamond: shapesDiamond } },
+      icons: { heart: shapesHeartIcon, diamond: shapesDiamondIcon },
+      photo: shapesPhoto,
+      place: shapesPlace,
     },
   },
 ];
