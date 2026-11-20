@@ -5954,20 +5954,29 @@ if (THING) {
   const LAND = SHAPE_LAND || FOREST;
   /* The farm's animal (1-9), or null for its review (10). */
   const FARM_KIND = FARM && !SEAS ? FARM_KINDS[LESSON - 1] ?? null : null;
-  /* The seasons' farm: which season and weather this part is, how many places, and their words. */
+  /* Bloo's island of the year (rebuilt 2026-11-20): lesson n = a season and its weather on ONE island,
+     the same layout in all four seasons. The weather is an AMOUNT laid over the season (`seasFx(w, time)`):
+     0 at the season's two places, rolling in after the weather's reel, 1 at the weather's two and the end. */
   const SEAS_SEASONS = ["spring", "summer", "fall", "winter"], SEAS_WEATHERS = ["rainy", "sunny", "windy", "snowy"];
-  const SEAS_SEASON = SEAS ? (LESSON <= 4 ? SEAS_SEASONS[LESSON - 1] : LESSON <= 8 ? SEAS_SEASONS[LESSON - 5] : "summer") : null;
-  const SEAS_WEATHER = SEAS ? (LESSON >= 5 && LESSON <= 8 ? SEAS_WEATHERS[LESSON - 5] : LESSON === 9 ? "sunny" : null) : null;
-  const SEAS_STEPS = LESSON <= 4 ? 3 : LESSON <= 8 ? 2 : 4;
+  const SEAS_SEASON = SEAS ? SEAS_SEASONS[LESSON - 1] : null;
+  const SEAS_WEATHER = SEAS ? SEAS_WEATHERS[LESSON - 1] : null;
+  const SEAS_STEPS = 4;
+  /* The reels' pastel skies (spring's lilac-pink, summer's blue, fall's peach haze, winter's lilac), each
+     season's lawn, tree crowns, flowers, and the weather's sky and fog it turns to. */
   const SEAS_LOOK = {
-    spring: { sky: ["#9fcdf2", "#cfe6f7", "#e6f1e2", "#f6f1dc"], lawn: ["#a5de84", "#9cd77b"], trees: [0xffa3c8, 0xffc4dc, 0x9fdc86, 0x8fd27a], roof: 0x6fa3e4, petals: [0xff8fb8, 0xffffff, 0xffc4dc, 0xc7a3f0] },
-    summer: { sky: ["#6fb9f0", "#a9d8f5", "#e6f3e6", "#f6f1c8"], lawn: ["#8fd46f", "#86cb68"], trees: [0x7fd36a, 0x62bf62, 0x8fd27a, 0x6fcf8f], roof: 0x6fa3e4, petals: [0xffd45e, 0xffffff, 0xff9f8a, 0x9cc4f2] },
-    fall: { sky: ["#a9c8e6", "#d9dfe6", "#f3e3c8", "#f8e7c4"], lawn: ["#c9cf72", "#c0c76a"], trees: [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xc9573a], roof: 0xb9745a, petals: [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xffffff] },
-    winter: { sky: ["#b9cde4", "#d6e2ee", "#e9eff5", "#f4f6f9"], lawn: ["#f4f8fb", "#e9f0f6"], trees: [0xffffff, 0xe8f2fb, 0xdbeaf6, 0xf3f7fb], roof: 0xf2f7fb, petals: [0xffffff, 0xdbeaf6, 0xffffff, 0xc9dcf2] },
+    spring: { sky: ["#c4a6ee", "#eab4dc", "#fbd0d4", "#fde3cf"], lawn: ["#a9e08a", "#9ad67c"], trees: [0xffb3d1, 0xffc9de, 0xa6e08c, 0x92d67d], roof: 0x8fb8f0, petals: [0xff8fb8, 0xffffff, 0xffd45e, 0xc7a3f0] },
+    summer: { sky: ["#58aef2", "#8fcbf6", "#cfeaf9", "#eef6de"], lawn: ["#8fd46f", "#82ca63"], trees: [0x6fcf5f, 0x5cbf5a, 0x86d86e, 0x4fb46a], roof: 0x8fb8f0, petals: [0xffd45e, 0xff9f8a, 0xffffff, 0x9cc4f2] },
+    fall: { sky: ["#9fbde8", "#d6cde2", "#f6d6bc", "#fbe3c4"], lawn: ["#c9d27a", "#bcc76c"], trees: [0xf5a142, 0xe8743a, 0xf7cf55, 0xd2563a], roof: 0xc98a6a, petals: [0xf5a142, 0xe8743a, 0xf7cf55, 0xd2563a] },
+    winter: { sky: ["#a9b6e8", "#cbd2f0", "#e8e5f4", "#f6f1f6"], lawn: ["#eef2fb", "#e1e8f6"], trees: [0xffffff, 0xeef4fb, 0xe2ecf8, 0xf7f9fc], roof: 0x8fb8f0, petals: [0xffffff, 0xe2ecf8, 0xffffff, 0xd8e4f6] },
   };
-  const SEAS_WEATHER_SKY = { rainy: ["#8d9fb0", "#aebbc7", "#c5cfd6", "#d6dcdf"], sunny: ["#5fb2f0", "#9fd4f6", "#f1f0c9", "#fbf2c4"], windy: ["#9fc0e4", "#cfdeec", "#ecdfc9", "#f6e8cc"], snowy: ["#c4d0dd", "#dbe3eb", "#edf1f5", "#f6f8fa"] };
+  const SEAS_WEATHER_LOOK = {
+    rainy: { sky: ["#8e95b6", "#a9aec8", "#c6c8d8", "#d9d8e2"], fog: 0xc3c6d6, near: 34, far: 260, sun: 1.15, hemi: 1.2 },
+    sunny: { sky: ["#3c9cf0", "#78c2f7", "#c3e6fb", "#fff1c6"], fog: 0xd8ecf7, near: 90, far: 330, sun: 3.0, hemi: 1.1 },
+    windy: { sky: ["#86b2ea", "#c0d6f1", "#eedbc6", "#f8e2c6"], fog: 0xf0dfcc, near: 70, far: 300, sun: 2.45, hemi: 1.05 },
+    snowy: { sky: ["#aeb4cf", "#cacddd", "#e2e2eb", "#f0eef3"], fog: 0xe4e5ee, near: 30, far: 240, sun: 1.35, hemi: 1.25 },
+  };
   const LOOK = SEAS ? SEAS_LOOK[SEAS_SEASON] : null;
-  const SKY = SEAS ? SEAS_WEATHER_SKY[SEAS_WEATHER] ?? LOOK.sky : ["#9fcdf2", "#cfe6f7", "#e6f1e2", "#f6f1dc"];
+  const SKY = SEAS ? LOOK.sky : ["#9fcdf2", "#cfe6f7", "#e6f1e2", "#f6f1dc"];
   /* The hill's season; lesson 5 is the review, all four in turn. */
   const YEAR = ["spring", "summer", "fall", "winter"];
   const HILL_SEASON = YEAR_HILL ? YEAR[LESSON - 1] ?? null : null;
@@ -5997,13 +6006,13 @@ if (THING) {
   const skyTex = new THREE.CanvasTexture(skyCanvas);
   skyTex.colorSpace = THREE.SRGBColorSpace;
   scene.background = skyTex;
-  scene.fog = LAB ? new THREE.Fog(0xd9eafa, 55, 175) : SKY_NIGHT ? new THREE.Fog(0x2b3486, 52, 175) : SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS_WEATHER === "rainy" ? new THREE.Fog(0xb9c5cd, 24, 130) : SEAS_WEATHER === "snowy" ? new THREE.Fog(0xe8eef3, 24, 130) : SEAS ? new THREE.Fog(new THREE.Color(SKY[1]).getHex(), 60, 230) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
+  scene.fog = LAB ? new THREE.Fog(0xd9eafa, 55, 175) : SKY_NIGHT ? new THREE.Fog(0x2b3486, 52, 175) : SKY_STOPS ? new THREE.Fog(0xb4daf8, 52, 170) : LAND ? new THREE.Fog(0xf4c6e6, 40, 120) : FARM ? (SEAS ? new THREE.Fog(new THREE.Color(SKY[2]).getHex(), 80, 320) : new THREE.Fog(0xe0eef2, 28, 92)) : STOPS ? new THREE.Fog(BLOO_STOPS ? 0xd9ecfc : GARDEN_STOPS ? 0xfadbe8 : FRUITS_STOPS ? 0xe8def9 : 0xf7b9d5, 42, 110) : MY_GARDEN ? new THREE.Fog(0xf8dbe6, 28, 92) : YEAR_HILL ? new THREE.Fog(new THREE.Color(HILL_SKY[3]).getHex(), 45, 150) : VEG ? new THREE.Fog(0xf0e6f2, 30, 100) : FOREST ? new THREE.Fog(0xdcebd2, 22, 78) : new THREE.Fog(0xedf1f2, 26, 96);
 
   sky.color.set(LAND ? 0xf2e6ff : 0xeaf4ff);
   sky.groundColor.set(LAND ? 0xd4e8a8 : 0xc0e0a4);
   sky.intensity = 1.05;
   sun.color.set(LAND ? 0xffe8d2 : 0xfff0da);
-  sun.intensity = SEAS_WEATHER === "rainy" ? 1.35 : SEAS_WEATHER === "snowy" ? 1.5 : SEAS_WEATHER === "sunny" ? 2.6 : 2.25;
+  sun.intensity = SEAS ? 2.35 : 2.25;
   scene.environmentIntensity = 0.42;
   Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 });
   sun.shadow.camera.updateProjectionMatrix();
