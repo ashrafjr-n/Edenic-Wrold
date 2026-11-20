@@ -10166,7 +10166,7 @@ if (THING) {
     if (i === 900) [tuftSeed, seed] = [seed, 23];
     const x = i < 900 ? -24 + rand() * 170 : 146 + rand() * 130, z = -12 + rand() * 14.5;
     if (keepClear.some((b) => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z)) continue;
-    if (SEAS && (!onIsle(x, z, 1.5) || isleSeason(x, z) === "winter")) continue;
+    if (SEAS && (!onIsle(x, z, 1.5) || SEAS_SEASON === "winter")) continue;
     const tuft = new THREE.Group();
     const n = 3 + Math.floor(rand() * 3);
     for (let j = 0; j < n; j++) {
