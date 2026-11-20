@@ -9679,8 +9679,9 @@ if (THING) {
     (BLOO_STOPS ? [[8.6, 0x6bb8f0], [6.9, 0xffd77a], [5.2, 0xfbf6ee]] : GARDEN_STOPS ? [[8.6, 0xffa3c8], [6.9, 0x9cc4f2], [5.2, 0xfbf6ee]] : FRUITS_STOPS ? [[8.6, 0xb9a3ec], [6.9, 0xf5d98a], [5.2, 0xfbf6ee]] : [[8.6, 0xf49ab5], [6.9, 0xffd77a], [5.2, 0x9cc9ea]]).forEach(([r, color]) => {
       add(mesh(new THREE.TorusGeometry(r, 0.98, 32, 120, Math.PI), soft(color, { roughness: 0.78 })), 0, 0, -56 + DZ);
     });
-    add(bell(7.5, 8.5), -7.5, 0, -51 + DZ);
-    add(bell(6.5, 7), 7.5, 0, -50.5 + DZ);
+    /* Seasons and Weather: the two hills behind spring, the first lesson, in spring's green and pink. */
+    add(bell(7.5, 8.5, WEATHER_STOPS ? 0xbfe5a8 : PAL_HILL), -7.5, 0, -51 + DZ);
+    add(bell(6.5, 7, WEATHER_STOPS ? YEAR_BANDS[0].hill : PAL_HILL), 7.5, 0, -50.5 + DZ);
     {
       const top = 18, r = 11;
       const geo = smoothLathe([[r, 0], [r * 0.82, top * 0.4], [r * 0.56, top * 0.78], [r * 0.25, top * 0.98], [0, top]], 256);
