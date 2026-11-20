@@ -34,7 +34,9 @@ export type Sfx =
   | "hooray"
   | "chest"
   | "star"
-  | "clouds";
+  | "clouds"
+  | "snap"
+  | "rustle";
 
 /** How long the "speaking" state lasts when a clip cannot play. */
 const SPEAK_MS = 1200;
@@ -69,7 +71,7 @@ function load(id: string): Promise<AudioBuffer | null> {
 
 /** Plays clip `id`; resolves when it ends (at once if it cannot play).
     `rate` raises the pitch (and quickens it) — the letters' and finds' scale. */
-function play(id: string, rate = 1, volume = 1): Promise<boolean> {
+function play(id: string, rate = 1, volume = 1, pan = 0): Promise<boolean> {
   const ctx = audio();
   if (!ctx) return Promise.resolve(false);
   return load(id).then(
@@ -81,7 +83,9 @@ function play(id: string, rate = 1, volume = 1): Promise<boolean> {
         source.playbackRate.value = rate;
         const gain = ctx.createGain();
         gain.gain.value = volume;
-        source.connect(gain).connect(ctx.destination);
+        /* `pan` -1 left … 1 right: where on the screen it comes from (Find's hidden thing). */
+        const out = pan ? source.connect(gain).connect(new StereoPannerNode(ctx, { pan })) : source.connect(gain);
+        out.connect(ctx.destination);
         source.onended = () => resolve(true);
         source.start();
       }),
@@ -98,13 +102,14 @@ export function playCue(id: string): Promise<void> {
     semitones from the clip's own note. */
 const SCALE = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
 
-/** Plays a sound effect; `step` raises it that many notes up the scale. */
-export function playSfx(id: Sfx, step?: number): void {
+/** Plays a sound effect; `step` raises it that many notes up the scale;
+    `pan` (-1…1) places it left or right, `volume` softens it. */
+export function playSfx(id: Sfx, step?: number, { pan = 0, volume = id === "tap" ? 0.6 : 1 }: { pan?: number; volume?: number } = {}): void {
   const rate = step === undefined ? 1 : 2 ** (SCALE[Math.min(step, SCALE.length - 1)] / 12);
-  void play(`sfx/${id}`, rate, id === "tap" ? 0.6 : 1);
+  void play(`sfx/${id}`, rate, volume, pan);
 }
 
-const EFFECTS: Sfx[] = ["tap", "correct", "oops", "letter", "found", "pickup", "chomp", "plop", "bubbles", "whoosh", "hooray", "chest", "star", "clouds"];
+const EFFECTS: Sfx[] = ["tap", "correct", "oops", "letter", "found", "pickup", "chomp", "plop", "bubbles", "whoosh", "hooray", "chest", "star", "clouds", "snap", "rustle"];
 
 /** The first tap: starts the audio context and fetches every effect (a few
     KB each), so none waits for the network when it is due. */
