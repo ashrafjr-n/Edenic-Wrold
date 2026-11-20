@@ -1114,8 +1114,8 @@ Only what is still open. **A finished item leaves this list** (the user,
 2026-11-19) — its story stays in git and `claude-docs/`.
 
 - [ ] **Pinki** (Shapes, Colors): small design polish and detail fixes only.
-- [ ] **The user's checks:** Vegetables (Basket Time) and Seasons and
-      Weather → fixes.
+- [ ] **The user's checks:** Vegetables (Basket Time), and Seasons and
+      Weather's rebuilt island and course page (2026-11-20) → fixes.
 - [ ] The sun, clouds and snowman from their stills — still wanted?
 - [ ] A native speaker checks every Kurdish (Badini) string; Arabic too.
 - [ ] A production build and a real phone/tablet run (never done yet):
