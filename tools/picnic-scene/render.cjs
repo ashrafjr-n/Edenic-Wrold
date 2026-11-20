@@ -27,6 +27,12 @@
  *
  *   node tools/picnic-scene/render.cjs season spring summer fall winter
  *
+ * Play's Find (2026-11-20) — a stage's place in depth layers (the room,
+ * the counter, the thing to find, the near things before the lens) and the
+ * album's photo, `out/find-<place>/`. Then `crop.py find <place>`:
+ *
+ *   node tools/picnic-scene/render.cjs find kitchen
+ *
  * Single things — one PNG each in `out/things/`, seen from the front and a
  * little above. Each spec is `file=thing[:arg][@blank]` (`@blank`: plain grey
  * clay, the thing before it is painted; `@float`: no ground shadow; `@top`:
@@ -192,7 +198,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
 (async () => {
   /* The garden's thousands of frames on the Mac's GPU (~0.5 s a frame,
      six times SwiftShader); everything else as it always was. */
-  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest", "intro", "search"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
+  const gpu = ["garden", "forest", "mygarden", "farm", "seasons", "veg", "hill", "stops", "chest", "intro", "search", "find"].includes(mode) ? ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"];
   const browser = await chromium.launch({ args: gpu, executablePath: process.env.CHROME });
   const page = await page_(browser);
   page.on("pageerror", (error) => console.error("scene.html:", error.message));
@@ -465,6 +471,18 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           for (const [layer, url] of Object.entries(layers)) save(find, layer, url);
         }
       }
+    }
+  } else if (mode === "find") {
+    /* Play's Find (2026-11-20): a stage's place in depth layers —
+       `out/find-<place>/` (back, mid, the thing, front, photo, all). */
+    for (const place of specs.length ? specs : ["kitchen"]) {
+      const layers = await render(page, `find=${place}`);
+      const out = path.join(__dirname, "out", `find-${place}`);
+      fs.rmSync(out, { recursive: true, force: true });
+      fs.mkdirSync(out, { recursive: true });
+      for (const [layer, url] of Object.entries(layers)) save(out, layer, url);
+      fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.itemsMeta())));
+      console.log(`find ${place}: done`);
     }
   } else if (mode === "basket") {
     const layers = await render(page, "basket");
