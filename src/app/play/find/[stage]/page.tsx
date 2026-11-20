@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FindPlay } from "@/components/activities/find/find-play";
 import { pageAccent } from "@/components/ui/back-button";
-import { FIND_STAGE_COUNT, FIND_STAGES, findStage, placeOf } from "@/data/find-stages";
+import { FIND_STAGES, findStage, placeOf } from "@/data/find-stages";
 import { dirFor } from "@/lib/format-dict";
 import { getDictionary } from "@/lib/locale";
 
@@ -28,7 +28,6 @@ export default async function FindStagePage({ params }: { params: Promise<{ stag
       <FindPlay
         stage={stage}
         place={placeOf(stage)}
-        total={FIND_STAGE_COUNT}
         words={dict.findGame}
         again={dict.activities.again}
         next={dict.activities.next}
