@@ -47,7 +47,7 @@ export function chestStarKey(characterId: string, lessonId: string): ItemKey {
 
 
 /** Play's games that stars open (`edenic-plan.md` "Stars → Play's games"). */
-export type PlayGame = "puzzle" | "memory";
+export type PlayGame = "puzzle" | "memory" | "find";
 
 /** What one Play game costs: two chest stars. */
 export const STARS_PER_GAME = 2;
