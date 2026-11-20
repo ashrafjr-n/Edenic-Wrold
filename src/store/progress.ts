@@ -9,7 +9,7 @@ import { isChestStarKey, itemKey, playOpenKey, STARS_PER_GAME, type ItemKey, typ
    `"use client"` module can only be invoked from client code. Re-exported
    from this file so every existing `@/store/progress` import still works. */
 export type { ItemKey } from "@/lib/progress-keys";
-export { itemKey, puzzleKey, memoryKey, chestStarKey, playOpenKey, STARS_PER_GAME } from "@/lib/progress-keys";
+export { itemKey, puzzleKey, memoryKey, findKey, chestStarKey, playOpenKey, STARS_PER_GAME } from "@/lib/progress-keys";
 export type { PlayGame } from "@/lib/progress-keys";
 
 interface ItemProgress {
