@@ -108,12 +108,12 @@
  *
  *   node tools/picnic-scene/render.cjs farm 1 2 3 4 5 6 7 8 9 10
  *
- * Bloo's seasons and weather (2026-11-09) — the same farm through the year
- * (`scene.html?garden=<1-9>&world=seasons`: 1-4 a season's three places, 5-8 its weather's two,
- * 9 the review), no Find: `out/seasons-<n>-<frame>/`, then `crop.py seasonsfarm`, which joins them
- * and writes `src/data/seasons-farm.ts`:
+ * Bloo's Seasons and Weather (rebuilt 2026-11-20) — his island of the year
+ * (`scene.html?garden=<1-4>&world=seasons`: a season and its weather on one island, five stations,
+ * the weather rolling in on move 2, the weather's three stations looping): `out/seasons-<n>-<frame>/`
+ * (`s<i>`, `m<i>/`, `l<i>/`), then `crop.py seasonsfarm`, which writes `src/data/seasons-farm.ts`:
  *
- *   node tools/picnic-scene/render.cjs seasons 1 2 3 4 5 6 7 8 9
+ *   node tools/picnic-scene/render.cjs seasons 1 2 3 4
  *
  * Nova's hill (2026-11-05) — The Seasons' world, the same kit
  * (`scene.html?garden=<1-5>&world=hill`, the seasons in order, 5 the review):
@@ -417,7 +417,7 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           }
         };
         await open(1);
-        const stations = await page.evaluate(() => window.garden.stations);
+        const [stations, seconds, loops, loopSeconds] = await page.evaluate(() => [window.garden.stations, window.garden.seconds, window.garden.loops, window.garden.loopSeconds]);
         for (let i = 0; i < stations; i++) save(out, `s${i}`, await page.evaluate((i) => window.garden.station(i), i));
         fs.writeFileSync(path.join(out, "meta.json"), JSON.stringify(await page.evaluate(() => window.garden.meta())));
         /* The moves, at 0.8x — they are seen moving, and mostly out of focus. */
@@ -428,12 +428,25 @@ const save = (dir, name, url) => fs.writeFileSync(path.join(dir, `${name}.png`),
           const dir = path.join(out, `m${i}`);
           fs.rmSync(dir, { recursive: true, force: true });
           fs.mkdirSync(dir);
-          const n = Math.round(FPS * (i === 0 ? SECONDS.entry : mode === "veg" ? (i === 2 ? SECONDS.blur : SECONDS.step) : i === stations - 1 ? SECONDS.end : SECONDS.step));
+          /* Bloo's island says how long each of its moves is (the weather's roll is the long one). */
+          const n = Math.round(FPS * (seconds ? seconds[i] : i === 0 ? SECONDS.entry : mode === "veg" ? (i === 2 ? SECONDS.blur : SECONDS.step) : i === stations - 1 ? SECONDS.end : SECONDS.step));
           for (let f = 0; f < n; f++) {
             const url = await page.evaluate(([i, t]) => window.garden.move(i, t), [i, f / (n - 1)]);
             fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
           }
           console.log(`${mode} ${lesson} ${frame} move ${i}: ${n} frames`);
+        }
+        /* Bloo's island: the weather's stations alive — `l<i>/`, one loop (its last frame runs into its first). */
+        for (const i of loops ?? []) {
+          const dir = path.join(out, `l${i}`);
+          fs.rmSync(dir, { recursive: true, force: true });
+          fs.mkdirSync(dir);
+          const n = Math.round(FPS * loopSeconds);
+          for (let f = 0; f < n; f++) {
+            const url = await page.evaluate(([i, t]) => window.garden.loop(i, t), [i, f / n]);
+            fs.writeFileSync(path.join(dir, `${String(f).padStart(4, "0")}.jpg`), Buffer.from(url.split(",")[1], "base64"));
+          }
+          console.log(`${mode} ${lesson} ${frame} loop ${i}: ${n} frames`);
         }
         if (mode === "veg") {
           if (lesson !== "1") continue;
