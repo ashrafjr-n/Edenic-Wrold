@@ -93,7 +93,7 @@ export function useCourseStars(characterId: string, lessonId: string, count: num
   );
 }
 
-const PLAY_GAMES: PlayGame[] = ["puzzle", "memory"];
+const PLAY_GAMES: PlayGame[] = ["puzzle", "memory", "find"];
 
 /** Play's stars: the chest stars earned in Learn, the games they have
     opened, and what is left to spend (earned − 2 × opened). Nothing earned
