@@ -9745,7 +9745,9 @@ if (THING) {
       for (const y of [0.4, 1.05]) g.add(at(rbox(n * 0.55 + 0.3, 0.14, 0.08, m, 0.04), (n * 0.55) / 2, y, -0.08));
       return g;
     };
-    const dressing = BLOO_STOPS
+    const dressing = WEATHER_STOPS
+      ? []
+      : BLOO_STOPS
       ? [[-1, 2, () => pomTree(1)], [1, -4, () => lollipop(0x6bb8f0)], [-1, -14, () => blueFence(7)], [1, -24, () => pomTree(2)], [-1, -32, () => lollipop(0x6bb8f0)], [1, -40, () => blueFence(7)], [-1, -48, () => pomTree(1)]]
       : GARDEN_STOPS
       ? [[-1, 2, () => pomTree(3)], [1, -4, () => roseBush(1.5)], [-1, -14, () => blueFence(7)], [1, -24, () => pomTree(0)], [-1, -32, () => roseBush(1.5)], [1, -40, () => blueFence(7)], [-1, -48, () => pomTree(3)]]
@@ -9765,8 +9767,69 @@ if (THING) {
       const f = group(at(mesh(new THREE.CylinderGeometry(2.1, 2.3, 0.8, 48), white), 0, 0.4, 0), at(mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.1, 48), blue), 0, 0.82, 0), at(mesh(new THREE.CylinderGeometry(0.28, 0.42, 1.5, 24), white), 0, 1.5, 0), at(mesh(new THREE.CylinderGeometry(0.95, 0.75, 0.3, 40), white), 0, 2.35, 0), at(ball(0.4, soft(0xff8fbf), 24), 0, 2.85, 0));
       add(f, (portrait ? -8 : -12.5) * (dz % 92 ? -1 : 1), 0, -22 + dz);
     }
-    for (const dz of REPEATS) for (const [x, z, make] of (BLOO_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0x9cc4f2)], [-9, -21, () => chubby(0xffd267)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]] : GARDEN_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xc7a3f0)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0x9cc4f2)]] : FRUITS_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xf5d98a)], [-9, -21, () => chubby(0xffffff)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xf5d98a)]] : [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]])) {
+    for (const dz of REPEATS) for (const [x, z, make] of (WEATHER_STOPS ? [] : BLOO_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0x9cc4f2)], [-9, -21, () => chubby(0xffd267)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]] : GARDEN_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xc7a3f0)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0x9cc4f2)]] : FRUITS_STOPS ? [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xf5d98a)], [-9, -21, () => chubby(0xffffff)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xf5d98a)]] : [[8.5, 1, () => chubby(0xffffff)], [-8.5, -9, () => sprig()], [9, -14, () => chubby(0xffd267)], [-9, -21, () => chubby(0xff8fa8)], [9, -33, () => sprig()], [-8.5, -42, () => chubby(0xffffff)]])) {
       add(make(), (portrait ? x * 0.72 : x) * (dz % 92 ? -1 : 1), 0, z + dz, { k: 1.2 });
+    }
+    if (WEATHER_STOPS) {
+      /* The ground in four soft bands, blended where they meet. */
+      lawn.visible = false;
+      const geo = new THREE.PlaneGeometry(420, 420, 1, 420);
+      const colors = [], pos = geo.attributes.position;
+      const bandColor = YEAR_BANDS.map((b) => new THREE.Color(b.ground));
+      for (let v = 0; v < pos.count; v++) {
+        const z = -30 - pos.getY(v);
+        const c = new THREE.Color(0, 0, 0);
+        for (let k = -4; k <= 4; k++) c.add(bandColor[yearBand(z + k * 0.9)]);
+        c.multiplyScalar(1 / 9);
+        colors.push(c.r, c.g, c.b);
+      }
+      geo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+      const ground = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.98 }));
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.set(0, 0, -30);
+      ground.receiveShadow = true;
+      ground.userData.noMerge = true;
+      scene.add(ground);
+      /* Its trees take the island's sixteen season tones. */
+      GARDEN_TONES.tree.splice(0, GARDEN_TONES.tree.length, ...["spring", "summer", "fall", "winter"].flatMap((season) => SEAS_LOOK[season].trees));
+      const out = portrait ? 7.6 : 12.5;
+      YEAR_BANDS.forEach(({ season, weather, tone }, b) => {
+        const z0 = -39 + b * 11;
+        const sx = b % 2 ? 1 : -1;
+        /* Two trees each side, the season's thing on one side, its weather's on the other. */
+        for (const [x, z, k, t] of [[-out - 2.5, z0 - 3, 2.4, 0], [-out - 6, z0 + 2.5, 2.0, 2], [out + 2.5, z0 + 1, 2.3, 1], [out + 6.5, z0 - 3.5, 2.1, 3]]) {
+          const tr = gardenScenery("tree", tone + t);
+          add(tr, x, 0, z, { k, ry: b + t });
+          if (season === "winter") for (const [cx, cy, cz, r] of [[0, 2.62, 0, 0.3], [-0.28, 2.38, 0.05, 0.3], [0.3, 2.36, -0.05, 0.3]]) {
+            const cap = at(ball(r, velvet(0xfbfdff), 24), cx, cy + 0.08, cz);
+            cap.scale.y = 0.55;
+            tr.add(cap);
+          }
+        }
+        add(seasonThing(season), sx * (out - 1.2), 0, z0 + 2, { k: 1.25, ry: -sx * 0.4 });
+        add(weatherThing(weather), -sx * (out - 0.8), 0, z0 - 1.5, { k: 1.15, ry: sx * 0.4 });
+        /* Up in the band's sky, its weather as a toy: a grey cloud with drops, the sun, maple leaves, flakes. */
+        const skyX = -sx * (out + 3), skyY = 9.5, skyZ = z0 - 4;
+        if (weather === "rainy") {
+          const c = cloud(2.2);
+          c.traverse((o) => o.isMesh && (o.material = o.material.clone(), o.material.color.set(0xd3d6e6)));
+          add(c, skyX, skyY, skyZ);
+          for (const [dx, dy] of [[-0.8, -0.9], [0.1, -1.4], [0.9, -0.8], [-0.3, -2.1], [0.6, -2.3]]) add(raindrop(), skyX + dx * 2.2, skyY + dy * 1.3, skyZ, { k: 2.4 });
+        } else if (weather === "sunny") {
+          const disc = mesh(new THREE.SphereGeometry(1.5, 48, 32), velvet(0xffcd3c));
+          disc.scale.z = 0.55;
+          add(disc, skyX, skyY + 0.5, skyZ);
+          for (let i = 0; i < 10; i++) {
+            const a = (i / 10) * Math.PI * 2, ray = mesh(new THREE.CapsuleGeometry(0.22, 0.4, 8, 16), velvet(0xffa53a));
+            ray.rotation.z = a - Math.PI / 2;
+            add(ray, skyX + Math.cos(a) * 2.1, skyY + 0.5 + Math.sin(a) * 2.1, skyZ);
+          }
+        } else if (weather === "windy") {
+          [[0, 0, 0xf5a142, 0.4], [1.8, -1.0, 0xe8743a, -0.5], [-1.6, -1.6, 0xf7cf55, 1.1], [0.6, -2.6, 0xd2563a, 2.2]].forEach(([dx, dy, c, r]) => add(mapleLeaf(c), skyX + dx, skyY + dy, skyZ, { k: 1.4 }).rotation.set(0.3, 0, r));
+        } else {
+          [[0, 0, 1.6], [2.0, -1.2, 1.1], [-1.8, -1.4, 1.2], [0.6, -2.6, 0.9]].forEach(([dx, dy, k]) => add(velvetFlake(), skyX + dx, skyY + dy, skyZ, { k }));
+        }
+      });
     }
     /* The cloud with a face, cream, over the far side. */
     for (const dz of REPEATS) for (const [x, y, z, k] of [[-11, 13, -46, 2.8], [12, 16, -30, 2.2]]) {
