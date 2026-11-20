@@ -252,12 +252,12 @@ if NAME == "find":
     # its things (`mid.webp`), the near things blurred as a lens sees them
     # (`front.webp`, half size: it is soft) and the thing to find cut to its
     # pixels (`<thing>.webp`), into `public/assets/play/find/<place>/<frame>/`;
-    # once, the album's photo (what was found, together) and its small
+    # once, each thing whole (`<thing>-icon.webp`), the album's photo (what was found, together) and its small
     # picture of the place. Writes `src/data/find-places.ts` (each frame's
-    # layers' shape, each hidden thing's box and its leaves' spot).
+    # layers' shape, each hidden thing's box and its tip).
     #
     #     python3 tools/picnic-scene/crop.py find kitchen
-    places = {"kitchen": ["carrot", "broccoli"]}
+    places = {"kitchen": ["carrot", "broccoli"], "garden": ["flower", "leaf"], "farm": ["cat", "dog"]}
     lines = []
     for place in sys.argv[2:] or list(places):
         frames = []
@@ -285,19 +285,26 @@ if NAME == "find":
                 box = alpha_box(cut, threshold=10, pad=4)
                 piece = cut.crop(box)
                 piece.save(f"{dest}/{thing}.webp", quality=88, method=6)
-                # Its leaves: where its green is (the hint's twinkle), % of the piece.
-                px = np.asarray(piece).astype(np.int32)
-                green = (px[..., 1] > px[..., 2] + 40) & (px[..., 1] >= px[..., 0] - 10) & (px[..., 3] > 200)
-                ys, xs = np.nonzero(green)
-                leaf = [float(round(xs.mean() / piece.width * 100, 1)), float(round(ys.min() / piece.height * 100 + 6, 1))] if len(xs) else [50.0, 20.0]
+                # Its tip — the top of what shows (leaves, petals, ears): the hint's
+                # twinkle, % of the piece.
+                solid = np.asarray(piece)[..., 3] > 200
+                ys, xs = np.nonzero(solid)
+                band = ys < ys.min() + piece.height * 0.12
+                tip = [float(round(xs[band].mean() / piece.width * 100, 1)), float(round(ys.min() / piece.height * 100 + 6, 1))]
                 w, h = mid.size
                 pct = [round(v * 100, 2) for v in (box[0] / w, box[1] / h, (box[2] - box[0]) / w, (box[3] - box[1]) / h)]
-                things.append(f'{thing}: {{ box: [{", ".join(map(str, pct))}], leaf: [{leaf[0]}, {leaf[1]}] }}')
-                print(place, frame, thing, pct, leaf)
+                things.append(f'{thing}: {{ box: [{", ".join(map(str, pct))}], tip: [{tip[0]}, {tip[1]}] }}')
+                print(place, frame, thing, pct, tip)
             frames.append(f'    {frame}: {{\n      aMid: {meta["aMid"]},\n      things: {{\n        ' + ",\n        ".join(things) + ',\n      },\n    },')
             if frame == "landscape":
                 k_front = meta["kFront"]
                 top = os.path.join(ROOT, f"public/assets/play/find/{place}")
+                # Each thing whole, no shadow (the list's, the photo's and the album's picture of it).
+                for thing in places[place]:
+                    whole = Image.open(os.path.join(src, f"{thing}-icon.png")).convert("RGBA")
+                    whole = whole.crop(alpha_box(whole, threshold=10, pad=4))
+                    whole.thumbnail((256, 256), Image.LANCZOS)
+                    whole.save(f"{top}/{thing}-icon.webp", quality=90, method=6)
                 Image.open(os.path.join(src, "photo.png")).convert("RGB").resize((720, 720), Image.LANCZOS).save(f"{top}/photo.jpg", quality=86, optimize=True, progressive=True)
                 everything = Image.open(os.path.join(src, "all.png")).convert("RGB")
                 tw = round(everything.height * 1.3)
@@ -309,7 +316,7 @@ if NAME == "find":
             "   Each Find place's layers: how much faster the near layer slides\n"
             "   (`kFront`; it is that much wider), and per frame the middle layer's\n"
             "   width ÷ height (`aMid`), and each hidden thing's box on it [x, y, w, h] %\n"
-            "   and its leaves' spot on its own picture [x, y] %. */\n"
+            "   and its tip (the top of what shows) on its own picture [x, y] %. */\n"
             "export const FIND_PLACES = {\n" + "\n".join(lines) + "\n} as const;\n\n"
             "export type FindPlace = keyof typeof FIND_PLACES;\n"
         )
