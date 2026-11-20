@@ -8,7 +8,7 @@ import { getDictionary } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Find — Edenic World",
-  description: "Look round Nova's kitchen and find what is hidden there.",
+  description: "Look round the friends' places and find what is hidden there.",
 };
 
 export function generateStaticParams() {
