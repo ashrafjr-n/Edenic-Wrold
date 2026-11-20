@@ -302,7 +302,7 @@ export const en = {
     lookLeft: "Look left",
     lookRight: "Look right",
     intro1: "Can you find the things on my list?",
-    intro2: "Drag the kitchen to look around. Peek behind things!",
+    intro2: "Drag the picture to look around. Peek behind things!",
     found1: "You found them all!",
     found2: "Snap! Your photo is in the album.",
     letsGo: "Let's go!",
