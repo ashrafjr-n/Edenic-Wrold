@@ -1,20 +1,30 @@
 import type { StaticImageData } from "next/image";
 import { FIND_PLACES, type FindPlace } from "./find-places";
-import kitchenBack from "../../public/assets/play/find/kitchen/back.jpg";
-import kitchenCarrot from "../../public/assets/play/find/kitchen/carrot.webp";
-import kitchenFront from "../../public/assets/play/find/kitchen/front.webp";
-import kitchenMid from "../../public/assets/play/find/kitchen/mid.webp";
+import kitchenBackWide from "../../public/assets/play/find/kitchen/landscape/back.jpg";
+import kitchenCarrotWide from "../../public/assets/play/find/kitchen/landscape/carrot.webp";
+import kitchenFrontWide from "../../public/assets/play/find/kitchen/landscape/front.webp";
+import kitchenMidWide from "../../public/assets/play/find/kitchen/landscape/mid.webp";
+import kitchenBack from "../../public/assets/play/find/kitchen/portrait/back.jpg";
+import kitchenCarrot from "../../public/assets/play/find/kitchen/portrait/carrot.webp";
+import kitchenFront from "../../public/assets/play/find/kitchen/portrait/front.webp";
+import kitchenMid from "../../public/assets/play/find/kitchen/portrait/mid.webp";
 import kitchenPhoto from "../../public/assets/play/find/kitchen/photo.jpg";
 import kitchenPlace from "../../public/assets/play/find/kitchen/place.jpg";
 
-/** A Find stage's pictures (`tools/picnic-scene/crop.py find`): the room,
-    the counter, the near things before the lens, the thing to find, the
-    album's photo of it and the album's small picture of the place. */
-export interface FindArt {
+/** One frame of a Find place (`tools/picnic-scene/crop.py find`): the room,
+    the counter, the near things before the lens and the thing to find. */
+export interface FindLayers {
   back: StaticImageData;
   mid: StaticImageData;
   front: StaticImageData;
   thing: StaticImageData;
+}
+
+/** A stage's pictures: its place in both frames (a wide screen's and a
+    phone's), the album's photo of the thing and its small picture of the place. */
+export interface FindArt {
+  landscape: FindLayers;
+  portrait: FindLayers;
   photo: StaticImageData;
   place: StaticImageData;
 }
@@ -38,7 +48,12 @@ export const FIND_STAGES: readonly FindStage[] = [
     n: 1,
     place: "kitchen",
     thing: "carrot",
-    art: { back: kitchenBack, mid: kitchenMid, front: kitchenFront, thing: kitchenCarrot, photo: kitchenPhoto, place: kitchenPlace },
+    art: {
+      landscape: { back: kitchenBackWide, mid: kitchenMidWide, front: kitchenFrontWide, thing: kitchenCarrotWide },
+      portrait: { back: kitchenBack, mid: kitchenMid, front: kitchenFront, thing: kitchenCarrot },
+      photo: kitchenPhoto,
+      place: kitchenPlace,
+    },
   },
 ];
 
