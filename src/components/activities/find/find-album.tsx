@@ -11,7 +11,8 @@ import { findKey, useProgress } from "@/store/progress";
 /** One page of the album: a stage, with its pictures once it is built. */
 export interface AlbumSlot {
   n: number;
-  thing?: string;
+  /** What is hidden there: its word and its picture. */
+  things?: readonly { word: string; pic: StaticImageData }[];
   photo?: StaticImageData;
   place?: StaticImageData;
 }
@@ -31,7 +32,7 @@ type State = "done" | "next" | "soon" | "locked";
 
 /**
  * Find's album, which is also its stage picker: nine white clay polaroids
- * taped on the page. A found stage shows its photo and its word; the next
+ * taped on the page. A found stage shows its photo and what was found; the next
  * one its place, with a play dot; one not built yet "Coming soon"; the rest
  * a padlock. The stages open one at a time. Nothing found until the store
  * has read localStorage.
@@ -45,7 +46,7 @@ export function FindAlbum({ slots, words, soon, fresh }: FindAlbumProps) {
   const stateOf = (slot: AlbumSlot): State => {
     if (found(slot.n)) return "done";
     if (slot.n > 1 && !found(slot.n - 1)) return "locked";
-    return slot.thing ? "next" : "soon";
+    return slot.things ? "next" : "soon";
   };
 
   return (
@@ -78,7 +79,8 @@ export function FindAlbum({ slots, words, soon, fresh }: FindAlbumProps) {
                 {state === "soon" ? <Hourglass strokeWidth={2.4} /> : <Lock strokeWidth={2.6} />}
               </span>
             );
-          const caption = state === "done" ? slot.thing : state === "next" ? "?" : state === "soon" ? soon : " ";
+          const caption =
+            state === "done" ? slot.things?.map(({ word, pic }) => <Image key={word} src={pic} alt="" sizes="32px" className="find-polaroid-thing" />) : state === "next" ? "?" : state === "soon" ? soon : " ";
           const inner = (
             <>
               {picture}
@@ -92,7 +94,7 @@ export function FindAlbum({ slots, words, soon, fresh }: FindAlbumProps) {
               {state === "done" || state === "next" ? (
                 <Link
                   href={`/play/find/${slot.n}`}
-                  aria-label={state === "done" ? format(words.photoAria, { n: slot.n, thing: slot.thing ?? "" }) : format(words.playAria, { n: slot.n })}
+                  aria-label={state === "done" ? format(words.photoAria, { n: slot.n, things: slot.things?.map((t) => t.word).join(", ") ?? "" }) : format(words.playAria, { n: slot.n })}
                   className={className}
                   style={style}
                 >
