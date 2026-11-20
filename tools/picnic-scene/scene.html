@@ -5927,8 +5927,8 @@ if (THING) {
      the near things pass in front of the far ones): the room (`back`), the
      counter and what is on it (`mid`), the near things in front of the lens
      (`front`, blurred by `crop.py find`). The thing to find is its own
-     layer (`carrot`, with its shadow), hidden behind a near bowl at the
-     start, its leaves peeking over it. Plus `photo`, the close-up the album
+     layer (`carrot`, `broccoli`, each with its shadow), hidden behind a near
+     thing, peeking over it. Plus `photo`, the close-up the album
      keeps, and `all` to look at. `?find=kitchen`, `render.cjs find kitchen`. */
   const H_PX = 1200;
   /* Two frames, as the course worlds have: `landscape` for a wide screen and
@@ -6010,23 +6010,26 @@ if (THING) {
   scene.add(things);
   const lay = (thing, x, z, how) => things.add(onCounter(thing, x, z, how));
   lay(KITCHEN.blender(), -9.0, -1.4, { rotY: 0.3 });
-  lay(KITCHEN.milkBottle(), -7.5, -1.6);
+  lay(KITCHEN.milkBottle(), -6.6, -1.7);
   lay(ITEMS.food("cheese"), -5.9, 0.7, { rotY: 0.8, scale: 0.9 });
   lay(VIDEO_THINGS.tomato(), -4.2, -0.7, { scale: 0.95 });
   lay(KITCHEN.egg(), -2.9, 0.9, { rotY: 0.5 });
   lay(KITCHEN.egg(), -2.35, 0.55, { rotY: -0.7 });
   lay(VIDEO_THINGS.potato(), -1.3, -1.1, { rotY: 0.6, scale: 0.95 });
   lay(KITCHEN.garlic(), 0.5, 0.5, { scale: 1.05 });
-  lay(VIDEO_THINGS.broccoli(), 2.1, -1.2, { scale: 0.95 });
   lay(VIDEO_THINGS.pepper(), 3.5, 0.8, { rotY: -0.4, scale: 0.95 });
   const basket = ITEMS.basket();
   lay(basket, 7.6, -1.1, { scale: 1.2 });
   lay(VIDEO_THINGS.tomato(), 9.3, 0.6, { scale: 0.9 });
   lay(VIDEO_THINGS.potato(), 10.6, -0.9, { rotY: -0.4, scale: 0.9 });
 
-  /* The carrot: lying back against nothing, its leafy top up and to the left. */
-  const CARROT = [5.4, 0.1];
+  /* What is hidden (2026-11-20: two to find, sometimes three): the carrot
+     lying back, its leafy top up and to the left, behind the fruit bowl; the
+     broccoli behind the flower jug, its florets peeking. Each is its own layer. */
+  const CARROT = [5.4, 0.1], BROCCOLI = [-7.4, 0.3];
   const carrot = onCounter(VIDEO_THINGS.carrot(), CARROT[0], CARROT[1], { rot: [0, 0, 0.95], rotY: 0.25, scale: 0.95 });
+  const broccoli = onCounter(VIDEO_THINGS.broccoli(), BROCCOLI[0], BROCCOLI[1], { rotY: 0.4, scale: 0.95 });
+  const hidden = { carrot, broccoli };
 
   /* The near things, between the lens and the counter (z = FRONT_Z), their
      feet below the frame: each stands on the line from the camera to a spot
@@ -6120,7 +6123,7 @@ if (THING) {
   };
   /* Where each covers, and how high its top reaches there (a height on the counter's line). */
   near(bowl(), [CARROT[0] + 0.55, 0.5, CARROT[1]], nearAt(CARROT[0], 0.78, CARROT[1]).y);
-  near(jug(), [-7.2, 0, 0.5], nearAt(-7.2, 1.7, 0.5).y);
+  near(jug(), [BROCCOLI[0] - 0.2, 0.5, BROCCOLI[1]], nearAt(BROCCOLI[0], 1.25, BROCCOLI[1]).y);
   near(herbs(), [-2.0, 0, 0.5], nearAt(-2.0, 0.55, 0.5).y);
   near(kettle(), [12.2, 0, 0.5], nearAt(12.2, 0.9, 0.5).y);
 
@@ -6131,33 +6134,38 @@ if (THING) {
     renderer.render(scene, cam);
     return renderer.domElement.toDataURL("image/png");
   };
-  const showOnly = (...groups) => [room, counter, things, carrot, front].forEach((g) => (g.visible = groups.includes(g)));
+  const showOnly = (...groups) => [room, counter, things, ...Object.values(hidden), front].forEach((g) => (g.visible = groups.includes(g)));
   window.renderLayers = () => {
     const out = {};
     renderer.setClearColor(0xfbefdc, 1);
-    showOnly(room, counter, things, carrot, front);
+    showOnly(room, counter, things, ...Object.values(hidden), front);
     out.all = shot(A_MID);
     showOnly(room);
     out.back = shot(A_MID);
     renderer.setClearColor(0x000000, 0);
     showOnly(counter, things);
     out.mid = shot(A_MID);
-    /* The carrot alone, with its shadow on the counter's top. */
-    showOnly(carrot);
+    /* Each hidden thing alone, with its shadow on the counter's top. */
     catcher.visible = true;
     catcher.position.set(0, 0.001, 0);
-    out.carrot = shot(A_MID);
+    for (const [name, group] of Object.entries(hidden)) {
+      showOnly(group);
+      out[name] = shot(A_MID);
+    }
     catcher.visible = false;
     showOnly(front);
     out.front = shot(A_MID * K_FRONT);
-    /* The album's photo: up close, the counter round it. */
+    /* The album's photo: what was found, together on the counter, up close. */
     renderer.setClearColor(0xfbefdc, 1);
-    showOnly(room, counter, things, carrot);
+    showOnly(room, counter, things, ...Object.values(hidden));
+    const home = broccoli.position.clone();
+    broccoli.position.set(CARROT[0] + 1.25, home.y, CARROT[1] - 0.7);
     const close = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
     const c = carrot.position;
-    close.position.set(c.x - 0.6, 2.9, c.z + 6.2);
-    close.lookAt(c.x - 0.3, 0.75, c.z);
+    close.position.set(c.x + 0.05, 3.4, c.z + 8.2);
+    close.lookAt(c.x + 0.15, 1.1, c.z - 0.3);
     out.photo = shot(1, close, 1000, 1000);
+    broccoli.position.copy(home);
     return out;
   };
   window.itemsMeta = () => ({ aMid: A_MID, kFront: K_FRONT, frame: PORTRAIT ? "portrait" : "landscape" });
