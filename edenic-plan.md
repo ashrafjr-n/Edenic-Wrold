@@ -954,7 +954,7 @@ all-six celebration (postponed; no certificate).
 **Play = three games, opened by stars (the user, 2026-11-19).** BUILT
 2026-11-19: `/play` shows the three cards with a star bank; Puzzle and Memory
 Match each open for two chest stars, the child choosing which. Open:
-- **Find's stages 2–9** (stage 1, Nova's kitchen — the carrot, BUILT
+- **Find's stages 2–9** (two things each, three in the harder ones; stage 1, Nova's kitchen — the carrot and the broccoli, BUILT
   2026-11-20 and waiting for the user's notes; design in `claude-docs/play-page.md`
   "Find"). One at a time, each checked: a new place (or the kitchen again,
   harder), its thing hidden behind a near thing, harder as they go — among
