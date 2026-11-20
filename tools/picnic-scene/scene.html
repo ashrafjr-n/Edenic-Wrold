@@ -5931,14 +5931,23 @@ if (THING) {
      start, its leaves peeking over it. Plus `photo`, the close-up the album
      keeps, and `all` to look at. `?find=kitchen`, `render.cjs find kitchen`. */
   const H_PX = 1200;
-  /* The counter's shot (the middle layer's width ÷ height) and how much faster the near layer slides. */
-  const A_MID = 2.7, K_FRONT = 1.5;
+  /* Two frames, as the course worlds have: `landscape` for a wide screen and
+     `portrait` (`&frame=portrait`) for a phone — the same camera, the same
+     width of kitchen, a taller lens showing the cupboards above and a near
+     table below. The counter's shot (the middle layer's width ÷ height) and
+     how much faster the near layer slides. */
+  const PORTRAIT = params.get("frame") === "portrait";
+  const A_MID = PORTRAIT ? 1.7 : 2.7, K_FRONT = 1.5;
   const FRONT_Z = 10;
-  const view = new THREE.PerspectiveCamera(22, A_MID, 0.1, 200);
+  /* The near table's top: under a wide frame's bottom edge, a strip along a phone's. */
+  const TABLE_Y = 2.45;
+  const view = new THREE.PerspectiveCamera(PORTRAIT ? 34 : 22, A_MID, 0.1, 200);
   const lift = THREE.MathUtils.degToRad(14);
   const LOOK = new THREE.Vector3(0, 1.75, -1);
   view.position.set(LOOK.x, LOOK.y + Math.sin(lift) * 20, LOOK.z + Math.cos(lift) * 20);
   view.lookAt(LOOK);
+  view.updateMatrixWorld(true);
+  view.updateProjectionMatrix();
 
   /* The videos' warm light, wide enough for the whole counter. */
   sun.color.set(0xfff0e4);
@@ -6029,15 +6038,26 @@ if (THING) {
     const to = new THREE.Vector3(x, y, z).sub(view.position);
     return view.position.clone().addScaledVector(to, (FRONT_Z - view.position.z) / to.z);
   };
-  const near = (thing, spot, ty, k = 1) => {
+  /* Each stands on the near table, sized so its top reaches `ty` (where it covers its spot). */
+  const near = (thing, spot, ty) => {
     const p = nearAt(...spot);
-    thing.scale.setScalar(k);
+    thing.updateMatrixWorld(true);
+    const size = new THREE.Box3().setFromObject(thing, true);
+    thing.scale.setScalar((ty - TABLE_Y) / (size.max.y - size.min.y));
     thing.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(thing, true);
-    thing.position.set(p.x, ty - box.max.y + thing.position.y, FRONT_Z);
+    thing.position.set(p.x, TABLE_Y - box.min.y, FRONT_Z);
     front.add(thing);
     return thing;
   };
+  const table = new THREE.Group();
+  const top_ = mesh(new RoundedBoxGeometry(80, 0.5, 4.2, 4, 0.2), soft(0xffd3df, { clearcoat: 0.3 }));
+  top_.position.set(0, TABLE_Y - 0.25, FRONT_Z + 1.2);
+  table.add(top_);
+  const apron = mesh(new RoundedBoxGeometry(80, 3, 0.4, 4, 0.15), soft(0xffbfd0));
+  apron.position.set(0, TABLE_Y - 1.9, FRONT_Z + 3.0);
+  table.add(apron);
+  front.add(table);
   const bowl = () => {
     const g = new THREE.Group();
     g.add(mesh(new THREE.LatheGeometry([[0, 0], [0.9, 0.05], [1.45, 0.45], [1.7, 1.0], [1.72, 1.08]].map(([x, y]) => new THREE.Vector2(x, y)), 96), soft(0x9fe0cf, { clearcoat: 0.6, side: THREE.DoubleSide })));
@@ -6099,25 +6119,10 @@ if (THING) {
     return g;
   };
   /* Where each covers, and how high its top reaches there (a height on the counter's line). */
-  near(bowl(), [CARROT[0] + 0.15, 0.5, CARROT[1]], nearAt(CARROT[0], 0.95, CARROT[1]).y, 0.72);
-  near(jug(), [-7.2, 0, 0.5], nearAt(-7.2, 1.7, 0.5).y, 0.62);
-  near(herbs(), [-2.0, 0, 0.5], nearAt(-2.0, 0.55, 0.5).y, 0.6);
-  near(kettle(), [12.2, 0, 0.5], nearAt(12.2, 0.9, 0.5).y, 0.7);
-  /* Bunting across the top, just in front of the lens. */
-  const flags = new THREE.Group();
-  const top = nearAt(0, 6.15, -5.6).y;
-  for (let i = -20; i <= 20; i++) {
-    const x = i * 0.46;
-    const flag = mesh(new THREE.ConeGeometry(0.15, 0.32, 3), soft([0xff9fb4, 0xffe3a3, 0x9fe0cf, 0xc7a3f0][(i + 20) % 4]));
-    flag.rotation.z = Math.PI;
-    flag.position.set(x, top - 0.17, FRONT_Z);
-    flags.add(flag);
-  }
-  const string = mesh(new THREE.CylinderGeometry(0.015, 0.015, 21, 8), soft(0xffffff));
-  string.rotation.z = Math.PI / 2;
-  string.position.set(0, top, FRONT_Z);
-  flags.add(string);
-  front.add(flags);
+  near(bowl(), [CARROT[0] + 0.55, 0.5, CARROT[1]], nearAt(CARROT[0], 0.78, CARROT[1]).y);
+  near(jug(), [-7.2, 0, 0.5], nearAt(-7.2, 1.7, 0.5).y);
+  near(herbs(), [-2.0, 0, 0.5], nearAt(-2.0, 0.55, 0.5).y);
+  near(kettle(), [12.2, 0, 0.5], nearAt(12.2, 0.9, 0.5).y);
 
   const shot = (aspect, cam = view, w = Math.round(H_PX * aspect), h = H_PX) => {
     renderer.setSize(w, h);
@@ -6155,7 +6160,7 @@ if (THING) {
     out.photo = shot(1, close, 1000, 1000);
     return out;
   };
-  window.itemsMeta = () => ({ aMid: A_MID, kFront: K_FRONT });
+  window.itemsMeta = () => ({ aMid: A_MID, kFront: K_FRONT, frame: PORTRAIT ? "portrait" : "landscape" });
 } else if (GARDEN) {
   /* ---------- Pinki's shape garden (2026-11-02) — the Shapes course's
      world: where its lessons happen, not a picture behind them. One walled
