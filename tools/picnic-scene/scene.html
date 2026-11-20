@@ -10317,6 +10317,12 @@ if (THING) {
     }
     if (i === 0) return lerp(ENTRY, STATIONS[0], settle(t));
     if (VEG) return lerp(STATIONS[i - 1], STATIONS[i], smooth(Math.min(1, t / 0.96)));
+    /* Bloo's island: on from the season's spelling to the weather's word in the first third, then
+       an easy drift in (from a little back and up) while the weather comes. */
+    if (SEAS && i === SEAS_ROLL) {
+      const e = smooth(Math.min(1, t / 0.32)), drift = 1 - settle(Math.max(0, (t - 0.32) / 0.68));
+      return lerp(STATIONS[i - 1], STATIONS[i], e).map((v, c) => v + [0, 0.25, 1.1, 0, 0.1, 0][c] * drift * e);
+    }
     const a = STATIONS[i - 1], b = STATIONS[i];
     const e = smooth(Math.max(0, Math.min(1, (t - HOLD) / (0.96 - HOLD))));
     const cam = lerp(a, b, e);
@@ -10365,15 +10371,28 @@ if (THING) {
       aim(cam);
       return render("image/jpeg", 0.92);
     },
+    /* Bloo's island: each move's length (s), and the stations that LOOP — the weather's, alive. */
+    ...(SEAS ? { seconds: SEAS_SECONDS, loops: [SEAS_ROLL, SEAS_ROLL + 1, SEAS_ROLL + 2], loopSeconds: SEAS_LOOP } : {}),
     /* Station i's still. */
     station(i) {
       grow(1);
+      seasFx?.(SEAS && i >= SEAS_ROLL ? 1 : 0, 0);
       aim(STATIONS[i]);
       return render();
+    },
+    /* Frame `t` of a weather station's loop (Bloo's island): its still at time t·LOOP; t = 1 is t = 0. */
+    loop(i, t) {
+      grow(1);
+      seasFx(1, t * SEAS_LOOP);
+      aim(STATIONS[i]);
+      return render("image/jpeg", 0.93);
     },
     /* Frame `t` of move i. */
     move(i, t) {
       grow(i === 0 ? t : 1);
+      /* Bloo's island: the weather rolls in on the move to its word; after it, it falls on, its time
+         ending at 0 on each station (where the station's loop starts). */
+      if (SEAS) seasFx(i < SEAS_ROLL ? 0 : i === SEAS_ROLL ? smooth(Math.min(1, Math.max(0, (t - 0.12) / 0.8))) : 1, (t - 1) * SEAS_SECONDS[i]);
       if (!VEG) {
         const [b0, b1] = YEAR_HILL && i === STATIONS.length - 1 ? [0.08, 0.92] : BLOOM;
         blooms(i - 1, i === 0 ? 0 : Math.max(0, Math.min(1, (t - b0) / (b1 - b0))));
