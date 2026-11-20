@@ -5,7 +5,7 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Lock, Play } from "lucide-react";
 import { seenOf, useCourseUnlock } from "@/components/learn/use-course-unlock";
-import { chestSeen, peekChest, takeChest } from "@/lib/chest-run";
+import { STAR_FLIGHT, chestSeen, peekChest, takeChest } from "@/lib/chest-run";
 import { playSfx } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
 import { useWide } from "@/lib/use-wide";
@@ -168,28 +168,35 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
      time, simply open (`still`) on a later visit. */
   const open = (still = false) => {
     if (chestNow.current.open) return;
-    playChest.current(still);
-    chestSeen.mark(`${characterId}.${lessonId}`);
-    /* Its star: only a chest reached — every lesson done — gives it,
-       once. Read off the store itself: this can be called from an effect of the
+    /* Read off the store itself: this can be called from an effect of the
        first render, whose own `nextIndex` is from before the store was read. */
     const { items, complete } = useProgress.getState();
-    if (!star || !titles.every((_, i) => items[itemKey(characterId, lessonId, i + 1)])) return;
     const key = chestStarKey(characterId, lessonId);
-    const fresh = !items[key];
+    /* Its star already given (the last lesson replayed): simply open, as on any later visit — nothing comes out again. */
+    const given = Boolean(items[key]);
+    playChest.current(still || given);
+    chestSeen.mark(`${characterId}.${lessonId}`);
+    /* Its star: only a chest reached — every lesson done — gives it, once. */
+    if (given || !star || !titles.every((_, i) => items[itemKey(characterId, lessonId, i + 1)])) return;
     complete(key, 1);
     starTimer.current = window.setTimeout(
       () => {
-        setStarOut(fresh ? "rise" : "rest");
-        if (fresh) playSfx("star");
+        setStarOut(true);
+        playSfx("star");
       },
-      fresh ? (still ? STAR_BEAT_MS : STAR_AFTER_MS) : 0,
+      still ? STAR_BEAT_MS : STAR_AFTER_MS,
     );
   };
-  /* The star over the open chest: `rise` as it comes out the first time, `rest` after. */
-  const [starOut, setStarOut] = useState<"rise" | "rest" | null>(null);
+  /* The star coming up out of the chest, the once it is given; the star pod
+     then flies it to its slot (`STAR_FLIGHT`) and the chest stays open, empty. */
+  const [starOut, setStarOut] = useState(false);
   const starTimer = useRef(0);
   useEffect(() => () => window.clearTimeout(starTimer.current), []);
+  useEffect(() => {
+    const gone = () => setStarOut(false);
+    window.addEventListener(STAR_FLIGHT, gone);
+    return () => window.removeEventListener(STAR_FLIGHT, gone);
+  }, []);
   const [chestAsked] = useState(() => peekChest(`${characterId}.${lessonId}`));
 
   /* A way is pink once the lesson before it is done. */
@@ -785,9 +792,12 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
   }, [walk, chestAsked, data]);
 
   /* Every lesson done = the child has reached the chest: it opens by itself once
-     the camera is at it — shaking the first time, simply open after that. */
+     the camera is at it — shaking the first time, simply open after that. After
+     the last lesson's Finish the walk opens it — unless its star was given
+     already: then it is open from the start, as on any later visit. */
   useEffect(() => {
-    if (!hydrated || nextIndex >= 0 || chestAsked) return;
+    if (!hydrated || nextIndex >= 0) return;
+    if (chestAsked && !useProgress.getState().items[chestStarKey(characterId, lessonId)]) return;
     const first = !chestSeen.has(`${characterId}.${lessonId}`);
     const timer = window.setTimeout(() => open(!first), first ? 1400 : 300);
     return () => clearTimeout(timer);
@@ -891,7 +901,7 @@ export function CourseWorld({ world, titles, characterId, lessonId, basePath, di
             className="course-stop"
             style={place(data.keys[data.keys.length - 1][ways])}
           >
-            {star && starOut && <Image src={star} alt="" sizes="(orientation: landscape) 12vw, 34vw" className="chest-star" data-rise={starOut === "rise" || undefined} />}
+            {star && starOut && <Image src={star} alt="" sizes="(orientation: landscape) 12vw, 34vw" className="chest-star" />}
           </button>
         </div>
       </div>
