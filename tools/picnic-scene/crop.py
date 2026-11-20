@@ -252,15 +252,14 @@ if NAME == "find":
     # its things (`mid.webp`), the near things blurred as a lens sees them
     # (`front.webp`, half size: it is soft) and the thing to find cut to its
     # pixels (`<thing>.webp`), into `public/assets/play/find/<place>/<frame>/`;
-    # once, the album's photo and its small picture of the place. Writes
-    # `src/data/find-places.ts` (each frame's layers' shape, the thing's box
-    # and its leaves' spot).
+    # once, the album's photo (what was found, together) and its small
+    # picture of the place. Writes `src/data/find-places.ts` (each frame's
+    # layers' shape, each hidden thing's box and its leaves' spot).
     #
     #     python3 tools/picnic-scene/crop.py find kitchen
-    places = {"kitchen": "carrot"}
+    places = {"kitchen": ["carrot", "broccoli"]}
     lines = []
     for place in sys.argv[2:] or list(places):
-        thing = places[place]
         frames = []
         for frame in ("landscape", "portrait"):
             src = os.path.join(HERE, "out", f"find-{place}", frame)
@@ -280,19 +279,22 @@ if NAME == "find":
             a = pre[..., 3:]
             rgb = np.where(a > 0.004, pre[..., :3] / np.maximum(a, 1e-4), 0)
             Image.fromarray((np.clip(np.concatenate([rgb, a], axis=-1), 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA").save(f"{dest}/front.webp", quality=84, method=6)
-            cut = Image.open(os.path.join(src, f"{thing}.png")).convert("RGBA")
-            box = alpha_box(cut, threshold=10, pad=4)
-            piece = cut.crop(box)
-            piece.save(f"{dest}/{thing}.webp", quality=88, method=6)
-            # Its leaves: where its green is (the hint's twinkle), % of the piece.
-            px = np.asarray(piece).astype(np.int32)
-            green = (px[..., 1] > px[..., 2] + 40) & (px[..., 1] >= px[..., 0] - 10) & (px[..., 3] > 200)
-            ys, xs = np.nonzero(green)
-            leaf = [float(round(xs.mean() / piece.width * 100, 1)), float(round(ys.min() / piece.height * 100 + 6, 1))] if len(xs) else [50.0, 20.0]
-            w, h = mid.size
-            pct = [round(v * 100, 2) for v in (box[0] / w, box[1] / h, (box[2] - box[0]) / w, (box[3] - box[1]) / h)]
-            frames.append(f'    {frame}: {{ aMid: {meta["aMid"]}, thing: [{", ".join(map(str, pct))}], leaf: [{leaf[0]}, {leaf[1]}] }},')
-            print(place, frame, thing, pct, leaf)
+            things = []
+            for thing in places[place]:
+                cut = Image.open(os.path.join(src, f"{thing}.png")).convert("RGBA")
+                box = alpha_box(cut, threshold=10, pad=4)
+                piece = cut.crop(box)
+                piece.save(f"{dest}/{thing}.webp", quality=88, method=6)
+                # Its leaves: where its green is (the hint's twinkle), % of the piece.
+                px = np.asarray(piece).astype(np.int32)
+                green = (px[..., 1] > px[..., 2] + 40) & (px[..., 1] >= px[..., 0] - 10) & (px[..., 3] > 200)
+                ys, xs = np.nonzero(green)
+                leaf = [float(round(xs.mean() / piece.width * 100, 1)), float(round(ys.min() / piece.height * 100 + 6, 1))] if len(xs) else [50.0, 20.0]
+                w, h = mid.size
+                pct = [round(v * 100, 2) for v in (box[0] / w, box[1] / h, (box[2] - box[0]) / w, (box[3] - box[1]) / h)]
+                things.append(f'{thing}: {{ box: [{", ".join(map(str, pct))}], leaf: [{leaf[0]}, {leaf[1]}] }}')
+                print(place, frame, thing, pct, leaf)
+            frames.append(f'    {frame}: {{\n      aMid: {meta["aMid"]},\n      things: {{\n        ' + ",\n        ".join(things) + ',\n      },\n    },')
             if frame == "landscape":
                 k_front = meta["kFront"]
                 top = os.path.join(ROOT, f"public/assets/play/find/{place}")
@@ -306,8 +308,8 @@ if NAME == "find":
             "/* Written by `tools/picnic-scene/crop.py find` — do not edit by hand.\n"
             "   Each Find place's layers: how much faster the near layer slides\n"
             "   (`kFront`; it is that much wider), and per frame the middle layer's\n"
-            "   width ÷ height (`aMid`), the thing's box on it [x, y, w, h] % and its\n"
-            "   leaves' spot on its own picture [x, y] %. */\n"
+            "   width ÷ height (`aMid`), and each hidden thing's box on it [x, y, w, h] %\n"
+            "   and its leaves' spot on its own picture [x, y] %. */\n"
             "export const FIND_PLACES = {\n" + "\n".join(lines) + "\n} as const;\n\n"
             "export type FindPlace = keyof typeof FIND_PLACES;\n"
         )
