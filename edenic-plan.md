@@ -954,11 +954,18 @@ all-six celebration (postponed; no certificate).
 **Play = three games, opened by stars (the user, 2026-11-19).** BUILT
 2026-11-19: `/play` shows the three cards with a star bank; Puzzle and Memory
 Match each open for two chest stars, the child choosing which. Open:
-- **Find's stages 2–9** (two things each, three in the harder ones; stage 1, Nova's kitchen — the carrot and the broccoli, BUILT
-  2026-11-20 and waiting for the user's notes; design in `claude-docs/play-page.md`
-  "Find"). One at a time, each checked: a new place (or the kitchen again,
-  harder), its thing hidden behind a near thing, harder as they go — among
-  look-alikes, then the word alone.
+- **Find's stages 4–9** (stages 1–3 BUILT 2026-11-20: Nova's kitchen,
+  her garden, Bloo's farm; design in `claude-docs/play-page.md` "Find").
+  The plan the user agreed (one at a time, each checked; words with audio):
+  4 Pinki's shape land — heart, diamond, among look-alike shapes;
+  5 Bloo's farm pond — fish, turtle, bird (the first THREE);
+  6 Pinki's colour land — purple, yellow (find a COLOUR: a colour dot on
+    the list, any thing of it counts — needs a little code);
+  7 Bloo's island in winter — mouse, nest, bird (smaller, further, behind two);
+  8 Nova's garden at dusk — tree, bench, gecko (dim, a circle of light
+    follows the finger — needs a little code);
+  9 finale, the friends' picnic — tomato, heart, parrot (one from each
+    friend; the album completes with a small celebration).
 
 ### Phase 7 — Course worlds, camera moves, the return to the board (agreed 2026-11-02)
 
