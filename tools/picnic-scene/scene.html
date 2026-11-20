@@ -6210,20 +6210,16 @@ if (THING) {
      places and no Find. */
   const FOREST_STEPS = FARM ? (SEAS ? SEAS_STEPS : 3) : MY_GARDEN ? (MY_KIND ? 2 : 4) : !FOREST ? 0 : !COLOR_ID ? 5 : MIXES[COLOR_ID] ? 3 : 2;
   const STEP_DX = 6.8;
-  /* Bloo's island of the year (2026-11-10): round, floating, its quarters the four
-     seasons — the lesson's season in front (its places), the next on the right, the
-     one before on the left, the opposite far behind. */
-  const ISLE = SEAS ? { cx: ((FOREST_STEPS - 1) * STEP_DX) / 2, cz: -30, r: 46 } : null;
-  const isleQuarter = (x, z) => {
-    const a = Math.atan2(x - ISLE.cx, z - ISLE.cz);
-    /* The front is widest (150°), so the lesson's season fills the view from its places. */
-    const F = THREE.MathUtils.degToRad(75), B = THREE.MathUtils.degToRad(150);
-    return a > B || a < -B ? 2 : a > F ? 1 : a < -F ? 3 : 0;
-  };
-  /* A season's lessons (1-8): the whole island is that season, a world of its own (the user,
-     2026-11-10). The review (9): the four quarters, the whole year. */
-  const isleSeason = (x, z) => (LESSON <= 8 ? SEAS_SEASON : SEAS_SEASONS[(SEAS_SEASONS.indexOf(SEAS_SEASON) + isleQuarter(x, z)) % 4]);
+  /* Bloo's island of the year: round, floating over a sea of clouds, the whole of it in the
+     lesson's season (the same island, the same trees and houses, in all four). */
+  const ISLE = SEAS ? { cx: ((FOREST_STEPS - 1) * STEP_DX) / 2, cz: -26, r: 48 } : null;
   const onIsle = (x, z, margin = 1) => Math.hypot(x - ISLE.cx, z - ISLE.cz) < ISLE.r - margin;
+  /* The weather laid over the season: `seasFx(amount 0..1, time in s)`, set by the island below. */
+  let seasFx = null;
+  /* Its camera: the move that brings the weather (to its word), every move's length (s), the loops' length. */
+  const SEAS_ROLL = 2, SEAS_SECONDS = [2.4, 2.3, 5.6, 2.3, 2.8], SEAS_LOOP = 3;
+  /* The windy lesson's kite (its weather's spelling place), tugged by the wind. */
+  let seasKite = null;
   const fx = VEG || YEAR_HILL || STOPS ? null : ON_PATH ? (COLOR_ID ? FOREST_STEPS * STEP_DX + 3.6 : null) : LESSON <= 7 ? CORNER[LESSON] + 5 : null;
   const inFind = (x, reach = 6.5) => fx !== null && Math.abs(x - fx) < reach;
 
