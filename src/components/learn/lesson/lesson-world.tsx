@@ -41,7 +41,9 @@ export function worldCover(wide: boolean): CSSProperties {
  * things over the same frame. A walk opens on the flower of the step just
  * done blooming; the lesson's end is one more station — the camera rising
  * over the path in bloom. Reduced motion, a stall or a refused play: the
- * next still fades in instead. Fixed to the whole viewport under the page
+ * next still fades in instead. A station with a loop (Bloo's island, the
+ * weather's: the rain falling on) plays it once the camera is there, never
+ * under reduced motion. Fixed to the whole viewport under the page
  * (`-z-[5]`, over the classroom's wall), never over the header.
  */
 export function LessonWorldView({ world, station, onArrive }: LessonWorldViewProps) {
@@ -59,12 +61,23 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
   /* The station the camera last got to. */
   const reached = useRef(-1);
   const stall = useRef<number | undefined>(undefined);
+  /* A station that stays alive (Bloo's island: the rain falling on): its loop, on top once it plays. */
+  const [live, setLive] = useState<number | null>(null);
+  const loops = useRef(new Map<number, HTMLVideoElement>());
 
   const arrive = (at: number) => {
     window.clearTimeout(stall.current);
     reached.current = at;
     setShown(at);
     onArrive();
+    /* Its first frame is the still, so it starts where the camera stopped. */
+    const loop = loops.current.get(at);
+    if (!loop || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    loop.currentTime = 0;
+    loop.play().then(
+      () => reached.current === at && setLive(at),
+      () => undefined,
+    );
   };
   /* The same, from inside the effect below (its timers and its refused play). */
   const arriveLater = useEffectEvent(arrive);
@@ -79,6 +92,9 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
     last.current = station;
     lastFrame.current = frame;
     if (station < 0 || (station === from && !turned)) return;
+    /* Leaving a live station: its loop gives way to the move (or the still). */
+    setLive(null);
+    loops.current.forEach((loop) => loop.pause());
     const walking = station === from + 1 || (station === from && reached.current !== station);
     const video = videos.current.get(station);
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -106,6 +122,8 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
      Before the entry its first frame is on top (behind the reel on a wide
      screen). */
   const mounted = [...new Set([onTop ?? -1, station, station + 1])].filter((i) => i >= 0 && i < world.moves.length && world.moves[i]);
+  /* The loop of the station the camera is going to, loading while it walks. */
+  const looping = [...new Set([station, live ?? -1])].filter((i) => i >= 0 && world.loops?.[i]);
 
   return (
     <div className="world-frame -z-[5]" aria-hidden>
@@ -149,6 +167,23 @@ export function LessonWorldView({ world, station, onArrive }: LessonWorldViewPro
               if (i === station) arrive(i);
             }}
             className={`absolute inset-0 h-full w-full object-cover ${i === onTop ? "" : "opacity-0"}`}
+          />
+        ))}
+        {looping.map((i) => (
+          <video
+            key={`loop-${frame}-${i}`}
+            ref={(element) => {
+              if (element) loops.current.set(i, element);
+              else loops.current.delete(i);
+            }}
+            src={world.loops?.[i]?.[frame]}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            onError={() => i === live && setLive(null)}
+            className={`absolute inset-0 h-full w-full object-cover ${i === live ? "" : "opacity-0"}`}
           />
         ))}
       </div>
