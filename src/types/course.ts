@@ -172,6 +172,10 @@ export interface LessonWorld {
   /** The camera's move INTO each station, a clip played by path (move 0
       is the entry, after the reel); the last frame is that station. */
   moves: readonly (Framed<string> | null)[];
+  /** Bloo's island (2026-11-20): a station that stays ALIVE once the camera is there — a clip that
+      loops seamlessly, its first frame that station's still (the rain falling on, the leaves flying).
+      `null` (or absent) where the station is still. */
+  loops?: readonly (Framed<string> | null)[];
   /** The station each step plays at (the last holds for the steps after it):
       absent, step `i` is at station `i`. Several steps at one station never
       change the picture between them — Nova's kitchen: a blurred
