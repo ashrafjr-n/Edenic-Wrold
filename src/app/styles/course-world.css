@@ -104,9 +104,10 @@ button.course-stop {
 /* ---------------------------------------------------------------
    The star a course's gold chest gives: over the open chest,
    inside the chest's own stop (`cqi` of its box). It comes up out of the
-   chest once (`data-rise`), then hangs there, bobbing — on later visits it
-   is simply there. Both animate `translate`, which carries the centring
-   (never a Tailwind `-translate-x-1/2` beside it). --------- */
+   chest the once it is given and bobs there until the star pod flies it to
+   its slot (`StarPod`); the chest then stays open, empty. Both animate
+   `translate`, which carries the centring (never a Tailwind
+   `-translate-x-1/2` beside it). --------- */
 .chest-star {
   position: absolute;
   left: 50%;
@@ -116,10 +117,6 @@ button.course-stop {
   pointer-events: none;
   translate: -50% 0;
   filter: drop-shadow(0 0 0.7em rgb(255 214 96 / 85%)) drop-shadow(0 0.5em 0.6em rgb(150 90 20 / 30%));
-  animation: chest-star-bob 2.2s ease-in-out infinite alternate;
-}
-
-.chest-star[data-rise] {
   animation:
     chest-star-rise 1.15s cubic-bezier(0.3, 1.25, 0.5, 1) both,
     chest-star-bob 2.2s ease-in-out 1.15s infinite alternate;
@@ -156,8 +153,7 @@ button.course-stop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chest-star,
-  .chest-star[data-rise] {
+  .chest-star {
     animation: none;
   }
 }
