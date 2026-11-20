@@ -6553,154 +6553,537 @@ if (THING) {
   for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
 
   } else if (SEAS) {
-  /* ---- Bloo's ISLAND OF THE YEAR (2026-11-10, the user: Seasons and Weather wants a
-     world of its own, not the Animals farm): one round island floating over a sea of
-     clouds, in four quarters (`ISLE`, `isleSeason`). The lesson's season is in front,
-     where its places are, so the child stands IN it and sees the rest of the year
-     around: the next season on the right, the one before on the left, the opposite
-     far behind. The weather falls on the front quarter. ---- */
+  /* ---- Bloo's ISLAND OF THE YEAR (rebuilt 2026-11-20, the user: "the 3D behind the activities is
+     bad, the rain is bad, the season → weather change must be smooth on one world"). One round
+     island floating over a sea of clouds, in the reels' look: a pastel cobble path winding along
+     the four places, a big pom-pom tree, Bloo's cottages, a wooden fence, mushrooms, rolling hills
+     and clumps of trees behind, fluffy clouds. Its LAYOUT never changes with the season (its own
+     seeded random, `lr`), only its looks do — so the child knows it is the same place all year.
+     The weather is laid over it by an amount (`seasFx`), never a second render. ---- */
   scene.remove(gravel);
   scene.remove(lawn);
+  seed = 7;
+  let ls = 20261120;
+  const lr = () => ((ls = (ls * 16807) % 2147483647) / 2147483647);
+  const lpick = (list) => list[Math.floor(lr() * list.length)];
+  const SEASON = SEAS_SEASON, WEATHER = SEAS_WEATHER;
+  const WINTER = SEASON === "winter", FALL = SEASON === "fall", SPRING = SEASON === "spring", SUMMER = SEASON === "summer";
   const placeXs = [...Array(FOREST_STEPS).keys()].map((k) => k * STEP_DX);
   const X1 = (FOREST_STEPS - 1) * STEP_DX;
-  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 3.2 && z > -3.5 && z < 7.5);
-  const pick = (list) => list[Math.floor(rand() * list.length)];
-  /* Every season's trees: tone `season * 4 + k`. */
-  GARDEN_TONES.tree.splice(0, GARDEN_TONES.tree.length, ...SEAS_SEASONS.flatMap((season) => SEAS_LOOK[season].trees));
+  /* Never right in front of a place, nor on the path. */
+  const pathZ = (x) => 3.9 + Math.sin(x * 0.11) * 0.35;
+  /* The pond by the weather's word: rain rings on it, the sun's sparkles, winter's ice. */
+  const PONDX = 2 * STEP_DX + 2.8, PONDZ = -1.5;
+  const busy = (x, z) => placeXs.some((px) => Math.abs(x - px) < 3.4 && z > -3.6 && z < 9.8) || Math.abs(z - pathZ(x)) < 1.5 || Math.hypot((x - PONDX) / 3.6, (z - PONDZ) / 2.2) < 1;
+  const near = (x, z) => placeXs.some((px) => Math.abs(x - px) < 4.6 && z > 6.2);
+  GARDEN_TONES.tree.splice(0, GARDEN_TONES.tree.length, ...LOOK.trees);
+  const ss = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const TAU = Math.PI * 2;
+  /* Everything the weather moves stays out of `freeze()`'s merge. */
+  const live = (o) => { o.traverse((c) => (c.userData.noMerge = true)); return o; };
+  const snowM = velvet(0xfbfdff);
 
-  /* The ground: the quarters' lawns, blended softly where they meet. */
-  const ground = new THREE.RingGeometry(0.01, ISLE.r, 256, 40);
-  const colors = [];
-  const pos = ground.attributes.position;
-  const lawnOf = SEAS_SEASONS.map((season) => new THREE.Color(SEAS_LOOK[season].lawn[0]));
-  const S0 = SEAS_SEASONS.indexOf(SEAS_SEASON);
-  for (let v = 0; v < pos.count; v++) {
-    /* The ring lies in x/y; on the ground y becomes -z. */
-    const x = ISLE.cx + pos.getX(v), z = ISLE.cz - pos.getY(v);
-    /* Soft edges between quarters: the quarter averaged over ±12° around this point. */
-    const c = new THREE.Color(0, 0, 0);
-    let sum = 0;
-    for (let k = -6; k <= 6; k++) {
-      const a = Math.atan2(x - ISLE.cx, z - ISLE.cz) + THREE.MathUtils.degToRad(2 * k);
-      c.add(lawnOf[SEAS_SEASONS.indexOf(isleSeason(ISLE.cx + Math.sin(a), ISLE.cz + Math.cos(a)))]);
-      sum++;
+  /* ---- The ground: the season's lawn, softly mottled (low waves of lighter and darker) ---- */
+  const ground = new THREE.CircleGeometry(ISLE.r, 200, 0, TAU);
+  {
+    const pos = ground.attributes.position, colors = [];
+    const [a, b] = LOOK.lawn.map((c) => new THREE.Color(c));
+    for (let v = 0; v < pos.count; v++) {
+      const x = pos.getX(v), y = pos.getY(v);
+      const n = 0.5 + 0.25 * Math.sin(x * 0.21 + y * 0.13) + 0.25 * Math.sin(x * 0.07 - y * 0.31 + 1.3);
+      const c = a.clone().lerp(b, n);
+      colors.push(c.r, c.g, c.b);
     }
-    c.multiplyScalar(1 / Math.max(sum, 1e-3));
-    colors.push(c.r, c.g, c.b);
+    ground.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
   }
-  ground.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-  const isle = new THREE.Mesh(ground, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95 }));
+  const groundM = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95 });
+  const isle = new THREE.Mesh(ground, groundM);
   isle.rotation.x = -Math.PI / 2;
   isle.position.set(ISLE.cx, 0, ISLE.cz);
   isle.receiveShadow = true;
+  isle.userData.noMerge = true;
   scene.add(isle);
-  /* Under it: a clay cliff tapering away, then the sea of clouds. */
-  const cliff = mesh(new THREE.CylinderGeometry(ISLE.r + 0.15, ISLE.r * 0.28, 20, 128, 4), soft(0xd8a57c, { roughness: 0.9 }));
-  cliff.position.set(ISLE.cx, -10.02, ISLE.cz);
-  cliff.castShadow = false;
-  scene.add(cliff);
-  const lip = mesh(new THREE.TorusGeometry(ISLE.r, 0.35, 12, 160), soft(0xc98f66, { roughness: 0.9 }));
+  /* Under it: a band of the lawn's edge, the clay cliff tapering away, the sea of clouds. */
+  const lip = mesh(new THREE.TorusGeometry(ISLE.r, 0.42, 16, 200), velvet(new THREE.Color(LOOK.lawn[1]).getHex()));
   lip.rotation.x = Math.PI / 2;
   lip.position.set(ISLE.cx, -0.3, ISLE.cz);
   lip.castShadow = false;
   scene.add(lip);
-  const below = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.MeshBasicMaterial({ color: new THREE.Color(SKY[1]) }));
+  const cliff = mesh(new THREE.CylinderGeometry(ISLE.r + 0.2, ISLE.r * 0.3, 22, 160, 6), velvet(0xe2b48c));
+  cliff.position.set(ISLE.cx, -11.1, ISLE.cz);
+  cliff.castShadow = false;
+  scene.add(cliff);
+  const soilBand = mesh(new THREE.CylinderGeometry(ISLE.r + 0.35, ISLE.r + 0.1, 1.6, 160), velvet(0xc99872));
+  soilBand.position.set(ISLE.cx, -1.1, ISLE.cz);
+  soilBand.castShadow = false;
+  scene.add(soilBand);
+  const below = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshBasicMaterial({ color: new THREE.Color(SKY[3]) }));
   below.rotation.x = -Math.PI / 2;
-  below.position.set(ISLE.cx, -26, ISLE.cz);
+  below.position.set(ISLE.cx, -30, ISLE.cz);
+  below.userData.noMerge = true;
   scene.add(below);
-  for (let i = 0; i < 26; i++) {
-    const a = (i / 26) * Math.PI * 2 + rand() * 0.2, r = ISLE.r + 8 + rand() * 26;
-    add(cloud(3 + rand() * 3), ISLE.cx + Math.sin(a) * r, -9 - rand() * 8, ISLE.cz + Math.cos(a) * r);
+  for (let i = 0; i < 34; i++) {
+    const a = (i / 34) * TAU + lr() * 0.2, r = ISLE.r + 6 + lr() * 34;
+    add(cloud(3.2 + lr() * 3.4), ISLE.cx + Math.sin(a) * r, -8 - lr() * 10, ISLE.cz + Math.cos(a) * r, { ry: lr() * 6 });
   }
 
-  /* The way through the front quarter: pastel stepping stones. */
-  const cobbleM = [0xf3e2c0, 0xe9d3a8, 0xfbf0d8, 0xe6d0a0].map((c) => stone(c));
-  const pathZ = (x) => 3.9 + Math.sin(x * 0.11) * 0.35;
+  /* ---- The path: pastel cobbles in the reels' colours (lilac, pink, mint, peach, cream) ---- */
+  const COBBLES = WINTER ? [0xe9e6f6, 0xf6e6ef, 0xe6f2ee, 0xf7ece2, 0xffffff] : FALL ? [0xf1d2b0, 0xe9c19a, 0xf5ddc0, 0xe7cfa8, 0xf9ead2] : [0xd6c4f4, 0xffc9de, 0xc4ecd8, 0xffdcc0, 0xfbf0dc];
+  const cobbleM = COBBLES.map((c) => velvet(c));
   for (let x = -30; x < X1 + 30; x += 0.46) {
     for (let k = -2; k <= 2; k++) {
-      const [sx, sz] = [x + (rand() - 0.5) * 0.18 + (k % 2) * 0.23, pathZ(x) + k * 0.42 + (rand() - 0.5) * 0.08];
+      const sx = x + (lr() - 0.5) * 0.18 + (k % 2) * 0.23, sz = pathZ(x) + k * 0.42 + (lr() - 0.5) * 0.08;
+      const c = lpick(cobbleM), r0 = 0.2 + lr() * 0.04, ry = lr() * 3;
       if (!onIsle(sx, sz, 1.2)) continue;
-      const st = mesh(new THREE.CylinderGeometry(0.2 + rand() * 0.04, 0.23, 0.09, 20), pick(cobbleM));
+      const st = mesh(new THREE.CylinderGeometry(r0, r0 + 0.03, 0.1, 20), c);
       st.scale.z = 0.85;
       st.castShadow = false;
-      add(st, sx, 0.045, sz, { ry: rand() * 3 });
+      add(st, sx, 0.05, sz, { ry });
     }
   }
 
-  /* Trees all over the island in their quarter's season — the front's middle stays open. */
-  const open = (x, z) => z > -18 && x > -15 && x < X1 + 15;
-  for (let i = 0, n = 0; i < 4000 && n < 95; i++) {
-    const x = ISLE.cx + (rand() * 2 - 1) * ISLE.r, z = ISLE.cz + (rand() * 2 - 1) * ISLE.r;
-    if (!onIsle(x, z, 3) || open(x, z) || z > 7) continue;
-    const season = isleSeason(x, z);
-    const tree = add(gardenScenery("tree", SEAS_SEASONS.indexOf(season) * 4 + Math.floor(rand() * 4)), x, 0, z, { k: 2.3 * (0.8 + rand() * 0.5), ry: rand() * 6 });
-    if (SEAS_WEATHER === "windy" && season === SEAS_SEASON) tree.rotation.z = -0.13;
+  /* ---- Rolling hills on the island, behind ---- */
+  const hillM = [velvet(new THREE.Color(LOOK.lawn[0]).lerp(new THREE.Color(0xffffff), 0.12).getHex()), velvet(new THREE.Color(LOOK.lawn[1]).lerp(new THREE.Color(0x000000), 0.04).getHex())];
+  for (const [x, z, r, sy] of [[-22, -40, 17, 0.36], [2, -48, 22, 0.42], [28, -44, 19, 0.38], [48, -36, 15, 0.34], [-34, -24, 12, 0.3], [14, -62, 20, 0.4], [40, -60, 16, 0.36]]) {
+    if (!onIsle(x, z, 4)) continue;
+    const hill = mesh(new THREE.SphereGeometry(r, 72, 36), hillM[Math.round(x) & 1]);
+    hill.scale.y = sy;
+    hill.castShadow = false;
+    add(hill, x, -0.4, z);
+  }
+
+  /* ---- Trees: clumps on the hills and between the houses, the season's crowns; a few close ones ---- */
+  const trees = [];
+  const tree = (x, z, k, tone) => {
+    const t = add(gardenScenery("tree", tone), x, 0, z, { k, ry: lr() * 6 });
+    trees.push({ t, x, z, phase: lr() * TAU });
+    if (WINTER) {
+      /* Snow sitting on the crown's top tufts. */
+      for (const [cx, cy, cz, r] of [[0, 2.62, 0, 0.3], [-0.28, 2.38, 0.05, 0.3], [0.3, 2.36, -0.05, 0.3]]) {
+        const cap = at(ball(r, snowM, 24), cx, cy + 0.08, cz);
+        cap.scale.y = 0.55;
+        t.add(cap);
+      }
+    }
+    return t;
+  };
+  for (let i = 0, n = 0; i < 5000 && n < 120; i++) {
+    const x = ISLE.cx + (lr() * 2 - 1) * ISLE.r, z = ISLE.cz + (lr() * 2 - 1) * ISLE.r;
+    const k = 2.1 * (0.8 + lr() * 0.6), tone = Math.floor(lr() * 4);
+    if (!onIsle(x, z, 3) || z > -9.5) continue;
+    /* Clumps: keep a tree only where the wave of clumps is high, so the hills and sky show between. */
+    if (Math.sin(x * 0.19) + Math.sin(z * 0.23 + x * 0.05) < 0.1 && z > -30) continue;
+    /* The view over the middle of the path stays open to the cottages and hills. */
+    if (Math.abs(x - 9) < 3.5 && z > -16) continue;
+    tree(x, z, k, tone);
     n++;
   }
-  /* Each quarter's own things: blossoms, sunflowers and a pond, pumpkins and leaves, snowmen and drifts. */
-  const snowM = soft(0xffffff, { roughness: 0.9 });
-  const snowman = (x, z, k = 1) => {
-    add(ball(0.75 * k, snowM, 28), x, 0.7 * k, z); add(ball(0.55 * k, snowM, 28), x, 1.8 * k, z); add(ball(0.38 * k, snowM, 28), x, 2.55 * k, z);
-    const nose = mesh(new THREE.ConeGeometry(0.07 * k, 0.4 * k, 12), soft(0xff8a3c)); nose.rotation.x = Math.PI / 2; add(nose, x, 2.55 * k, z + 0.4 * k);
+  /* Pines among them — evergreen, the same in every season (snow on their tiers in winter). */
+  const pine = (x, z, k) => {
+    const g = new THREE.Group();
+    g.add(at(mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.9, 14), velvet(0xc79d72)), 0, 0.45, 0));
+    for (let i = 0; i < 3; i++) {
+      const r = 1.05 - i * 0.26, y = 0.8 + i * 0.72;
+      g.add(at(mesh(new THREE.ConeGeometry(r, 1.25, 28), velvet(0x4f9e72)), 0, y + 0.62, 0));
+      if (WINTER) { const cap = at(mesh(new THREE.ConeGeometry(r * 0.78, 0.7, 28), snowM), 0, y + 0.98, 0); g.add(cap); }
+    }
+    add(g, x, 0, z, { k, ry: lr() * 6 });
   };
-  const pumpkinM = soft(0xf28a2a, { roughness: 0.7, sheen: 0.4 }), stemM = soft(0x6f8f3a);
-  const pondM = soft(0x9fd0f0, { roughness: 0.25 });
-  let ponds = 0;
-  for (let i = 0; i < 3000; i++) {
-    const x = ISLE.cx + (rand() * 2 - 1) * ISLE.r, z = ISLE.cz + (rand() * 2 - 1) * ISLE.r;
-    if (!onIsle(x, z, 2.5) || busy(x, z) || z > 8) continue;
-    const season = isleSeason(x, z), front = season === SEAS_SEASON && isleQuarter(x, z) === 0;
-    if (front && open(x, z) && season !== "winter" && rand() < 0.75) continue;
-    const r = rand();
-    if (season === "winter") {
-      if (r < 0.006 && !open(x, z)) snowman(x, z, 0.9 + rand() * 0.3);
-      else if (r < 0.06) { const d = ball(0.9 + rand() * 0.8, snowM, 24); d.scale.y = 0.28; d.castShadow = false; add(d, x, 0, z); }
-    } else if (season === "fall") {
-      if (r < 0.025) { const pk = ball(0.42 + rand() * 0.15, pumpkinM, 24); pk.scale.y = 0.78; add(pk, x, 0.32, z); add(mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.22, 8), stemM), x, 0.72, z); }
-      else if (r < 0.2) { const l = ball(0.14, soft(pick(SEAS_LOOK.fall.petals)), 12); l.scale.set(1.5, 0.12, 1); l.castShadow = false; add(l, x, 0.04, z, { ry: rand() * 6 }); }
-    } else {
-      if (season === "summer" && ponds < 2 && r < 0.004 && !open(x, z)) {
-        const pd = mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.04, 48), pondM); pd.scale.z = 0.6; pd.castShadow = false; add(pd, x, 0.02, z); ponds++;
-      } else if (r < 0.05) {
-        const c = pick(SEAS_LOOK[season].petals);
-        for (let j = 0; j < 4 + Math.floor(rand() * 4); j++) add(hillFlower(c), x + (rand() - 0.5) * 1.8, 0, z + (rand() - 0.5) * 1.2, { k: 1.8 + rand() * 0.8, ry: (rand() - 0.5) * 0.8 });
-      }
+  for (let i = 0, n = 0; i < 3000 && n < 16; i++) {
+    const x = ISLE.cx + (lr() * 2 - 1) * ISLE.r, z = -12 - lr() * 40, k = 1.6 + lr() * 0.7;
+    if (!onIsle(x, z, 4) || Math.abs(x - 9) < 5) continue;
+    pine(x, z, k);
+    n++;
+  }
+  /* Two big trees, the places' landmarks: by the season's word and by the weather's. */
+  const BIG = [[-7.6, -8.8, 3.7, 0], [21.8, -9.8, 3.5, 2]];
+  for (const [x, z, k, tone] of BIG) tree(x, z, k, tone);
+  /* A few by the path's ends, framing the walk. */
+  for (const [x, z, k] of [[-12, 0.5, 3.0], [-15, -3, 2.6], [32.5, 1.2, 3.1], [36, -2.5, 2.4], [26.6, -7.5, 2.6]]) tree(x, z, k, Math.floor(lr() * 4));
+
+  /* ---- Bloo's cottages: cream walls, his blue puffy roofs (winter: snow on them) ---- */
+  const cottage = (x, z, ry, roof) => {
+    const g = pinkCottage();
+    g.traverse((o) => {
+      if (!o.isMesh) return;
+      const hex = o.material.color.getHex();
+      if (hex === 0xfbd3df) o.material = soft(0xfbf1e2, { roughness: 0.85 });
+      else if (hex === 0xf49ab5) o.material = soft(roof, { roughness: 0.8 });
+      else if (hex === 0xf28fb0) o.material = soft(0x9cc4f2, { roughness: 0.7 });
+    });
+    if (WINTER) {
+      const cap = at(ball(2.78, snowM, 64), 0, 3.12, 0);
+      cap.scale.set(1, 0.6, 0.86);
+      g.add(cap);
+    }
+    add(g, x, 0, z, { ry, k: 1.05 });
+    return g;
+  };
+  const cottages = [cottage(5.2, -12.5, 0.15, LOOK.roof), cottage(26.5, -14.5, -0.2, 0xffb3d1), cottage(-17, -15, 0.35, 0xc7a3f0)];
+
+  /* ---- The wooden fence along the back of the lawn, in runs with gaps ---- */
+  const postM = velvet(WINTER ? 0xf3e2c6 : 0xf0d6a8);
+  const fenceTops = [];
+  for (const [x0, x1] of [[-16, -2.5], [2.5, 11.5], [14.5, 30], [33, 40]]) {
+    for (let x = x0; x <= x1; x += 1.5) add(rbox(0.24, 1.3, 0.24, postM, 0.07), x, 0.65, -8.6);
+    for (const y of [0.46, 0.98]) {
+      const rail = add(rbox(x1 - x0 + 0.3, 0.15, 0.1, postM, 0.05), (x0 + x1) / 2, y, -8.6);
+      if (y > 0.9) fenceTops.push([x0, x1]);
+    }
+    if (WINTER) add(rbox(x1 - x0 + 0.3, 0.12, 0.2, snowM, 0.06), (x0 + x1) / 2, 1.12, -8.6);
+  }
+
+  /* ---- Mushrooms: round caps with white dots (the spring reel's), by the path and the trees ---- */
+  const mushroom = (k, cap) => {
+    const g = new THREE.Group();
+    g.add(at(mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.55, 24), velvet(0xfbf3e6)), 0, 0.27, 0));
+    const top = at(ball(0.42, velvet(cap), 40), 0, 0.58, 0);
+    top.scale.y = 0.62;
+    g.add(top);
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * TAU + 0.4, y = i % 2 ? 0.74 : 0.68, r = i % 2 ? 0.2 : 0.33;
+      g.add(at(ball(0.06, velvet(0xffffff), 12), Math.cos(a) * r, y, Math.sin(a) * r));
+    }
+    if (WINTER) { const s = at(ball(0.43, snowM, 32), 0, 0.66, 0); s.scale.y = 0.42; g.add(s); }
+    g.scale.setScalar(k);
+    return g;
+  };
+  for (const [x, z, k, cap] of [[-3.2, -1.8, 1.25, 0xff8fb8], [-2.5, -2.6, 0.8, 0xc7a3f0], [9.6, -4.4, 1.0, 0xff9f8a], [11.4, -2.6, 0.9, 0xff8fb8], [23.4, -2.4, 1.2, 0xc7a3f0], [24.2, -3.4, 0.7, 0xffb3d1], [-9.5, -6, 1.1, 0xff9f8a]]) add(mushroom(k, cap), x, 0, z, { ry: lr() * 6 });
+
+  /* ---- The season on the lawn: slots laid out the same every season, filled by the season ---- */
+  const pumpkinM = velvet(0xf28a2a), stemM = velvet(0x6f8f3a);
+  const pumpkin = (k) => {
+    const g = new THREE.Group();
+    for (let i = 0; i < 6; i++) {
+      const lobe = at(ball(0.36, pumpkinM, 28), Math.cos((i / 6) * TAU) * 0.2, 0.32, Math.sin((i / 6) * TAU) * 0.2);
+      lobe.scale.set(0.75, 0.82, 0.75);
+      g.add(lobe);
+    }
+    g.add(at(mesh(new THREE.CylinderGeometry(0.045, 0.07, 0.26, 10), stemM), 0, 0.68, 0));
+    g.scale.setScalar(k);
+    return g;
+  };
+  const leafM = LOOK.petals.map((c) => velvet(c));
+  const fallen = (x, z, n) => {
+    for (let j = 0; j < n; j++) {
+      const l = ball(0.16, lpick(leafM), 12);
+      l.scale.set(1.5, 0.12, 0.9);
+      l.castShadow = false;
+      add(l, x + (lr() - 0.5) * 2.2, 0.03, z + (lr() - 0.5) * 1.6, { ry: lr() * 6 });
+    }
+  };
+  const drift = (x, z, r) => { const d = ball(r, snowM, 28); d.scale.y = 0.3; d.castShadow = false; add(d, x, 0, z); };
+  for (let i = 0, n = 0; i < 4000 && n < 70; i++) {
+    const x = -24 + lr() * (X1 + 48), z = -8 + lr() * 17, kind = lr(), k = 0.9 + lr() * 0.6, c = lpick(LOOK.petals);
+    if (!onIsle(x, z, 2) || busy(x, z) || near(x, z)) continue;
+    n++;
+    if (WINTER) { if (kind < 0.55) drift(x, z, 0.6 + kind); continue; }
+    if (FALL) { kind < 0.18 ? add(pumpkin(k), x, 0, z, { ry: kind * 20 }) : fallen(x, z, 6); continue; }
+    for (let j = 0; j < 5; j++) {
+      const fx_ = x + (lr() - 0.5) * 1.6, fz = z + (lr() - 0.5) * 1.1;
+      add(SPRING && j % 2 ? tulip(c) : hillFlower(c), fx_, 0, fz, { k: (SPRING && j % 2 ? 0.95 : 1.35) + lr() * 0.45, ry: (lr() - 0.5) * 0.8 });
     }
   }
-  if (SEAS_SEASON !== "winter") for (let x = -26; x < X1 + 26; x += 3 + rand() * 3) { const z = 7.6 + rand() * 1.8; if (onIsle(x, z, 1.5)) add(gardenScenery("grass", Math.floor(rand() * 4)), x, 0, z, { k: 1.4 + rand() * 0.5 }); }
-  for (const [x, y, z, k] of [[-10, 14, -78, 3.4], [22, 17, -86, 4], [54, 14, -80, 3.2], [87, 16, -84, 3.8]]) add(cloud(k), x, y, z);
+  /* Close by the camera: soft grass sliding past (snow lumps in winter, leaves in fall too). */
+  const nearGrass = [];
+  for (let x = -26; x < X1 + 26; x += 2.6 + lr() * 2.4) {
+    const z = 7.8 + lr() * 1.4, k = 1.3 + lr() * 0.5, tone = Math.floor(lr() * 4);
+    if (!onIsle(x, z, 1.5) || placeXs.some((px) => Math.abs(x - px) < 2.6)) continue;
+    if (WINTER) { drift(x, z, 0.7 + k * 0.3); continue; }
+    const g = add(gardenScenery("grass", tone), x, 0, z, { k });
+    nearGrass.push({ g, phase: x });
+    if (FALL) fallen(x, z - 0.6, 3);
+  }
+  /* Spring: butterflies over the flowers. */
+  const springFlies = SPRING ? [[-2.2, 1.9, -1.2, 0.6], [11.2, 2.4, -2.6, -0.5], [24.5, 1.7, -1.0, 0.3]].map(([x, y, z, ry]) => ({ b: add(live(butterfly()), x, y, z, { k: 0.7, ry }), x, y })) : [];
+  /* Sky: a few big fluffy clouds far off. */
+  const skyClouds = [];
+  for (const [x, y, z, k] of [[-26, 15, -86, 4.2], [-2, 20, -96, 5.2], [26, 16, -90, 4.4], [52, 19, -94, 4.8], [76, 14, -84, 3.8]]) skyClouds.push(add(live(cloud(k)), x, y, z));
+
+  /* ---- The pond: still water in a ring of round stones (winter: ice, the stones snowed on) ---- */
   {
-    /* The season's and the weather's extras, in the places' reach (x -20 to the last place + 20). */
-    const X0 = -20, X1 = SEAS_STEPS * STEP_DX + 20;
-    const spread = (n, make) => { for (let i = 0; i < n; i++) make(X0 + rand() * (X1 - X0), -12 + rand() * 19, i); };
-    if (SEAS_SEASON === "fall") {
-      for (const c of [0xf2a44a, 0xe2763a, 0xf5cf5a, 0xc9573a]) for (let i = 0; i < 40; i++) { const l = ball(0.14, soft(c), 12); l.scale.set(1.5, 0.12, 1); add(l, X0 + rand() * (X1 - X0), 0.05, -6 + rand() * 12, { ry: rand() * 6 }); }
+    const water = mesh(new THREE.CircleGeometry(1, 64), clay(WINTER ? 0xdcebfa : 0x9fd2f2, { roughness: WINTER ? 0.35 : 0.06, clearcoat: 1, clearcoatRoughness: WINTER ? 0.3 : 0.03, sheen: 0 }));
+    water.rotation.x = -Math.PI / 2;
+    water.scale.set(2.6, 1.5, 1);
+    water.position.set(PONDX, 0.04, PONDZ);
+    water.castShadow = false;
+    scene.add(water);
+    const rimM = [0xf3e6d6, 0xe9dccb, 0xd6c4f4, 0xffd9c8].map((c) => velvet(WINTER ? 0xffffff : c));
+    for (let i = 0; i < 30; i++) {
+      const a = (i / 30) * TAU, r = 0.24 + lr() * 0.1;
+      const st = ball(r, lpick(rimM), 24);
+      st.scale.y = 0.55;
+      add(st, PONDX + Math.cos(a) * 2.75, 0.06, PONDZ + Math.sin(a) * 1.62);
     }
-    if (SEAS_SEASON === "winter") {
-      for (const [x, z] of [[-6, 1.6], [SEAS_STEPS * STEP_DX + 3, 0.6], [SEAS_STEPS * STEP_DX * 0.5, -3]]) {
-        const m = soft(0xffffff, { roughness: 0.9 });
-        add(ball(0.75, m, 28), x, 0.7, z); add(ball(0.55, m, 28), x, 1.8, z); add(ball(0.38, m, 28), x, 2.55, z);
-        const nose = mesh(new THREE.ConeGeometry(0.07, 0.4, 12), soft(0xff8a3c)); nose.rotation.x = Math.PI / 2; add(nose, x, 2.55, z + 0.4);
-      }
-    }
-    if (SEAS_WEATHER === "rainy") {
-      spread(900, (x, z) => { const d = mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.8, 5), soft(0xc4def5)); d.castShadow = false; add(d, x, 0.4 + rand() * 8, z, { ry: 0 }).rotation.z = 0.14; });
-      spread(14, (x, z) => { const p = mesh(new THREE.CylinderGeometry(0.7 + rand() * 0.5, 0.7 + rand() * 0.5, 0.02, 32), soft(0xa9c9e6, { roughness: 0.3 })); p.scale.z = 0.6; p.castShadow = false; add(p, x, 0.025, 1 + rand() * 5); });
-    }
-    if (SEAS_WEATHER === "snowy") spread(1100, (x, z) => { const f = ball(0.05 + rand() * 0.06, soft(0xffffff), 8); f.castShadow = false; add(f, x, 0.2 + rand() * 9, z); });
-    if (SEAS_WEATHER === "windy") {
-      spread(90, (x, z) => { const l = ball(0.1, soft(pick([0x7fd36a, 0xf2a44a, 0xf5cf5a, 0xe2763a])), 10); l.scale.set(2.2, 0.35, 1); l.castShadow = false; add(l, x, 0.6 + rand() * 6, z, { ry: rand() * 3 }); });
-      spread(50, (x, z) => { if (z > -2) return; const s = rbox(1.2 + rand() * 0.6, 0.03, 0.03, soft(0xffffff), 0.012); s.castShadow = false; add(s, x, 0.8 + rand() * 5, z); });
-    }
-    if (SEAS_WEATHER === "sunny" || SEAS_SEASON === "summer") {
-      const sunMid = (X0 + X1) / 2;
-      const disc = new THREE.Mesh(new THREE.SphereGeometry(7, 40, 20), new THREE.MeshBasicMaterial({ color: 0xfff4b8, fog: false }));
-      disc.position.set(sunMid, 12.5, -72);
-      const halo = new THREE.Mesh(new THREE.SphereGeometry(11, 40, 20), new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.28, fog: false }));
-      halo.position.copy(disc.position);
-      scene.add(disc, halo);
+    if (!WINTER) for (const [dx, dz] of [[-1.2, 0.3], [0.9, -0.4]]) {
+      const pad = mesh(new THREE.CircleGeometry(0.32, 24, 0.4, TAU - 0.8), velvet(0x7cc96a));
+      pad.rotation.x = -Math.PI / 2;
+      pad.castShadow = false;
+      add(pad, PONDX + dx, 0.07, PONDZ + dz);
     }
   }
+
+  /* ---- THE WEATHER, laid over the season by an amount `w` (0..1) at a time `time` (s). Everything that
+     falls, flies or sways is periodic over LOOP seconds, so the weather's stations loop seamlessly. ---- */
+  const LOOP = SEAS_LOOP;
+  const wx = new THREE.Group();
+  scene.add(wx);
+  /* The season's sky, fog and light — the weather turns them to its own. */
+  const W = SEAS_WEATHER_LOOK[WEATHER];
+  const skyFrom = SKY.map((c) => new THREE.Color(c)), skyTo = W.sky.map((c) => new THREE.Color(c));
+  const fogFrom = scene.fog.color.clone(), fogTo = new THREE.Color(W.fog);
+  const fogNear = scene.fog.near, fogFar = scene.fog.far;
+  const sunFrom = sun.intensity, hemiFrom = sky.intensity;
+  const sunColorFrom = sun.color.clone(), sunColorTo = new THREE.Color(WEATHER === "sunny" ? 0xffe6b8 : WEATHER === "rainy" ? 0xe9ecf7 : WEATHER === "snowy" ? 0xf1f2fa : 0xfff0da);
+  const groundFrom = groundM.color.clone();
+  const paintSky = (w) => {
+    const g = sctx.createLinearGradient(0, 0, 0, 512);
+    [0, 0.5, 0.85, 1].forEach((at_, i) => g.addColorStop(at_, "#" + skyFrom[i].clone().lerp(skyTo[i], w).getHexString()));
+    sctx.fillStyle = g;
+    sctx.fillRect(0, 0, 4, 512);
+    skyTex.needsUpdate = true;
+  };
+  /* A seeded table for the weather's bits — never the layout's random. */
+  let ws = 4242;
+  const wr = () => ((ws = (ws * 16807) % 2147483647) / 2147483647);
+  const dummy = new THREE.Object3D();
+  /* Where the weather falls: round the places, from behind the fence to the camera. */
+  const BX = [-16, X1 + 16], BZ = [-16, 5.4];
+  const update = [];
+
+  if (WEATHER === "rainy") {
+    /* Soft grey-lilac rain clouds sliding in over the island, then drops — sparse first, then a light rain. */
+    const rainClouds = [];
+    for (let i = 0; i < 9; i++) {
+      const c = live(cloud(3.6 + wr() * 2.6));
+      c.traverse((o) => { if (o.isMesh) { o.material = o.material.clone(); } });
+      const to = [-14 + i * 6.4 + wr() * 3, 11 + wr() * 4.5, -34 - wr() * 26];
+      const from = [to[0] + (i % 2 ? 60 : -60), to[1] + 3, to[2]];
+      rainClouds.push({ c, from, to, d: wr() * 0.25 });
+      wx.add(c);
+    }
+    const N = 2600, H = 11;
+    const drop = new THREE.CapsuleGeometry(0.017, 0.4, 3, 6).translate(0, 0.24, 0);
+    const rain = new THREE.InstancedMesh(drop, new THREE.MeshBasicMaterial({ color: 0xf4f8ff, transparent: true, opacity: 0.66, depthWrite: false }), N);
+    rain.userData.noMerge = true;
+    rain.frustumCulled = false;
+    const drops = [...Array(N)].map(() => ({ x: BX[0] + wr() * (BX[1] - BX[0]), z: BZ[0] + wr() * (BZ[1] - BZ[0]), p: wr() }));
+    wx.add(rain);
+    /* Puddles on the lawn and the path, ripples on them and on the pond. */
+    const puddleM = clay(0xb8c6e2, { roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.04, sheen: 0 });
+    const puddles = [];
+    for (let i = 0, n = 0; i < 400 && n < 16; i++) {
+      const x = -8 + wr() * (X1 + 16), z = -5 + wr() * 12;
+      if (!onIsle(x, z, 3) || placeXs.some((px) => Math.abs(x - px) < 1.6 && z > -2 && z < 3)) continue;
+      const p = mesh(new THREE.CircleGeometry(0.6 + wr() * 0.7, 40), puddleM);
+      p.rotation.x = -Math.PI / 2;
+      p.scale.set(1, 0.62, 1);
+      p.castShadow = false;
+      p.position.set(x, 0.035 + n * 0.0004, z);
+      p.userData.noMerge = true;
+      wx.add(p);
+      puddles.push(p);
+      n++;
+    }
+    const ripples = [];
+    const rippleAt = [...puddles.map((p) => [p.position.x, p.position.z, 0.55]), ...[...Array(10)].map(() => [PONDX + (wr() - 0.5) * 3.6, PONDZ + (wr() - 0.5) * 1.8, 0.7])];
+    for (const [x, z, r] of rippleAt) {
+      for (let k = 0; k < 2; k++) {
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.86, 1, 40), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false }));
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.set(x + (wr() - 0.5) * r, 0.06, z + (wr() - 0.5) * r * 0.6);
+        ring.userData.noMerge = true;
+        wx.add(ring);
+        ripples.push({ ring, p: wr(), r: 0.18 + wr() * 0.22 });
+      }
+    }
+    skyClouds.forEach((c) => c.traverse((o) => { if (o.isMesh) o.material = o.material.clone(); }));
+    update.push((w, time) => {
+      skyClouds.forEach((c) => c.traverse((o) => o.isMesh && o.material.color.set(0xffffff).lerp(new THREE.Color(0xc4c6d8), w)));
+      rainClouds.forEach(({ c, from, to, d }) => {
+        const e = ss(d, d + 0.55, w);
+        c.position.set(from[0] + (to[0] - from[0]) * e, from[1] + (to[1] - from[1]) * e, to[2]);
+        c.traverse((o) => o.isMesh && (o.material.color.set(0xffffff).lerp(new THREE.Color(0xb3b6cc), ss(0.2, 0.9, w)), (o.material.emissiveIntensity = 0.42 - 0.22 * w)));
+      });
+      const shown = Math.round(N * Math.pow(ss(0.3, 1, w), 1.6));
+      rain.count = shown;
+      /* Spring's butterflies fly off as the rain comes. */
+      springFlies.forEach(({ b, x, y }, i) => { const e = ss(0.08, 0.5, w); b.position.set(x + e * (i % 2 ? 7 : -7), y + e * 7, b.position.z); });
+      for (let i = 0; i < shown; i++) {
+        const d = drops[i];
+        const y = H - (((d.p + (time / LOOP) * 3) % 1) + 1) % 1 * H;
+        dummy.position.set(d.x - y * 0.06, y, d.z);
+        dummy.rotation.set(0, 0, 0.06);
+        dummy.updateMatrix();
+        rain.setMatrixAt(i, dummy.matrix);
+      }
+      rain.instanceMatrix.needsUpdate = true;
+      puddles.forEach((p, i) => p.scale.setScalar(Math.max(0.001, ss(0.35 + (i % 4) * 0.08, 1, w))));
+      ripples.forEach(({ ring, p, r }) => {
+        const ph = (((p + (time / LOOP) * 2) % 1) + 1) % 1;
+        const s = r + ph * r * 2.2;
+        ring.scale.set(s, s * 0.62, s);
+        ring.material.opacity = 0.75 * (1 - ph) * ss(0.45, 1, w);
+      });
+      groundM.color.copy(groundFrom).lerp(new THREE.Color(0xd7dbe4), 0.22 * w);
+      groundM.roughness = 0.95 - 0.35 * w;
+    });
+  }
+
+  if (WEATHER === "sunny") {
+    /* The summer sun stands behind a cloud; the cloud drifts off, the sun comes out — its halo and slow
+       rays, a warmer light, butterflies, sparkles on the pond. */
+    const SUN = [-6, 21, -88];
+    const disc = new THREE.Mesh(new THREE.SphereGeometry(6.4, 48, 24), new THREE.MeshBasicMaterial({ color: 0xfff3b0, fog: false }));
+    disc.position.set(...SUN);
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(10, 48, 24), new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.2, fog: false, depthWrite: false }));
+    halo.position.set(...SUN);
+    const rays = new THREE.Group();
+    /* Each ray fades out toward its tip. */
+    const rayG = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-3.2, 0, 0), new THREE.Vector3(3.2, 0, 0), new THREE.Vector3(0, 30, 0)]);
+    rayG.setAttribute("color", new THREE.Float32BufferAttribute([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], 4));
+    const rayM = new THREE.MeshBasicMaterial({ color: 0xfff6c8, vertexColors: true, transparent: true, opacity: 0, fog: false, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+    for (let i = 0; i < 12; i++) { const r = new THREE.Mesh(rayG, rayM); r.rotation.z = (i / 12) * TAU; rays.add(r); }
+    rays.position.set(SUN[0], SUN[1], SUN[2] + 2);
+    [disc, halo, rays].forEach((o) => { o.userData.noMerge = true; wx.add(o); });
+    const veil = live(cloud(6.2));
+    veil.traverse((o) => { if (o.isMesh) { o.material = o.material.clone(); } });
+    wx.add(veil);
+    const flies = [];
+    for (let i = 0; i < 7; i++) {
+      const b = live(butterfly());
+      b.scale.setScalar(0);
+      wx.add(b);
+      flies.push({ b, x: -4 + i * 4.6 + wr() * 2, y: 1.4 + wr() * 1.2, z: -2.5 + wr() * 3.5, r: 0.5 + wr() * 0.6, p: wr() });
+    }
+    const sparkTex = (() => {
+      const cv = document.createElement("canvas");
+      cv.width = cv.height = 64;
+      const c = cv.getContext("2d");
+      const g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.25, "rgba(255,255,240,0.7)"); g.addColorStop(1, "rgba(255,255,240,0)");
+      c.fillStyle = g; c.fillRect(0, 0, 64, 64);
+      c.fillStyle = "rgba(255,255,255,0.9)"; c.fillRect(30, 4, 4, 56); c.fillRect(4, 30, 56, 4);
+      const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+    })();
+    const sparks = [...Array(9)].map(() => {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: sparkTex, transparent: true, depthWrite: false, opacity: 0 }));
+      s.position.set(PONDX + (wr() - 0.5) * 3.8, 0.12, PONDZ + (wr() - 0.5) * 1.8);
+      s.userData.noMerge = true;
+      wx.add(s);
+      return { s, p: wr() };
+    });
+    update.push((w, time) => {
+      const out = ss(0.05, 0.75, w);
+      veil.position.set(SUN[0] + 4 + out * 46, SUN[1] - 1 + out * 2, SUN[2] + 6);
+      veil.traverse((o) => o.isMesh && (o.material.emissiveIntensity = 0.42));
+      halo.scale.setScalar(0.8 + 0.7 * ss(0.3, 1, w));
+      halo.material.opacity = 0.16 + 0.22 * ss(0.3, 1, w);
+      rays.rotation.z = (time / LOOP) * (TAU / 12);
+      rayM.opacity = 0.16 * ss(0.45, 1, w);
+      flies.forEach(({ b, x, y, z, r, p }) => {
+        const a = TAU * (time / LOOP + p);
+        b.position.set(x + Math.cos(a) * r, y + Math.sin(2 * a) * 0.25, z + Math.sin(a) * r * 0.5);
+        b.rotation.set(0, -a + Math.PI / 2, 0);
+        const flap = 0.35 + 0.65 * Math.abs(Math.cos(TAU * (time / LOOP) * 9 + p * 7));
+        const k = 0.55 * ss(0.5, 1, w);
+        b.scale.set(k * flap, k, k);
+      });
+      sparks.forEach(({ s, p }) => {
+        const ph = (((p + (time / LOOP) * 2) % 1) + 1) % 1;
+        s.material.opacity = Math.sin(Math.PI * ph) ** 3 * ss(0.5, 1, w);
+        s.scale.setScalar(0.25 + 0.35 * Math.sin(Math.PI * ph));
+      });
+      groundM.color.copy(groundFrom).lerp(new THREE.Color(0xfff6c8), 0.12 * w);
+    });
+  }
+
+  if (WEATHER === "windy") {
+    /* The fall wind: the trees and the grass sway, leaves stream across the island and spin. */
+    trees.forEach(({ t }) => live(t));
+    nearGrass.forEach(({ g }) => live(g));
+    const N = 260;
+    const leaf = new THREE.SphereGeometry(0.15, 10, 6).scale(1.5, 0.14, 0.95);
+    const leaves = new THREE.InstancedMesh(leaf, velvet(0xffffff), N);
+    leaves.userData.noMerge = true;
+    leaves.frustumCulled = false;
+    const L = [...Array(N)].map(() => ({ y: 0.4 + wr() * 7, z: BZ[0] + 2 + wr() * (BZ[1] - BZ[0] - 2), p: wr(), a: 0.4 + wr() * 1.2, f: wr() * TAU, c: lpick(LOOK.petals) }));
+    L.forEach((l, i) => leaves.setColorAt(i, new THREE.Color(l.c)));
+    wx.add(leaves);
+    const SPAN = X1 + 44;
+    update.push((w, time) => {
+      const sway = (f, k) => -w * (0.07 + 0.05 * Math.sin(TAU * (time / LOOP) * 2 + f)) * k;
+      trees.forEach(({ t, phase, z }) => (t.rotation.z = sway(phase, z > -20 ? 1 : 0.6)));
+      nearGrass.forEach(({ g, phase }) => (g.rotation.z = sway(phase, 2.4)));
+      const shown = Math.round(N * ss(0.15, 1, w));
+      leaves.count = shown;
+      for (let i = 0; i < shown; i++) {
+        const l = L[i];
+        const ph = (((l.p + time / LOOP) % 1) + 1) % 1;
+        dummy.position.set(-22 + ph * SPAN, l.y + Math.sin(TAU * ph * 2 + l.f) * l.a, l.z + Math.cos(TAU * ph + l.f) * 0.8);
+        dummy.rotation.set(TAU * ph * 3 + l.f, TAU * ph * 2, TAU * ph * 4 + l.f);
+        dummy.scale.setScalar(Math.sin(Math.PI * ph) ** 0.4);
+        dummy.updateMatrix();
+        leaves.setMatrixAt(i, dummy.matrix);
+      }
+      leaves.instanceMatrix.needsUpdate = true;
+      if (seasKite) {
+        seasKite.rotation.z = 0.2 * Math.sin(TAU * (time / LOOP) * 2) * w;
+        seasKite.position.y = seasKite.userData.y + w * (0.8 + 0.25 * Math.sin(TAU * (time / LOOP)));
+      }
+    });
+  }
+
+  if (WEATHER === "snowy") {
+    /* The winter sky softens, flakes start — a few, then a gentle snowfall — and the snow piles up. */
+    const N = 3600;
+    const flake = new THREE.IcosahedronGeometry(0.042, 1);
+    const flakes = new THREE.InstancedMesh(flake, new THREE.MeshBasicMaterial({ color: 0xffffff }), N);
+    flakes.userData.noMerge = true;
+    flakes.frustumCulled = false;
+    const F = [...Array(N)].map(() => ({ x: BX[0] + wr() * (BX[1] - BX[0]), z: BZ[0] + wr() * (BZ[1] - BZ[0]), top: 1.2 + wr() * 10, p: wr(), k: 0.6 + wr() * 0.9, f: wr() * TAU }));
+    wx.add(flakes);
+    /* Snow piling on the roofs, the fence, the path's edges. */
+    const piles = [];
+    for (const g of cottages) { const p = live(at(ball(2.82, snowM, 48), 0, 3.32, 0)); p.scale.set(1, 0.001, 0.88); g.add(p); piles.push({ p, y: 0.55 }); }
+    for (let i = 0; i < 26; i++) {
+      const x = -14 + wr() * (X1 + 28), z = -6 + wr() * 13;
+      if (busy(x, z)) continue;
+      const p = live(ball(0.5 + wr() * 0.6, snowM, 24));
+      p.position.set(x, 0, z);
+      p.scale.set(1, 0.001, 1);
+      p.castShadow = false;
+      wx.add(p);
+      piles.push({ p, y: 0.32 });
+    }
+    update.push((w, time) => {
+      const shown = Math.round(N * Math.pow(ss(0.2, 1, w), 1.3));
+      flakes.count = shown;
+      for (let i = 0; i < shown; i++) {
+        const f = F[i];
+        const ph = (((f.p + time / LOOP) % 1) + 1) % 1;
+        dummy.position.set(f.x + Math.sin(TAU * ph + f.f) * 0.35, f.top - ph * 3, f.z + Math.cos(TAU * ph * 2 + f.f) * 0.2);
+        dummy.scale.setScalar(f.k * Math.min(1, Math.sin(Math.PI * ph) * 4));
+        dummy.updateMatrix();
+        flakes.setMatrixAt(i, dummy.matrix);
+      }
+      flakes.instanceMatrix.needsUpdate = true;
+      piles.forEach(({ p, y }, i) => (p.scale.y = Math.max(0.001, y * ss(0.3 + (i % 5) * 0.06, 1, w))));
+    });
+  }
+
+  seasFx = (w, time = 0) => {
+    paintSky(w);
+    scene.fog.color.copy(fogFrom).lerp(fogTo, w);
+    scene.fog.near = fogNear + (W.near - fogNear) * w;
+    scene.fog.far = fogFar + (W.far - fogFar) * w;
+    below.material.color.copy(skyFrom[3]).lerp(skyTo[3], w);
+    sun.intensity = sunFrom + (W.sun - sunFrom) * w;
+    sun.color.copy(sunColorFrom).lerp(sunColorTo, w);
+    sky.intensity = hemiFrom + (W.hemi - hemiFrom) * w;
+    update.forEach((f) => f(w, time));
+  };
+  seasFx(0, 0);
 
   } else if (FARM) {
   /* ---- Bloo's farm (2026-11-08, the user: "a farm"): a sunny blue-green
