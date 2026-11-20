@@ -545,7 +545,7 @@ if NAME == "intro":
     sys.exit()
 
 if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"):
-    SEAS = NAME == "seasonsfarm"  # Bloo's seasons and weather (2026-11-09): the farm through the year; ids 1-4 a season, 5-8 its weather
+    SEAS = NAME == "seasonsfarm"  # Bloo's Seasons and Weather (rebuilt 2026-11-20): his island of the year, lesson n = a season and its weather in ONE render
     FARM = NAME in ("farm", "seasonsfarm")  # Bloo's farm (2026-11-08): the Animals course's world, the same kit, no Find
     MYG = NAME == "mygarden"  # Nova's My Garden (2026-11-08): the forest's kit, its own things to find
     FOREST = NAME == "forest" or MYG  # Pinki's colour forest (2026-11-05): the same kit, `out/forest-<n>-<frame>/`
@@ -565,9 +565,9 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
     import subprocess
     import tempfile
 
-    BLUR = 0.009  # σ as a share of the picture's long side
+    BLUR = 0.006 if SEAS else 0.009  # σ as a share of the picture's long side (the island's places read through a lighter blur)
     smooth = lambda a, b, t: (lambda x: x * x * (3 - 2 * x))(min(1, max(0, (t - a) / (b - a))))
-    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or (list(range(1, 9)) if SEAS else list(range(1, 10)) if FARM else list(range(1, 7)) if MYG else list(range(1, 11)) if FOREST else [1] if VEG else [1, 2, 3, 4, 5] if HILL else [1, 2, 3, 4, 5, 6, 7])
+    lessons = [int(a) for a in sys.argv[2:] if not a.startswith("--")] or ([1, 2, 3, 4] if SEAS else list(range(1, 10)) if FARM else list(range(1, 7)) if MYG else list(range(1, 11)) if FOREST else [1] if VEG else [1, 2, 3, 4, 5] if HILL else [1, 2, 3, 4, 5, 6, 7])
     base = "public/assets/learn/bloo/seasons-weather/world" if SEAS else "public/assets/learn/bloo/animals/world" if FARM else "public/assets/learn/nova/garden/world" if MYG else "public/assets/learn/pinki/colors/forest" if FOREST else "public/assets/learn/nova/fruits/world" if VEG else "public/assets/learn/nova/seasons/world" if HILL else "public/assets/learn/pinki/shapes/garden"
     # A step played sharp in the world: a Find, or Nova's kitchen.
     has_find = lambda lesson: not HILL and not FARM and lesson <= (0 if MYG else 10 if FOREST else 5 if VEG else 7)
@@ -575,6 +575,8 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
 
     # The word step's easel (a colour's splash, a shape lesson's shape) stays sharp.
     sharp0 = lambda lesson: (lesson <= 8 if SEAS else lesson <= 9) if FARM else lesson <= (6 if MYG else 10) if FOREST else not (VEG or HILL) and lesson <= 7
+    # Bloo's island: both word steps are sharp (the season's, then the weather's); the spellings and the end are not.
+    sharp_at = lambda lesson, i: i in (0, 2) if SEAS else sharp0(lesson) and i == 0
 
     def sigma(lesson, move, last, t):
         # Nova's kitchen (2026-11-06): no entry clip (the wide view is a blurred
@@ -582,6 +584,11 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
         # focus for Basket Time; move 2 (the lesson's end) blurs it out again.
         if VEG:
             return BLUR * (1 - smooth(0.05, 0.85, t)) if move == 1 else BLUR * smooth(0.0, 0.85, t)
+        if SEAS:
+            # Into the season's word sharp; to its letters out of focus; the weather's roll comes into focus at
+            # once and stays; to its letters out of focus again; up to the end, sharp on the way, blurred at the top.
+            return [0, BLUR * smooth(0.84, 1.0, t), BLUR * (1 - smooth(0.0, 0.25, t)), BLUR * smooth(0.84, 1.0, t),
+                    BLUR * max(1 - smooth(0.0, 0.12, t), smooth(0.84, 1.0, t))][move]
         if move == 0:
             return 0 if sharp0(lesson) else BLUR * smooth(0.5, 1.0, t)
         # The colour lessons' first station stays sharp: its splash is the step.
@@ -607,7 +614,7 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
             for i in stations:
                 img = Image.open(f"{out}/s{i}.png").convert("RGB")
                 img.thumbnail((1280, 1280), Image.LANCZOS)
-                blurred(img, 0 if sharp0(lesson) and i == 0 else BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
+                blurred(img, 0 if sharp_at(lesson, i) else BLUR).save(f"{to}/s{i}.jpg", quality=82, optimize=True, progressive=True)
                 stills.append(f"s{i}.jpg")
             moves = []
             for i in stations:
@@ -623,6 +630,19 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
                                     "-c:v", "libx264", "-preset", "slow", "-crf", "25", "-pix_fmt", "yuv420p",
                                     "-movflags", "+faststart", "-an", f"{to}/m{i}.mp4"], check=True)
                 moves.append(f"m{i}.mp4?v={zlib.crc32(open(f'{to}/m{i}.mp4', 'rb').read()):08x}")
+            # Bloo's island: the weather's stations, alive — a loop each, focused as its still.
+            loops = {}
+            for i in stations:
+                if not os.path.isdir(f"{out}/l{i}"):
+                    continue
+                frames = sorted(os.listdir(f"{out}/l{i}"))
+                with tempfile.TemporaryDirectory() as tmp:
+                    for k, name in enumerate(frames):
+                        blurred(Image.open(f"{out}/l{i}/{name}").convert("RGB"), 0 if sharp_at(lesson, i) else BLUR).save(f"{tmp}/{k:04d}.png")
+                    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "30", "-i", f"{tmp}/%04d.png",
+                                    "-c:v", "libx264", "-preset", "slow", "-crf", "26", "-pix_fmt", "yuv420p",
+                                    "-movflags", "+faststart", "-an", f"{to}/l{i}.mp4"], check=True)
+                loops[i] = f"l{i}.mp4?v={zlib.crc32(open(f'{to}/l{i}.mp4', 'rb').read()):08x}"
             find = None
             if has_find(lesson) and not VEG:
                 fdir = f"{out}/find"
@@ -642,13 +662,16 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
                 # Farthest first, so a nearer thing lies over a farther one.
                 items.sort(key=lambda it: it["hit"][1] + it["hit"][3])
                 find = {"items": items}
-            data[lesson][frame] = {"stills": stills, "moves": moves, "find": find}
+            data[lesson][frame] = {"stills": stills, "moves": moves, "find": find, "loops": loops}
         print(f"garden {lesson}: done")
     # Keep what an earlier run wrote for the lessons not cropped this time.
     saved = os.path.join(HERE, "out", f"{NAME}.json")
     data = {**({int(k): v for k, v in json.load(open(saved)).items()} if os.path.exists(saved) else {}), **data}
     # No review lessons (removed 2026-11-11): what an earlier run saved for one is dropped.
     data.pop(9 if SEAS else 10 if FARM else 7 if MYG else 11 if FOREST else 6 if VEG else None, None)
+    # Bloo's island (2026-11-20): one render a lesson — the old weather halves (5-8) are gone.
+    if SEAS:
+        data = {k: v for k, v in data.items() if k <= 4}
     json.dump(data, open(saved, "w"))
 
     # `src/data/shape-garden.ts`: every picture a static import (cache-busted),
@@ -768,36 +791,26 @@ if NAME in ("garden", "forest", "mygarden", "farm", "seasonsfarm", "veg", "hill"
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
         sys.exit()
     if SEAS:
-        # A season lesson = its season's three places (id n) + its weather's two and the end (id n + 4): the camera
-        # are joined by `roll.py`'s clip (`roll.mp4`, the weather rolling in; the weather render's own entry is not used).
-        parts = {n: [n, 2, n + 4, 3] for n in range(1, 5)}
+        # Each lesson's five stations and moves (the generic `worlds` lines) + its weather's loops, the word written in the sky.
         lines = []
-        for n in range(1, 5):
-            a, ka, b, kb = parts[n]
-            stations, moves = [], []
-            for frame_ids in ((a, ka), (b, kb)):
-                lid, k = frame_ids
-                if lid not in data:
-                    continue
-                both = data[lid]
-                for i in range(k):
-                    stations.append(f"{{ landscape: {pic(lid, 'landscape', both['landscape']['stills'][i])}, portrait: {pic(lid, 'portrait', both['portrait']['stills'][i])} }}")
-                    own = both["landscape"]["moves"][i]
-                    rolled = lid == b and i == 0  # the weather rolls in: `roll.py`'s clip of the season's lesson
-                    name = "roll.mp4" if rolled else own
-                    dir_ = a if rolled else lid
-                    portrait = "roll.mp4" if rolled else both["portrait"]["moves"][i]
-                    moves.append(f'{{ landscape: "/{base[len("public/"):]}/{dir_}/landscape/{name}", portrait: "/{base[len("public/"):]}/{dir_}/portrait/{portrait}" }}')
-            lines.append(f"  {n}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n    wordInSky: true,\n  }},")
+        for lesson in sorted(data):
+            both = data[lesson]
+            stations = [f"{{ landscape: {pic(lesson, 'landscape', st)}, portrait: {pic(lesson, 'portrait', both['portrait']['stills'][i])} }}" for i, st in enumerate(both["landscape"]["stills"])]
+            path_ = lambda frame, rel: f"/{base[len('public/'):]}/{lesson}/{frame}/{rel}"
+            moves = [f'{{ landscape: "{path_("landscape", m)}", portrait: "{path_("portrait", both["portrait"]["moves"][i])}" }}' for i, m in enumerate(both["landscape"]["moves"])]
+            own = {int(k): v for k, v in both["landscape"].get("loops", {}).items()}
+            ploops = {int(k): v for k, v in both["portrait"].get("loops", {}).items()}
+            loops = [f'{{ landscape: "{path_("landscape", own[i])}", portrait: "{path_("portrait", ploops[i])}" }}' if i in own else "null" for i in range(len(stations))]
+            lines.append(f"  {lesson}: {{\n    stations: [\n      {(',' + chr(10) + '      ').join(stations)},\n    ],\n    moves: [\n      {(',' + chr(10) + '      ').join(moves)},\n    ],\n    loops: [{', '.join(loops)}],\n    wordInSky: true,\n  }},")
         body = "\n".join(lines)
         imports = [line for line in dict.fromkeys(imports) if re.search(r"\b" + line.split()[1] + r"\b", body)]
         ts = (
             "/* GENERATED by `python3 tools/picnic-scene/crop.py seasonsfarm` (after\n"
-            "   `render.cjs seasons`) — Bloo's island of the year, the Seasons and Weather\n"
-            "   course's world (2026-11-10). Edit the scene, not this file. */\n"
+            "   `render.cjs seasons 1 2 3 4`) — Bloo's island of the year, the Seasons and Weather\n"
+            "   course's world (rebuilt 2026-11-20). Edit the scene, not this file. */\n"
             'import type { LessonWorld } from "@/types/course";\n'
             + "\n".join(imports)
-            + "\n\n/** Each season lesson's camera: its five stills (its season's word and spelling, then the weather's word, spelling and\n    the end) and the walk between: in, to the letters, BACK while the weather rolls in (`roll.mp4`, `roll.py`),\n    to the letters in the weather, up and away. */\n"
+            + "\n\n/** Each lesson on ONE island: the season's word and spelling, then — the weather rolling in on move 2, after its\n    reel — the weather's word, spelling and the end. The weather's three stations loop (`loops`): the rain falls on. */\n"
             + "export const SEASONS_FARM: Record<number, LessonWorld> = {\n" + body + "\n};\n"
         )
         open(os.path.join(ROOT, GENERATED), "w").write(ts)
