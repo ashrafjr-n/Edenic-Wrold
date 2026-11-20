@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
+import { STAR_FLIGHT } from "@/lib/chest-run";
 import { playSfx } from "@/lib/cue";
 import { format } from "@/lib/format-dict";
 import type { Dictionary } from "@/lib/dictionaries/en";
@@ -29,6 +30,8 @@ const LIVE_MS = 3200;
 const SHUT_MS = 2600;
 /** The new star pops into its slot once the slots are out (`.star-pod-star--new`). */
 const POP_MS = 350;
+/** The plate and its slots have sprung out (`lang-pop`): the slot is where it stays. */
+const FAN_MS = 600;
 
 function readSeen(): string[] {
   try {
@@ -56,8 +59,18 @@ export function StarPod({ characterId, courses, labels }: StarPodProps) {
   const hydrated = useProgress((state) => state.hydrated);
   const [open, setOpen] = useState(false);
   const [fresh, setFresh] = useState<string[]>([]);
+  /* The star just given on this page, flying from over the chest into its
+     slot: hidden until the slot is measured (`style` = where it starts). */
+  const [flight, setFlight] = useState<{ key: string; style?: CSSProperties } | null>(null);
   const atArrival = useRef<string[] | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  /* Shown arriving in place: the star pops into its slot (the one over a chest, if any, goes). */
+  function pop(keys: string[]) {
+    window.dispatchEvent(new Event(STAR_FLIGHT));
+    setFresh(keys);
+    window.setTimeout(() => playSfx("star"), POP_MS);
+  }
 
   const keys = courses.map((course) => chestStarKey(characterId, course.id));
   const earned = keys.filter((key) => hydrated && items[key]);
@@ -74,20 +87,46 @@ export function StarPod({ characterId, courses, labels }: StarPodProps) {
     const timer = window.setTimeout(
       () => {
         writeSeen([...seen, ...unseen]);
-        setFresh(unseen);
         setOpen(true);
-        window.setTimeout(() => playSfx("star"), POP_MS);
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!early && !still && unseen.length === 1 && document.querySelector(".chest-star")) setFlight({ key: unseen[0] });
+        else pop(unseen);
       },
       early ? ARRIVE_MS : LIVE_MS,
     );
     return () => window.clearTimeout(timer);
   }, [hydrated, earnedList]);
 
+  /* The slots out: from the star over the chest to its slot. */
+  useEffect(() => {
+    if (!flight || flight.style) return;
+    const timer = window.setTimeout(() => {
+      const from = document.querySelector(".chest-star")?.getBoundingClientRect();
+      const to = wrapperRef.current?.querySelector(`[data-slot="${flight.key}"] img`)?.getBoundingClientRect();
+      if (!from || !to?.width) {
+        setFlight(null);
+        pop([flight.key]);
+        return;
+      }
+      setFlight({
+        key: flight.key,
+        style: {
+          "--fly-x": `${from.left + from.width / 2 - (to.left + to.width / 2)}px`,
+          "--fly-y": `${from.top + from.height / 2 - (to.top + to.height / 2)}px`,
+          "--fly-s": from.width / to.width,
+        } as CSSProperties,
+      });
+      window.dispatchEvent(new Event(STAR_FLIGHT));
+    }, FAN_MS);
+    return () => window.clearTimeout(timer);
+  }, [flight]);
+
   useEffect(() => {
     if (!fresh.length) return;
     const timer = window.setTimeout(() => {
       setOpen(false);
       setFresh([]);
+      setFlight(null);
     }, SHUT_MS);
     return () => window.clearTimeout(timer);
   }, [fresh]);
@@ -124,6 +163,7 @@ export function StarPod({ characterId, courses, labels }: StarPodProps) {
         onClick={() => {
           setOpen((value) => !value);
           setFresh([]);
+          setFlight(null);
         }}
         className="btn3d--clay-white h-12 shrink-0 gap-1.5 px-4 text-lg font-bold sm:h-14 sm:px-5 sm:text-xl"
       >
@@ -137,21 +177,32 @@ export function StarPod({ characterId, courses, labels }: StarPodProps) {
         <div className="star-pod-fan flex items-center gap-2">
           {courses.map((course, index) => {
             const has = earned.includes(keys[index]);
+            const flying = flight?.key === keys[index] ? flight : null;
             return (
               <span
                 key={course.id}
                 role="img"
                 aria-label={format(has ? labels.starEarned : labels.starMissing, { name: course.name })}
+                data-slot={keys[index]}
                 className="star-pod-slot"
                 style={{ animationDelay: `${0.08 + index * 0.06}s` }}
               >
                 <Image src={emptyStar} alt="" sizes="40px" className="star-pod-star" />
-                {has && (
+                {has && (!flying || flying.style) && (
                   <Image
                     src={chestStar}
                     alt=""
                     sizes="40px"
-                    className={`star-pod-star ${fresh.includes(keys[index]) ? "star-pod-star--new" : ""}`}
+                    style={flying?.style}
+                    onAnimationEnd={
+                      flying
+                        ? () => {
+                            playSfx("star");
+                            setFresh([flying.key]);
+                          }
+                        : undefined
+                    }
+                    className={`star-pod-star ${flying ? "star-pod-star--fly" : fresh.includes(keys[index]) ? "star-pod-star--new" : ""}`}
                   />
                 )}
               </span>
