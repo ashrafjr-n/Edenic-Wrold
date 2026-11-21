@@ -68,10 +68,10 @@ export const en = {
       action: "Start learning",
     },
     play: {
-      title: "Discover",
+      title: "Play",
       description:
-        "Watch the Edenic World episodes and short videos with Pinki, Nova and Bloo — and games on the way.",
-      action: "Start discovering",
+        "Puzzles, memory and hunts with Pinki, Nova and Bloo — collect stars in Learn to open the games.",
+      action: "Start playing",
     },
   },
   learnPicker: {
