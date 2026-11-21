@@ -3,46 +3,39 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { isNavActive, mainNav, profileNav } from "@/data/nav";
+import { isNavActive, mainNav } from "@/data/nav";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 /* Flat PNGs, not lucide — `.icon-mask` (globals.css) masks each one to
    `currentColor`, so `.nav-tab`'s own color rules (blue at rest, pink for
    the current page) drive the icon exactly like they'd drive an inline SVG.
    Keyed by the nav item's stable `id`, not its translated `label` — a label
-   swap must never break this lookup. */
+   swap must never break this lookup. Watch (a television) and Play (a game
+   controller) are Phosphor's filled glyphs (MIT), rendered to 512 px alpha. */
 const ICON_SRC = {
   home: "/assets/nav-icons/home.png",
   learn: "/assets/nav-icons/learn.png",
-  discover: "/assets/nav-icons/discover.png?v=planet",
-  profile: "/assets/nav-icons/profile.png",
+  watch: "/assets/nav-icons/watch.png",
+  play: "/assets/nav-icons/play.png",
 } as const;
 
-/* One optical size for all four, MEASURED from each PNG rather than eyeballed.
-   The four glyphs fill their shared 512×512 canvas by very different amounts —
-   home 512×512 (a solid square), learn 512×392, discover 512×410 (Phosphor's
-   filled planet, 2026-11-19 — `?v=` because the file replaced a compass), profile
-   342×428 — so `.icon-mask`'s plain `mask-size: contain` renders four
-   different sizes out of one 28×28 box. Each scale below is `512 / (the
-   glyph's own longest side)`, which fits every glyph to the same square, and
-   home then takes a 92% optical trim on top of that: a full-bleed square
-   silhouette reads noticeably heavier than a wide flat one at identical
-   width.
+/* One optical size for all four, MEASURED from each PNG's alpha box rather
+   than eyeballed: home 512×512 (a solid square), learn 512×392, watch 512×492
+   (the television, nearly square), play 512×375 (the controller). Each scale
+   is `512 / (the glyph's own longest side)` — 100% for all but the two
+   near-square glyphs, home and watch, which take a 92% optical trim: a
+   full-bleed square silhouette reads heavier than a wide flat one at the same
+   width. All four boxes are centred in their canvas, so `.icon-mask`'s
+   `mask-position: center` puts them on one level.
 
-   All four bounding boxes are centred in their canvas (verified), so
-   `.icon-mask`'s `mask-position: center` is what puts them on the same level
-   — nothing here needs to offset them.
-
-   **Re-measure this table if any of these PNGs is replaced.** It is
-   calibrated to the current files, and the previous version of it had gone
-   stale against exactly that. Set on BOTH `maskSize`/`WebkitMaskSize`:
-   inline styles aren't run through Lightning CSS's auto-prefixing, unlike
-   `.icon-mask` itself. */
+   **Re-measure this table if any of these PNGs is replaced.** Set on BOTH
+   `maskSize`/`WebkitMaskSize`: inline styles aren't run through Lightning
+   CSS's auto-prefixing, unlike `.icon-mask` itself. */
 const ICON_SCALE: Record<keyof typeof ICON_SRC, string> = {
   home: "92%",
   learn: "100%",
-  discover: "100%",
-  profile: "120%",
+  watch: "92%",
+  play: "100%",
 };
 
 const iconVar = (id: keyof typeof ICON_SRC) =>
@@ -55,12 +48,11 @@ const iconVar = (id: keyof typeof ICON_SRC) =>
 /** App-style bottom tab bar — phone only (`sm:hidden`). Carries `MainNav`'s
     items (same `mainNav` data, same locked rules) but fixed to the viewport
     bottom instead of sitting in the header, the way a native app places its
-    primary navigation. Home/Learn/Play move down here on a phone — see
-    `MainNav`, hidden below `sm` — and a fourth **Profile** tab joins them,
-    which is the one thing on this bar `MainNav` has no counterpart for: it
-    comes from `profileNav`, not `mainNav`, precisely so it stays out of the
-    header and the footer. The rest of the chrome (logo, language, dark mode,
-    join) stays in the top header on every breakpoint.
+    primary navigation. Home, Learn, Watch and Play move down here on a
+    phone — see `MainNav`, hidden below `sm`. There is no Profile tab: once
+    accounts exist, the header's Join button turns into the profile button.
+    The rest of the chrome (logo, language, dark mode, join) stays in the top
+    header on every breakpoint.
 
     `dict` is passed down from `layout.tsx` since a Client Component can't
     call `getDictionary()` itself.
@@ -131,29 +123,6 @@ export function BottomNav({ dict }: { dict: Dictionary }) {
           </Link>
         );
       })}
-
-      {/* Profile: chrome with no destination, the same pattern the header's
-          "Join Edenic World" follows — there is no profile until someone
-          signs in, and the sign-in flow is a later phase. So it is a `<span>`,
-          not a `<Link>`, and it does nothing at all when pressed.
-
-          It deliberately does NOT take the "Soon" treatment the locked
-          `mainNav` branch above uses: that badge is for a SECTION of the site
-          that has no page yet, while this is a control that will act on the
-          child's own account. It wears `.nav-tab` so the icon and label read
-          exactly like a resting tab, and it can never take
-          `.nav-tab--current` — there is no page it could be "on". */}
-      <span
-        aria-disabled="true"
-        className="nav-tab flex h-16 cursor-default flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold"
-      >
-        <span
-          aria-hidden
-          className="icon-mask icon-mask-grain h-7 w-7"
-          style={iconVar("profile")}
-        />
-        {dict.nav[profileNav.id]}
-      </span>
     </nav>
   );
 }
