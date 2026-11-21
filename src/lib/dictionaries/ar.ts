@@ -198,8 +198,8 @@ export const ar: Dictionary = {
     welcome2: "هل تساعدنا لنوقظه؟ اقفز على أول كعكة!",
     stageSoon: "هذه المرحلة في الطريق!",
   },
-  /** `/watch`'s lines (the name is from the old Discover page). */
-  discover: {
+  /** `/watch`'s lines. */
+  watch: {
     showEpisode: "اعرض الحلقة {n}",
     watchButton: "شاهد",
     watchClipAria: "شاهد الفيديو: {title}",
