@@ -279,7 +279,20 @@ def flip():
     return finish(room(mix(0.24, (0, attack(fwip, 4), 0.5), (0.06, wood(note("G5"), 0.12), 0.55)), 0.3, 0.1), 0.5)
 
 
-SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds, snap, rustle, flip]
+def tick():
+    """Memory Match's last five seconds (2026-11-21): one clock tick, a high
+    soft wood block (the site raises it a note each second)."""
+    return finish(room(wood(note("E5"), 0.12), 0.2, 0.08), 0.5)
+
+
+def timesup():
+    """Memory Match's clock runs out: a toy's gentle falling "aww" — three
+    soft marimba notes stepping down, the last one long. Never a buzzer."""
+    s = mix(1.5, (0, marimba(note("G5"), 0.5), 0.8), (0.22, marimba(note("E5"), 0.5), 0.8), (0.46, marimba(note("C5"), 0.9), 0.95), (0.46, marimba(note("C4"), 0.9), 0.5))
+    return finish(room(s, 0.5, 0.18), 0.65)
+
+
+SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds, snap, rustle, flip, tick, timesup]
 
 
 def write_mp3(name, signal):
