@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { BackRow } from "@/components/ui/back-button";
 import { Footer } from "@/components/layout/footer";
 import { WatchGrid } from "@/components/watch/watch-grid";
 import { watchClips, watchEpisodes, watchSongs } from "@/data/watch";
@@ -16,8 +15,7 @@ export default async function WatchPage() {
   return (
     <>
       <main className="flex flex-1 flex-col overflow-x-clip">
-        <BackRow href="/discover" label={dict.discover.backToDiscover} />
-        <div className="px-4 pb-10 pt-6 sm:px-8">
+        <div className="px-4 pb-10 pt-6 sm:px-8 sm:pt-8">
           <h1 className="sr-only">{dict.discover.watchButton}</h1>
           <WatchGrid
             episodes={watchEpisodes}
