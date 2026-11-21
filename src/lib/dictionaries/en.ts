@@ -23,8 +23,8 @@ export const en = {
   nav: {
     home: "Home",
     learn: "Learn",
-    discover: "Discover",
-    profile: "Profile",
+    watch: "Watch",
+    play: "Play",
     soon: "Soon",
     mainAriaLabel: "Main",
     footerAriaLabel: "Footer",
