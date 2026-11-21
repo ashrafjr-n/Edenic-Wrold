@@ -758,9 +758,7 @@ door that opens. The friends are never animated; they are their pictures and spe
 through `FriendSays`. Puzzle and Memory Match are not used in the story. They stay
 as free games.
 
-**The world is the Edenic Laboratory from episode 2** (`public/e-s/ep2-lab-front.png`,
-`ep2-lab-wide-friends-from-back.png`, `ep2-lab-door-closeup.png`; the screenshots are
-references only, untracked, never shipped). It is rebuilt in 3D in our own renderer, the
+**The world is the Edenic Laboratory from episode 2** (reference screenshots of the lab — deleted 2026-11-21, re-take them from the episode if the lab is resumed; they were untracked, never shipped). It is rebuilt in 3D in our own renderer, the
 same way the Learn worlds are made (`scene.html` + `render.cjs` + `crop.py`) and played
 by `CourseWorld`. What it shows:
 - **The lab:** a pink and blue house with a rounded roof, an arch of pastel balls
