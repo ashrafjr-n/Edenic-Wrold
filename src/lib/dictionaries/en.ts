@@ -215,8 +215,8 @@ export const en = {
     welcome2: "Will you help us wake it up? Hop on the first cookie!",
     stageSoon: "This stage is on its way!",
   },
-  /** `/watch`'s lines (the name is from the old Discover page). */
-  discover: {
+  /** `/watch`'s lines. */
+  watch: {
     showEpisode: "Show episode {n}",
     watchButton: "Watch",
     watchClipAria: "Watch the video: {title}",
