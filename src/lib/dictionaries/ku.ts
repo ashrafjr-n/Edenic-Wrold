@@ -187,7 +187,6 @@ export const ku: Dictionary = {
     feed: "خوارن بدە",
     basket: "دانە",
   },
-  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
   /** تاقیگەها نڤستی یا Play. */
   lab: {
     title: "تاقیگەها نڤستی",
@@ -203,16 +202,10 @@ export const ku: Dictionary = {
     welcome2: "تو دێ هاریکاریا مە کەی دا هشیار بکەین؟ باز بدە سەر کولیچا ئێکێ!",
     stageSoon: "ئەڤ قۆناغە ل سەر ڕێیە!",
   },
+  /** `/watch`'s lines (the name is from the old Discover page). */
   discover: {
-    playGo: "وەرە یاری بکەین",
-    watchNew: "ئەلقێن نوو",
-    watchSub: "ئەلقە، ستران و ڤیدیۆیێن کورت",
-    playSub: "یاری و سەرهاتی",
     showEpisode: "ئەلقا {n} نیشان بدە",
-    playButton: "یاری",
     watchButton: "تەماشە بکە",
-    watchAlt: "پینکی، نۆڤا و بلوو ل تاقیگەها Edenic",
-    backToDiscover: "زڤڕینا بۆ بدۆزە",
     watchClipAria: "ڤیدیۆیا {title} تەماشە بکە",
     episodesTitle: "پشکێن",
     reelsTitle: "ڤیدیۆیێن کورت",
