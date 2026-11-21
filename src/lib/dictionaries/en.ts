@@ -200,7 +200,6 @@ export const en = {
     feed: "Feed",
     basket: "Put",
   },
-  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
   /** Play's Sleeping Lab: the world of stops on `/play`. */
   lab: {
     title: "The Sleeping Lab",
@@ -216,16 +215,10 @@ export const en = {
     welcome2: "Will you help us wake it up? Hop on the first cookie!",
     stageSoon: "This stage is on its way!",
   },
+  /** `/watch`'s lines (the name is from the old Discover page). */
   discover: {
-    playGo: "Let's play",
-    watchNew: "New episodes",
-    watchSub: "Episodes, songs and short videos",
-    playSub: "Games and adventures",
     showEpisode: "Show episode {n}",
-    playButton: "Play",
     watchButton: "Watch",
-    watchAlt: "Pinki, Nova and Bloo in the Edenic Laboratory",
-    backToDiscover: "Back to Discover",
     watchClipAria: "Watch the video: {title}",
     episodesTitle: "Episodes",
     reelsTitle: "Short videos",
