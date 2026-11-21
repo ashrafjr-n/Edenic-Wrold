@@ -202,8 +202,8 @@ export const ku: Dictionary = {
     welcome2: "تو دێ هاریکاریا مە کەی دا هشیار بکەین؟ باز بدە سەر کولیچا ئێکێ!",
     stageSoon: "ئەڤ قۆناغە ل سەر ڕێیە!",
   },
-  /** `/watch`'s lines (the name is from the old Discover page). */
-  discover: {
+  /** `/watch`'s lines. */
+  watch: {
     showEpisode: "ئەلقا {n} نیشان بدە",
     watchButton: "تەماشە بکە",
     watchClipAria: "ڤیدیۆیا {title} تەماشە بکە",
