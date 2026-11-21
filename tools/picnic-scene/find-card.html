@@ -1,7 +1,10 @@
 <!doctype html>
-<!-- `/play`'s Find card (2026-11-21): ONE clay magnifying glass on a transparent
-     ground. `node tools/picnic-scene/find-card.cjs` renders it to `out/find-card/magnifier.png`;
-     `python3 tools/picnic-scene/find-card.py` lays it into the garden with the friends. -->
+<!-- `/play`'s Find card (2026-11-21). Three renders, picked by `?part=`:
+       back       the meadow — sky, hills, clouds, two lollipop trees, flowers (opaque)
+       front      the near bushes and flowers on a transparent ground (+ their shadows)
+       magnifier  one clay magnifying glass on a transparent ground
+     `node tools/picnic-scene/find-card.cjs` renders all three to `out/find-card/`;
+     `python3 tools/picnic-scene/find-card.py` lays the friends BETWEEN back and front. -->
 <meta charset="utf-8" />
 <script type="importmap">
   { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
@@ -11,9 +14,11 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
-const S = 1000;
+const part = new URLSearchParams(location.search).get("part") || "back";
+const W = part === "magnifier" ? 1000 : 2752;
+const H = part === "magnifier" ? 1000 : 1720;
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
-renderer.setSize(S, S);
+renderer.setSize(W, H);
 renderer.setPixelRatio(1);
 renderer.setClearColor(0x000000, 0);
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -24,54 +29,128 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
 scene.environmentIntensity = 0.7;
 scene.add(new THREE.HemisphereLight(0xffffff, 0xffd9ec, 0.8));
 const sun = new THREE.DirectionalLight(0xfff1dd, 2.2);
-sun.position.set(-3, 5, 6);
+sun.position.set(-5, 9, 8);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.camera.left = -14; sun.shadow.camera.right = 14; sun.shadow.camera.top = 12; sun.shadow.camera.bottom = -12;
+sun.shadow.camera.far = 40;
+sun.shadow.radius = 6; sun.shadow.bias = -0.0004;
 scene.add(sun);
 
-const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 50);
-camera.position.set(0, 0, 14);
+const clay = (color, rough = 0.66) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
+const shadowed = (m) => { m.castShadow = true; m.receiveShadow = true; return m; };
+const ball = (r, color, x, y, z, sx = 1, sy = 1, sz = 1) => {
+  const m = shadowed(new THREE.Mesh(new THREE.SphereGeometry(r, 64, 40), clay(color)));
+  m.position.set(x, y, z); m.scale.set(sx, sy, sz); return m;
+};
 
-const clay = (color, rough = 0.62) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
-const g = new THREE.Group();
+/* A clay bush: a heap of overlapping balls, bottom flattened by the ground. */
+const GREENS = [0x8fe08a, 0x9be895, 0x82d97f, 0xa6ee9d];
+function bush(x, z, s) {
+  const g = new THREE.Group();
+  const balls = [[0, 0.8, 0, 1.0], [-0.95, 0.6, 0.15, 0.78], [0.95, 0.62, 0.1, 0.8], [-0.4, 1.35, 0.1, 0.66], [0.5, 1.3, 0.05, 0.62], [0, 0.55, 0.7, 0.72], [-1.5, 0.4, 0.3, 0.5], [1.5, 0.42, 0.3, 0.52]];
+  balls.forEach(([bx, by, bz, r], i) => g.add(ball(r, GREENS[i % 4], bx, by, bz)));
+  g.position.set(x, 0, z); g.scale.setScalar(s);
+  return g;
+}
+/* A lollipop tree: a pink trunk and a round pastel crown. */
+function tree(x, z, s, crown) {
+  const g = new THREE.Group();
+  const trunk = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 2.2, 32), clay(0xf6a6c6)));
+  trunk.position.y = 1.1; g.add(trunk);
+  g.add(ball(1.15, crown, 0, 2.9, 0));
+  g.add(ball(0.7, crown, 0.8, 2.5, 0.2));
+  g.add(ball(0.62, crown, -0.8, 2.55, 0.1));
+  g.position.set(x, 0, z); g.scale.setScalar(s);
+  return g;
+}
+/* A flower: six petals round a button, lying a little toward the camera. */
+function flower(x, z, s, petal, heart = 0xffd34d) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    g.add(ball(0.17, petal, Math.cos(a) * 0.27, 0.42 + Math.sin(a) * 0.27, 0, 1, 1, 0.55));
+  }
+  g.add(ball(0.15, heart, 0, 0.42, 0.04, 1, 1, 0.8));
+  const stem = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 0.42, 12), clay(0x6fcf72)));
+  stem.position.y = 0.21; g.add(stem);
+  g.position.set(x, 0, z); g.scale.setScalar(s);
+  return g;
+}
+/* A cloud: a clay heap of white balls. */
+function cloud(x, y, z, s) {
+  const g = new THREE.Group();
+  [[0, 0, 0, 0.8], [0.85, -0.12, 0, 0.62], [-0.85, -0.14, 0, 0.6], [0.3, 0.45, 0, 0.55], [1.5, -0.25, 0, 0.42], [-1.45, -0.27, 0, 0.4]].forEach(([cx, cy, cz, r]) => {
+    const m = ball(r, 0xffffff, cx, cy, cz); m.castShadow = false; g.add(m);
+  });
+  g.position.set(x, y, z); g.scale.setScalar(s);
+  return g;
+}
 
-/* The rim: a fat rounded torus in Nova's gold-orange clay. */
-const rim = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.34, 48, 96), clay(0xffb43a, 0.55));
-g.add(rim);
-/* The glass: a pale blue disc a little inside the rim, a soft bulge. */
-const glass = new THREE.Mesh(
-  new THREE.SphereGeometry(1.62, 64, 32).scale(1, 1, 0.12),
-  new THREE.MeshPhysicalMaterial({ color: 0xd8efff, roughness: 0.12, transmission: 0.0, transparent: true, opacity: 0.12, clearcoat: 1, clearcoatRoughness: 0.1 }),
-);
-g.add(glass);
-/* A shine: two thin white clay arcs on the glass. */
-const shineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, emissive: 0xffffff, emissiveIntensity: 0.25 });
-const arc = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.07, 16, 48, Math.PI * 0.42), shineMat);
-arc.rotation.z = Math.PI * 0.62; arc.position.z = 0.2; g.add(arc);
-const dot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), shineMat);
-dot.position.set(-1.12 + 0.05, -0.2, 0.2); dot.position.set(-1.18, 0.2, 0.2); g.add(dot);
-/* The handle: a rounded neck in gold and a long pink grip. */
-const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.27, 0.55, 16, 32), clay(0xffb43a, 0.55));
-neck.position.set(1.5, -1.5, 0); neck.rotation.z = Math.PI * 0.25; g.add(neck);
-const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.55, 24, 48), clay(0xf2569b, 0.6));
-grip.position.set(2.45, -2.45, 0); grip.rotation.z = Math.PI * 0.25; g.add(grip);
-const cap = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), clay(0xffffff, 0.5));
-cap.position.set(1.95 + 0.01, -1.95, 0.4); cap.visible = false; g.add(cap);
+const camera = new THREE.PerspectiveCamera(36, W / H, 0.1, 200);
 
-g.rotation.set(-0.16, 0.32, -0.12);
-g.children.forEach((m) => { m.castShadow = true; m.receiveShadow = true; });
-scene.add(g);
-
-/* Frame the whole thing in the square. */
-const box = new THREE.Box3().setFromObject(g);
-const c = box.getCenter(new THREE.Vector3());
-g.position.sub(c);
-const size = box.getSize(new THREE.Vector3());
-camera.position.z = 14 * Math.max(size.x, size.y) / 6.2;
+if (part === "back") {
+  camera.position.set(0, 2.6, 17);
+  camera.lookAt(0, 2.0, 0);
+  /* The sky: a vertical gradient, lavender up high, warm pink at the hills. */
+  const c = document.createElement("canvas"); c.width = 8; c.height = 512;
+  const cx = c.getContext("2d"); const gr = cx.createLinearGradient(0, 0, 0, 512);
+  gr.addColorStop(0, "#dcc8f5"); gr.addColorStop(0.55, "#f6d3ec"); gr.addColorStop(1, "#ffe9e1");
+  cx.fillStyle = gr; cx.fillRect(0, 0, 8, 512);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const sky = new THREE.Mesh(new THREE.PlaneGeometry(160, 90), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  sky.position.set(0, 14, -45); scene.add(sky);
+  /* Far and near hills. */
+  const hill = (x, y, z, sx, sy, color) => { const m = ball(1, color, x, y, z, sx, sy, sx * 0.6); scene.add(m); return m; };
+  hill(-9, -4.2, -26, 18, 8, 0xc6efd0);
+  hill(10, -4.8, -22, 17, 8, 0xbbeacb);
+  hill(0, -5.5, -14, 22, 7.2, 0xa9e6b9);
+  /* The meadow. */
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(120, 80), clay(0xbdf0b4, 0.9));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; ground.position.z = -10; scene.add(ground);
+  scene.add(cloud(-6.2, 5.6, -20, 1.9), cloud(5.6, 6.4, -22, 1.5), cloud(0.5, 7.4, -24, 1.0));
+  scene.add(tree(-7.2, -6, 1.3, 0xffb2d4), tree(7.6, -7, 1.45, 0xc9b6f2), tree(1.2, -12, 1.0, 0xffd7a0));
+  [[-4.2, -1, 1.3, 0xff8fc0], [-1.2, 0.4, 1.0, 0xffffff], [2.1, -0.6, 1.2, 0xffb454], [5.2, -2, 1.1, 0xc6a2f5], [-6.4, -2.6, 1.0, 0xffffff], [0.2, -3, 0.9, 0xff8fc0]]
+    .forEach(([x, z, s, col]) => scene.add(flower(x, z, s, col)));
+} else if (part === "front") {
+  camera.position.set(0, 2.6, 17);
+  camera.lookAt(0, 2.0, 0);
+  /* The ground only catches the bushes' shadows. */
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(120, 80), new THREE.ShadowMaterial({ opacity: 0.22, color: 0x4a7a55 }));
+  catcher.rotation.x = -Math.PI / 2; catcher.receiveShadow = true; catcher.position.z = -10; scene.add(catcher);
+  scene.add(bush(-5.0, 3.0, 1.15), bush(5.2, 2.6, 1.0), bush(0.2, 5.4, 0.42));
+  [[-1.9, 5.8, 0.9, 0xffffff], [2.2, 5.6, 1.0, 0xff8fc0], [-7.0, 4.6, 0.9, 0xffb454], [7.4, 4.4, 0.9, 0xffffff], [-0.7, 6.4, 0.8, 0xc6a2f5]]
+    .forEach(([x, z, s, col]) => scene.add(flower(x, z, s, col)));
+} else {
+  /* The magnifier. */
+  camera.fov = 24; camera.aspect = 1; camera.updateProjectionMatrix();
+  camera.position.set(0, 0, 14);
+  const g = new THREE.Group();
+  g.add(Object.assign(new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.34, 48, 96), clay(0xffb43a, 0.55))));
+  g.add(new THREE.Mesh(
+    new THREE.SphereGeometry(1.62, 64, 32).scale(1, 1, 0.12),
+    new THREE.MeshPhysicalMaterial({ color: 0xd8efff, roughness: 0.12, transparent: true, opacity: 0.12, clearcoat: 1, clearcoatRoughness: 0.1 }),
+  ));
+  const shine = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, emissive: 0xffffff, emissiveIntensity: 0.25 });
+  const arc = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.07, 16, 48, Math.PI * 0.42), shine);
+  arc.rotation.z = Math.PI * 0.62; arc.position.z = 0.2; g.add(arc);
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), shine); dot.position.set(-1.18, 0.2, 0.2); g.add(dot);
+  const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.27, 0.55, 16, 32), clay(0xffb43a, 0.55));
+  neck.position.set(1.5, -1.5, 0); neck.rotation.z = Math.PI * 0.25; g.add(neck);
+  const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.55, 24, 48), clay(0xf2569b, 0.6));
+  grip.position.set(2.45, -2.45, 0); grip.rotation.z = Math.PI * 0.25; g.add(grip);
+  g.rotation.set(-0.16, 0.32, -0.12);
+  scene.add(g);
+  const box = new THREE.Box3().setFromObject(g);
+  g.position.sub(box.getCenter(new THREE.Vector3()));
+  const size = box.getSize(new THREE.Vector3());
+  camera.position.z = 14 * Math.max(size.x, size.y) / 6.2;
+}
 renderer.render(scene, camera);
-window.magnifier = () => renderer.domElement.toDataURL("image/png");
+window.shot = () => renderer.domElement.toDataURL("image/png");
 window.ready = true;
 </script>
