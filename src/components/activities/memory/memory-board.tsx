@@ -38,6 +38,9 @@ const MAX_CARD = "8.5rem";
     completion records the same one, exactly as a puzzle does. */
 const DONE = 3;
 
+/** The clock turns red and ticks for its last this-many seconds. */
+const LOW_SECONDS = 5;
+
 type ClockVars = CSSProperties & { "--clock-left"?: string };
 
 /**
@@ -96,6 +99,15 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
       if (wrongTimer.current !== null) window.clearTimeout(wrongTimer.current);
     };
   }, []);
+
+  /* The last five seconds tick, and the clock turns red; at zero a soft "aww".
+     Driven by the clock itself (an external timer), so it is an effect; it
+     stays quiet while the board is not running or the level is done. */
+  useEffect(() => {
+    if (!running || done) return;
+    if (remaining === 0) playSfx("timesup");
+    else if (remaining <= LOW_SECONDS) playSfx("tick", LOW_SECONDS - remaining);
+  }, [remaining, running, done]);
 
   const isOpen = (index: number) =>
     flipped.includes(index) || matched.includes(deck[index].faceId);
@@ -188,7 +200,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
               than red: the clock stops mattering there, it does not start
               threatening. */}
           <div
-            className={`memory-clock mt-4 sm:mt-6 ${remaining === 0 ? "is-spent" : ""}`}
+            className={`memory-clock mt-4 sm:mt-6 ${remaining === 0 ? "is-spent" : remaining <= LOW_SECONDS && running && !done ? "is-low" : ""}`}
             style={
               {
                 "--clock-left": `${(remaining / level.seconds) * 100}%`,
