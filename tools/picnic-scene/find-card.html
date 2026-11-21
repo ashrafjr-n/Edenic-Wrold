@@ -1,0 +1,77 @@
+<!doctype html>
+<!-- `/play`'s Find card (2026-11-21): ONE clay magnifying glass on a transparent
+     ground. `node tools/picnic-scene/find-card.cjs` renders it to `out/find-card/magnifier.png`;
+     `python3 tools/picnic-scene/find-card.py` lays it into the garden with the friends. -->
+<meta charset="utf-8" />
+<script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
+</script>
+<body style="margin:0;background:transparent">
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const S = 1000;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(S, S);
+renderer.setPixelRatio(1);
+renderer.setClearColor(0x000000, 0);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 0.95;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.7;
+scene.add(new THREE.HemisphereLight(0xffffff, 0xffd9ec, 0.8));
+const sun = new THREE.DirectionalLight(0xfff1dd, 2.2);
+sun.position.set(-3, 5, 6);
+scene.add(sun);
+
+const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 50);
+camera.position.set(0, 0, 14);
+
+const clay = (color, rough = 0.62) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
+const g = new THREE.Group();
+
+/* The rim: a fat rounded torus in Nova's gold-orange clay. */
+const rim = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.34, 48, 96), clay(0xffb43a, 0.55));
+g.add(rim);
+/* The glass: a pale blue disc a little inside the rim, a soft bulge. */
+const glass = new THREE.Mesh(
+  new THREE.SphereGeometry(1.62, 64, 32).scale(1, 1, 0.12),
+  new THREE.MeshPhysicalMaterial({ color: 0xd8efff, roughness: 0.12, transmission: 0.0, transparent: true, opacity: 0.12, clearcoat: 1, clearcoatRoughness: 0.1 }),
+);
+g.add(glass);
+/* A shine: two thin white clay arcs on the glass. */
+const shineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, emissive: 0xffffff, emissiveIntensity: 0.25 });
+const arc = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.07, 16, 48, Math.PI * 0.42), shineMat);
+arc.rotation.z = Math.PI * 0.62; arc.position.z = 0.2; g.add(arc);
+const dot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), shineMat);
+dot.position.set(-1.12 + 0.05, -0.2, 0.2); dot.position.set(-1.18, 0.2, 0.2); g.add(dot);
+/* The handle: a rounded neck in gold and a long pink grip. */
+const neck = new THREE.Mesh(new THREE.CapsuleGeometry(0.27, 0.55, 16, 32), clay(0xffb43a, 0.55));
+neck.position.set(1.5, -1.5, 0); neck.rotation.z = Math.PI * 0.25; g.add(neck);
+const grip = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.55, 24, 48), clay(0xf2569b, 0.6));
+grip.position.set(2.45, -2.45, 0); grip.rotation.z = Math.PI * 0.25; g.add(grip);
+const cap = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), clay(0xffffff, 0.5));
+cap.position.set(1.95 + 0.01, -1.95, 0.4); cap.visible = false; g.add(cap);
+
+g.rotation.set(-0.16, 0.32, -0.12);
+g.children.forEach((m) => { m.castShadow = true; m.receiveShadow = true; });
+scene.add(g);
+
+/* Frame the whole thing in the square. */
+const box = new THREE.Box3().setFromObject(g);
+const c = box.getCenter(new THREE.Vector3());
+g.position.sub(c);
+const size = box.getSize(new THREE.Vector3());
+camera.position.z = 14 * Math.max(size.x, size.y) / 6.2;
+renderer.render(scene, camera);
+window.magnifier = () => renderer.domElement.toDataURL("image/png");
+window.ready = true;
+</script>
