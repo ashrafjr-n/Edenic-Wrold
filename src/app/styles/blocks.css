@@ -487,9 +487,18 @@
 }
 
 /* `/watch`'s hero panel (2026-11-21): the pink clay half beside the episode's
-   picture, Pinki standing in its corner — a picture, never animated. Below
+   picture (pinned pink, so white words keep their contrast in dark mode), Pinki standing in its corner — a picture, never animated. Below
    `lg` the panel sits under the picture and keeps its words clear of her
    (`pe-*` on the panel); from `lg` the column is wide enough to share. */
+.watch-panel {
+  background-color: #f2569b;
+  --clay-edge: #c8306f;
+}
+
+.watch-panel-chip {
+  color: #c8306f;
+}
+
 .watch-panel-pinki {
   position: absolute;
   z-index: 0;
