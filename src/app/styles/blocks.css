@@ -44,12 +44,12 @@
 }
 
 /* ---------------------------------------------------------------
-   Two small clay pieces that began on Discover's doors (the page itself is
-   gone, 2026-11-21 — Watch and Play are tabs of their own): a grained clay
+   Two small clay pieces (renamed from `.discover-soon-icon` / `.discover-chip`
+   when Discover's page went, 2026-11-21): a grained clay
    dot for an icon (`--dot`, sky by default — `/watch`'s section names) and
    the white clay chip (`PlayStars`' bank, the album's count).
    --------------------------------------------------------------- */
-.discover-soon-icon {
+.clay-dot {
   display: grid;
   place-items: center;
   width: 2.1rem;
@@ -66,14 +66,14 @@
 }
 
 @media (width >= 40rem) {
-  .discover-soon-icon {
+  .clay-dot {
     width: 2.5rem;
   }
 }
 
 /* The white clay chip (`PlayStars`' bank): `.btn3d--clay-white`'s shading,
    no grain — white carries none. */
-.discover-chip {
+.clay-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
