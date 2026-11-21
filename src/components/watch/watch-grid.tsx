@@ -67,9 +67,9 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
   </span>
 );
 
-/** The clay dot before a section's name (`.discover-soon-icon`, in the section's colour). */
+/** The clay dot before a section's name (`.clay-dot`, in the section's colour). */
 const SectionDot = ({ icon, dot }: { icon: ReactNode; dot: string }) => (
-  <span aria-hidden className="discover-soon-icon shrink-0" style={{ "--dot": dot } as CSSProperties}>
+  <span aria-hidden className="clay-dot shrink-0" style={{ "--dot": dot } as CSSProperties}>
     {icon}
   </span>
 );
@@ -196,7 +196,7 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
             >
               <Image src={pinki} alt="" sizes="(min-width: 640px) 12rem, 7rem" className="watch-panel-pinki" />
               <div key={hero.id} className="anim-rise-in flex flex-col items-start gap-4">
-                <span dir={dir} className="discover-chip watch-panel-chip">
+                <span dir={dir} className="clay-chip watch-panel-chip">
                   {at === 0 ? words.latestEpisode : words.episodesTitle}
                 </span>
                 <p dir="ltr" className="min-h-[2lh] text-start text-2xl font-bold leading-tight text-white sm:text-3xl">
