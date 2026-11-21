@@ -183,7 +183,6 @@ export const ar: Dictionary = {
     feed: "أطعِم",
     basket: "ضع",
   },
-  /** `/discover`: the two doors — Play and Watch — and Watch's own lines. */
   /** مختبر Play النائم. */
   lab: {
     title: "المختبر النائم",
@@ -199,16 +198,10 @@ export const ar: Dictionary = {
     welcome2: "هل تساعدنا لنوقظه؟ اقفز على أول كعكة!",
     stageSoon: "هذه المرحلة في الطريق!",
   },
+  /** `/watch`'s lines (the name is from the old Discover page). */
   discover: {
-    playGo: "هيا نلعب",
-    watchNew: "حلقات جديدة",
-    watchSub: "حلقات وأغاني وفيديوهات قصيرة",
-    playSub: "ألعاب ومغامرات",
     showEpisode: "اعرض الحلقة {n}",
-    playButton: "العب",
     watchButton: "شاهد",
-    watchAlt: "بينكي ونوفا وبلو في مختبر Edenic",
-    backToDiscover: "العودة إلى اكتشف",
     watchClipAria: "شاهد الفيديو: {title}",
     episodesTitle: "الحلقات",
     reelsTitle: "فيديوهات قصيرة",
