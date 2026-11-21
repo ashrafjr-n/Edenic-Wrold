@@ -25,6 +25,7 @@ import { AgainButton, NextButton } from "@/components/ui/morph-button";
 import { Celebration } from "@/components/ui/celebration";
 import { SongButton } from "./song-button";
 import { format } from "@/lib/format-dict";
+import { playSfx, unlockSound } from "@/lib/cue";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 export interface PuzzleBoardHandle {
@@ -208,6 +209,9 @@ export function PuzzleBoard({
       const next = [...placed, spot.piece.id];
       setPlaced(next);
       setFlight({ id: spot.piece.id, dx, dy });
+      /* Sound (2026-11-21): a lift, then the fit — or the cheer if it was the last. */
+      playSfx("whoosh");
+      playSfx(next.length === total ? "hooray" : "letter", next.length - 1);
       /* Recorded here rather than when it lands, for the same reason a
          dropped piece is: in the handler that made the picture whole. */
       if (next.length === total) finish();
@@ -222,6 +226,7 @@ export function PuzzleBoard({
   }));
 
   const flashWrong = (id: number) => {
+    playSfx("plop");
     setWrongId(id);
     if (wiggleTimer.current !== null) window.clearTimeout(wiggleTimer.current);
     wiggleTimer.current = window.setTimeout(() => setWrongId(null), WIGGLE_MS);
@@ -232,6 +237,8 @@ export function PuzzleBoard({
     piece: PuzzlePiece,
   ) => {
     event.currentTarget.setPointerCapture(event.pointerId);
+    unlockSound();
+    playSfx("pickup");
     setDrag({
       id: piece.id,
       startX: event.clientX,
@@ -303,6 +310,8 @@ export function PuzzleBoard({
         const next = [...placed, piece.id];
         setPlaced(next);
         setDrag(null);
+        /* Each piece that fits climbs one more note; the last one cheers. */
+        playSfx(next.length === total ? "hooray" : "letter", next.length - 1);
         /* Recorded the moment the picture is whole, in the handler that made
            it whole — not in an effect watching for it. */
         if (next.length === total) finish();
