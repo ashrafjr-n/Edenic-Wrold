@@ -256,3 +256,72 @@ button.game-card:focus-visible {
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------
+   `/play`'s stage (2026-11-21): Bloo's sky as one big `.clay` panel — the
+   three game cards sit on it, Bloo stands on their top edge, the star bank
+   is in the corner. The colours are pinned (not theme tokens) like the old
+   Play door they came from, so the stage reads the same in dark mode.
+   --------------------------------------------------------------- */
+.play-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #5aaee8;
+  --clay-edge: #2f78b8;
+  border-radius: 2rem;
+  padding: 1rem;
+}
+
+/* The top row: Bloo (left) stands on the cards' edge, the bank is at the end. */
+.play-stage-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 5.5rem;
+}
+
+.play-stage-bloo {
+  position: absolute;
+  z-index: 3;
+  inset-inline-start: 0.5rem;
+  bottom: -1.1rem;
+  width: auto;
+  height: 7.4rem;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 12px rgb(20 20 60 / 30%));
+}
+
+@media (width >= 40rem) {
+  .play-stage {
+    border-radius: 2.5rem;
+    padding: 1.75rem 2rem 2rem;
+  }
+
+  .play-stage-top {
+    min-height: 7rem;
+  }
+
+  .play-stage-bloo {
+    inset-inline-start: 1.5rem;
+    bottom: -1.4rem;
+    height: 9.6rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .play-stage {
+    padding: 2rem 2.5rem 2.5rem;
+  }
+
+  .play-stage-top {
+    min-height: 8.5rem;
+  }
+
+  .play-stage-bloo {
+    inset-inline-start: 2rem;
+    height: 11.4rem;
+  }
+}
