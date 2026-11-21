@@ -581,7 +581,7 @@ export function PuzzleBoard({
           <SongButton
             src={picture.song.src}
             poster={picture.image.src}
-            label={dict.discover.watchButton}
+            label={dict.watch.watchButton}
             ariaLabel={dict.activities.watchSongAria}
             closeLabel={dict.lessonPlayer.close}
           />
