@@ -13,6 +13,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { LevelBadge } from "@/components/ui/level-badge";
 import { Celebration } from "@/components/ui/celebration";
 import { format, dirFor } from "@/lib/format-dict";
+import { playSfx, unlockSound } from "@/lib/cue";
 import type { Dictionary } from "@/lib/dictionaries/en";
 
 interface MemoryBoardProps {
@@ -107,6 +108,10 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
 
     if (!running) setRunning(true);
 
+    /* Sound (2026-11-21): every turn flips; a pair climbs the scale like a
+       hunt's finds; a miss is the soft "uh-oh"; the last pair cheers. */
+    unlockSound();
+    playSfx("flip");
     const next = [...flipped, index];
     setFlipped(next);
     if (next.length < 2) return;
@@ -117,6 +122,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
       setMatched(nextMatched);
       setFlipped([]);
 
+      playSfx(nextMatched.length === level.pairs ? "hooray" : "found", nextMatched.length - 1);
       if (nextMatched.length === level.pairs) {
         /* Recorded in the handler that finished it, never in an effect
            watching for it — the same call the puzzle makes. */
@@ -127,6 +133,7 @@ export function MemoryBoard({ level, nextHref, dict }: MemoryBoardProps) {
     }
 
     setWrong(next);
+    window.setTimeout(() => playSfx("oops", undefined, { volume: 0.6 }), 350);
     wrongTimer.current = window.setTimeout(() => {
       setFlipped([]);
       setWrong(null);
