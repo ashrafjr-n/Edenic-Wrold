@@ -271,7 +271,15 @@ def rustle():
     return finish(room(mix(0.7, *shakes), 0.5, 0.15), 0.45)
 
 
-SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds, snap, rustle]
+def flip():
+    """Play's Memory Match (2026-11-21): a card turning over — a soft paper
+    "fwip" and a tiny wood tick as it lands face up."""
+    x = t(0.09)
+    fwip = noise_band(0.09, 1800, 7500) * np.sin(np.pi * x / 0.09) ** 1.5
+    return finish(room(mix(0.24, (0, attack(fwip, 4), 0.5), (0.06, wood(note("G5"), 0.12), 0.55)), 0.3, 0.1), 0.5)
+
+
+SOUNDS = [tap, correct, oops, letter, found, pickup, chomp, plop, bubbles, whoosh, hooray, chest, star, clouds, snap, rustle, flip]
 
 
 def write_mp3(name, signal):
