@@ -193,11 +193,10 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
             </button>
             <div
               className="watch-panel clay relative isolate flex flex-col items-start justify-center gap-4 overflow-hidden p-5 pe-28 sm:p-8 sm:pe-40 lg:pe-8"
-              style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)" } as CSSProperties}
             >
               <Image src={pinki} alt="" sizes="(min-width: 640px) 12rem, 7rem" className="watch-panel-pinki" />
               <div key={hero.id} className="anim-rise-in flex flex-col items-start gap-4">
-                <span dir={dir} className="discover-chip" style={{ color: "var(--accent-dark)" }}>
+                <span dir={dir} className="discover-chip watch-panel-chip">
                   {at === 0 ? words.latestEpisode : words.episodesTitle}
                 </span>
                 <p dir="ltr" className="min-h-[2lh] text-start text-2xl font-bold leading-tight text-white sm:text-3xl">
@@ -209,7 +208,7 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
                 onClick={() => play({ kind: "episode", item: hero })}
                 className="btn3d--clay-white px-7 py-3 text-lg"
               >
-                <Play className="h-5 w-5 fill-current text-[var(--accent)]" strokeWidth={2.5} />
+                <Play className="h-5 w-5 fill-current text-[#f2569b]" strokeWidth={2.5} />
                 <span dir={dir}>{words.watchNow}</span>
               </Button3D>
               {episodes.length > 1 && (
