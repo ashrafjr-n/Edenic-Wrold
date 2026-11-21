@@ -52,7 +52,7 @@ export function FindAlbum({ slots, words, soon, fresh }: FindAlbumProps) {
   return (
     <>
       <p className="mt-3 flex justify-center">
-        <span className="discover-chip find-album-chip" role="img" aria-label={format(words.albumAria, { n: count, total: slots.length })}>
+        <span className="clay-chip find-album-chip" role="img" aria-label={format(words.albumAria, { n: count, total: slots.length })}>
           <Camera className="h-6 w-6" strokeWidth={2.4} aria-hidden />
           <span aria-hidden dir="ltr">
             {count}/{slots.length}
