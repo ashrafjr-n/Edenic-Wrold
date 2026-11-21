@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
-import { ChevronDown, Play, X } from "lucide-react";
+import { ChevronDown, Clapperboard, Music, Play, X } from "lucide-react";
 import { Button3D } from "@/components/ui/button-3d";
 import { format } from "@/lib/format-dict";
 import type { LessonId } from "@/types/lesson";
+import pinki from "../../../public/assets/friends/pinki.png";
 import type { WatchClip, WatchCourse, WatchEpisode, WatchSong } from "@/data/watch";
 
 interface WatchGridProps {
@@ -66,8 +67,15 @@ const PlayBadge = ({ size = "h-14 w-14", icon = "h-7 w-7" }: { size?: string; ic
   </span>
 );
 
+/** The clay dot before a section's name (`.discover-soon-icon`, in the section's colour). */
+const SectionDot = ({ icon, dot }: { icon: ReactNode; dot: string }) => (
+  <span aria-hidden className="discover-soon-icon shrink-0" style={{ "--dot": dot } as CSSProperties}>
+    {icon}
+  </span>
+);
+
 /**
- * `/watch`. Episodes lead: ONE hero (picture + a panel with its title and one
+ * `/watch` (a top-level tab since 2026-11-21, so no back button). Episodes lead: ONE hero (picture + a pink clay panel with Pinki, its title and one
  * Watch-now button, side by side from `lg`) through which every episode passes,
  * newest first, one every `HERO_MS` — the pictures cross-fade, the panel's
  * words fade up, a dot per episode fills as it stays. It holds
@@ -183,21 +191,25 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
               ))}
               <PlayBadge size="h-16 w-16 sm:h-20 sm:w-20" icon="h-8 w-8 sm:h-10 sm:w-10" />
             </button>
-            <div className="flex flex-col items-start justify-center gap-4 p-5 sm:p-8">
+            <div
+              className="watch-panel clay relative isolate flex flex-col items-start justify-center gap-4 overflow-hidden p-5 pe-28 sm:p-8 sm:pe-40 lg:pe-8"
+              style={{ backgroundColor: "var(--accent)", "--clay-edge": "var(--accent-dark)" } as CSSProperties}
+            >
+              <Image src={pinki} alt="" sizes="(min-width: 640px) 12rem, 7rem" className="watch-panel-pinki" />
               <div key={hero.id} className="anim-rise-in flex flex-col items-start gap-4">
-                <span dir={dir} className="rounded-full bg-[var(--accent)] px-3.5 py-1 text-sm font-bold text-white">
+                <span dir={dir} className="discover-chip" style={{ color: "var(--accent-dark)" }}>
                   {at === 0 ? words.latestEpisode : words.episodesTitle}
                 </span>
-                <p dir="ltr" className="min-h-[2lh] text-start text-2xl font-bold leading-tight text-[var(--color-ink)] sm:text-3xl">
+                <p dir="ltr" className="min-h-[2lh] text-start text-2xl font-bold leading-tight text-white sm:text-3xl">
                   {hero.title}
                 </p>
               </div>
               <Button3D
-                tone={{ face: "var(--brand)", edge: "var(--brand-dark)", text: "#fff" }}
+                tone={{ face: "#fff", text: "var(--color-ink-fixed)" }}
                 onClick={() => play({ kind: "episode", item: hero })}
-                className="px-7 py-3 text-lg"
+                className="btn3d--clay-white px-7 py-3 text-lg"
               >
-                <Play className="h-5 w-5 fill-current" strokeWidth={2.5} />
+                <Play className="h-5 w-5 fill-current text-[var(--accent)]" strokeWidth={2.5} />
                 <span dir={dir}>{words.watchNow}</span>
               </Button3D>
               {episodes.length > 1 && (
@@ -209,9 +221,9 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
                       onClick={() => setAt(i)}
                       aria-label={format(words.showEpisode, { n: episodes.length - i })}
                       aria-current={i === at || undefined}
-                      className={`relative h-2.5 cursor-pointer overflow-hidden rounded-full bg-[rgb(var(--shadow-hue)/16%)] transition-[width] duration-500 ${i === at ? "w-10" : "w-2.5 hover:bg-[rgb(var(--shadow-hue)/28%)]"}`}
+                      className={`relative h-2.5 cursor-pointer overflow-hidden rounded-full bg-white/35 transition-[width] duration-500 ${i === at ? "w-10" : "w-2.5 hover:bg-white/60"}`}
                     >
-                      {i === at && <span key={`${episode.id}-${hovered}-${Boolean(playing)}`} aria-hidden className={`absolute inset-0 rounded-full bg-[var(--brand)] ${still ? "" : "watch-dot-fill"}`} />}
+                      {i === at && <span key={`${episode.id}-${hovered}-${Boolean(playing)}`} aria-hidden className={`absolute inset-0 rounded-full bg-white ${still ? "" : "watch-dot-fill"}`} />}
                     </button>
                   ))}
                 </div>
@@ -221,7 +233,8 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
         </section>
 
         <section aria-label={words.songsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
-          <h2 dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:sticky lg:top-28 lg:self-start lg:text-2xl">
+          <h2 dir={dir} className="flex items-center gap-3 text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:sticky lg:top-28 lg:self-start lg:text-2xl">
+            <SectionDot icon={<Music className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />} dot="var(--accent)" />
             {words.songsTitle}
           </h2>
 
@@ -258,7 +271,8 @@ export function WatchGrid({ episodes, songs, courses, clips, words, dir }: Watch
 
         <section aria-label={words.reelsTitle} className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
           <div className="flex flex-col gap-3 lg:sticky lg:top-28 lg:self-start">
-            <h2 dir={dir} className="text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-2xl">
+            <h2 dir={dir} className="flex items-center gap-3 text-2xl font-bold text-[var(--color-ink)] sm:text-3xl lg:text-2xl">
+              <SectionDot icon={<Clapperboard className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2.5} />} dot="var(--brand)" />
               {words.reelsTitle}
             </h2>
             <div role="group" aria-label={words.filterAria} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1.5 sm:mx-0 sm:flex-wrap sm:px-0 lg:flex-col lg:gap-2">
