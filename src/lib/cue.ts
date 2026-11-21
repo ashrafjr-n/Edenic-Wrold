@@ -37,7 +37,9 @@ export type Sfx =
   | "clouds"
   | "snap"
   | "rustle"
-  | "flip";
+  | "flip"
+  | "tick"
+  | "timesup";
 
 /** How long the "speaking" state lasts when a clip cannot play. */
 const SPEAK_MS = 1200;
@@ -110,7 +112,7 @@ export function playSfx(id: Sfx, step?: number, { pan = 0, volume = id === "tap"
   void play(`sfx/${id}`, rate, volume, pan);
 }
 
-const EFFECTS: Sfx[] = ["tap", "correct", "oops", "letter", "found", "pickup", "chomp", "plop", "bubbles", "whoosh", "hooray", "chest", "star", "clouds", "snap", "rustle", "flip"];
+const EFFECTS: Sfx[] = ["tap", "correct", "oops", "letter", "found", "pickup", "chomp", "plop", "bubbles", "whoosh", "hooray", "chest", "star", "clouds", "snap", "rustle", "flip", "tick", "timesup"];
 
 /** The first tap: starts the audio context and fetches every effect (a few
     KB each), so none waits for the network when it is due. */
