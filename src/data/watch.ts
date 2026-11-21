@@ -16,9 +16,6 @@ const EPISODES: readonly { id: string; title: string; poster?: StaticImageData }
   { id: "S0-dQzksqmY", title: "Edenic World Episode-1 ( English version)", poster: episode1 },
 ];
 
-/** The episodes' own stills, newest first — the first is on Discover's Watch TV. */
-export const watchStills: StaticImageData[] = EPISODES.flatMap(({ poster }) => (poster ? [poster] : []));
-
 export interface WatchEpisode {
   id: string;
   title: string;
